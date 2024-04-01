@@ -1,0 +1,50 @@
+<app-default-login-layout
+    title="Entre com suas credenciais"
+    primaryBtnText="Log In"
+    secondaryBtnText="Cadastrar"
+    (submit)="submit()"
+    (navigate)="navigate()"
+    [disablePrimaryBtn]="!cadastrarForm.valid"
+
+
+    
+>
+    <form [formGroup]="cadastrarForm">
+        <app-primary-input
+            formControlName="name"
+            inputName="name"
+            type="text"
+            label="Nome"
+            placeholder="Jose"
+    >
+            <img src="/assets/svg/icon-mail.svg"/>
+        </app-primary-input>
+        <app-primary-input
+        formControlName="email"
+        inputName="email"
+        type="email"
+        label="Email"
+        placeholder="seuemail@grupodb.com.br"
+    >
+        </app-primary-input>
+        <app-primary-input
+            formControlName="senha"
+            inputName="Senha"
+            type="password"
+            label="Senha"
+            
+        >
+            <img src="/assets/svg/icon-passwd.svg"/>
+        </app-primary-input>
+        <app-primary-input
+            formControlName="senhaConfirm"
+            inputName="SenhaConfirm"
+            type="password"
+            label="Confirma Senha"
+            
+        >
+        </app-primary-input>
+    </form>
+
+</app-default-login-layout>    
+
