@@ -18,7 +18,10 @@ main{
     
         gap: 8px;
         flex-grow: 1;
-        background-color: $bg-color;
+        background-color: aliceblue;
+        img{
+            width: 750px;
+        }
     }    
 
     .form-section{
@@ -26,6 +29,7 @@ main{
         padding: 0 35px;
         img{
             margin-bottom: 45px;
+            width: 300px;
         }
 
         h2{

@@ -40,7 +40,7 @@ export class LoginComponent {
   }
 
   navigate(){
-    this.router.navigate(["cadastrar"])
+    this.router.navigate(["dashboard"])
   }
 
 }

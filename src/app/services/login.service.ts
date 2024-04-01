@@ -15,7 +15,7 @@ export class LoginService {
     return this.httpClient.post<LoginResponse>(this.apiUrl,{username, password}).pipe(
       tap(() => {
         // Redirecionar para a página desejada após o login
-        this.router.navigate(['/cadastrar']);
+        this.router.navigate(['/dashboard']);
       })
     );     
   }
