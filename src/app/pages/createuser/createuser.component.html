@@ -1,0 +1,59 @@
+<app-default-login-layout
+    title="Cadastrar novo usuário"
+    secondaryBtnText="Cadastrar"
+    (submit)="submit()"
+    (navigate)="navigate()"
+    [disablePrimaryBtn]="!createuserForm.valid"
+
+
+    
+>
+    <form [formGroup]="createuserForm">
+        <app-primary-input
+            formControlName="first_name"
+            inputName="first_name"
+            type="text"
+            label="Nome"
+            placeholder="Nome"
+        >
+        <img src="/assets/svg/icon-person.svg"/>
+        </app-primary-input>
+        <app-primary-input
+            formControlName="last_name"
+            inputName="last_name"
+            type="text"
+            label="Sobrenome"
+            placeholder="Sobrenome"
+        >
+        <img src="/assets/svg/icon-person.svg"/>
+        </app-primary-input>
+        <app-primary-input
+        formControlName="username"
+        inputName="username"
+        type="email"
+        label="Email"
+        placeholder="seuemail@grupodb.com.br"
+        >
+        </app-primary-input>
+        <app-primary-input
+            formControlName="password"
+            inputName="password"
+            type="password"
+            label="Senha"
+            
+        >
+            <img src="/assets/svg/icon-passwd.svg"/>
+        </app-primary-input>
+        <app-primary-input
+            formControlName="confirmPassword"
+            inputName="confirmPassword"
+            type="password"
+            label="Repita a Senha"
+            
+        >
+            <img src="/assets/svg/icon-passwd.svg"/>
+        </app-primary-input>
+    </form>
+
+</app-default-login-layout>    
+
