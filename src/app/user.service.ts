@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:8000/auth/api/'; 
+  private apiUrl = 'http://localhost:8000/management/token/'; 
   constructor(private http: HttpClient) { }
 
   getUsers(): Observable<any[]>{

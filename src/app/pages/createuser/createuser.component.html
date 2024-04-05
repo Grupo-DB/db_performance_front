@@ -1,6 +1,6 @@
 <app-default-login-layout
     title="Cadastrar novo usuário"
-    secondaryBtnText="Cadastrar"
+    primaryBtnText="Cadastrar"
     (submit)="submit()"
     (navigate)="navigate()"
     [disablePrimaryBtn]="!createuserForm.valid"
@@ -15,9 +15,12 @@
             type="text"
             label="Nome"
             placeholder="Nome"
+            
         >
+        
         <img src="/assets/svg/icon-person.svg"/>
         </app-primary-input>
+        
         <app-primary-input
             formControlName="last_name"
             inputName="last_name"
@@ -53,7 +56,11 @@
         >
             <img src="/assets/svg/icon-passwd.svg"/>
         </app-primary-input>
+        
+
     </form>
+
+    
 
 </app-default-login-layout>    
 
