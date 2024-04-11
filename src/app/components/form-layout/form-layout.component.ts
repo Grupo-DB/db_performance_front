@@ -1,17 +1,16 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { UserService } from '../../services/user.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-default-login-layout',
+  selector: 'app-form-layout',
   standalone: true,
   imports: [
     CommonModule
   ],
-  templateUrl: './default-login-layout.component.html',
-  styleUrl: './default-login-layout.component.scss'
+  templateUrl: './form-layout.component.html',
+  styleUrl: './form-layout.component.scss'
 })
-export class DefaultLoginLayoutComponent {
+export class FormLayoutComponent {
 
   @Input() title: string="";
   @Input() primaryBtnText: string="";
@@ -28,23 +27,4 @@ export class DefaultLoginLayoutComponent {
   navigate(){
     this.onNavigate.emit();
   }
-
-  users: any[] = [];
-
-  constructor(private userService: UserService) { }
-
-  ngOnInit(): void {
-    this.userService.getUsers().subscribe(
-      users => {
-        this.users = users;
-      },
-      error => {
-        console.error('Error fetching users:', error);
-      }
-    );
-  }
 }
-
-
-
-

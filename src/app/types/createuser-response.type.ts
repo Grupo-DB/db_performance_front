@@ -4,6 +4,8 @@ export type CreateuserResponse = {
     username: string,
     password: string,
     confirmPassword: string,
+    funcao: string,
     access: string,
     refresh: string,
+
 }

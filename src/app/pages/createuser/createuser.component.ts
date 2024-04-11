@@ -1,49 +1,71 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { DefaultLoginLayoutComponent } from '../../components/default-login-layout/default-login-layout.component';
-import { AbstractControl, FormControl, FormGroup, FormRecord, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule,Validators } from '@angular/forms';
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CreateuserService } from '../../services/createuser.service';
 import { ToastrService } from 'ngx-toastr';
 import { passwordValidator } from './passwordValidator';
-import { AuthInterceptor } from '../../services/interceptor.service';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { LoginService } from '../../services/login.service';
-
+import { InputTextModule } from 'primeng/inputtext';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { ButtonModule } from 'primeng/button';
+import { TableModule,Table } from 'primeng/table';
+import { UserService } from '../../services/user.service';
+import { DropdownModule } from 'primeng/dropdown';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 interface CreateuserForm {
   first_name: FormControl,
   last_name: FormControl,
   username: FormControl,
+  funcao: FormControl,
   password: FormControl,
-  confirmPassword: FormControl
+  confirmPassword: FormControl,
+  
 }
 
+interface Funcao {
+  name: string;
+  code: string;
+}
 
 @Component({
   selector: 'app-createuser',
   standalone: true,
   imports: [
-    DefaultLoginLayoutComponent,
+    DefaultLoginLayoutComponent,FormsModule,
     ReactiveFormsModule,
     PrimaryInputComponent,
-    
+    RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
   providers: [
     CreateuserService,
-    LoginService
+    LoginService,
+    UserService,
+    MessageService
+
   ],
   templateUrl: './createuser.component.html',
   styleUrl: './createuser.component.scss'
 })
-export class CreateuserComponent {
+export class CreateuserComponent implements OnInit{
+  users: any[] = [];
+  funcoes: Funcao[] =[
+    { name: 'Recursos Humanos', code: 'RH'},
+    { name: 'Avaliador', code: 'AV'}
+  ];
   createuserForm!: FormGroup<CreateuserForm>;
-
-  
+  @ViewChild('CreateuserForm') CreateuserForm: any;
+  @ViewChild('dt1') dt1!: Table;
+  inputValue: string = '';
   constructor(
     private router: Router,
     private createuserService:CreateuserService,
-    private toastService: ToastrService,
+    private userService: UserService,
+    private messageService: MessageService,
     
   )
   
@@ -54,6 +76,7 @@ export class CreateuserComponent {
       first_name: new FormControl('',[Validators.required, Validators.minLength(3)]),
       last_name: new FormControl('',[Validators.required, Validators.minLength(3)]),
       username: new FormControl('',[Validators.required, Validators.email]),
+      funcao: new FormControl('',Validators.required),
       password: new FormControl('',[Validators.required, Validators.minLength(6)]),
       confirmPassword: new FormControl('',[Validators.required, Validators.minLength(6)]),
       
@@ -63,12 +86,39 @@ export class CreateuserComponent {
 
   }
 
+  ngOnInit(): void {
+    this.userService.getUsers().subscribe(
+      users => {
+        this.users = users;
+      },
+      error => {
+        console.error('Error fetching users:', error);
+      }
+    );
+  }
+  
+  clear(table: Table) {
+    table.clear();
+}
 
+clearForm() {
+  this.createuserForm.reset();
+}
+
+filterTable() {
+  this.dt1.filterGlobal(this.inputValue, 'contains');
+}
 
   submit(){
-    this.createuserService.createuser(this.createuserForm.value.first_name, this.createuserForm.value.last_name, this.createuserForm.value.username, this.createuserForm.value.password,this.createuserForm.value.confirmPassword, ).subscribe({
-      next: () => this.toastService.success("Usuário cadastrado com sucesso!"),
-      error: () => this.toastService.error("Erro, revise os dados!")
+    this.createuserService.createuser(
+      this.createuserForm.value.first_name, 
+      this.createuserForm.value.last_name, 
+      this.createuserForm.value.username,
+      this.createuserForm.value.funcao, 
+      this.createuserForm.value.password,
+      this.createuserForm.value.confirmPassword, ).subscribe({
+      next: () => this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Usuário registrado com sucesso!' }),
+      error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }),
     })
   }
 
@@ -77,3 +127,5 @@ export class CreateuserComponent {
   }
 
 }
+
+

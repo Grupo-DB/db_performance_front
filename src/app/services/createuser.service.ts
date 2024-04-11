@@ -18,8 +18,8 @@ export class CreateuserService {
 
   
 
-  createuser(first_name: string, last_name: string, username: string, password: string,confirmPassword:string){
-    return this.httpClient.post<CreateuserResponse>(this.apiUrl,{first_name,last_name,username, password,confirmPassword}).pipe(
+  createuser(first_name: string, last_name: string, username: string, password: string,confirmPassword:string,funcao:string){
+    return this.httpClient.post<CreateuserResponse>(this.apiUrl,{first_name,last_name,username, password,confirmPassword,funcao}).pipe(
       tap(() => {
         // Redirecionar para a página desejada após o login
         this.router.navigate(['/dashboard']);
