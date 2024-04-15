@@ -16,20 +16,19 @@ import { UserService } from '../../services/user.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { GetFuncaoService } from '../../services/getfuncao.service';
 
 interface CreateuserForm {
   first_name: FormControl,
   last_name: FormControl,
   username: FormControl,
-  funcao: FormControl,
   password: FormControl,
   confirmPassword: FormControl,
-  
+  funcao: FormControl,
 }
 
-interface Funcao {
-  name: string;
-  code: string;
+interface Funcao{
+  name: string
 }
 
 @Component({
@@ -45,7 +44,8 @@ interface Funcao {
     CreateuserService,
     LoginService,
     UserService,
-    MessageService
+    MessageService,
+    GetFuncaoService
 
   ],
   templateUrl: './createuser.component.html',
@@ -53,20 +53,22 @@ interface Funcao {
 })
 export class CreateuserComponent implements OnInit{
   users: any[] = [];
-  funcoes: Funcao[] =[
-    { name: 'Recursos Humanos', code: 'RH'},
-    { name: 'Avaliador', code: 'AV'}
-  ];
+  funcoes: Funcao[]|undefined;
+  // funcoes: Funcao[] =[
+  //   { name: 'Recursos Humanos', code: 'RH'},
+  //   { name: 'Avaliador', code: 'AV'}
+  // ];
   createuserForm!: FormGroup<CreateuserForm>;
   @ViewChild('CreateuserForm') CreateuserForm: any;
   @ViewChild('dt1') dt1!: Table;
   inputValue: string = '';
+  
   constructor(
     private router: Router,
     private createuserService:CreateuserService,
     private userService: UserService,
     private messageService: MessageService,
-    
+    private getfuncaoService: GetFuncaoService
   )
   
   
@@ -76,9 +78,9 @@ export class CreateuserComponent implements OnInit{
       first_name: new FormControl('',[Validators.required, Validators.minLength(3)]),
       last_name: new FormControl('',[Validators.required, Validators.minLength(3)]),
       username: new FormControl('',[Validators.required, Validators.email]),
-      funcao: new FormControl('',Validators.required),
       password: new FormControl('',[Validators.required, Validators.minLength(6)]),
       confirmPassword: new FormControl('',[Validators.required, Validators.minLength(6)]),
+      funcao: new FormControl('',Validators.required),
       
     }, { validators: passwordValidator  }); 
 
@@ -95,7 +97,19 @@ export class CreateuserComponent implements OnInit{
         console.error('Error fetching users:', error);
       }
     );
+
+    this.getfuncaoService.getFuncaos().subscribe(
+      funcoes => {
+        this.funcoes = funcoes;
+      },
+      error => {
+        console.error('Error fetching users:', error);
+      }
+    );
+
+
   }
+  
   
   clear(table: Table) {
     table.clear();
@@ -113,10 +127,10 @@ filterTable() {
     this.createuserService.createuser(
       this.createuserForm.value.first_name, 
       this.createuserForm.value.last_name, 
-      this.createuserForm.value.username,
-      this.createuserForm.value.funcao, 
+      this.createuserForm.value.username, 
       this.createuserForm.value.password,
-      this.createuserForm.value.confirmPassword, ).subscribe({
+      this.createuserForm.value.confirmPassword,
+      this.createuserForm.value.funcao, ).subscribe({
       next: () => this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Usuário registrado com sucesso!' }),
       error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }),
     })

@@ -43,10 +43,10 @@
                 </span>          
             </p-inputGroup>
             <p-dropdown 
-            formControlName="funcao" 
-            [options]="funcoes" 
-            optionLabel="name" 
-            placeholder="Selecione a Função">
+                [options]="funcoes" 
+                formControlName="funcao"
+                placeholder="Selecione a Função"
+                >
             </p-dropdown>
         </div>    
         <div class="form2">
@@ -72,7 +72,7 @@
                     <input pInputText
                         id="password"
                         formControlName="password"
-                        type="text"
+                        type="password"
                     />  
                     <label for="password">Digite a senha</label>
                 </span>          
@@ -86,7 +86,7 @@
                     <input pInputText
                         id="confirmPassword"
                         formControlName="confirmPassword"
-                        type="text"
+                        type="password"
                     />  
                     <label for="confirmPassword">Confirme a senha</label>
                 </span>          
@@ -154,6 +154,7 @@
                         <td>{{ user.last_name }}</td>
                         <td>{{ user.username }}</td>
                         <td>{{ user.funcao }}</td>
+                        
                         <td class="td-acao">
                             <button pButton label="Editar" severity="help"  (click)="filterTable()"></button>
                             <button pButton label="Excluir" severity="danger"  (click)="filterTable()"></button>
