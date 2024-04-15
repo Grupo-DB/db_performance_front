@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { LoginResponse } from '../types/login-response.type';
+import { LoginResponse } from '../../types/login-response.type';
 import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 

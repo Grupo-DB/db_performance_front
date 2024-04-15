@@ -3,20 +3,20 @@ import { DefaultLoginLayoutComponent } from '../../components/default-login-layo
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule,Validators } from '@angular/forms';
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
 import { Router, RouterLink } from '@angular/router';
-import { CreateuserService } from '../../services/createuser.service';
+import { CreateuserService } from '../../services/users/createuser.service';
 import { ToastrService } from 'ngx-toastr';
 import { passwordValidator } from './passwordValidator';
-import { LoginService } from '../../services/login.service';
+import { LoginService } from '../../services/login/login.service';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { ButtonModule } from 'primeng/button';
 import { TableModule,Table } from 'primeng/table';
-import { UserService } from '../../services/user.service';
+import { UserService } from '../../services/users/user.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { GetFuncaoService } from '../../services/getfuncao.service';
+import { GetFuncaoService } from '../../services/funcoes/getfuncao.service';
 
 interface CreateuserForm {
   first_name: FormControl,

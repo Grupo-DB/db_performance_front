@@ -1,10 +1,19 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { FormControl, ReactiveFormsModule,FormGroup, Validators } from '@angular/forms';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormControl, ReactiveFormsModule,FormGroup, FormsModule, Validators } from '@angular/forms';
 import { FormLayoutComponent } from "../../components/form-layout/form-layout.component";
-import { RegisterCompanyService } from '../../services/registercompany.service';
-import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
+import { RegisterCompanyService } from '../../services/companys/registercompany.service';
+import { Router, RouterLink } from '@angular/router';
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
+import { MessageService } from 'primeng/api';
+import { GetCompanyService } from '../../services/companys/getcompany.service';
+import { Table, TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { InputTextModule } from 'primeng/inputtext';
+import { ToastModule } from 'primeng/toast';
+
 
 interface RegisterCompanyForm{
   nome: FormControl,
@@ -21,37 +30,73 @@ interface RegisterCompanyForm{
     templateUrl: './registercompany.component.html',
     styleUrl: './registercompany.component.scss',
     imports: [
-        ReactiveFormsModule,
+        ReactiveFormsModule,FormsModule,
         FormLayoutComponent,
-        PrimaryInputComponent
+        PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
         
     ],
     providers:[
-      RegisterCompanyService
+      RegisterCompanyService,
+      MessageService,
+      GetCompanyService
     ]
 })
-export class RegisterCompanyComponent {
+export class RegisterCompanyComponent implements OnInit {
+  companys: any[] = [];
 
   registercompanyForm!: FormGroup<RegisterCompanyForm>;
-
+  @ViewChild('RegistercompanyForm') RegisterCompanyForm: any;
+  @ViewChild('dt1') dt1!: Table;
+  inputValue: string = '';
   
   constructor(
     private router: Router,
     private registercompanyService:RegisterCompanyService,
-    private toastService: ToastrService,    
+    private messageService: MessageService,
+    private getcompanyService: GetCompanyService  
   )
 
     {
    this.registercompanyForm = new FormGroup({
       nome: new FormControl('',[Validators.required, Validators.minLength(3)]),
-      cnpj: new FormControl('',[Validators.required, Validators.minLength(3)]),
-      endereco: new FormControl('',[Validators.required, Validators.email]),
-      cidade: new FormControl('',[Validators.required, Validators.minLength(6)]),
-      estado: new FormControl('',[Validators.required, Validators.minLength(6)]),
-      codigo: new FormControl('',[Validators.required, Validators.minLength(6)]),
+      cnpj: new FormControl('',[Validators.required, Validators.minLength(13)]),
+      endereco: new FormControl('',[Validators.required,]),
+      cidade: new FormControl('',[Validators.required, Validators.minLength(3)]),
+      estado: new FormControl('',[Validators.required, Validators.maxLength(2)]),
+      codigo: new FormControl('',[Validators.required, Validators.maxLength(2)]),
       
     }); 
   }
+
+  ngOnInit(): void {
+    this.getcompanyService.getCompanys().subscribe(
+      companys => {
+        this.companys = companys;
+      },
+      error => {
+        console.error('Error fetching users:', error);
+      }
+    );
+
+  }
+  
+  
+  clear(table: Table) {
+    table.clear();
+}
+
+clearForm() {
+  this.registercompanyForm.reset();
+}
+
+filterTable() {
+  this.dt1.filterGlobal(this.inputValue, 'contains');
+}
+
+
+
+
+
   
   submit(){
     this.registercompanyService.registercompany(
@@ -62,21 +107,17 @@ export class RegisterCompanyComponent {
       this.registercompanyForm.value.estado, 
       this.registercompanyForm.value.codigo
     ).subscribe({
-    next: () => this.toastService.success("Cadastro feito com sucesso!!"),
-    error: () => this.toastService.error("Erro!!")
-  })
+      next: () => this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Usuário registrado com sucesso!' }),
+      error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }), 
+    })
   }
+  
 
   navigate(){
     this.router.navigate(["dashboard"])
   }
 
-  @ViewChild('empresaModal',{static: false}) empresaModal?: ElementRef;
-  close(){
-
-    (this.empresaModal?.nativeElement as HTMLElement).style.display = 'none';
-    document.body.classList.remove('modal-open');
-}
+  
 }
 
 

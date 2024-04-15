@@ -7,15 +7,18 @@
       [nzTrigger]="null">
       <div class="sidebar-logo">
         <a href="https://ng.ant.design/" target="_blank">
-          <img src="/assets/imagens/logobranca.png" alt="logo">
-          <h1>DB Performance</h1>
+          <img src="/assets/imagens/Slide1.png" alt="logo">
+          <h1>Manager</h1>
         </a>
       </div>
-      <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
-        <li nz-submenu nzOpen nzTitle="Dashboard" nzIcon="dashboard">
+      <ul nz-menu style="background-color:#898993;"  nzMode="inline" [nzInlineCollapsed]="isCollapsed">
+        <li nz-submenu nzOpen nzTitle="Gestão de Pesooas" nzIcon="team">
           <ul>
             <li nz-menu-item nzMatchRouter>
-              <a routerLink="createuser">Colaboradores</a>
+              <a>Dashboard</a>
+            </li>
+            <li nz-menu-item nzMatchRouter>
+              <a>Colaboradores</a>
             </li>
             <li nz-menu-item nzMatchRouter>
               <a>Avaliações</a>
@@ -28,29 +31,25 @@
         <li nz-submenu nzOpen nzTitle="Cadastros" nzIcon="form">
           <ul>
             <li nz-menu-item nzMatchRouter>
-              <a>Empresas</a>
+              <a  routerLink="createuser">Usuários</a>
             </li>
             <li nz-menu-item nzMatchRouter>
-              <a>Areas</a>
+              <a routerLink="registercompany">Empresas</a>
+            </li>
+            <li nz-menu-item nzMatchRouter>
+              <a routerLink="area">Areas</a>
             </li>
             <li nz-menu-item nzMatchRouter>
               <a>Setores</a>
             </li>
+            <li nz-menu-item nzMatchRouter>
+              <a>Filiais</a>
+            </li>
+            <li nz-menu-item nzMatchRouter>
+              <a>Cargos</a>
+            </li>
           </ul>
         </li>
-      </ul>
-      <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
-          <li nz-submenu nzOpen nzTitle="Recursos Humanos" nzIcon="dashboard"></li>
-            <ul>
-              
-              <li nz-menu-item nzMatchRouter>
-                <a>Avaliação de Funcionários</a>
-              </li>
-              <li nz-menu-item nzMatchRouter>
-                <a>Dashboard</a>
-              </li>
-              
-            </ul>    
       </ul>
     </nz-sider>
     <nz-layout>

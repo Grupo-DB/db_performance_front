@@ -15,7 +15,7 @@
     z-index: 10;
     min-height: 100vh;
     box-shadow: 2px 0 6px ;
-    background-color: #000080;
+    background-color:#4C5264    ;
   }
   
   .header-trigger {
@@ -27,7 +27,7 @@
   }
   
   .trigger:hover {
-    color: #4B0082;
+    color: #4C5264;
   }
   
   .sidebar-logo {
@@ -36,7 +36,7 @@
     padding-left: 24px;
     overflow: hidden;
     line-height: 64px;
-    background:#000080;
+    background:#4C5264;
     transition: all .3s;
     
   }
@@ -86,5 +86,8 @@
   }
 
   nz-sider{
-    background-color:#B0E0E6;
+    background-color:#4C5264;
+    li{
+      background-color: #e3e3f3;
+    }
   }

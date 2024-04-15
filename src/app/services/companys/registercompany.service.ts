@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs';
-import { RegisterCompanyResponse } from '../types/registercompany-response';
+import { RegisterCompanyResponse } from '../../types/registercompany-response';
 @Injectable({
   providedIn: 'root'
 })
