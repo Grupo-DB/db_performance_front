@@ -4,7 +4,6 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule,Validators } f
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
 import { Router, RouterLink } from '@angular/router';
 import { CreateuserService } from '../../services/users/createuser.service';
-import { ToastrService } from 'ngx-toastr';
 import { passwordValidator } from './passwordValidator';
 import { LoginService } from '../../services/login/login.service';
 import { InputTextModule } from 'primeng/inputtext';

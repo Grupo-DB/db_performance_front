@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule,FormGroup, FormsModule, Validators } from '@angular/forms';
 import { FormLayoutComponent } from "../../components/form-layout/form-layout.component";
 import { RegisterCompanyService } from '../../services/companys/registercompany.service';
@@ -13,6 +13,7 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
+import { InputMaskModule } from 'primeng/inputmask';
 
 
 interface RegisterCompanyForm{
@@ -32,7 +33,7 @@ interface RegisterCompanyForm{
     imports: [
         ReactiveFormsModule,FormsModule,
         FormLayoutComponent,
-        PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
+        PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,InputMaskModule
         
     ],
     providers:[
@@ -56,11 +57,12 @@ export class RegisterCompanyComponent implements OnInit {
     private getcompanyService: GetCompanyService  
   )
 
+
     {
    this.registercompanyForm = new FormGroup({
       nome: new FormControl('',[Validators.required, Validators.minLength(3)]),
-      cnpj: new FormControl('',[Validators.required, Validators.minLength(13)]),
-      endereco: new FormControl('',[Validators.required,]),
+      cnpj: new FormControl('',[Validators.required]),
+      endereco: new FormControl('',[Validators.required,Validators.minLength(5)]),
       cidade: new FormControl('',[Validators.required, Validators.minLength(3)]),
       estado: new FormControl('',[Validators.required, Validators.maxLength(2)]),
       codigo: new FormControl('',[Validators.required, Validators.maxLength(2)]),
@@ -69,6 +71,7 @@ export class RegisterCompanyComponent implements OnInit {
   }
 
   ngOnInit(): void {
+   
     this.getcompanyService.getCompanys().subscribe(
       companys => {
         this.companys = companys;
@@ -99,6 +102,7 @@ filterTable() {
 
   
   submit(){
+    console.log('control =>', this.registercompanyForm);
     this.registercompanyService.registercompany(
       this.registercompanyForm.value.nome, 
       this.registercompanyForm.value.cnpj, 
@@ -114,7 +118,7 @@ filterTable() {
   
 
   navigate(){
-    this.router.navigate(["dashboard"])
+    this.router.navigate(["welcome"])
   }
 
   

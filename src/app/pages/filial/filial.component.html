@@ -1,1 +1,199 @@
-<p>filial works!</p>
+<div class="container">
+    
+    <div class="form-geral">
+        <div class="titulo">
+            <h2>Cadastrar Nova Filial</h2>
+        </div>    
+        <form [formGroup]="registerfilialForm"
+        title="Cadastrar nova Empresa"
+        primaryBtnText="Cadastrar"
+        (submit)="submit()"
+        (navigate)="navigate()"
+        
+        >
+        <div class="form1">
+            <p-inputGroup>
+                <p-inputGroupAddon>
+                    <i class="pi pi-user"></i>
+                </p-inputGroupAddon>
+                <span class="p-float-label">
+                    <input pInputText
+                        id="nome"
+                        formControlName="nome"
+                        type="text"
+                    />  
+                    <label for="nome">Digite o nome</label>
+                </span>          
+            </p-inputGroup>
+            
+            <div class="teste">  
+                <span class="p-float-label">
+                    <p-inputMask id="cnpj_input" mask="99.999.999/9999-99" formControlName="cnpj" ></p-inputMask>
+                    <label for="cnpj_input">Informe o CNPJ</label>
+                </span>  
+            </div> 
+
+            <p-inputGroup>
+              <p-inputGroupAddon>
+                  <i class="pi pi-user"></i>
+              </p-inputGroupAddon>
+              <span class="p-float-label">
+                  <input pInputText
+                  id="endereco"
+                  formControlName="endereco"
+                  type="text"
+                  />  
+                  <label for="endereco">Digite o Endereço</label>
+              </span>          
+          </p-inputGroup>
+        </div>    
+        <div class="form2">
+            <p-inputGroup>
+                <p-inputGroupAddon>
+                    <i class="pi pi-at"></i>
+                </p-inputGroupAddon>
+                <span class="p-float-label">
+                    <input pInputText
+                        id="cidade"
+                        formControlName="cidade"
+                        type="text"
+                    />  
+                    <label for="cidade">Digite a Cidade</label>
+                </span>          
+            </p-inputGroup>
+  
+            <p-inputGroup>
+                <p-inputGroupAddon>
+                    <i class="pi pi-key"></i>
+                </p-inputGroupAddon>
+                <span class="p-float-label">
+                    <input pInputText
+                        id="estado"
+                        formControlName="estado"
+                        type="text"
+                    />  
+                    <label for="estado">Digite o Estado</label>
+                </span>          
+            </p-inputGroup>
+  
+            <p-inputGroup>
+                <p-inputGroupAddon>
+                    <i class="pi pi-key"></i>
+                </p-inputGroupAddon>
+                <span class="p-float-label">
+                    <input pInputText
+                        id="codigo"
+                        formControlName="codigo"
+                        type="text"
+                    />  
+                    <label for="codigo">Digite o cód da filial</label>
+                </span>          
+            </p-inputGroup>
+        </div>
+        <div class="form3">
+            <p-dropdown 
+            [options]="companys" 
+            formControlName="empresa"
+            optionLabel="nome"
+            placeholder="Selecione a Empresa"
+            >
+        </p-dropdown>
+        </div>    
+        </form>
+    </div>    
+  
+    <div class="botoes-form">
+        <p-toast></p-toast>
+        <p-button 
+        label="Limpar" 
+        icon="pi pi-check" 
+        severity="warning"
+        (click)="clearForm()">
+        </p-button>
+        <p-button 
+            label="Gravar" 
+            icon="pi pi-check"
+            iconPos="right" 
+            severity="success"
+            (click)="submit()">
+        </p-button>
+        
+    </div>
+    <hr>
+        <div class="tabela">
+            <p-table
+                #dt1
+                [value]="filiais"
+                [paginator]="true"
+                [rows]="5"
+                [showCurrentPageReport]="true"
+                [tableStyle]="{ 'min-width': '50rem' }"
+                currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
+                [rowsPerPageOptions]="[5, 10, 20]"
+                [globalFilterFields]="['nome', 'cnpj', 'endereco','cidade','estado','codigo']"
+            >
+                <ng-template pTemplate="caption">
+                    <div class="flex">
+                        <span class="p-input-icon-left ml-auto">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Palavra-Chave" />
+                        </span>
+                        <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
+                        <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+                    </div>
+                </ng-template>    
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width:25%">ID
+                            <p-columnFilter type="text" field="id" display="menu"></p-columnFilter>
+                        </th>
+                        <th style="width:25%">Nome
+                            <p-columnFilter type="text" field="nome" display="menu"></p-columnFilter>
+                        </th>
+                        <th style="width:25%">CNPJ
+                            <p-columnFilter type="text" field="cnpj" display="menu"></p-columnFilter>
+                        </th>
+                        <th style="width:25%">Empresa
+                            <p-columnFilter type="text" field="empresa" display="menu"></p-columnFilter>
+                        </th>
+                        <th style="width:25%">Endereço
+                            <p-columnFilter type="text" field="endereco" display="menu"></p-columnFilter>
+                        </th>
+                        <th style="width:25%">Cidade
+                            <p-columnFilter type="text" field="cidade" display="menu"></p-columnFilter>
+                        </th>
+                        <th style="width:25%">Estado
+                            <p-columnFilter type="text" field="estado" display="menu"></p-columnFilter>
+                        </th>
+                        <th style="width:25%">Codigo
+                          <p-columnFilter type="text" field="codigo" display="menu"></p-columnFilter>
+                        </th>
+                        <th style="width: 25%;">Ações</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-filial>
+                    <tr>
+                        <td>{{ filial.id }}</td>
+                        <td>{{ filial.nome }}</td>
+                        <td>{{ filial.cnpj }}</td>
+                        <td>{{ filial.empresa }}</td>
+                        <td>{{ filial.endereco }}</td>
+                        <td>{{ filial.cidade }}</td>
+                        <td>{{ filial.estado }}</td>
+                        <td>{{ filial.codigo }}</td>
+                        <td class="td-acao">
+                            <button pButton label="Editar" severity="help"  (click)="filterTable()"></button>
+                            <button pButton label="Excluir" severity="danger"  (click)="filterTable()"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="paginatorleft">
+                    <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+                </ng-template>
+                <ng-template pTemplate="paginatorright">
+                    <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
+                </ng-template>
+            </p-table>
+        </div>        
+  
+  </div><!--end container-->

@@ -32,6 +32,29 @@
         p-dropdown{
             padding: 15px;
         }
+        p-inputMask{
+            padding: 15px;
+            width: 150px;
+        }
+        .teste{
+            margin-bottom: 5%;
+            margin-top: 6%;
+            label{
+                margin-left: 5%;
+            }
+        }
+        .form1{
+            p-inputGroup{
+                padding: 15px;
+            }
+            
+            
+            p-inputMask{
+                margin-top: 20px;
+                padding: 15px;
+                width: 150px;
+            }
+        }
  }
  
  .botoes-form{

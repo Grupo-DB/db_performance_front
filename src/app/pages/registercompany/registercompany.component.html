@@ -25,20 +25,15 @@
                   <label for="nome">Digite o nome</label>
               </span>          
           </p-inputGroup>
-          
-          <p-inputGroup>
-              <p-inputGroupAddon>
-                  <i class="pi pi-user"></i>
-              </p-inputGroupAddon>
-              <span class="p-float-label">
-                  <input pInputText
-                  id="cnpj"
-                  formControlName="cnpj"
-                  type="text"
-                  />  
-                  <label for="cnpj">Digite o CNPJ</label>
-              </span>          
-          </p-inputGroup>
+        
+            <div class="teste">  
+                <span class="p-float-label">
+                    <p-inputMask id="cnpj_input" mask="99.999.999/9999-99" formControlName="cnpj" ></p-inputMask>
+                    <label for="cnpj_input">Informe o CNPJ</label>
+                </span>  
+            </div>      
+                  
+              
           <p-inputGroup>
             <p-inputGroupAddon>
                 <i class="pi pi-user"></i>
@@ -127,7 +122,7 @@
               [tableStyle]="{ 'min-width': '50rem' }"
               currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
               [rowsPerPageOptions]="[5, 10, 20]"
-              [globalFilterFields]="['nome', 'cnpj', 'endereco','cidade','estado','codigo']"
+              [globalFilterFields]="['id','nome', 'cnpj', 'endereco','cidade','estado','codigo']"
           >
               <ng-template pTemplate="caption">
                   <div class="flex">
@@ -141,6 +136,9 @@
               </ng-template>    
               <ng-template pTemplate="header">
                   <tr>
+                    <th style="width:25%">ID
+                        <p-columnFilter type="text" field="id" display="menu"></p-columnFilter>
+                    </th>
                       <th style="width:25%">Nome
                           <p-columnFilter type="text" field="nome" display="menu"></p-columnFilter>
                       </th>
@@ -164,6 +162,7 @@
               </ng-template>
               <ng-template pTemplate="body" let-empresa>
                   <tr>
+                    <td>{{ empresa.id }}</td>
                       <td>{{ empresa.nome }}</td>
                       <td>{{ empresa.cnpj }}</td>
                       <td>{{ empresa.endereco }}</td>
