@@ -18,13 +18,16 @@
               <a>Dashboard</a>
             </li>
             <li nz-menu-item nzMatchRouter>
-              <a>Colaboradores</a>
+              <a routerLink="colaborador">Colaboradores</a>
             </li>
             <li nz-menu-item nzMatchRouter>
               <a>Avaliações</a>
             </li>
             <li nz-menu-item nzMatchRouter>
               <a>Avaliadores</a>
+            </li>
+            <li nz-menu-item nzMatchRouter>
+              <a routerLink="tipocontrato">Tipos de Contrato</a>
             </li>
           </ul>
         </li>
@@ -66,6 +69,43 @@
       <nz-content>
         <div class="inner-content">
           <router-outlet></router-outlet>
+          <input
+            type="file"
+          
+          >
+
+
+          <!-- <p-fileUpload
+          chooseLabel="Choose"
+          name="imagem"
+          url="http://localhost:8000/management/upload/"
+          accept="image/*"
+          [maxFileSize]="1000000"
+          (onUpload)="onUpload($event)"
+          [multiple]="true"
+        >
+          <ng-template let-file pTemplate="file">
+            <div>{{ file.name }} {{ file.size }}</div>
+          </ng-template>
+        </p-fileUpload> -->
+
+        <nz-upload
+      nzType="drag"
+      nzName="imagem"
+      [nzMultiple]="true"
+      
+      
+    >
+      <p class="ant-upload-drag-icon">
+        <span nz-icon nzType="inbox"></span>
+      </p>
+      <p class="ant-upload-text">Click or drag file to this area to upload</p>
+      <p class="ant-upload-hint">
+        Support for a single or bulk upload. Strictly prohibit from uploading company data or other band files
+      </p>
+    </nz-upload>
+
+
         </div>
       </nz-content>
     </nz-layout>

@@ -3,7 +3,7 @@ import { Injectable, NgModule } from '@angular/core';
 import { Router } from '@angular/router';
 import { CreateuserResponse } from '../../types/createuser-response.type';
 import { tap } from 'rxjs';
-import { AuthInterceptor } from '../interceptors/interceptor.service';
+
 import { LoginService } from '../login/login.service';
 
  @Injectable({

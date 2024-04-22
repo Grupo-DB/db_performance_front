@@ -7,6 +7,8 @@ import { AreaComponent } from './pages/area/area.component';
 import { FilialComponent } from './pages/filial/filial.component';
 import { SetorComponent } from './pages/setor/setor.component';
 import { CargoComponent } from './pages/cargo/cargo.component';
+import { TipoContratoComponent } from './pages/tipocontrato/tipocontrato.component';
+import { ColaboradorComponent } from './pages/colaborador/colaborador.component';
 
 
 export const routes: Routes = [
@@ -18,7 +20,9 @@ export const routes: Routes = [
       { path: 'area', component: AreaComponent },
       { path: 'filial', component: FilialComponent },
       { path: 'setor', component:SetorComponent },
-      { path: 'cargo', component:CargoComponent}
+      { path: 'cargo', component:CargoComponent},
+      { path: 'tipocontrato', component:TipoContratoComponent },
+      { path: 'colaborador', component:ColaboradorComponent}
     ],
   },
   //{ path: 'welcome', loadChildren: () => import('./pages/welcome/welcome.routes').then(m => m.WELCOME_ROUTES) }
