@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class GetTipoAvalicaoService {
+export class GetTipoAvaliacaoService {
   private apiUrl = 'http://localhost:8000/management/get_tipoavaliacao/'; 
   constructor(private http: HttpClient) { }
 

@@ -13,7 +13,7 @@ import { FormLayoutComponent } from '../../components/form-layout/form-layout.co
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
 import { MessageService } from 'primeng/api';
 import { RegisterTipoAvaliacaoService } from '../../services/tipoavaliacoes/registertipoavaliacao.service';
-import { GetTipoAvalicaoService } from '../../services/tipoavaliacoes/gettipoavaliacao.service';
+import { GetTipoAvaliacaoService } from '../../services/tipoavaliacoes/gettipoavaliacao.service';
 
 interface RegisterTipoAvaliacaoForm{
   nome: FormControl,
@@ -45,7 +45,7 @@ export class TipoAvaliacaoComponent implements OnInit {
     private router: Router,
     private messageService: MessageService,
     private registertipoavaliacaoService: RegisterTipoAvaliacaoService,
-    private gettipoavalicaoService: GetTipoAvalicaoService
+    private gettipoavaliacaoService: GetTipoAvaliacaoService
   )    
   {
     this.registertipoavaliacaoForm = new FormGroup({
@@ -53,7 +53,7 @@ export class TipoAvaliacaoComponent implements OnInit {
    }); 
  }
  ngOnInit(): void {
- this.gettipoavalicaoService.getTipoavaliacoes().subscribe(
+ this.gettipoavaliacaoService.getTipoavaliacoes().subscribe(
   tipoavaliacoes => {
     this.tipoavaliacoes = tipoavaliacoes;
   },
@@ -76,7 +76,7 @@ this.dt1.filterGlobal(this.inputValue, 'contains');
 
 submit(){
   this.registertipoavaliacaoService.registertipoavaliacao(
-    this.registertipoavaliacaoForm.value.nome,
+    this.registertipoavaliacaoForm.value.nome
   ).subscribe({
     next: () => this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Filial registrada com sucesso!' }),
     error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }), 

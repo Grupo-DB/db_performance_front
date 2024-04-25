@@ -12,48 +12,62 @@
         </a>
       </div>
       <ul nz-menu style="background-color:#898993;"  nzMode="inline" [nzInlineCollapsed]="isCollapsed">
-        <li nz-submenu nzOpen nzTitle="Gestão de Pesooas" nzIcon="team">
+        <li nz-submenu nzOpen nzTitle="Gestão de Pessoas" nzIcon="team">
           <ul>
-            <li nz-menu-item nzMatchRouter>
-              <a>Dashboard</a>
-            </li>
-            <li nz-menu-item nzMatchRouter>
-              <a routerLink="colaborador">Colaboradores</a>
-            </li>
-            <li nz-menu-item nzMatchRouter>
-              <a>Avaliações</a>
-            </li>
-            <li nz-menu-item nzMatchRouter>
-              <a>Avaliadores</a>
-            </li>
-            <li nz-menu-item nzMatchRouter>
-              <a routerLink="tipocontrato">Tipos de Contrato</a>
-            </li>
-            <li nz-menu-item nzMatchRouter>
-              <a routerLink="tipoavaliacao">Tipos de Avaliação</a>
-            </li>
+            <li nz-submenu nzTitle="Cadastros" nzIcon="appstore-add">
+              <ul>
+                <li nz-menu-item nzMatchRouter>
+                  <a  routerLink="createuser">Usuários</a>
+                </li>
+                <li nz-menu-item nzIcon="audit" nzMatchRouter>
+                  <a routerLink="colaborador">Colaboradores</a>
+                </li>
+                <li nz-menu-item nzMatchRouter>
+                  <a routerLink="avaliador">Avaliadores</a>
+                </li>
+                <li nz-menu-item nzMatchRouter>
+                  <a routerLink="avaliacao">Avaliações</a>
+                </li>
+                <li nz-menu-item nzMatchRouter>
+                  <a routerLink="tipocontrato">Tipos de Contrato</a>
+                </li>
+                <li nz-menu-item nzMatchRouter>
+                  <a routerLink="tipoavaliacao">Tipos de Avaliação</a>
+                </li>
+                <li nz-menu-item nzMatchRouter>
+                  <a routerLink="pergunta">Perguntas</a>
+                </li>
+                <li nz-menu-item nzMatchRouter>
+                  <a routerLink="formulario">Questionários</a>
+                </li>
+                <li nz-menu-item nzMatchRouter>
+                  <a routerLink="questionario">Montar Formularios</a>
+                </li>
+              </ul>
+            </li>  
           </ul>
         </li>
-        <li nz-submenu nzOpen nzTitle="Cadastros" nzIcon="form">
+        <li nz-submenu nzOpen nzTitle="Corporativo" nzIcon="global">
           <ul>
-            <li nz-menu-item nzMatchRouter>
-              <a  routerLink="createuser">Usuários</a>
-            </li>
-            <li nz-menu-item nzMatchRouter>
-              <a routerLink="registercompany">Empresas</a>
-            </li>
-            <li nz-menu-item nzMatchRouter>
-              <a routerLink="area">Areas</a>
-            </li>
-            <li nz-menu-item nzMatchRouter>
-              <a routerLink="setor">Setores</a>
-            </li>
-            <li nz-menu-item nzMatchRouter>
-              <a routerLink="filial">Filiais</a>
-            </li>
-            <li nz-menu-item nzMatchRouter>
-              <a routerLink="cargo">Cargos</a>
-            </li>
+              <li nz-submenu nzTitle="Cadastros" nzIcon="appstore-add">
+                <ul>  
+                  <li nz-menu-item nzMatchRouter>
+                    <a routerLink="registercompany">Empresas</a>
+                  </li>
+                  <li nz-menu-item nzMatchRouter>
+                    <a routerLink="area">Areas</a>
+                  </li>
+                  <li nz-menu-item nzMatchRouter>
+                    <a routerLink="setor">Setores</a>
+                  </li>
+                  <li nz-menu-item nzMatchRouter>
+                    <a routerLink="filial">Filiais</a>
+                  </li>
+                  <li nz-menu-item nzMatchRouter>
+                    <a routerLink="cargo">Cargos</a>
+                  </li>
+                </ul>
+              </li>        
           </ul>
         </li>
       </ul>

@@ -1,0 +1,138 @@
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { InputMaskModule } from 'primeng/inputmask';
+import { InputTextModule } from 'primeng/inputtext';
+import { Table, TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+import { FormLayoutComponent } from '../../components/form-layout/form-layout.component';
+import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
+import { GetFormularioService } from '../../services/formularios/getformulario.service';
+import { GetPerguntaService } from '../../services/perguntas/getpergunta.service';
+import { GetQuestionarioService } from '../../services/questionarios/getquestionario.service';
+import { RegisterQuestionarioService } from '../../services/questionarios/registerquestionario.service';
+import { PickListModule } from 'primeng/picklist';
+
+interface RegisterQuestionarioForm{
+  formulario: FormControl,
+  pergunta: FormControl,
+ 
+}
+interface Formulario{
+  nome: string,
+}
+interface Pergunta{
+  texto: string,
+  id:string
+}
+@Component({
+  selector: 'app-questionario',
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,FormsModule,PickListModule,
+    FormLayoutComponent,InputMaskModule,
+    PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
+  ],
+  providers:[
+    MessageService,
+  ],
+  templateUrl: './questionario.component.html',
+  styleUrl: './questionario.component.scss'
+})
+export class QuestionarioComponent implements OnInit {
+  perguntas: Pergunta [] | undefined;
+  formularios: Formulario [] | undefined;
+  
+  targetPerguntas!: Pergunta[];
+  
+  questionarios: any[] = [];
+
+  registerquestionarioForm!: FormGroup<RegisterQuestionarioForm>;
+  @ViewChild('RegisterfilialForm') RegisterQuestionarioForm: any;
+  @ViewChild('dt1') dt1!: Table;
+  inputValue: string = '';
+
+  constructor(
+    private router: Router,
+    private messageService: MessageService,
+    private getformularioService: GetFormularioService,
+    private registerquestionarioService: RegisterQuestionarioService,
+    private getperguntaService: GetPerguntaService,
+    private getquestionarioService: GetQuestionarioService,
+    private cdr: ChangeDetectorRef,
+  
+  )
+  {
+    this.registerquestionarioForm = new FormGroup({
+      formulario: new FormControl('',[Validators.required]),
+      pergunta: new FormControl('',[Validators.required]),
+      
+     }); 
+   }
+
+   ngOnInit(): void {
+    // this.getperguntaService.getPerguntas().subscribe(perguntas =>{
+    //   this.perguntas = perguntas;
+    //   this.cdr.markForCheck();
+    // });
+    this.targetPerguntas = []
+    this.getformularioService.getFormularios().subscribe(
+      formularios => {
+        this.formularios = formularios;
+      },
+      error => {
+        console.error('Error fetching users:', error);
+      }
+    );
+    this.getperguntaService.getPerguntas().subscribe(
+      perguntas => {
+        this.perguntas = perguntas;
+      },
+      error => {
+        console.error('Error fetching users:', error);
+      }
+    );
+    
+}
+
+
+clear(table: Table) {
+  table.clear();
+}
+
+clearForm() {
+this.registerquestionarioForm.reset();
+}
+
+filterTable() {
+this.dt1.filterGlobal(this.inputValue, 'contains');
+}
+
+submit() {
+  this.registerquestionarioForm.patchValue({
+    pergunta: this.targetPerguntas
+  });
+  const formularioId = this.registerquestionarioForm.value.formulario.id;
+
+  this.targetPerguntas.forEach(pergunta => {
+    const idPergunta = pergunta.id;
+    this.registerquestionarioService.registerquestionario(formularioId, idPergunta).subscribe({
+      next: () => this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Filial registrada com sucesso!' }),
+      error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }), 
+    });
+  });
+}
+
+
+navigate(){
+  this.router.navigate(["dashboard"])
+}
+
+
+
+}

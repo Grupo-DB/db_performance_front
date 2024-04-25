@@ -11,8 +11,8 @@ export class RegisterAvaliadorService {
   private apiUrl = 'http://localhost:8000/management/registeravaliador/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
-  registeravaliador(colaborador: string, usuario: string, ){
-    return this.httpClient.post<AvaliadorResponse>(this.apiUrl,{colaborador,usuario}).pipe(
+  registeravaliador(nome:string,colaborador: string, usuario: string, ){
+    return this.httpClient.post<AvaliadorResponse>(this.apiUrl,{nome,colaborador,usuario}).pipe(
       tap(() => {
         this.router.navigate(['/dashboard']);
       })

@@ -12,7 +12,7 @@ export class RegisterTipoAvaliacaoService {
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
   registertipoavaliacao(nome: string){
-    return this.httpClient.post<TipoAvaliacaoResponse>(this.apiUrl,{nome,}).pipe(
+    return this.httpClient.post<TipoAvaliacaoResponse>(this.apiUrl,{nome}).pipe(
       tap(() => {
         this.router.navigate(['/dashboard']);
       })

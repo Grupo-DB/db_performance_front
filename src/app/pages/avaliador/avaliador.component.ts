@@ -22,6 +22,7 @@ import { UserService } from '../../services/users/user.service';
 
 
 interface RegisterAvaliadorForm{
+  nome: FormControl,
   colaborador: FormControl,
   usuario: FormControl
 }
@@ -67,6 +68,7 @@ export class AvaliadorComponent implements OnInit {
   )
   {
     this.registeravaliadorForm = new FormGroup({
+      nome: new FormControl('',[Validators.required]),
       colaborador: new FormControl('',[Validators.required]),
       usuario: new FormControl('',[Validators.required]),
      }); 
@@ -90,8 +92,15 @@ export class AvaliadorComponent implements OnInit {
         console.error('Error fetching users:', error);
       }
     );
-}
-
+    this.getavaliadorService.getAvaliadores().subscribe(
+      avaliadores => {
+        this.avaliadores = avaliadores;
+      },
+      error => {
+        console.error('Error fetching users:', error);
+      }
+    );
+  }
 clear(table: Table) {
   table.clear();
 }
@@ -107,7 +116,8 @@ this.dt1.filterGlobal(this.inputValue, 'contains');
 submit(){
   const colaboradorId = this.registeravaliadorForm.value.colaborador.id;
   const usuarioId = this.registeravaliadorForm.value.usuario.id;
-  this.registeravaliadorService.registeravaliador( 
+  this.registeravaliadorService.registeravaliador(
+    this.registeravaliadorForm.value.nome, 
     colaboradorId,
     usuarioId,
     
