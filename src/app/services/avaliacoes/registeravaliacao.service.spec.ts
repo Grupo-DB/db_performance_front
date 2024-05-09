@@ -14,29 +14,20 @@ export class RegisterAvaliacaoService {
 
   registeravaliacao(
     tipoavaliacao: string, 
-    colaborador: string, 
     avaliador: string,
-    formulario:string,
-    data_avaliacao:Date,
+    colaborador: string,
     periodo: string,
-    resposta:string,
-    justificativa:string,
-    nota: string,
-    feedback: string,
-
+    perguntasRespostas: JSON,
+    feedback: string
   ){
     return this.httpClient.post<AvaliacaoResponse>(
       this.apiUrl,{
         tipoavaliacao,
-        colaborador,
         avaliador,
-        formulario,
-        data_avaliacao,
+        colaborador,
         periodo,
-        resposta,
-        justificativa,
-        nota,
-        feedback,
+        perguntasRespostas,
+        feedback
       }).pipe(
       tap(() => {
         this.router.navigate(['/dashboard']);

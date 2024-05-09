@@ -1,0 +1,201 @@
+<div class="container"> 
+  
+  <h1>Informações do Colaborador Associado ao Usuário Ativo</h1>
+
+
+ 
+  {{ avaliadorInfo.avaliador.id }} 
+
+
+<p>Email: {{ avaliadorInfo.colaborador.nome }}</p>
+<p>Cargo do Colaborador: {{ avaliadorInfo.colaborador.cargo_nome }}</p>
+<p>Area do Colaborador: {{ avaliadorInfo.colaborador.area_nome }}</p>
+<p>Setor do Colaborador: {{ avaliadorInfo.colaborador.setor_nome }}</p>
+<div *ngIf="colaboradorSelecionado">
+  <p>{{ colaboradorSelecionado.nome }}</p>
+  <p>{{ colaboradorSelecionado.cargo_nome }}</p>
+  <p>{{ colaboradorSelecionado.area_nome }}</p>
+  <p>{{ colaboradorSelecionado.setor_nome }}</p>
+  <img [src]="'http://localhost:8000' + colaboradorSelecionado.image"  width="80" class="shadow-4" />
+</div>
+<form [formGroup]="registeravaliacaoForm" (submit)="submit()">
+
+   
+    <p-dropdown 
+        [options]="colaboradores" 
+        formControlName="colaborador"
+        optionLabel="nome"
+        placeholder="Selecione o Colaborador"
+        (onChange)="selecionarColaborador($event.value)"
+      >
+      </p-dropdown>
+
+      
+
+
+      <p-dropdown 
+        [options]="tipoavaliacoes" 
+        formControlName="tipoavaliacao"
+        optionLabel="nome"
+        placeholder="Selecione o Tipo"
+      
+      >
+      </p-dropdown> 
+       <p-dropdown 
+      [options]="periodos" 
+      formControlName="periodo"
+      optionLabel="nome"
+      placeholder="Selecione o Periodo"
+    
+    >
+    </p-dropdown>
+  
+    
+
+      
+        <input type="hidden" formControlName="avaliador" [(ngModel)]="avaliadorInfo.avaliador.id" >
+      
+
+      <mat-horizontal-stepper linear formArrayName="perguntasRespostas" >
+        <mat-step *ngFor="let pergunta of perguntas; let i = index" [formGroupName]="'pergunta-' + pergunta.id"  >
+        
+          <ng-template matStepLabel>{{ 'Pergunta ' + (i + 1) }}</ng-template>
+          
+          <mat-form-field>
+            <input matInput type="text" formControlName="resposta" placeholder="Resposta para a pergunta {{ pergunta.id }}" >
+          </mat-form-field>
+          <mat-form-field>  
+            <textarea matInput formControlName="justificativa" placeholder="Justificativa (opcional)"></textarea>
+          </mat-form-field>
+          <div>
+            <button mat-button matStepperPrevious type="button">Anterior</button>
+            <button mat-button matStepperNext type="button">Próximo</button>
+          </div>
+        </mat-step>    
+        
+      </mat-horizontal-stepper>
+    </form>
+
+    <mat-form-field>
+      <mat-label>Selecione um formulário</mat-label>
+         <mat-select [(ngModel)]="formularioSelecionado" (selectionChange)="selecionarFormulario()">
+        <mat-option *ngFor="let formulario of formularios" [value]="formulario.id">{{ formulario.nome }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <form [formGroup]="registeravaliacaoForm" (submit)="submit()">
+      <p-button 
+      label="Gravar" 
+      icon="pi pi-check"
+      iconPos="right" 
+      severity="success"
+      (click)="submit()">
+  </p-button>
+      {{ registeravaliacaoForm.value | json }}
+      <!-- <div class="botoes-form">
+        <p-toast></p-toast>
+        <p-button 
+            label="Gravar" 
+            icon="pi pi-check"
+            iconPos="right" 
+            severity="success"
+            (click)="submit()">
+        </p-button>
+      </div>
+      {{ registeravaliacaoForm.value | json }}
+</form> -->
+<!-- <div *ngIf="colaboradorSelecionado">
+  <p>{{ colaboradorSelecionado.nome }}</p>
+  <p>{{ colaboradorSelecionado.cargo_nome }}</p>
+  <p>{{ colaboradorSelecionado.area_nome }}</p>
+  <p>{{ colaboradorSelecionado.setor_nome }}</p>
+  <img [src]="'http://localhost:8000' + colaboradorSelecionado.image"  width="80" class="shadow-4" />
+</div> -->
+ 
+<!-- <mat-form-field>
+  <mat-label>Selecione um formulário</mat-label>
+    <mat-select [(ngModel)]="formularioSelecionado" (selectionChange)="selecionarFormulario()">
+      <mat-option *ngFor="let formulario of formularios" [value]="formulario.id">{{ formulario.nome }}</mat-option>
+    </mat-select>
+</mat-form-field>   -->
+
+<!-- <mat-horizontal-stepper linear [formGroup]="registeravaliacaoForm">
+  <mat-step *ngFor="let pergunta of perguntas; let i = index">
+    <ng-template matStepLabel>{{ 'Pergunta ' + (i + 1) }}</ng-template>
+    <mat-form-field>
+      <mat-label>Input</mat-label>
+      <input type="text" formControlName="resposta" placeholder="Resposta para a pergunta {{ pergunta.id }}" required>
+      <textarea formControlName="justificativa" placeholder="Justificativa (opcional)"></textarea>
+    </mat-form-field>
+    <div>
+      <button mat-button matStepperPrevious type="button">Back</button>
+      <button mat-button matStepperNext type="button">Next</button>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper> -->
+
+
+
+ 
+
+
+<!-- <form [formGroup]="registeravaliacao2Form" (ngSubmit)="submit()">
+  <div *ngFor="let pergunta of perguntas">
+      <label>{{ pergunta.texto }}</label>
+      <input type="text" [formControlName]="'resposta_' + pergunta.id">
+      <input type="text" [formControlName]="'justificativa_' + pergunta.id">
+  </div>
+  <button type="submit" [disabled]="!registeravaliacao2Form.valid">Enviar</button>
+</form> -->
+
+
+
+<!-- <mat-form-field>
+  <mat-label>Selecione um formulário</mat-label>
+    <mat-select [(ngModel)]="formularioSelecionado" (selectionChange)="selecionarFormulario()">
+      <mat-option *ngFor="let formulario of formularios" [value]="formulario.id">{{ formulario.nome }}</mat-option>
+    </mat-select>
+</mat-form-field>   -->
+<!-- <mat-horizontal-stepper linear>
+<mat-step *ngFor="let pergunta of perguntas; let i = index" [label]="'Pergunta ' + (i + 1)">
+  <ng-template matStepLabel>{{ 'Pergunta ' + (i + 1) }}</ng-template>
+  <div class="flex flex-column h-12rem">
+    <div class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
+      {{ pergunta.texto }}
+      <mat-form-field>
+        <mat-label>Input</mat-label>
+        <input matInput>
+      </mat-form-field>
+    </div>
+  </div>
+  <div>
+    <button mat-button matStepperPrevious type="button">Back</button>
+    <button mat-button matStepperNext type="button">Next</button>
+  </div>
+</mat-step> 
+
+</mat-horizontal-stepper> -->
+ 
+
+
+
+
+    <!--FUNCIONA-->
+      <!-- <form [formGroup]="registeravaliacaoForm" (submit)="submit()">
+      <div formArrayName="perguntasRespostas">
+        <div *ngFor="let pergunta of perguntas; let i = index" [formGroupName]="'pergunta-' + pergunta.id">
+          <input type="text" formControlName="resposta" placeholder="Resposta para a pergunta {{ pergunta.id }}" required>
+          <textarea formControlName="justificativa" placeholder="Justificativa (opcional)"></textarea>
+        </div>
+      </div> 
+    </form> -->
+
+
+
+
+
+
+
+  
+
+
+ 

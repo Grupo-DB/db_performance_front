@@ -15,6 +15,7 @@ import { FormularioComponent } from './pages/formulario/formulario.component';
 import { PerguntaComponent } from './pages/pergunta/pergunta.component';
 import { AvaliacaoComponent } from './pages/avaliacao/avaliacao.component';
 import { QuestionarioComponent } from './pages/questionario/questionario.component';
+import { NovaliacaoComponent } from './pages/novaliacao/novaliacao.component';
 
 
 export const routes: Routes = [
@@ -31,10 +32,11 @@ export const routes: Routes = [
       { path: 'colaborador', component:ColaboradorComponent },
       { path: 'tipoavaliacao', component:TipoAvaliacaoComponent },
       { path: 'avaliador', component:AvaliadorComponent },
-      { path: 'avaliacao', component:AvaliacaoComponent },
       { path: 'formulario', component: FormularioComponent },
       { path: 'pergunta', component: PerguntaComponent },
-      { path: 'questionario', component: QuestionarioComponent }  
+      { path: 'questionario', component: QuestionarioComponent },
+      { path: 'avaliacao', component:AvaliacaoComponent },
+      { path: 'novaliacao', component:NovaliacaoComponent }  
     ],
   },
   //{ path: 'welcome', loadChildren: () => import('./pages/welcome/welcome.routes').then(m => m.WELCOME_ROUTES) }
