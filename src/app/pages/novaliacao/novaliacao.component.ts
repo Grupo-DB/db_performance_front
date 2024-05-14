@@ -42,6 +42,7 @@ import { AvaliadorService } from '../../services/ativo/avaliador.service';
 import { ColaboradorResponse } from '../../types/colaborador-response';
 import { ColaboradorService } from '../../services/ativo/colaborador.service';
 import { Calendar, CalendarModule } from 'primeng/calendar';
+import { AvaliadoService } from '../../services/avaliados/avaliado.service';
 
 
 // interface RegisterAvaliacaoForm{
@@ -57,8 +58,12 @@ export interface RespostasFormatadas {
 interface TipoAvaliacao{
   nome: string
 }
-interface Colaborador{
-  nome: string
+interface Colaborador {
+  nome: string;
+  cargo_nome: string;
+  area_nome: string;
+  setor_nome: string;
+  image: string;
 }
 interface Avaliador{
   nome: string
@@ -106,6 +111,7 @@ export class NovaliacaoComponent implements OnInit {
   steps: any[] = [];
   avaliacoes: any[] = [];
   login: any;
+  avaliados: any[] = [];
   avaliadorSelecionado: any;
   avaliadoSelecionado: any;
   colaboradorInfo: any;
@@ -113,7 +119,7 @@ export class NovaliacaoComponent implements OnInit {
   //avaliador: any; // Variável para armazenar as informações do avaliador com o colaborador
   userId: any; // Variável para armazenar o userId
   avaliadorInfo:any;
-  colaboradorSelecionado: any;
+  colaboradorSelecionado: Colaborador [] = [];
   respostasJustificativas: { [key: string]: { resposta: string, justificativa: string } } = {};
 
   registeravaliacaoForm: FormGroup;
@@ -133,6 +139,7 @@ export class NovaliacaoComponent implements OnInit {
     private ativoService: AtivoService,
     private avaliadorService: AvaliadorService,
     private colaboradorService: ColaboradorService,
+    private avaliadoService: AvaliadoService,
     private fb: FormBuilder  
   )
 
@@ -193,6 +200,7 @@ export class NovaliacaoComponent implements OnInit {
       this.selecionarColaborador(value);
     });
   
+    this.carregarAvaliados();
 
     this.gettipoavaliacaoService.getTipoavaliacoes().subscribe(
       tipoavaliacoes => {
@@ -232,19 +240,53 @@ export class NovaliacaoComponent implements OnInit {
   
   }
   
-  selecionarColaborador(colaborador: any) {
-    this.colaboradorSelecionado = colaborador;
+  selecionarColaborador(colaborador: Colaborador) {
+    this.colaboradorSelecionado.push(colaborador);
 }
 
 
   
-  selecionarFormulario() {
-    if (this.formularioSelecionado) {
-      // Carregar perguntas ao selecionar um formulário
-      this.carregarPerguntasDoFormulario(this.formularioSelecionado);
-      this.cdRef.detectChanges();
+  // selecionarFormulario() {
+  //   if (this.formularioSelecionado) {
+  //     // Carregar perguntas ao selecionar um formulário
+  //     this.carregarPerguntasDoFormulario(this.formularioSelecionado);
+  //     this.cdRef.detectChanges();
+  //   }
+  // }
+
+  carregarAvaliados() {
+    this.avaliadoService.getAvaliados().subscribe(
+      (data: any[]) => {
+        this.avaliados = data;
+      },
+      error => {
+        console.error('Erro ao carregar avaliados:', error);
+      }
+    );
+  }
+  
+  getIdFormularioDoAvaliado(idAvaliado: number): number | null {
+    // Aqui você deve implementar a lógica para obter o ID do formulário associado ao avaliado
+    // Se o avaliado tem uma propriedade 'formularioId', você pode retorná-la diretamente
+    // Exemplo:
+    const avaliado = this.avaliados.find(avaliado => avaliado.id === idAvaliado);
+    return avaliado ? avaliado.formularioId : null;
+  }
+
+  onChangeAvaliado(idAvaliado: number) {
+    if (idAvaliado) {
+      // Obter o ID do formulário associado ao avaliado
+      const idFormulario = this.getIdFormularioDoAvaliado(idAvaliado);
+      
+      if (idFormulario) {
+        this.carregarPerguntasDoFormulario(idFormulario);
+      }
+    } else {
+      this.perguntas = [];  // Limpa as perguntas se nenhum avaliado for selecionado
     }
   }
+
+  
 
 
     carregarPerguntasDoFormulario(formularioId: number) {
@@ -413,7 +455,7 @@ export class NovaliacaoComponent implements OnInit {
     const tipoavaliacaoId = this.registeravaliacaoForm.value.tipoavaliacao.id;
     const avaliadorId = this.registeravaliacaoForm.value.avaliador.id;
     const colaboradorId = this.registeravaliacaoForm.value.colaborador.id;
-    const periodo = this.registeravaliacaoForm.value.periodo;
+    const periodo = this.registeravaliacaoForm.value.periodo.nome;
     const perguntasRespostas: any = this.formatarPerguntasRespostas(this.registeravaliacaoForm.value.perguntasRespostas);
     const perguntasRespostasJSON: JSON = JSON.parse(JSON.stringify(perguntasRespostas));
     const feedback = this.registeravaliacaoForm.value.feedback;

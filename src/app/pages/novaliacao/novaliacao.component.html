@@ -2,29 +2,26 @@
   
   <h1>Informações do Colaborador Associado ao Usuário Ativo</h1>
 
+<p>Avaliador: {{ avaliadorInfo.colaborador.nome }}</p>
+<p>Cargo: {{ avaliadorInfo.colaborador.cargo_nome }}</p>
+<p>Area: {{ avaliadorInfo.colaborador.area_nome }}</p>
+<p>Setor: {{ avaliadorInfo.colaborador.setor_nome }}</p>
 
- 
-  {{ avaliadorInfo.avaliador.id }} 
 
-
-<p>Email: {{ avaliadorInfo.colaborador.nome }}</p>
-<p>Cargo do Colaborador: {{ avaliadorInfo.colaborador.cargo_nome }}</p>
-<p>Area do Colaborador: {{ avaliadorInfo.colaborador.area_nome }}</p>
-<p>Setor do Colaborador: {{ avaliadorInfo.colaborador.setor_nome }}</p>
-<div *ngIf="colaboradorSelecionado">
-  <p>{{ colaboradorSelecionado.nome }}</p>
-  <p>{{ colaboradorSelecionado.cargo_nome }}</p>
-  <p>{{ colaboradorSelecionado.area_nome }}</p>
-  <p>{{ colaboradorSelecionado.setor_nome }}</p>
-  <img [src]="'http://localhost:8000' + colaboradorSelecionado.image"  width="80" class="shadow-4" />
+<div *ngFor="let colaborador of colaboradorSelecionado">
+  <p>{{ colaborador.nome }}</p>
+  <p>{{ colaborador.cargo_nome }}</p>
+  <p>{{ colaborador.area_nome }}</p>
+  <p>{{ colaborador.setor_nome }}</p>
+  <img [src]="'http://localhost:8000' + colaborador.image"  width="80" class="shadow-4" />
 </div>
 <form [formGroup]="registeravaliacaoForm" (submit)="submit()">
 
    
     <p-dropdown 
-        [options]="colaboradores" 
+        [options]="avaliados" 
         formControlName="colaborador"
-        optionLabel="nome"
+        optionLabel="id"
         placeholder="Selecione o Colaborador"
         (onChange)="selecionarColaborador($event.value)"
       >
@@ -53,7 +50,7 @@
     
 
       
-        <input type="hidden" formControlName="avaliador" [(ngModel)]="avaliadorInfo.avaliador.id" >
+        <input type="hidden" formControlName="avaliador" [(ngModel)]="avaliadorInfo.avaliador" >
       
 
       <mat-horizontal-stepper linear formArrayName="perguntasRespostas" >
@@ -76,12 +73,12 @@
       </mat-horizontal-stepper>
     </form>
 
-    <mat-form-field>
+    <!-- <mat-form-field>
       <mat-label>Selecione um formulário</mat-label>
          <mat-select [(ngModel)]="formularioSelecionado" (selectionChange)="selecionarFormulario()">
         <mat-option *ngFor="let formulario of formularios" [value]="formulario.id">{{ formulario.nome }}</mat-option>
       </mat-select>
-    </mat-form-field>
+    </mat-form-field> -->
     <form [formGroup]="registeravaliacaoForm" (submit)="submit()">
       <p-button 
       label="Gravar" 

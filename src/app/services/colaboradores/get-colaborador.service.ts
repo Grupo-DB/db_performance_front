@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class GetColaboradorService {
-  private apiUrl = 'http://localhost:8000/management/get_colaborador/'; 
+  private apiUrl = 'http://localhost:8000/management/colaboradores/'; 
   constructor(private http: HttpClient) { }
 
   getColaboradores(): Observable<any[]>{

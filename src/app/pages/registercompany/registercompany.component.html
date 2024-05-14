@@ -112,10 +112,11 @@
       
   </div>
   <hr>
+
       <div class="tabela">
           <p-table
               #dt1
-              [value]="companys"
+              [value]="empresas"
               [paginator]="true"
               [rows]="5"
               [showCurrentPageReport]="true"
@@ -170,8 +171,8 @@
                       <td>{{ empresa.estado }}</td>
                       <td>{{ empresa.codigo }}</td>
                       <td class="td-acao">
-                          <button pButton label="Editar" severity="help"  (click)="filterTable()"></button>
-                          <button pButton label="Excluir" severity="danger"  (click)="filterTable()"></button>
+                            <button pButton label="Editar" severity="help" (click)="abrirModalEdicao(empresa)"></button>
+                            <button pButton label="Excluir" severity="danger"  (click)="excluirEmpresa(empresa.id)"></button>
                       </td>
                   </tr>
               </ng-template>
@@ -182,6 +183,116 @@
                   <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
               </ng-template>
           </p-table>
-      </div>        
+      </div>
+      
+      <p-dialog 
+      header="Editar Empresa" 
+      [modal]="true"
+      [(visible)]="editFormVisible" 
+      [style]="{ width: '50rem' }" 
+      [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
+        
+          <form [formGroup]="editForm" (Submit)="submit()">
+            <div class="form1">
+                <p-inputGroup>
+                    <p-inputGroupAddon>
+                        <i class="pi pi-user"></i>
+                    </p-inputGroupAddon>
+                    <span class="p-float-label">
+                        <input pInputText
+                            id="nome"
+                            formControlName="nome"
+                            type="text"
+                        />  
+                        <label for="nome">Digite o nome</label>
+                    </span>          
+                </p-inputGroup>
+              
+                  <div class="teste">  
+                      <span class="p-float-label">
+                          <p-inputMask id="cnpj_input" mask="99.999.999/9999-99" formControlName="cnpj" ></p-inputMask>
+                          <label for="cnpj_input">Informe o CNPJ</label>
+                      </span>  
+                  </div>      
+                        
+                    
+                <p-inputGroup>
+                  <p-inputGroupAddon>
+                      <i class="pi pi-user"></i>
+                  </p-inputGroupAddon>
+                  <span class="p-float-label">
+                      <input pInputText
+                      id="endereco"
+                      formControlName="endereco"
+                      type="text"
+                      />  
+                      <label for="endereco">Digite o Endereço</label>
+                  </span>          
+              </p-inputGroup>
+            </div>    
+            <div class="form2">
+                <p-inputGroup>
+                    <p-inputGroupAddon>
+                        <i class="pi pi-at"></i>
+                    </p-inputGroupAddon>
+                    <span class="p-float-label">
+                        <input pInputText
+                            id="cidade"
+                            formControlName="cidade"
+                            type="text"
+                        />  
+                        <label for="cidade">Digite a Cidade</label>
+                    </span>          
+                </p-inputGroup>
+      
+                <p-inputGroup>
+                    <p-inputGroupAddon>
+                        <i class="pi pi-key"></i>
+                    </p-inputGroupAddon>
+                    <span class="p-float-label">
+                        <input pInputText
+                            id="estado"
+                            formControlName="estado"
+                            type="text"
+                        />  
+                        <label for="estado">Digite o Estado</label>
+                    </span>          
+                </p-inputGroup>
+      
+                <p-inputGroup>
+                    <p-inputGroupAddon>
+                        <i class="pi pi-key"></i>
+                    </p-inputGroupAddon>
+                    <span class="p-float-label">
+                        <input pInputText
+                            id="codigo"
+                            formControlName="codigo"
+                            type="text"
+                        />  
+                        <label for="codigo">Digite o cód da empresa</label>
+                    </span>          
+                </p-inputGroup>
+                <div class="botoes-form">
+                    <p-toast></p-toast>
+                    <p-button 
+                    label="Limpar" 
+                    icon="pi pi-check" 
+                    severity="warning"
+                    (click)="cleareditForm()">
+                    </p-button>
+                    <p-button 
+                        label="Gravar" 
+                        icon="pi pi-check"
+                        iconPos="right" 
+                        severity="success"
+                        (click)="saveEdit()">
+                    </p-button>
+                    
+                </div>
+            </div>    
+          </form>
+        
+      </p-dialog>
+     
 
 </div><!--end container-->
