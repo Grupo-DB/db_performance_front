@@ -12,7 +12,7 @@ import { ToastModule } from 'primeng/toast';
 import { FormLayoutComponent } from '../../components/form-layout/form-layout.component';
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
 import { MessageService } from 'primeng/api';
-import { RegisterAreaService } from '../../services/areas/registerarea.service';
+import { AreaService } from '../../services/areas/registerarea.service';
 import { GetCompanyService } from '../../services/companys/getcompany.service';
 import { GetFilialService } from '../../services/filiais/getfilial.service';
 import { GetAvaliadorService } from '../../services/avaliadores/getavaliador.service';
@@ -48,7 +48,7 @@ interface Avaliador {
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
   providers:[
-    MessageService,RegisterAreaService,
+    MessageService,AreaService,
     GetCompanyService,GetFilialService
   ],
   templateUrl: './avaliado.component.html',

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
@@ -11,11 +11,18 @@ import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { FormLayoutComponent } from '../../components/form-layout/form-layout.component';
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { CommonModule } from '@angular/common';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
+import { GetAreaService } from '../../services/areas/getarea.service';
 import { GetCompanyService } from '../../services/companys/getcompany.service';
 import { GetFilialService } from '../../services/filiais/getfilial.service';
-import { RegisterAreaService } from '../../services/areas/registerarea.service';
-import { GetAreaService } from '../../services/areas/getarea.service';
+import { Filial } from '../filial/filial.component';
+import { FilialService } from '../../services/filiais/registerfilial.service';
+import { RegisterCompanyService } from '../../services/companys/registercompany.service';
+import { AreaService } from '../../services/areas/registerarea.service';
+import { Empresa } from '../registercompany/registercompany.component';
 
 
 interface RegisterAreaForm{
@@ -23,10 +30,10 @@ interface RegisterAreaForm{
   filial: FormControl
   nome: FormControl,
 }
-interface Company{
-  nome: string
-}
-interface Filial{
+export interface Area {
+  id: number;
+  empresa: string,
+  filial: string,
   nome: string
 }
 
@@ -36,21 +43,23 @@ interface Filial{
   templateUrl: './area.component.html',
   styleUrl: './area.component.scss',
   imports: [
-    ReactiveFormsModule,FormsModule,
-    FormLayoutComponent,InputMaskModule,
+    ReactiveFormsModule,FormsModule,CommonModule,
+    FormLayoutComponent,InputMaskModule,DialogModule,ConfirmDialogModule,
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
   providers:[
-    MessageService,RegisterAreaService,
-    GetCompanyService,GetFilialService
+    MessageService,AreaService,ConfirmationService,
+    FilialService,RegisterCompanyService,
   ]
 })
 
 export class AreaComponent implements OnInit {
-  companys: Company[]| undefined;
+  empresas: Empresa[]| undefined;
   filiais: Filial[]| undefined;
-  areas: any[] = [];
+  areas: Area[] = [];
 
+  editForm!: FormGroup;
+  editFormVisible: boolean = false;
   registerareaForm!: FormGroup<RegisterAreaForm>;
   @ViewChild('RegisterfilialForm') RegisterAreaForm: any;
   @ViewChild('dt1') dt1!: Table;
@@ -59,10 +68,11 @@ export class AreaComponent implements OnInit {
   constructor(
     private router: Router,
     private messageService: MessageService,
-    private getcompanyService: GetCompanyService,
-    private getfilialService: GetFilialService,
-    private registerareaService: RegisterAreaService,
-    private getareaService: GetAreaService,
+    private registercompanyService: RegisterCompanyService,
+    private filialService: FilialService,
+    private areaService: AreaService,
+    private fb: FormBuilder,
+    private confirmationService: ConfirmationService 
   )
 
   {
@@ -70,11 +80,17 @@ export class AreaComponent implements OnInit {
       nome: new FormControl('',[Validators.required, Validators.minLength(3)]),
       empresa: new FormControl('',[Validators.required]),
       filial: new FormControl('',[Validators.required]),
-     }); 
+     });
+     this.editForm = this.fb.group({
+      id: [''],
+      empresa: [''],
+      filial: [''],
+      nome: [''],
+     });   
    }
 
    ngOnInit(): void {
-    this.getfilialService.getFiliais().subscribe(
+    this.filialService.getFiliais().subscribe(
       filiais => {
         this.filiais = filiais;
       },
@@ -83,57 +99,109 @@ export class AreaComponent implements OnInit {
       }
     );
 
-    this.getareaService.getAreas().subscribe(
-      areas => {
-        this.areas = areas;
-      },
-      error => {
-        console.error('Error fetching users:', error);
-      }
-    );
-
-    this.getcompanyService.getCompanys().subscribe(
-      companys => {
-        this.companys = companys;
+    this.registercompanyService.getCompanys().subscribe(
+      empresas => {
+        this.empresas = empresas;
       },
       error => {
         console.error('Error fetching users:',error);
       }
     );
-
+    this.areaService.getAreas().subscribe(
+      (areas:Area[]) => {
+        this.areas = areas;
+      },
+      error => {
+        console.error('Error fetching areas:', error);
+      },
+    );
   }
   
-  
-  clear(table: Table) {
-    table.clear();
+clear(table: Table) {
+  table.clear();
 }
 
 clearForm() {
   this.registerareaForm.reset();
 }
-
+cleareditForm() {
+  this.editForm.reset();
+}
 filterTable() {
   this.dt1.filterGlobal(this.inputValue, 'contains');
+}
+abrirModalEdicao(area: Area) {
+  this.editFormVisible = true;
+  this.editForm.patchValue({
+    id: area.id,
+    empresa: area.empresa,
+    filial: area.filial,
+    nome: area.nome,
+  });
+}
+saveEdit() {
+  const areaId = this.editForm.value.id;
+  const empresaId = this.editForm.value.empresa.id;
+  const filialId = this.editForm.value.filial.id;
+  const dadosAtualizados: Partial<Area> = {
+    nome: this.editForm.value.nome,
+    empresa: empresaId,
+    filial: filialId,
+    };
+  
+  this.areaService.editArea(areaId, dadosAtualizados).subscribe({
+    next: () => {
+      this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Area atualizada com sucesso!' });
+      setTimeout(() => {
+        window.location.reload(); // Atualiza a página após a exclusão
+      }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+    },
+    error: () => {
+      this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao atualizar a Area.' });
+    }
+  });
+}
+excluirArea(id: number) {
+  this.confirmationService.confirm({
+    message: 'Tem certeza que deseja excluir esta area?',
+    header: 'Confirmação',
+    icon: 'pi pi-exclamation-triangle',
+    acceptIcon: 'pi pi-check',
+    rejectIcon: 'pi pi-times',
+    acceptLabel: 'Sim',
+    rejectLabel: 'Cancelar',
+    acceptButtonStyleClass: 'p-button-success',
+    rejectButtonStyleClass: 'p-button-danger',
+    accept: () => {
+      this.areaService.deleteArea(id).subscribe(() => {
+        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Area excluída com sucesso',life:4000 });
+        setTimeout(() => {
+          window.location.reload(); // Atualiza a página após a exclusão
+        }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+      });
+    },
+    reject: () => {
+      this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 3000 });
+    }
+  });
 }
   
   submit(){
     const empresaId = this.registerareaForm.value.empresa.id;
     const filialId = this.registerareaForm.value.filial.id;
-    this.registerareaService.registerarea(
+    this.areaService.registerarea(
       this.registerareaForm.value.nome, 
       empresaId,
       filialId,
-      
-      
     ).subscribe({
-      next: () => this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Filial registrada com sucesso!' }),
-      error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }), 
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Area registrada com sucesso!' });
+        setTimeout(() => {
+          window.location.reload(); // Atualiza a página após o registro
+        }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+      },
+      error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }),
     })
-  }
-  
-
-  navigate(){
-    this.router.navigate(["dashboard"])
   }
 
 }

@@ -13,7 +13,7 @@ import { FormLayoutComponent } from '../../components/form-layout/form-layout.co
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
 import { MessageService } from 'primeng/api';
 import { GetAreaService } from '../../services/areas/getarea.service';
-import { RegisterCargoService } from '../../services/cargos/registercargo.service';
+
 import { GetCompanyService } from '../../services/companys/getcompany.service';
 import { GetFilialService } from '../../services/filiais/getfilial.service';
 import { GetSetorService } from '../../services/setores/get-setor.service';

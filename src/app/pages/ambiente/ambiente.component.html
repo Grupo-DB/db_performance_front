@@ -1,1 +1,207 @@
-<p>ambiente works!</p>
+<div class="container">
+    
+    <div class="form-geral">
+        <div class="titulo">
+            <h2>Cadastrar Novo Ambiente</h2>
+        </div>    
+        <form [formGroup]="registerambienteForm"
+        title="Cadastrar novo Ambiente"
+        primaryBtnText="Cadastrar"
+        (submit)="submit()"
+        >
+        <div class="form1">
+            <p-inputGroup>
+                <p-inputGroupAddon>
+                    <i class="pi pi-user"></i>
+                </p-inputGroupAddon>
+                <span class="p-float-label">
+                    <input pInputText
+                        id="nome"
+                        formControlName="nome"
+                        type="text"
+                    />  
+                    <label for="nome">Digite o nome</label>
+                </span>          
+            </p-inputGroup>
+            
+            <div class="form3">
+                <p-dropdown 
+                [options]="empresas" 
+                formControlName="empresa"
+                optionLabel="nome"
+                placeholder="Selecione a Empresa"
+                >
+                </p-dropdown>
+                <p-dropdown 
+                    [options]="filiais" 
+                    formControlName="filial"
+                    optionLabel="nome"
+                    placeholder="Selecione a Filial"
+                    >
+                </p-dropdown>
+                <p-dropdown 
+                    [options]="areas" 
+                    formControlName="area"
+                    optionLabel="nome"
+                    placeholder="Selecione a Area"
+                    >
+                </p-dropdown>
+                <p-dropdown 
+                    [options]="setores" 
+                    formControlName="setor"
+                    optionLabel="nome"
+                    placeholder="Selecione o Setor"
+                    >
+                </p-dropdown>
+            </div>
+        </div>            
+        </form>
+    </div>    
+  
+    <div class="botoes-form">
+        <p-toast></p-toast>
+        <p-button 
+        label="Limpar" 
+        icon="pi pi-check" 
+        severity="warning"
+        (click)="clearForm()">
+        </p-button>
+        <p-button 
+            label="Gravar" 
+            icon="pi pi-check"
+            iconPos="right" 
+            severity="success"
+            (click)="submit()">
+        </p-button>
+        
+    </div>
+    <hr>
+        <div class="tabela">
+            <p-table
+                #dt1
+                [value]="ambientes"
+                [paginator]="true"
+                [rows]="5"
+                [showCurrentPageReport]="true"
+                [tableStyle]="{ 'min-width': '50rem' }"
+                currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
+                [rowsPerPageOptions]="[5, 10, 20]"
+                [globalFilterFields]="['nome', 'id']"
+            >
+                <ng-template pTemplate="caption">
+                    <div class="flex">
+                        <span class="p-input-icon-left ml-auto">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Palavra-Chave" />
+                        </span>
+                        <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
+                        <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+                    </div>
+                </ng-template>    
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width:25%">ID
+                            <p-columnFilter type="text" field="id" display="menu"></p-columnFilter>
+                        </th>
+                        <th style="width:25%">Nome
+                            <p-columnFilter type="text" field="nome" display="menu"></p-columnFilter>
+                        </th>
+                        <th style="width: 25%;">Ações</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-ambiente>
+                    <tr>
+                        <td>{{ ambiente.id }}</td>
+                        <td>{{ ambiente.nome }}</td>
+                        <td class="td-acao">
+                            <p-toast />
+                            <p-confirmDialog />
+                            <button pButton label="Editar" severity="help" (click)="abrirModalEdicao(ambiente)"></button>
+                            <button pButton label="Excluir" severity="danger"  (click)="excluirAmbiente(ambiente.id)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="paginatorleft">
+                    <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+                </ng-template>
+                <ng-template pTemplate="paginatorright">
+                    <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
+                </ng-template>
+            </p-table>
+        </div>
+        <p-dialog 
+            header="Editar Ambiente" 
+            [modal]="true"
+            [(visible)]="editFormVisible" 
+            [style]="{ width: '50rem' }" 
+            [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+        >
+            <form [formGroup]="editForm" >
+                <div class="form1">
+                    <p-inputGroup>
+                        <p-inputGroupAddon>
+                            <i class="pi pi-user"></i>
+                        </p-inputGroupAddon>
+                        <span class="p-float-label">
+                            <input pInputText
+                                id="nome"
+                                formControlName="nome"
+                                type="text"
+                            />  
+                            <label for="nome">Digite o nome</label>
+                        </span>          
+                    </p-inputGroup>
+                    
+                    <div class="form3">
+                        <p-dropdown 
+                        [options]="empresas" 
+                        formControlName="empresa"
+                        optionLabel="nome"
+                        placeholder="Selecione a Empresa"
+                        >
+                        </p-dropdown>
+                        <p-dropdown 
+                            [options]="filiais" 
+                            formControlName="filial"
+                            optionLabel="nome"
+                            placeholder="Selecione a Filial"
+                            >
+                        </p-dropdown>
+                        <p-dropdown 
+                            [options]="areas" 
+                            formControlName="area"
+                            optionLabel="nome"
+                            placeholder="Selecione a Area"
+                            >
+                        </p-dropdown>
+                        <p-dropdown 
+                            [options]="setores" 
+                            formControlName="setor"
+                            optionLabel="nome"
+                            placeholder="Selecione o Setor"
+                            >
+                        </p-dropdown>
+                        <div class="botoes-form">
+                            <p-toast></p-toast>
+                            <p-button 
+                            label="Limpar" 
+                            icon="pi pi-check" 
+                            severity="warning"
+                            (click)="cleareditForm()">
+                            </p-button>
+                            <p-button 
+                                label="Gravar" 
+                                icon="pi pi-check"
+                                iconPos="right" 
+                                severity="success"
+                                (click)="saveEdit()">
+                            </p-button>
+                            
+                        </div>
+                    </div>
+                </div>        
+            </form>
+            </p-dialog>    
+  </div><!--end container-->
+
+

@@ -12,13 +12,14 @@ import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { FormLayoutComponent } from '../../components/form-layout/form-layout.component';
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
-import { RegisterAreaService } from '../../services/areas/registerarea.service';
+
 import { GetCompanyService } from '../../services/companys/getcompany.service';
 import { GetFilialService } from '../../services/filiais/getfilial.service';
 import { GetAvaliadorService } from '../../services/avaliadores/getavaliador.service';
 import { RegisterAvaliadorService } from '../../services/avaliadores/registeravaliador.service';
 import { GetColaboradorService } from '../../services/colaboradores/get-colaborador.service';
 import { UserService } from '../../services/users/user.service';
+import { AreaService } from '../../services/areas/registerarea.service';
 
 
 interface RegisterAvaliadorForm{
@@ -42,7 +43,7 @@ interface User {
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
   providers:[
-    MessageService,RegisterAreaService,
+    MessageService,AreaService,
     GetCompanyService,GetFilialService
   ],
   templateUrl: './avaliador.component.html',

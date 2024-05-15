@@ -68,7 +68,6 @@ export class RegisterCompanyComponent implements OnInit {
     private router: Router,
     private registercompanyService:RegisterCompanyService,
     private messageService: MessageService,
-    private getcompanyService: GetCompanyService,
     private fb: FormBuilder,
     private confirmationService: ConfirmationService  
   )
@@ -109,7 +108,6 @@ export class RegisterCompanyComponent implements OnInit {
   clear(table: Table) {
     table.clear();
 }
-
 clearForm() {
   this.registercompanyForm.reset();
 }
@@ -141,7 +139,9 @@ saveEdit() {
   this.registercompanyService.editCompany(empresaId, dadosAtualizados).subscribe({
     next: () => {
       this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Empresa atualizada com sucesso!' });
-      //this.getCompanys(); // Recarregar a lista de empresas após a edição
+      setTimeout(() => {
+        window.location.reload(); // Atualiza a página após a exclusão
+      }, 2000); // Tempo em milissegundos (1 segundo de atraso)
     },
     error: () => {
       this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao atualizar a empresa.' });
@@ -149,20 +149,29 @@ saveEdit() {
   });
 }
 
-// excluirEmpresa(id: number) {
-//   this.registercompanyService.deleteCompany(id).subscribe(() => {
-//     console.log('Empresa excluída com sucesso!');
-//       });
-// }
 
 excluirEmpresa(id: number) {
   this.confirmationService.confirm({
     message: 'Tem certeza que deseja excluir esta empresa?',
+    header: 'Confirmação',
+    icon: 'pi pi-exclamation-triangle',
+    acceptIcon: 'pi pi-check',
+    rejectIcon: 'pi pi-times',
+    acceptLabel: 'Sim',
+    rejectLabel: 'Cancelar',
+    acceptButtonStyleClass: 'p-button-success',
+    rejectButtonStyleClass: 'p-button-danger',
     accept: () => {
       this.registercompanyService.deleteCompany(id).subscribe(() => {
-        console.log('Empresa excluída com sucesso!');
+        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Empresa excluída com sucesso',life:4000 });
+        setTimeout(() => {
+          window.location.reload(); // Atualiza a página após a exclusão
+        }, 2000); // Tempo em milissegundos (1 segundo de atraso)
       });
     },
+    reject: () => {
+      this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 3000 });
+    }
   });
 }
 
@@ -176,17 +185,16 @@ excluirEmpresa(id: number) {
       this.registercompanyForm.value.estado, 
       this.registercompanyForm.value.codigo
     ).subscribe({
-      next: () => this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Usuário registrado com sucesso!' }),
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Empresa registrada com sucesso!' });
+        setTimeout(() => {
+          window.location.reload(); // Atualiza a página após o registro
+        }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+      },
       error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }), 
-    })
+    });
   }
-  
-
-  navigate(){
-    this.router.navigate(["welcome"])
-  }
-
-  
+    
 }
 
 

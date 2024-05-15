@@ -7,9 +7,7 @@
         <form [formGroup]="registerareaForm"
         title="Cadastrar nova Area"
         primaryBtnText="Cadastrar"
-        (submit)="submit()"
-        (navigate)="navigate()"
-        
+        (submit)="submit()"        
         >
         <div class="form1">
             <p-inputGroup>
@@ -28,7 +26,7 @@
             
             <div class="form3">
                 <p-dropdown 
-                [options]="companys" 
+                [options]="empresas" 
                 formControlName="empresa"
                 optionLabel="nome"
                 placeholder="Selecione a Empresa"
@@ -74,7 +72,7 @@
                 [tableStyle]="{ 'min-width': '50rem' }"
                 currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
                 [rowsPerPageOptions]="[5, 10, 20]"
-                [globalFilterFields]="['nome', 'cnpj', 'endereco','cidade','estado','codigo']"
+                [globalFilterFields]="['nome', 'empresa', 'filial']"
             >
                 <ng-template pTemplate="caption">
                     <div class="flex">
@@ -102,8 +100,10 @@
                         <td>{{ area.id }}</td>
                         <td>{{ area.nome }}</td>
                         <td class="td-acao">
-                            <button pButton label="Editar" severity="help"  (click)="filterTable()"></button>
-                            <button pButton label="Excluir" severity="danger"  (click)="filterTable()"></button>
+                            <p-toast />
+                            <p-confirmDialog />
+                            <button pButton label="Editar" severity="help" (click)="abrirModalEdicao(area)"></button>
+                            <button pButton label="Excluir" severity="danger"  (click)="excluirArea(area.id)"></button>
                         </td>
                     </tr>
                 </ng-template>
@@ -115,6 +115,67 @@
                 </ng-template>
             </p-table>
         </div>        
-  
+        <p-dialog 
+            header="Editar Filial" 
+            [modal]="true"
+            [(visible)]="editFormVisible" 
+            [style]="{ width: '50rem' }" 
+            [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+        >
+        <form [formGroup]="editForm"
+        title="Cadastrar nova Area"
+        primaryBtnText="Cadastrar"
+        (submit)="submit()"        
+        >
+        <div class="form1">
+            <p-inputGroup>
+                <p-inputGroupAddon>
+                    <i class="pi pi-user"></i>
+                </p-inputGroupAddon>
+                <span class="p-float-label">
+                    <input pInputText
+                        id="nome"
+                        formControlName="nome"
+                        type="text"
+                    />  
+                    <label for="nome">Digite o nome</label>
+                </span>          
+            </p-inputGroup>
+            
+            <div class="form3">
+                <p-dropdown 
+                [options]="empresas" 
+                formControlName="empresa"
+                optionLabel="nome"
+                placeholder="Selecione a Empresa"
+                >
+                </p-dropdown>
+                <p-dropdown 
+                    [options]="filiais" 
+                    formControlName="filial"
+                    optionLabel="nome"
+                    placeholder="Selecione a Filial"
+                    >
+                </p-dropdown>
+            </div>
+            <div class="botoes-form">
+                <p-toast></p-toast>
+                <p-button 
+                label="Limpar" 
+                icon="pi pi-check" 
+                severity="warning"
+                (click)="cleareditForm()">
+                </p-button>
+                <p-button 
+                    label="Gravar" 
+                    icon="pi pi-check"
+                    iconPos="right" 
+                    severity="success"
+                    (click)="saveEdit()">
+                </p-button>
+            </div>  
+        </div>            
+        </form>
+        </p-dialog>
   </div><!--end container-->
 

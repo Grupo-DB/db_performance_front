@@ -8,7 +8,6 @@
       title="Cadastrar nova Empresa"
       primaryBtnText="Cadastrar"
       (submit)="submit()"
-      (navigate)="navigate()"
       
       >
       <div class="form1">
@@ -171,8 +170,10 @@
                       <td>{{ empresa.estado }}</td>
                       <td>{{ empresa.codigo }}</td>
                       <td class="td-acao">
+                        <p-toast />
+                        <p-confirmDialog />
                             <button pButton label="Editar" severity="help" (click)="abrirModalEdicao(empresa)"></button>
-                            <button pButton label="Excluir" severity="danger"  (click)="excluirEmpresa(empresa.id)"></button>
+                            <button pButton label="Excluir" severity="danger"  (click)="excluirEmpresa(empresa.id)"></button>  
                       </td>
                   </tr>
               </ng-template>
@@ -183,16 +184,16 @@
                   <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
               </ng-template>
           </p-table>
-      </div>
+        </div>
       
-      <p-dialog 
-      header="Editar Empresa" 
-      [modal]="true"
-      [(visible)]="editFormVisible" 
-      [style]="{ width: '50rem' }" 
-      [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
-        
-          <form [formGroup]="editForm" (Submit)="submit()">
+    <p-dialog 
+        header="Editar Empresa" 
+        [modal]="true"
+        [(visible)]="editFormVisible" 
+        [style]="{ width: '50rem' }" 
+        [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+    >  
+          <form [formGroup]="editForm">
             <div class="form1">
                 <p-inputGroup>
                     <p-inputGroupAddon>
