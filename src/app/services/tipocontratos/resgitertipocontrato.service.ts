@@ -1,21 +1,34 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { TipoContratoResponse } from '../../types/tipocontrato-response';
+import { TipoContrato } from '../../pages/tipocontrato/tipocontrato.component';
 
 @Injectable({
   providedIn: 'root'
 })
-export class RegisterTipoContratoService {
-  private apiUrl = 'http://localhost:8000/management/registertipocontrato/';
+export class TipoContratoService {
+  private apiUrl = 'http://localhost:8000/management/tipocontratos/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
-  registertipocontrato(nome: string, empresa: string, filial: string,area:string,setor:string,cargo:string){
-    return this.httpClient.post<TipoContratoResponse>(this.apiUrl,{nome,empresa,filial,area,setor,cargo}).pipe(
-      tap(() => {
-        this.router.navigate(['/dashboard']);
-      })
+  registertipocontrato(nome: string, empresa: string, filial: string,area:string,setor:string,cargo:string,ambiente:string){
+    return this.httpClient.post<TipoContratoResponse>(this.apiUrl,{nome,empresa,filial,area,setor,cargo,ambiente}).pipe(
     );
+  }
+  getTiposContratos(): Observable<any[]>{
+    return this.httpClient.get<any[]>(this.apiUrl);  
+  }
+  editTipoContrato(id: number, dadosAtualizados: Partial<TipoContrato>): Observable<any> {
+    const url = `${this.apiUrl}${id}/`;
+    return this.httpClient.patch(url, dadosAtualizados);
+  }
+  deleteTipoContrato(id: number): Observable<any> {
+    const url = `${this.apiUrl}${id}/`;
+    return this.httpClient.delete(url);
+  } 
+  getTiposContratosByCargo(id: number): Observable<any[]> {
+    return this.httpClient.get<any>(`${this.apiUrl}byCargo/?cargo_id=${id}`);
+
   }   
 }

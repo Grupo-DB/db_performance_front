@@ -27,5 +27,9 @@ export class SetorService {
   deleteSetor(id: number): Observable<any> {
     const url = `${this.apiUrl}${id}/`;
     return this.httpClient.delete(url);
+  }
+  getSetorByArea(id: number): Observable<any[]> {
+    return this.httpClient.get<any>(`${this.apiUrl}byArea/?area_id=${id}`);
+
   }   
 }

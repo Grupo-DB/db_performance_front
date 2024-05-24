@@ -1,6 +1,6 @@
 
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
@@ -12,29 +12,44 @@ import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { FormLayoutComponent } from '../../components/form-layout/form-layout.component';
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { GetAreaService } from '../../services/areas/getarea.service';
 import { GetCargoService } from '../../services/cargos/getcargo.service';
 import { GetCompanyService } from '../../services/companys/getcompany.service';
 import { GetFilialService } from '../../services/filiais/getfilial.service';
 import { GetSetorService } from '../../services/setores/get-setor.service';
-import { RegisterTipoContratoService } from '../../services/tipocontratos/resgitertipocontrato.service';
 import { GetTipoContratoService } from '../../services/tipocontratos/gettipocontrato.service';
-import { RegisterColaboradorService } from '../../services/colaboradores/registercolaborador.service';
 import { CalendarModule } from 'primeng/calendar';
 import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
-import { format } from 'date-fns';
 import { CheckboxModule } from 'primeng/checkbox';
-import { formatDate } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import { GetColaboradorService } from '../../services/colaboradores/get-colaborador.service';
+import { AmbienteService } from '../../services/ambientes/ambiente.service';
+import { TipoContratoService } from '../../services/tipocontratos/resgitertipocontrato.service';
+import { DialogModule } from 'primeng/dialog';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { SetorService } from '../../services/setores/registersetor.service';
+import { ColaboradorService } from '../../services/colaboradores/registercolaborador.service';
+import { RegisterCompanyService } from '../../services/companys/registercompany.service';
+import { FilialService } from '../../services/filiais/registerfilial.service';
+import { AreaService } from '../../services/areas/registerarea.service';
+import { CargoService } from '../../services/cargos/registercargo.service';
+import { Ambiente } from '../ambiente/ambiente.component';
+import { Area } from '../area/area.component';
+import { Cargo } from '../cargo/cargo.component';
+import { Filial } from '../filial/filial.component';
+import { Empresa } from '../registercompany/registercompany.component';
+import { Setor } from '../setor/setor.component';
+import { TipoContrato } from '../tipocontrato/tipocontrato.component';
 
 interface RegisterColaboradorForm{
   empresa: FormControl,
   filial: FormControl,
   area: FormControl,
   setor: FormControl,
+  ambiente: FormControl,
   cargo: FormControl,
   tipocontrato: FormControl,
   data_admissao:FormControl,
@@ -46,51 +61,48 @@ interface RegisterColaboradorForm{
   data_troca_cargo: FormControl,
   data_demissao: FormControl,
   image: FormControl
-
   nome: FormControl
 }
-interface Company{
-  nome: string
-}
-interface Filial{
-  nome: string
-}
-interface Area{
-  nome: string
-}
-interface Setor{
-  nome: string
-}
-interface Cargo{
-  nome: string
-}
-interface TipoContrato{
+  interface imgForm{
+    image: FormControl
+  }
+export interface Colaborador{
+  id: number;
+  empresa: number;
+  filial: number;
+  area: number;
+  setor: number;
+  ambiente: number;
+  cargo: number;
+  tipocontrato: number;
+  data_admissao: Date;
+  situacao: boolean;
+  genero: string;
+  estado_civil: string;
+  data_nascimento: Date;
+  data_troca_setor: Date;
+  data_troca_cargo: Date;
+  data_demissao: Date;
+  image: ImageData;
   nome: string
 }
 interface Genero{
   nome: string,
-  
 }
 interface Estado_Civil{
   nome: string,
-  code: string
 }
-interface UploadEvent {
-  originalEvent: Event;
-  files: File[];
-}
-
 @Component({
   selector: 'app-colaborador',
   standalone: true,
   imports: [
-    ReactiveFormsModule,FormsModule,NzUploadModule,
-    FormLayoutComponent,InputMaskModule,CalendarModule,CheckboxModule,
+    ReactiveFormsModule,FormsModule,NzUploadModule,CommonModule,DialogModule,
+    FormLayoutComponent,InputMaskModule,CalendarModule,CheckboxModule,ConfirmDialogModule,
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,
   ],
   providers:[
-    MessageService,GetSetorService,RegisterColaboradorService,GetColaboradorService,
-    GetCompanyService,GetFilialService,GetAreaService,GetCargoService
+    MessageService,SetorService,ColaboradorService,ColaboradorService,AmbienteService,TipoContratoService,
+    RegisterCompanyService,FilialService,AreaService,CargoService,ConfirmationService
   ],
   templateUrl: './colaborador.component.html',
   styleUrl: './colaborador.component.scss'
@@ -100,16 +112,26 @@ export class ColaboradorComponent implements OnInit {
   onUpload(event: any): void {
     this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded with Basic Mode' });
   }
-
-  companys: Company[]| undefined;
+  empresas: Empresa[]| undefined;
   filiais: Filial[]| undefined;
   areas: Area[]| undefined;
   setores: Setor[]| undefined;
   cargos: Cargo[]| undefined;
+  ambientes: Ambiente[]| undefined;
   tipocontratos: TipoContrato[]| undefined;
   generos: Genero[] | undefined;
   estados_civis: Estado_Civil[] | undefined;
   colaboradores: any[] = [];
+  editForm!: FormGroup;
+  imgForm!: FormGroup<imgForm>;
+  editFormVisible: boolean = false;
+
+  empresaSelecionadaId: number | null = null;
+  filialSelecionadaId: number | null = null;
+  areaSelecionadaId: number | null = null;
+  setorSelecionadoId: number | null = null;
+  ambienteSelecionadoId: number | null = null;
+  cargoSelecionadoId: number | null = null;
 
   registercolaboradorForm!: FormGroup<RegisterColaboradorForm>;
   @ViewChild('RegisterfilialForm') RegisterColaboradorForm: any;
@@ -120,16 +142,17 @@ export class ColaboradorComponent implements OnInit {
   constructor(
     private router: Router,
     private messageService: MessageService,
-    private getcompanyService: GetCompanyService,
-    private getfilialService: GetFilialService,
-    private registercolaboradorService: RegisterColaboradorService,
-    private getareaService: GetAreaService,
-    private getsetorService: GetSetorService,
-    private getcargoService: GetCargoService,
-    private getcolaboradorService: GetColaboradorService,
-    private gettipocontratoService: GetTipoContratoService,
+    private registercompanyService: RegisterCompanyService,
+    private filialService: FilialService,
+    private colaboradorService: ColaboradorService,
+    private areaService: AreaService,
+    private setorService: SetorService,
+    private cargoService: CargoService,
+    private ambienteService: AmbienteService,
+    private tipocontratoService: TipoContratoService,
     private msg: NzMessageService,
-    
+    private fb: FormBuilder,
+    private confirmationService: ConfirmationService,
   )
   
   {
@@ -139,6 +162,7 @@ export class ColaboradorComponent implements OnInit {
       filial: new FormControl('',),
       area: new FormControl('',),
       setor: new FormControl('',),
+      ambiente: new FormControl('',),
       cargo: new FormControl('',),
       tipocontrato: new FormControl('',),
       data_admissao: new FormControl('',),
@@ -149,19 +173,40 @@ export class ColaboradorComponent implements OnInit {
       data_troca_setor: new FormControl('',),
       data_troca_cargo: new FormControl('',),
       data_demissao: new FormControl('',),
-      image: new FormControl('',),
-
+      image: new FormControl('',)
    }); 
-
+   this.editForm = this.fb.group({
+    id: [''],
+    nome: [''],
+    empresa: [''],
+    filial: [''],
+    area:[''],
+    setor:[''],
+    ambiente:[''],
+    cargo:[''],
+    tipocontrato:[''],
+    data_admissao:[''],
+    situacao:[''],
+    genero:[''],
+    estado_civil:[''],
+    data_nascimento:[''],
+    data_troca_setor:[''],
+    data_troca_cargo:[''],
+    data_demissao:[''],
+    
+   });
+   this.imgForm = new FormGroup({
+    image: new FormControl('',)
+   });   
  }
 
  ngOnInit(): void {
   this.estados_civis = [
-    { nome: 'Solteiro(a)', code: 'SOL' },
-    { nome: 'Casado(a)', code: 'CAS' },
-    { nome: 'Divorciado(a)', code: 'DIV' },
-    { nome: 'Separado(a)', code: 'SEP' },
-    { nome: 'Viuvo(a)', code:'VIU'}
+    { nome: 'Solteiro(a)' },
+    { nome: 'Casado(a)'  },
+    { nome: 'Divorciado(a)' },
+    { nome: 'Separado(a)' },
+    { nome: 'Viuvo(a)'}
 ];
 
 this.generos =[
@@ -169,8 +214,8 @@ this.generos =[
   { nome:'Feminino'}
 ];
  
-this.getcolaboradorService.getColaboradores().subscribe(
-  colaboradores => {
+this.colaboradorService.getColaboradores().subscribe(
+  (colaboradores: Colaborador[]) => {
     this.colaboradores = colaboradores;
   },
   error => {
@@ -178,7 +223,7 @@ this.getcolaboradorService.getColaboradores().subscribe(
   }
 );
 
-  this.getfilialService.getFiliais().subscribe(
+  this.filialService.getFiliais().subscribe(
     filiais => {
       this.filiais = filiais;
     },
@@ -187,7 +232,7 @@ this.getcolaboradorService.getColaboradores().subscribe(
     }
   );
 
-  this.gettipocontratoService.getTipocontratos().subscribe(
+  this.tipocontratoService.getTiposContratos().subscribe(
     tipocontratos => {
       this.tipocontratos = tipocontratos;
     },
@@ -196,7 +241,7 @@ this.getcolaboradorService.getColaboradores().subscribe(
     }
   );
 
-  this.getcargoService.getCargos().subscribe(
+  this.cargoService.getCargos().subscribe(
     cargos => {
       this.cargos = cargos;
     },
@@ -205,16 +250,16 @@ this.getcolaboradorService.getColaboradores().subscribe(
     }
   );
 
-  this.getcompanyService.getCompanys().subscribe(
-    companys => {
-      this.companys = companys;
+  this.registercompanyService.getCompanys().subscribe(
+    empresas => {
+      this.empresas = empresas;
     },
     error => {
       console.error('Error fetching users:',error);
     }
   );
 
-  this.getsetorService.getSetores().subscribe(
+  this.setorService.getSetores().subscribe(
     setores => {
       this.setores = setores;
     },
@@ -222,7 +267,7 @@ this.getcolaboradorService.getColaboradores().subscribe(
       console.error('Error fetching users:',error);
     }
   );
-  this.getareaService.getAreas().subscribe(
+  this.areaService.getAreas().subscribe(
     areas => {
       this.areas = areas;
     },
@@ -230,18 +275,38 @@ this.getcolaboradorService.getColaboradores().subscribe(
       console.error('Error fetching users:',error);
     }
   );
+  this.ambienteService.getAmbientes().subscribe(
+    ambientes => {
+      this.ambientes = ambientes;
+    },
+    error =>{
+      console.error('Error fetching users:',error);
+    }
+  )
 
  }
-onFileChange(event:any) {
+// onFileChange(event:any) {
     
+//   if (event.target.files.length > 0) {
+//     const file = event.target.files[0];
+//     this.registercolaboradorForm.patchValue({
+//       image: file
+//     });
+//   }
+// }
+
+onFileChange(event: any, form: FormGroup) {
   if (event.target.files.length > 0) {
     const file = event.target.files[0];
-    this.registercolaboradorForm.patchValue({
+    form.patchValue({
       image: file
     });
   }
 }
-
+handleFileChange(event: any) {
+  this.onFileChange(event, this.registercolaboradorForm);
+  this.onFileChange(event, this.imgForm);
+}
 handleChange({ file, fileList }: NzUploadChangeParam): void {
   const status = file.status;
   if (status !== 'uploading') {
@@ -251,6 +316,117 @@ handleChange({ file, fileList }: NzUploadChangeParam): void {
     this.msg.success(`${file.name} file uploaded successfully.`);
   } else if (status === 'error') {
     this.msg.error(`${file.name} file upload failed.`);
+  }
+}
+
+onEmpresaSelecionada(empresa: any): void {
+  const id = empresa.id;
+  if (id !== undefined) {
+    console.log('Empresa selecionada ID:', id); // Log para depuração
+    this.empresaSelecionadaId = id;
+    this.filiaisByEmpresa();
+  } else {
+    console.error('O ID do avaliado é indefinido');
+  }
+}
+filiaisByEmpresa(): void {
+  if (this.empresaSelecionadaId !== null) {
+    this.filialService.getFiliaisByEmpresa(this.empresaSelecionadaId).subscribe(data => {
+      this.filiais = data;
+      console.log('Filiais carregadas:', this.filiais); // Log para depuração
+    });
+  }
+} 
+onFilialSelecionada(filial: any): void {
+  const id = filial.id;
+  if (id !== undefined) {
+    console.log('Filial selecionada ID:', id); // Log para depuração
+    this.filialSelecionadaId = id;
+    this.areasByFilial();
+  } else {
+    console.error('O ID do avaliado é indefinido');
+  }
+}
+areasByFilial(): void {
+  if (this.filialSelecionadaId !== null) {
+    this.areaService.getAreasByFilial(this.filialSelecionadaId).subscribe(data => {
+      this.areas = data;
+      console.log('Areas carregadas:', this.areas); // Log para depuração
+    });
+  }
+} 
+onAreaSelecionada(area: any): void {
+  const id = area.id;
+  if (id !== undefined) {
+    console.log('Area selecionada ID:', id); // Log para depuração
+    this.areaSelecionadaId = id;
+    this.setoresByArea();
+  } else {
+    console.error('O ID do avaliado é indefinido');
+  }
+}
+setoresByArea(): void {
+  if (this.areaSelecionadaId !== null) {
+    this.setorService.getSetorByArea(this.areaSelecionadaId).subscribe(data => {
+      this.setores = data;
+      console.log('Setores carregadas:', this.areas); // Log para depuração
+    });
+  }
+}
+
+onSetorSelecionado(setor: any): void {
+  const id = setor.id;
+  if (id !== undefined) {
+    console.log('Setor selecionado ID:', id); // Log para depuração
+    this.setorSelecionadoId = id;
+    this.ambientesBySetor();
+  } else {
+    console.error('O ID do avaliado é indefinido');
+  }
+}
+ambientesBySetor(): void {
+  if (this.setorSelecionadoId !== null) {
+    this.ambienteService.getAmbientesBySetor(this.setorSelecionadoId).subscribe(data => {
+      this.ambientes = data;
+      console.log('Setores carregadas:', this.areas); // Log para depuração
+    });
+  }
+}
+onAmbienteSelecionado(ambiente: any): void {
+  const id = ambiente.id;
+  if (id !== undefined) {
+    console.log('Ambiente selecionado ID:', id); // Log para depuração
+    this.ambienteSelecionadoId = id;
+    this.cargosByAmbiente();
+  } else {
+    console.error('O ID do avaliado é indefinido');
+  }
+}
+cargosByAmbiente(): void {
+  if (this.ambienteSelecionadoId !== null) {
+    this.cargoService.getCargosByAmbiente(this.ambienteSelecionadoId).subscribe(data => {
+      this.cargos = data;
+      console.log('Setores carregadas:', this.areas); // Log para depuração
+    });
+  }
+}
+
+onCargoSelecionado(cargo: any): void {
+  const id = cargo.id;
+  if (id !== undefined) {
+    console.log('Cargo selecionado ID:', id); // Log para depuração
+    this.cargoSelecionadoId = id;
+    this.tiposContratosByCargo();
+  } else {
+    console.error('O ID do avaliado é indefinido');
+  }
+}
+tiposContratosByCargo(): void {
+  if (this.cargoSelecionadoId !== null) {
+    this.tipocontratoService.getTiposContratosByCargo(this.cargoSelecionadoId).subscribe(data => {
+      this.tipocontratos = data;
+      console.log('Setores carregadas:', this.areas); // Log para depuração
+    });
   }
 }
  
@@ -265,21 +441,137 @@ this.registercolaboradorForm.reset();
 filterTable() {
 this.dt1.filterGlobal(this.inputValue, 'contains');
 }
+cleareditForm() {
+  this.editForm.reset();
+}
 
+abrirModalEdicao(colaborador: Colaborador) {
+  this.editFormVisible = true;
+  this.editForm.patchValue({  
+    id: colaborador.id,
+    nome: colaborador.nome,
+    empresa: colaborador.empresa,
+    filial: colaborador.filial,
+    area: colaborador.area,
+    setor: colaborador.setor,
+    ambiente: colaborador.ambiente,
+    cargo: colaborador.cargo,
+    tipocontrato: colaborador.tipocontrato,
+    data_admissao: colaborador.data_admissao,
+    situacao: colaborador.situacao,
+    genero: colaborador.genero,
+    estado_civil: colaborador.estado_civil,
+    data_nascimento: colaborador.data_nascimento,
+    data_troca_setor: colaborador.data_troca_setor,
+    data_troca_cargo: colaborador.data_troca_cargo,
+    data_demissao: colaborador.data_demissao,
+    
+  });
+}
+saveEdit(){
+    const colaboradorId = this.editForm.value.id;
+    const empresaId = this.editForm.value.empresa.id;
+    const filialId = this.editForm.value.filial.id;
+    const areaId = this.editForm.value.area.id;
+    const setorId = this.editForm.value.setor.id;
+    const ambienteId = this.editForm.value.ambiente.id;
+    const cargoId = this.editForm.value.cargo.id;
+    const tipocontratoId = this.editForm.value.tipocontrato.id;
+    const generoNome = this.editForm.value.genero.nome;
+    const estado_civilNome = this.editForm.value.estado_civil.nome; 
+    //const formData = new FormData();
+    //const image = this.registercolaboradorForm.get('image')?.value;
+    // if (image) {
+    //   formData.append('image', image);
+    // }
+    const dadosAtualizados: Partial<Colaborador> = {
+      nome: this.editForm.value.nome,
+      empresa: empresaId,
+      filial: filialId,
+      area: areaId,
+      setor: setorId,
+      ambiente: ambienteId,
+      cargo: cargoId,
+      tipocontrato: tipocontratoId,
+      genero: generoNome,
+      estado_civil: estado_civilNome,
+      data_nascimento: this.editForm.value.data_nascimento,
+      data_troca_setor: this.editForm.value.data_troca_setor,
+      data_troca_cargo: this.editForm.value.data_troca_cargo,
+      data_demissao: this.editForm.value.data_demissao,
+      
+    };
+    
+  
 
+    this.colaboradorService.editColaborador(colaboradorId, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Colaborador atualizado com sucesso!' });
+        setTimeout(() => {
+         window.location.reload(); // Atualiza a página após a exclusão
+        }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao atualizar o colaborador.' });
+      }
+    });
+
+}
+updateImage() {
+  if(this.imgForm.valid) {
+    const colaboradorId = this.editForm.value.id;
+    const formDataImg = new FormData();
+    const image = this.imgForm.get('image')?.value; // Use 'editForm' em vez de 'registercolaboradorForm'
+    if (image) {
+      formDataImg.append('image', image);
+    }
+      this.colaboradorService.updateColaboradorImage(colaboradorId, formDataImg).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Imagem atualizada com sucesso!' });
+          setTimeout(() => {
+            window.location.reload(); // Atualiza a página após a atualização
+          }, 2000); // Tempo em milissegundos (2 segundos de atraso)
+        },
+        error: () => {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao atualizar a imagem.' });
+        }
+      });
+    }
+}
+
+excluirColaborador(id: number) {
+  this.confirmationService.confirm({
+    message: 'Tem certeza que deseja excluir este Colaborador?',
+    header: 'Confirmação',
+    icon: 'pi pi-exclamation-triangle',
+    acceptIcon: 'pi pi-check',
+    rejectIcon: 'pi pi-times',
+    acceptLabel: 'Sim',
+    rejectLabel: 'Cancelar',
+    acceptButtonStyleClass: 'p-button-success',
+    rejectButtonStyleClass: 'p-button-danger',
+    accept: () => {
+      this.colaboradorService.deleteColaborador(id).subscribe(() => {
+        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Colaborador excluído com sucesso!',life:4000 });
+        setTimeout(() => {
+          window.location.reload(); // Atualiza a página após a exclusão
+        }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+      });
+    },
+    reject: () => {
+      this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 3000 });
+    }
+  });
+}
 
 submit() {
   if (this.registercolaboradorForm.valid) {
-    //const dataFormatadaad = format(this.registercolaboradorForm.value.data_admissao, 'yyyy-MM-dd');
-    //const dataFormatadanasc = format(this.registercolaboradorForm.value.data_demissao, 'yyyy-MM-dd');
-    //const dataFormatadatc = format(this.registercolaboradorForm.value.data_troca_cargo, 'yyyy-MM-dd');
-    //const dataFormatadast = format(this.registercolaboradorForm.value.data_troca_setor, 'yyyy-MM-dd');
-    //const dataFormatadadm = format(this.registercolaboradorForm.value.data_demissao, 'yyyy-MM-dd');
     const empresaId = this.registercolaboradorForm.value.empresa.id;
     const filialId = this.registercolaboradorForm.value.filial.id;
     const areaId = this.registercolaboradorForm.value.area.id;
     const setorId = this.registercolaboradorForm.value.setor.id;
     const cargoId = this.registercolaboradorForm.value.cargo.id;
+    const ambienteId = this.registercolaboradorForm.value.ambiente.id;
     const tipocontratoId = this.registercolaboradorForm.value.tipocontrato.id;
     const generoNome = this.registercolaboradorForm.value.genero.nome;
     const estado_civilNome = this.registercolaboradorForm.value.estado_civil.nome;
@@ -326,6 +618,7 @@ submit() {
     formData.append('filial', filialId);
     formData.append('area', areaId);
     formData.append('setor', setorId);
+    formData.append('ambiente', ambienteId);
     formData.append('cargo', cargoId);
     formData.append('tipocontrato', tipocontratoId);
     formData.append('data_admissao', dataFormatadaad || '');
@@ -344,18 +637,16 @@ submit() {
       formData.append('image', image);
     }
 
-    this.registercolaboradorService.registercolaborador(formData).subscribe({
-      next: () => this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Colaborador registrado com sucesso!' }),
-      error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao registrar colaborador. Por favor, revise os dados e tente novamente.' }), 
-    });
-  } else {
-    this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+    this.colaboradorService.registercolaborador(formData).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Colaborador registrado com sucesso!' });
+        setTimeout(() => {
+          window.location.reload(); // Atualiza a página após o registro
+        }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+      },
+      error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }), 
+    })
   }
 }
-
-navigate(){
-  this.router.navigate(["dashboard"])
-}
-
 }
 

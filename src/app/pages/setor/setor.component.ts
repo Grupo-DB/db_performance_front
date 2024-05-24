@@ -66,6 +66,10 @@ export class SetorComponent implements OnInit {
   setores: Setor[] = [];
   editForm!: FormGroup;
   editFormVisible: boolean = false;
+
+  empresaSelecionadaId: number | null = null;
+  filialSelecionadaId: number | null = null;
+  
   registersetorForm!: FormGroup<RegisterSetorForm>;
   @ViewChild('RegisterfilialForm') RegisterSetorForm: any;
   @ViewChild('dt1') dt1!: Table;
@@ -88,6 +92,13 @@ export class SetorComponent implements OnInit {
       empresa: new FormControl('',[Validators.required]),
       filial: new FormControl('',[Validators.required]),
       area: new FormControl('',[Validators.required]),
+   }); 
+   this.editForm = this.fb.group({
+    id: [''],
+    empresa: [''],
+    filial: [''],
+    area:[''],
+    nome: [''],
    }); 
  }
 
@@ -127,6 +138,43 @@ export class SetorComponent implements OnInit {
     }
   );
 }
+
+onEmpresaSelecionada(empresa: any): void {
+  const id = empresa.id;
+  if (id !== undefined) {
+    console.log('Empresa selecionada ID:', id); // Log para depuração
+    this.empresaSelecionadaId = id;
+    this.filiaisByEmpresa();
+  } else {
+    console.error('O ID do avaliado é indefinido');
+  }
+}
+filiaisByEmpresa(): void {
+  if (this.empresaSelecionadaId !== null) {
+    this.filialService.getFiliaisByEmpresa(this.empresaSelecionadaId).subscribe(data => {
+      this.filiais = data;
+      console.log('Filiais carregadas:', this.filiais); // Log para depuração
+    });
+  }
+} 
+onFilialSelecionada(filial: any): void {
+  const id = filial.id;
+  if (id !== undefined) {
+    console.log('Filial selecionada ID:', id); // Log para depuração
+    this.filialSelecionadaId = id;
+    this.areasByFilial();
+  } else {
+    console.error('O ID do avaliado é indefinido');
+  }
+}
+areasByFilial(): void {
+  if (this.filialSelecionadaId !== null) {
+    this.areaService.getAreasByFilial(this.filialSelecionadaId).subscribe(data => {
+      this.areas = data;
+      console.log('Areas carregadas:', this.areas); // Log para depuração
+    });
+  }
+} 
 cleareditForm() {
   this.editForm.reset();
 }
@@ -146,10 +194,11 @@ abrirModalEdicao(setor: Setor) {
   this.editFormVisible = true;
   this.editForm.patchValue({  
     id: setor.id,
+    nome: setor.nome,
     empresa: setor.empresa,
     filial: setor.filial,
     area: setor.area,
-    nome: setor.nome,
+   
   });
 }
 
@@ -159,10 +208,10 @@ saveEdit() {
   const filialId = this.editForm.value.filial.id;
   const areaId = this.editForm.value.area.id;
   const dadosAtualizados: Partial<Setor> = {
+    nome: this.editForm.value.nome,
     empresa: empresaId,
     filial: filialId,
-    area: areaId,
-    nome: this.editForm.value.nome,
+    area: areaId,    
   };
   
   this.setorService.editSetor(setorId, dadosAtualizados).subscribe({

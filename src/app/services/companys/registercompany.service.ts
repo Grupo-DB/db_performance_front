@@ -30,4 +30,7 @@ export class RegisterCompanyService {
   const url = `${this.apiUrl}${id}/`;
   return this.httpClient.delete(url);
   }
+  getEmpresa(id: string) {
+    return this.httpClient.get<any>(`http://localhost:8000/management/empresas/${id}`);
+  }
 }

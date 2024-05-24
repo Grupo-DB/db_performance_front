@@ -27,17 +27,21 @@
             <div class="form3">
                 <p-dropdown 
                 [options]="empresas" 
+                
                 formControlName="empresa"
                 optionLabel="nome"
                 placeholder="Selecione a Empresa"
+                (onChange)="onEmpresaSelecionada($event.value)"
                 >
                 </p-dropdown>
                 <p-dropdown 
-                    [options]="filiais" 
-                    formControlName="filial"
-                    optionLabel="nome"
-                    placeholder="Selecione a Filial"
-                    >
+                [options]="filiais" 
+                
+                formControlName="filial"
+                optionLabel="nome"
+                placeholder="Selecione a Empresa"
+                (onChange)="onFilialSelecionada($event.value)"
+                >
                 </p-dropdown>
                 <p-dropdown 
                     [options]="areas" 
@@ -147,19 +151,23 @@
                     
                     <div class="form3">
                         <p-dropdown 
-                        [options]="empresas" 
-                        formControlName="empresa"
-                        optionLabel="nome"
-                        placeholder="Selecione a Empresa"
-                        >
-                        </p-dropdown>
-                        <p-dropdown 
+                            [options]="empresas" 
+                            
+                            formControlName="empresa"
+                            optionLabel="nome"
+                            placeholder="Selecione a Empresa"
+                            (onChange)="onEmpresaSelecionada($event.value)"
+                            >
+                            </p-dropdown>
+                            <p-dropdown 
                             [options]="filiais" 
+                            
                             formControlName="filial"
                             optionLabel="nome"
-                            placeholder="Selecione a Filial"
+                            placeholder="Selecione a Empresa"
+                            (onChange)="onFilialSelecionada($event.value)"
                             >
-                        </p-dropdown>
+                            </p-dropdown>
                         <p-dropdown 
                             [options]="areas" 
                             formControlName="area"

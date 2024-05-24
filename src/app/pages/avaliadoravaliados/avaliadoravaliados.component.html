@@ -1,0 +1,60 @@
+
+<form [formGroup]="registerassociacaoForm"
+title="Montar novo Formulario"
+primaryBtnText="Cadastrar"
+(submit)="submit()"
+
+
+>
+
+<div class="card">
+    <p-pickList [source]="avaliados" [target]="targetAvaliados" sourceHeader="Avaliados" targetHeader="Selecionados" [dragdrop]="true" [responsive]="true" [sourceStyle]="{ height: '30rem' }"
+        [targetStyle]="{ height: '30rem' }" filterBy="name" sourceFilterPlaceholder="Search by name" targetFilterPlaceholder="Search by name" breakpoint="1400px"formControlName="pergunta">
+        <ng-template let-avaliado pTemplate="item">
+            <div class="flex flex-wrap p-2 align-items-center gap-3">
+                
+                <div class="flex-1 flex flex-column gap-2">
+                    <span class="font-bold">{{ avaliado.nome }}</span>
+                    <div class="flex align-products-center gap-2">
+                        <i class="pi pi-tag text-sm"></i>
+                        
+                    </div>
+                </div>
+                
+            </div>
+        </ng-template>
+    </p-pickList>
+</div>
+
+<div class="form1">
+
+    
+    <div class="form3">
+        <p-dropdown 
+        [options]="avaliadores" 
+        formControlName="avaliador"
+        optionLabel="nome"
+        placeholder="Selecione o Avaliador"
+        >
+        </p-dropdown>
+        
+    </div>
+</div>            
+</form>
+<div class="botoes-form">
+    <p-toast></p-toast>
+    <p-button 
+    label="Limpar" 
+    icon="pi pi-check" 
+    severity="warning"
+    (click)="clearForm()">
+    </p-button>
+    <p-button 
+        label="Gravar" 
+        icon="pi pi-check"
+        iconPos="right" 
+        severity="success"
+        (click)="submit()">
+    </p-button>
+    
+</div>

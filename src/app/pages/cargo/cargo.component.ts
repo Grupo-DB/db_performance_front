@@ -49,8 +49,8 @@ export interface Cargo{
   setor: number;
   ambiente: number;
   nome: string;
-}
 
+}
 @Component({
   selector: 'app-cargo',
   standalone: true,
@@ -75,6 +75,12 @@ export class CargoComponent implements OnInit {
   cargos: any[] = [];
   editForm!: FormGroup;
   editFormVisible: boolean = false;
+
+  empresaSelecionadaId: number | null = null;
+  filialSelecionadaId: number | null = null;
+  areaSelecionadaId: number | null = null;
+  setorSelecionadoId: number | null = null
+
   registercargoForm!: FormGroup<RegisterCargoForm>;
   @ViewChild('RegistercargoForm') RegisterCargoForm: any;
   @ViewChild('dt1') dt1!: Table;
@@ -101,6 +107,15 @@ export class CargoComponent implements OnInit {
       area: new FormControl('',[Validators.required]),
       setor: new FormControl('',[Validators.required]),
       ambiente: new FormControl('',[Validators.required]),
+   });
+   this.editForm = this.fb.group({
+    id: [''],
+    nome: [''],
+    empresa: [''],
+    filial: [''],
+    area:[''],
+    setor:[''],
+    ambiente:[''],
    }); 
  }
 
@@ -158,6 +173,81 @@ export class CargoComponent implements OnInit {
   );
 }
 
+onEmpresaSelecionada(empresa: any): void {
+  const id = empresa.id;
+  if (id !== undefined) {
+    console.log('Empresa selecionada ID:', id); // Log para depuração
+    this.empresaSelecionadaId = id;
+    this.filiaisByEmpresa();
+  } else {
+    console.error('O ID do avaliado é indefinido');
+  }
+}
+filiaisByEmpresa(): void {
+  if (this.empresaSelecionadaId !== null) {
+    this.filialService.getFiliaisByEmpresa(this.empresaSelecionadaId).subscribe(data => {
+      this.filiais = data;
+      console.log('Filiais carregadas:', this.filiais); // Log para depuração
+    });
+  }
+} 
+onFilialSelecionada(filial: any): void {
+  const id = filial.id;
+  if (id !== undefined) {
+    console.log('Filial selecionada ID:', id); // Log para depuração
+    this.filialSelecionadaId = id;
+    this.areasByFilial();
+  } else {
+    console.error('O ID do avaliado é indefinido');
+  }
+}
+areasByFilial(): void {
+  if (this.filialSelecionadaId !== null) {
+    this.areaService.getAreasByFilial(this.filialSelecionadaId).subscribe(data => {
+      this.areas = data;
+      console.log('Areas carregadas:', this.areas); // Log para depuração
+    });
+  }
+} 
+onAreaSelecionada(area: any): void {
+  const id = area.id;
+  if (id !== undefined) {
+    console.log('Area selecionada ID:', id); // Log para depuração
+    this.areaSelecionadaId = id;
+    this.setoresByArea();
+  } else {
+    console.error('O ID do avaliado é indefinido');
+  }
+}
+setoresByArea(): void {
+  if (this.areaSelecionadaId !== null) {
+    this.setorService.getSetorByArea(this.areaSelecionadaId).subscribe(data => {
+      this.setores = data;
+      console.log('Setores carregadas:', this.areas); // Log para depuração
+    });
+  }
+}
+
+onSetorSelecionado(setor: any): void {
+  const id = setor.id;
+  if (id !== undefined) {
+    console.log('Setor selecionado ID:', id); // Log para depuração
+    this.setorSelecionadoId = id;
+    this.ambientesBySetor();
+  } else {
+    console.error('O ID do avaliado é indefinido');
+  }
+}
+ambientesBySetor(): void {
+  if (this.setorSelecionadoId !== null) {
+    this.ambienteService.getAmbientesBySetor(this.setorSelecionadoId).subscribe(data => {
+      this.ambientes = data;
+      console.log('Setores carregadas:', this.areas); // Log para depuração
+    });
+  }
+}
+
+
 cleareditForm() {
   this.editForm.reset();
 }
@@ -178,12 +268,12 @@ abrirModalEdicao(cargo: Cargo) {
   this.editFormVisible = true;
   this.editForm.patchValue({  
     id: cargo.id,
+    nome: cargo.nome,
     empresa: cargo.empresa,
     filial: cargo.filial,
     area: cargo.area,
     setor: cargo.setor,
     ambiente: cargo.ambiente,
-    nome: cargo.nome,
   });
 }
 saveEdit() {
@@ -194,15 +284,15 @@ saveEdit() {
   const setorId = this.editForm.value.setor.id
   const ambienteId = this.editForm.value.ambiente.id
   const dadosAtualizados: Partial<Cargo> = {
+    nome: this.editForm.value.nome,
     empresa: empresaId,
     filial: filialId,
     area: areaId,
     setor: setorId,
     ambiente:ambienteId,
-    nome: this.editForm.value.nome,
   };
   
-  this.setorService.editSetor(cargoId, dadosAtualizados).subscribe({
+  this.cargoService.editCargo(cargoId, dadosAtualizados).subscribe({
     next: () => {
       this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Cargo atualizado com sucesso!' });
       setTimeout(() => {
@@ -226,8 +316,8 @@ excluirCargo(id: number) {
     acceptButtonStyleClass: 'p-button-success',
     rejectButtonStyleClass: 'p-button-danger',
     accept: () => {
-      this.setorService.deleteSetor(id).subscribe(() => {
-        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Cargo excluído com sucesso',life:4000 });
+      this.cargoService.deleteCargo(id).subscribe(() => {
+        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Cargo excluído com sucesso!!',life:4000 });
         setTimeout(() => {
           window.location.reload(); // Atualiza a página após a exclusão
         }, 2000); // Tempo em milissegundos (1 segundo de atraso)
@@ -246,12 +336,12 @@ submit(){
   const setorId = this.registercargoForm.value.setor.id;
   const ambienteId = this.registercargoForm.value.ambiente.id;
   this.cargoService.registercargo(
+    this.registercargoForm.value.nome,  
     empresaId,
     filialId,
     areaId,
     setorId,
     ambienteId,
-    this.registercargoForm.value.nome,  
   ).subscribe({
     next: () => {
       this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Cargo registrado com sucesso!' });

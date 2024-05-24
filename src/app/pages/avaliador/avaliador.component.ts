@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputGroupModule } from 'primeng/inputgroup';
@@ -16,42 +16,47 @@ import { PrimaryInputComponent } from '../../components/primary-input/primary-in
 import { GetCompanyService } from '../../services/companys/getcompany.service';
 import { GetFilialService } from '../../services/filiais/getfilial.service';
 import { GetAvaliadorService } from '../../services/avaliadores/getavaliador.service';
-import { RegisterAvaliadorService } from '../../services/avaliadores/registeravaliador.service';
 import { GetColaboradorService } from '../../services/colaboradores/get-colaborador.service';
 import { UserService } from '../../services/users/user.service';
 import { AreaService } from '../../services/areas/registerarea.service';
+import { CommonModule } from '@angular/common';
+import { DialogModule } from 'primeng/dialog';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { User } from '../createuser/createuser.component';
+
+import { ColaboradorService } from '../../services/colaboradores/registercolaborador.service';
+import { AvaliadorService } from '../../services/avaliadores/registeravaliador.service';
+import { Colaborador } from '../colaborador/colaborador.component';
 
 
 interface RegisterAvaliadorForm{
-  nome: FormControl,
-  colaborador: FormControl,
   usuario: FormControl
+  colaborador:FormControl
 }
-interface Colaborador {
-  nome: string
-}
-interface User {
-  username: string
+export interface Avaliador{
+  id: number;
+  user: number;
+  colaborador: number;
 }
 
 @Component({
   selector: 'app-avaliador',
   standalone: true,
   imports: [
-    ReactiveFormsModule,FormsModule,
-    FormLayoutComponent,InputMaskModule,
+    ReactiveFormsModule,FormsModule,CommonModule,
+    FormLayoutComponent,InputMaskModule,DialogModule,ConfirmDialogModule,
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
   providers:[
-    MessageService,AreaService,
+    MessageService,AreaService,ConfirmationService,
     GetCompanyService,GetFilialService
   ],
   templateUrl: './avaliador.component.html',
   styleUrl: './avaliador.component.scss'
 })
 export class AvaliadorComponent implements OnInit {
-  colaboradores: Colaborador[]| undefined;
   usuarios: User[]| undefined;
+  colaboradores: Colaborador[]| undefined;
   avaliadores: any[] = [];
 
   registeravaliadorForm!: FormGroup<RegisterAvaliadorForm>;
@@ -62,21 +67,22 @@ export class AvaliadorComponent implements OnInit {
   constructor(
     private router: Router,
     private messageService: MessageService,
-    private getcolaboradorService: GetColaboradorService,
+    private colaboradorService: ColaboradorService,
     private userService: UserService,
-    private registeravaliadorService: RegisterAvaliadorService,
-    private getavaliadorService: GetAvaliadorService,
+    private avaliadorService:AvaliadorService,
+
   )
   {
     this.registeravaliadorForm = new FormGroup({
-      nome: new FormControl('',[Validators.required]),
       colaborador: new FormControl('',[Validators.required]),
       usuario: new FormControl('',[Validators.required]),
+      
      }); 
    }
 
    ngOnInit(): void {
-    this.getcolaboradorService.getColaboradores().subscribe(
+
+    this.colaboradorService.getColaboradores().subscribe(
       colaboradores => {
         this.colaboradores = colaboradores;
       },
@@ -93,8 +99,8 @@ export class AvaliadorComponent implements OnInit {
         console.error('Error fetching users:', error);
       }
     );
-    this.getavaliadorService.getAvaliadores().subscribe(
-      avaliadores => {
+    this.avaliadorService.getAvaliadores().subscribe(
+      (avaliadores: Avaliador []) => {
         this.avaliadores = avaliadores;
       },
       error => {
@@ -102,6 +108,7 @@ export class AvaliadorComponent implements OnInit {
       }
     );
   }
+  
 clear(table: Table) {
   table.clear();
 }
@@ -117,8 +124,8 @@ this.dt1.filterGlobal(this.inputValue, 'contains');
 submit(){
   const colaboradorId = this.registeravaliadorForm.value.colaborador.id;
   const usuarioId = this.registeravaliadorForm.value.usuario.id;
-  this.registeravaliadorService.registeravaliador(
-    this.registeravaliadorForm.value.nome, 
+  this.avaliadorService.registeravaliador(
+    
     colaboradorId,
     usuarioId,
     
@@ -128,11 +135,5 @@ submit(){
     error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }), 
   })
 }
-
-
-navigate(){
-  this.router.navigate(["dashboard"])
-}
-
 
 }

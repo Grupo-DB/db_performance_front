@@ -37,8 +37,8 @@ interface RegisterAmbienteForm{
 export interface Ambiente{
   id: number;
   empresa: number;
-  area: number;
   filial: number;
+  area: number;
   setor: number;
   nome: string;
 }
@@ -67,6 +67,12 @@ export class AmbienteComponent implements OnInit {
   ambientes:Ambiente[] = [];
   editForm!: FormGroup;
   editFormVisible: boolean = false;
+
+  empresaSelecionadaId: number | null = null;
+  filialSelecionadaId: number | null = null;
+  areaSelecionadaId: number | null = null;
+  
+
   registerambienteForm!: FormGroup<RegisterAmbienteForm>;
   @ViewChild('RegisterAmbienteForm') RegisterAmbienteForm: any;
   @ViewChild('dt1') dt1!: Table;
@@ -85,11 +91,19 @@ export class AmbienteComponent implements OnInit {
   )
   {
     this.registerambienteForm = new FormGroup({
-      nome: new FormControl('',[Validators.required, Validators.minLength(3)]),
       empresa: new FormControl('',[Validators.required]),
       filial: new FormControl('',[Validators.required]),
       area: new FormControl('',[Validators.required]),
       setor: new FormControl('',[Validators.required]),
+      nome: new FormControl('',[Validators.required, Validators.minLength(3)]),
+   });
+   this.editForm = this.fb.group({
+    id: [''],
+    nome: [''],
+    empresa: [''],
+    filial: [''],
+    area:[''],
+    setor:[''],
    }); 
   }
   ngOnInit(): void {
@@ -136,6 +150,63 @@ export class AmbienteComponent implements OnInit {
       }
     );
   }
+
+  onEmpresaSelecionada(empresa: any): void {
+    const id = empresa.id;
+    if (id !== undefined) {
+      console.log('Empresa selecionada ID:', id); // Log para depuração
+      this.empresaSelecionadaId = id;
+      this.filiaisByEmpresa();
+    } else {
+      console.error('O ID do avaliado é indefinido');
+    }
+  }
+  filiaisByEmpresa(): void {
+    if (this.empresaSelecionadaId !== null) {
+      this.filialService.getFiliaisByEmpresa(this.empresaSelecionadaId).subscribe(data => {
+        this.filiais = data;
+        console.log('Filiais carregadas:', this.filiais); // Log para depuração
+      });
+    }
+  } 
+  onFilialSelecionada(filial: any): void {
+    const id = filial.id;
+    if (id !== undefined) {
+      console.log('Filial selecionada ID:', id); // Log para depuração
+      this.filialSelecionadaId = id;
+      this.areasByFilial();
+    } else {
+      console.error('O ID do avaliado é indefinido');
+    }
+  }
+  areasByFilial(): void {
+    if (this.filialSelecionadaId !== null) {
+      this.areaService.getAreasByFilial(this.filialSelecionadaId).subscribe(data => {
+        this.areas = data;
+        console.log('Areas carregadas:', this.areas); // Log para depuração
+      });
+    }
+  } 
+  onAreaSelecionada(area: any): void {
+    const id = area.id;
+    if (id !== undefined) {
+      console.log('Area selecionada ID:', id); // Log para depuração
+      this.areaSelecionadaId = id;
+      this.setoresByArea();
+    } else {
+      console.error('O ID do avaliado é indefinido');
+    }
+  }
+  setoresByArea(): void {
+    if (this.areaSelecionadaId !== null) {
+      this.setorService.getSetorByArea(this.areaSelecionadaId).subscribe(data => {
+        this.setores = data;
+        console.log('Setores carregadas:', this.areas); // Log para depuração
+      });
+    }
+  }
+
+
   cleareditForm() {
     this.editForm.reset();
   }
@@ -155,11 +226,11 @@ export class AmbienteComponent implements OnInit {
     this.editFormVisible = true;
     this.editForm.patchValue({  
       id: ambiente.id,
+      nome: ambiente.nome,
       empresa: ambiente.empresa,
       filial: ambiente.filial,
       area: ambiente.area,
       setor: ambiente.setor,
-      nome: ambiente.nome,
     });
   }
   saveEdit() {
@@ -169,14 +240,14 @@ export class AmbienteComponent implements OnInit {
     const areaId = this.editForm.value.area.id;
     const setorId = this.editForm.value.setor.id
     const dadosAtualizados: Partial<Ambiente> = {
+      nome: this.editForm.value.nome,
       empresa: empresaId,
       filial: filialId,
       area: areaId,
       setor: setorId,
-      nome: this.editForm.value.nome,
     };
     
-    this.setorService.editSetor(ambienteId, dadosAtualizados).subscribe({
+    this.ambienteService.editAmbiente(ambienteId, dadosAtualizados).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Ambiente atualizado com sucesso!' });
         setTimeout(() => {
@@ -200,8 +271,8 @@ export class AmbienteComponent implements OnInit {
       acceptButtonStyleClass: 'p-button-success',
       rejectButtonStyleClass: 'p-button-danger',
       accept: () => {
-        this.setorService.deleteSetor(id).subscribe(() => {
-          this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Ambiente excluído com sucesso',life:4000 });
+        this.ambienteService.deleteAmbiente(id).subscribe(() => {
+          this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Ambiente excluído com sucesso!!',life:4000 });
           setTimeout(() => {
             window.location.reload(); // Atualiza a página após a exclusão
           }, 2000); // Tempo em milissegundos (1 segundo de atraso)
@@ -218,12 +289,12 @@ export class AmbienteComponent implements OnInit {
     const areaId = this.registerambienteForm.value.area.id;
     const setorId = this.registerambienteForm.value.setor.id;
     this.ambienteService.registerAmbiente( 
+      this.registerambienteForm.value.nome,
       empresaId,
       filialId,
       areaId,
       setorId,
-      this.registerambienteForm.value.nome,
-    ).subscribe({
+          ).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Setor registrado com sucesso!' });
         setTimeout(() => {

@@ -63,6 +63,9 @@ export class FilialComponent implements OnInit {
   empresas: Empresa[]| undefined;
   editForm!: FormGroup;
   editFormVisible: boolean = false;
+
+ 
+
   registerfilialForm!: FormGroup<RegisterFilialForm>;
   @ViewChild('RegisterfilialForm') RegisterFilialForm: any;
   @ViewChild('dt1') dt1!: Table;
@@ -118,8 +121,9 @@ export class FilialComponent implements OnInit {
       }
     );
 
-  }
-  
+  } 
+ 
+
   
 clear(table: Table) {
   table.clear();

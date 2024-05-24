@@ -11,44 +11,45 @@ import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { FormLayoutComponent } from '../../components/form-layout/form-layout.component';
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { AreaService } from '../../services/areas/registerarea.service';
 import { GetCompanyService } from '../../services/companys/getcompany.service';
 import { GetFilialService } from '../../services/filiais/getfilial.service';
 import { GetAvaliadorService } from '../../services/avaliadores/getavaliador.service';
-import { RegisterAvaliadorService } from '../../services/avaliadores/registeravaliador.service';
+
 import { GetColaboradorService } from '../../services/colaboradores/get-colaborador.service';
 import { UserService } from '../../services/users/user.service';
 import { GetFormularioService } from '../../services/formularios/getformulario.service';
 import { AvaliadoService } from '../../services/avaliados/avaliado.service';
+import { CommonModule } from '@angular/common';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
+import { Colaborador } from '../colaborador/colaborador.component';
+import { Formulario } from '../formulario/formulario.component';
+import { Avaliador } from '../avaliador/avaliador.component';
+import { FormularioService } from '../../services/formularios/registerformulario.service';
 
 
 interface RegisterAvaliadoForm{
   colaborador: FormControl,
   formulario: FormControl,
-  avaliador: FormControl
 }
-interface Colaborador {
-  nome: string
-}
-interface Formulario {
-  nome: string
-  perguntas: string
-}
-interface Avaliador {
-  colaborador_nome: string
+export interface Avaliado{
+  id: number;
+  colaborador: number;
+  formulario: number;
 }
 
 @Component({
   selector: 'app-avaliado',
   standalone: true,
   imports: [
-    ReactiveFormsModule,FormsModule,
-    FormLayoutComponent,InputMaskModule,
+    ReactiveFormsModule,FormsModule,CommonModule,
+    FormLayoutComponent,InputMaskModule,DialogModule,ConfirmDialogModule,
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
   providers:[
-    MessageService,AreaService,
+    MessageService,AreaService,ConfirmationService,
     GetCompanyService,GetFilialService
   ],
   templateUrl: './avaliado.component.html',
@@ -57,7 +58,6 @@ interface Avaliador {
 export class AvaliadoComponent implements OnInit {
   colaboradores: Colaborador[]| undefined;
   formularios: Formulario[]| undefined;
-  avaliadores: any[] = [];
   avaliados: any[] = [];
   registeravaliadoForm!: FormGroup<RegisterAvaliadoForm>;
   @ViewChild('RegisteravaliadoForm') RegisterAvaliadoForm: any;
@@ -68,7 +68,7 @@ export class AvaliadoComponent implements OnInit {
     private router: Router,
     private messageService: MessageService,
     private getcolaboradorService: GetColaboradorService,
-    private getformularioService: GetFormularioService,
+    private formularioService: FormularioService,
     private avaliadoService: AvaliadoService,
     private getavaliadorService: GetAvaliadorService,
   )
@@ -76,11 +76,18 @@ export class AvaliadoComponent implements OnInit {
     this.registeravaliadoForm = new FormGroup({
       colaborador: new FormControl('',[Validators.required]),
       formulario: new FormControl('',[Validators.required]),
-      avaliador: new FormControl('',[Validators.required]),
      }); 
    }
 
    ngOnInit(): void {
+    this.avaliadoService.getAvaliados().subscribe(
+      (avaliados: Avaliado []) => {
+        this.avaliados = avaliados;
+      },
+      error => {
+        console.error('Error fetching users:', error);
+      }
+    );
 
     this.getcolaboradorService.getColaboradores().subscribe(
       colaboradores => {
@@ -92,16 +99,8 @@ export class AvaliadoComponent implements OnInit {
     );
     //this.carregarAvaliadores();
 
-    this.getavaliadorService.getAvaliadores().subscribe(
-      avaliadores => {
-        this.avaliadores = avaliadores;
-      },
-      error => {
-        console.error('Error fetching users:', error);
-      }
-    );
-
-    this.getformularioService.getFormularios().subscribe(
+    
+    this.formularioService.getFormularios().subscribe(
       formularios =>{
         this.formularios = formularios;
       },
@@ -152,11 +151,11 @@ export class AvaliadoComponent implements OnInit {
   submit(){
     const colaboradorId = this.registeravaliadoForm.value.colaborador.id;
     const formularioId = this.registeravaliadoForm.value.formulario.id;
-    const avaliadorId = this.registeravaliadoForm.value.avaliador.id;
+    
     this.avaliadoService.registeravaliado(
     colaboradorId,
     formularioId,
-    avaliadorId  
+      
     ).subscribe({
       next: () => this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Filial registrada com sucesso!' }),
       error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }), 

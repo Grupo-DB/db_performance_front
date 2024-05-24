@@ -9,13 +9,13 @@ import { AvaliacaoResponse } from '../../types/avaliacao-response';
   providedIn: 'root'
 })
 export class RegisterAvaliacaoService {
-  private apiUrl = 'http://localhost:8000/management/registeravaliacao/';
+  private apiUrl = 'http://localhost:8000/management/avaliacoes/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
   registeravaliacao(
-    tipoavaliacao: string, 
+    tipoavaliacao: number, 
     avaliador: string,
-    colaborador: string,
+    avaliado: string,
     periodo: string,
     perguntasRespostas: JSON,
     feedback: string
@@ -24,7 +24,7 @@ export class RegisterAvaliacaoService {
       this.apiUrl,{
         tipoavaliacao,
         avaliador,
-        colaborador,
+        avaliado,
         periodo,
         perguntasRespostas,
         feedback

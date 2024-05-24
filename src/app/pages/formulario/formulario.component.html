@@ -1,4 +1,4 @@
-<div class="container">
+<!-- <div class="container">
     
     <div class="form-geral">
         <div class="titulo">
@@ -8,7 +8,6 @@
         title="Cadastrar Novo Questionário"
         primaryBtnText="Cadastrar"
         (submit)="submit()"
-        (navigate)="navigate()"
         >
         <div class="form1">
             <p-inputGroup>
@@ -24,28 +23,78 @@
                     <label for="texto">Digite o Nome</label>
                 </span>          
             </p-inputGroup>
-            
-        </div>            
+            <div class="botoes-form">
+                <p-toast></p-toast>
+                <p-button 
+                label="Limpar" 
+                icon="pi pi-check" 
+                severity="warning"
+                (click)="clearForm()">
+                </p-button>
+                <p-button 
+                    label="Gravar" 
+                    icon="pi pi-check"
+                    iconPos="right" 
+                    severity="success"
+                    (click)="submit()">
+                </p-button>
+                
+            </div>
+        </div>
         </form>
+        <div class="form3">
+            <p-dropdown 
+            [options]="formularios" 
+            formControlName="formulario"
+            optionLabel="nome"
+            placeholder="Selecione o Formulario"
+            >
+            </p-dropdown>
+            
+        </div>
+        <div class="card">
+            <div class="card">
+                <p-pickList [source]="perguntas" [target]="targetPerguntas" sourceHeader="Perguntas" targetHeader="Selecionadas" [dragdrop]="true" [responsive]="true" [sourceStyle]="{ height: '30rem' }"
+                    [targetStyle]="{ height: '30rem' }" filterBy="name" sourceFilterPlaceholder="Search by name" targetFilterPlaceholder="Search by name" breakpoint="1400px"formControlName="pergunta">
+                    <ng-template let-pergunta pTemplate="item">
+                        <div class="flex flex-wrap p-2 align-items-center gap-3">
+                            
+                            <div class="flex-1 flex flex-column gap-2">
+                                <span class="font-bold">{{ pergunta.texto }}</span>
+                                <div class="flex align-products-center gap-2">
+                                    <i class="pi pi-tag text-sm"></i>
+                                    
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </ng-template>
+                </p-pickList>
+            </div>
+               
+            
+            <div class="botoes-form">
+                <p-toast></p-toast>
+                <p-button 
+                label="Limpar" 
+                icon="pi pi-check" 
+                severity="warning"
+                (click)="clearForm()">
+                </p-button>
+                <p-button 
+                    label="Gravar" 
+                    icon="pi pi-check"
+                    iconPos="right" 
+                    severity="success"
+                    (click)="associatePerguntas()">
+                </p-button>
+                
+            </div>        
+        
+        
     </div>    
   
-    <div class="botoes-form">
-        <p-toast></p-toast>
-        <p-button 
-        label="Limpar" 
-        icon="pi pi-check" 
-        severity="warning"
-        (click)="clearForm()">
-        </p-button>
-        <p-button 
-            label="Gravar" 
-            icon="pi pi-check"
-            iconPos="right" 
-            severity="success"
-            (click)="submit()">
-        </p-button>
-        
-    </div>
+
     <hr>
         <div class="tabela">
             <p-table
@@ -85,8 +134,10 @@
                         <td>{{ formulario.id }}</td>
                         <td>{{ formulario.nome }}</td>
                         <td class="td-acao">
-                            <button pButton label="Editar" severity="help"  (click)="filterTable()"></button>
-                            <button pButton label="Excluir" severity="danger"  (click)="filterTable()"></button>
+                            <p-toast />
+                            <p-confirmDialog />
+                            <button pButton label="Editar" severity="help" (click)="abrirModalEdicao(formulario)"></button>
+                            <button pButton label="Excluir" severity="danger"  (click)="excluirFormulario(formulario.id)"></button>
                         </td>
                     </tr>
                 </ng-template>
@@ -98,9 +149,95 @@
                 </ng-template>
             </p-table>
         </div>        
-  
+        <p-dialog 
+            header="Editar Formulario" 
+            [modal]="true"
+            [(visible)]="editFormVisible" 
+            [style]="{ width: '50rem' }" 
+            [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+        >
+        <form [formGroup]="editForm"
+        title="EditarFormulario"
+        primaryBtnText="Cadastrar"
+             
+        >
+        <div class="form1">
+            <p-inputGroup>
+                <p-inputGroupAddon>
+                    <i class="pi pi-user"></i>
+                </p-inputGroupAddon>
+                <span class="p-float-label">
+                    <input pInputText
+                        id="nome"
+                        formControlName="nome"
+                        type="text"
+                    />  
+                    <label for="texto">Digite o Nome</label>
+                </span>          
+            </p-inputGroup>
+        </div>
+        <div class="botoes-form">
+            <p-toast></p-toast>
+            <p-button 
+            label="Limpar" 
+            icon="pi pi-check" 
+            severity="warning"
+            (click)="cleareditForm()">
+            </p-button>
+            <p-button 
+                label="Gravar" 
+                icon="pi pi-check"
+                iconPos="right" 
+                severity="success"
+                (click)="saveEdit()">
+            </p-button>
+        </div>  
+        </form>
+        </p-dialog>
   </div><!--end container-->
 
 
 
+ -->
 
+
+ <!-- formulario.component.html -->
+
+<div class="formulario-container">
+    <!-- Formulário para criar um novo formulário -->
+    <form [formGroup]="registerformularioForm" (ngSubmit)="submit()">
+      <div class="form-group">
+        <label for="nome">Nome do Formulário:</label>
+        <input id="nome" formControlName="nome" type="text" class="form-control" />
+      </div>
+      <button type="submit" class="btn btn-primary" [disabled]="registerformularioForm.invalid">Criar Formulário</button>
+    </form>
+  
+    <hr />
+  
+    <!-- Lista de Formulários -->
+    <h2>Formulários</h2>
+    <ul>
+      <li *ngFor="let formulario of formularios">
+        {{ formulario.nome }}
+      </li>
+    </ul>
+  
+    <hr />
+  
+    <!-- Seletor de Perguntas para associar ao Formulário criado -->
+    <!-- <div *ngIf="selectedFormularioId !== null">
+      <h3>Associar Perguntas ao Formulário</h3>
+      <p>Formulário ID: {{ selectedFormularioId }}</p>
+  
+      <div class="form-group">
+        <label for="perguntas">Selecione as Perguntas:</label>
+        <select id="perguntas" multiple class="form-control" (change)="onPerguntaChange($event)">
+          <option *ngFor="let pergunta of perguntas" [value]="pergunta.id">{{ pergunta.texto }}</option>
+        </select>
+      </div>
+  
+      <button type="button" class="btn btn-success" (click)="associatePerguntas()">Associar Perguntas</button>
+    </div> -->
+  </div>
+  

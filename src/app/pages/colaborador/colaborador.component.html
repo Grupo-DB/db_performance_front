@@ -14,7 +14,6 @@
             title="Cadastrar novo Colaborador"
             primaryBtnText="Cadastrar"
             (submit)="submit()"
-            (navigate)="navigate()"
             enctype="multipart/form-data"
         >
         
@@ -36,17 +35,21 @@
                 </div>             
                 <div class="form2">
                     <p-dropdown 
-                        [options]="companys" 
+                        [options]="empresas" 
+                        
                         formControlName="empresa"
                         optionLabel="nome"
                         placeholder="Selecione a Empresa"
+                        (onChange)="onEmpresaSelecionada($event.value)"
                     >
                     </p-dropdown>
                     <p-dropdown 
                         [options]="filiais" 
+                        
                         formControlName="filial"
                         optionLabel="nome"
                         placeholder="Selecione a Filial"
+                        (onChange)="onFilialSelecionada($event.value)"
                     >
                     </p-dropdown>
                 </div>
@@ -56,24 +59,36 @@
                         formControlName="area"
                         optionLabel="nome"
                         placeholder="Selecione a Area"
-                    >
+                        (onChange)="onAreaSelecionada($event.value)"
+                        >
                     </p-dropdown>
                     <p-dropdown 
                         [options]="setores" 
                         formControlName="setor"
                         optionLabel="nome"
                         placeholder="Selecione o Setor"
-                    >
+                        (onChange)="onSetorSelecionado($event.value)"
+                        >
                     </p-dropdown>
                 </div>
-                <div class="form4">    
+                <div class="form4">   
+                    <p-dropdown 
+                        [options]="ambientes" 
+                        formControlName="ambiente"
+                        optionLabel="nome"
+                        placeholder="Selecione o Ambiente"
+                        (onChange)="onAmbienteSelecionado($event.value)"
+                    >
+                    </p-dropdown> 
                     <p-dropdown 
                         [options]="cargos" 
                         formControlName="cargo"
                         optionLabel="nome"
                         placeholder="Selecione o Cargo"
+                        (onChange)="onCargoSelecionado($event.value)"
                     >
                     </p-dropdown>
+                    
                     <p-dropdown 
                         [options]="tipocontratos" 
                         formControlName="tipocontrato"
@@ -101,8 +116,8 @@
                     </p-dropdown>
                     <p-checkbox 
                         formControlName="situacao"
-                        value="sim" 
-                        inputId="sit">
+                        value="true"
+                    >
                     </p-checkbox>
                     <label for="sit">Ativo</label>
                 </div>
@@ -112,7 +127,7 @@
                         type="file"  
                         formControlName="image"
                         class="form-control"
-                        (change)="onFileChange($event)"
+                        (change)="onFileChange($event,registercolaboradorForm)"
                     />
                     
                     <p-dropdown 
@@ -131,31 +146,17 @@
                         placeholder="Data de Nascimento"
                     >
                     </p-calendar>
-                    <p-calendar 
+                    <!-- <p-calendar 
                         formControlName=""
                         [disabled]="true"
                         dateFormat="yy-mm-dd"
                         [showIcon]="true"
                         placeholder="Data de Troca de Setor"
                     >
-                    </p-calendar>
+                    </p-calendar> -->
                 </div>
                 <div class="form8">    
-                    <p-calendar 
-                        formControlName=""
-                        [disabled]="true"
-                        dateFormat="yy-mm-dd"
-                        [showIcon]="true"
-                        placeholder="Data de Troca de Cargo"
-                    >
-                    </p-calendar>
-                    <p-calendar 
-                        formControlName="data_demissao"
-                        [disabled]="true"
-                        [showIcon]="true"
-                        placeholder="Data de Demissão"
-                    >
-                    </p-calendar>
+
                 </div>
             </div>
            
@@ -237,10 +238,12 @@
                         <td>{{ colaborador.filial }}</td>
                         <td>{{ colaborador.setor }}</td>
                         <td>{{ colaborador.cargo }}</td>
-                        <td><img [src]="'http://localhost:8000' + colaborador.image"  width="80" class="shadow-4" /></td>
+                        <td><img [src]="colaborador.image"  width="80" class="shadow-4" /></td>
                         <td class="td-acao">
-                            <button pButton label="Editar" severity="help"  (click)="filterTable()"></button>
-                            <button pButton label="Excluir" severity="danger"  (click)="filterTable()"></button>
+                            <p-toast />
+                            <p-confirmDialog />
+                            <button pButton label="Editar" severity="help"  (click)="abrirModalEdicao(colaborador)"></button>
+                            <button pButton label="Excluir" severity="danger"  (click)="excluirColaborador(colaborador.id)"></button>
                         </td>
                     </tr>
                 </ng-template>
@@ -252,5 +255,209 @@
                 </ng-template>
             </p-table>
         </div>        
-  
+        <p-dialog 
+            header="Editar Tipo de Contrato" 
+            [modal]="true"
+            [(visible)]="editFormVisible" 
+            [style]="{ width: '50rem' }" 
+            [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+        >
+            <form [formGroup]="editForm"
+            
+            >
+                <div class="fg1">
+                    <div class="form1">
+                        <p-inputGroup>
+                            <p-inputGroupAddon>
+                                <i class="pi pi-user"></i>
+                            </p-inputGroupAddon>
+                            <span class="p-float-label">
+                                <input pInputText
+                                    id="nome"
+                                    formControlName="nome"
+                                    type="text"
+                                />  
+                                <label for="nome">Digite o nome</label>
+                            </span>          
+                        </p-inputGroup>
+                    </div>             
+                    <div class="form2">
+                        <p-dropdown 
+                            [options]="empresas" 
+                            
+                            formControlName="empresa"
+                            optionLabel="nome"
+                            placeholder="Selecione a Empresa"
+                            (onChange)="onEmpresaSelecionada($event.value)"
+                        >
+                         </p-dropdown>
+                        <p-dropdown 
+                            [options]="filiais" 
+                            
+                            formControlName="filial"
+                            optionLabel="nome"
+                            placeholder="Selecione a Empresa"
+                            (onChange)="onFilialSelecionada($event.value)"
+                        >
+                        </p-dropdown>
+                    </div>
+                    <div class="form3">    
+                        <p-dropdown 
+                            [options]="areas" 
+                            formControlName="area"
+                            optionLabel="nome"
+                            placeholder="Selecione a Area"
+                            (onChange)="onAreaSelecionada($event.value)"
+                            >
+                         </p-dropdown>
+                        <p-dropdown 
+                            [options]="setores" 
+                            formControlName="setor"
+                            optionLabel="nome"
+                            placeholder="Selecione o Setor"
+                            (onChange)="onSetorSelecionado($event.value)"
+                            >
+                        </p-dropdown>
+                    </div>
+                    <div class="form4">    
+                        <p-dropdown 
+                            [options]="ambientes" 
+                            formControlName="ambiente"
+                            optionLabel="nome"
+                            placeholder="Selecione o Ambiente"
+                            (onChange)="onAmbienteSelecionado($event.value)"
+                        >
+                        </p-dropdown> 
+                        <p-dropdown 
+                            [options]="cargos" 
+                            formControlName="cargo"
+                            optionLabel="nome"
+                            placeholder="Selecione o Cargo"
+                            (onChange)="onCargoSelecionado($event.value)"
+                        >
+                        </p-dropdown>
+                    
+                        <p-dropdown 
+                            [options]="tipocontratos" 
+                            formControlName="tipocontrato"
+                            optionLabel="nome"
+                            placeholder="Selecione o Tipo Do Contrato"
+                        >
+                        </p-dropdown>
+                    </div>
+                </div>
+                <div class="fg2">       
+                    <div class="form5">
+                        <p-calendar 
+                            formControlName="data_admissao"
+                            dateFormat="yy-mm-dd"                    
+                            [showIcon]="true"
+                            placeholder="Data de Admissão"
+                        >
+                        </p-calendar> 
+                        <p-dropdown 
+                            [options]="generos" 
+                            formControlName="genero"
+                            optionLabel="nome"
+                            placeholder="Selecione o Gênero"        
+                        >
+                        </p-dropdown>
+                        <p-checkbox 
+                            formControlName="situacao"
+                            
+                        >
+                        </p-checkbox>
+                        <label for="sit">Ativo</label>
+                    </div>
+                    <div class="form6">                     
+                        <!-- <input 
+                            id="foto"
+                            type="file"  
+                            formControlName="image"
+                            class="form-control"
+                            (change)="onFileChange($event)"
+                        /> -->
+                        
+                        <p-dropdown 
+                            [options]="estados_civis" 
+                            formControlName="estado_civil"
+                            optionLabel="nome"
+                            placeholder="Selecione o Estado Civil"
+                        >
+                        </p-dropdown>   
+                    </div>
+                    <div class="form7">                
+                        <p-calendar 
+                            formControlName="data_nascimento"
+                            dateFormat="yy-mm-dd"
+                            [showIcon]="true"
+                            placeholder="Data de Nascimento"
+                        >
+                        </p-calendar>
+                        <p-calendar 
+                            formControlName=""
+                            [disabled]="true"
+                            dateFormat="yy-mm-dd"
+                            [showIcon]="true"
+                            placeholder="Data de Troca de Setor"
+                        >
+                        </p-calendar>
+                    </div>
+                    <div class="form8">    
+                        <p-calendar 
+                            formControlName=""
+                            [disabled]="true"
+                            dateFormat="yy-mm-dd"
+                            [showIcon]="true"
+                            placeholder="Data de Troca de Cargo"
+                        >
+                        </p-calendar>
+                        <p-calendar 
+                            formControlName="data_demissao"
+                            [disabled]="true"
+                            [showIcon]="true"
+                            placeholder="Data de Demissão"
+                        >
+                        </p-calendar> 
+                    </div>
+                    <div class="botoes-form">
+                        <p-toast></p-toast>
+                        <p-button 
+                        label="Limpar" 
+                        icon="pi pi-check" 
+                        severity="warning"
+                        (click)="cleareditForm()">
+                        </p-button>
+                        <p-button 
+                            label="Gravar" 
+                            icon="pi pi-check"
+                            iconPos="right" 
+                            severity="success"
+                            (click)="saveEdit()">
+                        </p-button>
+                        
+                    </div>
+
+                </div>
+            </form>
+            <form 
+            [formGroup]="imgForm"
+            title="Cadastrar novo Colaborador"
+            primaryBtnText="Cadastrar"
+            (submit)="updateImage()"
+            enctype="multipart/form-data"
+        >
+            <div>
+                <input 
+                id="foto"
+                type="file"  
+                formControlName="image"
+                class="form-control"
+                (change)="onFileChange($event,imgForm)">
+            </div>
+            <button type="submit">Atualizar Imagem</button>
+          </form>  
+           
+        </p-dialog>    
+        
   </div><!--end container-->

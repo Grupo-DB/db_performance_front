@@ -1,21 +1,38 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { AvaliadorResponse } from '../../types/avaliador-response';
+import { Avaliador } from '../../pages/avaliador/avaliador.component';
 
 @Injectable({
   providedIn: 'root'
 })
-export class RegisterAvaliadorService {
-  private apiUrl = 'http://localhost:8000/management/registeravaliador/';
+export class AvaliadorService {
+  private apiUrl = 'http://localhost:8000/management/avaliadores/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
-  registeravaliador(nome:string,colaborador: string, usuario: string, ){
-    return this.httpClient.post<AvaliadorResponse>(this.apiUrl,{nome,colaborador,usuario}).pipe(
-      tap(() => {
-        this.router.navigate(['/dashboard']);
-      })
+  registeravaliador(colaborador_ptr:number,usuario_id: number,){
+    const url = `${this.apiUrl}${colaborador_ptr}/transformar_em_avaliador/`;
+    return this.httpClient.post(url,{colaborador_ptr,usuario_id}).pipe(
     );
-  }   
+  }
+  getAvaliadores(): Observable<any[]>{
+    return this.httpClient.get<any[]>(this.apiUrl);  
+  }
+  editAvaliador(id: number, dadosAtualizados: Partial<Avaliador>): Observable<any> {
+    const url = `${this.apiUrl}${id}/`;
+    return this.httpClient.patch(url, dadosAtualizados);
+  }
+  deleteAvaliador(id: number): Observable<any> {
+    const url = `${this.apiUrl}${id}/`;
+    return this.httpClient.delete(url);
+  }
+  registerassociacao(avaliador: number, avaliado_id: number){
+    
+    const url = `${this.apiUrl}${avaliador}/add_avaliado/`;
+    return this.httpClient.post(url,{avaliador,avaliado_id}).pipe(
+
+    );
+  }     
 }

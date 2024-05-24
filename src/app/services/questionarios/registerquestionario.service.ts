@@ -9,16 +9,14 @@ import { QuestionarioResponse } from '../../types/questionario-response';
   providedIn: 'root'
 })
 export class RegisterQuestionarioService {
-  private apiUrl = 'http://localhost:8000/management/formulario/';
+  private apiUrl = 'http://localhost:8000/management/formularios/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
-  
     
-  registerquestionario(formulario: string, pergunta_id: string){
-    const url = `${this.apiUrl}${formulario}/adicionar-pergunta/`;
+  registerquestionario(formulario: number, pergunta_id: number){
+    
+    const url = `${this.apiUrl}${formulario}/add_pergunta/`;
     return this.httpClient.post<QuestionarioResponse>(url,{formulario,pergunta_id}).pipe(
-      tap(() => {
-        this.router.navigate(['/dashboard']);
-      })
+
     );
   }   
 }

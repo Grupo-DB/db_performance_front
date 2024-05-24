@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { RegisterTipoContratoService } from './resgitertipocontrato.service';
+import {  TipoContratoService } from './resgitertipocontrato.service';
 
-describe('ResgitertipocontratoService', () => {
-  let service: RegisterTipoContratoService;
+describe('TipocontratoService', () => {
+  let service: TipoContratoService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(RegisterTipoContratoService);
+    service = TestBed.inject(TipoContratoService);
   });
 
   it('should be created', () => {

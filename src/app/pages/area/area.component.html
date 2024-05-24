@@ -27,9 +27,11 @@
             <div class="form3">
                 <p-dropdown 
                 [options]="empresas" 
+                
                 formControlName="empresa"
                 optionLabel="nome"
                 placeholder="Selecione a Empresa"
+                (onChange)="onEmpresaSelecionada($event.value)"
                 >
                 </p-dropdown>
                 <p-dropdown 
@@ -37,6 +39,7 @@
                     formControlName="filial"
                     optionLabel="nome"
                     placeholder="Selecione a Filial"
+                    
                     >
                 </p-dropdown>
             </div>
@@ -92,6 +95,12 @@
                         <th style="width:25%">Nome
                             <p-columnFilter type="text" field="nome" display="menu"></p-columnFilter>
                         </th>
+                        <th style="width:25%">Empresa
+                            <p-columnFilter type="text" field="nome" display="menu"></p-columnFilter>
+                        </th>
+                        <th style="width:25%">Filial
+                            <p-columnFilter type="text" field="nome" display="menu"></p-columnFilter>
+                        </th>
                         <th style="width: 25%;">Ações</th>
                     </tr>
                 </ng-template>
@@ -99,6 +108,8 @@
                     <tr>
                         <td>{{ area.id }}</td>
                         <td>{{ area.nome }}</td>
+                        <td>{{ area.empresa }}</td>
+                        <td>{{ area.filial }}</td>
                         <td class="td-acao">
                             <p-toast />
                             <p-confirmDialog />
@@ -123,7 +134,7 @@
             [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
         >
         <form [formGroup]="editForm"
-        title="Cadastrar nova Area"
+        title="Editar Area"
         primaryBtnText="Cadastrar"
         (submit)="submit()"        
         >
@@ -145,9 +156,11 @@
             <div class="form3">
                 <p-dropdown 
                 [options]="empresas" 
+                
                 formControlName="empresa"
                 optionLabel="nome"
                 placeholder="Selecione a Empresa"
+                (onChange)="onEmpresaSelecionada($event.value)"
                 >
                 </p-dropdown>
                 <p-dropdown 

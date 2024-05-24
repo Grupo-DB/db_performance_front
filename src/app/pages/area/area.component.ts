@@ -34,7 +34,9 @@ export interface Area {
   id: number;
   empresa: string,
   filial: string,
-  nome: string
+  nome: string,
+  empresaNome?: string; // Propriedade opcional
+  filialNome?: string; // Propriedade opcional
 }
 
 @Component({
@@ -56,7 +58,9 @@ export interface Area {
 export class AreaComponent implements OnInit {
   empresas: Empresa[]| undefined;
   filiais: Filial[]| undefined;
-  areas: Area[] = [];
+ areas: Area[] = [];
+
+  empresaSelecionadaId: number | null = null;
 
   editForm!: FormGroup;
   editFormVisible: boolean = false;
@@ -108,14 +112,50 @@ export class AreaComponent implements OnInit {
       }
     );
     this.areaService.getAreas().subscribe(
-      (areas:Area[]) => {
+      (areas: Area[]) => {
         this.areas = areas;
       },
       error => {
-        console.error('Error fetching areas:', error);
-      },
+        console.error('Error fetching companies:', error);
+      }
     );
+    // 
+    //this.carregarAreas();
   }
+  // carregarAreas() {
+  //   this.areaService.getAreas().subscribe((areas: any[]) => {
+  //     this.areas = areas;
+  //     // Para cada área, buscar os nomes das empresas e filiais
+  //     this.areas.forEach(area => {
+  //       this.registercompanyService.getEmpresa(area.empresa).subscribe((empresa: any) => {
+  //         area.empresaNome = empresa.nome; // Adiciona o nome da empresa ao objeto area
+  //       });
+  //       this.filialService.getFilial(area.filial).subscribe((filial: any) => {
+  //         area.filialNome = filial.nome; // Adiciona o nome da filial ao objeto area
+  //       });
+  //     });
+  //   });
+  // }
+  
+   onEmpresaSelecionada(empresa: any): void {
+    const id = empresa.id;
+    if (id !== undefined) {
+      console.log('Empresa selecionada ID:', id); // Log para depuração
+      this.empresaSelecionadaId = id;
+      this.filiaisByEmpresa();
+    } else {
+      console.error('O ID do avaliado é indefinido');
+    }
+  }
+
+  filiaisByEmpresa(): void {
+    if (this.empresaSelecionadaId !== null) {
+      this.filialService.getFiliaisByEmpresa(this.empresaSelecionadaId).subscribe(data => {
+        this.filiais = data;
+        console.log('Filiais carregadas:', this.filiais); // Log para depuração
+      });
+    }
+  } 
   
 clear(table: Table) {
   table.clear();

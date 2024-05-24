@@ -7,9 +7,7 @@
         <form [formGroup]="registertipocontratoForm"
         title="Cadastrar novo Cargo"
         primaryBtnText="Cadastrar"
-        (submit)="submit()"
-        (navigate)="navigate()"
-        
+        (submit)="submit()"      
         >
         <div class="form1">
             <p-inputGroup>
@@ -28,24 +26,29 @@
             
             <div class="form3">
                 <p-dropdown 
-                [options]="companys" 
-                formControlName="empresa"
-                optionLabel="nome"
-                placeholder="Selecione a Empresa"
+                    [options]="empresas" 
+                    
+                    formControlName="empresa"
+                    optionLabel="nome"
+                    placeholder="Selecione a Empresa"
+                    (onChange)="onEmpresaSelecionada($event.value)"
                 >
                 </p-dropdown>
                 <p-dropdown 
                     [options]="filiais" 
+                    
                     formControlName="filial"
                     optionLabel="nome"
-                    placeholder="Selecione a Filial"
-                    >
-                </p-dropdown>
+                    placeholder="Selecione a Empresa"
+                    (onChange)="onFilialSelecionada($event.value)"
+                >
+                </p-dropdown>                
                 <p-dropdown 
                     [options]="areas" 
                     formControlName="area"
                     optionLabel="nome"
                     placeholder="Selecione a Area"
+                    (onChange)="onAreaSelecionada($event.value)"
                     >
                 </p-dropdown>
                 <p-dropdown 
@@ -53,6 +56,15 @@
                     formControlName="setor"
                     optionLabel="nome"
                     placeholder="Selecione o Setor"
+                    (onChange)="onSetorSelecionado($event.value)"
+                    >
+                </p-dropdown>
+                <p-dropdown 
+                    [options]="ambientes" 
+                    formControlName="ambiente"
+                    optionLabel="nome"
+                    placeholder="Selecione o Ambiente"
+                    (onChange)="onAmbienteSelecionado($event.value)"
                     >
                 </p-dropdown>
                 <p-dropdown 
@@ -60,7 +72,7 @@
                     formControlName="cargo"
                     optionLabel="nome"
                     placeholder="Selecione o Cargo"
-                    >
+                >
                 </p-dropdown>
             </div>
         </div>            
@@ -123,8 +135,10 @@
                         <td>{{ tipocontrato.id }}</td>
                         <td>{{ tipocontrato.nome }}</td>
                         <td class="td-acao">
-                            <button pButton label="Editar" severity="help"  (click)="filterTable()"></button>
-                            <button pButton label="Excluir" severity="danger"  (click)="filterTable()"></button>
+                            <p-toast />
+                            <p-confirmDialog />
+                            <button pButton label="Editar" severity="help"  (click)="abrirModalEdicao(tipocontrato)"></button>
+                            <button pButton label="Excluir" severity="danger"  (click)="excluirTipoContrato(tipocontrato.id)"></button>
                         </td>
                     </tr>
                 </ng-template>
@@ -136,5 +150,98 @@
                 </ng-template>
             </p-table>
         </div>        
-  
+        <p-dialog 
+            header="Editar Tipo de Contrato" 
+            [modal]="true"
+            [(visible)]="editFormVisible" 
+            [style]="{ width: '50rem' }" 
+            [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+        >
+            <form [formGroup]="editForm" >
+                <div class="form1">
+                    <p-inputGroup>
+                        <p-inputGroupAddon>
+                            <i class="pi pi-user"></i>
+                        </p-inputGroupAddon>
+                        <span class="p-float-label">
+                            <input pInputText
+                                id="nome"
+                                formControlName="nome"
+                                type="text"
+                            />  
+                            <label for="nome">Digite o nome</label>
+                        </span>          
+                    </p-inputGroup>
+                    
+                    <div class="form3">
+                        <p-dropdown 
+                    [options]="empresas" 
+                    
+                    formControlName="empresa"
+                    optionLabel="nome"
+                    placeholder="Selecione a Empresa"
+                    (onChange)="onEmpresaSelecionada($event.value)"
+                >
+                </p-dropdown>
+                <p-dropdown 
+                    [options]="filiais" 
+                    
+                    formControlName="filial"
+                    optionLabel="nome"
+                    placeholder="Selecione a Empresa"
+                    (onChange)="onFilialSelecionada($event.value)"
+                >
+                </p-dropdown>                
+                <p-dropdown 
+                    [options]="areas" 
+                    formControlName="area"
+                    optionLabel="nome"
+                    placeholder="Selecione a Area"
+                    (onChange)="onAreaSelecionada($event.value)"
+                    >
+                </p-dropdown>
+                <p-dropdown 
+                    [options]="setores" 
+                    formControlName="setor"
+                    optionLabel="nome"
+                    placeholder="Selecione o Setor"
+                    (onChange)="onSetorSelecionado($event.value)"
+                    >
+                </p-dropdown>
+                <p-dropdown 
+                    [options]="ambientes" 
+                    formControlName="ambiente"
+                    optionLabel="nome"
+                    placeholder="Selecione o Ambiente"
+                    (onChange)="onAmbienteSelecionado($event.value)"
+                    >
+                </p-dropdown>
+                <p-dropdown 
+                    [options]="cargos" 
+                    formControlName="cargo"
+                    optionLabel="nome"
+                    placeholder="Selecione o Cargo"
+                >
+                </p-dropdown>
+                    </div>
+                    <div class="botoes-form">
+                        <p-toast></p-toast>
+                        <p-button 
+                        label="Limpar" 
+                        icon="pi pi-check" 
+                        severity="warning"
+                        (click)="cleareditForm()">
+                        </p-button>
+                        <p-button 
+                            label="Gravar" 
+                            icon="pi pi-check"
+                            iconPos="right" 
+                            severity="success"
+                            (click)="saveEdit()">
+                        </p-button>
+                        
+                    </div>
+                </div>
+            </form>
+        </p-dialog>        
   </div><!--end container-->

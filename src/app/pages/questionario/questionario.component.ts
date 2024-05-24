@@ -17,19 +17,18 @@ import { GetPerguntaService } from '../../services/perguntas/getpergunta.service
 import { GetQuestionarioService } from '../../services/questionarios/getquestionario.service';
 import { RegisterQuestionarioService } from '../../services/questionarios/registerquestionario.service';
 import { PickListModule } from 'primeng/picklist';
+import { PerguntaService } from '../../services/perguntas/registerpergunta.service';
+import { Formulario } from '../formulario/formulario.component';
+import { Pergunta } from '../pergunta/pergunta.component';
+import { FormularioService } from '../../services/formularios/registerformulario.service';
 
 interface RegisterQuestionarioForm{
   formulario: FormControl,
   pergunta: FormControl,
  
 }
-interface Formulario{
-  nome: string,
-}
-interface Pergunta{
-  texto: string,
-  id:string
-}
+
+
 @Component({
   selector: 'app-questionario',
   standalone: true,
@@ -60,10 +59,10 @@ export class QuestionarioComponent implements OnInit {
   constructor(
     private router: Router,
     private messageService: MessageService,
-    private getformularioService: GetFormularioService,
+    private formularioService: FormularioService,
     private registerquestionarioService: RegisterQuestionarioService,
-    private getperguntaService: GetPerguntaService,
-    private getquestionarioService: GetQuestionarioService,
+    private perguntaService: PerguntaService,
+
     private cdr: ChangeDetectorRef,
   
   )
@@ -81,7 +80,7 @@ export class QuestionarioComponent implements OnInit {
     //   this.cdr.markForCheck();
     // });
     this.targetPerguntas = []
-    this.getformularioService.getFormularios().subscribe(
+    this.formularioService.getFormularios().subscribe(
       formularios => {
         this.formularios = formularios;
       },
@@ -89,7 +88,7 @@ export class QuestionarioComponent implements OnInit {
         console.error('Error fetching users:', error);
       }
     );
-    this.getperguntaService.getPerguntas().subscribe(
+    this.perguntaService.getPerguntas().subscribe(
       perguntas => {
         this.perguntas = perguntas;
       },

@@ -8,17 +8,24 @@ import { AvaliadoResponse } from '../../types/avaliado-response';
   providedIn: 'root'
 })
 export class AvaliadoService {
+  private apiAvUrl = 'http://localhost:8000/management/avaliadores/meus_avaliados/';
   private apiUrl = 'http://localhost:8000/management/avaliados/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
-  registeravaliado(colaborador:string,formulario: string, avaliador: string, ){
-    return this.httpClient.post<AvaliadoResponse>(this.apiUrl,{colaborador,formulario,avaliador}).pipe(
-      tap(() => {
-        this.router.navigate(['/dashboard']);
-      })
-    );
+  registeravaliado(colaborador_ptr:number,formulario_id: number,  ){
+    const url = `${this.apiUrl}${colaborador_ptr}/transformar_em_avaliado/`;
+    return this.httpClient.post(url,{colaborador_ptr,formulario_id}).pipe(
+    );   
   }
+  getMeusAvaliados(): Observable<any[]> {
+    return this.httpClient.get<any[]>(this.apiAvUrl);
+  }  
   getAvaliados(): Observable<any[]> {
     return this.httpClient.get<any[]>(this.apiUrl);
-  }   
+  } 
+   // Método para obter um avaliado específico pelo ID
+   getAvaliado(id: number): Observable<any> {
+    return this.httpClient.get<any>(`${this.apiUrl}${id}/`);
+  } 
+
 }

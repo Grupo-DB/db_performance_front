@@ -29,6 +29,10 @@ interface CreateuserForm {
 interface Funcao{
   name: string
 }
+export interface User{
+  id: number,
+  username:string
+}
 
 @Component({
   selector: 'app-createuser',

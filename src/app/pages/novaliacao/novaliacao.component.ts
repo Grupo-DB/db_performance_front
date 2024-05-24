@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, ReactiveFormsModule, FormsModule, FormGroup, Validators, FormBuilder, AbstractControl } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { FormControl, ReactiveFormsModule, FormsModule, FormGroup, Validators, FormBuilder, AbstractControl, FormArray, ValidatorFn, ValidationErrors } from '@angular/forms';
 import { RouterOutlet, RouterLink, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -19,11 +19,10 @@ import { GetCargoService } from '../../services/cargos/getcargo.service';
 import { GetCompanyService } from '../../services/companys/getcompany.service';
 import { GetFilialService } from '../../services/filiais/getfilial.service';
 import { GetSetorService } from '../../services/setores/get-setor.service';
-import { RegisterTipoContratoService } from '../../services/tipocontratos/resgitertipocontrato.service';
 import { GetAvaliacaoService } from '../../services/avaliacoes/getavaliacao.service';
 import { RegisterAvaliacaoService } from '../../services/avaliacoes/registeravaliacao.service.spec';
-import { GetAvaliadorService } from '../../services/avaliadores/getavaliador.service';
-import { GetColaboradorService } from '../../services/colaboradores/get-colaborador.service';
+import { MatRadioChange } from '@angular/material/radio';
+import { RadioButtonModule } from 'primeng/radiobutton';
 import { GetFormularioService } from '../../services/formularios/getformulario.service';
 import { GetTipoAvaliacaoService } from '../../services/tipoavaliacoes/gettipoavaliacao.service';
 import { PerguntasService } from '../../services/avaliacoes/perguntas.service';
@@ -37,12 +36,15 @@ import {AsyncPipe} from '@angular/common';
 import {StepperOrientation, MatStepperModule} from '@angular/material/stepper';
 import {MatSelectModule} from '@angular/material/select';
 import { LoginService } from '../../services/login/login.service';
-import { AtivoService } from '../../services/ativo/ativo.service';
-import { AvaliadorService } from '../../services/ativo/avaliador.service';
-import { ColaboradorResponse } from '../../types/colaborador-response';
-import { ColaboradorService } from '../../services/ativo/colaborador.service';
+import {MatRadioModule} from '@angular/material/radio';
 import { Calendar, CalendarModule } from 'primeng/calendar';
 import { AvaliadoService } from '../../services/avaliados/avaliado.service';
+import { TipoContratoService } from '../../services/tipocontratos/resgitertipocontrato.service';
+import { ColaboradorService } from '../../services/colaboradores/registercolaborador.service';
+import { AvaliadorService } from '../../services/avaliadores/registeravaliador.service';
+import { Colaborador } from '../colaborador/colaborador.component';
+import { Avaliado } from '../avaliado/avaliado.component';
+import { justificativaValidator } from './justificativaValidator';
 
 
 // interface RegisterAvaliacaoForm{
@@ -58,13 +60,13 @@ export interface RespostasFormatadas {
 interface TipoAvaliacao{
   nome: string
 }
-interface Colaborador {
-  nome: string;
-  cargo_nome: string;
-  area_nome: string;
-  setor_nome: string;
-  image: string;
-}
+// interface Colaborador {
+//   nome: string;
+//   cargo_nome: string;
+//   area_nome: string;
+//   setor_nome: string;
+//   image: string;
+// }
 interface Avaliador{
   nome: string
 }
@@ -87,13 +89,13 @@ interface Cargo{
   selector: 'app-novaliacao',
   standalone: true,
   imports: [
-    ReactiveFormsModule,FormsModule,StepperModule, RouterOutlet,CommonModule,MatStepperModule,MatFormFieldModule,CalendarModule,
-    FormLayoutComponent,InputMaskModule,StepsModule,NzStepsModule,MatInputModule,MatButtonModule,AsyncPipe,MatSelectModule,
-    PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
+    ReactiveFormsModule,FormsModule,StepperModule, RouterOutlet,CommonModule,MatStepperModule,MatFormFieldModule,CalendarModule,MatRadioModule,
+    FormLayoutComponent,InputMaskModule,StepsModule,NzStepsModule,MatInputModule,MatButtonModule,AsyncPipe,MatSelectModule,RadioButtonModule,
+    PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,
   ],
   providers: [
-    MessageService,GetSetorService,RegisterTipoContratoService,PerguntasService,
-    GetCompanyService,GetFilialService,GetAreaService,GetCargoService,LoginService,AtivoService
+    MessageService,GetSetorService,TipoContratoService,PerguntasService,
+    GetCompanyService,GetFilialService,GetAreaService,GetCargoService,LoginService,
   ],
   templateUrl: './novaliacao.component.html',
   styleUrl: './novaliacao.component.scss'
@@ -113,56 +115,63 @@ export class NovaliacaoComponent implements OnInit {
   login: any;
   avaliados: any[] = [];
   avaliadorSelecionado: any;
-  avaliadoSelecionado: any;
+  avaliadoSelecionado: Avaliado [] = [];
   colaboradorInfo: any;
   avaliadorId: string | undefined
   //avaliador: any; // Variável para armazenar as informações do avaliador com o colaborador
   userId: any; // Variável para armazenar o userId
-  avaliadorInfo:any;
+  avaliador:any = null;
+  avaliado: any = null; 
+  avaliadoSelecionadoId: number | undefined;
+  avaliadoDetalhes: any | undefined;
+  trimestre: any;
   colaboradorSelecionado: Colaborador [] = [];
   respostasJustificativas: { [key: string]: { resposta: string, justificativa: string } } = {};
-
+  
   registeravaliacaoForm: FormGroup;
   
+  conceitos: any[] = [
+    { key: 'otimo', name: 'Ótimo', value: 5 },
+    { key: 'bom', name: 'Bom', value: 4 },
+    { key: 'regular', name: 'Regular', value: 3 },
+    { key: 'ruim', name: 'Ruim', value: 2 },
+    { key: 'pessimo', name: 'Pessimo', value: 1 },
+];
+
   constructor(
     private router: Router,
     private messageService: MessageService,
     private gettipoavaliacaoService: GetTipoAvaliacaoService,
-    private getcolaboradorService: GetColaboradorService,
+    private colaboradorService: ColaboradorService,
     private registeravaliacaoService: RegisterAvaliacaoService,
     private getformularioService: GetFormularioService,
     private getavaliacaoService: GetAvaliacaoService,
-    private getavaliadorService: GetAvaliadorService,
+    private avaliadorService: AvaliadorService,
     private perguntasService: PerguntasService,
     private cdRef: ChangeDetectorRef,
     private loginService: LoginService,
-    private ativoService: AtivoService,
-    private avaliadorService: AvaliadorService,
-    private colaboradorService: ColaboradorService,
+
     private avaliadoService: AvaliadoService,
-    private fb: FormBuilder  
+    private fb: FormBuilder,
+    
   )
 
   {
     this.registeravaliacaoForm = this.fb.group({
-      tipoavaliacao: ['', ],
+      tipoavaliacao: ['',],
       avaliador:['',],
-      colaborador:['', ],
+      avaliado:['', ],
       periodo:['',],
       perguntasRespostas: this.fb.group({}),
-      feedback:['']
-    });
+      feedback:[''],
+    },{ validators: justificativaValidator() });
   }
  
   ngOnInit(): void {
-    this.periodos = [
-      { nome: '1º Trimestre'},
-      { nome: '2º Trimestre'},
-      { nome: '3º Trimestre'},
-      { nome: '4º Trimestre'},
-    ];
-    
-    
+
+    this.trimestre = '';
+    this.obterTrimestre();  
+  
     // this.inicializarRespostasJustificativas();
 
     // this.perguntas.forEach(pergunta => {
@@ -172,36 +181,38 @@ export class NovaliacaoComponent implements OnInit {
     // });
 
 
-    const userId = this.loginService.getUserId();
-    if (userId) {
-      this.avaliadorService.getAvaliadorByUserId(userId).subscribe((avaliador) => {
-        console.log('Avaliador encontrado:', avaliador);
+    // const userId = this.loginService.getUserId();
+    // if (userId) {
+    //   this.avaliadorService.getAvaliadorByUserId(userId).subscribe((avaliador) => {
+    //     console.log('Avaliador encontrado:', avaliador);
         
-        // Faça o que for necessário com as informações do avaliador
-        this.avaliadorInfo = avaliador;
+    //     // Faça o que for necessário com as informações do avaliador
+    //     this.avaliadorInfo = avaliador;
         
-        //this.registeravaliacaoForm?.get('avaliador')?.setValue(avaliador);
-        // Verifique se o avaliador tem dados do colaborador associado
-        if (avaliador.colaborador) {
-          this.colaboradorService.getColaboradorById(avaliador.colaborador.id).subscribe((colaborador) => {
-            console.log('Colaborador associado ao avaliador:', colaborador);
-            // Faça o que for necessário com as informações do colaborador
-            this.colaboradorInfo = colaborador;
-          });
-        } else {
-          console.error('Avaliador não possui colaborador associado.');
-        }
-      });
-    } else {
-      console.error('ID do usuário não encontrado.');
-    }
+    //     //this.registeravaliacaoForm?.get('avaliador')?.setValue(avaliador);
+    //     // Verifique se o avaliador tem dados do colaborador associado
+    //     if (avaliador.colaborador) {
+    //       this.colaboradorService.getColaboradorById(avaliador.colaborador.id).subscribe((colaborador) => {
+    //         console.log('Colaborador associado ao avaliador:', colaborador);
+    //         // Faça o que for necessário com as informações do colaborador
+    //         this.colaboradorInfo = colaborador;
+    //       });
+    //     } else {
+    //       console.error('Avaliador não possui colaborador associado.');
+    //     }
+    //   });
+    // } else {
+    //   console.error('ID do usuário não encontrado.');
+    // }
 
-    this.registeravaliacaoForm.valueChanges.subscribe(value => {
-      this.selecionarColaborador(value);
-    });
-  
-    this.carregarAvaliados();
-
+    // this.registeravaliacaoForm.valueChanges.subscribe(value => {
+    //   this.selecionarAvaliado(value);
+    // });
+    //this.formularioId = this.avaliadoDetalhes.formulario;
+    //this.carregarPerguntasDoFormulario();
+    this.getAvaliadorInfo();
+    //this.loadAvaliados();
+    //this.getAvaliadoInfo();
     this.gettipoavaliacaoService.getTipoavaliacoes().subscribe(
       tipoavaliacoes => {
         this.tipoavaliacoes = tipoavaliacoes;
@@ -211,7 +222,7 @@ export class NovaliacaoComponent implements OnInit {
       }
     );
     
-    this.getcolaboradorService.getColaboradores().subscribe(
+    this.colaboradorService.getColaboradores().subscribe(
       colaboradores => {
         this.colaboradores = colaboradores;
       },
@@ -237,15 +248,151 @@ export class NovaliacaoComponent implements OnInit {
         console.error('Error fetching users:',error);
       }
     );
-  
+    this.avaliadoService.getMeusAvaliados().subscribe(
+      avaliados => {
+        this.avaliados = avaliados;
+      },
+      error => {
+        console.error('Error fetching users:',error);
+      }
+    );
+  }
+  requireJustification: boolean = false;
+  justification: string = '';  
+  onOptionChange(option: any): void {
+    if (option.value === 5 || option.value === 1) {
+      this.requireJustification = true;
+    } else {
+      this.requireJustification = false;
+      this.justification = '';  // Clear the justification if not required
+    }
+  }
+
+  obterTrimestre() {
+    const dataAtual = new Date();
+    const mesAtual = dataAtual.getMonth() + 1; // +1 porque os meses em JavaScript são indexados a partir de 0
+    switch (Math.ceil(mesAtual / 3)) {
+      case 1:
+        this.trimestre = 'Primeiro trimestre';
+        break;
+      case 2:
+        this.trimestre = 'Segundo trimestre';
+        break;
+      case 3:
+        this.trimestre = 'Terceiro trimestre';
+        break;
+      case 4:
+        this.trimestre = 'Quarto trimestre';
+        break;
+      default:
+        this.trimestre = 'Não foi possível determinar o trimestre';
+    }
+  }
+
+  // onAvaliadoSelecionado(avaliado: any): void {
+  //   const id =avaliado.id;
+  //   console.log('Avaliado selecionado ID:', id); // Log para depuração
+  //   this.avaliadoSelecionadoId = id;
+  //   this.obterDetalhesAvaliado();
+  //   this.carregarPerguntasDoFormulario();
+  // }
+ 
+
+  // obterDetalhesAvaliado(): void {
+  //   if (this.avaliadoSelecionadoId !== undefined) {
+  //     this.avaliadoService.getAvaliado(this.avaliadoSelecionadoId).subscribe(
+  //       (data: any) => {
+  //         console.log('Dados do Avaliado:', data);
+  //         this.avaliadoDetalhes = data;
+  //       },
+  //       (error) => {
+  //         console.error('Erro ao obter detalhes do avaliado', error);
+  //       }
+  //     );
+  //   }
+  // }
+
+
+  async onAvaliadoSelecionado(avaliado: any): Promise<void> {
+    const id = avaliado.id;
+    if (id !== undefined) {
+      console.log('Avaliado selecionado ID:', id); // Log para depuração
+      this.avaliadoSelecionadoId = id;
+      await this.obterDetalhesAvaliado(); // Espera a obtenção dos detalhes do avaliado
+      this.carregarPerguntasDoFormulario();
+    } else {
+      console.error('O ID do avaliado é indefinido');
+    }
   }
   
-  selecionarColaborador(colaborador: Colaborador) {
-    this.colaboradorSelecionado.push(colaborador);
+  obterDetalhesAvaliado(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (this.avaliadoSelecionadoId !== undefined) {
+        // Substitua isso pelo código real para obter os detalhes do avaliado
+        this.avaliadoService.getAvaliado(this.avaliadoSelecionadoId).subscribe(
+          (response) => {
+            this.avaliadoDetalhes = response;
+            resolve();
+          },
+          (error) => {
+            console.error('Erro ao obter detalhes do avaliado:', error);
+            reject(error);
+          }
+        );
+      } else {
+        console.error('O ID do avaliado é indefinido');
+        reject('O ID do avaliado é indefinido');
+      }
+    });
+  }
+
+
+  // onAvaliadoSelected(avaliadoId: number) {
+  //   // Faça algo com o valor selecionado (por exemplo, buscar informações adicionais).
+  //   console.log('Avaliado selecionado:', avaliadoId);
+  //   // Aqui você pode chamar sua API DRF para obter mais informações sobre o avaliado.
+  // }
+
+//   selecionarAvaliado(avaliado: Avaliado) {
+//     this.avaliadoSelecionado.push(avaliado);
+// }
+
+// loadAvaliados(): void {
+//   // Chame o serviço para obter a lista de avaliados (ajuste conforme necessário)
+//   this.avaliadoService.getAvaliados().subscribe(
+//     data => {
+//       this.avaliados = data;
+//     },
+//     error => {
+//       console.error('Erro ao carregar a lista de avaliados:', error);
+//     }
+//   );
+// }
+
+// onAvaliadoChange(event: Event): void {
+//   const target = event.target as HTMLSelectElement;
+//   const avaliadoId = target.value ? parseInt(target.value, 10) : null;
+//   if (avaliadoId !== null) {
+//     this.getAvaliadoInfo(avaliadoId);
+//   } else {
+//     this.avaliado = null;
+//   }
+// }
+
+
+
+
+getAvaliadorInfo(): void {
+  this.colaboradorService.getAvaliador().subscribe(
+    data => {
+      this.avaliador = data;
+    },
+    error => {
+      console.error('Erro ao obter informações do avaliador:', error);
+      this.avaliador = null; // Garanta que avaliador seja null em caso de erro
+    }
+  );
 }
-
-
-  
   // selecionarFormulario() {
   //   if (this.formularioSelecionado) {
   //     // Carregar perguntas ao selecionar um formulário
@@ -254,42 +401,44 @@ export class NovaliacaoComponent implements OnInit {
   //   }
   // }
 
-  carregarAvaliados() {
-    this.avaliadoService.getAvaliados().subscribe(
-      (data: any[]) => {
-        this.avaliados = data;
-      },
-      error => {
-        console.error('Erro ao carregar avaliados:', error);
-      }
-    );
-  }
+  // getAvaliadoInfo(): void {
+  //   this.colaboradorService.getAvaliado().subscribe(
+  //     data => {
+  //       this.avaliado = data;
+  //     },
+  //     error => {
+  //       console.error('Erro ao obter informações do avaliado:', error);
+  //       this.avaliado = {}; // Em caso de erro, inicialize como objeto vazio
+  //     }
+  //   );
+  // }
   
-  getIdFormularioDoAvaliado(idAvaliado: number): number | null {
-    // Aqui você deve implementar a lógica para obter o ID do formulário associado ao avaliado
-    // Se o avaliado tem uma propriedade 'formularioId', você pode retorná-la diretamente
-    // Exemplo:
-    const avaliado = this.avaliados.find(avaliado => avaliado.id === idAvaliado);
-    return avaliado ? avaliado.formularioId : null;
-  }
+  // getIdFormularioDoAvaliado(idAvaliado: number): number | null {
+  //   // Aqui você deve implementar a lógica para obter o ID do formulário associado ao avaliado
+  //   // Se o avaliado tem uma propriedade 'formularioId', você pode retorná-la diretamente
+  //   // Exemplo:
+  //   const avaliado = this.avaliados.find(avaliado => avaliado.id === idAvaliado);
+  //   return avaliado ? avaliado.formularioId : null;
+  // }
 
-  onChangeAvaliado(idAvaliado: number) {
-    if (idAvaliado) {
-      // Obter o ID do formulário associado ao avaliado
-      const idFormulario = this.getIdFormularioDoAvaliado(idAvaliado);
+  // onChangeAvaliado(idAvaliado: number) {
+  //   if (idAvaliado) {
+  //     // Obter o ID do formulário associado ao avaliado
+  //     const idFormulario = this.getIdFormularioDoAvaliado(idAvaliado);
       
-      if (idFormulario) {
-        this.carregarPerguntasDoFormulario(idFormulario);
-      }
-    } else {
-      this.perguntas = [];  // Limpa as perguntas se nenhum avaliado for selecionado
-    }
-  }
+  //     if (idFormulario) {
+  //       this.carregarPerguntasDoFormulario(idFormulario);
+  //     }
+  //   } else {
+  //     this.perguntas = [];  // Limpa as perguntas se nenhum avaliado for selecionado
+  //   }
+  // }
 
   
 
 
-    carregarPerguntasDoFormulario(formularioId: number) {
+    carregarPerguntasDoFormulario() {
+      const formularioId = this.avaliadoDetalhes.formulario;
       this.perguntasService.carregarPerguntas(formularioId).subscribe(
         (perguntas: any) => {
           // Aqui você pode fazer o que quiser com as perguntas, como armazená-las em uma variável
@@ -304,24 +453,102 @@ export class NovaliacaoComponent implements OnInit {
       );
     }
 
-    getPerguntaFormGroup(perguntaId: number): FormGroup {
-      return this.fb.group({
-        perguntaId: [perguntaId],
-        resposta: ['', Validators.required],
-        justificativa: ['']
-      });
-    }
+  
+
+    // getPerguntaFormGroup(perguntaId: number): FormGroup {
+    //   return this.fb.group({
+    //     perguntaId: [perguntaId],
+    //     resposta: ['', Validators.required],
+    //     justificativa: ['',]
+    //   });
+    // }
+    //correto
+    // preencherCamposPerguntas() {
+    //   const perguntasRespostasGroup = this.registeravaliacaoForm.get('perguntasRespostas') as FormGroup;
+  
+    //   this.perguntas.forEach(pergunta => {
+    //     const perguntaControlName = `pergunta-${pergunta.id}`;
+    //     perguntasRespostasGroup.addControl(perguntaControlName, this.fb.group({
+    //       resposta: ['', Validators.required], // Defina validadores conforme necessário
+    //       justificativa: ['',] // Pode ser obrigatória ou não, dependendo da lógica do seu aplicativo
+    //     },{ Validators: justificativaValidator() }));
+        
+    //   });
+    // }
+    // validacaoPersonalizada() {
+    //   return (formGroup: FormGroup) => {
+    //     let resposta = formGroup.controls['resposta'];
+    //     let justificativa = formGroup.controls['justificativa'];
+    
+    //     // Condição de validação
+    //     if ((resposta.value === 1 || resposta.value === 5) && justificativa.value === '') {
+    //       return justificativa.setErrors({ 'obrigatorio': true });
+    //     } else {
+    //       return justificativa.setErrors(null);
+    //     }
+    //   }
+    // }
+    // preencherCamposPerguntas() {
+    //   const perguntasRespostasGroup = this.registeravaliacaoForm.get('perguntasRespostas') as FormGroup;
+  
+    //   this.perguntas.forEach(pergunta => {
+    //     const perguntaGroup = this.fb.group({
+    //       resposta: ['', Validators.required],
+    //       justificativa: ['',]
+    //     }, { validators: this.validacaoPersonalizada() });
+    //     perguntasRespostasGroup.addControl(`pergunta-${pergunta.id}`, perguntaGroup);
+    //   });
+    // }
+
     preencherCamposPerguntas() {
       const perguntasRespostasGroup = this.registeravaliacaoForm.get('perguntasRespostas') as FormGroup;
-  
-      this.perguntas.forEach(pergunta => {
-        const perguntaControlName = `pergunta-${pergunta.id}`;
-        perguntasRespostasGroup.addControl(perguntaControlName, this.fb.group({
-          resposta: ['', Validators.required], // Defina validadores conforme necessário
-          justificativa: [''] // Pode ser obrigatória ou não, dependendo da lógica do seu aplicativo
-        }));
+    
+      this.perguntas.forEach((pergunta, index) => {
+        const perguntaGroup = this.fb.group({
+          resposta: ['', Validators.required],
+          justificativa: ['']
+        });
+        perguntaGroup.get('resposta')!.valueChanges.subscribe(() => this.onRespostaChange(index));
+        perguntasRespostasGroup.addControl(`pergunta-${pergunta.id}`, perguntaGroup);
+        // Chama a função de validação inicial para configurar os validadores corretamente
+        
       });
     }
+   
+
+    getRespostaValue(perguntaId: number): string {
+      const respostaControl = this.registeravaliacaoForm.get(`perguntasRespostas.pergunta-${perguntaId}.resposta`);
+      return respostaControl ? respostaControl.value : '';
+    }
+  
+    getJustificativaValue(perguntaId: number): string {
+      const justificativaControl = this.registeravaliacaoForm.get(`perguntasRespostas.pergunta-${perguntaId}.justificativa`);
+      return justificativaControl ? justificativaControl.value : '';
+    }
+   
+    
+    onRespostaChange(index: number) {
+      const perguntaGroup = this.registeravaliacaoForm.get(`perguntasRespostas.pergunta-${this.perguntas[index].id}`) as FormGroup;
+      const respostaControl = perguntaGroup.get('resposta');
+      const justificativaControl = perguntaGroup.get('justificativa');
+    
+      if (respostaControl && justificativaControl) {
+        const resposta = respostaControl.value;
+        if (resposta === 1 || resposta === 5) { // Verifica se a resposta é 5 ou 1
+          justificativaControl.setValidators([Validators.required]);
+        } else {
+          justificativaControl.clearValidators();
+        }
+        justificativaControl.updateValueAndValidity();
+      }
+    }
+  
+    isJustificativaRequired(index: number): boolean {
+      const perguntaGroup = this.registeravaliacaoForm.get(`perguntasRespostas.pergunta-${this.perguntas[index].id}`) as FormGroup;
+      const justificativaControl = perguntaGroup?.get('justificativa');
+      return (justificativaControl?.hasError('required') && (justificativaControl?.touched || justificativaControl?.dirty)) ?? false;
+    }
+  
 
     // preencherCamposPerguntas() {
     //   if (this.registeravaliacaoForm instanceof FormGroup) {
@@ -454,7 +681,7 @@ export class NovaliacaoComponent implements OnInit {
     console.log(this.registeravaliacaoForm.value)
     const tipoavaliacaoId = this.registeravaliacaoForm.value.tipoavaliacao.id;
     const avaliadorId = this.registeravaliacaoForm.value.avaliador.id;
-    const colaboradorId = this.registeravaliacaoForm.value.colaborador.id;
+    const avaliadoId = this.registeravaliacaoForm.value.avaliado.id;
     const periodo = this.registeravaliacaoForm.value.periodo.nome;
     const perguntasRespostas: any = this.formatarPerguntasRespostas(this.registeravaliacaoForm.value.perguntasRespostas);
     const perguntasRespostasJSON: JSON = JSON.parse(JSON.stringify(perguntasRespostas));
@@ -462,7 +689,7 @@ export class NovaliacaoComponent implements OnInit {
       this.registeravaliacaoService.registeravaliacao(
         tipoavaliacaoId,
         avaliadorId,
-        colaboradorId,
+        avaliadoId,
         periodo,
         perguntasRespostasJSON,
         feedback
