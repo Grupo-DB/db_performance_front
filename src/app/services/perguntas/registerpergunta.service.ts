@@ -14,8 +14,8 @@ export class PerguntaService {
   private apiUrl = 'http://localhost:8000/management/perguntas/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
-  registerpergunta(texto: string){
-    return this.httpClient.post<PerguntaResponse>(this.apiUrl,{texto}).pipe(
+  registerpergunta(texto: string,legenda:Text){
+    return this.httpClient.post<PerguntaResponse>(this.apiUrl,{texto,legenda}).pipe(
     );
   }
   getPerguntas(): Observable<any[]>{

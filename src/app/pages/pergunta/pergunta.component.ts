@@ -21,10 +21,12 @@ import { DialogModule } from 'primeng/dialog';
 
 interface RegisterPerguntaForm{
   texto: FormControl,
+  legenda: FormControl
 }
 export interface Pergunta{
   id: number;
-  texto: string
+  texto: string;
+  legenda: Text;
 }
 @Component({
   selector: 'app-pergunta',
@@ -59,10 +61,12 @@ export class PerguntaComponent implements OnInit{
   {
     this.registerperguntaForm = new FormGroup({
       texto: new FormControl('',[Validators.required, Validators.minLength(3)]),
+      legenda: new FormControl('',)
    });
    this.editForm = this.fb.group({
     id: [''],
     texto: [''],
+    legenda:['']
    });  
  }
  
@@ -95,12 +99,14 @@ abrirModalEdicao(pergunta: Pergunta) {
   this.editForm.patchValue({
     id: pergunta.id,
     texto: pergunta.texto,
+    legenda:pergunta.legenda
   });
 }
 saveEdit() {
   const perguntaId = this.editForm.value.id;
   const dadosAtualizados: Partial<Pergunta> = {
     texto: this.editForm.value.texto,
+    legenda: this.editForm.value.legenda,
     };
   
   this.perguntaService.editPergunta(perguntaId, dadosAtualizados).subscribe({
@@ -142,6 +148,7 @@ excluirPergunta(id: number) {
  submit(){
    this.perguntaService.registerpergunta(
      this.registerperguntaForm.value.texto,
+     this.registerperguntaForm.value.legenda,
    ).subscribe({
     next: () => {
       this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Pergunta registrada com sucesso!' });

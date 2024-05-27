@@ -43,32 +43,38 @@ import { Filial } from '../filial/filial.component';
 import { Empresa } from '../registercompany/registercompany.component';
 import { Setor } from '../setor/setor.component';
 import { TipoContrato } from '../tipocontrato/tipocontrato.component';
+import { switchMap, map, forkJoin } from 'rxjs';
 
-interface RegisterColaboradorForm{
-  empresa: FormControl,
-  filial: FormControl,
-  area: FormControl,
-  setor: FormControl,
-  ambiente: FormControl,
-  cargo: FormControl,
-  tipocontrato: FormControl,
-  data_admissao:FormControl,
-  situacao: FormControl,
-  genero: FormControl,
-  estado_civil: FormControl,
-  data_nascimento: FormControl,
-  data_troca_setor: FormControl,
-  data_troca_cargo: FormControl,
-  data_demissao: FormControl,
-  image: FormControl
-  nome: FormControl
+interface RegisterColaboradorForm {
+  empresa: FormControl;
+  filial: FormControl;
+  area: FormControl;
+  setor: FormControl;
+  ambiente: FormControl;
+  cargo: FormControl;
+  tipocontrato: FormControl;
+  data_admissao: FormControl;
+  situacao: FormControl;
+  genero: FormControl;
+  estado_civil: FormControl;
+  data_nascimento: FormControl;
+  data_troca_setor: FormControl;
+  data_troca_cargo: FormControl;
+  data_demissao: FormControl;
+  image: FormControl;
+  nome: FormControl;
+  username: FormControl;
+  password: FormControl;
+
+  tornar_avaliado: FormControl;
+  tornar_avaliador: FormControl;
 }
   interface imgForm{
     image: FormControl
   }
 export interface Colaborador{
   id: number;
-  empresa: number;
+  empresa: Empresa;
   filial: number;
   area: number;
   setor: number;
@@ -84,7 +90,11 @@ export interface Colaborador{
   data_troca_cargo: Date;
   data_demissao: Date;
   image: ImageData;
-  nome: string
+  nome: string;
+  username: string;
+  password: string
+  tornar_avaliador: boolean;
+  tornar_avaliado: boolean;
 }
 interface Genero{
   nome: string,
@@ -173,7 +183,11 @@ export class ColaboradorComponent implements OnInit {
       data_troca_setor: new FormControl('',),
       data_troca_cargo: new FormControl('',),
       data_demissao: new FormControl('',),
-      image: new FormControl('',)
+      image: new FormControl('',),
+      username: new FormControl('',),
+      password: new FormControl('',),
+      tornar_avaliado: new FormControl('',),
+      tornar_avaliador: new FormControl('',)
    }); 
    this.editForm = this.fb.group({
     id: [''],
@@ -189,12 +203,15 @@ export class ColaboradorComponent implements OnInit {
     situacao:[''],
     genero:[''],
     estado_civil:[''],
-    data_nascimento:[''],
+    data_nascimento:[''],  
     data_troca_setor:[''],
     data_troca_cargo:[''],
     data_demissao:[''],
-    
-   });
+    username:[''],
+    password:[''],
+    tornar_avaliador:[''],
+    tornar_avaliado:['']
+,   });
    this.imgForm = new FormGroup({
     image: new FormControl('',)
    });   
@@ -214,14 +231,14 @@ this.generos =[
   { nome:'Feminino'}
 ];
  
-this.colaboradorService.getColaboradores().subscribe(
-  (colaboradores: Colaborador[]) => {
-    this.colaboradores = colaboradores;
-  },
-  error => {
-    console.error('Error fetching users:', error);
-  }
-);
+  this.colaboradorService.getColaboradores().subscribe(
+    (colaboradores: Colaborador[]) => {
+      this.colaboradores = colaboradores;
+    },
+    error => {
+      console.error('Error fetching users:', error);
+    }
+  );
 
   this.filialService.getFiliais().subscribe(
     filiais => {
@@ -283,8 +300,36 @@ this.colaboradorService.getColaboradores().subscribe(
       console.error('Error fetching users:',error);
     }
   )
-
  }
+
+ getNomeEmpresa(id: number): string {
+  const empresa = this.empresas?.find(emp => emp.id === id);
+  return empresa ? empresa.nome : 'Empresa não encontrada';
+}
+getNomeFilial(id: number): string {
+  const filial = this.filiais?.find(fil => fil.id === id);
+  return filial ? filial.nome : 'Filial não encontrada';
+}
+getNomeArea(id: number): string {
+  const area = this.areas?.find(are => are.id === id);
+  return area ? area.nome : 'Area não encontrada';
+}
+getNomeSetor(id: number): string {
+  const setor = this.setores?.find(set => set.id === id);
+  return setor ? setor.nome : 'Setor não encontrada';
+}
+getNomeAmbiente(id: number): string {
+  const ambiente = this.ambientes?.find(amb => amb.id === id);
+  return ambiente ? ambiente.nome : 'Ambiente não encontrada';
+}
+getNomeCargo(id: number): string {
+  const cargo = this.cargos?.find(carg => carg.id === id);
+  return cargo ? cargo.nome : 'Cargo não encontrada';
+}
+getNomeTipoContrato(id: number): string {
+  const tipocontrato = this.tipocontratos?.find(tipocontrato => tipocontrato.id === id);
+  return tipocontrato ? tipocontrato.nome : 'Tipo de contrato não encontrado';
+}
 // onFileChange(event:any) {
     
 //   if (event.target.files.length > 0) {
@@ -294,6 +339,9 @@ this.colaboradorService.getColaboradores().subscribe(
 //     });
 //   }
 // }
+
+
+
 
 onFileChange(event: any, form: FormGroup) {
   if (event.target.files.length > 0) {
@@ -465,7 +513,10 @@ abrirModalEdicao(colaborador: Colaborador) {
     data_troca_setor: colaborador.data_troca_setor,
     data_troca_cargo: colaborador.data_troca_cargo,
     data_demissao: colaborador.data_demissao,
-    
+    username:colaborador.username,
+    password: colaborador.password,
+    tornar_avaliador:colaborador.tornar_avaliador,
+    tornar_avaliado:colaborador.tornar_avaliado
   });
 }
 saveEdit(){
@@ -479,11 +530,6 @@ saveEdit(){
     const tipocontratoId = this.editForm.value.tipocontrato.id;
     const generoNome = this.editForm.value.genero.nome;
     const estado_civilNome = this.editForm.value.estado_civil.nome; 
-    //const formData = new FormData();
-    //const image = this.registercolaboradorForm.get('image')?.value;
-    // if (image) {
-    //   formData.append('image', image);
-    // }
     const dadosAtualizados: Partial<Colaborador> = {
       nome: this.editForm.value.nome,
       empresa: empresaId,
@@ -499,7 +545,10 @@ saveEdit(){
       data_troca_setor: this.editForm.value.data_troca_setor,
       data_troca_cargo: this.editForm.value.data_troca_cargo,
       data_demissao: this.editForm.value.data_demissao,
-      
+      username: this.editForm.value.username,
+      password: this.editForm.value.password,
+      tornar_avaliador: this.editForm.value.tornar_avaliador,
+      tornar_avaliado: this.editForm.value.tornar_avaliado
     };
     
   
@@ -507,9 +556,9 @@ saveEdit(){
     this.colaboradorService.editColaborador(colaboradorId, dadosAtualizados).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Colaborador atualizado com sucesso!' });
-        setTimeout(() => {
-         window.location.reload(); // Atualiza a página após a exclusão
-        }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+        //setTimeout(() => {
+         //window.location.reload(); // Atualiza a página após a exclusão
+        //}, 2000); // Tempo em milissegundos (1 segundo de atraso)
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao atualizar o colaborador.' });
@@ -629,8 +678,15 @@ submit() {
     formData.append('data_troca_setor', dataFormatadast || '');
     formData.append('data_troca_cargo', dataFormatadatc || '');
     formData.append('data_troca_demissao', dataFormatadadm || '');
+    formData.append('username', this.registercolaboradorForm.value.username.toString());
+    formData.append('password', this.registercolaboradorForm.value.password.toString());
+    formData.append('tornar_avaliado', this.registercolaboradorForm.value.tornar_avaliado.toString());
+    formData.append('tornar_avaliador', this.registercolaboradorForm.value.tornar_avaliador.toString())
+    // if (this.registercolaboradorForm.value.user) {
+    //   formData.append('user.username', this.registercolaboradorForm.value.user.username);
+    //   formData.append('user.password', this.registercolaboradorForm.value.user.password);
+    // }
 
-    
     // Add a imagem ao FormData
     const image = this.registercolaboradorForm.get('image')?.value;
     if (image) {
@@ -640,9 +696,9 @@ submit() {
     this.colaboradorService.registercolaborador(formData).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Colaborador registrado com sucesso!' });
-        setTimeout(() => {
-          window.location.reload(); // Atualiza a página após o registro
-        }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+        //setTimeout(() => {
+          //window.location.reload(); // Atualiza a página após o registro
+       // }, 1000); // Tempo em milissegundos (1 segundo de atraso)
       },
       error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }), 
     })

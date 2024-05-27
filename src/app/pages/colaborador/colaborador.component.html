@@ -32,38 +32,70 @@
                             <label for="nome">Digite o nome</label>
                         </span>          
                     </p-inputGroup>
+                    <p-inputGroup>
+                        <p-inputGroupAddon>
+                            <i class="pi pi-user"></i>
+                        </p-inputGroupAddon>
+                        <span class="p-float-label">
+                            <input pInputText
+                                id="username"
+                                formControlName="username"
+                                type="text"
+                            />  
+                            <label for="nome">Digite o user</label>
+                        </span>          
+                    </p-inputGroup>
+                    <p-inputGroup>
+                        <p-inputGroupAddon>
+                            <i class="pi pi-user"></i>
+                        </p-inputGroupAddon>
+                        <span class="p-float-label">
+                            <input pInputText
+                                id="password"
+                                formControlName="password"
+                                type="text"
+                            />  
+                            <label for="nome">Digite a senha</label>
+                        </span>          
+                    </p-inputGroup>
                 </div>             
                 <div class="form2">
+                    <label for="empresa">Empresa:</label>
                     <p-dropdown 
                         [options]="empresas" 
-                        
+                        id="empresa"
                         formControlName="empresa"
                         optionLabel="nome"
-                        placeholder="Selecione a Empresa"
+                        placeholder="Selecione"
                         (onChange)="onEmpresaSelecionada($event.value)"
                     >
                     </p-dropdown>
+                    <label for="filial">Filial:</label>
                     <p-dropdown 
                         [options]="filiais" 
-                        
+                        id="filial"
                         formControlName="filial"
                         optionLabel="nome"
-                        placeholder="Selecione a Filial"
+                        placeholder="Selecione "
                         (onChange)="onFilialSelecionada($event.value)"
                     >
                     </p-dropdown>
                 </div>
-                <div class="form3">    
+                <div class="form3">
+                    <label for="area">area:</label>    
                     <p-dropdown 
-                        [options]="areas" 
+                        [options]="areas"
+                        id="area" 
                         formControlName="area"
                         optionLabel="nome"
-                        placeholder="Selecione a Area"
+                        placeholder="Selecione"
                         (onChange)="onAreaSelecionada($event.value)"
                         >
                     </p-dropdown>
+                    <label for="setor">Setor:</label>
                     <p-dropdown 
-                        [options]="setores" 
+                        [options]="setores"
+                        id="setor" 
                         formControlName="setor"
                         optionLabel="nome"
                         placeholder="Selecione o Setor"
@@ -71,29 +103,34 @@
                         >
                     </p-dropdown>
                 </div>
-                <div class="form4">   
+                <div class="form4">
+                    <label for="ambiente">Ambiente:</label>   
                     <p-dropdown 
+                        id="ambiente"
                         [options]="ambientes" 
                         formControlName="ambiente"
                         optionLabel="nome"
-                        placeholder="Selecione o Ambiente"
+                        placeholder="Selecione"
                         (onChange)="onAmbienteSelecionado($event.value)"
                     >
                     </p-dropdown> 
+                    <label for="cargo">Cargo:</label>
                     <p-dropdown 
+                        id="cargo"
                         [options]="cargos" 
                         formControlName="cargo"
                         optionLabel="nome"
-                        placeholder="Selecione o Cargo"
+                        placeholder="Selecione"
                         (onChange)="onCargoSelecionado($event.value)"
                     >
                     </p-dropdown>
-                    
-                    <p-dropdown 
+                    <label for="tipocontrato">Tipo de Contrato:</label>
+                    <p-dropdown
+                        id="tipocontrato" 
                         [options]="tipocontratos" 
                         formControlName="tipocontrato"
                         optionLabel="nome"
-                        placeholder="Selecione o Tipo Do Contrato"
+                        placeholder="Selecione"
                     >
                     </p-dropdown>
                 </div>
@@ -119,7 +156,7 @@
                         value="true"
                     >
                     </p-checkbox>
-                    <label for="sit">Ativo</label>
+                    <label for="sit">Inativo</label>
                 </div>
                 <div class="form6">                     
                     <input 
@@ -146,18 +183,23 @@
                         placeholder="Data de Nascimento"
                     >
                     </p-calendar>
-                    <!-- <p-calendar 
-                        formControlName=""
-                        [disabled]="true"
-                        dateFormat="yy-mm-dd"
-                        [showIcon]="true"
-                        placeholder="Data de Troca de Setor"
+                    
+                     
+                    <label for="sit">Avaliador</label>
+                    <p-checkbox 
+                        formControlName="tornar_avaliador"
+                        value="true"
                     >
-                    </p-calendar> -->
+                    </p-checkbox>
+                    <label for="sit">Avaliado</label>
+                    <p-checkbox 
+                        formControlName="tornar_avaliado"
+                        value="true"
+                    >
+                    </p-checkbox>
+                    
                 </div>
-                <div class="form8">    
 
-                </div>
             </div>
            
                                        
@@ -213,19 +255,28 @@
                             <p-columnFilter type="text" field="nome" display="menu"></p-columnFilter>
                         </th>
                         <th style="width:25%">Empresa
-                            <p-columnFilter type="text" field="empresa" display="menu"></p-columnFilter>
+                            <p-columnFilter type="text" field="empresa.nome" display="menu"></p-columnFilter>
                         </th>
                         <th style="width:25%">Filial
                             <p-columnFilter type="text" field="filial" display="menu"></p-columnFilter>
                         </th>
+                        <th style="width:25%">Area
+                            <p-columnFilter type="text" field="area" display="menu"></p-columnFilter>
+                        </th>
                         <th style="width:25%">Setor
                             <p-columnFilter type="text" field="setor" display="menu"></p-columnFilter>
+                        </th>
+                        <th style="width:25%">Ambiente
+                            <p-columnFilter type="text" field="ambiente" display="menu"></p-columnFilter>
                         </th>
                         <th style="width:25%">Cargo
                             <p-columnFilter type="text" field="cargo" display="menu"></p-columnFilter>
                         </th>
+                        <th style="width:25%">Tipo Contrato
+                            <p-columnFilter type="text" field="cargo" display="menu"></p-columnFilter>
+                        </th>
                         <th style="width:25%"> Foto
-                            <p-columnFilter type="text" field="area" display="menu"></p-columnFilter>
+                            <p-columnFilter type="text" field="tipocontrato" display="menu"></p-columnFilter>
                         </th>
                         <th style="width: 25%;">Ações</th>
                     </tr>
@@ -234,10 +285,13 @@
                     <tr>
                         <td>{{ colaborador.id }}</td>
                         <td>{{ colaborador.nome }}</td>
-                        <td>{{ colaborador.empresa }}</td>
-                        <td>{{ colaborador.filial }}</td>
-                        <td>{{ colaborador.setor }}</td>
-                        <td>{{ colaborador.cargo }}</td>
+                        <td>{{ getNomeEmpresa(colaborador.empresa) }}</td>
+                        <td>{{ getNomeFilial(colaborador.filial) }}</td>
+                        <td>{{ getNomeArea(colaborador.area) }}</td>
+                        <td>{{ getNomeSetor(colaborador.setor) }}</td>
+                        <td>{{ getNomeAmbiente(colaborador.ambiente) }}</td>
+                        <td>{{ getNomeCargo(colaborador.cargo) }}</td>
+                        <td>{{ getNomeTipoContrato(colaborador.tipocontrato) }}</td>
                         <td><img [src]="colaborador.image"  width="80" class="shadow-4" /></td>
                         <td class="td-acao">
                             <p-toast />
@@ -418,7 +472,47 @@
                             [showIcon]="true"
                             placeholder="Data de Demissão"
                         >
-                        </p-calendar> 
+                        </p-calendar>
+                        <div class="form8">    
+                            <p-inputGroup>
+                                <p-inputGroupAddon>
+                                    <i class="pi pi-user"></i>
+                                </p-inputGroupAddon>
+                                <span class="p-float-label">
+                                    <input pInputText
+                                        id="username"
+                                        formControlName="username"
+                                        type="text"
+                                    />  
+                                    <label for="nome">Digite o Email</label>
+                                </span>          
+                            </p-inputGroup>
+                            <p-inputGroup>
+                                <p-inputGroupAddon>
+                                    <i class="pi pi-key"></i>
+                                </p-inputGroupAddon>
+                                <span class="p-float-label">
+                                    <input pInputText
+                                        id="password"
+                                        formControlName="password"
+                                        type="password"
+                                    />  
+                                    <label for="password">Digite a senha</label>
+                                </span>          
+                            </p-inputGroup> 
+                            <label for="sit">Avaliador</label>
+                            <p-checkbox 
+                                formControlName="tornar_avaliador"
+                                value="true"
+                            >
+                            </p-checkbox>
+                            <label for="sit">Avaliado</label>
+                            <p-checkbox 
+                                formControlName="tornar_avaliado"
+                                value="true"
+                            >
+                            </p-checkbox>
+                    </div> 
                     </div>
                     <div class="botoes-form">
                         <p-toast></p-toast>

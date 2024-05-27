@@ -1,0 +1,33 @@
+.buttons{
+
+    display: flex;
+    .divFeedbacks {
+        margin-top: 10%;
+        background-color: #444959;
+        color: #ffffffee;
+        height: 30%;
+        width: 30%;
+        margin-left: 20%;
+        cursor: pointer;
+        p{
+            padding: 100px;
+        }
+    }
+    
+    
+    .divAvaliacao {
+        margin-top: 10%;
+        background-color: #444959;
+        color: #ffffffee;
+        height: 30%;
+        width: 30%;
+        margin-left: 5%;
+        cursor: pointer;
+        p{
+            padding: 100px;
+        }
+    }
+    
+
+}
+

@@ -45,6 +45,7 @@ import { AvaliadorService } from '../../services/avaliadores/registeravaliador.s
 import { Colaborador } from '../colaborador/colaborador.component';
 import { Avaliado } from '../avaliado/avaliado.component';
 import { justificativaValidator } from './justificativaValidator';
+import { TipoAvaliacaoService } from '../../services/tipoavaliacoes/registertipoavaliacao.service';
 
 
 // interface RegisterAvaliacaoForm{
@@ -94,7 +95,7 @@ interface Cargo{
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,
   ],
   providers: [
-    MessageService,GetSetorService,TipoContratoService,PerguntasService,
+    MessageService,GetSetorService,TipoContratoService,PerguntasService,TipoAvaliacaoService,
     GetCompanyService,GetFilialService,GetAreaService,GetCargoService,LoginService,
   ],
   templateUrl: './novaliacao.component.html',
@@ -107,6 +108,7 @@ export class NovaliacaoComponent implements OnInit {
   formularios: Formulario [] | undefined;
   formularioSelecionado: number | undefined;
   periodos: Periodo [] | undefined;
+ 
   perguntas: any [] = [];
   respostas: any [] = [];
   activeIndex: number = 0;
@@ -127,7 +129,7 @@ export class NovaliacaoComponent implements OnInit {
   trimestre: any;
   colaboradorSelecionado: Colaborador [] = [];
   respostasJustificativas: { [key: string]: { resposta: string, justificativa: string } } = {};
-  
+  tipoavSelecionadoId: number | null = null;
   registeravaliacaoForm: FormGroup;
   
   conceitos: any[] = [
@@ -141,7 +143,7 @@ export class NovaliacaoComponent implements OnInit {
   constructor(
     private router: Router,
     private messageService: MessageService,
-    private gettipoavaliacaoService: GetTipoAvaliacaoService,
+    private tipoavaliacaoService: GetTipoAvaliacaoService,
     private colaboradorService: ColaboradorService,
     private registeravaliacaoService: RegisterAvaliacaoService,
     private getformularioService: GetFormularioService,
@@ -150,7 +152,7 @@ export class NovaliacaoComponent implements OnInit {
     private perguntasService: PerguntasService,
     private cdRef: ChangeDetectorRef,
     private loginService: LoginService,
-
+    private tipoAvaliacaoService: TipoAvaliacaoService,
     private avaliadoService: AvaliadoService,
     private fb: FormBuilder,
     
@@ -211,16 +213,10 @@ export class NovaliacaoComponent implements OnInit {
     //this.formularioId = this.avaliadoDetalhes.formulario;
     //this.carregarPerguntasDoFormulario();
     this.getAvaliadorInfo();
+    
     //this.loadAvaliados();
     //this.getAvaliadoInfo();
-    this.gettipoavaliacaoService.getTipoavaliacoes().subscribe(
-      tipoavaliacoes => {
-        this.tipoavaliacoes = tipoavaliacoes;
-      },
-      error => {
-        console.error('Error fetching users:', error);
-      }
-    );
+    
     
     this.colaboradorService.getColaboradores().subscribe(
       colaboradores => {
@@ -251,6 +247,14 @@ export class NovaliacaoComponent implements OnInit {
     this.avaliadoService.getMeusAvaliados().subscribe(
       avaliados => {
         this.avaliados = avaliados;
+      },
+      error => {
+        console.error('Error fetching users:',error);
+      }
+    );
+    this.tipoAvaliacaoService.getTipoAvaliacaos().subscribe(
+      tipoavaliacoes => {
+        this.tipoavaliacoes = tipoavaliacoes;
       },
       error => {
         console.error('Error fetching users:',error);
@@ -289,6 +293,26 @@ export class NovaliacaoComponent implements OnInit {
     }
   }
 
+  onTipoAvaliacaoSelecionado(tipoavaliacao: any): void {
+    const id = tipoavaliacao.id;
+    if (id !== undefined) {
+      console.log('Tipo Avaliacao selecionado ID:', id); // Log para depuração
+      this.tipoavSelecionadoId = id;
+      this.avaliadoByTipoAvaliacao();
+    } else {
+      console.error('O ID do avaliado é indefinido');
+    }
+  }
+
+  avaliadoByTipoAvaliacao(): void {
+    if (this.tipoavSelecionadoId !== null) {
+      this.avaliadoService.getAvaliadosByTipoAvaliacao(this.tipoavSelecionadoId).subscribe(data => {
+        this.avaliados = data;
+        console.log('Filiais carregadas:', this.avaliados); // Log para depuração
+      });
+    }
+  }
+
   // onAvaliadoSelecionado(avaliado: any): void {
   //   const id =avaliado.id;
   //   console.log('Avaliado selecionado ID:', id); // Log para depuração
@@ -312,14 +336,25 @@ export class NovaliacaoComponent implements OnInit {
   //   }
   // }
 
-
+/////////////FUNCIONAAAAAAAAAAAAAAAAAAAAAAAAAA
+  // async onAvaliadoSelecionado(avaliado: any): Promise<void> {
+  //   const id = avaliado.id;
+  //   if (id !== undefined) {
+  //     console.log('Avaliado selecionado ID:', id); // Log para depuração
+  //     this.avaliadoSelecionadoId = id;
+  //     await this.obterDetalhesAvaliado(); // Espera a obtenção dos detalhes do avaliado
+  //     this.carregarPerguntasDoFormulario();
+  //   } else {
+  //     console.error('O ID do avaliado é indefinido');
+  //   }
+  // }
   async onAvaliadoSelecionado(avaliado: any): Promise<void> {
     const id = avaliado.id;
     if (id !== undefined) {
       console.log('Avaliado selecionado ID:', id); // Log para depuração
       this.avaliadoSelecionadoId = id;
       await this.obterDetalhesAvaliado(); // Espera a obtenção dos detalhes do avaliado
-      this.carregarPerguntasDoFormulario();
+      await this.carregarTipoAvaliacaoEFormularios(id); // Carrega os tipos de avaliação e as perguntas dos formulários
     } else {
       console.error('O ID do avaliado é indefinido');
     }
@@ -346,7 +381,17 @@ export class NovaliacaoComponent implements OnInit {
     });
   }
 
-
+  async carregarTipoAvaliacaoEFormularios(userId: number): Promise<void> {
+    try {
+      const tiposAvaliacao = await this.tipoAvaliacaoService.carregarTipoAvaliacao(userId).toPromise();
+      for (const tipoAvaliacao of tiposAvaliacao) {
+        const formularioId = tipoAvaliacao.formulario; // Ajuste conforme sua resposta da API
+        await this.carregarPerguntasDoFormulario(formularioId);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar tipos de avaliação:', error);
+    }
+  }
   // onAvaliadoSelected(avaliadoId: number) {
   //   // Faça algo com o valor selecionado (por exemplo, buscar informações adicionais).
   //   console.log('Avaliado selecionado:', avaliadoId);
@@ -434,24 +479,52 @@ getAvaliadorInfo(): void {
   //   }
   // }
 
-  
+  // carregarPerguntasDoFormulario(formularioId: number): Promise<void> {
+  //   return new Promise((resolve, reject) => {
+  //     this.perguntasService.carregarPerguntas(formularioId).subscribe(
+  //       (perguntas: any) => {
+  //         this.perguntas.push(...perguntas); // Adiciona as novas perguntas ao array existente
+  //         this.preencherCamposPerguntas();
+  //         console.log('Perguntas carregadas:', perguntas);
+  //         resolve();
+  //       },
+  //       error => {
+  //         console.error('Erro ao carregar perguntas:', error);
+  //         reject(error);
+  //       }
+  //     );
+  //   });
+  // }
 
+  carregarPerguntasDoFormulario(formularioId: number) {
+    this.perguntasService.carregarPerguntas(formularioId).subscribe(
+      (perguntas: any) => {
+        this.perguntas = perguntas;
+        this.preencherCamposPerguntas();
+        console.log('Perguntas carregadas:', perguntas);
+      },
+      error => {
+        console.error('Erro ao carregar perguntas:', error);
+      }
+    );
+  }
 
-    carregarPerguntasDoFormulario() {
-      const formularioId = this.avaliadoDetalhes.formulario;
-      this.perguntasService.carregarPerguntas(formularioId).subscribe(
-        (perguntas: any) => {
-          // Aqui você pode fazer o que quiser com as perguntas, como armazená-las em uma variável
-          this.perguntas = perguntas;
-          this.preencherCamposPerguntas();
+/////////FUNCIONAAAAAAAAAAA
+    // carregarPerguntasDoFormulario() {
+    //   const formularioId = this.avaliadoDetalhes.tipoavaliacao;
+    //   this.perguntasService.carregarPerguntas(formularioId).subscribe(
+    //     (perguntas: any) => {
+    //       // Aqui você pode fazer o que quiser com as perguntas, como armazená-las em uma variável
+    //       this.perguntas = perguntas;
+    //       this.preencherCamposPerguntas();
           
-          console.log()
-        },
-        error => {
-          console.error('Erro ao carregar perguntas:', error);
-        }
-      );
-    }
+    //       console.log()
+    //     },
+    //     error => {
+    //       console.error('Erro ao carregar perguntas:', error);
+    //     }
+    //   );
+    // }
 
   
 
@@ -682,7 +755,7 @@ getAvaliadorInfo(): void {
     const tipoavaliacaoId = this.registeravaliacaoForm.value.tipoavaliacao.id;
     const avaliadorId = this.registeravaliacaoForm.value.avaliador.id;
     const avaliadoId = this.registeravaliacaoForm.value.avaliado.id;
-    const periodo = this.registeravaliacaoForm.value.periodo.nome;
+    const periodo = this.registeravaliacaoForm.value.periodo;
     const perguntasRespostas: any = this.formatarPerguntasRespostas(this.registeravaliacaoForm.value.perguntasRespostas);
     const perguntasRespostasJSON: JSON = JSON.parse(JSON.stringify(perguntasRespostas));
     const feedback = this.registeravaliacaoForm.value.feedback;

@@ -58,7 +58,7 @@ export interface Area {
 export class AreaComponent implements OnInit {
   empresas: Empresa[]| undefined;
   filiais: Filial[]| undefined;
- areas: Area[] = [];
+  areas: Area[] = [];
 
   empresaSelecionadaId: number | null = null;
 

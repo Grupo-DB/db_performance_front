@@ -8,7 +8,6 @@
         title="Cadastrar Novo Tipo de Avaliação"
         primaryBtnText="Cadastrar"
         (submit)="submit()"
-        (navigate)="navigate()"
         >
         <div class="form1">
             <p-inputGroup>
@@ -24,6 +23,15 @@
                     <label for="nome">Digite o nome</label>
                 </span>          
             </p-inputGroup>
+            <p-dropdown 
+                [options]="formularios" 
+                
+                formControlName="formulario"
+                optionLabel="nome"
+                placeholder="Selecione o Formulario"
+                
+                >
+                </p-dropdown>
         </div>            
         </form>
     </div>    
@@ -84,8 +92,10 @@
                         <td>{{ tipoavaliacao.id }}</td>
                         <td>{{ tipoavaliacao.nome }}</td>
                         <td class="td-acao">
-                            <button pButton label="Editar" severity="help"  (click)="filterTable()"></button>
-                            <button pButton label="Excluir" severity="danger"  (click)="filterTable()"></button>
+                            <p-toast />
+                            <p-confirmDialog />
+                            <button pButton label="Editar" severity="help" (click)="abrirModalEdicao(tipoavaliacao)"></button>
+                            <button pButton label="Excluir" severity="danger"  (click)="excluirTipoAvaliacao(tipoavaliacao.id)"></button>
                         </td>
                     </tr>
                 </ng-template>

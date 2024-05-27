@@ -7,13 +7,23 @@
 <div *ngIf="avaliadoDetalhes">
   <p><strong>Nome:</strong> {{ avaliadoDetalhes.nome }}</p>
   <img [src]="avaliadoDetalhes.image"  width="80" class="shadow-4" />
-  {{avaliadoDetalhes.formulario}}
+  {{avaliadoDetalhes.tipoAvaliacao}}
 </div>
 
 <form [formGroup]="registeravaliacaoForm" (submit)="submit()">     
   <input type="hidden" formControlName="avaliador" [(ngModel)]="avaliador" > 
-  <input type="hidden" formControlName="periodo" [(ngModel)]="trimestre">
-  <input *ngIf="avaliadoDetalhes" type="hidden" formControlName="tipoavaliacao" [(ngModel)]="avaliadoDetalhes.formulario">
+  <input type="text" formControlName="periodo" [(ngModel)]="trimestre">
+  
+  <p-dropdown 
+      [options]="tipoavaliacoes"
+      formControlName="tipoavaliacao" 
+      optionLabel="nome"
+      [filter]="true"
+      filterBy="nome" 
+      [showClear]="true"
+      (onChange)="onTipoAvaliacaoSelecionado($event.value)">
+    >
+    </p-dropdown>
   <p-dropdown 
       [options]="avaliados"
       formControlName="avaliado" 
@@ -30,6 +40,7 @@
       <ng-template matStepLabel>{{ 'Pergunta ' + (i + 1) }}</ng-template>
       
       {{ pergunta.texto }}
+      <p>{{ pergunta.legenda }}</p>
       <mat-radio-group
         aria-labelledby="example-radio-group-label"
         class="example-radio-group"
@@ -72,7 +83,7 @@
   (click)="submit()">
 </p-button>
 </mat-horizontal-stepper>
-
+{{ registeravaliacaoForm.value | json }}
 </form>
 
   <!-- <p-button 

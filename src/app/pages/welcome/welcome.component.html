@@ -14,20 +14,17 @@
       <ul nz-menu style="background-color:#898993;"  nzMode="inline" [nzInlineCollapsed]="isCollapsed">
         <li nz-submenu nzOpen nzTitle="Gestão de Pessoas" nzIcon="team">
           
-          <ul>
+          <!-- <ul>
             <li nz-submenu nzTitle="Avaliação de Funcionários" nzIcon="appstore-add">
               <ul>
                 
                 <ul>
-                  <li nz-submenu nzTitle="Cadastros" nzIcon="appstore-add">
+                   <li nz-submenu nzTitle="Cadastros" nzIcon="appstore-add">
                     <ul>
                       
                       <li nz-menu-item nzIcon="audit" nzMatchRouter>
                         <a routerLink="colaborador">Colaboradores</a>
                       </li>
-                      
-                  
-                      
                       <li nz-menu-item nzMatchRouter>
                         <a routerLink="tipoavaliacao">Tipos de Avaliação</a>
                       </li>
@@ -47,19 +44,24 @@
                         <a routerLink="avaliado">Avaliados</a>
                       </li>
                       <li nz-menu-item nzMatchRouter>
+                        <a routerLink="tipoavaliacaoavaliados">Associar Tipo de Avaliação</a>
+                      </li>
+                      <li nz-menu-item nzMatchRouter>
                         <a routerLink="avaliadoravaliados">Associar Avaliados</a>
                       </li>
                     </ul>
-                  </li>  
+                  </li>   
                 </ul>
-                <li nz-menu-item nzMatchRouter>
+                 <li nz-menu-item nzMatchRouter>
                   <a routerLink="avaliacao">Avaliações</a>
-                </li>
-              </ul>
+                </li> -->
+              <!-- </ul>
             </li>
-          </ul>
-        </li>
-              
+          </ul> 
+        </li> -->
+        <li nz-menu-item   nzMatchRouter>
+          <a routerLink="avaliacao" ><span nz-icon nzType="audit" nzTheme="outline"></span> Avaliações</a>
+      </li>        
         <li nz-submenu nzOpen nzTitle="Corporativo" nzIcon="global">
           <ul>
               <li nz-submenu nzTitle="Cadastros" nzIcon="appstore-add">
@@ -103,6 +105,7 @@
                  [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
               ></span>
           </span>
+          kjahfkljadh
         </div>
       </nz-header>
       <nz-content>

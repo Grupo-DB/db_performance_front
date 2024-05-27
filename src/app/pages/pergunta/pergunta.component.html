@@ -23,6 +23,19 @@
                     <label for="texto">Digite a Pergunta</label>
                 </span>          
             </p-inputGroup>
+            <p-inputGroup>
+                <p-inputGroupAddon>
+                    <i class="pi pi-user"></i>
+                </p-inputGroupAddon>
+                <span class="p-float-label">
+                    <input pInputText
+                        id="legenda"
+                        formControlName="legenda"
+                        type="text"
+                    />  
+                    <label for="texto">Digite a Legendaa</label>
+                </span>          
+            </p-inputGroup>
         </div>            
         </form>
     </div>    
@@ -75,6 +88,9 @@
                         <th style="width:25%">Pergunta
                             <p-columnFilter type="text" field="texto" display="menu"></p-columnFilter>
                         </th>
+                        <th style="width:25%">Legenda
+                            <p-columnFilter type="text" field="texto" display="menu"></p-columnFilter>
+                        </th>
                         <th style="width: 25%;">Ações</th>
                     </tr>
                 </ng-template>
@@ -82,6 +98,7 @@
                     <tr>
                         <td>{{ pergunta.id }}</td>
                         <td>{{ pergunta.texto }}</td>
+                        <td>{{ pergunta.legenda }}</td>
                         <td class="td-acao">
                             <p-toast />
                             <p-confirmDialog />
