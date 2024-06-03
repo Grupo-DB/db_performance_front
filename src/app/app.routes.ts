@@ -20,6 +20,8 @@ import { AvaliadoComponent } from './pages/avaliado/avaliado.component';
 import { AmbienteComponent } from './pages/ambiente/ambiente.component';
 import { AvaliadorAvaliadosComponent } from './pages/avaliadoravaliados/avaliadoravaliados.component';
 import { VincularComponent } from './pages/vincular/vincular.component';
+import { FeedbackComponent } from './pages/feedback/feedback.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
 
 
 export const routes: Routes = [
@@ -44,8 +46,11 @@ export const routes: Routes = [
       { path: 'avaliado', component:AvaliadoComponent },
       { path: 'ambiente', component:AmbienteComponent },
       { path: 'avaliadoravaliados', component:AvaliadorAvaliadosComponent },
-      { path: 'tipoavaliacaoavaliados', component:VincularComponent }  
+      { path: 'tipoavaliacaoavaliados', component:VincularComponent },
+      { path: 'feedback', component:FeedbackComponent }, 
+      { path: 'dashboard', component:DashboardComponent }
     ],
   },
+  
   //{ path: 'welcome', loadChildren: () => import('./pages/welcome/welcome.routes').then(m => m.WELCOME_ROUTES) }
 ];

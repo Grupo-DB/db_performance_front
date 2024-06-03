@@ -1,32 +1,49 @@
-<ul nz-menu nzMode="horizontal">
-    <li nz-submenu nzTitle="Cadastros" nzIcon="tags">
-        <ul>
-            <li nz-menu-item  nzMatchRouter>
-                <a routerLink="../colaborador" >Colaboradores</a>
-            </li>
-            <li nz-menu-item  nzMatchRouter>
-                <a routerLink="../tipoavaliacao" >Tipos de Avaliação</a>
-            </li>
-            <li nz-menu-item  nzMatchRouter>
-                <a routerLink="../pergunta" >Perguntas</a>
-            </li>
-            <li nz-menu-item  nzMatchRouter>
-                <a routerLink="../formulario" >Questionários</a>
-            </li>
-        </ul>
-      
-    <li nz-menu-item   nzMatchRouter>
-        <a routerLink="../questionario" ><span nz-icon nzType="setting" nzTheme="outline"></span> Montar Formulários</a>
-    </li>
-    <li nz-menu-item   nzMatchRouter>
-        <a routerLink="../tipoavaliacaoavaliados" ><span nz-icon nzType="setting" nzTheme="outline"></span> Associar Avaliados - Tipos de Avaliação</a>
-    </li>
-    <li nz-menu-item   nzMatchRouter>
-        <a routerLink="../avaliadoravaliados" ><span nz-icon nzType="setting" nzTheme="outline"></span> Associar Avaliados - Avaliadores</a>
-    </li>
-    
-    
-  </ul>
+<div class="menu">
+    <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+        <li nz-menu-item nzMatchRouter="#">
+            <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
+        </li>
+        <li nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+            <ul>
+                <li nz-menu-item  nzMatchRouter>
+                    <a routerLink="../formulario" >Tipos de Avaliações</a>
+                </li>
+                <li nz-menu-item  nzMatchRouter>
+                    <a routerLink="../pergunta" >Perguntas</a>
+                </li>
+                <li nz-menu-item  nzMatchRouter>
+                    <a routerLink="../tipoavaliacao" >Formulários</a>
+                </li>
+            </ul>
+        </li>    
+        
+        <li nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
+            <ul>
+                <li nz-menu-item   nzMatchRouter>
+                    <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
+                </li>
+                <li nz-menu-item   nzMatchRouter>
+                    <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Tipos de Avaliação</a>
+                </li>
+                <li nz-menu-item   nzMatchRouter>
+                    <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
+                </li>
+            </ul>    
+        </li>
+
+        
+        <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
+        </li>
+        <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="#" >Histórico de Avaliações</a>
+        </li>
+        <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="#" >Relatórios</a>
+        </li>
+        
+    </ul>
+</div>
     <div class="buttons" >
         
             <div class="divAvaliacao" routerLink="../novaliacao">
@@ -34,7 +51,7 @@
             </div>  
         
         
-            <div class="divFeedbacks" routerLink="../">
+            <div class="divFeedbacks" routerLink="../feedback">
                 <p> FEEDBACKS </p>
             </div>  
         

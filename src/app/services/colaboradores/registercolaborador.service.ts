@@ -35,5 +35,7 @@ export class ColaboradorService {
     getAvaliador(): Observable<any> {
       return this.httpClient.get(`${this.urlme}me/`);
     }
-    
+    getColaboradorInfo(): Observable<any> {
+      return this.httpClient.get(`${this.apiUrl}meInfo/`);
+    }
   }

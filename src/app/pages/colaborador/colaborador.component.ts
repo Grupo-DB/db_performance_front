@@ -44,6 +44,7 @@ import { Empresa } from '../registercompany/registercompany.component';
 import { Setor } from '../setor/setor.component';
 import { TipoContrato } from '../tipocontrato/tipocontrato.component';
 import { switchMap, map, forkJoin } from 'rxjs';
+import { DividerModule } from 'primeng/divider';
 
 interface RegisterColaboradorForm {
   empresa: FormControl;
@@ -107,7 +108,7 @@ interface Estado_Civil{
   standalone: true,
   imports: [
     ReactiveFormsModule,FormsModule,NzUploadModule,CommonModule,DialogModule,
-    FormLayoutComponent,InputMaskModule,CalendarModule,CheckboxModule,ConfirmDialogModule,
+    FormLayoutComponent,InputMaskModule,CalendarModule,CheckboxModule,ConfirmDialogModule,DividerModule,
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,
   ],
   providers:[
@@ -135,7 +136,7 @@ export class ColaboradorComponent implements OnInit {
   editForm!: FormGroup;
   imgForm!: FormGroup<imgForm>;
   editFormVisible: boolean = false;
-
+  
   empresaSelecionadaId: number | null = null;
   filialSelecionadaId: number | null = null;
   areaSelecionadaId: number | null = null;
@@ -678,10 +679,10 @@ submit() {
     formData.append('data_troca_setor', dataFormatadast || '');
     formData.append('data_troca_cargo', dataFormatadatc || '');
     formData.append('data_troca_demissao', dataFormatadadm || '');
-    formData.append('username', this.registercolaboradorForm.value.username.toString());
-    formData.append('password', this.registercolaboradorForm.value.password.toString());
-    formData.append('tornar_avaliado', this.registercolaboradorForm.value.tornar_avaliado.toString());
-    formData.append('tornar_avaliador', this.registercolaboradorForm.value.tornar_avaliador.toString())
+    formData.append('username', this.registercolaboradorForm.value.username);
+    formData.append('password', this.registercolaboradorForm.value.password);
+    formData.append('tornar_avaliado', this.registercolaboradorForm.value.tornar_avaliado);
+    formData.append('tornar_avaliador', this.registercolaboradorForm.value.tornar_avaliador)
     // if (this.registercolaboradorForm.value.user) {
     //   formData.append('user.username', this.registercolaboradorForm.value.user.username);
     //   formData.append('user.password', this.registercolaboradorForm.value.user.password);

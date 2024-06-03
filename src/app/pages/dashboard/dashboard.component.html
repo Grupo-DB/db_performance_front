@@ -1,124 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-    <div class="container">
-        <div class="side-bar">
-            <img src="/assets/imagens/logobranca.png" >
-            <div class="line">
-                <img src="/assets/svg/line.svg">
-            </div>    
-            <ul class="item-dashboard">
-                <img src="/assets/svg/icon-dashboard.svg"> Dashboard
+<div class="menu">
+    <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+        <li nz-menu-item nzMatchRouter="#">
+            <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
+        </li>
+        <li nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+            <ul>
+                <li nz-menu-item  nzMatchRouter>
+                    <a routerLink="../formulario" >Tipos de Avaliações</a>
+                </li>
+                <li nz-menu-item  nzMatchRouter>
+                    <a routerLink="../pergunta" >Perguntas</a>
+                </li>
+                <li nz-menu-item  nzMatchRouter>
+                    <a routerLink="../tipoavaliacao" >Formulários</a>
+                </li>
             </ul>
-            <div class="item-dashboard">
-                <img src="/assets/svg/icon-dashboard.svg"> Avaliações
-            </div>
-            <div class="item-dashboard">
-                <img src="/assets/svg/icon-dashboard.svg"> Avaliadores
-            </div>
-            <div class="item-dashboard">
-                <img src="/assets/svg/icon-dashboard.svg"> Colaboradores
-            </div>
-            <div class="item-dashboard">
-                <a href="cadastros">
-                    <img src="/assets/svg/icon-dashboard.svg"> Cadastros
-                </a>
-            </div>      
-        </div>
-        <div class="content">
-            <div class="card-colaboradores">
-                <div class="badge-colaboradores">
-                    <img src="/assets/svg/icon-person.svg">
-                </div>
-                <div class="card-name-colaboradores">
-                    Colaboradores
-                    <h2>432</h2>
-                </div>
-                <div class="line-card-colaboradores">
-                    <img src="/assets/svg/line.svg">
-                </div>
-                <div class="metrica-card-colaboradores">
-                    <p><span class="card-colaboradores-rodape"> +12% </span>Último Período</p>
-                </div>
-                
-            </div>
+        </li>    
+        
+        <li nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
+            <ul>
+                <li nz-menu-item   nzMatchRouter>
+                    <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
+                </li>
+                <li nz-menu-item   nzMatchRouter>
+                    <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Tipos de Avaliação</a>
+                </li>
+                <li nz-menu-item   nzMatchRouter>
+                    <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
+                </li>
+            </ul>    
+        </li>
 
-            <div class="card-colaboradores">
-                <div class="badge-colaboradores">
-                    <img src="/assets/svg/icon-person.svg">
-                </div>
-                <div class="card-name-colaboradores">
-                    Colaboradores
-                    <h2>432</h2>
-                </div>
-                <div class="line-card-colaboradores">
-                    <img src="/assets/svg/line.svg">
-                </div>
-                <div class="metrica-card-colaboradores">
-                    <p><span class="card-colaboradores-rodape"> +12% </span>Último Período</p>
-                </div>
-                
-            </div>
+        
+        <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
+        </li>
+        <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="#" >Histórico de Avaliações</a>
+        </li>
+        <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="#" >Relatórios</a>
+        </li>
+        
+    </ul>
+</div>
+    
 
-            <div class="card-colaboradores">
-                <div class="badge-colaboradores">
-                    <img src="/assets/svg/icon-person.svg">
-                </div>
-                <div class="card-name-colaboradores">
-                    Colaboradores
-                    <h2>432</h2>
-                </div>
-                <div class="line-card-colaboradores">
-                    <img src="/assets/svg/line.svg">
-                </div>
-                <div class="metrica-card-colaboradores">
-                    <p><span class="card-colaboradores-rodape"> +12% </span>Último Período</p>
-                </div>
-                
-            </div>
 
-            <div class="card-colaboradores">
-                <div class="badge-colaboradores">
-                    <img src="/assets/svg/icon-person.svg">
-                </div>
-                <div class="card-name-colaboradores">
-                    Colaboradores
-                    <h2>432</h2>
-                </div>
-                <div class="line-card-colaboradores">
-                    <img src="/assets/svg/line.svg">
-                </div>
-                <div class="metrica-card-colaboradores">
-                    <p><span class="card-colaboradores-rodape"> +12% </span>Último Período</p>
-                </div>
-            </div>
-            <!--Segunda linha-->
-            <div class="card-graph-av">
-                <div class="img-graph">
-                    sdfsd
-                </div>
-            </div>
-            <div class="card-graph-av">
-                <div class="img-graph">
-                    sdfsd
-                </div>
-            </div>
-            <div class="card-graph-av">
-                <div class="img-graph">
-                    sdfsd
-                </div>
-            </div>
-            <!--Terceira Linha-->
-            <div class="tabelas">
-                fsdfsdfsf
-            </div>
-        </div>    
-    </div>
-</body>
-</html>
+<br><br>
+<br><br>
+
+
+
+<h1>Dashboard em desenvolvimento...</h1>

@@ -6,49 +6,131 @@
     flex-flow: column wrap;
     align-items: center;   
 }
-.uppercase-text {
-    text-transform: uppercase;
-  }
+// .uppercase-text {
+//     text-transform: uppercase;
+//   }
 
 .form-geral{
     width: 100%;
     border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-    text-transform: uppercase;
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
+    //text-transform: uppercase;
         .fg1{
             width: 100%;
+            p{
+                margin-left: 20px;
+            }
             .form1{
-                padding: 1%;
-                margin-left: 15px;
+                padding: 10px;
+                margin-left: 35px;
+                p{
+                    margin-left: auto;
+                }
+                p-inputGroup{
+                    width: 77%;
+                }
             }
             .form2{
-                padding: 1%;
+                padding: 5px;
+                margin-left: 20px;
+                
+                p{
+                    margin-left: 20px;
+                }
+            }
+            .filial{
+                padding: 5px;
+                margin-left: 20px;
+                p{
+                    margin-left: 20px;
+                }
+                
             }
             .form3{
-                padding: 1%;
+                padding: 5PX;
+                margin-left: 20px;
+            }
+            .dvset{
+                padding: 5PX;
+                margin-left: 20px;
             }
             .form4{
-                padding: 1%;
-                margin-bottom: 3%;
+                padding: 5PX;
+                margin-left: 20px;
+            }
+            .dvcarg{
+                padding: 5PX;
+                margin-left: 20px;
+            }
+            .dvtc{
+                padding: 5PX;
+                margin-left: 20px;
             }
         }
         .fg2{
             width: 100%;
+            p-dropdown{
+                margin-left: 18px;
+            }
+           
+            p{
+                margin-left: 30px;
+            }
+            .dvgen{
+                padding: 5PX;
+                margin-left: 40px;
+            }
             .form5{
-                padding: 1%;
+                padding: 5PX;
+                margin-left: 20px;
+            }
+            .dvgen{
+                padding: 5PX;
+                margin-left: 20px;
             }
             .form6{
-                padding: 1%;
-                input{
-                    margin-left: 5%;
-                }
+                padding: 5PX;
+                margin-left: 20px;
             }
             .form7{
-                padding: 1%;
+                padding: 5PX;
+                margin-left: 20px;
+                
             }
-            .form8{
-                padding: 1%;
-                margin-bottom: 1%;
+            .dvft{
+                padding: 5PX;
+                margin-left: 50px;
+                margin-top: 20px;
+                p{
+                    margin-left: 2px;
+                }
+                input{
+                    margin-left: 5px;
+                }
+            }
+            .dvcb{
+                margin-top: 30PX;
+                padding: 8PX;
+                margin-left: 20px;
+                p{
+                    margin-left: 28px;
+                }
+            }
+            .dvus{
+                margin-top: 20px;
+                margin-left: 55px;
+                margin-bottom: 1px;
+                width: 80%;
+                background-color: #e0ede9;
+                border-radius: 5px;
+               
+            }
+            .tituser{
+                margin-top: 20px;
+                p{
+                    margin-left: 55px;
+                    
+                }
             }
         }
         
@@ -118,6 +200,12 @@
     border-radius: 10px;
     width: 100%;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    th{
+        font-size: 14px;
+    }
+    td{
+        font-size:12px ;
+    }
 }
 
 .td-acao{
@@ -129,3 +217,130 @@
 
 }
 
+.btnpri{
+    cursor: pointer;
+    background-color: #444959;
+    color: #fff;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    margin-left: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}   
+.btnsec{
+    cursor: pointer;
+    background-color: #e3e3f3;
+    color: #444959;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}
+.btnprit{
+    cursor: pointer;
+    background-color: #444959;
+    color: #fff;
+    width: 100px;
+    height: 40px;
+    border-radius: 5px;
+    margin-left: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}   
+.btnsect{
+    cursor: pointer;
+    background-color: #e3e3f3;
+    color: #444959;
+    width: 100px;
+    height: 40px;
+    border-radius: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}
+ ///////FORMULARIO DE EDIÇÃO
+ 
+.editgeral{
+    width: 100%;
+    .fg1edit{
+        width: 50%;
+        p{
+            margin-left: 20px;
+        }
+        .form1edit{
+            margin-left: 15px;
+            p{
+                margin-left: 2px;
+                margin-bottom: 20px;
+            }
+            p-inputGroup{
+                width: 77%;
+            }
+        }
+        // .form2edit{
+        //     padding: 10px;
+        //     margin-left: 35px;
+        // }
+    }
+    .fg2edit{
+        width: 50%;
+        p{
+            margin-left: 20px;
+        }
+    }
+
+}
+
+.botoes-formedit{
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+    
+}
+
+.btnpriedit{
+    cursor: pointer;
+    background-color: #444959;
+    color: #fff;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    margin-left: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}   
+.btnsecedit{
+    cursor: pointer;
+    background-color: #e3e3f3;
+    color: #444959;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}
+.dvusedit{
+    margin-top: 15px;
+    background-color: #e0ede9;
+    border-radius: 5px;
+}
+.tituseredit{
+    margin-top: 15px;
+}
+.editImg{
+    margin-left: 20%;
+    margin-top: 15px;
+}

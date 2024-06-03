@@ -10,6 +10,7 @@ import { AvaliadoResponse } from '../../types/avaliado-response';
 export class AvaliadoService {
   private apiAvUrl = 'http://localhost:8000/management/avaliadores/meus_avaliados/';
   private apiUrl = 'http://localhost:8000/management/avaliados/';
+  private apiUrlsa = 'http://localhost:8000/management/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
   registeravaliado(colaborador_ptr:number,formulario_id: number,  ){
@@ -30,4 +31,12 @@ export class AvaliadoService {
   getAvaliadosByTipoAvaliacao(tipoAvaliacaoId: number): Observable<any> {
     return this.httpClient.get(`${this.apiUrl}byTipoAvaliacao/`, { params: { tipoAvaliacao: tipoAvaliacaoId.toString() } });
   }
+  getAvaliadosByAvaliador(id: number): Observable<any[]> {
+    return this.httpClient.get<any>(`${this.apiUrl}byAvaliador/?avaliador_id=${id}`);
+  }
+  getMeusAvaliadosSemAvaliacao(periodo: string, tipoAvaliacaoId:number): Observable<any> {
+    return this.httpClient.get(`${this.apiUrl}meus_avaliados_sem_avaliacao/`, {
+      params: { periodo,  tipoAvaliacao: tipoAvaliacaoId.toString()  }
+    });
+  } 
 }

@@ -6,6 +6,6 @@ export type AvaliacaoResponse = {
     formulario: string,
     data_avaliacao: Date,
     periodo: string,
-    feedback: string,
-    perguntasRespostas:string
+    //feedback: boolean,
+    perguntasRespostas:JSON
 }

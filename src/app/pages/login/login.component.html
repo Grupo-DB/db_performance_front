@@ -1,37 +1,58 @@
-<app-default-login-layout
+<!-- <app-default-login-layout
     title="Entre com suas credenciais"
     primaryBtnText="Log In"
     secondaryBtnText="Cadastrar"
     (submit)="submit()"
-    (navigate)="navigate()"
+    (navigate)="navigate()"    
+> -->
+<div class="container">
+
+   <div class="login"> 
+        <div class="lgimg">
+            <img  src="/assets/imagens/logotelalogin.png"/>
+        </div>
+        <form [formGroup]="loginForm">
+            <p-inputGroup>
+                <p-inputGroupAddon>
+                    <i class="pi pi-user"></i>
+                </p-inputGroupAddon>
+                <span class="p-float-label">
+                    <input pInputText
+                        id="email1"
+                        formControlName="email"
+                        type="text"
+                    />  
+                    <label for="nome">Nome de usuário</label>
+                </span>          
+            </p-inputGroup>
+            <p-inputGroup>
+                <p-inputGroupAddon>
+                    <i class="pi pi-key"></i>
+                </p-inputGroupAddon>
+                <span class="p-float-label">
+                    <input 
+                        [style]="{'width':'50%'}"
+                        pInputText
+                        id="password"
+                        formControlName="password"
+                        type="password"
+                    />  
+                    <label for="password">Senha</label>
+                </span>          
+            </p-inputGroup>
+            <div class="botoes-form">
+                <p-toast></p-toast>
+                <div class="btnsec" (click)="clearForm()">
+                    <p>Limpar</p>
+                </div>
+                <div class="btnpri" (click)="submit()">
+                    <p>LogIn</p>            
+                </div>
+            </div>       
+        </form>
+    </div>
+</div>
     
-
-
-    
->
-    <form [formGroup]="loginForm">
-        <app-primary-input
-            formControlName="email"
-            inputName="email"
-            type="email"
-            label="Email"
-            placeholder="seuemail@grupodb.com.br"
-        >
-            <img src="/assets/svg/icon-person.svg"/>
-        </app-primary-input>
-        <app-primary-input
-            formControlName="password"
-            inputName="password"
-            type="password"
-            label="Senha"
-            
-        >
-            <img src="/assets/svg/icon-passwd.svg"/>
-        </app-primary-input>
-        <span>Esqueceu sua senha?</span>
-    </form>
-
-</app-default-login-layout>    
 
 
 <!-- <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">

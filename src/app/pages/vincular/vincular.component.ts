@@ -18,7 +18,11 @@ import { Avaliado } from '../avaliado/avaliado.component';
 import { AvaliadorService } from '../../services/avaliadores/registeravaliador.service';
 import { AvaliadoService } from '../../services/avaliados/avaliado.service';
 import { TipoAvaliacaoService } from '../../services/tipoavaliacoes/registertipoavaliacao.service';
-
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzLayoutModule } from 'ng-zorro-antd/layout';
+import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { TabMenuModule } from 'primeng/tabmenu';
+import { Divider, DividerModule } from 'primeng/divider';
 
 interface RegisterAssociacaoForm{
   tipoavaliacao: FormControl,
@@ -28,8 +32,9 @@ interface RegisterAssociacaoForm{
   selector: 'app-vincular',
   standalone: true,
   imports: [
+    NzIconModule,NzLayoutModule,NzMenuModule,TabMenuModule,
     ReactiveFormsModule,FormsModule,PickListModule,
-    FormLayoutComponent,InputMaskModule,
+    FormLayoutComponent,InputMaskModule,DividerModule,
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,
   ],
   providers:[

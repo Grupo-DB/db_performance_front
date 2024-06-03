@@ -21,7 +21,11 @@ import { PerguntaService } from '../../services/perguntas/registerpergunta.servi
 import { Formulario } from '../formulario/formulario.component';
 import { Pergunta } from '../pergunta/pergunta.component';
 import { FormularioService } from '../../services/formularios/registerformulario.service';
-
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzLayoutModule } from 'ng-zorro-antd/layout';
+import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { TabMenuModule } from 'primeng/tabmenu';
+import { DividerModule } from 'primeng/divider';
 interface RegisterQuestionarioForm{
   formulario: FormControl,
   pergunta: FormControl,
@@ -33,8 +37,9 @@ interface RegisterQuestionarioForm{
   selector: 'app-questionario',
   standalone: true,
   imports: [
+    NzIconModule,NzLayoutModule,NzMenuModule,TabMenuModule,
     ReactiveFormsModule,FormsModule,PickListModule,
-    FormLayoutComponent,InputMaskModule,
+    FormLayoutComponent,InputMaskModule,DividerModule,
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
   providers:[
@@ -121,7 +126,7 @@ submit() {
   this.targetPerguntas.forEach(pergunta => {
     const idPergunta = pergunta.id;
     this.registerquestionarioService.registerquestionario(formularioId, idPergunta).subscribe({
-      next: () => this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Filial registrada com sucesso!' }),
+      next: () => this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Pergunta Adicionada com sucesso!' }),
       error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }), 
     });
   });

@@ -21,7 +21,11 @@ import { DialogModule } from 'primeng/dialog';
 import { PerguntaService } from '../../services/perguntas/registerpergunta.service';
 //import { Pergunta } from '../pergunta/pergunta.component';
 import { PickListModule } from 'primeng/picklist';
-
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzLayoutModule } from 'ng-zorro-antd/layout';
+import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { TabMenuModule } from 'primeng/tabmenu';
+import { DividerModule } from 'primeng/divider';
 
 interface RegisterFormularioForm{
   nome: FormControl
@@ -40,6 +44,7 @@ export interface Pergunta {
   selector: 'app-formulario',
   standalone: true,
   imports: [
+    TabMenuModule,NzIconModule,NzMenuModule,NzLayoutModule,DividerModule,
     ReactiveFormsModule,FormsModule,CommonModule,PickListModule,
     FormLayoutComponent,InputMaskModule,DialogModule,ConfirmDialogModule,
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule

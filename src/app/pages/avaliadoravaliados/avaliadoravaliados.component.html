@@ -1,4 +1,51 @@
 
+<div class="menu">
+    <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+        <li nz-menu-item nzMatchRouter="#">
+            <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
+        </li>
+        <li nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+            <ul>
+                <li nz-menu-item  nzMatchRouter>
+                    <a routerLink="../formulario" >Tipos de Avaliações</a>
+                </li>
+                <li nz-menu-item  nzMatchRouter>
+                    <a routerLink="../pergunta" >Perguntas</a>
+                </li>
+                <li nz-menu-item  nzMatchRouter>
+                    <a routerLink="../tipoavaliacao" >Formulários</a>
+                </li>
+            </ul>
+        </li>    
+        
+        <li nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
+            <ul>
+                <li nz-menu-item   nzMatchRouter>
+                    <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
+                </li>
+                <li nz-menu-item   nzMatchRouter>
+                    <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Tipos de Avaliação</a>
+                </li>
+                <li nz-menu-item   nzMatchRouter>
+                    <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
+                </li>
+            </ul>    
+        </li>
+
+        
+        <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
+        </li>
+        <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="#" >Histórico de Avaliações</a>
+        </li>
+        <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="#" >Relatórios</a>
+        </li>
+        
+    </ul>
+</div>
+
 <form [formGroup]="registerassociacaoForm"
 title="Montar novo Formulario"
 primaryBtnText="Cadastrar"
@@ -7,9 +54,28 @@ primaryBtnText="Cadastrar"
 
 >
 
+<div class="form1">
+    <div class="titulo">
+        <p-divider align="left" type="solid">
+            <b>Associar Avaliados a um Avaliador</b>
+        </p-divider>
+    </div>    
+    <div class="form3">
+        <p-dropdown 
+        [options]="avaliadores" 
+        formControlName="avaliador"
+        optionLabel="nome"
+        placeholder="Selecione o Avaliador"
+        >
+        </p-dropdown>
+        
+    </div>
+</div>   
+
+
 <div class="card">
     <p-pickList [source]="avaliados" [target]="targetAvaliados" sourceHeader="Avaliados" targetHeader="Selecionados" [dragdrop]="true" [responsive]="true" [sourceStyle]="{ height: '30rem' }"
-        [targetStyle]="{ height: '30rem' }" filterBy="name" sourceFilterPlaceholder="Search by name" targetFilterPlaceholder="Search by name" breakpoint="1400px"formControlName="pergunta">
+        [targetStyle]="{ height: '30rem' }" filterBy="name" sourceFilterPlaceholder="Pesquisa por nome" targetFilterPlaceholder="Pesquisa por nome" breakpoint="1400px"formControlName="pergunta">
         <ng-template let-avaliado pTemplate="item">
             <div class="flex flex-wrap p-2 align-items-center gap-3">
                 
@@ -26,35 +92,18 @@ primaryBtnText="Cadastrar"
     </p-pickList>
 </div>
 
-<div class="form1">
-
-    
-    <div class="form3">
-        <p-dropdown 
-        [options]="avaliadores" 
-        formControlName="avaliador"
-        optionLabel="nome"
-        placeholder="Selecione o Avaliador"
-        >
-        </p-dropdown>
-        
-    </div>
-</div>            
+         
 </form>
 <div class="botoes-form">
     <p-toast></p-toast>
-    <p-button 
-    label="Limpar" 
-    icon="pi pi-check" 
-    severity="warning"
-    (click)="clearForm()">
-    </p-button>
-    <p-button 
-        label="Gravar" 
-        icon="pi pi-check"
-        iconPos="right" 
-        severity="success"
-        (click)="submit()">
-    </p-button>
+    <div class="botoes-form">
+        <p-toast></p-toast>
+        <div class="btnsec" (click)="clearForm()">
+            <p>Limpar</p>
+        </div>
+        <div class="btnpri" (click)="submit()">
+            <p>Salvar</p>            
+        </div>
+    </div>   
     
 </div>

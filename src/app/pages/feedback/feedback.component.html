@@ -1,0 +1,225 @@
+<div class="container">
+    <!-- <div class="dp1">
+        <label for="tipav'">Avaliador: </label>
+        <p-dropdown
+            [style]="{'width':'60%'}"
+            id="tipav" 
+            [options]="avaliadores"
+             
+            optionLabel="nome"
+            [filter]="true"
+            filterBy="nome" 
+            [showClear]="true"
+            placeholder="SELECIONE"
+            (onChange)="onAvaliadorSelecionado($event.value)"
+        >
+        >
+        </p-dropdown>
+      </div><br>
+      <div class="dp2">  
+        <label for="ava">avaliado: </label>
+        <p-dropdown
+            [style]="{'width':'60%'}"
+            id="ava" 
+            [options]="avaliados"
+             
+            optionLabel="nome"
+            [filter]="true"
+            filterBy="nome"
+            placeholder="SELECIONE" 
+            [showClear]="true"
+            
+        >   
+        </p-dropdown>
+
+        <h2>Avaliações</h2>
+    <ul>
+      <li *ngFor="let avaliacao of avaliacoes">
+        {{ avaliacao.avaliado }}
+      </li>
+    </ul> -->
+
+    <div class="titulo">
+        <p-divider align="left" type="solid">
+            <b>Feedbacks</b>
+        </p-divider> 
+    </div> 
+
+
+        <div class="card">
+            <p-table
+                #dt2
+                [value]="avaliacoes"
+                dataKey="id"
+                [rows]="10"
+                [rowsPerPageOptions]="[10, 25, 50]"
+                [loading]="loading"
+                [paginator]="true"
+                [globalFilterFields]="['avaliadoNome','avaliadorNome']"
+                [tableStyle]="{ 'min-width': '75rem' }"
+            >
+            <ng-template pTemplate="header">
+                <tr>
+                    
+                    <th style="width:22%">Periodo</th>
+                    <th style="width:22%">Avaliado</th>
+                    <th style="width:22%">Avaliador</th>
+                    <th style="width:22%">Tipo</th>
+                    <th style="width:22%">Status</th>
+                    
+                    <th style="width: 42%;">Realizado</th>
+                    <th style="width: 22%;">Ações</th>
+                </tr>
+                <tr>
+                   
+                    <th>
+                        <p-columnFilter 
+                            
+                            type="text"
+                            field="periodo" 
+                            placeholder="Pesquisa " 
+                            ariaLabel="Filter Periodo" />
+                    </th>
+                    <th>
+                        <p-columnFilter 
+                            
+                            type="text"
+                            field="avaliadoNome" 
+                            placeholder="Pesquisa " 
+                            ariaLabel="Filter Avaliado" />
+                    </th>
+
+                    <th>
+                        <p-columnFilter 
+                            type="text"
+                            field="avaliadorNome"
+                            placeholder="Pesquisa" 
+                            ariaLabel="Filter Avaliador" />
+                    </th>
+                    <th>
+                        <p-columnFilter 
+                            type="text"
+                            field="tipoavaliacaoNome"
+                            placeholder="Pesquisa" 
+                            ariaLabel="Filter TipoAvaliacao" />
+                    </th>
+                    <th>
+                        <p-columnFilter type="boolean" field="feedback" [showMenu]="false">
+                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                <p-dropdown 
+                                    [options]="feedbackOptions" 
+                                    placeholder="Feedback" 
+                                    (onChange)="filter($event.value)">
+                                </p-dropdown>
+                            </ng-template>
+                        </p-columnFilter>
+                        <!-- <p-columnFilter type="boolean" field="feedback" /> -->
+                    </th>
+                    <th></th>
+                    <th></th>
+                   
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-avaliacao>
+                <tr>
+                    
+                    <td>
+                        {{ avaliacao.periodo }}
+                    </td>
+                    <td>
+                        {{ getNomeAvaliado(avaliacao.avaliado) }}
+                    </td>
+                    <td>
+                        {{ getNomeAvaliador(avaliacao.avaliador) }}
+                    </td>
+                    <td>
+                        {{ getNomeTipoAvaliacao(avaliacao.tipoavaliacao) }}
+                    </td>
+                    <td>
+                        <i class="pi" [ngClass]="{ 'text-green-500 pi-check-circle': avaliacao.feedback, 'text-red-500 pi-times-circle': !avaliacao.feedback }"></i>
+                        
+                    </td>
+                    <!-- <td><button (click)="onFeedbackButtonClick(avaliacao.id)">Marcar Feedback e Finalizar</button></td> -->
+                    
+                    <td>{{avaliacao.finished_at}}</td>
+                    <td>
+                        <div class="btnpri" (click)="abrirModalEdicao(avaliacao.id)">
+                            <p>Editar</p>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+            
+            </p-table>
+        </div>
+
+        <p-dialog 
+            
+            [modal]="true"
+            [(visible)]="visible"
+            [style]="{ width: '50rem' }" 
+            [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+        >
+        <div class="geral">   
+            <p-divider align="left" type="solid">
+                
+                <b>Feedback</b>
+            </p-divider>
+
+            <div *ngIf="avaliacaoDetalhe">
+                <h2>Detalhes da Avaliação</h2>
+                <p>Id: {{ avaliacaoDetalhe.id }}</p>
+                <p>Periodo: <strong>{{ avaliacaoDetalhe.periodo }}</strong></p>
+                <p>Avaliado: <strong>{{ getNomeAvaliado(avaliacaoDetalhe.avaliado) }}</strong></p>
+                <p>Avaliador:<strong> {{ getNomeAvaliador(avaliacaoDetalhe.avaliador) }}</strong></p>
+                <p>Tipo de Avaliação:<strong> {{ getNomeTipoAvaliacao(avaliacaoDetalhe.tipoavaliacao) }}</strong></p>
+                <p-divider></p-divider>
+                <pre>{{perguntasRespostasFormatada}}</pre>
+            </div>
+            <p-divider></p-divider>
+            <div class="obs">
+                <form [formGroup]="registerfbForm" (submit)="submit()">
+                    <p><strong>Observações:</strong></p>
+                    <textarea 
+                        rows="3"
+                        cols="30" 
+                        pInputTextarea 
+                        formControlName="observacoes"
+                    >
+                    </textarea>
+                    <div class="btnpri2" (click)="submit()">
+                        <p>Salvar</p>
+                    </div>
+                    
+                    
+                </form>    
+            </div>
+            <p-divider></p-divider>
+            <div class="btnpri3" (click)="onFeedbackButtonClick(avaliacaoDetalhe.id)">
+               <br> <p>Finalizar</p>
+            </div>
+        </div>
+        </p-dialog> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>

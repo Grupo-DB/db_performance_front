@@ -17,7 +17,13 @@ import { PerguntaService } from '../../services/perguntas/registerpergunta.servi
 import { CommonModule } from '@angular/common';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
-
+import { EditorModule } from 'primeng/editor';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { DividerModule } from 'primeng/divider';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzLayoutModule } from 'ng-zorro-antd/layout';
+import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { TabMenuModule } from 'primeng/tabmenu';
 
 interface RegisterPerguntaForm{
   texto: FormControl,
@@ -32,8 +38,9 @@ export interface Pergunta{
   selector: 'app-pergunta',
   standalone: true,
   imports: [ 
-    ReactiveFormsModule,FormsModule,CommonModule,
-    FormLayoutComponent,InputMaskModule,DialogModule,ConfirmDialogModule,
+    NzIconModule,NzLayoutModule,NzMenuModule,TabMenuModule,
+    ReactiveFormsModule,FormsModule,CommonModule,EditorModule,InputTextareaModule,
+    FormLayoutComponent,InputMaskModule,DialogModule,ConfirmDialogModule,DividerModule,
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
   providers: [

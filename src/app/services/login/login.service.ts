@@ -49,6 +49,18 @@ export class LoginService {
     }
     return null;
   }
+
+  logout() {
+    // Remover tokens de autenticação e qualquer outra informação relevante do armazenamento local
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    // Redirecionar para a página de login
+    this.router.navigate(['']);
+  }
+
+  // Outras funções de autenticação, como login, verificar se está autenticado, etc.
+
+
 }
 
 

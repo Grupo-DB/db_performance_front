@@ -1,22 +1,35 @@
 @import "primeicons/primeicons.css";
+// import Quill styles in styles.scss
+@import "../../../../node_modules/quill/dist/quill.core.css";
+@import "../../../../node_modules/quill/dist/quill.snow.css";
 
 .container{
     
     display: flex;
     flex-flow: column wrap;
-    align-items: center;
+    align-items: start;
     
 }
 
 .form-geral{
-    
+    margin-top: 20px;
+    margin-left: 20px;
+    width: 100%;
     border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    
+    .form1{
+        padding: 20px;
+        width: 31%;
+        .lg{
+            margin-left: 18px;
+        }
+    }
     
 }
 .titulo{
-    justify-content: center;
-    text-align: center;
+    margin-top: 10px;
+    margin-left: 30px;
+    text-align: start;
     h2{
         color:slategrey;
     }
@@ -82,3 +95,36 @@
         margin-left: 2px;
     }
 }
+
+.btnpri{
+    cursor: pointer;
+    background-color: #444959;
+    color: #fff;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    margin-left: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}   
+.btnsec{
+    cursor: pointer;
+    background-color: #e3e3f3;
+    color: #444959;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}
+
+.menu{
+    position:static;
+     //transform: translate(-1%, -180%);
+     
+     width: 100%;
+ }

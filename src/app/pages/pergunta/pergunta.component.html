@@ -1,9 +1,58 @@
+<div class="menu">
+    <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+        <li nz-menu-item nzMatchRouter="#">
+            <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
+        </li>
+        <li nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+            <ul>
+                <li nz-menu-item  nzMatchRouter>
+                    <a routerLink="../formulario" >Tipos de Avaliações</a>
+                </li>
+                <li nz-menu-item  nzMatchRouter>
+                    <a routerLink="../pergunta" >Perguntas</a>
+                </li>
+                <li nz-menu-item  nzMatchRouter>
+                    <a routerLink="../tipoavaliacao" >Formulários</a>
+                </li>
+            </ul>
+        </li>    
+        
+        <li nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
+            <ul>
+                <li nz-menu-item   nzMatchRouter>
+                    <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
+                </li>
+                <li nz-menu-item   nzMatchRouter>
+                    <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Tipos de Avaliação</a>
+                </li>
+                <li nz-menu-item   nzMatchRouter>
+                    <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
+                </li>
+            </ul>    
+        </li>
+
+        
+        <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
+        </li>
+        <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="#" >Histórico de Avaliações</a>
+        </li>
+        <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="#" >Relatórios</a>
+        </li>
+        
+    </ul>
+</div>
+
+
 <div class="container">
-    
+
+
     <div class="form-geral">
-        <div class="titulo">
-            <h2>Cadastrar Nova Pergunta</h2>
-        </div>    
+        <p-divider align="left" type="solid">
+            <b>Cadastrar nova pergunta</b>
+        </p-divider>     
         <form [formGroup]="registerperguntaForm"
         title="Cadastrar Nova Pergunta"
         primaryBtnText="Cadastrar"
@@ -23,41 +72,31 @@
                     <label for="texto">Digite a Pergunta</label>
                 </span>          
             </p-inputGroup>
-            <p-inputGroup>
-                <p-inputGroupAddon>
-                    <i class="pi pi-user"></i>
-                </p-inputGroupAddon>
-                <span class="p-float-label">
-                    <input pInputText
-                        id="legenda"
+            
+                <div class="lg">
+                    <p><strong>Legenda</strong></p>
+                    <textarea 
+                        rows="3"
+                        cols="35" 
+                        pInputTextarea 
                         formControlName="legenda"
-                        type="text"
-                    />  
-                    <label for="texto">Digite a Legendaa</label>
-                </span>          
-            </p-inputGroup>
+                    >
+                    </textarea>
+                </div>    
         </div>            
         </form>
     </div>    
-  
+   
     <div class="botoes-form">
         <p-toast></p-toast>
-        <p-button 
-        label="Limpar" 
-        icon="pi pi-check" 
-        severity="warning"
-        (click)="clearForm()">
-        </p-button>
-        <p-button 
-            label="Gravar" 
-            icon="pi pi-check"
-            iconPos="right" 
-            severity="success"
-            (click)="submit()">
-        </p-button>
-        
+        <div class="btnsec" (click)="clearForm()">
+            <p>Limpar</p>
+        </div>
+        <div class="btnpri" (click)="submit()">
+            <p>Salvar</p>            
+        </div>
     </div>
-    <hr>
+    
         <div class="tabela">
             <p-table
                 #dt1
@@ -102,8 +141,14 @@
                         <td class="td-acao">
                             <p-toast />
                             <p-confirmDialog />
-                            <button pButton label="Editar" severity="help" (click)="abrirModalEdicao(pergunta)"></button>
-                            <button pButton label="Excluir" severity="danger"  (click)="excluirPergunta(pergunta.id)"></button>
+                            <div class="btnsec" (click)="abrirModalEdicao(pergunta)">
+                                <p>Editar</p>
+                            </div>
+                            
+                            <div class="btnpri" (click)="excluirPergunta(pergunta.id)">
+                                <p>Salvar</p>            
+                            </div>
+                            
                         </td>
                     </tr>
                 </ng-template>
@@ -141,22 +186,16 @@
                     <label for="texto">Digite a Pergunta</label>
                 </span>          
             </p-inputGroup>
+            
         </div>
         <div class="botoes-form">
             <p-toast></p-toast>
-            <p-button 
-            label="Limpar" 
-            icon="pi pi-check" 
-            severity="warning"
-            (click)="cleareditForm()">
-            </p-button>
-            <p-button 
-                label="Gravar" 
-                icon="pi pi-check"
-                iconPos="right" 
-                severity="success"
-                (click)="saveEdit()">
-            </p-button>
+            <div class="btnsec" (click)="cleareditForm()">
+                <p>Limpar</p>
+            </div>
+            <div class="btnpri" (click)="saveEdit()">
+                <p>Salvar</p>            
+            </div>
         </div>  
         </form>
         </p-dialog>
@@ -164,3 +203,4 @@
 
 
 
+  

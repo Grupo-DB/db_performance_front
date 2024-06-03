@@ -1,0 +1,38 @@
+.container{
+    text-transform: uppercase;
+    .avaliador{
+        .titles {    
+            display: flex;
+            justify-content: space-between;
+            p {
+                font-weight: bolder;
+                text-decoration: underline;
+            }   
+        }
+    }
+    .drops{
+        display: flex;
+        justify-content: space-between;
+    }
+    .dp1{
+        
+        width: 50%;
+    }
+    .dp2{
+        
+        width: 50%;
+    }
+    .avaliado{
+        display: flex;
+        .dvimg{
+            margin-top: 3%;
+            margin-left: 50%;
+        }
+    }
+    .dvform{
+        .rg{
+            display: flex;
+            justify-content: space-between;
+        }
+    }
+}

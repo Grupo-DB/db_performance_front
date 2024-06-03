@@ -18,7 +18,11 @@ import { Formulario } from '../formulario/formulario.component';
 import { FormularioService } from '../../services/formularios/registerformulario.service';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
-
+import { DividerModule } from 'primeng/divider';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzLayoutModule } from 'ng-zorro-antd/layout';
+import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { TabMenuModule } from 'primeng/tabmenu';
 interface RegisterTipoAvaliacaoForm{
   nome: FormControl,
   formulario:FormControl,
@@ -33,7 +37,7 @@ export interface TipoAvaliacao{
   selector: 'app-tipoavaliacao',
   standalone: true,
   imports: [ 
-    ReactiveFormsModule,FormsModule,
+    ReactiveFormsModule,FormsModule,TabMenuModule,DividerModule,NzIconModule,NzLayoutModule,NzMenuModule,
     FormLayoutComponent,InputMaskModule,DialogModule,ConfirmDialogModule,
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],

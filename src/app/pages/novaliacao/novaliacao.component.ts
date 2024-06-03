@@ -19,7 +19,7 @@ import { GetCargoService } from '../../services/cargos/getcargo.service';
 import { GetCompanyService } from '../../services/companys/getcompany.service';
 import { GetFilialService } from '../../services/filiais/getfilial.service';
 import { GetSetorService } from '../../services/setores/get-setor.service';
-import { GetAvaliacaoService } from '../../services/avaliacoes/getavaliacao.service';
+import { AvaliacaoService } from '../../services/avaliacoes/getavaliacao.service';
 import { RegisterAvaliacaoService } from '../../services/avaliacoes/registeravaliacao.service.spec';
 import { MatRadioChange } from '@angular/material/radio';
 import { RadioButtonModule } from 'primeng/radiobutton';
@@ -46,28 +46,41 @@ import { Colaborador } from '../colaborador/colaborador.component';
 import { Avaliado } from '../avaliado/avaliado.component';
 import { justificativaValidator } from './justificativaValidator';
 import { TipoAvaliacaoService } from '../../services/tipoavaliacoes/registertipoavaliacao.service';
+import { DividerModule } from 'primeng/divider';
+import { async } from 'rxjs';
+import { Ambiente } from '../ambiente/ambiente.component';
+import { Area } from '../area/area.component';
+import { Filial } from '../filial/filial.component';
+import { Empresa } from '../registercompany/registercompany.component';
+import { Setor } from '../setor/setor.component';
+import { TipoContrato } from '../tipocontrato/tipocontrato.component';
+import { Cargo } from '../cargo/cargo.component';
+import { RegisterCompanyService } from '../../services/companys/registercompany.service';
+import { AmbienteService } from '../../services/ambientes/ambiente.service';
+import { AreaService } from '../../services/areas/registerarea.service';
+import { CargoService } from '../../services/cargos/registercargo.service';
+import { FilialService } from '../../services/filiais/registerfilial.service';
+import { SetorService } from '../../services/setores/registersetor.service';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 
+export interface Avaliacao{
+  id: number;
+  periodo: string;
+  perguntasRespostas: JSON;
+  observacoes: Text;
+  tipoavaliacao: number;
+  avaliador: number;
+  avaliado: number;
+  feedback:boolean;
+}
 
-// interface RegisterAvaliacaoForm{
-//   tipoavaliacao: string,
-//   colaborador: string,
-//   data_avaliacao: string,
-//   periodo:string,
-//   perguntasRespostas: RespostasFormatadas,
-//}
 export interface RespostasFormatadas {
   [key: string]: { resposta: string; justificativa: string };
 }
 interface TipoAvaliacao{
   nome: string
 }
-// interface Colaborador {
-//   nome: string;
-//   cargo_nome: string;
-//   area_nome: string;
-//   setor_nome: string;
-//   image: string;
-// }
+
 interface Avaliador{
   nome: string
 }
@@ -78,20 +91,15 @@ interface Formulario{
 interface Periodo{
   nome: string
 }
-interface Pergunta{
-  texto: string
-  id: number
-}
-interface Cargo{
-  nome:string
-}
+
+
 
 @Component({
   selector: 'app-novaliacao',
   standalone: true,
   imports: [
-    ReactiveFormsModule,FormsModule,StepperModule, RouterOutlet,CommonModule,MatStepperModule,MatFormFieldModule,CalendarModule,MatRadioModule,
-    FormLayoutComponent,InputMaskModule,StepsModule,NzStepsModule,MatInputModule,MatButtonModule,AsyncPipe,MatSelectModule,RadioButtonModule,
+    ReactiveFormsModule,FormsModule,StepperModule, RouterOutlet,CommonModule,MatStepperModule,MatFormFieldModule,CalendarModule,MatRadioModule,DividerModule,
+    FormLayoutComponent,InputMaskModule,StepsModule,NzStepsModule,MatInputModule,MatButtonModule,AsyncPipe,MatSelectModule,RadioButtonModule,InputTextareaModule,
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,
   ],
   providers: [
@@ -108,7 +116,13 @@ export class NovaliacaoComponent implements OnInit {
   formularios: Formulario [] | undefined;
   formularioSelecionado: number | undefined;
   periodos: Periodo [] | undefined;
- 
+  empresas: Empresa[]| undefined;
+  filiais: Filial[]| undefined;
+  areas: Area[]| undefined;
+  setores: Setor[]| undefined;
+  cargos: Cargo[]| undefined;
+  ambientes: Ambiente[]| undefined;
+  tipocontratos: TipoContrato[]| undefined;
   perguntas: any [] = [];
   respostas: any [] = [];
   activeIndex: number = 0;
@@ -131,7 +145,8 @@ export class NovaliacaoComponent implements OnInit {
   respostasJustificativas: { [key: string]: { resposta: string, justificativa: string } } = {};
   tipoavSelecionadoId: number | null = null;
   registeravaliacaoForm: FormGroup;
-  
+  periodo: any;
+  tipoAvaliacao: any;
   conceitos: any[] = [
     { key: 'otimo', name: 'Ótimo', value: 5 },
     { key: 'bom', name: 'Bom', value: 4 },
@@ -143,11 +158,16 @@ export class NovaliacaoComponent implements OnInit {
   constructor(
     private router: Router,
     private messageService: MessageService,
-    private tipoavaliacaoService: GetTipoAvaliacaoService,
+    private filialService: FilialService,
+    private areaService: AreaService,
+    private setorService: SetorService,
+    private cargoService: CargoService,
+    private ambienteService: AmbienteService,
+    private tipocontratoService: TipoContratoService,
     private colaboradorService: ColaboradorService,
     private registeravaliacaoService: RegisterAvaliacaoService,
     private getformularioService: GetFormularioService,
-    private getavaliacaoService: GetAvaliacaoService,
+    private avaliacaoService: AvaliacaoService,
     private avaliadorService: AvaliadorService,
     private perguntasService: PerguntasService,
     private cdRef: ChangeDetectorRef,
@@ -155,6 +175,7 @@ export class NovaliacaoComponent implements OnInit {
     private tipoAvaliacaoService: TipoAvaliacaoService,
     private avaliadoService: AvaliadoService,
     private fb: FormBuilder,
+    private registercompanyService:RegisterCompanyService
     
   )
 
@@ -164,16 +185,72 @@ export class NovaliacaoComponent implements OnInit {
       avaliador:['',],
       avaliado:['', ],
       periodo:['',],
+      //feedback:['',],
       perguntasRespostas: this.fb.group({}),
-      feedback:[''],
     },{ validators: justificativaValidator() });
   }
  
   ngOnInit(): void {
-
+    //this.periodo = this.obterTrimestre();
     this.trimestre = '';
     this.obterTrimestre();  
+    this.registercompanyService.getCompanys().subscribe(
+      empresas => {
+        this.empresas = empresas;
+      },
+      error => {
+        console.error('Error fetching users:',error);
+      }
+    );
+    this.filialService.getFiliais().subscribe(
+      filiais => {
+        this.filiais = filiais;
+      },
+      error => {
+        console.error('Error fetching users:', error);
+      }
+    );
+    this.tipocontratoService.getTiposContratos().subscribe(
+      tipocontratos => {
+        this.tipocontratos = tipocontratos;
+      },
+      error => {
+        console.error('Error fetching users:', error);
+      }
+    );
   
+    this.cargoService.getCargos().subscribe(
+      cargos => {
+        this.cargos = cargos;
+      },
+      error => {
+        console.error('Error fetching users:', error);
+      }
+    );
+    this.setorService.getSetores().subscribe(
+      setores => {
+        this.setores = setores;
+      },
+      error => {
+        console.error('Error fetching users:',error);
+      }
+    );
+    this.areaService.getAreas().subscribe(
+      areas => {
+        this.areas = areas;
+      },
+      error => {
+        console.error('Error fetching users:',error);
+      }
+    );
+    this.ambienteService.getAmbientes().subscribe(
+      ambientes => {
+        this.ambientes = ambientes;
+      },
+      error =>{
+        console.error('Error fetching users:',error);
+      }
+    )
     // this.inicializarRespostasJustificativas();
 
     // this.perguntas.forEach(pergunta => {
@@ -236,7 +313,7 @@ export class NovaliacaoComponent implements OnInit {
       }
     );
   
-    this.getavaliacaoService.getAvaliacoes().subscribe(
+    this.avaliacaoService.getAvaliacoes().subscribe(
       avaliacoes => {
         this.avaliacoes = avaliacoes;
       },
@@ -251,7 +328,7 @@ export class NovaliacaoComponent implements OnInit {
       error => {
         console.error('Error fetching users:',error);
       }
-    );
+     );
     this.tipoAvaliacaoService.getTipoAvaliacaos().subscribe(
       tipoavaliacoes => {
         this.tipoavaliacoes = tipoavaliacoes;
@@ -260,7 +337,11 @@ export class NovaliacaoComponent implements OnInit {
         console.error('Error fetching users:',error);
       }
     );
+    //this.carregarMeusAvaliadosSemAvaliacao();
   }
+  
+
+
   requireJustification: boolean = false;
   justification: string = '';  
   onOptionChange(option: any): void {
@@ -293,16 +374,39 @@ export class NovaliacaoComponent implements OnInit {
     }
   }
 
+  // obterTrimestre(): string {
+  //   const dataAtual = new Date();
+  //   const mesAtual = dataAtual.getMonth() + 1; // +1 porque os meses em JavaScript são indexados a partir de 0
+  //   switch (Math.ceil(mesAtual / 3)) {
+  //     case 1:
+  //       return 'Q1-' + dataAtual.getFullYear();
+  //     case 2:
+  //       return 'Q2-' + dataAtual.getFullYear();
+  //     case 3:
+  //       return 'Q3-' + dataAtual.getFullYear();
+  //     case 4:
+  //       return 'Q4-' + dataAtual.getFullYear();
+  //     default:
+  //       return 'Indeterminado';
+  //   }
+  // }
+
+
   onTipoAvaliacaoSelecionado(tipoavaliacao: any): void {
     const id = tipoavaliacao.id;
     if (id !== undefined) {
       console.log('Tipo Avaliacao selecionado ID:', id); // Log para depuração
       this.tipoavSelecionadoId = id;
-      this.avaliadoByTipoAvaliacao();
+      this.carregarMeusAvaliadosSemAvaliacao();
     } else {
       console.error('O ID do avaliado é indefinido');
     }
   }
+  // onTipoAvaliacaoChange(event: Event): void {
+  //   const selectElement = event.target as HTMLSelectElement;
+  //   this.tipoAvaliacao = selectElement.value;
+  //   this.carregarMeusAvaliadosSemAvaliacao();
+  // }
 
   avaliadoByTipoAvaliacao(): void {
     if (this.tipoavSelecionadoId !== null) {
@@ -312,7 +416,34 @@ export class NovaliacaoComponent implements OnInit {
       });
     }
   }
-
+  getNomeEmpresa(id: number): string {
+    const empresa = this.empresas?.find(emp => emp.id === id);
+    return empresa ? empresa.nome : 'Empresa não encontrada';
+  }
+  getNomeFilial(id: number): string {
+    const filial = this.filiais?.find(fil => fil.id === id);
+    return filial ? filial.nome : 'Filial não encontrada';
+  }
+  getNomeArea(id: number): string {
+    const area = this.areas?.find(are => are.id === id);
+    return area ? area.nome : 'Area não encontrada';
+  }
+  getNomeSetor(id: number): string {
+    const setor = this.setores?.find(set => set.id === id);
+    return setor ? setor.nome : 'Setor não encontrada';
+  }
+  getNomeAmbiente(id: number): string {
+    const ambiente = this.ambientes?.find(amb => amb.id === id);
+    return ambiente ? ambiente.nome : 'Ambiente não encontrada';
+  }
+  getNomeCargo(id: number): string {
+    const cargo = this.cargos?.find(cargo => cargo.id === id);
+    return cargo ? cargo.nome : 'Cargo não encontrada';
+  }
+  getNomeTipoContrato(id: number): string {
+    const tipocontrato = this.tipocontratos?.find(tipocontrato => tipocontrato.id === id);
+    return tipocontrato ? tipocontrato.nome : 'Tipo de contrato não encontrado';
+  }  
   // onAvaliadoSelecionado(avaliado: any): void {
   //   const id =avaliado.id;
   //   console.log('Avaliado selecionado ID:', id); // Log para depuração
@@ -379,6 +510,21 @@ export class NovaliacaoComponent implements OnInit {
         reject('O ID do avaliado é indefinido');
       }
     });
+  }
+
+  carregarMeusAvaliadosSemAvaliacao(): void {
+    if (this.periodo !== 'Indeterminado' && this.tipoavSelecionadoId ) {
+      this.avaliadoService.getMeusAvaliadosSemAvaliacao(this.periodo, this.tipoavSelecionadoId).subscribe(
+        data => {
+          this.avaliados = data;
+        },
+        error => {
+          console.error('Erro na requisição:', error);
+        }
+      );
+    } else {
+      console.error('Período ou tipo de avaliação inválido');
+    }
   }
 
   async carregarTipoAvaliacaoEFormularios(userId: number): Promise<void> {
@@ -582,20 +728,20 @@ getAvaliadorInfo(): void {
           justificativa: ['']
         });
         perguntaGroup.get('resposta')!.valueChanges.subscribe(() => this.onRespostaChange(index));
-        perguntasRespostasGroup.addControl(`pergunta-${pergunta.id}`, perguntaGroup);
+        perguntasRespostasGroup.addControl(`pergunta-${pergunta.texto}`, perguntaGroup);
         // Chama a função de validação inicial para configurar os validadores corretamente
         
       });
     }
    
 
-    getRespostaValue(perguntaId: number): string {
-      const respostaControl = this.registeravaliacaoForm.get(`perguntasRespostas.pergunta-${perguntaId}.resposta`);
+    getRespostaValue(perguntaTxt: string): string {
+      const respostaControl = this.registeravaliacaoForm.get(`perguntasRespostas.pergunta-${perguntaTxt}.resposta`);
       return respostaControl ? respostaControl.value : '';
     }
   
-    getJustificativaValue(perguntaId: number): string {
-      const justificativaControl = this.registeravaliacaoForm.get(`perguntasRespostas.pergunta-${perguntaId}.justificativa`);
+    getJustificativaValue(perguntaTxt: string): string {
+      const justificativaControl = this.registeravaliacaoForm.get(`perguntasRespostas.pergunta-${perguntaTxt}.justificativa`);
       return justificativaControl ? justificativaControl.value : '';
     }
    
@@ -617,7 +763,7 @@ getAvaliadorInfo(): void {
     }
   
     isJustificativaRequired(index: number): boolean {
-      const perguntaGroup = this.registeravaliacaoForm.get(`perguntasRespostas.pergunta-${this.perguntas[index].id}`) as FormGroup;
+      const perguntaGroup = this.registeravaliacaoForm.get(`perguntasRespostas.pergunta-${this.perguntas[index].texto}`) as FormGroup;
       const justificativaControl = perguntaGroup?.get('justificativa');
       return (justificativaControl?.hasError('required') && (justificativaControl?.touched || justificativaControl?.dirty)) ?? false;
     }
@@ -764,8 +910,9 @@ getAvaliadorInfo(): void {
         avaliadorId,
         avaliadoId,
         periodo,
+        //feedback,
         perguntasRespostasJSON,
-        feedback
+        
       ).subscribe({
         next: () => this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Filial registrada com sucesso!' }),
         error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }), 

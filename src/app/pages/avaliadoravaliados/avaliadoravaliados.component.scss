@@ -1,0 +1,61 @@
+.form3{
+    margin-top: 50px;
+    margin-left: 90px;
+}
+
+.card{
+    margin-top: 20px;
+}
+
+.botoes-form{
+    width: 93%;
+    margin-bottom: 2%;
+    margin-top: 1%;
+    display: flex;
+    justify-content: end;
+    
+    p-button{
+        margin-right: 3%;
+        
+    }
+}
+
+.btnpri{
+    cursor: pointer;
+    background-color: #444959;
+    color: #fff;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    margin-left: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}   
+.btnsec{
+    cursor: pointer;
+    background-color: #e3e3f3;
+    color: #444959;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}
+.titulo{
+    justify-content: center;
+    text-align: center;
+    margin-top: 50px;
+    h2{
+        color:slategrey;
+    }
+}
+.menu{
+    position:static;
+     //transform: translate(-1%, -180%);
+     
+     width: 100%;
+ }

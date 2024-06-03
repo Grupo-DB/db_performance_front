@@ -36,6 +36,7 @@ interface RegisterAvaliadorForm{
 export interface Avaliador{
   id: number;
   user: number;
+  nome: string;
   colaborador: number;
 }
 
