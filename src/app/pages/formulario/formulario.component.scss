@@ -1,27 +1,10 @@
 @import "primeicons/primeicons.css";
 
 .container{
-    
     display: flex;
     flex-flow: column wrap;
-    align-items: center;
-    
 }
 
-.form1{
-    width: 50%;
-    
-    p-inputGroup{
-        width: 100%;
-    }
-}
-
-.form-geral{
-    
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-    
-}
 .titulo{
     justify-content: center;
     text-align: center;
@@ -30,6 +13,26 @@
         color:slategrey;
     }
 }
+
+.form-geral{
+    width: 100%;    
+}
+.fg1{
+    width: 50%;
+}
+
+.form1{
+    width: 100%;
+}
+.form2{
+    width: 100%;
+    p{
+        
+        margin-left: 20px;
+    }
+}
+
+
  form{
     margin-top: 2%;
     display: flex;
@@ -123,3 +126,39 @@
      
      width: 100%;
  }
+
+ .fg1ed{
+    justify-content: center;
+    width: 80%;
+}
+
+.form1ed{
+    width: 100%;    
+    margin-left: 50px;
+
+    p{
+        
+        margin-left: 20px;
+    }
+
+}
+.form2ed{
+    width: 100%;    
+    margin-left: 50px;
+
+    p{
+        
+        margin-left: 20px;
+    }
+
+}
+
+ .botoes-formed{
+    width: 80%;
+    margin-bottom: 2%;
+    margin-top: 15px;
+    margin-left: 37px;
+    display: flex;
+    justify-content: end;
+
+}

@@ -4,16 +4,29 @@
     
     display: flex;
     flex-flow: column wrap;
-    align-items: center;
+}
+.form-geral{
+    width: 100%;   
+}
+.fg1{
+    width:50%;
+    p{
+        margin-left: 20px;
+    }
+}
+.form3{
+    width:100%;  
+}
+.f4{
     
+    margin-top: 5px;
+}
+.f5{
+    
+    margin-top: 25px;
 }
 
-.form-geral{
-    
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-    
-}
+
 .titulo{
     justify-content: center;
     text-align: center;
@@ -51,11 +64,12 @@
  }
  
  .botoes-form{
-    width: 40%;
+    width: 49%;
     margin-bottom: 2%;
     margin-top: 1%;
     display: flex;
-    justify-content: center;
+    justify-content: end;
+    
     p-button{
         margin-right: 3%;
         
@@ -82,3 +96,61 @@
         margin-left: 2px;
     }
 }
+.btnpri{
+    cursor: pointer;
+    background-color: #444959;
+    color: #fff;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    margin-left: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}
+.btnsec{
+    cursor: pointer;
+    background-color: #e3e3f3;
+    color: #444959;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}
+.form1ed{
+    width: 100%;    
+    margin-left: 50px;
+
+    p{
+        
+        margin-left: 20px;
+    }
+
+}
+.fg1ed{
+    justify-content: center;
+    width: 80%;
+}
+
+.f1ed{
+    width: 100%;    
+    margin-left: 50px;
+
+    p{
+        
+        margin-left: 20px;
+    }
+}
+.f3ed{
+    width: 100%;    
+    margin-left: 50px;
+
+    p{
+        
+        margin-left: 20px;
+    }
+}    

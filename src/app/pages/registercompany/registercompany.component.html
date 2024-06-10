@@ -1,9 +1,11 @@
 <div class="container">
-    
+    <div class="titulo">
+        <p-divider align="left" type="solid">
+            <b>Cadastrar Nova Empresa</b>
+        </p-divider> 
+    </div>
   <div class="form-geral">
-      <div class="titulo">
-          <h2>Cadastrar Nova Empresa</h2>
-      </div>    
+    
       <form [formGroup]="registercompanyForm"
       title="Cadastrar nova Empresa"
       primaryBtnText="Cadastrar"
@@ -25,10 +27,10 @@
               </span>          
           </p-inputGroup>
         
-            <div class="teste">  
+            <div class="teste" >  
                 <span class="p-float-label">
-                    <p-inputMask id="cnpj_input" mask="99.999.999/9999-99" formControlName="cnpj" ></p-inputMask>
-                    <label for="cnpj_input">Informe o CNPJ</label>
+                    <p-inputMask  id="cnpj_input" mask="99.999.999/9999-99" formControlName="cnpj" [style]="{'width':'90%'}" ></p-inputMask>
+                    <label  for="cnpj_input">Informe o CNPJ</label>
                 </span>  
             </div>      
                   
@@ -93,24 +95,18 @@
       </form>
   </div>    
 
-  <div class="botoes-form">
-      <p-toast></p-toast>
-      <p-button 
-      label="Limpar" 
-      icon="pi pi-check" 
-      severity="warning"
-      (click)="clearForm()">
-      </p-button>
-      <p-button 
-          label="Gravar" 
-          icon="pi pi-check"
-          iconPos="right" 
-          severity="success"
-          (click)="submit()">
-      </p-button>
+    <div class="botoes-form">
+        <p-toast></p-toast>
+        <div class="btnsec" (click)="clearForm()">
+            <p>Limpar</p>
+        </div>
+        <div class="btnpri" (click)="submit()">
+            <p>Salvar</p>            
+        </div>
+    </div>
       
-  </div>
-  <hr>
+  
+  
 
       <div class="tabela">
           <p-table
@@ -172,8 +168,13 @@
                       <td class="td-acao">
                         <p-toast />
                         <p-confirmDialog />
-                            <button pButton label="Editar" severity="help" (click)="abrirModalEdicao(empresa)"></button>
-                            <button pButton label="Excluir" severity="danger"  (click)="excluirEmpresa(empresa.id)"></button>  
+                        <div class="btnsec" (click)="abrirModalEdicao(empresa)">
+                            <p>Editar</p>
+                        </div>
+                        
+                        <div class="btnpri" (click)="excluirEmpresa(empresa.id)">
+                            <p>Excluir</p>            
+                        </div>
                       </td>
                   </tr>
               </ng-template>
@@ -187,12 +188,17 @@
         </div>
       
     <p-dialog 
-        header="Editar Empresa" 
+        
         [modal]="true"
         [(visible)]="editFormVisible" 
         [style]="{ width: '50rem' }" 
         [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
     >  
+    <div class="titulo">
+        <p-divider align="left" type="solid">
+            <b>Editar Empresa</b>
+        </p-divider> 
+    </div>
           <form [formGroup]="editForm">
             <div class="form1">
                 <p-inputGroup>
@@ -231,7 +237,7 @@
                   </span>          
               </p-inputGroup>
             </div>    
-            <div class="form2">
+            <div class="form2ed">
                 <p-inputGroup>
                     <p-inputGroupAddon>
                         <i class="pi pi-at"></i>
@@ -273,27 +279,21 @@
                         <label for="codigo">Digite o cód da empresa</label>
                     </span>          
                 </p-inputGroup>
-                <div class="botoes-form">
-                    <p-toast></p-toast>
-                    <p-button 
-                    label="Limpar" 
-                    icon="pi pi-check" 
-                    severity="warning"
-                    (click)="cleareditForm()">
-                    </p-button>
-                    <p-button 
-                        label="Gravar" 
-                        icon="pi pi-check"
-                        iconPos="right" 
-                        severity="success"
-                        (click)="saveEdit()">
-                    </p-button>
+                <div class="botoes-formed">
+                    
+                    <div class="btnsec" (click)="cleareditForm()">
+                        <p>Limpar</p>
+                    </div>
+                    
+                     <div class="btnpri" (click)="saveEdit()">
+                        <p>Salvar</p>            
+                    </div>
                     
                 </div>
             </div>    
           </form>
         
       </p-dialog>
-     
+    
 
-</div><!--end container-->
+ </div>

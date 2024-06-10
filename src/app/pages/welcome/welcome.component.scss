@@ -1,5 +1,6 @@
 
-
+@import "../../../../node_modules/quill/dist/quill.core.css";
+@import "../../../../node_modules/quill/dist/quill.snow.css";
 
 :host {
     display: flex;
@@ -88,13 +89,30 @@
     font-size: 18px;
   }
 
-  
+  .app-header .inicio{
+    display: flex;
+    position: absolute;
+    margin-left: 70px;
+    
+    .divnot{
+      
+      transform: translate(-0%, 1%);
+      margin-top: -5px;
+      font-size: 12px;
+    }
+    .divnot2{
+      transform: translate(-71%,20%);
+      //background-color: #1890ff;
+      font-size: 12px;
+    }
+  }
 
   .app-header .final{
     display: flex;
     position: absolute;
     right: 120px;
     //background-color: #1890ff;
+    
     .empresa{
       
       transform: translate(65%, -15%);

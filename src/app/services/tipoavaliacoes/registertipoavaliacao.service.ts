@@ -12,8 +12,8 @@ export class TipoAvaliacaoService {
   private apiUrl = 'http://localhost:8000/management/tipoavaliacoes/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
-  registertipoavaliacao(nome: string, formulario:string,){
-    return this.httpClient.post(this.apiUrl,{nome,formulario}).pipe(
+  registertipoavaliacao(nome: string){
+    return this.httpClient.post(this.apiUrl,{nome}).pipe(
     );
   }
   getTipoAvaliacaos(): Observable<any[]>{
@@ -27,13 +27,7 @@ export class TipoAvaliacaoService {
     const url = `${this.apiUrl}${id}/`;
     return this.httpClient.delete(url);
   } 
-  registerassociacao(tipoavaliacao: number, avaliado_id: number){
-    
-    const url = `${this.apiUrl}${tipoavaliacao}/add_avaliado/`;
-    return this.httpClient.post(url,{tipoavaliacao,avaliado_id}).pipe(
 
-    );
-  }
   carregarTipoAvaliacao(userId: number): Observable<any> {
     return this.httpClient.get(`${this.apiUrl}user/${userId}/`);
   }

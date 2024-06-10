@@ -23,7 +23,7 @@ import { FilialService } from '../../services/filiais/registerfilial.service';
 import { RegisterCompanyService } from '../../services/companys/registercompany.service';
 import { AreaService } from '../../services/areas/registerarea.service';
 import { Empresa } from '../registercompany/registercompany.component';
-
+import { DividerModule } from 'primeng/divider';
 
 interface RegisterAreaForm{
   empresa: FormControl,
@@ -45,7 +45,7 @@ export interface Area {
   templateUrl: './area.component.html',
   styleUrl: './area.component.scss',
   imports: [
-    ReactiveFormsModule,FormsModule,CommonModule,
+    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,
     FormLayoutComponent,InputMaskModule,DialogModule,ConfirmDialogModule,
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
@@ -157,6 +157,16 @@ export class AreaComponent implements OnInit {
     }
   } 
   
+  getNomeEmpresa(id: number): string {
+    const empresa = this.empresas?.find(emp => emp.id === id);
+    return empresa ? empresa.nome : 'Empresa não encontrada';
+  }
+  getNomeFilial(id: number): string {
+    const filial = this.filiais?.find(fil => fil.id === id);
+    return filial ? filial.nome : 'Filial não encontrada';
+  }
+
+
 clear(table: Table) {
   table.clear();
 }

@@ -67,7 +67,15 @@
                  [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
           ></span>
           </span>
-          Olá<b>, {{ colaborador.nome }}.</b>
+          
+         <div class="inicio">
+          <div class="divnot">
+            <p>Olá<b>, {{ colaborador.nome }}.</b></p>
+          </div>
+          <div class="divnot2">
+            <b>Você possui:{{ unreadCount }} notificações</b>
+          </div>
+         </div> 
           
           <div class="top">
             <strong>{{ hoje | date:' HH:mm' }}</strong>
@@ -91,6 +99,24 @@
         </div>
       </nz-header>
       <nz-content>
+
+        <!-- <li *ngFor="let notificacao of notificacoes">
+          {{ notificacao.timestamp }} -  {{ notificacao.verb }} {{ notificacao.description }}
+        </li>
+
+        <div>
+          <h2>Notificações</h2>
+          <p>Notificações não lidas: {{ unreadCount }}</p>
+          <button (click)="markAllAsRead()">Marcar todas como lidas</button>
+          <ul>
+            <li *ngFor="let notificacao of notificacoes">
+              {{ notificacao.verb }} - {{ notificacao.description }}
+            </li>
+          </ul>
+        </div> -->
+
+
+
         <div class="inner-content">
           <router-outlet></router-outlet>
         </div>

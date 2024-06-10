@@ -23,9 +23,11 @@ import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { Divider, DividerModule } from 'primeng/divider';
+import { Formulario } from '../formulario/formulario.component';
+import { FormularioService } from '../../services/formularios/registerformulario.service';
 
 interface RegisterAssociacaoForm{
-  tipoavaliacao: FormControl,
+  formulario: FormControl,
   avaliado: FormControl
 }
 @Component({
@@ -45,6 +47,7 @@ interface RegisterAssociacaoForm{
 })
 export class VincularComponent implements OnInit {
   tipoavaliacoes: TipoAvaliacao[]|undefined;
+  formularios: Formulario[]|undefined;
   avaliados: Avaliado [] | undefined;
   targetAvaliados!: Avaliado[];
   vinculados: any[]=[]; 
@@ -56,13 +59,13 @@ export class VincularComponent implements OnInit {
   constructor(
     private router: Router,
     private messageService: MessageService,
-    private tipoAvaliacaoService: TipoAvaliacaoService,
+    private formularioService: FormularioService,
     private avaliadoService: AvaliadoService,
     private cdr: ChangeDetectorRef,
   )
   {
     this.registerassociacaoForm = new FormGroup({
-      tipoavaliacao: new FormControl('',[Validators.required]),
+      formulario: new FormControl('',[Validators.required]),
       avaliado: new FormControl('',[Validators.required]), 
      }); 
    }
@@ -77,9 +80,9 @@ export class VincularComponent implements OnInit {
         console.error('Error fetching users:', error);
       },
      );
-     this.tipoAvaliacaoService.getTipoAvaliacaos().subscribe(
-      tipoavaliacoes => {
-        this.tipoavaliacoes = tipoavaliacoes;
+     this.formularioService.getFormularios().subscribe(
+      formularios => {
+        this.formularios = formularios;
       },
       error =>{
         console.error('Error fetching users:', error);
@@ -103,11 +106,12 @@ export class VincularComponent implements OnInit {
       this.registerassociacaoForm.patchValue({
         avaliado: this.targetAvaliados
       });
-      const tipoAvaliacaoId = this.registerassociacaoForm.value.tipoavaliacao.id;
+      const formularioId = this.registerassociacaoForm.value.formulario.id;
     
       this.targetAvaliados.forEach(avaliado => {
         const idAvaliado = avaliado.id;
-        this.tipoAvaliacaoService.registerassociacao(tipoAvaliacaoId, idAvaliado).subscribe({
+        this.formularioService.registerassociacao(formularioId, idAvaliado).subscribe({
+          
           next: () => this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Filial registrada com sucesso!' }),
           error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }), 
         });

@@ -19,6 +19,7 @@ import { Empresa } from '../registercompany/registercompany.component';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { CommonModule } from '@angular/common';
+import { DividerModule } from 'primeng/divider';
 
 interface RegisterFilialForm{
   empresa: FormControl,
@@ -47,7 +48,7 @@ export interface Filial {
     templateUrl: './filial.component.html',
     styleUrl: './filial.component.scss',
     imports: [
-        ReactiveFormsModule,FormsModule,CommonModule,
+        ReactiveFormsModule,FormsModule,CommonModule,DividerModule,
         FormLayoutComponent,InputMaskModule,DialogModule,ConfirmDialogModule,
         PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
         

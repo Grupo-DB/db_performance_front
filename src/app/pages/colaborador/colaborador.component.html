@@ -187,6 +187,21 @@
                         (change)="onFileChange($event,registercolaboradorForm)"
                     />
                 </div>
+                <div class="dvemail">
+                    <p-inputGroup>
+                        <p-inputGroupAddon>
+                            <i class="pi pi-at"></i>
+                        </p-inputGroupAddon>
+                        <span class="p-float-label">
+                            <input pInputText
+                                id="email"
+                                formControlName="email"
+                                type="text"
+                            />  
+                            <label for="email">Digite o email</label>
+                        </span>          
+                    </p-inputGroup>
+                </div>
                 <div class="dvcb">
                     <div class="titclas">
                         <p>Classificação do Colaborador:</p>
@@ -235,7 +250,7 @@
                         </p-inputGroup>
                         <p-inputGroup>
                             <p-inputGroupAddon>
-                                <i class="pi pi-user"></i>
+                                <i class="pi pi-key"></i>
                             </p-inputGroupAddon>
                             
                                 <input pInputText
@@ -358,7 +373,7 @@
             
             [modal]="true"
             [(visible)]="editFormVisible" 
-            [style]="{ width: '50rem' }" 
+            [style]="{ width: '70rem' }" 
             [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
         >
         <div>   
@@ -559,6 +574,21 @@
                             placeholder="SELECIONE"
                         >
                         </p-calendar>
+                    </div>
+                    <div class="dvemailed">
+                        <p-inputGroup>
+                            <p-inputGroupAddon>
+                                <i class="pi pi-at"></i>
+                            </p-inputGroupAddon>
+                            <span class="p-float-label">
+                                <input pInputText
+                                    id="email"
+                                    formControlName="email"
+                                    type="text"
+                                />  
+                                <label for="email">Digite o email</label>
+                            </span>          
+                        </p-inputGroup>
                     </div>    
                     <div class="dvcb">
                         <div class="titclas">
@@ -587,7 +617,7 @@
                         
                     </div>
                     <div class="tituseredit">
-                        <p>Criar ou editar Usuário:</p>
+                        <p>Editar Usuário</p>
                     </div>
                     <div class="dvusedit">
                         
@@ -608,7 +638,7 @@
                             </p-inputGroup>
                             <p-inputGroup>
                                 <p-inputGroupAddon>
-                                    <i class="pi pi-user"></i>
+                                    <i class="pi pi-key"></i>
                                 </p-inputGroupAddon>
                                 
                                     <input pInputText
@@ -622,7 +652,6 @@
                             </p-inputGroup>
                     </div>    
                     <div class="botoes-formedit">
-                        <p-toast></p-toast>
                             <div class="btnsecedit" (click)="cleareditForm()">
                                 <p>Limpar</p>
                             </div>

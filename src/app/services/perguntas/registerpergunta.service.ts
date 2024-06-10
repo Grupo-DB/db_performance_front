@@ -28,5 +28,6 @@ export class PerguntaService {
   deletePergunta(id: number): Observable<any> {
     const url = `${this.apiUrl}${id}/`;
     return this.httpClient.delete(url);
-}   
+  }
+  
 }

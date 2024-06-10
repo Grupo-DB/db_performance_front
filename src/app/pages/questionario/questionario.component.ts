@@ -26,6 +26,8 @@ import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { DividerModule } from 'primeng/divider';
+import { TipoAvaliacao } from '../tipoavaliacao/tipoavaliacao.component';
+import { TipoAvaliacaoService } from '../../services/tipoavaliacoes/registertipoavaliacao.service';
 interface RegisterQuestionarioForm{
   formulario: FormControl,
   pergunta: FormControl,
@@ -51,7 +53,7 @@ interface RegisterQuestionarioForm{
 export class QuestionarioComponent implements OnInit {
   perguntas: Pergunta [] | undefined;
   formularios: Formulario [] | undefined;
-  
+  tiposavaliacoes: TipoAvaliacao [] | undefined;
   targetPerguntas!: Pergunta[];
   
   questionarios: any[] = [];
@@ -67,7 +69,7 @@ export class QuestionarioComponent implements OnInit {
     private formularioService: FormularioService,
     private registerquestionarioService: RegisterQuestionarioService,
     private perguntaService: PerguntaService,
-
+    private tipoavalicaoService: TipoAvaliacaoService,
     private cdr: ChangeDetectorRef,
   
   )
@@ -96,6 +98,14 @@ export class QuestionarioComponent implements OnInit {
     this.perguntaService.getPerguntas().subscribe(
       perguntas => {
         this.perguntas = perguntas;
+      },
+      error => {
+        console.error('Error fetching users:', error);
+      }
+    );
+    this.tipoavalicaoService.getTipoAvaliacaos().subscribe(
+      tiposavaliacoes => {
+        this.tiposavaliacoes = tiposavaliacoes;
       },
       error => {
         console.error('Error fetching users:', error);
@@ -131,12 +141,5 @@ submit() {
     });
   });
 }
-
-
-navigate(){
-  this.router.navigate(["dashboard"])
-}
-
-
 
 }

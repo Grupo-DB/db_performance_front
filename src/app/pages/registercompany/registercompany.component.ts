@@ -17,7 +17,7 @@ import { InputMaskModule } from 'primeng/inputmask';
 import { DialogModule } from 'primeng/dialog';
 import { CommonModule } from '@angular/common';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-
+import { DividerModule } from 'primeng/divider';
 
 interface RegisterCompanyForm{
   nome: FormControl,
@@ -43,7 +43,7 @@ export interface Empresa {
     templateUrl: './registercompany.component.html',
     styleUrl: './registercompany.component.scss',
     imports: [
-        ReactiveFormsModule,FormsModule,CommonModule,
+        ReactiveFormsModule,FormsModule,CommonModule,DividerModule,
         FormLayoutComponent,DialogModule,ConfirmDialogModule,
         PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,InputMaskModule
         

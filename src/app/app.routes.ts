@@ -22,6 +22,7 @@ import { AvaliadorAvaliadosComponent } from './pages/avaliadoravaliados/avaliado
 import { VincularComponent } from './pages/vincular/vincular.component';
 import { FeedbackComponent } from './pages/feedback/feedback.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { InicialComponent } from './pages/inicial/inicial.component';
 
 
 export const routes: Routes = [
@@ -48,7 +49,8 @@ export const routes: Routes = [
       { path: 'avaliadoravaliados', component:AvaliadorAvaliadosComponent },
       { path: 'tipoavaliacaoavaliados', component:VincularComponent },
       { path: 'feedback', component:FeedbackComponent }, 
-      { path: 'dashboard', component:DashboardComponent }
+      { path: 'dashboard', component:DashboardComponent },
+      { path: 'inicial', component:InicialComponent },
     ],
   },
   

@@ -62,6 +62,8 @@ import { CargoService } from '../../services/cargos/registercargo.service';
 import { FilialService } from '../../services/filiais/registerfilial.service';
 import { SetorService } from '../../services/setores/registersetor.service';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { FormularioService } from '../../services/formularios/registerformulario.service';
 
 export interface Avaliacao{
   id: number;
@@ -104,7 +106,7 @@ interface Periodo{
   ],
   providers: [
     MessageService,GetSetorService,TipoContratoService,PerguntasService,TipoAvaliacaoService,
-    GetCompanyService,GetFilialService,GetAreaService,GetCargoService,LoginService,
+    GetCompanyService,GetFilialService,GetAreaService,GetCargoService,LoginService,FormularioService
   ],
   templateUrl: './novaliacao.component.html',
   styleUrl: './novaliacao.component.scss'
@@ -140,6 +142,7 @@ export class NovaliacaoComponent implements OnInit {
   avaliado: any = null; 
   avaliadoSelecionadoId: number | undefined;
   avaliadoDetalhes: any | undefined;
+  avaliadosSA:any|undefined;
   trimestre: any;
   colaboradorSelecionado: Colaborador [] = [];
   respostasJustificativas: { [key: string]: { resposta: string, justificativa: string } } = {};
@@ -175,7 +178,9 @@ export class NovaliacaoComponent implements OnInit {
     private tipoAvaliacaoService: TipoAvaliacaoService,
     private avaliadoService: AvaliadoService,
     private fb: FormBuilder,
-    private registercompanyService:RegisterCompanyService
+    private registercompanyService:RegisterCompanyService,
+    private sanitizer: DomSanitizer,
+    private formularioService: FormularioService
     
   )
 
@@ -185,15 +190,14 @@ export class NovaliacaoComponent implements OnInit {
       avaliador:['',],
       avaliado:['', ],
       periodo:['',],
-      //feedback:['',],
       perguntasRespostas: this.fb.group({}),
     },{ validators: justificativaValidator() });
   }
  
   ngOnInit(): void {
-    //this.periodo = this.obterTrimestre();
     this.trimestre = '';
     this.obterTrimestre();  
+    this.periodo = this.obterTrimestre();
     this.registercompanyService.getCompanys().subscribe(
       empresas => {
         this.empresas = empresas;
@@ -337,10 +341,14 @@ export class NovaliacaoComponent implements OnInit {
         console.error('Error fetching users:',error);
       }
     );
-    //this.carregarMeusAvaliadosSemAvaliacao();
+    //const avaliadoId = this.avaliadoDetalhes.id
+    
   }
   
-
+  sanitizeHtml(legenda: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(legenda);
+    
+    }
 
   requireJustification: boolean = false;
   justification: string = '';  
@@ -370,7 +378,7 @@ export class NovaliacaoComponent implements OnInit {
         this.trimestre = 'Quarto trimestre';
         break;
       default:
-        this.trimestre = 'Não foi possível determinar o trimestre';
+        this.trimestre = 'Indeterminado';
     }
   }
 
@@ -481,11 +489,12 @@ export class NovaliacaoComponent implements OnInit {
   // }
   async onAvaliadoSelecionado(avaliado: any): Promise<void> {
     const id = avaliado.id;
+    const form = avaliado.formulario;
     if (id !== undefined) {
       console.log('Avaliado selecionado ID:', id); // Log para depuração
       this.avaliadoSelecionadoId = id;
       await this.obterDetalhesAvaliado(); // Espera a obtenção dos detalhes do avaliado
-      await this.carregarTipoAvaliacaoEFormularios(id); // Carrega os tipos de avaliação e as perguntas dos formulários
+      await this.carregarPerguntasDoFormulario(form); // Carrega os tipos de avaliação e as perguntas dos formulários
     } else {
       console.error('O ID do avaliado é indefinido');
     }
@@ -513,10 +522,10 @@ export class NovaliacaoComponent implements OnInit {
   }
 
   carregarMeusAvaliadosSemAvaliacao(): void {
-    if (this.periodo !== 'Indeterminado' && this.tipoavSelecionadoId ) {
-      this.avaliadoService.getMeusAvaliadosSemAvaliacao(this.periodo, this.tipoavSelecionadoId).subscribe(
+    if (this.trimestre && this.trimestre !== 'Indeterminado' ) {
+      this.avaliadoService.getMeusAvaliadosSemAvaliacao(this.trimestre).subscribe(
         data => {
-          this.avaliados = data;
+          this.avaliadosSA = data;
         },
         error => {
           console.error('Erro na requisição:', error);
@@ -527,17 +536,29 @@ export class NovaliacaoComponent implements OnInit {
     }
   }
 
-  async carregarTipoAvaliacaoEFormularios(userId: number): Promise<void> {
+  
+  async carregarPerguntasDoFormulario(formularioId: number): Promise<void> {
     try {
-      const tiposAvaliacao = await this.tipoAvaliacaoService.carregarTipoAvaliacao(userId).toPromise();
-      for (const tipoAvaliacao of tiposAvaliacao) {
-        const formularioId = tipoAvaliacao.formulario; // Ajuste conforme sua resposta da API
-        await this.carregarPerguntasDoFormulario(formularioId);
-      }
+      const perguntas = await this.perguntasService.carregarPerguntasDoFormulario(formularioId).toPromise();
+      this.perguntas = perguntas;
+      this.preencherCamposPerguntas();
+      console.log(`Perguntas do formulário ${formularioId}:`, perguntas);
     } catch (error) {
-      console.error('Erro ao carregar tipos de avaliação:', error);
+      console.error(`Erro ao carregar perguntas do formulário ${formularioId}:`, error);
     }
   }
+
+  // async carregarTipoAvaliacaoEFormularios(userId: number): Promise<void> {
+  //   try {
+  //     const tiposAvaliacao = await this.tipoAvaliacaoService.carregarTipoAvaliacao(userId).toPromise();
+  //     for (const tipoAvaliacao of tiposAvaliacao) {
+  //       const formularioId = tipoAvaliacao.formulario; // Ajuste conforme sua resposta da API
+  //       await this.carregarPerguntasDoFormulario(formularioId);
+  //     }
+  //   } catch (error) {
+  //     console.error('Erro ao carregar tipos de avaliação:', error);
+  //   }
+  // }
   // onAvaliadoSelected(avaliadoId: number) {
   //   // Faça algo com o valor selecionado (por exemplo, buscar informações adicionais).
   //   console.log('Avaliado selecionado:', avaliadoId);
@@ -642,18 +663,18 @@ getAvaliadorInfo(): void {
   //   });
   // }
 
-  carregarPerguntasDoFormulario(formularioId: number) {
-    this.perguntasService.carregarPerguntas(formularioId).subscribe(
-      (perguntas: any) => {
-        this.perguntas = perguntas;
-        this.preencherCamposPerguntas();
-        console.log('Perguntas carregadas:', perguntas);
-      },
-      error => {
-        console.error('Erro ao carregar perguntas:', error);
-      }
-    );
-  }
+  // carregarPerguntasDoFormulario(formularioId: number) {
+  //   this.perguntasService.carregarPerguntas(formularioId).subscribe(
+  //     (perguntas: any) => {
+  //       this.perguntas = perguntas;
+  //       this.preencherCamposPerguntas();
+  //       console.log('Perguntas carregadas:', perguntas);
+  //     },
+  //     error => {
+  //       console.error('Erro ao carregar perguntas:', error);
+  //     }
+  //   );
+  // }
 
 /////////FUNCIONAAAAAAAAAAA
     // carregarPerguntasDoFormulario() {
@@ -914,11 +935,15 @@ getAvaliadorInfo(): void {
         perguntasRespostasJSON,
         
       ).subscribe({
-        next: () => this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Filial registrada com sucesso!' }),
-        error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }), 
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Avaliação concluída com sucesso!' });
+          setTimeout(() => {
+            window.location.reload(); // Atualiza a página após o registro
+          }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+        },
+        error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao concluir avaliação! Por favor revise as respostas e justificativas,caso necessárias, e tente novamente.' }), 
       });
-    
-  }
+    }
 
   
 //   submit() {
@@ -931,8 +956,6 @@ getAvaliadorInfo(): void {
 //     }
 // }
 
+
   
-  navigate(){
-    this.router.navigate(["dashboard"])
-  }
 }

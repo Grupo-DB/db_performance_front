@@ -26,14 +26,18 @@ import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { DividerModule } from 'primeng/divider';
+import { TipoAvaliacao } from '../tipoavaliacao/tipoavaliacao.component';
+import { TipoAvaliacaoService } from '../../services/tipoavaliacoes/registertipoavaliacao.service';
+
 
 interface RegisterFormularioForm{
-  nome: FormControl
-
+  nome: FormControl,
+  tipoavaliacao:FormControl
 }
 export interface Formulario{
   id: number;
   nome: string;
+  tipoavaliacao: number;
   perguntas: Pergunta[];
 }
 export interface Pergunta {
@@ -58,6 +62,7 @@ export interface Pergunta {
 export class FormularioComponent implements OnInit {
   formularios:Formulario[] = [];
   perguntas: Pergunta[]|undefined;
+  tiposavaliacoes: TipoAvaliacao[]|undefined;
   targetPerguntas: Pergunta[] = [];
   editForm!: FormGroup;
   editFormVisible: boolean = false;
@@ -74,11 +79,13 @@ export class FormularioComponent implements OnInit {
     private formularioService: FormularioService,
     private perguntaService: PerguntaService,
     private fb: FormBuilder,
+    private tipoavaliacaoService: TipoAvaliacaoService,
     private confirmationService: ConfirmationService 
   )
   {
     this.registerformularioForm = this.fb.group({
       nome: new FormControl('', [Validators.required]),
+      tipoavaliacao: new FormControl('', [Validators.required]),
     });
      this.editForm = this.fb.group({
       id: [''],
@@ -99,6 +106,14 @@ export class FormularioComponent implements OnInit {
     this.perguntaService.getPerguntas().subscribe(
       perguntas => {
         this.perguntas = perguntas
+      },
+      error => {
+        console.error('Error fetching users:', error);
+      }
+    )
+    this.tipoavaliacaoService.getTipoAvaliacaos().subscribe(
+      tiposavaliacoes => {
+        this.tiposavaliacoes = tiposavaliacoes
       },
       error => {
         console.error('Error fetching users:', error);
@@ -125,6 +140,7 @@ abrirModalEdicao(formulario: Formulario) {
   this.editForm.patchValue({
     id: formulario.id,
     nome: formulario.nome,
+    tipoavaliacao: formulario.tipoavaliacao,
     perguntas:formulario.perguntas
   });
 }
@@ -132,6 +148,7 @@ saveEdit() {
   const formularioId = this.editForm.value.id;
   const dadosAtualizados: Partial<Formulario> = {
     nome: this.editForm.value.nome,
+    tipoavaliacao:this.editForm.value.tipoavaliacao
     };
   
   this.formularioService.editFormulario(formularioId, dadosAtualizados).subscribe({
@@ -171,9 +188,10 @@ excluirFormulario(id: number) {
   });
 }
 submit() {
-  
+  const tipoavaliacaoId = this.registerformularioForm.value.tipoavaliacao.id;  
   this.formularioService.registerformulario(
-    this.registerformularioForm.value.nome
+    this.registerformularioForm.value.nome,
+    tipoavaliacaoId
   ).subscribe({
     next: () => {
       this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Formulario registrado com sucesso!' });

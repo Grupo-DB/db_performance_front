@@ -26,7 +26,7 @@ import { Area } from '../area/area.component';
 import { Filial } from '../filial/filial.component';
 import { Empresa } from '../registercompany/registercompany.component';
 import { AreaService } from '../../services/areas/registerarea.service';
-
+import { DividerModule } from 'primeng/divider';
 
 interface RegisterSetorForm{
   empresa: FormControl,
@@ -46,7 +46,7 @@ export interface Setor {
   selector: 'app-setor',
   standalone: true,
   imports: [
-    ReactiveFormsModule,FormsModule,CommonModule,
+    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,
     FormLayoutComponent,InputMaskModule,DialogModule,ConfirmDialogModule,
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],

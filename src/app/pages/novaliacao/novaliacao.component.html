@@ -1,43 +1,77 @@
 <div class="container"> 
-  <div class="avaliador">
-    <p-divider align="left" type="solid">
-      <b>nova avaliação</b>
-    </p-divider> 
-      <div class="titles">
-        <p>identificação do avalidor:</p>
-        <p>periodo: {{ trimestre }}</p>
+  <p-divider align="left" type="solid">
+    <b>Nova Avaliação</b> 
+  </p-divider><br> 
+  <p style="margin-left: 22px;">Periodo: <strong>{{ trimestre }}</strong></p>
+  <br>
+  <div class="tc">
+    <div class="titles">
+      <div class="t1">
+        <p><b>Identificação do Avaliador:</b></p>
       </div>
-      nome: <strong> {{ avaliador.nome }}</strong><br>
-      empresa:<strong> {{ getNomeEmpresa(avaliador.empresa) }}</strong><br>
-      filial:<strong> {{ getNomeFilial(avaliador.filial) }}</strong><br>
-      area:<strong> {{ getNomeArea(avaliador.area) }}</strong><br>
-      setor:<strong> {{ getNomeSetor(avaliador.setor) }}</strong><br>
-      ambiente:<strong> {{ getNomeAmbiente(avaliador.ambiente) }}</strong><br>
-      cargo:<strong> {{ getNomeCargo(avaliador.cargo) }}</strong><br>
-  </div>
-  <p-divider />
-    
-  <div class="avaliado" *ngIf="avaliadoDetalhes">
-    <div>
-      Nome: <strong>{{ avaliadoDetalhes.nome }} </strong><br>
-      empresa:<strong> {{ getNomeEmpresa(avaliadoDetalhes.empresa) }}</strong><br>
-      filial:<strong> {{ getNomeFilial(avaliadoDetalhes.filial) }}</strong><br>
-      area:<strong> {{ getNomeArea(avaliadoDetalhes.area) }}</strong><br>
-      setor:<strong> {{ getNomeSetor(avaliadoDetalhes.setor) }}</strong><br>
-      ambiente:<strong> {{ getNomeAmbiente(avaliadoDetalhes.ambiente) }}</strong><br>
-      cargo:<strong> {{ getNomeCargo(avaliadoDetalhes.cargo) }}</strong><br>
-    </div>
-    <div class="dvimg">  
-       <img [src]="avaliadoDetalhes.image"  width="80" class="shadow-4" />
     </div>  
-  </div>
+    <div class="qw">
+      <p><b>Identificação do Avaliado:</b></p>
+    </div>
+  </div>    
+  <div class="infos">
+    
+      <div class="avaliador">
+         
+          <div class="av1">
+            Nome: <br>
+            Empresa: <br>
+            Filial: <br>
+            Área: <br>
+            Setor: <br>
+            Ambiente: <br>
+            Cargo: <br>
+          </div>
+          <div class="av2">
+            <strong>{{ avaliador.nome }}</strong><br>
+            <strong> {{ getNomeEmpresa(avaliador.empresa) }}</strong><br>
+            <strong> {{ getNomeFilial(avaliador.filial) }}</strong><br>
+            <strong> {{ getNomeArea(avaliador.area) }}</strong><br>
+            <strong> {{ getNomeSetor(avaliador.setor) }}</strong><br>
+            <strong> {{ getNomeAmbiente(avaliador.ambiente) }}</strong><br>
+            <strong> {{ getNomeCargo(avaliador.cargo) }}</strong><br>
+          </div>  
+      </div>
+      
+        
+      <div class="avaliado" *ngIf="avaliadoDetalhes">  
+            <div class="ava1">
+              
+              Nome: <br>
+              Empresa:<br>
+              Filial: <br>
+              Área:<br>
+              Setor:<br>
+              Ambiente:<br>
+              Cargo:<br>
+            </div>
+            <div class="ava2">
+              <strong>{{ avaliadoDetalhes.nome }} </strong><br>
+              <strong> {{ getNomeEmpresa(avaliadoDetalhes.empresa) }}</strong><br>
+              <strong> {{ getNomeFilial(avaliadoDetalhes.filial) }}</strong><br>
+              <strong> {{ getNomeArea(avaliadoDetalhes.area) }}</strong><br>
+              <strong> {{ getNomeSetor(avaliadoDetalhes.setor) }}</strong><br>
+              <strong> {{ getNomeAmbiente(avaliadoDetalhes.ambiente) }}</strong><br>
+              <strong> {{ getNomeCargo(avaliadoDetalhes.cargo) }}</strong><br>
+            </div>  
+            
+            <div class="dvimg">  
+              <img [src]="avaliadoDetalhes.image"  width="80" class="shadow-4" />
+            </div>  
+      </div>
+    </div>  
 
-
+<p-divider></p-divider>
   <div class="dvform">
     <form [formGroup]="registeravaliacaoForm" (submit)="submit()"> 
       <div class="drops"> 
         <div class="dp1">
-          <label for="tipav'">Tipo de Avaliação: </label>
+          <label for="tipav'">Formulário: </label>
           <p-dropdown
               [style]="{'width':'60%'}"
               id="tipav" 
@@ -47,22 +81,22 @@
               [filter]="true"
               filterBy="nome" 
               [showClear]="true"
-              placeholder="SELECIONE"
+              placeholder="Selecione"
               (onChange)="onTipoAvaliacaoSelecionado($event.value)">
           >
           </p-dropdown>
         </div>
         <div class="dp2">  
-          <label for="ava">avaliado: </label>
+          <label for="ava">Avaliado: </label>
           <p-dropdown
               [style]="{'width':'75%'}"
               id="ava" 
-              [options]="avaliados"
+              [options]="avaliadosSA"
               formControlName="avaliado" 
               optionLabel="nome"
               [filter]="true"
               filterBy="nome"
-              placeholder="SELECIONE" 
+              placeholder="Selecione" 
               [showClear]="true"
               (onChange)="onAvaliadoSelecionado($event.value)"
           >   
@@ -76,23 +110,33 @@
       <mat-horizontal-stepper linear formArrayName="perguntasRespostas" >
         <mat-step *ngFor="let pergunta of perguntas; let i = index" [formGroupName]="'pergunta-' + pergunta.texto">
           <ng-template matStepLabel>{{ pergunta.texto  }}</ng-template>
-          <div class="rg">  
-            <mat-radio-group
-              style="flex-direction: column; display: flex; "
-              aria-labelledby="example-radio-group-label"
-              class="example-radio-group"
-              formControlName="resposta"
-              name="resposta{{ i }}"
-              (change)="onRespostaChange(i)">
-              <mat-radio-button class="example-radio-button" *ngFor="let conceito of conceitos" [value]="conceito.value">{{ conceito.name }}</mat-radio-button>
-            </mat-radio-group>
-            <p>{{ pergunta.legenda }}</p>
-          </div>
-          <div>  
-            <mat-form-field>
-              <input matInput type="text" formControlName="justificativa" placeholder="Justificativa">
+          <div class="rg"> 
+            <div class="rb"> 
+              <mat-radio-group
+                style="flex-direction: column; display: flex; "
+                aria-labelledby="example-radio-group-label"
+                class="example-radio-group"
+                formControlName="resposta"
+                name="resposta{{ i }}"
+                (change)="onRespostaChange(i)">
+                <mat-radio-button class="example-radio-button" *ngFor="let conceito of conceitos" [value]="conceito.value">{{ conceito.name }}</mat-radio-button>
+              </mat-radio-group>
+            </div>
+            <div class="pl">  
+              <p [innerHTML]="sanitizeHtml(pergunta.legenda)"></p>
+            </div>
+          </div>  
+          <div>
+            <textarea 
+              rows="2" 
+              cols="60" 
+              pInputTextarea 
+              formControlName="justificativa">
+            </textarea><br>
+            <!-- <mat-form-field>
+              <input [style]="{'width': '100px;'}" matInput type="text" formControlName="justificativa" placeholder="Justificativa">
               <mat-error *ngIf="isJustificativaRequired(i)">Justificativa é obrigatória para resposta Ótimo ou Ruim</mat-error>
-            </mat-form-field><br>
+            </mat-form-field><br> -->
             <button mat-button matStepperPrevious type="button">Anterior</button>
             <button mat-button matStepperNext type="button">Próximo</button>
           </div>    
@@ -123,16 +167,12 @@
               </textarea> -->
     
           </div>
-          <div>
+          <div class="botoes-form">
+            <p-toast></p-toast>
             <button mat-button matStepperPrevious type="button">Anterior</button>
-            <p-button 
-              label="Gravar" 
-              icon="pi pi-check"
-              iconPos="right" 
-              severity="success"
-              (click)="submit()"
-            >
-            </p-button>  
+            <div class="btnpri" (click)="submit()">
+              <p>Salvar</p>            
+            </div>
     
           </div>
         </mat-step>
@@ -141,7 +181,8 @@
     </mat-horizontal-stepper>
     <!-- {{ registeravaliacaoForm.value | json }} -->
     </form>
-  </div>  
+  </div>
+</div>    
   <!-- <p-button 
       label="Gravar" 
       icon="pi pi-check"

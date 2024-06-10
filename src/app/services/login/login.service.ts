@@ -30,7 +30,7 @@ export class LoginService {
         } else {
           console.error('Tokens não encontrados na resposta da API.');
         }  
-          this.router.navigate(['/welcome']);
+          this.router.navigate(['/welcome/inicial']);
       })
     );
   }

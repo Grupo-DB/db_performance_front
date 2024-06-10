@@ -13,8 +13,6 @@ import { FormLayoutComponent } from '../../components/form-layout/form-layout.co
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { TipoAvaliacaoService } from '../../services/tipoavaliacoes/registertipoavaliacao.service';
-import { GetTipoAvaliacaoService } from '../../services/tipoavaliacoes/gettipoavaliacao.service';
-import { Formulario } from '../formulario/formulario.component';
 import { FormularioService } from '../../services/formularios/registerformulario.service';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
@@ -23,14 +21,16 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { TabMenuModule } from 'primeng/tabmenu';
+
+
 interface RegisterTipoAvaliacaoForm{
   nome: FormControl,
-  formulario:FormControl,
+  
 }
 export interface TipoAvaliacao{
   id: number;
   nome: string;
-  formulario:number;
+ 
 }
 
 @Component({
@@ -48,7 +48,6 @@ export interface TipoAvaliacao{
   styleUrl: './tipoavaliacao.component.scss'
 })
 export class TipoAvaliacaoComponent implements OnInit {
-  formularios: Formulario[]|undefined;
   tipoavaliacoes: TipoAvaliacao[] = [];
   editForm!: FormGroup;
   editFormVisible: boolean = false;
@@ -61,19 +60,18 @@ export class TipoAvaliacaoComponent implements OnInit {
     private router: Router,
     private messageService: MessageService,
     private tipoavaliacaoService: TipoAvaliacaoService,
-    private formularioService: FormularioService,
     private fb: FormBuilder,
     private confirmationService: ConfirmationService 
   )    
   {
     this.registertipoavaliacaoForm = new FormGroup({
       nome: new FormControl('',[Validators.required, Validators.minLength(3)]),
-      formulario: new FormControl(''),
+      
    }); 
  this.editForm = this.fb.group({
   id: [''],
   nome: [''],
-  formulario: [''],
+  
  });
 }
  ngOnInit(): void {
@@ -85,15 +83,6 @@ export class TipoAvaliacaoComponent implements OnInit {
     console.error('Error fetching users:', error);
   },
 );
-  this.formularioService.getFormularios().subscribe(
-    formularios => {
-      this.formularios = formularios;
-    },
-    error => {
-      console.error('Error fetching users:',error);
-    }
-  );
-
  }
 clear(table: Table) {
   table.clear();
@@ -113,15 +102,12 @@ abrirModalEdicao(tipoavaliacao: TipoAvaliacao) {
   this.editForm.patchValue({
     id: tipoavaliacao.id,
     nome: tipoavaliacao.nome,
-    formulario: tipoavaliacao.formulario
   });
 }
 saveEdit() {
   const tipoAvaliacaoId = this.editForm.value.id;
-  const formularioId = this.editForm.value.formulario.id;
   const dadosAtualizados: Partial<TipoAvaliacao> = {
     nome: this.editForm.value.nome,
-    formulario: formularioId,
     };
   
   this.tipoavaliacaoService.editTipoAvaliacao(tipoAvaliacaoId, dadosAtualizados).subscribe({
@@ -161,10 +147,8 @@ excluirTipoAvaliacao(id: number) {
   });
 }
 submit(){
-  const formularioId = this.registertipoavaliacaoForm.value.formulario.id;
   this.tipoavaliacaoService.registertipoavaliacao(
     this.registertipoavaliacaoForm.value.nome,
-    formularioId
   ).subscribe({
     next: () => {
       this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Tipo de avaliação registrado com sucesso!' });
@@ -176,3 +160,4 @@ submit(){
   })
 }
 }
+

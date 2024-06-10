@@ -18,8 +18,9 @@ import { RegisterCompanyService } from '../../services/companys/registercompany.
 import { FilialService } from '../../services/filiais/registerfilial.service';
 import { Empresa } from '../registercompany/registercompany.component';
 import { Filial } from '../filial/filial.component';
-
-
+import { UserService } from '../../services/users/user.service';
+import { FormsModule } from '@angular/forms'; // Import FormsModule
+import { NotificacoesService } from '../../services/notifications/notificacoes.service'; 
 
 
 @Component({
@@ -28,7 +29,7 @@ import { Filial } from '../filial/filial.component';
   templateUrl: './welcome.component.html',
   styleUrls: ['./welcome.component.scss'],
   imports:[
-    CommonModule, RouterOutlet, NzIconModule,NzUploadModule, NzLayoutModule, NzMenuModule,RouterLink,DividerModule],
+    CommonModule, RouterOutlet, NzIconModule,NzUploadModule, NzLayoutModule, NzMenuModule,RouterLink,DividerModule,FormsModule],
   providers: [MessageService,UploadService]
 })
 export class WelcomeComponent implements OnInit  {
@@ -38,16 +39,26 @@ export class WelcomeComponent implements OnInit  {
   filiais: Filial[]| undefined;
   hoje: number = Date.now();
   colaborador: any;
+  notificacoes: any[] = [];
+  unreadCount: number = 0;
+  subject: any;
+  message: any;
+  recipient_list: any;
+ 
+
   constructor(
     private apiService: UploadService,
     private loginService: LoginService,
     private colaboradorService: ColaboradorService,
     private filialService: FilialService,
     private registercompanyService:RegisterCompanyService,
-    private msg: NzMessageService
+    private msg: NzMessageService,
+    private userService: UserService,
+    private notificacoesService: NotificacoesService
   ) {}
 
   ngOnInit(): void {
+    
     this.getColaboradorInfo();
     this.registercompanyService.getCompanys().subscribe(
       empresas => {
@@ -57,6 +68,16 @@ export class WelcomeComponent implements OnInit  {
         console.error('Error fetching users:',error);
       }
     );
+
+    // this.notificacoesService.getNotifications().subscribe(
+    //   notificacoes => {
+    //     this.notificacoes = notificacoes;
+    //   },
+    //   error => {
+    //     console.error('Error fetching users:',error);
+    //   }
+    // );
+
     this.filialService.getFiliais().subscribe(
       filiais => {
         this.filiais = filiais;
@@ -65,7 +86,69 @@ export class WelcomeComponent implements OnInit  {
         console.error('Error fetching users:', error);
       }
     );
+
+    this.getUnreadCount();
+
   }
+
+  getUnreadNotifications(): void {
+    this.notificacoesService.getUnreadNotifications().subscribe(
+      (data: any) => {
+        this.notificacoes = data;
+      },
+      (error: any) => {
+        console.error('Erro ao buscar notificações não lidas:', error);
+      }
+    );
+  }
+
+  markAllAsRead(): void {
+    this.notificacoesService.markAllAsRead().subscribe(
+      (data: any) => {
+        console.log('Notificações marcadas como lidas:', data);
+        this.getUnreadNotifications();
+        
+      },
+      (error: any) => {
+        console.error('Erro ao marcar notificações como lidas:', error);
+      }
+    );
+  }
+
+  getUnreadCount(): void {
+    this.notificacoesService.getUnreadCount().subscribe(
+      (data: any) => {
+        this.unreadCount = data.unread_count;
+      },
+      (error: any) => {
+        console.error('Erro ao contar notificações não lidas:', error);
+      }
+    );
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   handleChange({ file, fileList }: NzUploadChangeParam): void {
     const status = file.status;
@@ -104,6 +187,19 @@ export class WelcomeComponent implements OnInit  {
     const filial = this.filiais?.find(fil => fil.id === id);
     return filial ? filial.nome : 'Filial não encontrada';
   }
+
+
+  sendEmail() {
+    this.userService.sendEmail(this.subject, this.message, this.recipient_list).subscribe(
+      response => {
+        console.log('Email sent successfully', response);
+      },
+      error => {
+        console.error('Error sending email', error);
+      }
+    );
+  }
+
 
   // async onUpload($event: FileUploadEvent) {
 

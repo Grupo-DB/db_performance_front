@@ -1,0 +1,16 @@
+<p-messages 
+[(value)]="messages" 
+[enableService]="false" 
+[closable]="false">
+</p-messages>
+
+        <div>
+          <h2>Notificações</h2>
+          <p>Notificações não lidas: {{ unreadCount }}</p>
+          <button (click)="markAllAsRead()">Marcar todas como lidas</button>
+          <ul>
+            <li *ngFor="let notificacao of notificacoes">
+              {{ notificacao.verb }} - {{ notificacao.description }}
+            </li>
+          </ul>
+        </div>

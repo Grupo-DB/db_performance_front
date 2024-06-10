@@ -1,21 +1,57 @@
 .container{
-    text-transform: uppercase;
-    .avaliador{
-        .titles {    
-            display: flex;
-            justify-content: space-between;
-            p {
-                font-weight: bolder;
-                text-decoration: underline;
-            }   
+    //text-transform: uppercase;
+    .infos{
+        display: flex;
+    }
+    .tc{
+        display: flex;
+        p {
+            
+            text-decoration: underline;
         }
+        .qw{
+            margin-left: 20px;
+        }
+    }
+    .titles {    
+        display: flex;
+        width: 50%;
+        
+        p {
+            
+            text-decoration: underline;
+        }
+        .t1{
+            
+            margin-left: 22px;
+        }
+        .t2{
+            
+            margin-left: 120px;
+            
+        }
+        
+
+    }
+    .avaliador{
+        display: flex;
+        margin-left: 20px;
+        width: 50%;
+            .av1{
+                margin-left: 2px;
+            }
+            .av2{
+                margin-left: 10px;
+            }
+        
+        
     }
     .drops{
         display: flex;
         justify-content: space-between;
     }
     .dp1{
-        
+        margin-left: 20px;
         width: 50%;
     }
     .dp2{
@@ -24,15 +60,50 @@
     }
     .avaliado{
         display: flex;
+        margin-left: 20px;
+        width: 50%;
+        .ava1{
+            margin-left: 2px;
+        }
+        .ava2{
+            margin-left: 10px;
+        }
         .dvimg{
-            margin-top: 3%;
-            margin-left: 50%;
+            
+            margin-left: 180px;
         }
     }
     .dvform{
         .rg{
             display: flex;
-            justify-content: space-between;
+            
+            .pl{
+                margin-top: 20px;
+                margin-left: 80px;
+            }
         }
+
     }
 }
+.btnpri{
+    cursor: pointer;
+    background-color: #444959;
+    color: #fff;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    margin-left: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+} 
+.botoes-form{
+    width: 165px;
+    margin-bottom: 2%;
+    margin-top: 1%;
+    display: flex;
+    justify-content: end;
+    
+    
+} 

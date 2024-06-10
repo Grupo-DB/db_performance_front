@@ -4,14 +4,11 @@
     
     display: flex;
     flex-flow: column wrap;
-    align-items: center;
-    
 }
 
 .form-geral{
     
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    width: 70%;
     
 }
 .titulo{
@@ -37,7 +34,13 @@
             width: 150px;
         }    
         .form3{
-            margin-top: 2%;
+            padding: 5px;
+            margin-left: 20px;
+            margin-top: -22px;
+            
+            p{
+                margin-left: 20px;
+            }
         }
 
         .teste{
@@ -50,11 +53,12 @@
  }
  
  .botoes-form{
-    width: 40%;
+    width: 538px;
     margin-bottom: 2%;
     margin-top: 1%;
     display: flex;
-    justify-content: center;
+    justify-content: end;
+    
     p-button{
         margin-right: 3%;
         
@@ -79,5 +83,43 @@
     display: flex;
     button{
         margin-left: 2px;
+    }
+}
+.btnpri{
+    cursor: pointer;
+    background-color: #444959;
+    color: #fff;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    margin-left: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}   
+.btnsec{
+    cursor: pointer;
+    background-color: #e3e3f3;
+    color: #444959;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}
+.botoes-formed{
+    width: 90%;
+    margin-bottom: 2%;
+    margin-top: 2%;
+    display: flex;
+    justify-content: end;
+    
+}
+.form2ed{
+    p-inputGroup{
+        padding: 16px;
     }
 }

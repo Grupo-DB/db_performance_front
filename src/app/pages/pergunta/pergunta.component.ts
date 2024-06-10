@@ -24,6 +24,8 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { TabMenuModule } from 'primeng/tabmenu';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+
 
 interface RegisterPerguntaForm{
   texto: FormControl,
@@ -57,13 +59,15 @@ export class PerguntaComponent implements OnInit{
   @ViewChild('RegisterfilialForm') RegisterPerguntaForm: any;
   @ViewChild('dt1') dt1!: Table;
   inputValue: string = '';
-
+  formattedTexts: SafeHtml[] = [];
   constructor(
     private router: Router,
     private messageService: MessageService,
     private perguntaService: PerguntaService,
     private fb: FormBuilder,
-    private confirmationService: ConfirmationService 
+    private confirmationService: ConfirmationService,
+    private sanitizer: DomSanitizer,
+    
   ) 
   {
     this.registerperguntaForm = new FormGroup({
@@ -78,15 +82,30 @@ export class PerguntaComponent implements OnInit{
  }
  
  ngOnInit(): void {
-  this.perguntaService.getPerguntas().subscribe(
-   (perguntas:Pergunta[]) => {
-     this.perguntas = perguntas;
-   },
-   error => {
-     console.error('Error fetching users:', error);
-   }
- );
+
+  // this.perguntaService.getPerguntas().subscribe(response => {
+  //   this.formattedTexts = response.map(text => this.sanitizer.bypassSecurityTrustHtml(text.formattedText));
+  // });
+
+
+//   this.perguntaService.getPerguntas().subscribe(
+//    (perguntas:Pergunta[]) => {
+//      this.perguntas = perguntas;
+//    },
+//    error => {
+//      console.error('Error fetching users:', error);
+//    }
+//  );
+ 
+this.perguntaService.getPerguntas().subscribe(response => {
+  this.perguntas = response;
+});
+}
+sanitizeHtml(legenda: string): SafeHtml {
+  return this.sanitizer.bypassSecurityTrustHtml(legenda);
+  
   }
+
  clear(table: Table) {
    table.clear();
  }
@@ -109,6 +128,9 @@ abrirModalEdicao(pergunta: Pergunta) {
     legenda:pergunta.legenda
   });
 }
+
+
+
 saveEdit() {
   const perguntaId = this.editForm.value.id;
   const dadosAtualizados: Partial<Pergunta> = {

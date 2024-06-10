@@ -108,8 +108,16 @@
                     margin-left: 5px;
                 }
             }
+            .dvemail{
+                padding: 5PX;
+                margin-left: 50px;
+                margin-top: 20px;
+                p-inputGroup{
+                    width: 80%;
+                }
+            }
             .dvcb{
-                margin-top: 30PX;
+                margin-top: 5PX;
                 padding: 8PX;
                 margin-left: 20px;
                 p{
@@ -295,6 +303,14 @@
         width: 50%;
         p{
             margin-left: 20px;
+        }
+        .dvemailed{
+            margin-top: 30px;
+            margin-left: 22px;
+            margin-bottom: 20px;
+            p-inputgroup{
+                width: 80%;
+            }
         }
     }
 

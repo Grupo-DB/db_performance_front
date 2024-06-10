@@ -66,7 +66,7 @@ interface RegisterColaboradorForm {
   nome: FormControl;
   username: FormControl;
   password: FormControl;
-
+  email: FormControl;
   tornar_avaliado: FormControl;
   tornar_avaliador: FormControl;
 }
@@ -94,6 +94,7 @@ export interface Colaborador{
   nome: string;
   username: string;
   password: string
+  email: string;
   tornar_avaliador: boolean;
   tornar_avaliado: boolean;
 }
@@ -187,6 +188,7 @@ export class ColaboradorComponent implements OnInit {
       image: new FormControl('',),
       username: new FormControl('',),
       password: new FormControl('',),
+      email: new FormControl('',),
       tornar_avaliado: new FormControl('',),
       tornar_avaliador: new FormControl('',)
    }); 
@@ -210,6 +212,7 @@ export class ColaboradorComponent implements OnInit {
     data_demissao:[''],
     username:[''],
     password:[''],
+    email:[''],
     tornar_avaliador:[''],
     tornar_avaliado:['']
 ,   });
@@ -224,7 +227,7 @@ export class ColaboradorComponent implements OnInit {
     { nome: 'Casado(a)'  },
     { nome: 'Divorciado(a)' },
     { nome: 'Separado(a)' },
-    { nome: 'Viuvo(a)'}
+    { nome: 'Víuvo(a)'}
 ];
 
 this.generos =[
@@ -516,6 +519,7 @@ abrirModalEdicao(colaborador: Colaborador) {
     data_demissao: colaborador.data_demissao,
     username:colaborador.username,
     password: colaborador.password,
+    email: colaborador.email,
     tornar_avaliador:colaborador.tornar_avaliador,
     tornar_avaliado:colaborador.tornar_avaliado
   });
@@ -548,6 +552,7 @@ saveEdit(){
       data_demissao: this.editForm.value.data_demissao,
       username: this.editForm.value.username,
       password: this.editForm.value.password,
+      email: this.editForm.value.email,
       tornar_avaliador: this.editForm.value.tornar_avaliador,
       tornar_avaliado: this.editForm.value.tornar_avaliado
     };
@@ -557,9 +562,9 @@ saveEdit(){
     this.colaboradorService.editColaborador(colaboradorId, dadosAtualizados).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Colaborador atualizado com sucesso!' });
-        //setTimeout(() => {
-         //window.location.reload(); // Atualiza a página após a exclusão
-        //}, 2000); // Tempo em milissegundos (1 segundo de atraso)
+        setTimeout(() => {
+         window.location.reload(); // Atualiza a página após a exclusão
+        }, 2000); // Tempo em milissegundos (1 segundo de atraso)
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao atualizar o colaborador.' });
@@ -681,6 +686,7 @@ submit() {
     formData.append('data_troca_demissao', dataFormatadadm || '');
     formData.append('username', this.registercolaboradorForm.value.username);
     formData.append('password', this.registercolaboradorForm.value.password);
+    formData.append('email', this.registercolaboradorForm.value.email);
     formData.append('tornar_avaliado', this.registercolaboradorForm.value.tornar_avaliado);
     formData.append('tornar_avaliador', this.registercolaboradorForm.value.tornar_avaliador)
     // if (this.registercolaboradorForm.value.user) {

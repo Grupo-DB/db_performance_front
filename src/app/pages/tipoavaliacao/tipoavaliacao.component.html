@@ -6,13 +6,13 @@
         <li nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
             <ul>
                 <li nz-menu-item  nzMatchRouter>
-                    <a routerLink="../formulario" >Tipos de Avaliações</a>
+                    <a routerLink="../tipoavaliacao" >Tipos de Avaliações</a>
                 </li>
                 <li nz-menu-item  nzMatchRouter>
                     <a routerLink="../pergunta" >Perguntas</a>
                 </li>
                 <li nz-menu-item  nzMatchRouter>
-                    <a routerLink="../tipoavaliacao" >Formulários</a>
+                    <a routerLink="../formulario" >Formulários</a>
                 </li>
             </ul>
         </li>    
@@ -23,7 +23,7 @@
                     <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
                 </li>
                 <li nz-menu-item   nzMatchRouter>
-                    <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Tipos de Avaliação</a>
+                    <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados a um Formulário</a>
                 </li>
                 <li nz-menu-item   nzMatchRouter>
                     <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
@@ -44,20 +44,128 @@
         
     </ul>
 </div>
-
+ <!-- formulario.component.html -->
 <div class="container">
+
     
-        
-    <div class="form-geral">
+    <div class="titulo">
         <p-divider align="left" type="solid">
-            <b>Cadastrar novo Formulário</b>
-        </p-divider>     
-        <form [formGroup]="registertipoavaliacaoForm"
-        title="Cadastrar Novo Tipo de Avaliação"
-        primaryBtnText="Cadastrar"
-        (submit)="submit()"
-        >
-        <div class="form1">
+            <b>Cadastro de Tipos de Avaliações</b>
+        </p-divider> 
+    </div> 
+
+
+    <!-- Formulário para criar um novo formulário -->
+    <form [formGroup]="registertipoavaliacaoForm" (ngSubmit)="submit()">
+    <div class="form1">    
+        <p-inputGroup>
+            <p-inputGroupAddon>
+                <i class="pi pi-file-plus"></i>
+            </p-inputGroupAddon>
+            <span class="p-float-label">
+                <input pInputText
+                    id="nome"
+                    formControlName="nome"
+                    type="text"
+                />  
+                <label for="nome">Digite o nome</label>
+            </span>          
+        </p-inputGroup>
+    </div>  
+    
+    </form>
+    <div class="botoes-form">
+        <p-toast></p-toast>
+        <div class="btnsec" (click)="clearForm()">
+            <p>Limpar</p>
+        </div>
+        <div class="btnpri" (click)="submit()">
+            <p>Salvar</p>            
+        </div>
+    </div>   
+<br>
+  
+  
+  </div>
+  
+  <div class="tabela">
+    <p-table
+        #dt1
+        [value]="tipoavaliacoes"
+        [paginator]="true"
+        [rows]="5"
+        [showCurrentPageReport]="true"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
+        [rowsPerPageOptions]="[5, 10, 20]"
+        [globalFilterFields]="['nome','id']"
+    >
+        <ng-template pTemplate="caption">
+            <div class="flex">
+                <span class="p-input-icon-left ml-auto">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Palavra-Chave" />
+                </span>
+                <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
+                <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+            </div>
+        </ng-template>    
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width:25%">ID
+                    <p-columnFilter type="text" field="id" display="menu"></p-columnFilter>
+                </th>
+                <th style="width:25%">Nome
+                    <p-columnFilter type="text" field="texto" display="menu"></p-columnFilter>
+                </th>
+                <th style="width: 25%;">Ações</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-tipoavaliacao>
+            <tr>
+                <td>{{ tipoavaliacao.id }}</td>
+                <td>{{ tipoavaliacao.nome }}</td>
+                <td class="td-acao">
+                    <p-toast />
+                    <p-confirmDialog />
+                   
+                    <div class="btnsec" (click)="abrirModalEdicao(tipoavaliacao)">
+                        <p>Editar</p>
+                    </div>
+                    
+                    <div class="btnpri" (click)="excluirTipoAvaliacao(tipoavaliacao.id)">
+                        <p>Excluir</p>            
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="paginatorleft">
+            <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+        </ng-template>
+        <ng-template pTemplate="paginatorright">
+            <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
+        </ng-template>
+    </p-table>
+</div>        
+<p-dialog 
+
+    [modal]="true"
+    [(visible)]="editFormVisible" 
+    [style]="{ width: '50rem' }" 
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+>
+<div class="titulo">
+    <p-divider align="left" type="solid">
+        <b>Editar Tipo de Avaliação</b>
+    </p-divider> 
+</div>
+<form [formGroup]="editForm"
+title="EditarFormulario"
+primaryBtnText="Cadastrar"
+     
+>
+    <div class="fg1ed">
+        <div class="form1ed">
             <p-inputGroup>
                 <p-inputGroupAddon>
                     <i class="pi pi-user"></i>
@@ -68,94 +176,18 @@
                         formControlName="nome"
                         type="text"
                     />  
-                    <label for="nome">Digite o nome</label>
+                    <label for="texto">Digite o Nome</label>
                 </span>          
             </p-inputGroup>
-            <p-dropdown 
-                [options]="formularios" 
-                [style]="{'width':'93%'}"
-                formControlName="formulario"
-                optionLabel="nome"
-                placeholder="Selecione o Tipo de Avaliação"
-                
-                >
-                </p-dropdown>
-        </div>            
-        </form>
-        <div class="botoes-form">
-            <p-toast></p-toast>
-            <div class="btnsec" (click)="clearForm()">
+        </div>
+        <div class="botoes-formed">
+            <div class="btnsec" (click)="cleareditForm()">
                 <p>Limpar</p>
             </div>
-            <div class="btnpri" (click)="submit()">
+            <div class="btnpri" (click)="saveEdit()">
                 <p>Salvar</p>            
-            </div>
+            </div>  
         </div>
-    </div>    
-  
-    
-        
-    </div>
- 
-        <div class="tabela">
-            <p-table
-                #dt1
-                [value]="tipoavaliacoes"
-                [paginator]="true"
-                [rows]="5"
-                [showCurrentPageReport]="true"
-                [tableStyle]="{ 'min-width': '50rem' }"
-                currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
-                [rowsPerPageOptions]="[5, 10, 20]"
-                [globalFilterFields]="['nome', 'cnpj', 'endereco','cidade','estado','codigo']"
-            >
-                <ng-template pTemplate="caption">
-                    <div class="flex">
-                        <span class="p-input-icon-left ml-auto">
-                            <i class="pi pi-search"></i>
-                            <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Palavra-Chave" />
-                        </span>
-                        <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
-                        <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
-                    </div>
-                </ng-template>    
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th style="width:25%">ID
-                            <p-columnFilter type="text" field="id" display="menu"></p-columnFilter>
-                        </th>
-                        <th style="width:25%">Nome
-                            <p-columnFilter type="text" field="nome" display="menu"></p-columnFilter>
-                        </th>
-                        <th style="width: 25%;">Ações</th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-tipoavaliacao>
-                    <tr>
-                        <td>{{ tipoavaliacao.id }}</td>
-                        <td>{{ tipoavaliacao.nome }}</td>
-                        <td class="td-acao">
-                            <p-toast />
-                            <p-confirmDialog />
-                            <div class="btnsec" (click)="abrirModalEdicao(tipoavaliacao)">
-                                <p>Editar</p>
-                            </div>
-                            
-                            <div class="btnpri" (click)="excluirTipoAvaliacao(tipoavaliacao.id)">
-                                <p>Excluir</p>            
-                            </div>
-                        </td>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="paginatorleft">
-                    <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
-                </ng-template>
-                <ng-template pTemplate="paginatorright">
-                    <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
-                </ng-template>
-            </p-table>
-        </div>        
-  
-  <!--end container-->
-
-
+    </div>      
+</form>
+</p-dialog>

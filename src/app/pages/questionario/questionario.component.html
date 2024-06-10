@@ -6,13 +6,13 @@
         <li nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
             <ul>
                 <li nz-menu-item  nzMatchRouter>
-                    <a routerLink="../formulario" >Tipos de Avaliações</a>
+                    <a routerLink="../tipoavaliacao" >Tipos de Avaliações</a>
                 </li>
                 <li nz-menu-item  nzMatchRouter>
                     <a routerLink="../pergunta" >Perguntas</a>
                 </li>
                 <li nz-menu-item  nzMatchRouter>
-                    <a routerLink="../tipoavaliacao" >Formulários</a>
+                    <a routerLink="../formulario" >Formulários</a>
                 </li>
             </ul>
         </li>    
@@ -23,7 +23,7 @@
                     <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
                 </li>
                 <li nz-menu-item   nzMatchRouter>
-                    <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Tipos de Avaliação</a>
+                    <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados a um Formulário</a>
                 </li>
                 <li nz-menu-item   nzMatchRouter>
                     <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
@@ -45,12 +45,11 @@
     </ul>
 </div>
 
-<form [formGroup]="registerquestionarioForm"
-title="Montar novo Formulario"
-primaryBtnText="Cadastrar"
-(submit)="submit()"
-(navigate)="navigate()"
-
+<form 
+    [formGroup]="registerquestionarioForm"
+    title="Montar novo Formulario"
+    primaryBtnText="Cadastrar"
+    (submit)="submit()"
 >
 
 <div class="card">
@@ -64,7 +63,7 @@ primaryBtnText="Cadastrar"
         [options]="formularios" 
         formControlName="formulario"
         optionLabel="nome"
-        placeholder="Selecione o tipo de avaliação"
+        placeholder="Selecione o Formulário"
         >
         </p-dropdown>
         
