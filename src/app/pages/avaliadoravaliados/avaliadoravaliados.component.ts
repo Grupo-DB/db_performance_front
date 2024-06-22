@@ -22,8 +22,8 @@ import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { DividerModule } from 'primeng/divider';
-
-
+import { CommonModule } from '@angular/common';
+import { LoginService } from '../../services/login/login.service';
 
 interface RegisterAssociacaoForm{
   avaliador: FormControl,
@@ -35,7 +35,7 @@ interface RegisterAssociacaoForm{
   standalone: true,
   imports: [
     TabMenuModule,NzIconModule,NzLayoutModule,NzMenuModule,
-    ReactiveFormsModule,FormsModule,PickListModule,
+    ReactiveFormsModule,FormsModule,PickListModule,CommonModule,
     FormLayoutComponent,InputMaskModule,DividerModule,
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
@@ -47,11 +47,11 @@ interface RegisterAssociacaoForm{
   styleUrl: './avaliadoravaliados.component.scss'
 })
 export class AvaliadorAvaliadosComponent implements OnInit {
-  avaliadores: Avaliador [] | undefined;
+  avaliadores: Avaliador [] = [];
   avaliados: Avaliado [] | undefined;
   targetAvaliados!: Avaliado[];
   avaliadoresavaliados: any[]=[]; 
-
+  loading: boolean = true; 
   registerassociacaoForm!: FormGroup<RegisterAssociacaoForm>;
   @ViewChild('RegisterAssociacaoForm') RegisterAssociacaoForm: any;
   @ViewChild('dt1') dt1!: Table;
@@ -63,6 +63,7 @@ export class AvaliadorAvaliadosComponent implements OnInit {
     private avaliadorService: AvaliadorService,
     private avaliadoService: AvaliadoService,
     private cdr: ChangeDetectorRef,
+    private loginService: LoginService
   )
   {
     this.registerassociacaoForm = new FormGroup({
@@ -71,11 +72,16 @@ export class AvaliadorAvaliadosComponent implements OnInit {
      }); 
    }
 
+   hasGroup(groups: string[]): boolean {
+    return this.loginService.hasAnyGroup(groups);
+  }
+
    ngOnInit(): void {
      this.targetAvaliados=[]
      this.avaliadoService.getAvaliados().subscribe(
       avaliados => {
         this.avaliados = avaliados;
+        this.loading = false;
       },
       error =>{
         console.error('Error fetching users:', error);
@@ -84,11 +90,29 @@ export class AvaliadorAvaliadosComponent implements OnInit {
      this.avaliadorService.getAvaliadores().subscribe(
       avaliadores => {
         this.avaliadores = avaliadores;
+        //this.mapAvaliadores();
+        this.loading = false;
       },
       error =>{
         console.error('Error fetching users:', error);
       },
      );
+    }
+    
+    removeAvaliado(avaliador: Avaliador, avaliado: Avaliado): void {
+      this.avaliadorService.removeAvaliado(avaliador.id, avaliado.id).subscribe(
+        updatedAvaliador => {
+          // Atualiza o formulário localmente
+          const index = this.avaliadores.findIndex(f => f.id === avaliador.id);
+          if (index !== -1) {
+            this.avaliadores[index] = updatedAvaliador;
+            //this.mapFormularios(); // Atualiza o texto das perguntas
+          }
+        },
+        error => {
+          console.error('Erro ao remover avaliado:', error);
+        }
+      );
     }
 
     clear(table: Table) {
@@ -112,8 +136,26 @@ export class AvaliadorAvaliadosComponent implements OnInit {
       this.targetAvaliados.forEach(avaliado => {
         const idAvaliado = avaliado.id;
         this.avaliadorService.registerassociacao(avaliadorId, idAvaliado).subscribe({
-          next: () => this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Filial registrada com sucesso!' }),
-          error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }), 
+          next: () => {
+            this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Avaliados associados ao avaliador com sucesso!' }),
+            setTimeout(() => {
+              window.location.reload(); // Atualiza a página após o registro
+            }, 1000);
+          },
+          error: (err) => {
+            console.error('Login error:', err); 
+          
+            if (err.status === 401) {
+              this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+            } else if (err.status === 403) {
+              this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+            } else if (err.status === 400) {
+              this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+            }
+            else {
+              this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro no login. Por favor, tente novamente.' });
+            } 
+          } 
         });
       });
     }

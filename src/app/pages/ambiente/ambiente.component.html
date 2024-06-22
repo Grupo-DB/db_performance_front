@@ -1,61 +1,79 @@
-<div class="container">
-    
-    <div class="form-geral">
-        <div class="titulo">
-            <h2>Cadastrar Novo Ambiente</h2>
-        </div>    
+<div *ngIf="hasGroup(['Admin','RHGestor'])" class="container">
+    <div class="titulo">
+        <p-divider align="left" type="solid">
+            <b>Cadastro de Ambientes</b>
+        </p-divider> 
+    </div> 
+    <div class="form-geral">  
         <form [formGroup]="registerambienteForm"
         title="Cadastrar novo Ambiente"
         primaryBtnText="Cadastrar"
         (submit)="submit()"
         >
         <div class="form1">
-            <p-inputGroup>
-                <p-inputGroupAddon>
-                    <i class="pi pi-user"></i>
-                </p-inputGroupAddon>
-                <span class="p-float-label">
-                    <input pInputText
-                        id="nome"
-                        formControlName="nome"
-                        type="text"
-                    />  
-                    <label for="nome">Digite o nome</label>
-                </span>          
-            </p-inputGroup>
-            
+            <div class="dvf1">
+                <p-inputGroup>
+                    <p-inputGroupAddon>
+                        <i class="pi pi-file-edit"></i>
+                    </p-inputGroupAddon>
+                    <span class="p-float-label">
+                        <input pInputText
+                            id="nome"
+                            formControlName="nome"
+                            type="text"
+                        />  
+                        <label for="nome">Digite o nome</label>
+                    </span>          
+                </p-inputGroup>
+            </div>
             <div class="form3">
-                <p-dropdown 
+                <p><label for="empresa">Empresa</label></p>
+                <p-dropdown
+                    [style]="{'width':'95%'}" 
                     [options]="empresas" 
-                    
+                    id="empresa"
                     formControlName="empresa"
                     optionLabel="nome"
-                    placeholder="Selecione a Empresa"
+                    placeholder="Selecione"
                     (onChange)="onEmpresaSelecionada($event.value)"
                 >
                 </p-dropdown>
-                <p-dropdown 
+            </div>
+            <div class="dvf4">
+                <p><label for="filial">Filial</label></p>   
+                <p-dropdown
+                    [style]="{'width':'95%'}" 
                     [options]="filiais" 
-                    
+                    id="filial"
                     formControlName="filial"
                     optionLabel="nome"
-                    placeholder="Selecione a Empresa"
+                    placeholder="Selecione "
                     (onChange)="onFilialSelecionada($event.value)"
                 >
-                </p-dropdown>                
-                <p-dropdown 
+                </p-dropdown>
+            </div>
+        </div>
+        <div class="form2">
+            <div class="dvf5"> 
+                <p><label for="area">Área</label></p>                       
+                <p-dropdown
+                    [style]="{'width':'90%'}" 
                     [options]="areas" 
                     formControlName="area"
                     optionLabel="nome"
-                    placeholder="Selecione a Area"
+                    placeholder="Selecione "
                     (onChange)="onAreaSelecionada($event.value)"
                     >
                 </p-dropdown>
+            </div>
+            <div class="dvf6">
+                <p><label for="setor">Setor</label></p>    
                 <p-dropdown 
+                    [style]="{'width':'90%'}"
                     [options]="setores" 
                     formControlName="setor"
                     optionLabel="nome"
-                    placeholder="Selecione o Setor"
+                    placeholder="Selecione"
                     >
                 </p-dropdown>
             </div>
@@ -65,23 +83,17 @@
   
     <div class="botoes-form">
         <p-toast></p-toast>
-        <p-button 
-        label="Limpar" 
-        icon="pi pi-check" 
-        severity="warning"
-        (click)="clearForm()">
-        </p-button>
-        <p-button 
-            label="Gravar" 
-            icon="pi pi-check"
-            iconPos="right" 
-            severity="success"
-            (click)="submit()">
-        </p-button>
-        
+            <div class="btnsec" (click)="clearForm()">
+                <p>Limpar</p>
+            </div>
+            <div class="btnpri" (click)="submit()">
+                 <p>Cadastrar</p>            
+            </div>
     </div>
     <hr>
         <div class="tabela">
+            <p-toast />
+            <p-confirmDialog />
             <p-table
                 #dt1
                 [value]="ambientes"
@@ -91,13 +103,13 @@
                 [tableStyle]="{ 'min-width': '50rem' }"
                 currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
                 [rowsPerPageOptions]="[5, 10, 20]"
-                [globalFilterFields]="['nome', 'id']"
+                [globalFilterFields]="['nome', 'empresaNome','filialNome','areaNome','setorNome']"
             >
                 <ng-template pTemplate="caption">
                     <div class="flex">
                         <span class="p-input-icon-left ml-auto">
                             <i class="pi pi-search"></i>
-                            <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Palavra-Chave" />
+                            <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Digite o nome" />
                         </span>
                         <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
                         <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
@@ -105,24 +117,38 @@
                 </ng-template>    
                 <ng-template pTemplate="header">
                     <tr>
-                        <th style="width:25%">ID
-                            <p-columnFilter type="text" field="id" display="menu"></p-columnFilter>
+                        <th style="width:25%" type="text" field="nome" display="menu">
+                            Nome
                         </th>
-                        <th style="width:25%">Nome
-                            <p-columnFilter type="text" field="nome" display="menu"></p-columnFilter>
+                        <th style="width:25%" type="text" field="empresaNome" display="menu">
+                            Empresa
                         </th>
-                        <th style="width: 25%;">Ações</th>
+                        <th style="width:25%" type="text" field="filialNome" display="menu">
+                            Filial
+                        </th>
+                        <th style="width:25%" type="text" field="areaNome" display="menu">
+                            Área
+                        </th>
+                        <th style="width:25%" type="text" field="setorNome" display="menu">
+                            Setor
+                        </th>
+                        <th style="width: 25%; text-align: center;">Ações</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-ambiente>
                     <tr>
-                        <td>{{ ambiente.id }}</td>
                         <td>{{ ambiente.nome }}</td>
+                        <td>{{ getNomeEmpresa(ambiente.empresa) }}</td>
+                        <td>{{ getNomeFilial(ambiente.filial) }}</td>
+                        <td>{{ getNomeArea(ambiente.area) }}</td>
+                        <td>{{ getNomeSetor(ambiente.setor) }}</td>
                         <td class="td-acao">
-                            <p-toast />
-                            <p-confirmDialog />
-                            <button pButton label="Editar" severity="help" (click)="abrirModalEdicao(ambiente)"></button>
-                            <button pButton label="Excluir" severity="danger"  (click)="excluirAmbiente(ambiente.id)"></button>
+                            <div class="btnsec" (click)="abrirModalEdicao(ambiente)">
+                                <p>Editar</p>
+                            </div>
+                            <div class="btnpri" (click)="excluirAmbiente(ambiente.id)">
+                                <p>Excluir</p>            
+                           </div>
                         </td>
                     </tr>
                 </ng-template>
@@ -135,17 +161,22 @@
             </p-table>
         </div>
         <p-dialog 
-            header="Editar Ambiente" 
             [modal]="true"
             [(visible)]="editFormVisible" 
-            [style]="{ width: '50rem' }" 
+            [style]="{ width: '50rem', 'min-height':'45rem' }" 
             [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
         >
+        
+        <p-divider align="left" type="solid">
+            <b>Editar Ambiente</b>
+        </p-divider>
+        
+        <div class="editform">
             <form [formGroup]="editForm" >
-                <div class="form1">
+                <div class="form1ed">
                     <p-inputGroup>
                         <p-inputGroupAddon>
-                            <i class="pi pi-user"></i>
+                            <i class="pi pi-file-edit"></i>
                         </p-inputGroupAddon>
                         <span class="p-float-label">
                             <input pInputText
@@ -156,63 +187,70 @@
                             <label for="nome">Digite o nome</label>
                         </span>          
                     </p-inputGroup>
-                    
-                    <div class="form3">
-                        <p-dropdown 
-                            [options]="empresas" 
-                            
-                            formControlName="empresa"
-                            optionLabel="nome"
-                            placeholder="Selecione a Empresa"
-                            (onChange)="onEmpresaSelecionada($event.value)"
+                </div>
+                <div class="form3ed">
+                    <p><label for="empresa">Empresa</label></p>
+                    <p-dropdown
+                        [style]="{'width':'95%'}" 
+                        [options]="empresas" 
+                        id="empresa"
+                        formControlName="empresa"
+                        optionLabel="nome"
+                        placeholder="Selecione"
+                        (onChange)="onEmpresaSelecionada($event.value)"
+                    >
+                    </p-dropdown>
+                </div>
+                <div class="dvf4ed">    
+                    <p><label for="filial">Filial</label></p>   
+                    <p-dropdown
+                        [style]="{'width':'95%'}" 
+                        [options]="filiais" 
+                        id="filial"
+                        formControlName="filial"
+                        optionLabel="nome"
+                        placeholder="Selecione "
+                        (onChange)="onFilialSelecionada($event.value)"
+                    >
+                    </p-dropdown>
+                </div>
+                <div class="dvf5ed">                        
+                    <p><label for="area">Área</label></p>                       
+                    <p-dropdown
+                        [style]="{'width':'95%'}" 
+                        [options]="areas" 
+                        formControlName="area"
+                        optionLabel="nome"
+                        placeholder="Selecione "
+                        (onChange)="onAreaSelecionada($event.value)"
                         >
-                        </p-dropdown>
-                        <p-dropdown 
-                            [options]="filiais" 
-                            
-                            formControlName="filial"
-                            optionLabel="nome"
-                            placeholder="Selecione a Empresa"
-                            (onChange)="onFilialSelecionada($event.value)"
+                    </p-dropdown>
+                </div>
+                <div class="dvf6ed">        
+                    <p><label for="setor">Setor</label></p>    
+                    <p-dropdown 
+                        [style]="{'width':'95%'}"
+                        [options]="setores" 
+                        formControlName="setor"
+                        optionLabel="nome"
+                        placeholder="Selecione"
                         >
-                        </p-dropdown>                
-                        <p-dropdown 
-                            [options]="areas" 
-                            formControlName="area"
-                            optionLabel="nome"
-                            placeholder="Selecione a Area"
-                            (onChange)="onAreaSelecionada($event.value)"
-                            >
-                        </p-dropdown>
-                        
-                        <p-dropdown 
-                            [options]="setores" 
-                            formControlName="setor"
-                            optionLabel="nome"
-                            placeholder="Selecione o Setor"
-                            >
-                        </p-dropdown>
+                    </p-dropdown>
+                </div>
+                       
                         <div class="botoes-form">
-                            <p-toast></p-toast>
-                            <p-button 
-                            label="Limpar" 
-                            icon="pi pi-check" 
-                            severity="warning"
-                            (click)="cleareditForm()">
-                            </p-button>
-                            <p-button 
-                                label="Gravar" 
-                                icon="pi pi-check"
-                                iconPos="right" 
-                                severity="success"
-                                (click)="saveEdit()">
-                            </p-button>
-                            
+                            <div class="btnsec" (click)="cleareditForm()">
+                                <p>Limpar</p>
+                            </div>
+                            <div class="btnpri" (click)="saveEdit()">
+                                 <p>Editar</p>            
+                            </div>
                         </div>
-                    </div>
-                </div>        
+                       
             </form>
-            </p-dialog>    
+        </div>
+    
+        </p-dialog>    
   </div><!--end container-->
 
 

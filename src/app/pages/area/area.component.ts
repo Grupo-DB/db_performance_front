@@ -15,15 +15,13 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
-import { GetAreaService } from '../../services/areas/getarea.service';
-import { GetCompanyService } from '../../services/companys/getcompany.service';
-import { GetFilialService } from '../../services/filiais/getfilial.service';
 import { Filial } from '../filial/filial.component';
 import { FilialService } from '../../services/filiais/registerfilial.service';
 import { RegisterCompanyService } from '../../services/companys/registercompany.service';
 import { AreaService } from '../../services/areas/registerarea.service';
 import { Empresa } from '../registercompany/registercompany.component';
 import { DividerModule } from 'primeng/divider';
+import { LoginService } from '../../services/login/login.service';
 
 interface RegisterAreaForm{
   empresa: FormControl,
@@ -32,11 +30,10 @@ interface RegisterAreaForm{
 }
 export interface Area {
   id: number;
-  empresa: string,
-  filial: string,
+  empresa: number,
+  filial: number,
   nome: string,
-  empresaNome?: string; // Propriedade opcional
-  filialNome?: string; // Propriedade opcional
+  
 }
 
 @Component({
@@ -58,8 +55,8 @@ export interface Area {
 export class AreaComponent implements OnInit {
   empresas: Empresa[]| undefined;
   filiais: Filial[]| undefined;
-  areas: Area[] = [];
-
+  areas: any[] = [];
+  loading: boolean = true;
   empresaSelecionadaId: number | null = null;
 
   editForm!: FormGroup;
@@ -76,7 +73,8 @@ export class AreaComponent implements OnInit {
     private filialService: FilialService,
     private areaService: AreaService,
     private fb: FormBuilder,
-    private confirmationService: ConfirmationService 
+    private confirmationService: ConfirmationService,
+    private loginService: LoginService 
   )
 
   {
@@ -93,50 +91,63 @@ export class AreaComponent implements OnInit {
      });   
    }
 
-   ngOnInit(): void {
-    this.filialService.getFiliais().subscribe(
-      filiais => {
-        this.filiais = filiais;
-      },
-      error => {
-        console.error('Error fetching users:', error);
-      }
-    );
 
-    this.registercompanyService.getCompanys().subscribe(
-      empresas => {
-        this.empresas = empresas;
-      },
-      error => {
-        console.error('Error fetching users:',error);
-      }
-    );
-    this.areaService.getAreas().subscribe(
-      (areas: Area[]) => {
-        this.areas = areas;
-      },
-      error => {
-        console.error('Error fetching companies:', error);
-      }
-    );
-    // 
-    //this.carregarAreas();
+   hasGroup(groups: string[]): boolean {
+    return this.loginService.hasAnyGroup(groups);
+    }
+
+   ngOnInit(): void {
+    this.loading = false;
+      this.filialService.getFiliais().subscribe(
+        filiais => {
+          this.filiais = filiais;
+          this.mapFiliais();
+        },
+        error => {
+          console.error('Error fetching users:', error);
+        }
+      );
+
+      this.registercompanyService.getCompanys().subscribe(
+        empresas => {
+          this.empresas = empresas;
+          this.mapEmpresas();
+          console.log();
+        },
+        error => {
+          console.error('Error fetching users:',error);
+        }
+      );
+      this.areaService.getAreas().subscribe(
+        (areas: Area[]) => {
+          this.areas = areas;
+        },
+        error => {
+          console.error('Error fetching companies:', error);
+        }
+      );
+    
   }
-  // carregarAreas() {
-  //   this.areaService.getAreas().subscribe((areas: any[]) => {
-  //     this.areas = areas;
-  //     // Para cada área, buscar os nomes das empresas e filiais
-  //     this.areas.forEach(area => {
-  //       this.registercompanyService.getEmpresa(area.empresa).subscribe((empresa: any) => {
-  //         area.empresaNome = empresa.nome; // Adiciona o nome da empresa ao objeto area
-  //       });
-  //       this.filialService.getFilial(area.filial).subscribe((filial: any) => {
-  //         area.filialNome = filial.nome; // Adiciona o nome da filial ao objeto area
-  //       });
-  //     });
-  //   });
-  // }
   
+  mapEmpresas() {
+    this.areas.forEach(area => {
+      const empresa = this.empresas?.find(empresa => empresa.id === area.empresa);
+      if (empresa) {
+        area.empresaNomes = empresa.nome;
+      }
+    });
+    this.loading = false;
+  }
+  mapFiliais() {
+    this.areas.forEach(area => {
+      const filial = this.filiais?.find(filial => filial.id === area.filial);
+      if (filial) {
+        area.filialNome = filial.nome;
+      }
+    });
+    this.loading = false;
+  }
+
    onEmpresaSelecionada(empresa: any): void {
     const id = empresa.id;
     if (id !== undefined) {
@@ -174,11 +185,11 @@ clear(table: Table) {
 clearForm() {
   this.registerareaForm.reset();
 }
-cleareditForm() {
-  this.editForm.reset();
-}
 filterTable() {
   this.dt1.filterGlobal(this.inputValue, 'contains');
+  }
+cleareditForm() {
+  this.editForm.reset();
 }
 abrirModalEdicao(area: Area) {
   this.editFormVisible = true;
@@ -201,37 +212,55 @@ saveEdit() {
   
   this.areaService.editArea(areaId, dadosAtualizados).subscribe({
     next: () => {
-      this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Area atualizada com sucesso!' });
+      this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Área atualizada com sucesso!' });
       setTimeout(() => {
         window.location.reload(); // Atualiza a página após a exclusão
-      }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+      }, 1000); // Tempo em milissegundos (1 segundo de atraso)
     },
-    error: () => {
-      this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao atualizar a Area.' });
-    }
+    error: (err) => {
+      console.error('Login error:', err); 
+    
+      if (err.status === 401) {
+        this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+      } else if (err.status === 403) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+      } else if (err.status === 400) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+      }
+      else {
+        this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+      } 
+  }
   });
 }
 excluirArea(id: number) {
   this.confirmationService.confirm({
-    message: 'Tem certeza que deseja excluir esta area?',
+    message: 'Tem certeza que deseja excluir esta área?',
     header: 'Confirmação',
     icon: 'pi pi-exclamation-triangle',
     acceptIcon: 'pi pi-check',
     rejectIcon: 'pi pi-times',
     acceptLabel: 'Sim',
     rejectLabel: 'Cancelar',
-    acceptButtonStyleClass: 'p-button-success',
-    rejectButtonStyleClass: 'p-button-danger',
+    acceptButtonStyleClass: 'p-button-info',
+    rejectButtonStyleClass: 'p-button-secondary',
     accept: () => {
-      this.areaService.deleteArea(id).subscribe(() => {
-        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Area excluída com sucesso',life:4000 });
-        setTimeout(() => {
-          window.location.reload(); // Atualiza a página após a exclusão
-        }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+      this.areaService.deleteArea(id).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Área excluída com sucesso!!', life: 1000 });
+          setTimeout(() => {
+            window.location.reload(); // Atualiza a página após a exclusão
+          }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+        },
+        error: (err) => {
+          if (err.status === 403) {
+            this.messageService.add({ severity: 'error', summary: 'Erro de autorização!', detail: 'Você não tem permissão para realizar esta ação.', life: 2000 });
+          } 
+        }
       });
     },
     reject: () => {
-      this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 3000 });
+      this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 1000 });
     }
   });
 }
@@ -245,13 +274,26 @@ excluirArea(id: number) {
       filialId,
     ).subscribe({
       next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Area registrada com sucesso!' });
+        this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Área registrada com sucesso!' });
         setTimeout(() => {
           window.location.reload(); // Atualiza a página após o registro
         }, 1000); // Tempo em milissegundos (1 segundo de atraso)
       },
-      error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }),
-    })
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro no login. Por favor, tente novamente.' });
+        } 
+    }
+    });
   }
 
 }

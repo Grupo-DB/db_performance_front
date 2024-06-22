@@ -9,8 +9,8 @@ import { Colaborador } from '../../pages/colaborador/colaborador.component';
   providedIn: 'root'
 })
 export class ColaboradorService {
-  private apiUrl = 'http://localhost:8000/management/colaboradores/';
-  private urlme= 'http://localhost:8000/management/avaliadores/';
+  private apiUrl = 'http://172.50.10.11:8008/management/colaboradores/';
+  private urlme= 'http://172.50.10.11:8008/management/avaliadores/';
   constructor(private  httpClient: HttpClient, private router: Router) { }
    
     registercolaborador(formData: FormData) {

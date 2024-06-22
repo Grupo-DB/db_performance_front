@@ -23,10 +23,16 @@ import { VincularComponent } from './pages/vincular/vincular.component';
 import { FeedbackComponent } from './pages/feedback/feedback.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { InicialComponent } from './pages/inicial/inicial.component';
+import { ResetpsComponent } from './pages/resetps/resetps.component';
+import { EsqueceuSenhaComponent } from './pages/esqueceusenha/esqueceusenha.component';
+import { RedefinirSenhaComponent } from './pages/redefinirsenha/redefinirsenha.component';
 
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
+  { path:'resetps', component:ResetpsComponent },
+  { path: 'esqueceusenha', component:EsqueceuSenhaComponent },
+  { path: 'redefinirsenha/:uid/:token', component:RedefinirSenhaComponent },
   { path: 'welcome', component: WelcomeComponent, 
     children: [
       { path: 'createuser', component: CreateuserComponent },

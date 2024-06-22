@@ -1,3 +1,4 @@
+@import "primeicons/primeicons.css";
 .form3{
     margin-top: 50px;
     margin-left: 90px;
@@ -6,7 +7,17 @@
 .card{
    margin-top: 20px;
 }
-
+.flext{
+    
+    text-align: end;
+    button{
+        margin-left: 1%;
+    }
+}
+.avaliados{
+    display: flex;
+    justify-content: space-between;
+}
 .botoes-form{
     width: 93%;
     margin-bottom: 2%;
@@ -19,7 +30,21 @@
         
     }
 }
-
+.btnprit{
+    cursor: pointer;
+    background-color: #444959;
+    color: #fff;
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    margin-left: 15px;
+    margin-bottom: 1px;
+    
+    p{
+        text-align: center;
+        margin-top: 0px;
+    }
+}
 .btnpri{
     cursor: pointer;
     background-color: #444959;

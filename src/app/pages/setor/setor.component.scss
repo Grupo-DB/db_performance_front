@@ -1,7 +1,6 @@
 @import "primeicons/primeicons.css";
 
-.container{
-    
+.container{  
     display: flex;
     flex-flow: column wrap;
 }
@@ -10,6 +9,7 @@
 }
 .fg1{
     width:50%;
+    margin-top: -10px;
     p{
         margin-left: 20px;
     }
@@ -19,7 +19,7 @@
 }
 .f4{
     
-    margin-top: 5px;
+    margin-top: -10px;
 }
 .f5{
     
@@ -45,10 +45,13 @@
         p-dropdown{
             padding: 15px;
         }
-        p-inputMask{
-            padding: 15px;
-            width: 150px;
-        }    
+
+        .form1{
+            p-inputGroup{
+                width: 100%;
+            }
+        }
+         
         .form3{
             margin-top: 2%;
             margin-bottom: 5%;
@@ -66,7 +69,7 @@
  .botoes-form{
     width: 49%;
     margin-bottom: 2%;
-    margin-top: 1%;
+    margin-top: 2%;
     display: flex;
     justify-content: end;
     
@@ -88,6 +91,12 @@
     border-radius: 10px;
     width: 100%;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    th{
+        font-size: 14px;
+    }
+    td{
+        font-size:12px ;
+    }
 }
 
 .td-acao{
@@ -147,10 +156,49 @@
 }
 .f3ed{
     width: 100%;    
-    margin-left: 50px;
+    margin-top:10px;
 
     p{
         
         margin-left: 20px;
     }
-}    
+}
+.f4ed{
+    margin-top: 10px;
+} 
+
+.botoes-formed{
+    width: 98%;
+    margin-bottom: 2%;
+    margin-top: 2%;
+    display: flex;
+    justify-content: end;
+   
+}
+.btnpried{
+    cursor: pointer;
+    background-color: #444959;
+    color: #fff;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    margin-left: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+        margin-left: 2px;
+    }
+}
+.btnseced{
+    cursor: pointer;
+    background-color: #e3e3f3;
+    color: #444959;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+        margin-left: 2px;
+    }
+}

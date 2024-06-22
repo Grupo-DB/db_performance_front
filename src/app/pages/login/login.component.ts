@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { DefaultLoginLayoutComponent } from '../../components/default-login-layout/default-login-layout.component';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { LoginService } from '../../services/login/login.service';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputGroupModule } from 'primeng/inputgroup';
@@ -10,6 +10,9 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { LoginResponse } from '../../types/login-response.type';
+import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-login',
@@ -17,10 +20,10 @@ import { ButtonModule } from 'primeng/button';
   imports: [
     DefaultLoginLayoutComponent,
     ReactiveFormsModule,ButtonModule,ToastModule,
-    PrimaryInputComponent,InputTextModule,InputGroupAddonModule,InputGroupModule
+    PrimaryInputComponent,InputTextModule,InputGroupAddonModule,InputGroupModule,CommonModule, RouterOutlet, RouterLink, RouterLinkActive
   ],
   providers: [
-    LoginService,MessageService,
+    MessageService,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
@@ -42,11 +45,32 @@ export class LoginComponent {
   clearForm() {
     this.loginForm.reset();
   }
-  submit(){
-    this.loginService.login(this.loginForm.value.email, this.loginForm.value.password).subscribe({
-    next: () => this.toastrService.success("Login feito com sucesso!!"),
-    error: () => this.toastrService.error("Erro!!")
-  })
-  }
 
+  submit() {
+    this.loginService.login(this.loginForm.value.email, this.loginForm.value.password).subscribe({
+      next: (response) => {
+        this.messageService.add({ severity: 'success', summary: 'Login!', detail: 'Login feito com sucesso!' });
+        setTimeout(() => {
+          if (response.primeiro_acesso) {
+            this.router.navigate(['/resetps']);
+          } else {
+            this.router.navigate(['/welcome/inicial']);
+          }
+        }, 500); // Delay of 500ms to allow message to be displayed
+      },
+      
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro no login. Por favor, verifique os dados e tente novamente.' });
+      }
+    });
+  }
 }
+
+
+
+  // submit(){
+  //   this.loginService.login(this.loginForm.value.email, this.loginForm.value.password).subscribe({
+  //   next: () => this.toastrService.success("Login feito com sucesso!!"),
+  //   error: () => this.toastrService.error("Erro!!")
+  // })
+  // }

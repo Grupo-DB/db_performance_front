@@ -15,10 +15,8 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { GetAreaService } from '../../services/areas/getarea.service';
 import { GetCompanyService } from '../../services/companys/getcompany.service';
 import { GetFilialService } from '../../services/filiais/getfilial.service';
-
+import { DividerModule } from 'primeng/divider';
 import { GetSetorService } from '../../services/setores/get-setor.service';
-
-import { GetCargoService } from '../../services/cargos/getcargo.service';
 import { CargoService } from '../../services/cargos/registercargo.service';
 import { AmbienteService } from '../../services/ambientes/ambiente.service';
 import { AreaService } from '../../services/areas/registerarea.service';
@@ -32,6 +30,8 @@ import { Empresa } from '../registercompany/registercompany.component';
 import { Setor } from '../setor/setor.component';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
+import { LoginService } from '../../services/login/login.service';
+import { CommonModule } from '@angular/common';
 
 interface RegisterCargoForm{
   empresa: FormControl,
@@ -55,7 +55,7 @@ export interface Cargo{
   selector: 'app-cargo',
   standalone: true,
   imports: [
-    ReactiveFormsModule,FormsModule,
+    ReactiveFormsModule,FormsModule,DividerModule,CommonModule,
     FormLayoutComponent,InputMaskModule,DialogModule,ConfirmDialogModule,
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
@@ -75,7 +75,7 @@ export class CargoComponent implements OnInit {
   cargos: any[] = [];
   editForm!: FormGroup;
   editFormVisible: boolean = false;
-
+  loading: boolean = true;
   empresaSelecionadaId: number | null = null;
   filialSelecionadaId: number | null = null;
   areaSelecionadaId: number | null = null;
@@ -97,7 +97,8 @@ export class CargoComponent implements OnInit {
     private cargoService: CargoService,
     private fb: FormBuilder,
     private confirmationService: ConfirmationService,
-    private ambienteService: AmbienteService 
+    private ambienteService: AmbienteService,
+    private loginService: LoginService, 
   )
   {
     this.registercargoForm = new FormGroup({
@@ -119,7 +120,24 @@ export class CargoComponent implements OnInit {
    }); 
  }
 
+ hasGroup(groups: string[]): boolean {
+  return this.loginService.hasAnyGroup(groups);
+  }  
+
  ngOnInit(): void {
+
+  this.loading = false;
+ 
+
+  this.cargoService.getCargos().subscribe(
+    (cargos: Cargo[]) => {
+      this.cargos = cargos;
+    },
+    error => {
+      console.error('Error fetching companies:', error);
+    }
+  );
+
   this.filialService.getFiliais().subscribe(
     filiais => {
       this.filiais = filiais;
@@ -163,14 +181,74 @@ export class CargoComponent implements OnInit {
       console.error('Error fetching users:',error);
     }
   );
-  this.cargoService.getCargos().subscribe(
-    (cargos: Cargo[]) => {
-      this.cargos = cargos;
-    },
-    error => {
-      console.error('Error fetching companies:', error);
+}
+
+
+mapEmpresas() {
+  this.cargos.forEach(cargo => {
+    const empresa = this.empresas?.find(empresa => empresa.id === cargo.empresa);
+    if (empresa) {
+      cargo.empresaNome = empresa.nome;
     }
-  );
+  });
+  this.loading = false;
+}
+mapFiliais() {
+  this.cargos.forEach(cargo => {
+    const filial = this.filiais?.find(filial => filial.id === cargo.filial);
+    if (filial) {
+      cargo.filialNome = filial.nome;
+    }
+  });
+  this.loading = false;
+}
+mapAreas() {
+  this.cargos.forEach(cargo => {
+    const area = this.areas?.find(area => area.id === cargo.area);
+    if (area) {
+      cargo.areaNome = area.nome;
+    }
+  });
+  this.loading = false;
+}
+mapSetores() {
+  this.cargos.forEach(cargo => {
+    const setor = this.setores?.find(setor => setor.id === cargo.setor);
+    if (setor) {
+      cargo.setorNome = setor.nome;
+    }
+  });
+  this.loading = false;
+}
+mapAmbientes() {
+  this.cargos.forEach(cargo => {
+    const ambiente = this.ambientes?.find(ambiente => ambiente.id === cargo.ambiente);
+    if (ambiente) {
+      cargo.ambienteNome = ambiente.nome;
+    }
+  });
+  this.loading = false;
+}
+
+getNomeEmpresa(id: number): string {
+  const empresa = this.empresas?.find(emp => emp.id === id);
+  return empresa ? empresa.nome : 'Empresa não encontrada';
+}
+getNomeFilial(id: number): string {
+  const filial = this.filiais?.find(fil => fil.id === id);
+  return filial ? filial.nome : 'Filial não encontrada';
+}
+getNomeArea(id: number): string {
+  const area = this.areas?.find(are => are.id === id);
+  return area ? area.nome : 'Area não encontrada';
+}
+getNomeSetor(id: number): string {
+  const setor = this.setores?.find(set => set.id === id);
+  return setor ? setor.nome : 'Setor não encontrada';
+}
+getNomeAmbiente(id: number): string {
+  const ambiente = this.ambientes?.find(amb => amb.id === id);
+  return ambiente ? ambiente.nome : 'Ambiente não encontrada';
 }
 
 onEmpresaSelecionada(empresa: any): void {
@@ -297,13 +375,25 @@ saveEdit() {
       this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Cargo atualizado com sucesso!' });
       setTimeout(() => {
        window.location.reload(); // Atualiza a página após a exclusão
-      }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+      }, 1000); // Tempo em milissegundos (1 segundo de atraso)
     },
-    error: () => {
-      this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao atualizar o cargo.' });
-    }
+    error: (err) => {
+      console.error('Login error:', err); 
+    
+      if (err.status === 401) {
+        this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+      } else if (err.status === 403) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+      } else if (err.status === 400) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+      }
+      else {
+        this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+      } 
+  }
   });
 }
+
 excluirCargo(id: number) {
   this.confirmationService.confirm({
     message: 'Tem certeza que deseja excluir este Cargo?',
@@ -313,21 +403,30 @@ excluirCargo(id: number) {
     rejectIcon: 'pi pi-times',
     acceptLabel: 'Sim',
     rejectLabel: 'Cancelar',
-    acceptButtonStyleClass: 'p-button-success',
-    rejectButtonStyleClass: 'p-button-danger',
+    acceptButtonStyleClass: 'p-button-info',
+    rejectButtonStyleClass: 'p-button-secondary',
     accept: () => {
-      this.cargoService.deleteCargo(id).subscribe(() => {
-        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Cargo excluído com sucesso!!',life:4000 });
-        setTimeout(() => {
-          window.location.reload(); // Atualiza a página após a exclusão
-        }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+      this.cargoService.deleteCargo(id).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Cargo excluído com sucesso!!', life: 1000 });
+          setTimeout(() => {
+            window.location.reload(); // Atualiza a página após a exclusão
+          }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+        },
+        error: (err) => {
+          if (err.status === 403) {
+            this.messageService.add({ severity: 'error', summary: 'Erro de autorização!', detail: 'Você não tem permissão para realizar esta ação.', life: 2000 });
+          } 
+        }
       });
     },
     reject: () => {
-      this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 3000 });
+      this.messageService.add({ severity: 'info', summary: 'Cancelado', detail: 'Exclusão cancelada.', life: 1000 });
     }
   });
 }
+
+
 
 submit(){
   const empresaId = this.registercargoForm.value.empresa.id;
@@ -349,8 +448,21 @@ submit(){
         window.location.reload(); // Atualiza a página após o registro
       }, 1000); // Tempo em milissegundos (1 segundo de atraso)
     },
-    error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }), 
-  })
+    error: (err) => {
+      console.error('Login error:', err); 
+    
+      if (err.status === 401) {
+        this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+      } else if (err.status === 403) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+      } else if (err.status === 400) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+      }
+      else {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro no login. Por favor, tente novamente.' });
+      } 
+  }
+  });
+}
 }
 
-}

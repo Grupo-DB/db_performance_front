@@ -23,7 +23,12 @@
     }
 } 
 .geral  {
-  
+    .av1{
+        display: flex;
+        .conceitos{
+            margin-left: 250px;
+        }
+    }
     
     .obs{
         display: flex;

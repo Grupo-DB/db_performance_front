@@ -1,3 +1,5 @@
+@import "primeicons/primeicons.css";
+
 .menu{
    position:static;
     //transform: translate(-1%, -180%);
@@ -20,7 +22,10 @@
 .card{
     height: 10%;
 }
-
+.perguntas{
+    display: flex;
+    justify-content: space-between;
+}
 .botoes-form{
     width: 93%;
     margin-bottom: 2%;
@@ -33,7 +38,29 @@
         
     }
 }
+.flext{
+    
+    text-align: end;
+    button{
+        margin-left: 1%;
+    }
+}
 
+.btnprit{
+    cursor: pointer;
+    background-color: #444959;
+    color: #fff;
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    margin-left: 15px;
+    margin-bottom: 1px;
+    
+    p{
+        text-align: center;
+        margin-top: 0px;
+    }
+}
 .btnpri{
     cursor: pointer;
     background-color: #444959;
@@ -46,7 +73,7 @@
         text-align: center;
         margin-top: 10px;
     }
-}   
+}      
 .btnsec{
     cursor: pointer;
     background-color: #e3e3f3;

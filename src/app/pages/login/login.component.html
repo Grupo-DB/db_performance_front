@@ -7,7 +7,8 @@
 > -->
 <div class="container">
 
-   <div class="login"> 
+   <div class="login">
+    <p-toast></p-toast> 
         <div class="lgimg">
             <img  src="/assets/imagens/logotelalogin.png"/>
         </div>
@@ -40,8 +41,9 @@
                     <label for="password">Senha</label>
                 </span>          
             </p-inputGroup>
+            
             <div class="botoes-form">
-                <p-toast></p-toast>
+                
                 <div class="btnsec" (click)="clearForm()">
                     <p>Limpar</p>
                 </div>
@@ -50,6 +52,8 @@
                 </div>
             </div>       
         </form>
+        <a [routerLink]="['esqueceusenha']"><p>Esqueceu sua senha?</p></a>
+
     </div>
 </div>
     

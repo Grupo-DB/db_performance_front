@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
@@ -32,7 +32,7 @@ import { NotificacoesService } from '../../services/notifications/notificacoes.s
     CommonModule, RouterOutlet, NzIconModule,NzUploadModule, NzLayoutModule, NzMenuModule,RouterLink,DividerModule,FormsModule],
   providers: [MessageService,UploadService]
 })
-export class WelcomeComponent implements OnInit  {
+export class WelcomeComponent implements OnInit,OnDestroy  {
 
   isCollapsed = false;
   empresas:Empresa[]|undefined;
@@ -44,7 +44,7 @@ export class WelcomeComponent implements OnInit  {
   subject: any;
   message: any;
   recipient_list: any;
- 
+  private intervalId: any;
 
   constructor(
     private apiService: UploadService,
@@ -57,6 +57,10 @@ export class WelcomeComponent implements OnInit  {
     private notificacoesService: NotificacoesService
   ) {}
 
+  hasGroup(groups: string[]): boolean {
+    return this.loginService.hasAnyGroup(groups);
+  } 
+  
   ngOnInit(): void {
     
     this.getColaboradorInfo();
@@ -87,9 +91,23 @@ export class WelcomeComponent implements OnInit  {
       }
     );
 
-    this.getUnreadCount();
+    this.startClock();
 
+    this.getUnreadCount();
   }
+
+  ngOnDestroy(): void {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+  }
+
+  startClock(): void {
+    this.intervalId = setInterval(() => {
+      this.hoje = Date.now();
+    }, 1000); // Atualiza a cada segundo
+  }
+
 
   getUnreadNotifications(): void {
     this.notificacoesService.getUnreadNotifications().subscribe(

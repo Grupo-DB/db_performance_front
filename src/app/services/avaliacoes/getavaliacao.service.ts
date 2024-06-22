@@ -7,8 +7,8 @@ import { Avaliacao } from '../../pages/novaliacao/novaliacao.component';
   providedIn: 'root'
 })
 export class AvaliacaoService {
-  private apiUrl = 'http://localhost:8000/management/avaliacoes/';
-  private apiUrlfb = 'http://localhost:8000/management/';  
+  private apiUrl = 'http://172.50.10.11:8008/management/avaliacoes/';
+  private apiUrlfb = 'http://172.50.10.11:8008/management/';  
   constructor(private http: HttpClient) { }
 
   getAvaliacoes(): Observable<any[]>{

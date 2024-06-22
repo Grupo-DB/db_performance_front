@@ -9,7 +9,7 @@ import { Avaliador } from '../../pages/avaliador/avaliador.component';
   providedIn: 'root'
 })
 export class AvaliadorService {
-  private apiUrl = 'http://localhost:8000/management/avaliadores/';
+  private apiUrl = 'http://172.50.10.11:8008/management/avaliadores/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
   registeravaliador(colaborador_ptr:number,usuario_id: number,){
@@ -34,5 +34,9 @@ export class AvaliadorService {
     return this.httpClient.post(url,{avaliador,avaliado_id}).pipe(
 
     );
-  }     
+  }
+  removeAvaliado(avaliadorId: number, avaliadoId: number): Observable<Avaliador> {
+    return this.httpClient.post<Avaliador>(`${this.apiUrl}${avaliadorId}/remove_avaliado/`, { avaliado_id: avaliadoId });
+    }
+  
 }

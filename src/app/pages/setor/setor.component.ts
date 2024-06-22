@@ -11,10 +11,7 @@ import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { FormLayoutComponent } from '../../components/form-layout/form-layout.component';
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
-import { GetAreaService } from '../../services/areas/getarea.service';
-import { GetSetorService } from '../../services/setores/get-setor.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { GetCompanyService } from '../../services/companys/getcompany.service';
 import { GetFilialService } from '../../services/filiais/getfilial.service';
 import { SetorService } from '../../services/setores/registersetor.service';
 import { CommonModule } from '@angular/common';
@@ -27,7 +24,7 @@ import { Filial } from '../filial/filial.component';
 import { Empresa } from '../registercompany/registercompany.component';
 import { AreaService } from '../../services/areas/registerarea.service';
 import { DividerModule } from 'primeng/divider';
-
+import { LoginService } from '../../services/login/login.service';
 interface RegisterSetorForm{
   empresa: FormControl,
   filial: FormControl,
@@ -63,17 +60,17 @@ export class SetorComponent implements OnInit {
   empresas: Empresa[]| undefined;
   filiais: Filial[]| undefined;
   areas: Area[]| undefined;
-  setores: Setor[] = [];
+  setores: any[] = [];
   editForm!: FormGroup;
   editFormVisible: boolean = false;
-
+  loading: boolean = true;
   empresaSelecionadaId: number | null = null;
   filialSelecionadaId: number | null = null;
-  
+  inputValue: string = '';
   registersetorForm!: FormGroup<RegisterSetorForm>;
   @ViewChild('RegisterfilialForm') RegisterSetorForm: any;
   @ViewChild('dt1') dt1!: Table;
-  inputValue: string = '';
+  
 
   constructor(
     private router: Router,
@@ -83,7 +80,8 @@ export class SetorComponent implements OnInit {
     private setorService: SetorService,
     private areaService: AreaService,
     private fb: FormBuilder,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private loginService: LoginService
     
   )
   {
@@ -102,10 +100,18 @@ export class SetorComponent implements OnInit {
    }); 
  }
 
+ hasGroup(groups: string[]): boolean {
+  return this.loginService.hasAnyGroup(groups);
+} 
+
  ngOnInit(): void {
+
+  this.loading = false;
+
   this.filialService.getFiliais().subscribe(
     filiais => {
       this.filiais = filiais;
+      this.mapFiliais();
     },
     error => {
       console.error('Error fetching users:', error);
@@ -115,6 +121,7 @@ export class SetorComponent implements OnInit {
   this.areaService.getAreas().subscribe(
     areas => {
       this.areas = areas;
+      this.mapAreas();
     },
     error => {
       console.error('Error fetching users:', error);
@@ -124,6 +131,7 @@ export class SetorComponent implements OnInit {
   this.registercompanyService.getCompanys().subscribe(
     empresas => {
       this.empresas = empresas;
+      this.mapEmpresas();
     },
     error => {
       console.error('Error fetching users:',error);
@@ -137,6 +145,48 @@ export class SetorComponent implements OnInit {
       console.error('Error fetching companies:', error);
     }
   );
+}
+
+mapEmpresas() {
+  this.setores.forEach(setor => {
+    const empresa = this.empresas?.find(empresa => empresa.id === setor.empresa);
+    if (empresa) {
+      setor.empresaNome = empresa.nome;
+    }
+  });
+  this.loading = false;
+}
+mapFiliais() {
+  this.setores.forEach(setor => {
+    const filial = this.filiais?.find(filial => filial.id === setor.filial);
+    if (filial) {
+      setor.filialNome = filial.nome;
+    }
+  });
+  this.loading = false;
+}
+mapAreas() {
+  this.setores.forEach(setor => {
+    const area = this.areas?.find(area => area.id === setor.area);
+    if (area) {
+      setor.areaNome = area.nome;
+    }
+  });
+  this.loading = false;
+}
+
+
+getNomeEmpresa(id: number): string {
+  const empresa = this.empresas?.find(emp => emp.id === id);
+  return empresa ? empresa.nome : 'Empresa não encontrada';
+}
+getNomeFilial(id: number): string {
+  const filial = this.filiais?.find(fil => fil.id === id);
+  return filial ? filial.nome : 'Filial não encontrada';
+}
+getNomeArea(id: number): string {
+  const area = this.areas?.find(are => are.id === id);
+  return area ? area.nome : 'Area não encontrada';
 }
 
 onEmpresaSelecionada(empresa: any): void {
@@ -189,6 +239,7 @@ this.registersetorForm.reset();
 
 filterTable() {
 this.dt1.filterGlobal(this.inputValue, 'contains');
+console.log();
 }
 abrirModalEdicao(setor: Setor) {
   this.editFormVisible = true;
@@ -219,11 +270,22 @@ saveEdit() {
       this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Setor atualizado com sucesso!' });
       setTimeout(() => {
        window.location.reload(); // Atualiza a página após a exclusão
-      }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+      }, 1000); // Tempo em milissegundos (1 segundo de atraso)
     },
-    error: () => {
-      this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao atualizar o setor.' });
-    }
+    error: (err) => {
+      console.error('Login error:', err); 
+    
+      if (err.status === 401) {
+        this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+      } else if (err.status === 403) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+      } else if (err.status === 400) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+      }
+      else {
+        this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+      } 
+  }
   });
 }
 
@@ -236,18 +298,25 @@ excluirSetor(id: number) {
     rejectIcon: 'pi pi-times',
     acceptLabel: 'Sim',
     rejectLabel: 'Cancelar',
-    acceptButtonStyleClass: 'p-button-success',
-    rejectButtonStyleClass: 'p-button-danger',
+    acceptButtonStyleClass: 'p-button-info',
+    rejectButtonStyleClass: 'p-button-secondary',
     accept: () => {
-      this.setorService.deleteSetor(id).subscribe(() => {
-        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Setor excluído com sucesso',life:4000 });
-        setTimeout(() => {
-          window.location.reload(); // Atualiza a página após a exclusão
-        }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+      this.setorService.deleteSetor(id).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Setor excluído com sucesso!!', life: 1000 });
+          setTimeout(() => {
+            window.location.reload(); // Atualiza a página após a exclusão
+          }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+        },
+        error: (err) => {
+          if (err.status === 403) {
+            this.messageService.add({ severity: 'error', summary: 'Erro de autorização!', detail: 'Você não tem permissão para realizar esta ação.', life: 2000 });
+          } 
+        }
       });
     },
     reject: () => {
-      this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 3000 });
+      this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 1000 });
     }
   });
 }
@@ -268,8 +337,21 @@ submit(){
         window.location.reload(); // Atualiza a página após o registro
       }, 1000); // Tempo em milissegundos (1 segundo de atraso)
     },
-    error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }), 
-  })
+    error: (err) => {
+      console.error('Login error:', err); 
+    
+      if (err.status === 401) {
+        this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+      } else if (err.status === 403) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+      } else if (err.status === 400) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+      }
+      else {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro no login. Por favor, tente novamente.' });
+      } 
+  }
+  });
 }
 
 }

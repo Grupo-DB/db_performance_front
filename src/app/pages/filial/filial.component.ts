@@ -20,6 +20,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { CommonModule } from '@angular/common';
 import { DividerModule } from 'primeng/divider';
+import { LoginService } from '../../services/login/login.service';
 
 interface RegisterFilialForm{
   empresa: FormControl,
@@ -60,11 +61,11 @@ export interface Filial {
     ]
 })
 export class FilialComponent implements OnInit {
-  filiais: Filial[] = [];
+  filiais: any[] = [];
   empresas: Empresa[]| undefined;
   editForm!: FormGroup;
   editFormVisible: boolean = false;
-
+  loading: boolean = true;
  
 
   registerfilialForm!: FormGroup<RegisterFilialForm>;
@@ -78,7 +79,8 @@ export class FilialComponent implements OnInit {
     private messageService: MessageService,
     private registercompanyService: RegisterCompanyService,
     private fb: FormBuilder,
-    private confirmationService: ConfirmationService 
+    private confirmationService: ConfirmationService,
+    private loginService: LoginService 
   )
 
     {
@@ -103,7 +105,12 @@ export class FilialComponent implements OnInit {
     });
   }
 
+  hasGroup(groups: string[]): boolean {
+    return this.loginService.hasAnyGroup(groups);
+  }  
+
   ngOnInit(): void {
+    this.loading = false;
     this.filialService.getFiliais().subscribe(
       (filiais: Filial[]) => {
         this.filiais = filiais;
@@ -116,6 +123,7 @@ export class FilialComponent implements OnInit {
     this.registercompanyService.getCompanys().subscribe(
       empresas => {
         this.empresas = empresas;
+        this.mapEmpresas();
       },
       error => {
         console.error('Error fetching users:',error);
@@ -123,8 +131,22 @@ export class FilialComponent implements OnInit {
     );
 
   } 
- 
 
+  mapEmpresas() {
+    this.filiais.forEach(filial => {
+      const empresa = this.empresas?.find(empresa => empresa.id === filial.empresa);
+      if (empresa) {
+        filial.empresaNome = empresa.nome;
+      }
+    });
+    this.loading = false;
+  }
+
+ 
+  getNomeEmpresa(id: number): string {
+    const empresa = this.empresas?.find(emp => emp.id === id);
+    return empresa ? empresa.nome : 'Empresa não encontrada';
+  }
   
 clear(table: Table) {
   table.clear();
@@ -169,11 +191,22 @@ saveEdit() {
       this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Filial atualizada com sucesso!' });
       setTimeout(() => {
        window.location.reload(); // Atualiza a página após a exclusão
-      }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+      }, 1000); // Tempo em milissegundos (1 segundo de atraso)
     },
-    error: () => {
-      this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao atualizar a filial.' });
-    }
+    error: (err) => {
+      console.error('Login error:', err); 
+    
+      if (err.status === 401) {
+        this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+      } else if (err.status === 403) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+      } else if (err.status === 400) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+      }
+      else {
+        this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+      } 
+  }
   });
 }
 
@@ -186,18 +219,25 @@ excluirFilial(id: number) {
     rejectIcon: 'pi pi-times',
     acceptLabel: 'Sim',
     rejectLabel: 'Cancelar',
-    acceptButtonStyleClass: 'p-button-success',
-    rejectButtonStyleClass: 'p-button-danger',
+    acceptButtonStyleClass: 'p-button-info',
+    rejectButtonStyleClass: 'p-button-secondary',
     accept: () => {
-      this.filialService.deleteFilial(id).subscribe(() => {
-        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Filial excluída com sucesso',life:4000 });
-        setTimeout(() => {
-          window.location.reload(); // Atualiza a página após a exclusão
-        }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+      this.filialService.deleteFilial(id).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Filial excluída com sucesso!!', life: 1000 });
+          setTimeout(() => {
+            window.location.reload(); // Atualiza a página após a exclusão
+          }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+        },
+        error: (err) => {
+          if (err.status === 403) {
+            this.messageService.add({ severity: 'error', summary: 'Erro de autorização!', detail: 'Você não tem permissão para realizar esta ação.', life: 2000 });
+          } 
+        }
       });
     },
     reject: () => {
-      this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 3000 });
+      this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 1000 });
     }
   });
 }
@@ -220,10 +260,22 @@ excluirFilial(id: number) {
           window.location.reload(); // Atualiza a página após o registro
         }, 1000); // Tempo em milissegundos (1 segundo de atraso)
       },
-      error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }), 
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro no login. Por favor, tente novamente.' });
+        } 
+      }
     });
   }
- 
 }
 
 

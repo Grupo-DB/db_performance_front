@@ -6,6 +6,8 @@ import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { TabMenuModule } from 'primeng/tabmenu';
+import { LoginService } from '../../services/login/login.service';
+
 
 @Component({
   selector: 'app-dashboard',
@@ -16,6 +18,13 @@ import { TabMenuModule } from 'primeng/tabmenu';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
-export class DashboardComponent {
+export class DashboardComponent  {
+  constructor(
+    private loginService: LoginService
+) {}
+
+hasGroup(groups: string[]): boolean {
+  return this.loginService.hasAnyGroup(groups);
+}
 
 }

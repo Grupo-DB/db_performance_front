@@ -1,7 +1,7 @@
-<div class="container">
+<div  *ngIf="hasGroup(['Admin','RHGestor'])" class="container">
     <div class="titulo">
         <p-divider align="left" type="solid">
-            <b>Cadastrar Nova Filial</b>
+            <b>Cadastro de Filiais</b>
         </p-divider> 
     </div>
     <div class="form-geral">  
@@ -10,13 +10,28 @@
             primaryBtnText="Cadastrar"
             (submit)="submit()"
         >
+        
         <div class="form1">
+            <div class="emp">
+                <p><label for="empresa">Empresa</label></p>
+                <p-dropdown
+                    class="" 
+                    [style]="{'width':'91%'}"
+                    [options]="empresas" 
+                    formControlName="empresa"
+                    optionLabel="nome"
+                    placeholder="Selecione"
+                >
+                </p-dropdown>
+            </div>
+            <div class="nome">
             <p-inputGroup>
                 <p-inputGroupAddon>
-                    <i class="pi pi-user"></i>
+                    <i class="pi pi-file-edit"></i>
                 </p-inputGroupAddon>
                 <span class="p-float-label">
-                    <input pInputText
+                    <input
+                        pInputText
                         id="nome"
                         formControlName="nome"
                         type="text"
@@ -24,32 +39,32 @@
                     <label for="nome">Digite o nome</label>
                 </span>          
             </p-inputGroup>
-            
+            </div>
             <div class="teste">  
                 <span class="p-float-label">
-                    <p-inputMask id="cnpj_input" mask="99.999.999/9999-99" formControlName="cnpj" [style]="{'width':'90%'}" ></p-inputMask>
-                    <label for="cnpj_input">Informe o CNPJ</label>
+                    <p-inputMask id="cnpj_input" mask="99.999.999/9999-99" formControlName="cnpj" [style]="{'width':'91%'}" ></p-inputMask>
+                    <label style="margin-left: 60px;" for="cnpj_input">Informe o CNPJ</label>
                 </span>  
             </div> 
 
-            <p-inputGroup>
-              <p-inputGroupAddon>
-                  <i class="pi pi-user"></i>
-              </p-inputGroupAddon>
-              <span class="p-float-label">
-                  <input pInputText
-                  id="endereco"
-                  formControlName="endereco"
-                  type="text"
-                  />  
-                  <label for="endereco">Digite o Endereço</label>
-              </span>          
-          </p-inputGroup>
         </div>    
         <div class="form2">
             <p-inputGroup>
                 <p-inputGroupAddon>
-                    <i class="pi pi-at"></i>
+                    <i class="pi pi-file-edit"></i>
+                </p-inputGroupAddon>
+                <span class="p-float-label">
+                    <input pInputText
+                    id="endereco"
+                    formControlName="endereco"
+                    type="text"
+                    />  
+                    <label for="endereco">Digite o Endereço</label>
+                </span>          
+            </p-inputGroup>
+            <p-inputGroup>
+                <p-inputGroupAddon>
+                    <i class="pi pi-file-edit"></i>
                 </p-inputGroupAddon>
                 <span class="p-float-label">
                     <input pInputText
@@ -63,7 +78,7 @@
   
             <p-inputGroup>
                 <p-inputGroupAddon>
-                    <i class="pi pi-key"></i>
+                    <i class="pi pi-file-edit"></i>
                 </p-inputGroupAddon>
                 <span class="p-float-label">
                     <input pInputText
@@ -71,13 +86,16 @@
                         formControlName="estado"
                         type="text"
                     />  
-                    <label for="estado">Digite o Estado</label>
+                    <label for="estado">Digite a sigla do Estado</label>
                 </span>          
             </p-inputGroup>
   
+            
+        </div>
+        <div class="form3">
             <p-inputGroup>
                 <p-inputGroupAddon>
-                    <i class="pi pi-key"></i>
+                    <i class="pi pi-file-edit"></i>
                 </p-inputGroupAddon>
                 <span class="p-float-label">
                     <input pInputText
@@ -85,20 +103,9 @@
                         formControlName="codigo"
                         type="text"
                     />  
-                    <label for="codigo">Digite o cód da filial</label>
+                    <label for="codigo">Digite o código da filial</label>
                 </span>          
             </p-inputGroup>
-        </div>
-        <div class="form3">
-            <p><label for="empresa">Empresa:</label></p>
-            <p-dropdown 
-            [style]="{'width':'95%'}"
-            [options]="empresas" 
-            formControlName="empresa"
-            optionLabel="nome"
-            placeholder="Selecione"
-            >
-        </p-dropdown>
         </div>    
         </form>
     </div>    
@@ -124,13 +131,15 @@
                 [tableStyle]="{ 'min-width': '50rem' }"
                 currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
                 [rowsPerPageOptions]="[5, 10, 20]"
-                [globalFilterFields]="['nome', 'cnpj', 'endereco','cidade','estado','codigo']"
+                [globalFilterFields]="['nome', 'cnpj', 'empresaNome','endereco','cidade','estado','codigo']"
             >
                 <ng-template pTemplate="caption">
+                    <p-toast />
+                    <p-confirmDialog />
                     <div class="flex">
                         <span class="p-input-icon-left ml-auto">
                             <i class="pi pi-search"></i>
-                            <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Palavra-Chave" />
+                            <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Digite o nome" />
                         </span>
                         <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
                         <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
@@ -139,42 +148,40 @@
                 <ng-template pTemplate="header">
                     <tr>
                         
-                        <th style="width:25%">Nome
-                            <p-columnFilter type="text" field="nome" display="menu"></p-columnFilter>
+                        <th style="width:25%" type="text" field="nome" display="menu">
+                            Nome
                         </th>
-                        <th style="width:25%">CNPJ
-                            <p-columnFilter type="text" field="cnpj" display="menu"></p-columnFilter>
+                        <th style="width:25%" type="text" field="cnpj" display="menu">
+                            CNPJ
                         </th>
-                        <th style="width:25%">Empresa
-                            <p-columnFilter type="text" field="empresa" display="menu"></p-columnFilter>
+                        <th style="width:25%" type="text" field="empresaNome" display="menu">
+                            Empresa
                         </th>
-                        <th style="width:25%">Endereço
-                            <p-columnFilter type="text" field="endereco" display="menu"></p-columnFilter>
+                        <th style="width:25%" type="text" field="endereco" display="menu">
+                            Endereço
                         </th>
-                        <th style="width:25%">Cidade
-                            <p-columnFilter type="text" field="cidade" display="menu"></p-columnFilter>
+                        <th style="width:25%" type="text" field="cidade" display="menu">
+                            Cidade
                         </th>
-                        <th style="width:25%">Estado
-                            <p-columnFilter type="text" field="estado" display="menu"></p-columnFilter>
+                        <th style="width:25%" type="text" field="estado" display="menu">
+                            Estado
                         </th>
-                        <th style="width:25%">Codigo
-                          <p-columnFilter type="text" field="codigo" display="menu"></p-columnFilter>
+                        <th style="width:25%" type="text" field="codigo" display="menu">
+                            Codigo
                         </th>
-                        <th style="width: 25%;">Ações</th>
+                        <th style="width: 25%;text-align: center;">Ações</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-filial>
                     <tr>                      
                         <td>{{ filial.nome }}</td>
                         <td>{{ filial.cnpj }}</td>
-                        <td>{{ filial.empresa }}</td>
+                        <td>{{ getNomeEmpresa(filial.empresa) }}</td>
                         <td>{{ filial.endereco }}</td>
                         <td>{{ filial.cidade }}</td>
                         <td>{{ filial.estado }}</td>
                         <td>{{ filial.codigo }}</td>
                         <td class="td-acao">
-                            <p-toast />
-                            <p-confirmDialog />
                             <div class="btnsec" (click)="abrirModalEdicao(filial)">
                                 <p>Editar</p>
                             </div>
@@ -209,7 +216,7 @@
                 <div class="form1">
                     <p-inputGroup>
                         <p-inputGroupAddon>
-                            <i class="pi pi-user"></i>
+                            <i class="pi pi-file-edit"></i>
                         </p-inputGroupAddon>
                         <span class="p-float-label">
                             <input pInputText
@@ -224,13 +231,13 @@
                     <div class="teste">  
                         <span class="p-float-label">
                             <p-inputMask id="cnpj_input" mask="99.999.999/9999-99" formControlName="cnpj" ></p-inputMask>
-                            <label for="cnpj_input">Informe o CNPJ</label>
+                            <label style="margin-left: 60px;" for="cnpj_input">Informe o CNPJ</label>
                         </span>  
                     </div> 
         
                     <p-inputGroup>
                       <p-inputGroupAddon>
-                          <i class="pi pi-user"></i>
+                          <i class="pi pi-file-edit"></i>
                       </p-inputGroupAddon>
                       <span class="p-float-label">
                           <input pInputText
@@ -245,7 +252,7 @@
                 <div class="form2ed">
                     <p-inputGroup>
                         <p-inputGroupAddon>
-                            <i class="pi pi-at"></i>
+                            <i class="pi pi-file-edit"></i>
                         </p-inputGroupAddon>
                         <span class="p-float-label">
                             <input pInputText
@@ -259,7 +266,7 @@
           
                     <p-inputGroup>
                         <p-inputGroupAddon>
-                            <i class="pi pi-key"></i>
+                            <i class="pi pi-file-edit"></i>
                         </p-inputGroupAddon>
                         <span class="p-float-label">
                             <input pInputText
@@ -267,13 +274,13 @@
                                 formControlName="estado"
                                 type="text"
                             />  
-                            <label for="estado">Digite o Estado</label>
+                            <label for="estado">Digite a sigla do Estado</label>
                         </span>          
                     </p-inputGroup>
           
                     <p-inputGroup>
                         <p-inputGroupAddon>
-                            <i class="pi pi-key"></i>
+                            <i class="pi pi-file-edit"></i>
                         </p-inputGroupAddon>
                         <span class="p-float-label">
                             <input pInputText
@@ -286,7 +293,7 @@
                     </p-inputGroup>
                 </div>
                 <div class="form3">
-                    <p><label for="empresa">Empresa:</label></p>
+                    <p><label for="empresa">Empresa</label></p>
                     <p-dropdown 
                         [style]="{'width':'95%'}"
                         [options]="empresas" 

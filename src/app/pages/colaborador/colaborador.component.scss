@@ -12,16 +12,14 @@
 
 .form-geral{
     width: 100%;
-    border-radius: 10px;
-    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
-    //text-transform: uppercase;
         .fg1{
             width: 100%;
+            margin-top: 25px;
             p{
                 margin-left: 20px;
             }
             .form1{
-                padding: 10px;
+                margin-top: 16px;
                 margin-left: 35px;
                 p{
                     margin-left: auto;
@@ -31,7 +29,7 @@
                 }
             }
             .form2{
-                padding: 5px;
+                margin-top: 16px;
                 margin-left: 20px;
                 
                 p{
@@ -39,7 +37,7 @@
                 }
             }
             .filial{
-                padding: 5px;
+                margin-top: 16px;
                 margin-left: 20px;
                 p{
                     margin-left: 20px;
@@ -47,23 +45,31 @@
                 
             }
             .form3{
-                padding: 5PX;
+                margin-top: 16px;
                 margin-left: 20px;
             }
             .dvset{
-                padding: 5PX;
+                margin-top: 16px;
                 margin-left: 20px;
             }
             .form4{
-                padding: 5PX;
+                margin-top: 16px;
                 margin-left: 20px;
             }
             .dvcarg{
-                padding: 5PX;
+                margin-top: 16px;
                 margin-left: 20px;
             }
             .dvtc{
-                padding: 5PX;
+                margin-top: 16px;
+                margin-left: 20px;
+            }
+            .dvraca{
+                margin-top: 16px;
+                margin-left: 20px;
+            }
+            .dvinst{
+                margin-top: 16px;
                 margin-left: 20px;
             }
         }
@@ -78,7 +84,25 @@
             }
             .dvgen{
                 padding: 5PX;
-                margin-left: 40px;
+                margin-left: 35px;
+            }
+            .dvcat{
+                padding: 5PX;
+                margin-left: 15px;
+                p{
+                    margin-left: 34px;
+                }
+            }
+            .dvsal{
+                padding: 5PX;
+                margin-left: 50px;
+                p-inputNumber{
+                    width: 100%;
+                }
+                p{
+                    margin-left: 2px;
+                }
+                
             }
             .form5{
                 padding: 5PX;
@@ -120,15 +144,24 @@
                 margin-top: 5PX;
                 padding: 8PX;
                 margin-left: 20px;
+                
                 p{
                     margin-left: 28px;
                 }
+                .btns{
+                    display: flex;
+                    P{
+                        margin-top: 5px;
+                        margin-right: 2px;
+                    }
+                }
+
             }
             .dvus{
                 margin-top: 20px;
                 margin-left: 55px;
                 margin-bottom: 1px;
-                width: 80%;
+                width: 75%;
                 background-color: #e0ede9;
                 border-radius: 5px;
                
@@ -185,11 +218,11 @@
  }
  
  .botoes-form{
-    width: 40%;
+    width: 84%;
     margin-bottom: 2%;
-    margin-top: 1%;
+    margin-top: 2%;
     display: flex;
-    justify-content: center;
+    justify-content: end;
     p-button{
         margin-right: 3%;
         
@@ -214,16 +247,18 @@
     td{
         font-size:12px ;
     }
-}
-
-.td-acao{
-    display: flex;
-    button{
-        margin-left: 2px;
+    .td-acao{
+        display: flex;
+        margin-top: 50px;
+        button{
+            margin-left: 2px;
+        }
+    
+    
     }
-
-
 }
+
+
 
 .btnpri{
     cursor: pointer;
@@ -285,7 +320,7 @@
             margin-left: 20px;
         }
         .form1edit{
-            margin-left: 15px;
+            margin-left: 15px;            
             p{
                 margin-left: 2px;
                 margin-bottom: 20px;
@@ -294,22 +329,120 @@
                 width: 77%;
             }
         }
-        // .form2edit{
-        //     padding: 10px;
-        //     margin-left: 35px;
-        // }
-    }
+        .form2edit{
+            margin-top: 10px;
+            
+        }
+        .filialed{
+            margin-top: 10px;
+        }
+        .form3ed{
+            margin-top: 10px;
+        }
+        .dvseted{
+            margin-top: 10px;
+        }
+        .form4ed{
+            margin-top: 10px;
+        }
+        .dvcarged{
+            margin-top: 10px;
+        }
+        .dvtced{
+            margin-top: 10px;
+        }
+        .dvracaed{
+            margin-top: 10px;
+        }
+        .dvinsted{
+            margin-top: 10px;
+        }
+        .form5ed{
+            margin-top: 10px;
+            p{
+                margin-left: 20px;
+            }
+            p-calendar{
+                margin-left:-10px;
+            }
+        }
+    }    
     .fg2edit{
         width: 50%;
         p{
             margin-left: 20px;
         }
+        .dvsaled{
+            margin-top: 10px;
+            margin-left: 17px;
+           p-inputNumber{
+            width: 80%;
+           } 
+        }
+        .dvcated{
+            margin-top: 10px;
+        }
+        .btnsed{
+            display: flex;
+            P{
+                margin-top: 5px
+            }
+        }
+        .dvgened{
+            margin-top: 10px;
+        }
+        .form6ed{
+            margin-top: 10px;
+        }
+        .form7ed{
+            margin-top: 10px;
+            p{
+                margin-left: 20px;
+            }
+            p-calendar{
+                margin-left:-10px;
+            }
+        }
+        .form8ed{
+            margin-top: 10px;
+            p{
+                margin-left: 20px;
+            }
+            p-calendar{
+                margin-left:-10px;
+            }
+        }
+        .form9ed{
+            margin-top: 10px;
+            p{
+                margin-left: 20px;
+            }
+            p-calendar{
+                margin-left:-10px;
+            }
+        }
+        .form10ed{
+            margin-top: 10px;
+            p{
+                margin-left: 20px;
+            }
+            p-calendar{
+                margin-left:-10px;
+            }
+        }
         .dvemailed{
             margin-top: 30px;
-            margin-left: 22px;
-            margin-bottom: 20px;
+            margin-left: 15px;
+            margin-bottom: 10px;
             p-inputgroup{
                 width: 80%;
+            }
+        }
+        .dvcbed{
+            margin-top: 20px;
+            margin-bottom: 30px;
+            p{
+                margin-right: 2px;
             }
         }
     }
@@ -318,36 +451,41 @@
 
 .botoes-formedit{
     display: flex;
-    justify-content: center;
-    margin-top: 5px;
-    
+    justify-content: end;
+    margin-top: 20px;
+ 
+    .btnpriedit{
+        cursor: pointer;
+        background-color: #444959;
+        color: #fff;
+        width: 120px;
+        height: 40px;
+        border-radius: 5px;
+        margin-left: 5px;
+        p{
+            text-align: center;
+            margin-top: 10px;
+            margin-left: 2px;
+        }
+    }   
+    .btnsecedit{
+        cursor: pointer;
+        background-color: #e3e3f3;
+        color: #444959;
+        width: 120px;
+        height: 40px;
+        border-radius: 5px;
+        p{
+            text-align: center;
+            margin-top: 10px;
+            margin-left: 2px;
+        }
+    }
+
+
 }
 
-.btnpriedit{
-    cursor: pointer;
-    background-color: #444959;
-    color: #fff;
-    width: 120px;
-    height: 40px;
-    border-radius: 5px;
-    margin-left: 5px;
-    p{
-        text-align: center;
-        margin-top: 10px;
-    }
-}   
-.btnsecedit{
-    cursor: pointer;
-    background-color: #e3e3f3;
-    color: #444959;
-    width: 120px;
-    height: 40px;
-    border-radius: 5px;
-    p{
-        text-align: center;
-        margin-top: 10px;
-    }
-}
+
 .dvusedit{
     margin-top: 15px;
     background-color: #e0ede9;
@@ -357,6 +495,8 @@
     margin-top: 15px;
 }
 .editImg{
-    margin-left: 20%;
+    margin-left: 30%;
     margin-top: 15px;
+    justify-content: center;
+    
 }
