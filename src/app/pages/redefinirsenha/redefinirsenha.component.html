@@ -1,0 +1,75 @@
+<!-- <div class="reset-password-container">
+    <h2>Redefinir Senha</h2>
+    <form [formGroup]="resetPasswordForm" (ngSubmit)="submit()">
+      <div class="form-group">
+        <label for="newPassword">Nova Senha</label>
+        <input type="password" id="newPassword" formControlName="newPassword" />
+      </div>
+      <div class="form-group">
+        <label for="confirmPassword">Confirmar Nova Senha</label>
+        <input type="password" id="confirmPassword" formControlName="confirmPassword" />
+      </div>
+      <button type="submit" [disabled]="resetPasswordForm.invalid">Redefinir Senha</button>
+    </form>
+  </div> -->
+
+  
+<div class="container">
+  <div class="formulario">
+      <div class="lgimg">
+          <img  src="/assets/imagens/logotelalogin.png"/>
+      </div>
+      <div class="titulo">
+          <h1>Redefinir Senha</h1>
+      </div>
+      <form [formGroup]="resetPasswordForm">
+          <div class="f1">
+              <p-inputGroup>
+                  <p-inputGroupAddon>
+                      <i class="pi pi-key"></i>
+                  </p-inputGroupAddon>
+                  <span class="p-float-label">
+                      <input
+                          pInputText
+                          type="password"
+                          id="newPassword"
+                          formControlName="newPassword"
+                          name="newPassword"
+                          required
+                      />
+                      <label for="newPassword">Nova Senha</label>
+                  </span>                
+              </p-inputGroup>
+          </div>
+          <div class="f2">    
+              <p-inputGroup>
+                  <p-inputGroupAddon>
+                      <i class="pi pi-key"></i>
+                  </p-inputGroupAddon>
+                  <span class="p-float-label">
+                      <input
+                          pInputText
+                          type="password"
+                          id="newPassword"
+                          formControlName="confirmPassword"
+                          name="newPassword"
+                          required
+                      />
+                      <label for="newPassword">Confirmar Senha</label>
+                  </span>                
+              </p-inputGroup>
+              <div class="botoes-form">
+                  <p-toast></p-toast>
+                  <div class="btnsec" (click)="clearForm()">
+                      <p>Limpar</p>
+                  </div>
+                  <div class="btnpri" (click)="submit()">
+                      <p>Criar</p>            
+                  </div>
+              </div>  
+          </div>    
+      </form>
+  </div>    
+</div>
+
+ 

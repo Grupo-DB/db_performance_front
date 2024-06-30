@@ -27,7 +27,7 @@ export class CargoService {
     const url = `${this.apiUrl}${id}/`;
     return this.httpClient.delete(url);
   }
-  getCargosByAmbiente(id: number): Observable<any[]> {
+  getCargosByAmbiente(id: any): Observable<any[]> {
     return this.httpClient.get<any>(`${this.apiUrl}byAmbiente/?ambiente_id=${id}`);
 
   }    

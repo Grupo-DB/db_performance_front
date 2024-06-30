@@ -12,7 +12,6 @@ import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { FormLayoutComponent } from '../../components/form-layout/form-layout.component';
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
-import { GetPerguntaService } from '../../services/perguntas/getpergunta.service';
 import { PerguntaService } from '../../services/perguntas/registerpergunta.service';
 import { CommonModule } from '@angular/common';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -25,6 +24,7 @@ import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { LoginService } from '../../services/login/login.service';
 
 
 interface RegisterPerguntaForm{
@@ -40,7 +40,7 @@ export interface Pergunta{
   selector: 'app-pergunta',
   standalone: true,
   imports: [ 
-    NzIconModule,NzLayoutModule,NzMenuModule,TabMenuModule,
+    NzIconModule,NzLayoutModule,NzMenuModule,TabMenuModule,InputTextareaModule,
     ReactiveFormsModule,FormsModule,CommonModule,EditorModule,InputTextareaModule,
     FormLayoutComponent,InputMaskModule,DialogModule,ConfirmDialogModule,DividerModule,
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
@@ -67,7 +67,7 @@ export class PerguntaComponent implements OnInit{
     private fb: FormBuilder,
     private confirmationService: ConfirmationService,
     private sanitizer: DomSanitizer,
-    
+    private loginService: LoginService 
   ) 
   {
     this.registerperguntaForm = new FormGroup({
@@ -80,23 +80,13 @@ export class PerguntaComponent implements OnInit{
     legenda:['']
    });  
  }
+
+ hasGroup(groups: string[]): boolean {
+  return this.loginService.hasAnyGroup(groups);
+}
  
  ngOnInit(): void {
 
-  // this.perguntaService.getPerguntas().subscribe(response => {
-  //   this.formattedTexts = response.map(text => this.sanitizer.bypassSecurityTrustHtml(text.formattedText));
-  // });
-
-
-//   this.perguntaService.getPerguntas().subscribe(
-//    (perguntas:Pergunta[]) => {
-//      this.perguntas = perguntas;
-//    },
-//    error => {
-//      console.error('Error fetching users:', error);
-//    }
-//  );
- 
 this.perguntaService.getPerguntas().subscribe(response => {
   this.perguntas = response;
 });
@@ -143,11 +133,22 @@ saveEdit() {
       this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Pergunta atualizada com sucesso!' });
       setTimeout(() => {
         window.location.reload(); // Atualiza a página após a exclusão
-      }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+      }, 1000); // Tempo em milissegundos (1 segundo de atraso)
     },
-    error: () => {
-      this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao atualizar a Area.' });
-    }
+    error: (err) => {
+      console.error('Login error:', err); 
+    
+      if (err.status === 401) {
+        this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+      } else if (err.status === 403) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+      } else if (err.status === 400) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+      }
+      else {
+        this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+      } 
+  }
   });
 }
 excluirPergunta(id: number) {
@@ -159,18 +160,25 @@ excluirPergunta(id: number) {
     rejectIcon: 'pi pi-times',
     acceptLabel: 'Sim',
     rejectLabel: 'Cancelar',
-    acceptButtonStyleClass: 'p-button-success',
-    rejectButtonStyleClass: 'p-button-danger',
+    acceptButtonStyleClass: 'p-button-info',
+    rejectButtonStyleClass: 'p-button-secondary',
     accept: () => {
-      this.perguntaService.deletePergunta(id).subscribe(() => {
-        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Pergunta excluída com sucesso',life:4000 });
-        setTimeout(() => {
-          window.location.reload(); // Atualiza a página após a exclusão
-        }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+      this.perguntaService.deletePergunta(id).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Pergunta excluída com sucesso!!', life: 1000 });
+          setTimeout(() => {
+            window.location.reload(); // Atualiza a página após a exclusão
+          }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+        },
+        error: (err) => {
+          if (err.status === 403) {
+            this.messageService.add({ severity: 'error', summary: 'Erro de autorização!', detail: 'Você não tem permissão para realizar esta ação.', life: 2000 });
+          } 
+        }
       });
     },
     reject: () => {
-      this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 3000 });
+      this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 1000 });
     }
   });
 }
@@ -185,7 +193,20 @@ excluirPergunta(id: number) {
         window.location.reload(); // Atualiza a página após o registro
       }, 1000); // Tempo em milissegundos (1 segundo de atraso)
     },
-    error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }),
+    error: (err) => {
+      console.error('Login error:', err); 
+    
+      if (err.status === 401) {
+        this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+      } else if (err.status === 403) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+      } else if (err.status === 400) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+      }
+      else {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro no login. Por favor, tente novamente.' });
+      } 
+    }
   })
 }
 }

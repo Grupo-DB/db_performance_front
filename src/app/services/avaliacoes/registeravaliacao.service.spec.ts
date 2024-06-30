@@ -13,17 +13,16 @@ export class RegisterAvaliacaoService {
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
   registeravaliacao(
-    tipoavaliacao: number, 
+    tipo: string, 
     avaliador: string,
     avaliado: string,
     periodo: string,
-    //feedback: boolean,
     perguntasRespostas: JSON,
     
   ){
     return this.httpClient.post<AvaliacaoResponse>(
       this.apiUrl,{
-        tipoavaliacao,
+        tipo,
         avaliador,
         avaliado,
         periodo,

@@ -3,7 +3,7 @@
         <li nz-menu-item nzMatchRouter="#">
             <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
         </li>
-        <li nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
             <ul>
                 <li nz-menu-item  nzMatchRouter>
                     <a routerLink="../tipoavaliacao" >Tipos de Avaliações</a>
@@ -17,7 +17,7 @@
             </ul>
         </li>    
         
-        <li nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
             <ul>
                 <li nz-menu-item   nzMatchRouter>
                     <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
@@ -32,14 +32,14 @@
         </li>
 
         
-        <li nz-menu-item nzMatchRouter="">
+        <li nz-menu-item nzMatchRouter="" >
             <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
         </li>
-        <li nz-menu-item nzMatchRouter="">
-            <a style="font-size: 13px;" routerLink="#" >Histórico de Avaliações</a>
+        <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['RHAvaliacao'])">
+            <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
         </li>
         <li nz-menu-item nzMatchRouter="">
-            <a style="font-size: 13px;" routerLink="#" >Relatórios</a>
+            <a style="font-size: 13px;" routerLink="../relatorios" >Relatórios</a>
         </li>
         
     </ul>
@@ -52,7 +52,7 @@
             </div>  
         
         
-            <div class="divFeedbacks" routerLink="../feedback">
+            <div *ngIf="hasGroup(['Admin','RHGestor'])" class="divFeedbacks" routerLink="../feedback">
                 <p> FEEDBACKS </p>
             </div>  
         

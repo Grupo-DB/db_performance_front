@@ -10,7 +10,7 @@
 
 .form-geral{
     
-    width: 50%;
+    width: 70%;
     
 }
 .titulo{
@@ -35,34 +35,39 @@
             padding: 15px;
             width: 150px;
         }
-        .teste{
-            margin-bottom: 5%;
-            margin-top: 6%;
-            label{
-                margin-left: 5%;
-            }
-        }
+        
         .form2{
+            width: 50%;
             p-inputGroup{
                 padding: 15px;
             }
         }
         .form1{
+            width: 50%;
+            .teste{
+                width: 100%;
+                margin-bottom: 15px;
+                margin-top: 15px;
+                label{
+                    margin-left: 5%;
+                }
+            }
             p-inputGroup{
                 padding: 15px;
+               
             }
             
             
             p-inputMask{
-                margin-top: 20px;
-                padding: 15px;
+                margin-top: 0px;
+                margin-left: 1px;
                 width: 150px;
             }
         }
  }
  
  .botoes-form{
-    width: 535px;
+    width: 69%;
     margin-bottom: 2%;
     margin-top: 1%;
     display: flex;
@@ -93,6 +98,12 @@
     border-radius: 10px;
     width: 100%;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    th{
+        font-size: 14px;
+    }
+    td{
+        font-size:12px ;
+    }
 }
 
 .td-acao{

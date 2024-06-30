@@ -1,18 +1,64 @@
 @import "primeicons/primeicons.css";
 
 .container{
-    
     display: flex;
     flex-flow: column wrap;
     align-items: center;
-    
 }
 
 .form-geral{
-    
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-    
+    width: 100%;
+    .fg1{
+        width: 50%;
+        p{
+            margin-left: 20px;
+        }
+        .form1{
+            margin-left: 28px;
+            p{
+                margin-left: auto;
+            }
+            p-inputGroup{
+                width: 79%;
+            }
+        }
+        .form2{
+            padding: 5px;
+            margin-left: 20px;
+            
+            p{
+                margin-left: 20px;
+            }
+        }
+        .filial{
+            padding: 5px;
+            margin-left: 20px;
+            p{
+                margin-left: 20px;
+            }   
+        }
+    }
+    .fg2{
+        margin-top: -30px;
+        width: 50%;
+        .form3{
+            p{
+                margin-left: 20px;
+            } 
+        }
+        .dvset{
+            margin-top: -10px;
+            p{
+                margin-left: 20px;
+            }
+        }
+        .form4{
+            margin-top: 10px;
+            p{
+                margin-left: 20px;
+            }
+        }
+    }
 }
 .titulo{
     justify-content: center;
@@ -51,14 +97,39 @@
  }
  
  .botoes-form{
-    width: 40%;
+    width: 77%;
     margin-bottom: 2%;
     margin-top: 1%;
     display: flex;
-    justify-content: center;
+    justify-content: end;
     p-button{
         margin-right: 3%;
         
+    }
+}
+.btnpri{
+    cursor: pointer;
+    background-color: #444959;
+    color: #fff;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    margin-left: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}   
+.btnsec{
+    cursor: pointer;
+    background-color: #e3e3f3;
+    color: #444959;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
     }
 }
 
@@ -74,6 +145,21 @@
     border-radius: 10px;
     width: 100%;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    th{
+        font-size: 14px;
+    }
+    td{
+        font-size:12px ;
+    }
+    .td-acao{
+        display: flex;
+        margin-top: 50px;
+        button{
+            margin-left: 2px;
+        }
+    
+    
+    }
 }
 
 .td-acao{
@@ -81,4 +167,79 @@
     button{
         margin-left: 2px;
     }
+}
+.editgeral{
+    width: 100%;
+    .fg1edit{
+        width: 50%;
+        p{
+            margin-left: 20px;
+        }
+        .form1edit{
+            margin-left: 5px;
+            width: 103%;            
+            p-inputGroup{
+                width: 77%;
+            }
+        }
+        .form2edit{
+            margin-top: 1px;
+            
+        }
+        .filialed{
+            margin-top: 10px;
+        }
+    }
+    .fg2edit{
+        width: 50%;
+        p{
+            margin-left: 20px;
+        }
+        .form3ed{
+            margin-top: -15px;
+        }
+        .dvseted{
+            margin-top: 10px;
+        }
+        .form4ed{
+            margin-top: 12px;
+        }
+    }
+
+}
+
+.botoes-formedit{
+    display: flex;
+    justify-content: end;
+    margin-top: 20px;
+    width: 89%;
+    .btnpriedit{
+        cursor: pointer;
+        background-color: #444959;
+        color: #fff;
+        width: 120px;
+        height: 40px;
+        border-radius: 5px;
+        margin-left: 5px;
+        p{
+            text-align: center;
+            margin-top: 10px;
+            margin-left: 2px;
+        }
+    }   
+    .btnsecedit{
+        cursor: pointer;
+        background-color: #e3e3f3;
+        color: #444959;
+        width: 120px;
+        height: 40px;
+        border-radius: 5px;
+        p{
+            text-align: center;
+            margin-top: 10px;
+            margin-left: 2px;
+        }
+    }
+
+
 }

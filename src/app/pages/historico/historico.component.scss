@@ -1,0 +1,76 @@
+@import "primeicons/primeicons.css";
+.btnpri{
+    cursor: pointer;
+    background-color: #444959;
+    color: #fff;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    margin-left: 5px;
+    padding: 1px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+    
+}
+.card{
+    th{
+        font-size: 16px;
+    }
+    td{
+        font-size:12px ;
+    }
+} 
+.geral  {
+    .av1{
+        display: flex;
+        .conceitos{
+            margin-left: 250px;
+        }
+    }
+    
+    .obs{
+        display: flex;
+        
+        .btnpri2{
+            
+            cursor: pointer;
+            background-color: #444959;
+            color: #fff;
+            width: 120px;
+            height: 40px;
+            border-radius: 5px;
+            margin-left: 5px;
+            padding: 1px;
+            margin-top: 5px;
+            p{
+                text-align: center;
+                margin-top: 10px;
+            }
+        }
+    }
+    .btnpri3{
+            vertical-align: center;
+            cursor: pointer;
+            background-color: #444959;
+            color: #fff;
+            width: 320px;
+            height: 60px;
+            border-radius: 5px;
+            margin-left: 50%;
+         p{
+            text-align: center;
+            
+        }
+    }
+}
+.titulo{
+    justify-content: center;
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    h2{
+        color:slategrey;
+    }
+}

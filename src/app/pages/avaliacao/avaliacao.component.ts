@@ -6,7 +6,7 @@ import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { TabMenuModule } from 'primeng/tabmenu';
-
+import { LoginService } from '../../services/login/login.service';
 
 
 @Component({
@@ -19,7 +19,15 @@ import { TabMenuModule } from 'primeng/tabmenu';
   templateUrl: './avaliacao.component.html',
   styleUrl: './avaliacao.component.scss'
 })
-export class AvaliacaoComponent {}
+export class AvaliacaoComponent {
+  constructor(
+    private loginService: LoginService
+  ){}
+  hasGroup(groups: string[]): boolean {
+    return this.loginService.hasAnyGroup(groups);
+  }
+}
+
 
 
 

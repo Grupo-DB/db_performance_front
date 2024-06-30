@@ -32,7 +32,7 @@ export class AvaliadoService {
   getAvaliadosByTipoAvaliacao(tipoAvaliacaoId: number): Observable<any> {
     return this.httpClient.get(`${this.apiUrl}byTipoAvaliacao/`, { params: { tipoAvaliacao: tipoAvaliacaoId.toString() } });
   }
-  getAvaliadosByAvaliador(id: number): Observable<any[]> {
+  getAvaliadosByAvaliador(id: any): Observable<any[]> {
     return this.httpClient.get<any>(`${this.apiUrl}byAvaliador/?avaliador_id=${id}`);
   }
   getMeusAvaliadosSemAvaliacao(periodo: string,): Observable<any> {

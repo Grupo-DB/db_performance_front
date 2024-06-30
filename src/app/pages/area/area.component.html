@@ -1,6 +1,6 @@
-<div class="container">
+<div *ngIf="hasGroup(['Admin','RHGestor'])" class="container">
     <p-divider align="left" type="solid">
-        <b>Cadastrar Nova Área</b>
+        <b>Cadastro de Áreas</b>
     </p-divider> 
     <div class="form-geral">    
         <form [formGroup]="registerareaForm"
@@ -12,7 +12,7 @@
             <div class="form1">
                 <p-inputGroup>
                     <p-inputGroupAddon>
-                        <i class="pi pi-user"></i>
+                        <i class="pi pi-file-edit"></i>
                     </p-inputGroupAddon>
                     <span class="p-float-label">
                         <input pInputText
@@ -25,7 +25,7 @@
                 </p-inputGroup>
             </div>    
             <div class="f1">    
-                    <p><label for="empresa">Empresa:</label></p>
+                    <p><label for="empresa">Empresa</label></p>
                     <p-dropdown 
                         [style]="{'width':'95%'}"
                         [options]="empresas" 
@@ -36,7 +36,7 @@
                     </p-dropdown>
             </div>
             <div class="f3">    
-                    <p><label for="filial">Filial:</label></p>
+                    <p><label for="filial">Filial</label></p>
                     <p-dropdown 
                         [style]="{'width':'95%'}"
                         [options]="filiais" 
@@ -59,24 +59,25 @@
                 <p>Salvar</p>            
             </div> 
     </div>
-    <hr>
         <div class="tabela">
+            <p-toast />
+            <p-confirmDialog />
             <p-table
                 #dt1
                 [value]="areas"
                 [paginator]="true"
                 [rows]="5"
                 [showCurrentPageReport]="true"
-                [tableStyle]="{ 'min-width': '50rem' }"
+                [tableStyle]="{ 'min-width': '50rem'}"
                 currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
                 [rowsPerPageOptions]="[5, 10, 20]"
-                [globalFilterFields]="['nome', 'empresa', 'filial']"
+                [globalFilterFields]="['nome', 'empresaNome', 'filialNome']"
             >
                 <ng-template pTemplate="caption">
                     <div class="flex">
                         <span class="p-input-icon-left ml-auto">
                             <i class="pi pi-search"></i>
-                            <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Palavra-Chave" />
+                            <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Digite o nome" />
                         </span>
                         <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
                         <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
@@ -84,16 +85,16 @@
                 </ng-template>    
                 <ng-template pTemplate="header">
                     <tr>
-                        <th style="width:25%">Nome
-                            <p-columnFilter type="text" field="nome" display="menu"></p-columnFilter>
+                        <th style="width:25%" type="text" field="nome" display="menu">
+                            Nome
                         </th>
-                        <th style="width:25%">Empresa
-                            <p-columnFilter type="text" field="nome" display="menu"></p-columnFilter>
+                        <th style="width:25%" type="text" field="empresaNome" display="menu">
+                            Empresa
                         </th>
-                        <th style="width:25%">Filial
-                            <p-columnFilter type="text" field="nome" display="menu"></p-columnFilter>
+                        <th style="width:25%" type="text" field="filialNome" display="menu">
+                            Filial
                         </th>
-                        <th style="width: 25%;">Ações</th>
+                        <th style="width: 25%; text-align: center;">Ações</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-area>
@@ -102,8 +103,6 @@
                         <td>{{ getNomeEmpresa(area.empresa) }}</td>
                         <td>{{ getNomeFilial(area.filial) }}</td>
                         <td class="td-acao">
-                            <p-toast />
-                            <p-confirmDialog />
                             <div class="btnsec" (click)="abrirModalEdicao(area)">
                                 <p>Editar</p>
                             </div>
@@ -126,7 +125,7 @@
             
             [modal]="true"
             [(visible)]="editFormVisible" 
-            [style]="{ width: '50rem' }" 
+            [style]="{ width: '50rem','min-height':'45rem' }" 
             [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
         >
         <div class="titulo">
@@ -142,7 +141,7 @@
             <div class="form1ed">
                 <p-inputGroup>
                     <p-inputGroupAddon>
-                        <i class="pi pi-user"></i>
+                        <i class="pi pi-file-edit"></i>
                     </p-inputGroupAddon>
                     <span class="p-float-label">
                         <input pInputText
@@ -155,7 +154,7 @@
                 </p-inputGroup>
             </div>    
             <div class="f1ed">    
-                    <p><label for="empresa">Empresa:</label></p>
+                    <p><label for="empresa">Empresa</label></p>
                     <p-dropdown 
                         [style]="{'width':'95%'}"
                         [options]="empresas" 
@@ -166,7 +165,7 @@
                     </p-dropdown>
             </div>
             <div class="f3ed">    
-                    <p><label for="filial">Filial:</label></p>
+                    <p><label for="filial">Filial</label></p>
                     <p-dropdown 
                         [style]="{'width':'95%'}"
                         [options]="filiais" 

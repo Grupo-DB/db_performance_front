@@ -1,0 +1,21 @@
+.container{
+    display: flex;
+    width: 100%;
+    .notifications{
+        margin-left: 20px;
+        .btn{
+            cursor: pointer;
+            background-color:#e3e3f3;
+            color: #444959;
+            height: 40px;
+            width: 260px;
+            border-radius: 5px;
+            p{
+                text-align: center;
+                padding: 10px;
+                
+            }
+        }
+    }
+
+}

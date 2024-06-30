@@ -28,7 +28,7 @@ export class AreaService {
     const url = `${this.apiUrl}${id}/`;
     return this.httpClient.delete(url);
   }
-  getAreasByFilial(id: number): Observable<any[]> {
+  getAreasByFilial(id: any): Observable<any[]> {
     return this.httpClient.get<any>(`${this.apiUrl}byFilial/?filial_id=${id}`);
 
   } 

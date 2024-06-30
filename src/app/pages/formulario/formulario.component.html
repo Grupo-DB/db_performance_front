@@ -1,4 +1,4 @@
-<div class="menu">
+<div *ngIf="hasGroup(['Admin','RHGestor'])" class="menu">
     <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
         <li nz-menu-item nzMatchRouter="#">
             <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
@@ -35,16 +35,16 @@
         <li nz-menu-item nzMatchRouter="">
             <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
         </li>
-        <li nz-menu-item nzMatchRouter="">
-            <a style="font-size: 13px;" routerLink="#" >Histórico de Avaliações</a>
+        <li nz-menu-item nzMatchRouter=""*ngIf="hasGroup(['RHAvaliacao'])">
+            <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
         </li>
         <li nz-menu-item nzMatchRouter="">
-            <a style="font-size: 13px;" routerLink="#" >Relatórios</a>
+            <a style="font-size: 13px;" routerLink="../relatorios" >Relatórios</a>
         </li>
         
     </ul>
 </div>
-<div class="container">
+<div *ngIf="hasGroup(['Admin','RHGestor'])" class="container">
     <div class="titulo">
         <p-divider align="left" type="solid">
             <b>Cadastro de Formulários</b>
@@ -57,7 +57,7 @@
             <div class="form1">    
             <p-inputGroup>
                 <p-inputGroupAddon>
-                    <i class="pi pi-file-plus"></i>
+                    <i class="pi pi-file-edit"></i>
                 </p-inputGroupAddon>
                 <span class="p-float-label">
                     <input pInputText
@@ -70,7 +70,7 @@
             </p-inputGroup>
         </div>  
         <div class="form2">
-            <p><label>Tipo de Avaliação:</label></p>
+            <p><label>Tipo de Avaliação</label></p>
             <p-dropdown
                 [style]="{'width':'95%'}"
                 id="tipoavaliacao"
@@ -98,7 +98,9 @@
       
       
       
-      <div class="tabela">
+      <div *ngIf="hasGroup(['Admin','RHGestor'])" class="tabela">
+        <p-toast />
+        <p-confirmDialog />
         <p-table
             #dt1
             [value]="formularios"
@@ -114,7 +116,7 @@
                 <div class="flex">
                     <span class="p-input-icon-left ml-auto">
                         <i class="pi pi-search"></i>
-                        <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Palavra-Chave" />
+                        <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Digite o nome" />
                     </span>
                     <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
                     <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
@@ -122,27 +124,23 @@
             </ng-template>    
             <ng-template pTemplate="header">
                 <tr>
-                    <th style="width:25%">ID
-                        <p-columnFilter type="text" field="id" display="menu"></p-columnFilter>
+                    <th style="width:25%" type="text" field="nome" display="menu">
+                        Nome
                     </th>
-                    <th style="width:25%">Nome
-                        <p-columnFilter type="text" field="texto" display="menu"></p-columnFilter>
-                    </th>
+                    <!-- <th style="width:25%" type="text" field="tipoavaliacao" display="menu">
+                        Tipo de Avaliação
+                    </th> -->
                     <th style="width: 25%;">Ações</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-formulario>
                 <tr>
-                    <td>{{ formulario.id }}</td>
                     <td>{{ formulario.nome }}</td>
-                    <td class="td-acao">
-                        <p-toast />
-                        <p-confirmDialog />
-                       
+                    <!-- <td>{{ getTipoAvaliacaoNome(formulario.tipoavaliacao) }}</td> -->
+                    <td class="td-acao">                       
                         <div class="btnsec" (click)="abrirModalEdicao(formulario)">
                             <p>Editar</p>
                         </div>
-                        
                         <div class="btnpri" (click)="excluirFormulario(formulario.id)">
                             <p>Excluir</p>            
                         </div>
@@ -164,7 +162,7 @@
         [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
     >
     <p-divider align="left" type="solid">
-        <b>Editar Formula´rio</b>
+        <b>Editar Formulário</b>
     </p-divider>
     <form 
         [formGroup]="editForm"
@@ -189,7 +187,7 @@
             </p-inputGroup>
         </div>  
         <div class="form2ed">
-            <p><label>Tipo de Avaliação:</label></p>
+            <p><label>Tipo de Avaliação</label></p>
             <p-dropdown
                 [style]="{'width':'95%'}"
                 id="tipoavaliacao"

@@ -13,19 +13,12 @@ import { ToastModule } from 'primeng/toast';
 import { FormLayoutComponent } from '../../components/form-layout/form-layout.component';
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { GetAreaService } from '../../services/areas/getarea.service';
-import { GetCargoService } from '../../services/cargos/getcargo.service';
-import { GetCompanyService } from '../../services/companys/getcompany.service';
-import { GetFilialService } from '../../services/filiais/getfilial.service';
-import { GetSetorService } from '../../services/setores/get-setor.service';
-import { GetTipoContratoService } from '../../services/tipocontratos/gettipocontrato.service';
 import { CalendarModule } from 'primeng/calendar';
 import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { CheckboxModule } from 'primeng/checkbox';
-import { CommonModule, formatDate } from '@angular/common';
-import { GetColaboradorService } from '../../services/colaboradores/get-colaborador.service';
+import { CommonModule, DecimalPipe, formatDate } from '@angular/common';
 import { AmbienteService } from '../../services/ambientes/ambiente.service';
 import { TipoContratoService } from '../../services/tipocontratos/resgitertipocontrato.service';
 import { DialogModule } from 'primeng/dialog';
@@ -42,9 +35,11 @@ import { Cargo } from '../cargo/cargo.component';
 import { Filial } from '../filial/filial.component';
 import { Empresa } from '../registercompany/registercompany.component';
 import { Setor } from '../setor/setor.component';
-import { TipoContrato } from '../tipocontrato/tipocontrato.component';
-import { switchMap, map, forkJoin } from 'rxjs';
 import { DividerModule } from 'primeng/divider';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { BooleanToStatusPipe } from '../../services/situacao/boolean-to-status.pipe';
+import { LoginService } from '../../services/login/login.service';
 
 interface RegisterColaboradorForm {
   empresa: FormControl;
@@ -67,6 +62,10 @@ interface RegisterColaboradorForm {
   username: FormControl;
   password: FormControl;
   email: FormControl;
+  salario: FormControl;
+  raca: FormControl;
+  instrucao: FormControl;
+  categoria: FormControl;
   tornar_avaliado: FormControl;
   tornar_avaliador: FormControl;
 }
@@ -81,7 +80,7 @@ export interface Colaborador{
   setor: number;
   ambiente: number;
   cargo: number;
-  tipocontrato: number;
+  tipocontrato: string;
   data_admissao: Date;
   situacao: boolean;
   genero: string;
@@ -95,6 +94,10 @@ export interface Colaborador{
   username: string;
   password: string
   email: string;
+  salario: number;
+  raca: string;
+  instrucao: string;
+  categoria: string;
   tornar_avaliador: boolean;
   tornar_avaliado: boolean;
 }
@@ -104,11 +107,23 @@ interface Genero{
 interface Estado_Civil{
   nome: string,
 }
+interface Raca{
+  nome: string
+}
+interface Instrucao{
+  nome: string
+}
+interface Categoria{
+  nome: string
+}
+interface TipoContrato{
+  nome: string
+}
 @Component({
   selector: 'app-colaborador',
   standalone: true,
   imports: [
-    ReactiveFormsModule,FormsModule,NzUploadModule,CommonModule,DialogModule,
+    ReactiveFormsModule,FormsModule,NzUploadModule,CommonModule,DialogModule,InputNumberModule,InputSwitchModule,BooleanToStatusPipe,
     FormLayoutComponent,InputMaskModule,CalendarModule,CheckboxModule,ConfirmDialogModule,DividerModule,
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,
   ],
@@ -132,12 +147,15 @@ export class ColaboradorComponent implements OnInit {
   ambientes: Ambiente[]| undefined;
   tipocontratos: TipoContrato[]| undefined;
   generos: Genero[] | undefined;
+  racas: Raca[] | undefined;
+  instrucoes: Instrucao[] | undefined;
+  categorias: Categoria[] | undefined;
   estados_civis: Estado_Civil[] | undefined;
   colaboradores: any[] = [];
   editForm!: FormGroup;
   imgForm!: FormGroup<imgForm>;
   editFormVisible: boolean = false;
-  
+  loading: boolean = true;
   empresaSelecionadaId: number | null = null;
   filialSelecionadaId: number | null = null;
   areaSelecionadaId: number | null = null;
@@ -165,6 +183,7 @@ export class ColaboradorComponent implements OnInit {
     private msg: NzMessageService,
     private fb: FormBuilder,
     private confirmationService: ConfirmationService,
+    private loginService: LoginService
   )
   
   {
@@ -178,7 +197,7 @@ export class ColaboradorComponent implements OnInit {
       cargo: new FormControl('',),
       tipocontrato: new FormControl('',),
       data_admissao: new FormControl('',),
-      situacao: new FormControl('',),
+      situacao: new FormControl<boolean>(true),
       genero: new FormControl('',),
       estado_civil: new FormControl('',),
       data_nascimento: new FormControl('',),
@@ -189,8 +208,12 @@ export class ColaboradorComponent implements OnInit {
       username: new FormControl('',),
       password: new FormControl('',),
       email: new FormControl('',),
-      tornar_avaliado: new FormControl('',),
-      tornar_avaliador: new FormControl('',)
+      salario: new FormControl('',),
+      raca: new FormControl('',),
+      instrucao: new FormControl('',),
+      categoria: new FormControl('',),
+      tornar_avaliado: new FormControl<boolean>(true),
+      tornar_avaliador: new FormControl<boolean>(false)
    }); 
    this.editForm = this.fb.group({
     id: [''],
@@ -213,6 +236,10 @@ export class ColaboradorComponent implements OnInit {
     username:[''],
     password:[''],
     email:[''],
+    salario:[''],
+    raca:[''],
+    instrucao:[''],
+    categoria:[''],
     tornar_avaliador:[''],
     tornar_avaliado:['']
 ,   });
@@ -221,19 +248,60 @@ export class ColaboradorComponent implements OnInit {
    });   
  }
 
+ hasGroup(groups: string[]): boolean {
+  return this.loginService.hasAnyGroup(groups);
+}
+
  ngOnInit(): void {
   this.estados_civis = [
     { nome: 'Solteiro(a)' },
     { nome: 'Casado(a)'  },
     { nome: 'Divorciado(a)' },
     { nome: 'Separado(a)' },
-    { nome: 'Víuvo(a)'}
+    { nome: 'Víuvo(a)'},
+    { nome: 'União Estável'}
 ];
 
-this.generos =[
-  { nome:'Masculino'},
-  { nome:'Feminino'}
-];
+  this.generos =[
+    { nome:'Masculino'},
+    { nome:'Feminino'}
+  ];
+
+  this.racas = [
+    { nome:'Branca'},
+    { nome:'Preta'},
+    { nome:'Parda'},
+    { nome:'Indígena'},
+    { nome:'Branca'},
+    { nome:'Não Informado'},
+  ];
+
+  this.instrucoes = [
+    { nome:'Fundamental Incompleto'},
+    { nome:'Fundamental Completo'},
+    { nome:'Médio Incompleto'},
+    { nome:'Médio Completo'},
+    { nome:'Superior Incompleto'},
+    { nome:'Superior Completo'},
+    { nome:'Pós-Graduação'},
+  ]
+
+  this.tipocontratos = [
+    { nome:'Efetivo'},
+    { nome:'Experiência'},
+    { nome:'Jovem Aprendiz'},
+    { nome:'Estagiário'},
+    { nome:'Terceirizado'},
+  ]
+
+  this.categorias = [
+    { nome:'Horista'},
+    { nome:'Mensalista'},
+  ]
+
+this.loading = false;
+
+
  
   this.colaboradorService.getColaboradores().subscribe(
     (colaboradores: Colaborador[]) => {
@@ -247,15 +315,7 @@ this.generos =[
   this.filialService.getFiliais().subscribe(
     filiais => {
       this.filiais = filiais;
-    },
-    error => {
-      console.error('Error fetching users:', error);
-    }
-  );
-
-  this.tipocontratoService.getTiposContratos().subscribe(
-    tipocontratos => {
-      this.tipocontratos = tipocontratos;
+      this.mapFiliais();
     },
     error => {
       console.error('Error fetching users:', error);
@@ -265,6 +325,7 @@ this.generos =[
   this.cargoService.getCargos().subscribe(
     cargos => {
       this.cargos = cargos;
+      this.mapCargos();
     },
     error => {
       console.error('Error fetching users:', error);
@@ -274,6 +335,7 @@ this.generos =[
   this.registercompanyService.getCompanys().subscribe(
     empresas => {
       this.empresas = empresas;
+      this.mapEmpresas();
     },
     error => {
       console.error('Error fetching users:',error);
@@ -283,6 +345,7 @@ this.generos =[
   this.setorService.getSetores().subscribe(
     setores => {
       this.setores = setores;
+      this.mapSetores();
     },
     error => {
       console.error('Error fetching users:',error);
@@ -291,6 +354,7 @@ this.generos =[
   this.areaService.getAreas().subscribe(
     areas => {
       this.areas = areas;
+      this.mapAreas();
     },
     error => {
       console.error('Error fetching users:',error);
@@ -299,6 +363,7 @@ this.generos =[
   this.ambienteService.getAmbientes().subscribe(
     ambientes => {
       this.ambientes = ambientes;
+      this.mapAmbientes();
     },
     error =>{
       console.error('Error fetching users:',error);
@@ -306,7 +371,63 @@ this.generos =[
   )
  }
 
- getNomeEmpresa(id: number): string {
+ mapEmpresas() {
+  this.colaboradores.forEach(colaborador => {
+    const empresa = this.empresas?.find(empresa => empresa.id === colaborador.empresa);
+    if (empresa) {
+      colaborador.empresaNome = empresa.nome;
+    }
+  });
+  this.loading = false;
+}
+mapFiliais() {
+  this.colaboradores.forEach(colaborador => {
+    const filial = this.filiais?.find(filial => filial.id === colaborador.filial);
+    if (filial) {
+      colaborador.filialNome = filial.nome;
+    }
+  });
+  this.loading = false;
+}
+mapAreas() {
+  this.colaboradores.forEach(colaborador => {
+    const area = this.areas?.find(area => area.id === colaborador.area);
+    if (area) {
+      colaborador.areaNome = area.nome;
+    }
+  });
+  this.loading = false;
+}
+mapSetores() {
+  this.colaboradores.forEach(colaborador => {
+    const setor = this.setores?.find(setor => setor.id === colaborador.setor);
+    if (setor) {
+      colaborador.setorNome = setor.nome;
+    }
+  });
+  this.loading = false;
+}
+mapAmbientes() {
+  this.colaboradores.forEach(colaborador => {
+    const ambiente = this.ambientes?.find(ambiente => ambiente.id === colaborador.ambiente);
+    if (ambiente) {
+      colaborador.ambienteNome = ambiente.nome;
+    }
+  });
+  this.loading = false;
+}
+mapCargos() {
+  this.colaboradores.forEach(colaborador => {
+    const cargo = this.cargos?.find(cargo => cargo.id === colaborador.cargo);
+    if (cargo) {
+      colaborador.cargoNome = cargo.nome;
+    }
+  });
+  this.loading = false;
+}
+
+
+getNomeEmpresa(id: number): string {
   const empresa = this.empresas?.find(emp => emp.id === id);
   return empresa ? empresa.nome : 'Empresa não encontrada';
 }
@@ -330,10 +451,7 @@ getNomeCargo(id: number): string {
   const cargo = this.cargos?.find(carg => carg.id === id);
   return cargo ? cargo.nome : 'Cargo não encontrada';
 }
-getNomeTipoContrato(id: number): string {
-  const tipocontrato = this.tipocontratos?.find(tipocontrato => tipocontrato.id === id);
-  return tipocontrato ? tipocontrato.nome : 'Tipo de contrato não encontrado';
-}
+
 // onFileChange(event:any) {
     
 //   if (event.target.files.length > 0) {
@@ -343,8 +461,6 @@ getNomeTipoContrato(id: number): string {
 //     });
 //   }
 // }
-
-
 
 
 onFileChange(event: any, form: FormGroup) {
@@ -468,19 +584,12 @@ onCargoSelecionado(cargo: any): void {
   if (id !== undefined) {
     console.log('Cargo selecionado ID:', id); // Log para depuração
     this.cargoSelecionadoId = id;
-    this.tiposContratosByCargo();
+    
   } else {
     console.error('O ID do avaliado é indefinido');
   }
 }
-tiposContratosByCargo(): void {
-  if (this.cargoSelecionadoId !== null) {
-    this.tipocontratoService.getTiposContratosByCargo(this.cargoSelecionadoId).subscribe(data => {
-      this.tipocontratos = data;
-      console.log('Setores carregadas:', this.areas); // Log para depuração
-    });
-  }
-}
+
  
 clear(table: Table) {
   table.clear();
@@ -520,6 +629,10 @@ abrirModalEdicao(colaborador: Colaborador) {
     username:colaborador.username,
     password: colaborador.password,
     email: colaborador.email,
+    salario: colaborador.salario,
+    raca: colaborador.raca,
+    instrucao: colaborador.instrucao,
+    categoria: colaborador.categoria,
     tornar_avaliador:colaborador.tornar_avaliador,
     tornar_avaliado:colaborador.tornar_avaliado
   });
@@ -532,9 +645,12 @@ saveEdit(){
     const setorId = this.editForm.value.setor.id;
     const ambienteId = this.editForm.value.ambiente.id;
     const cargoId = this.editForm.value.cargo.id;
-    const tipocontratoId = this.editForm.value.tipocontrato.id;
+    const tipocontratoNome = this.editForm.value.tipocontrato.nome;
     const generoNome = this.editForm.value.genero.nome;
-    const estado_civilNome = this.editForm.value.estado_civil.nome; 
+    const estado_civilNome = this.editForm.value.estado_civil.nome;
+    const racaNome = this.editForm.value.raca.nome;
+    const instrucaoNome = this.editForm.value.instrucao.nome;
+    const categoriaNome = this.editForm.value.categoria.nome; 
     const dadosAtualizados: Partial<Colaborador> = {
       nome: this.editForm.value.nome,
       empresa: empresaId,
@@ -543,7 +659,7 @@ saveEdit(){
       setor: setorId,
       ambiente: ambienteId,
       cargo: cargoId,
-      tipocontrato: tipocontratoId,
+      tipocontrato: tipocontratoNome,
       genero: generoNome,
       estado_civil: estado_civilNome,
       data_nascimento: this.editForm.value.data_nascimento,
@@ -553,8 +669,13 @@ saveEdit(){
       username: this.editForm.value.username,
       password: this.editForm.value.password,
       email: this.editForm.value.email,
+      salario: this.editForm.value.salario,
+      raca: racaNome,
+      instrucao: instrucaoNome,
+      categoria: categoriaNome,
       tornar_avaliador: this.editForm.value.tornar_avaliador,
-      tornar_avaliado: this.editForm.value.tornar_avaliado
+      tornar_avaliado: this.editForm.value.tornar_avaliado,
+      situacao:this.editForm.value.situacao
     };
     
   
@@ -564,11 +685,22 @@ saveEdit(){
         this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Colaborador atualizado com sucesso!' });
         setTimeout(() => {
          window.location.reload(); // Atualiza a página após a exclusão
-        }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+        }, 1000); // Tempo em milissegundos (1 segundo de atraso)
       },
-      error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao atualizar o colaborador.' });
-      }
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+    }
     });
 
 }
@@ -585,10 +717,12 @@ updateImage() {
           this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Imagem atualizada com sucesso!' });
           setTimeout(() => {
             window.location.reload(); // Atualiza a página após a atualização
-          }, 2000); // Tempo em milissegundos (2 segundos de atraso)
+          }, 1000); // Tempo em milissegundos (2 segundos de atraso)
         },
-        error: () => {
-          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao atualizar a imagem.' });
+        error: (err) => {
+          if (err.status === 403) {
+            this.messageService.add({ severity: 'error', summary: 'Erro de autorização!', detail: 'Você não tem permissão para realizar esta ação.', life: 2000 });
+          } 
         }
       });
     }
@@ -603,18 +737,25 @@ excluirColaborador(id: number) {
     rejectIcon: 'pi pi-times',
     acceptLabel: 'Sim',
     rejectLabel: 'Cancelar',
-    acceptButtonStyleClass: 'p-button-success',
-    rejectButtonStyleClass: 'p-button-danger',
+    acceptButtonStyleClass: 'p-button-info',
+    rejectButtonStyleClass: 'p-button-secondary',
     accept: () => {
-      this.colaboradorService.deleteColaborador(id).subscribe(() => {
-        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Colaborador excluído com sucesso!',life:4000 });
-        setTimeout(() => {
-          window.location.reload(); // Atualiza a página após a exclusão
-        }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+      this.colaboradorService.deleteColaborador(id).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Filial excluída com sucesso!!', life: 1000 });
+          setTimeout(() => {
+            window.location.reload(); // Atualiza a página após a exclusão
+          }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+        },
+        error: (err) => {
+          if (err.status === 403) {
+            this.messageService.add({ severity: 'error', summary: 'Erro de autorização!', detail: 'Você não tem permissão para realizar esta ação.', life: 2000 });
+          } 
+        }
       });
     },
     reject: () => {
-      this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 3000 });
+      this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 1000 });
     }
   });
 }
@@ -627,10 +768,21 @@ submit() {
     const setorId = this.registercolaboradorForm.value.setor.id;
     const cargoId = this.registercolaboradorForm.value.cargo.id;
     const ambienteId = this.registercolaboradorForm.value.ambiente.id;
-    const tipocontratoId = this.registercolaboradorForm.value.tipocontrato.id;
+    const tipocontratoNome = this.registercolaboradorForm.value.tipocontrato.nome;
     const generoNome = this.registercolaboradorForm.value.genero.nome;
     const estado_civilNome = this.registercolaboradorForm.value.estado_civil.nome;
+    const racaNome = this.registercolaboradorForm.value.raca.nome;
+    const instrucaoNome = this.registercolaboradorForm.value.instrucao.nome;
+    const categoriaNome = this.registercolaboradorForm.value.categoria.nome;
+
     const formData = new FormData();
+
+    let situacao = this.registercolaboradorForm.value.situacao;
+
+// Verifique explicitamente se o valor é null ou undefined
+    if (situacao === null || situacao === undefined) {
+    situacao = 0; // ou qualquer valor padrão que você queira
+}
 
     // Verificar e formatar a data de admissão
     let dataFormatadaad = '';
@@ -675,9 +827,9 @@ submit() {
     formData.append('setor', setorId);
     formData.append('ambiente', ambienteId);
     formData.append('cargo', cargoId);
-    formData.append('tipocontrato', tipocontratoId);
+    formData.append('tipocontrato', tipocontratoNome || null);
     formData.append('data_admissao', dataFormatadaad || '');
-    formData.append('situacao', this.registercolaboradorForm.value.situacao || null);
+    formData.append('situacao', situacao.toString());
     formData.append('genero', generoNome || null)
     formData.append('estado_civil', estado_civilNome || null);
     formData.append('data_nascimento', dataFormatadanasc || '');
@@ -687,6 +839,10 @@ submit() {
     formData.append('username', this.registercolaboradorForm.value.username);
     formData.append('password', this.registercolaboradorForm.value.password);
     formData.append('email', this.registercolaboradorForm.value.email);
+    formData.append('salario', this.registercolaboradorForm.value.salario);
+    formData.append('raca', racaNome || null);
+    formData.append('instrucao', instrucaoNome || null);
+    formData.append('categoria', categoriaNome || null);
     formData.append('tornar_avaliado', this.registercolaboradorForm.value.tornar_avaliado);
     formData.append('tornar_avaliador', this.registercolaboradorForm.value.tornar_avaliador)
     // if (this.registercolaboradorForm.value.user) {
@@ -703,12 +859,25 @@ submit() {
     this.colaboradorService.registercolaborador(formData).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Colaborador registrado com sucesso!' });
-        //setTimeout(() => {
-          //window.location.reload(); // Atualiza a página após o registro
-       // }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+        setTimeout(() => {
+          window.location.reload(); // Atualiza a página após o registro
+       }, 1000); // Tempo em milissegundos (1 segundo de atraso)
       },
-      error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }), 
-    })
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro no login. Por favor, tente novamente.' });
+        } 
+      }
+    });
   }
 }
 }

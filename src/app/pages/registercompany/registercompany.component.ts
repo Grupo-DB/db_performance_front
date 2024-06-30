@@ -18,6 +18,8 @@ import { DialogModule } from 'primeng/dialog';
 import { CommonModule } from '@angular/common';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DividerModule } from 'primeng/divider';
+import { lettersOnlyValidator } from './lettersOnlyValidator';
+import { LoginService } from '../../services/login/login.service';
 
 interface RegisterCompanyForm{
   nome: FormControl,
@@ -69,16 +71,17 @@ export class RegisterCompanyComponent implements OnInit {
     private registercompanyService:RegisterCompanyService,
     private messageService: MessageService,
     private fb: FormBuilder,
-    private confirmationService: ConfirmationService  
+    private confirmationService: ConfirmationService,
+    private loginService: LoginService  
   )
     {
    this.registercompanyForm = new FormGroup({
-      nome: new FormControl('',[Validators.required, Validators.minLength(3)]),
+      nome: new FormControl('',[Validators.required, Validators.minLength(3),Validators.maxLength(50)]),
       cnpj: new FormControl('',[Validators.required]),
-      endereco: new FormControl('',[Validators.required,Validators.minLength(5)]),
-      cidade: new FormControl('',[Validators.required, Validators.minLength(3)]),
+      endereco: new FormControl('',[Validators.required,Validators.minLength(5),Validators.maxLength(50)]),
+      cidade: new FormControl('',[Validators.required, Validators.minLength(3),Validators.maxLength(50)]),
       estado: new FormControl('',[Validators.required, Validators.maxLength(2)]),
-      codigo: new FormControl('',[Validators.required, Validators.maxLength(2)]),
+      codigo: new FormControl('',[Validators.required, Validators.maxLength(2),lettersOnlyValidator()]),
       
     });
   
@@ -91,8 +94,11 @@ export class RegisterCompanyComponent implements OnInit {
         estado: [''],
         codigo: ['']
       });
-    } 
-
+    }
+    
+    hasGroup(groups: string[]): boolean {
+    return this.loginService.hasAnyGroup(groups);
+    }    
   
   ngOnInit(): void {
    
@@ -141,14 +147,24 @@ saveEdit() {
       this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Empresa atualizada com sucesso!' });
       setTimeout(() => {
         window.location.reload(); // Atualiza a página após a exclusão
-      }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+      }, 1000); // Tempo em milissegundos (1 segundo de atraso)
     },
-    error: () => {
-      this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao atualizar a empresa.' });
+    error: (err) => {
+      console.error('Login error:', err); 
+    
+      if (err.status === 401) {
+        this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+      } else if (err.status === 403) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+      } else if (err.status === 400) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+      }
+      else {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+      }
     }
   });
 }
-
 
 excluirEmpresa(id: number) {
   this.confirmationService.confirm({
@@ -159,18 +175,26 @@ excluirEmpresa(id: number) {
     rejectIcon: 'pi pi-times',
     acceptLabel: 'Sim',
     rejectLabel: 'Cancelar',
-    acceptButtonStyleClass: 'p-button-success',
-    rejectButtonStyleClass: 'p-button-danger',
+    acceptButtonStyleClass: 'p-button-info',
+    rejectButtonStyleClass: 'p-button-secondary',
     accept: () => {
-      this.registercompanyService.deleteCompany(id).subscribe(() => {
-        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Empresa excluída com sucesso',life:4000 });
-        setTimeout(() => {
-          window.location.reload(); // Atualiza a página após a exclusão
-        }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+      this.registercompanyService.deleteCompany(id).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Empresa excluída com sucesso!!', life: 1000 });
+          setTimeout(() => {
+            window.location.reload(); // Atualiza a página após a exclusão
+          }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+        },
+        error: (err) => {
+          if (err.status === 403) {
+            this.messageService.add({ severity: 'error', summary: 'Erro de autorização!', detail: 'Você não tem permissão para realizar esta ação.', life: 2000 });
+          } 
+        }
       });
     },
+    
     reject: () => {
-      this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 3000 });
+      this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 1000 });
     }
   });
 }
@@ -191,7 +215,20 @@ excluirEmpresa(id: number) {
           window.location.reload(); // Atualiza a página após o registro
         }, 1000); // Tempo em milissegundos (1 segundo de atraso)
       },
-      error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }), 
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro no login. Por favor, tente novamente.' });
+        } 
+    } 
     });
   }
     

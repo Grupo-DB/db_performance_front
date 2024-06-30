@@ -1,10 +1,5 @@
 
-<head>
-    <meta charset="UTF-8">
-    <title>Seu Título</title>
-</head> 
-
-<div class="container">   
+<div *ngIf="hasGroup(['Admin','RHGestor'])" class="container">   
     <div class="form-geral">
         <div class="titulo">
             <p-divider align="left" type="solid">
@@ -21,24 +16,23 @@
         
             <div class="fg1">
                 <div class="form1">
-                    <p><label for="nome">Digite o nome</label></p>
                     <p-inputGroup>
                         <p-inputGroupAddon>
-                            <i class="pi pi-user"></i>
+                            <i class="pi pi-user-edit"></i>
                         </p-inputGroupAddon>
                         <span class="p-float-label">
                             <input  pInputText
                                 id="nome"
                                 formControlName="nome"
                                 type="text"
-                            />  
-                            <label for="nome">Digite o nome</label>
+                            />
+                            <label for="nome">Digite o nome</label>  
                         </span>          
                     </p-inputGroup>
                 </div>    
                     
                 <div class="form2">
-                    <p><label for="empresa">Empresa:</label></p>
+                    <p><label for="empresa">Empresa</label></p>
                     <p-dropdown 
                         [style]="{'width':'75%'}"
                         [options]="empresas" 
@@ -51,7 +45,7 @@
                     </p-dropdown>
                 </div>
                 <div class="filial">
-                        <p><label for="filial">Filial:</label></p>    
+                        <p><label for="filial">Filial</label></p>    
                     <p-dropdown
                         [style]="{'width':'75%'}"
                         [options]="filiais" 
@@ -64,7 +58,7 @@
                     </p-dropdown>
                 </div>
                 <div class="form3">
-                    <p><label for="area">Área:</label></p>    
+                    <p><label for="area">Área</label></p>    
                     <p-dropdown 
                         [style]="{'width':'75%'}"
                         [options]="areas"
@@ -77,20 +71,20 @@
                     </p-dropdown>
                 </div>
                 <div class="dvset">    
-                    <p><label for="setor">Setor:</label></p>
+                    <p><label for="setor">Setor</label></p>
                     <p-dropdown 
                         [style]="{'width':'75%'}"
                         [options]="setores"
                         id="setor" 
                         formControlName="setor"
                         optionLabel="nome"
-                        placeholder="Selecione o Setor"
+                        placeholder="Selecione"
                         (onChange)="onSetorSelecionado($event.value)"
                         >
                     </p-dropdown>
                 </div>
                 <div class="form4">
-                    <p><label for="ambiente">Ambiente:</label></p> 
+                    <p><label for="ambiente">Ambiente</label></p> 
                     <p-dropdown 
                         [style]="{'width':'75%'}"
                         id="ambiente"
@@ -103,7 +97,7 @@
                     </p-dropdown>
                 </div>
                 <div class="dvcarg">     
-                    <p><label for="cargo">Cargo:</label></p>
+                    <p><label for="cargo">Cargo</label></p>
                     <p-dropdown
                         [style]="{'width':'75%'}" 
                         id="cargo"
@@ -116,7 +110,7 @@
                     </p-dropdown>
                 </div>
                 <div class="dvtc">    
-                    <p><label for="tipocontrato">Tipo de Contrato:</label></p>
+                    <p><label for="tipocontrato">Tipo de Contrato</label></p>
                     <p-dropdown
                         [style]="{'width':'75%'}"
                         id="tipocontrato" 
@@ -127,15 +121,63 @@
                     >
                     </p-dropdown>
                 </div>
-            </div>
-            <div class="fg2">       
-                <div class="form5">
-                   <p><label for="da">Data de Admissão:</label></p>
-                    <p-calendar
+                <div class="dvraca">    
+                    <p><label for="raca">Raça</label></p>
+                    <p-dropdown
                         [style]="{'width':'75%'}"
+                        id="raca" 
+                        [options]="racas" 
+                        formControlName="raca"
+                        optionLabel="nome"
+                        placeholder="Selecione"
+                    >
+                    </p-dropdown>
+                </div>
+                <div class="dvinst">    
+                    <p><label for="inst">Grau de Instrução</label></p>
+                    <p-dropdown
+                        [style]="{'width':'75%'}"
+                        id="inst" 
+                        [options]="instrucoes" 
+                        formControlName="instrucao"
+                        optionLabel="nome"
+                        placeholder="Selecione"
+                    >
+                    </p-dropdown>
+                </div>
+            </div>
+            <div class="fg2">
+                <div class="dvsal">
+                    <p><label for="sal">Salário</label></p>    
+                    <p-inputNumber
+                        [style]="{'width':'79%'}" 
+                        id="sal"
+                        formControlName="salario" 
+                        inputId="currency-us" 
+                        mode="currency" 
+                        currency="BRL" 
+                        locale="pt-BR" 
+                    />  
+                </div>    
+                <div class="dvcat">    
+                    <p><label for="cat">Categoria</label></p>
+                    <p-dropdown
+                        [style]="{'width':'75%'}"
+                        id="cat" 
+                        [options]="categorias" 
+                        formControlName="categoria"
+                        optionLabel="nome"
+                        placeholder="Selecione"
+                    >
+                    </p-dropdown>
+                </div>       
+                <div class="form5">
+                   <p><label for="da">Data de Admissão</label></p>
+                    <p-calendar
+                        [style]="{'width':'76%','margin-left':'-2px'}"
                         id="da" 
                         formControlName="data_admissao"
-                        dateFormat="yy-mm-dd"                    
+                        dateFormat="dd/mm/yy"                  
                         [showIcon]="true"
                         placeholder="SELECIONE"
                     >
@@ -143,10 +185,10 @@
                     
                 </div>
                 <div class="dvgen">
-                    <p><label for="gen">Gênero:</label></p>     
+                    <p><label for="gen">Gênero</label></p>     
                     <p-dropdown 
                         id="gen"
-                        [style]="{'width':'75%'}"
+                        [style]="{'width':'76%','margin-left':'-5px'}"
                         [options]="generos" 
                         formControlName="genero"
                         optionLabel="nome"
@@ -155,9 +197,9 @@
                     </p-dropdown>
                 </div>
                 <div class="form6">                     
-                    <p><label for="es">Estado Civil:</label></p>
+                    <p><label for="es">Estado Civil</label></p>
                     <p-dropdown
-                        [style]="{'width':'75%'}"
+                        [style]="{'width':'76%','margin-left':'-5px'}"
                         id="es"
                         [options]="estados_civis" 
                         formControlName="estado_civil"
@@ -167,18 +209,19 @@
                     </p-dropdown>   
                 </div>
                 <div class="form7"> 
-                    <p><label for="da">Data de Nascimento:</label></p>               
-                    <p-calendar 
-                        [style]="{'width':'75%'}"
+                    <p><label for="dn">Data de Nascimento</label></p>               
+                    <p-calendar
+                        id="dc" 
+                        [style]="{'width':'76%','margin-left':'-2px'}"
                         formControlName="data_nascimento"
-                        dateFormat="yy-mm-dd"
+                        dateFormat="dd/mm/yy"
                         [showIcon]="true"
                         placeholder="SELECIONE"
                     >
                     </p-calendar>
                 </div>
                 <div class="dvft">    
-                    <p><label for="foto">Carregar Foto:</label></p>
+                    <p><label for="foto">Carregar Foto</label></p>
                     <input 
                         id="foto"
                         type="file"  
@@ -204,29 +247,28 @@
                 </div>
                 <div class="dvcb">
                     <div class="titclas">
-                        <p>Classificação do Colaborador:</p>
-                    </div>     
-                    <label  for="sit" [style]="{'margin-left':'28px'}">Avaliador </label>
-                    <p-checkbox 
-                        formControlName="tornar_avaliador"
-                        value="true"
-                    >
-                    </p-checkbox>
-                    <label for="sit"[style]="{'margin-left':'20px'}">Avaliado </label>
-                    <p-checkbox 
-                        formControlName="tornar_avaliado"
-                        value="true"
-                    >
-                    </p-checkbox>
-                    <label for="sit"[style]="{'margin-left':'30px'}">Inativo </label>
-                    <p-checkbox 
-                        
-                        id="sit"
-                        formControlName="situacao"
-                        value="true"
-                    >
-                    </p-checkbox>
-                    
+                        <p>Classificação do Colaborador</p>
+                    </div> 
+                        <div class="btns">
+                            <p><label  for="sit" >Avaliador </label></p>
+                            <p-inputSwitch                           
+                                id="sit"
+                                formControlName="tornar_avaliador"
+                            >
+                            </p-inputSwitch>
+                            <p><label for="sit"[style]="{'margin-left':'20px'}">Avaliado </label></p>
+                            <p-inputSwitch 
+                                id="sit"
+                                formControlName="tornar_avaliado"
+                            >
+                            </p-inputSwitch>
+                            <p><label for="sit"[style]="{'margin-left':'30px'}">Situação </label></p>
+                                <p-inputSwitch 
+                                    id="sit"
+                                    formControlName="situacao"
+                                >
+                                </p-inputSwitch>
+                        </div>
                 </div>
                 <div class="tituser">
                     <p>Criar Usuário</p>
@@ -281,6 +323,8 @@
     </div>
     <hr>
         <div class="tabela">
+            <p-toast/>
+            <p-confirmDialog />
             <p-table
                 #dt1
                 [value]="colaboradores"
@@ -290,7 +334,7 @@
                 [tableStyle]="{ 'min-width': '50rem' }"
                 currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
                 [rowsPerPageOptions]="[5, 10, 20]"
-                [globalFilterFields]="['nome', 'empresa','filial','area','setor','ambiente', 'cargo','tipocontrato']"
+                [globalFilterFields]="['nome', 'empresaNome','filialNome','areaNome','setorNome','ambienteNome', 'cargoNome','situacao']"
             >
                 <ng-template pTemplate="caption">
                     <div class="flex">
@@ -304,42 +348,38 @@
                 </ng-template>    
                 <ng-template pTemplate="header">
                     <tr>
-                        <th style="width:25%">ID
-                            <p-columnFilter type="text" field="id" display="menu"></p-columnFilter>
+                        <th style="width:25%" type="text" field="nome" display="menu">
+                            Nome
                         </th>
-                        <th style="width:25%">Nome
-                            <p-columnFilter type="text" field="nome" display="menu"></p-columnFilter>
+                        <th style="width:25%" type="text" field="empresaNome" display="menu">
+                            Empresa
                         </th>
-                        <th style="width:25%">Empresa
-                            <p-columnFilter type="text" field="empresa.nome" display="menu"></p-columnFilter>
+                        <th style="width:25%" type="text" field="filialNome" display="menu">
+                            Filial
                         </th>
-                        <th style="width:25%">Filial
-                            <p-columnFilter type="text" field="filial" display="menu"></p-columnFilter>
+                        <th style="width:25%" type="text" field="areaNome" display="menu">
+                            Area
                         </th>
-                        <th style="width:25%">Area
-                            <p-columnFilter type="text" field="area" display="menu"></p-columnFilter>
+                        <th style="width:25%" type="text" field="setorNome" display="menu">
+                            Setor
                         </th>
-                        <th style="width:25%">Setor
-                            <p-columnFilter type="text" field="setor" display="menu"></p-columnFilter>
+                        <th style="width:25%" type="text" field="ambienteNome" display="menu">
+                            Ambiente
                         </th>
-                        <th style="width:25%">Ambiente
-                            <p-columnFilter type="text" field="ambiente" display="menu"></p-columnFilter>
+                        <th style="width:25%" type="text" field="cargoNome" display="menu">
+                            Cargo
                         </th>
-                        <th style="width:25%">Cargo
-                            <p-columnFilter type="text" field="cargo" display="menu"></p-columnFilter>
-                        </th>
-                        <th style="width:25%">Tipo Contrato
-                            <p-columnFilter type="text" field="cargo" display="menu"></p-columnFilter>
+                        <th style="width:25%" type="text" field="situacao" display="menu">
+                            Situação
                         </th>
                         <th style="width:25%"> Foto
-                            <p-columnFilter type="text" field="tipocontrato" display="menu"></p-columnFilter>
+                            <p-columnFilter type="text" field="" display="menu"></p-columnFilter>
                         </th>
-                        <th style="width: 25%;">Ações</th>
+                        <th style="width: 25%;text-align: center;">Ações</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-colaborador>
                     <tr>
-                        <td>{{ colaborador.id }}</td>
                         <td>{{ colaborador.nome }}</td>
                         <td>{{ getNomeEmpresa(colaborador.empresa) }}</td>
                         <td>{{ getNomeFilial(colaborador.filial) }}</td>
@@ -347,11 +387,9 @@
                         <td>{{ getNomeSetor(colaborador.setor) }}</td>
                         <td>{{ getNomeAmbiente(colaborador.ambiente) }}</td>
                         <td>{{ getNomeCargo(colaborador.cargo) }}</td>
-                        <td>{{ getNomeTipoContrato(colaborador.tipocontrato) }}</td>
+                        <td>{{ colaborador.situacao | booleanToStatus }}</td>
                         <td><img [src]="colaborador.image"  width="80" class="shadow-4" /></td>
                         <td class="td-acao">
-                            <p-toast />
-                            <p-confirmDialog />
                             <div class="btnsect" (click)="abrirModalEdicao(colaborador)">
                                 <p>Editar</p>
                             </div>
@@ -370,7 +408,6 @@
             </p-table>
         </div>        
         <p-dialog 
-            
             [modal]="true"
             [(visible)]="editFormVisible" 
             [style]="{ width: '70rem' }" 
@@ -383,10 +420,8 @@
         </div>  
         <div class="editgeral">
             <form [formGroup]="editForm">
-             
             <div class="fg1edit">
-                
-                <div class="form1edit">
+              <div class="form1edit">
                     <p><label for="nome">Digite o nome</label></p>
                     <p-inputGroup>
                         <p-inputGroupAddon>
@@ -404,7 +439,7 @@
                 </div>    
                     
                 <div class="form2edit">
-                    <p><label for="empresa">Empresa:</label></p>
+                    <p><label for="empresa">Empresa</label></p>
                     <p-dropdown 
                         [style]="{'width':'75%'}"
                         [options]="empresas" 
@@ -416,8 +451,8 @@
                     >
                     </p-dropdown>
                 </div>
-                <div class="filial">
-                        <p><label for="filial">Filial:</label></p>    
+                <div class="filialed">
+                        <p><label for="filial">Filial</label></p>    
                     <p-dropdown
                         [style]="{'width':'75%'}"
                         [options]="filiais" 
@@ -429,8 +464,8 @@
                     >
                     </p-dropdown>
                 </div>
-                <div class="form3">
-                    <p><label for="area">Área:</label></p>    
+                <div class="form3ed">
+                    <p><label for="area">Área</label></p>    
                     <p-dropdown 
                         [style]="{'width':'75%'}"
                         [options]="areas"
@@ -442,8 +477,8 @@
                         >
                     </p-dropdown>
                 </div>
-                <div class="dvset">    
-                    <p><label for="setor">Setor:</label></p>
+                <div class="dvseted">    
+                    <p><label for="setor">Setor</label></p>
                     <p-dropdown 
                         [style]="{'width':'75%'}"
                         [options]="setores"
@@ -455,8 +490,8 @@
                         >
                     </p-dropdown>
                 </div>
-                <div class="form4">
-                    <p><label for="ambiente">Ambiente:</label></p> 
+                <div class="form4ed">
+                    <p><label for="ambiente">Ambiente</label></p> 
                     <p-dropdown 
                         [style]="{'width':'75%'}"
                         id="ambiente"
@@ -468,8 +503,8 @@
                     >
                     </p-dropdown>
                 </div>
-                <div class="dvcarg">     
-                    <p><label for="cargo">Cargo:</label></p>
+                <div class="dvcarged">     
+                    <p><label for="cargo">Cargo</label></p>
                     <p-dropdown
                         [style]="{'width':'75%'}" 
                         id="cargo"
@@ -481,8 +516,8 @@
                     >
                     </p-dropdown>
                 </div>
-                <div class="dvtc">    
-                    <p><label for="tipocontrato">Tipo de Contrato:</label></p>
+                <div class="dvtced">    
+                    <p><label for="tipocontrato">Tipo de Contrato</label></p>
                     <p-dropdown
                         [style]="{'width':'75%'}"
                         id="tipocontrato" 
@@ -493,23 +528,70 @@
                     >
                     </p-dropdown>
                 </div>
+                <div class="dvracaed">    
+                    <p><label for="raca">Raça</label></p>
+                    <p-dropdown
+                        [style]="{'width':'75%'}"
+                        id="raca" 
+                        [options]="racas" 
+                        formControlName="raca"
+                        optionLabel="nome"
+                        placeholder="Selecione"
+                    >
+                    </p-dropdown>
+                </div>
+                <div class="dvinsted">    
+                    <p><label for="inst">Grau de Instrução</label></p>
+                    <p-dropdown
+                        [style]="{'width':'75%'}"
+                        id="inst" 
+                        [options]="instrucoes" 
+                        formControlName="instrucao"
+                        optionLabel="nome"
+                        placeholder="Selecione"
+                    >
+                    </p-dropdown>
+                </div>
+                <div class="form5ed">
+                    <p><label for="da">Data de Admissão</label></p>
+                     <p-calendar
+                         [style]="{'width':'75%'}"
+                         id="da" 
+                         formControlName="data_admissao"
+                         dateFormat="dd/mm/yy"                    
+                         [showIcon]="true"
+                         placeholder="SELECIONE"
+                     >
+                     </p-calendar>                     
+                 </div>
             </div>
-                <div class="fg2edit">       
-                    <div class="form5">
-                        <p><label for="da">Data de Admissão:</label></p>
-                         <p-calendar
-                             [style]="{'width':'75%'}"
-                             id="da" 
-                             formControlName="data_admissao"
-                             dateFormat="yy-mm-dd"                    
-                             [showIcon]="true"
-                             placeholder="SELECIONE"
-                         >
-                         </p-calendar>
-                         
-                     </div>
-                     <div class="dvgen">
-                         <p><label for="gen">Gênero:</label></p>     
+                <div class="fg2edit">
+                    <div class="dvsaled">
+                        <p><label for="sal">Salário</label></p>    
+                        <p-inputNumber
+                            [style]="{'width':'98%'}" 
+                            id="sal"
+                            formControlName="salario" 
+                            inputId="currency-us" 
+                            mode="currency" 
+                            currency="BRL" 
+                            locale="pt-BR" 
+                        />  
+                    </div>
+                    <div class="dvcated">    
+                        <p><label for="cat">Categoria</label></p>
+                        <p-dropdown
+                            [style]="{'width':'75%'}"
+                            id="cat" 
+                            [options]="categorias" 
+                            formControlName="categoria"
+                            optionLabel="nome"
+                            placeholder="Selecione"
+                        >
+                        </p-dropdown>
+                    </div>      
+                     <div class="dvgened">
+                         <p><label for="gen">Gênero</label></p>     
                          <p-dropdown 
                              id="gen"
                              [style]="{'width':'75%'}"
@@ -520,8 +602,8 @@
                          >
                          </p-dropdown>
                      </div>
-                     <div class="form6">                     
-                         <p><label for="es">Estado Civil:</label></p>
+                     <div class="form6ed">                     
+                         <p><label for="es">Estado Civil</label></p>
                          <p-dropdown
                              [style]="{'width':'75%'}"
                              id="es"
@@ -532,48 +614,50 @@
                          >
                          </p-dropdown>   
                      </div>
-                     <div class="form7"> 
-                         <p><label for="da">Data de Nascimento:</label></p>               
+                     <div class="form7ed"> 
+                         <p><label for="da">Data de Nascimento</label></p>               
                          <p-calendar 
                              [style]="{'width':'75%'}"
                              formControlName="data_nascimento"
-                             dateFormat="yy-mm-dd"
+                             dateFormat="dd/mm/yy"
                              [showIcon]="true"
                              placeholder="SELECIONE"
                          >
                          </p-calendar>
                      </div>
-                     <div class="form8">
-                        <p><label for="da">Data de Troca de Setor:</label></p>
+                     <div class="form8ed">
+                        <p><label for="da">Data de Troca de Setor</label></p>
                         <p-calendar 
                             [style]="{'width':'75%'}"
                             formControlName="data_troca_setor"
                             [disabled]="true"
-                            dateFormat="yy-mm-dd"
+                            dateFormat="dd/mm/yy"
                             [showIcon]="true"
                             placeholder="SELECIONE"
                         >
                         </p-calendar>
                     </div>
-                    <div class="form9">
-                        <p><label for="da">Data de Troca de Cargo:</label></p>    
+                    <div class="form9ed">
+                        <p><label for="da">Data de Troca de Cargo</label></p>    
                         <p-calendar
                             [style]="{'width':'75%'}"
                             formControlName="data_troca_cargo"
-                            dateFormat="yy-mm-dd"
+                            dateFormat="dd/mm/yy"
                             [showIcon]="true"
                             placeholder="SELECIONE"
                         >
                         </p-calendar>
-                        <p><label for="da">Data da Demissão::</label></p>
-                        <p-calendar 
-                            [style]="{'width':'75%'}"
-                            formControlName="data_demissao"
-                            dateFormat="yy-mm-dd"
-                            [showIcon]="true"
-                            placeholder="SELECIONE"
-                        >
-                        </p-calendar>
+                    </div>    
+                    <div class="form10ed">    
+                            <p><label for="da">Data da Demissão</label></p>
+                            <p-calendar 
+                                [style]="{'width':'75%'}"
+                                formControlName="data_demissao"
+                                dateFormat="dd/mm/yy"
+                                [showIcon]="true"
+                                placeholder="SELECIONE"
+                            >
+                            </p-calendar>
                     </div>
                     <div class="dvemailed">
                         <p-inputGroup>
@@ -590,30 +674,30 @@
                             </span>          
                         </p-inputGroup>
                     </div>    
-                    <div class="dvcb">
+                    <div class="dvcbed">
                         <div class="titclas">
-                            <p>Classificação do Colaborador:</p>
+                            <p>Classificação do Colaborador</p>
                         </div>     
-                        <label  for="sit" [style]="{'margin-left':'28px'}">Avaliador </label>
-                        <p-checkbox 
-                            formControlName="tornar_avaliador"
-                            value="true"
-                        >
-                        </p-checkbox>
-                        <label for="sit"[style]="{'margin-left':'20px'}">Avaliado </label>
-                        <p-checkbox 
-                            formControlName="tornar_avaliado"
-                            value="true"
-                        >
-                        </p-checkbox>
-                        <label for="sit"[style]="{'margin-left':'30px'}">Inativo </label>
-                        <p-checkbox 
-                            
-                            id="sit"
-                            formControlName="situacao"
-                            value="true"
-                        >
-                        </p-checkbox>
+                        <div class="btnsed">
+                            <p><label  for="sit" >Avaliador </label></p>
+                            <p-inputSwitch                           
+                                id="sit"
+                                formControlName="tornar_avaliador"
+                            >
+                            </p-inputSwitch>
+                            <p><label for="sit"[style]="{'margin-left':'20px'}">Avaliado </label></p>
+                            <p-inputSwitch 
+                                id="sit"
+                                formControlName="tornar_avaliado"
+                            >
+                            </p-inputSwitch>
+                            <p><label for="sit"[style]="{'margin-left':'30px'}">Situação </label></p>
+                                <p-inputSwitch 
+                                    id="sit"
+                                    formControlName="situacao"
+                                >
+                                </p-inputSwitch>
+                        </div>
                         
                     </div>
                     <div class="tituseredit">

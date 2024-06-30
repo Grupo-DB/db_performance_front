@@ -23,10 +23,18 @@ import { VincularComponent } from './pages/vincular/vincular.component';
 import { FeedbackComponent } from './pages/feedback/feedback.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { InicialComponent } from './pages/inicial/inicial.component';
+import { ResetpsComponent } from './pages/resetps/resetps.component';
+import { EsqueceuSenhaComponent } from './pages/esqueceusenha/esqueceusenha.component';
+import { RedefinirSenhaComponent } from './pages/redefinirsenha/redefinirsenha.component';
+import { HistoricoComponent } from './pages/historico/historico.component';
+import { RelatoriosComponent } from './pages/relatorios/relatorios.component';
 
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
+  { path:'resetps', component:ResetpsComponent },
+  { path: 'esqueceusenha', component:EsqueceuSenhaComponent },
+  { path: 'redefinirsenha/:uid/:token', component:RedefinirSenhaComponent },
   { path: 'welcome', component: WelcomeComponent, 
     children: [
       { path: 'createuser', component: CreateuserComponent },
@@ -51,6 +59,8 @@ export const routes: Routes = [
       { path: 'feedback', component:FeedbackComponent }, 
       { path: 'dashboard', component:DashboardComponent },
       { path: 'inicial', component:InicialComponent },
+      { path: 'historico', component:HistoricoComponent },
+      { path: 'relatorios', component:RelatoriosComponent },
     ],
   },
   

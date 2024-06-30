@@ -1,44 +1,4 @@
 <div class="container">
-    <!-- <div class="dp1">
-        <label for="tipav'">Avaliador: </label>
-        <p-dropdown
-            [style]="{'width':'60%'}"
-            id="tipav" 
-            [options]="avaliadores"
-             
-            optionLabel="nome"
-            [filter]="true"
-            filterBy="nome" 
-            [showClear]="true"
-            placeholder="SELECIONE"
-            (onChange)="onAvaliadorSelecionado($event.value)"
-        >
-        >
-        </p-dropdown>
-      </div><br>
-      <div class="dp2">  
-        <label for="ava">avaliado: </label>
-        <p-dropdown
-            [style]="{'width':'60%'}"
-            id="ava" 
-            [options]="avaliados"
-             
-            optionLabel="nome"
-            [filter]="true"
-            filterBy="nome"
-            placeholder="SELECIONE" 
-            [showClear]="true"
-            
-        >   
-        </p-dropdown>
-
-        <h2>Avaliações</h2>
-    <ul>
-      <li *ngFor="let avaliacao of avaliacoes">
-        {{ avaliacao.avaliado }}
-      </li>
-    </ul> -->
-
     <div class="titulo">
         <p-divider align="left" type="solid">
             <b>Feedbacks</b>
@@ -61,7 +21,7 @@
             <ng-template pTemplate="header">
                 <tr>
                     
-                    <th style="width:22%">Periodo</th>
+                    <th style="width:22%">Período</th>
                     <th style="width:22%">Avaliado</th>
                     <th style="width:22%">Avaliador</th>
                     <th style="width:22%">Tipo</th>
@@ -133,7 +93,7 @@
                         {{ getNomeAvaliador(avaliacao.avaliador) }}
                     </td>
                     <td>
-                        {{ getNomeTipoAvaliacao(avaliacao.tipoavaliacao) }}
+                        {{ avaliacao.tipo }}
                     </td>
                     <td>
                         <i class="pi" [ngClass]="{ 'text-green-500 pi-check-circle': avaliacao.feedback, 'text-red-500 pi-times-circle': !avaliacao.feedback }"></i>
@@ -143,7 +103,7 @@
                     
                     <td>{{avaliacao.finished_at}}</td>
                     <td>
-                        <div class="btnpri" (click)="abrirModalEdicao(avaliacao.id)">
+                        <div class="btnpri" (click)="abrirModalEdicao(avaliacao.id,avaliacao)">
                             <p>Editar</p>
                         </div>
                     </td>
@@ -168,19 +128,20 @@
 
             <div *ngIf="avaliacaoDetalhe">
                 <h2>Detalhes da Avaliação</h2>
-                <p>Id: {{ avaliacaoDetalhe.id }}</p>
-                <p>Periodo: <strong>{{ avaliacaoDetalhe.periodo }}</strong></p>
+                <p>Período: <strong>{{ avaliacaoDetalhe.periodo }}</strong></p>
                 <p>Avaliado: <strong>{{ getNomeAvaliado(avaliacaoDetalhe.avaliado) }}</strong></p>
                 <p>Avaliador:<strong> {{ getNomeAvaliador(avaliacaoDetalhe.avaliador) }}</strong></p>
-                <p>Tipo de Avaliação:<strong> {{ getNomeTipoAvaliacao(avaliacaoDetalhe.tipoavaliacao) }}</strong></p>
+                <p>Tipo de Avaliação:<strong> {{ avaliacaoDetalhe.tipo }}</strong></p>
                 <p-divider></p-divider>
                 <pre>{{perguntasRespostasFormatada}}</pre>
             </div>
             <p-divider></p-divider>
             <div class="obs">
-                <form [formGroup]="registerfbForm" (submit)="submit()">
+                <p-toast></p-toast>
+                <form [formGroup]="editForm" (submit)="submit()">
                     <p><strong>Observações:</strong></p>
                     <textarea 
+                        
                         rows="3"
                         cols="30" 
                         pInputTextarea 

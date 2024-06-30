@@ -13,8 +13,8 @@ export class FormularioService {
   private apiUrl = 'http://localhost:8000/management/formularios/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
-  registerformulario(nome: string,tipoAvaliacaoId:number){
-    return this.httpClient.post(this.apiUrl,{nome,tipoAvaliacaoId}).pipe(
+  registerformulario(nome: string,tipoavaliacao:number){
+    return this.httpClient.post(this.apiUrl,{nome,tipoavaliacao}).pipe(
     );
   }
   updateFormulario(id: number, perguntaIds: number[]): Observable<any> {
@@ -38,6 +38,12 @@ export class FormularioService {
 
     );
   }
+  removePergunta(formularioId: number, perguntaId: number): Observable<Formulario> {
+  return this.httpClient.post<Formulario>(`${this.apiUrl}${formularioId}/remove_pergunta/`, { pergunta_id: perguntaId });
+  }
+  removeAvaliado(formularioId: number, avaliadoId: number): Observable<Formulario> {
+    return this.httpClient.post<Formulario>(`${this.apiUrl}${formularioId}/remove_avaliado/`, { avaliado_id: avaliadoId });
+    }
   obterFormulariosDoAvaliado(avaliadoId: number): Observable<any> {
     return this.httpClient.get<any>(`http://localhost:8000/management/avaliado/${avaliadoId}/formulario/`);
   }

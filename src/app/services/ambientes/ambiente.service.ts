@@ -26,7 +26,7 @@ export class AmbienteService {
     const url = `${this.apiUrl}${id}/`;
     return this.httpClient.delete(url);
   } 
-  getAmbientesBySetor(id: number): Observable<any[]> {
+  getAmbientesBySetor(id: any): Observable<any[]> {
     return this.httpClient.get<any>(`${this.apiUrl}bySetor/?setor_id=${id}`);
 
   }  

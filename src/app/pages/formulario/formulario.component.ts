@@ -28,7 +28,7 @@ import { TabMenuModule } from 'primeng/tabmenu';
 import { DividerModule } from 'primeng/divider';
 import { TipoAvaliacao } from '../tipoavaliacao/tipoavaliacao.component';
 import { TipoAvaliacaoService } from '../../services/tipoavaliacoes/registertipoavaliacao.service';
-
+import { LoginService } from '../../services/login/login.service';
 
 interface RegisterFormularioForm{
   nome: FormControl,
@@ -39,6 +39,7 @@ export interface Formulario{
   nome: string;
   tipoavaliacao: number;
   perguntas: Pergunta[];
+  perguntasTexto?: string; // Adiciona a propriedade opcional
 }
 export interface Pergunta {
   id: number;
@@ -60,11 +61,12 @@ export interface Pergunta {
   styleUrl: './formulario.component.scss'
 })
 export class FormularioComponent implements OnInit {
-  formularios:Formulario[] = [];
+  formularios:any[] = [];
   perguntas: Pergunta[]|undefined;
   tiposavaliacoes: TipoAvaliacao[]|undefined;
   targetPerguntas: Pergunta[] = [];
   editForm!: FormGroup;
+  loading: boolean = true;
   editFormVisible: boolean = false;
   registerformularioForm!: FormGroup<RegisterFormularioForm>;
   selectedFormularioId: number | null = null;
@@ -80,7 +82,8 @@ export class FormularioComponent implements OnInit {
     private perguntaService: PerguntaService,
     private fb: FormBuilder,
     private tipoavaliacaoService: TipoAvaliacaoService,
-    private confirmationService: ConfirmationService 
+    private confirmationService: ConfirmationService,
+    private loginService: LoginService 
   )
   {
     this.registerformularioForm = this.fb.group({
@@ -93,8 +96,12 @@ export class FormularioComponent implements OnInit {
      });  
    }
 
+   hasGroup(groups: string[]): boolean {
+    return this.loginService.hasAnyGroup(groups);
+  } 
+
    ngOnInit(): void {
-    //this.targetPerguntas = []
+    this.loading = false;
     this.formularioService.getFormularios().subscribe(
       (formularios:Formulario[]) => {
         this.formularios = formularios;
@@ -113,12 +120,28 @@ export class FormularioComponent implements OnInit {
     )
     this.tipoavaliacaoService.getTipoAvaliacaos().subscribe(
       tiposavaliacoes => {
-        this.tiposavaliacoes = tiposavaliacoes
+        this.tiposavaliacoes = tiposavaliacoes;
+        this.mapTiposAvaliacoes();
       },
       error => {
         console.error('Error fetching users:', error);
       }
     )
+}
+
+mapTiposAvaliacoes() {
+  this.formularios.forEach(formulario => {
+    const tipoavaliacao = this.tiposavaliacoes?.find(tipoavaliacao => tipoavaliacao.id === formulario.tipoavaliacao);
+    if (tipoavaliacao) {
+      formulario.tipoavaliacaoNome = tipoavaliacao.nome;
+    }
+  });
+  this.loading = false;
+}
+
+getTipoAvaliacaoNome(id: number): string {
+  const tipoavaliacao = this.tiposavaliacoes?.find(tip => tip.id === id);
+  return tipoavaliacao ? tipoavaliacao.nome : 'Tipo de Avaliação não encontrado';
 }
 
 clear(table: Table) {
@@ -156,34 +179,53 @@ saveEdit() {
       this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Formulario atualizada com sucesso!' });
       setTimeout(() => {
         window.location.reload(); // Atualiza a página após a exclusão
-      }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+      }, 1000); // Tempo em milissegundos (1 segundo de atraso)
     },
-    error: () => {
-      this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao atualizar a Area.' });
-    }
+    error: (err) => {
+      console.error('Login error:', err); 
+    
+      if (err.status === 401) {
+        this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+      } else if (err.status === 403) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+      } else if (err.status === 400) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+      }
+      else {
+        this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+      } 
+  }
   });
 }
 excluirFormulario(id: number) {
   this.confirmationService.confirm({
-    message: 'Tem certeza que deseja excluir este Formulario?',
+    message: 'Tem certeza que deseja excluir este Formulário?',
     header: 'Confirmação',
     icon: 'pi pi-exclamation-triangle',
     acceptIcon: 'pi pi-check',
     rejectIcon: 'pi pi-times',
     acceptLabel: 'Sim',
     rejectLabel: 'Cancelar',
-    acceptButtonStyleClass: 'p-button-success',
-    rejectButtonStyleClass: 'p-button-danger',
+    acceptButtonStyleClass: 'p-button-info',
+    rejectButtonStyleClass: 'p-button-secondary',
     accept: () => {
-      this.formularioService.deleteFormulario(id).subscribe(() => {
-        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Formulario excluído com sucesso',life:4000 });
-        setTimeout(() => {
-          window.location.reload(); // Atualiza a página após a exclusão
-        }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+      this.formularioService.deleteFormulario(id).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Formulário excluído com sucesso!!', life: 1000 });
+          setTimeout(() => {
+            window.location.reload(); // Atualiza a página após a exclusão
+          }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+        },
+        error: (err) => {
+          if (err.status === 403) {
+            this.messageService.add({ severity: 'error', summary: 'Erro de autorização!', detail: 'Você não tem permissão para realizar esta ação.', life: 2000 });
+          } 
+        }
       });
     },
+      
     reject: () => {
-      this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 3000 });
+      this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 1000 });
     }
   });
 }
@@ -194,12 +236,25 @@ submit() {
     tipoavaliacaoId
   ).subscribe({
     next: () => {
-      this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Formulario registrado com sucesso!' });
+      this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Formulário registrado com sucesso!' });
       setTimeout(() => {
         window.location.reload(); // Atualiza a página após o registro
       }, 1000); // Tempo em milissegundos (1 segundo de atraso)
     },
-    error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }),
+    error: (err) => {
+      console.error('Login error:', err); 
+    
+      if (err.status === 401) {
+        this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+      } else if (err.status === 403) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+      } else if (err.status === 400) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+      }
+      else {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro no login. Por favor, tente novamente.' });
+      } 
+    }
   });
 }
 }

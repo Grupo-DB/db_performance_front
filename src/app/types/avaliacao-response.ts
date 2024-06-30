@@ -1,11 +1,10 @@
 export type AvaliacaoResponse = {
     id: string,
-    tipoavaliacao: string,
+    tipo: string,
     colaborador: string,
     avaliador: string,
     formulario: string,
     data_avaliacao: Date,
     periodo: string,
-    //feedback: boolean,
     perguntasRespostas:JSON
 }

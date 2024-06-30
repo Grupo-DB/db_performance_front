@@ -1,4 +1,4 @@
-<div class="menu">
+<div *ngIf="hasGroup(['Admin','RHGestor'])" class="menu">
     <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
         <li nz-menu-item nzMatchRouter="#">
             <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
@@ -35,17 +35,17 @@
         <li nz-menu-item nzMatchRouter="">
             <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
         </li>
-        <li nz-menu-item nzMatchRouter="">
-            <a style="font-size: 13px;" routerLink="#" >Histórico de Avaliações</a>
+        <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['RHAvaliacao'])">
+            <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
         </li>
         <li nz-menu-item nzMatchRouter="">
-            <a style="font-size: 13px;" routerLink="#" >Relatórios</a>
+            <a style="font-size: 13px;" routerLink="../relatorios" >Relatórios</a>
         </li>
         
     </ul>
 </div>
  <!-- formulario.component.html -->
-<div class="container">
+<div *ngIf="hasGroup(['Admin','RHGestor'])" class="container">
 
     
     <div class="titulo">
@@ -60,7 +60,7 @@
     <div class="form1">    
         <p-inputGroup>
             <p-inputGroupAddon>
-                <i class="pi pi-file-plus"></i>
+                <i class="pi pi-file-edit"></i>
             </p-inputGroupAddon>
             <span class="p-float-label">
                 <input pInputText
@@ -88,7 +88,9 @@
   
   </div>
   
-  <div class="tabela">
+  <div  *ngIf="hasGroup(['Admin','RHGestor'])" class="tabela">
+    <p-toast />
+    <p-confirmDialog />
     <p-table
         #dt1
         [value]="tipoavaliacoes"
@@ -104,7 +106,7 @@
             <div class="flex">
                 <span class="p-input-icon-left ml-auto">
                     <i class="pi pi-search"></i>
-                    <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Palavra-Chave" />
+                    <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Digite o nome" />
                 </span>
                 <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
                 <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
@@ -112,23 +114,16 @@
         </ng-template>    
         <ng-template pTemplate="header">
             <tr>
-                <th style="width:25%">ID
-                    <p-columnFilter type="text" field="id" display="menu"></p-columnFilter>
-                </th>
-                <th style="width:25%">Nome
-                    <p-columnFilter type="text" field="texto" display="menu"></p-columnFilter>
+                <th style="width:25%"type="text" field="texto" display="menu">
+                    Nome
                 </th>
                 <th style="width: 25%;">Ações</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-tipoavaliacao>
             <tr>
-                <td>{{ tipoavaliacao.id }}</td>
                 <td>{{ tipoavaliacao.nome }}</td>
-                <td class="td-acao">
-                    <p-toast />
-                    <p-confirmDialog />
-                   
+                <td class="td-acao">                   
                     <div class="btnsec" (click)="abrirModalEdicao(tipoavaliacao)">
                         <p>Editar</p>
                     </div>
@@ -168,7 +163,7 @@ primaryBtnText="Cadastrar"
         <div class="form1ed">
             <p-inputGroup>
                 <p-inputGroupAddon>
-                    <i class="pi pi-user"></i>
+                    <i class="pi pi-file-edit"></i>
                 </p-inputGroupAddon>
                 <span class="p-float-label">
                     <input pInputText

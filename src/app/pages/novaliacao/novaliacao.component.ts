@@ -64,13 +64,28 @@ import { SetorService } from '../../services/setores/registersetor.service';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FormularioService } from '../../services/formularios/registerformulario.service';
+import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
+
+
+// Custom validator function
+function respostaJustificativaValidator(control: AbstractControl): { [key: string]: any } | null {
+  const resposta = control.get('resposta')?.value;
+  const justificativa = control.get('justificativa')?.value;
+
+  if ((resposta === 1 || resposta === 5) && (!justificativa || justificativa.trim() === '')) {
+    return { justificativaObrigatoria: true };
+  }
+
+  return null;
+}
+
 
 export interface Avaliacao{
   id: number;
   periodo: string;
   perguntasRespostas: JSON;
   observacoes: Text;
-  tipoavaliacao: number;
+  formulario: string;
   avaliador: number;
   avaliado: number;
   feedback:boolean;
@@ -93,7 +108,9 @@ interface Formulario{
 interface Periodo{
   nome: string
 }
-
+interface Tipo{
+  nome: string,
+}
 
 
 @Component({
@@ -105,6 +122,10 @@ interface Periodo{
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,
   ],
   providers: [
+    {
+      provide: STEPPER_GLOBAL_OPTIONS,
+      useValue: {showError: true},
+    },
     MessageService,GetSetorService,TipoContratoService,PerguntasService,TipoAvaliacaoService,
     GetCompanyService,GetFilialService,GetAreaService,GetCargoService,LoginService,FormularioService
   ],
@@ -136,10 +157,10 @@ export class NovaliacaoComponent implements OnInit {
   avaliadoSelecionado: Avaliado [] = [];
   colaboradorInfo: any;
   avaliadorId: string | undefined
-  //avaliador: any; // Variável para armazenar as informações do avaliador com o colaborador
+  tipos: Tipo[] | undefined;
   userId: any; // Variável para armazenar o userId
   avaliador:any = null;
-  avaliado: any = null; 
+  avaliado: any = null;
   avaliadoSelecionadoId: number | undefined;
   avaliadoDetalhes: any | undefined;
   avaliadosSA:any|undefined;
@@ -149,13 +170,15 @@ export class NovaliacaoComponent implements OnInit {
   tipoavSelecionadoId: number | null = null;
   registeravaliacaoForm: FormGroup;
   periodo: any;
+  isLinear = false;
   tipoAvaliacao: any;
   conceitos: any[] = [
     { key: 'otimo', name: 'Ótimo', value: 5 },
     { key: 'bom', name: 'Bom', value: 4 },
     { key: 'regular', name: 'Regular', value: 3 },
     { key: 'ruim', name: 'Ruim', value: 2 },
-    { key: 'pessimo', name: 'Pessimo', value: 1 },
+    { key: 'pessimo', name: 'Péssimo', value: 1 },
+    { key: 'nao_se_aplica', name: 'Não se aplica', value: 0 },
 ];
 
   constructor(
@@ -173,7 +196,7 @@ export class NovaliacaoComponent implements OnInit {
     private avaliacaoService: AvaliacaoService,
     private avaliadorService: AvaliadorService,
     private perguntasService: PerguntasService,
-    private cdRef: ChangeDetectorRef,
+    private cdr: ChangeDetectorRef,
     private loginService: LoginService,
     private tipoAvaliacaoService: TipoAvaliacaoService,
     private avaliadoService: AvaliadoService,
@@ -181,23 +204,29 @@ export class NovaliacaoComponent implements OnInit {
     private registercompanyService:RegisterCompanyService,
     private sanitizer: DomSanitizer,
     private formularioService: FormularioService
-    
+
   )
 
   {
     this.registeravaliacaoForm = this.fb.group({
-      tipoavaliacao: ['',],
+      tipo: ['',],
       avaliador:['',],
       avaliado:['', ],
       periodo:['',],
-      perguntasRespostas: this.fb.group({}),
-    },{ validators: justificativaValidator() });
+      perguntasRespostas: this.fb.array([],[Validators.required]),
+    });
   }
- 
+
   ngOnInit(): void {
     this.trimestre = '';
-    this.obterTrimestre();  
+    this.obterTrimestre();
     this.periodo = this.obterTrimestre();
+
+    this.tipos =[
+      { nome:'Avaliação Geral'},
+      { nome:'Avaliação do Gestor'}
+    ];
+
     this.registercompanyService.getCompanys().subscribe(
       empresas => {
         this.empresas = empresas;
@@ -222,7 +251,7 @@ export class NovaliacaoComponent implements OnInit {
         console.error('Error fetching users:', error);
       }
     );
-  
+
     this.cargoService.getCargos().subscribe(
       cargos => {
         this.cargos = cargos;
@@ -255,50 +284,9 @@ export class NovaliacaoComponent implements OnInit {
         console.error('Error fetching users:',error);
       }
     )
-    // this.inicializarRespostasJustificativas();
-
-    // this.perguntas.forEach(pergunta => {
-    //   (this.registeravaliacaoForm.get('perguntasRespostas') as FormGroup).addControl(
-    //     pergunta.id.toString(), this.fb.control('', Validators.required)
-    //   );
-    // });
-
-
-    // const userId = this.loginService.getUserId();
-    // if (userId) {
-    //   this.avaliadorService.getAvaliadorByUserId(userId).subscribe((avaliador) => {
-    //     console.log('Avaliador encontrado:', avaliador);
-        
-    //     // Faça o que for necessário com as informações do avaliador
-    //     this.avaliadorInfo = avaliador;
-        
-    //     //this.registeravaliacaoForm?.get('avaliador')?.setValue(avaliador);
-    //     // Verifique se o avaliador tem dados do colaborador associado
-    //     if (avaliador.colaborador) {
-    //       this.colaboradorService.getColaboradorById(avaliador.colaborador.id).subscribe((colaborador) => {
-    //         console.log('Colaborador associado ao avaliador:', colaborador);
-    //         // Faça o que for necessário com as informações do colaborador
-    //         this.colaboradorInfo = colaborador;
-    //       });
-    //     } else {
-    //       console.error('Avaliador não possui colaborador associado.');
-    //     }
-    //   });
-    // } else {
-    //   console.error('ID do usuário não encontrado.');
-    // }
-
-    // this.registeravaliacaoForm.valueChanges.subscribe(value => {
-    //   this.selecionarAvaliado(value);
-    // });
-    //this.formularioId = this.avaliadoDetalhes.formulario;
-    //this.carregarPerguntasDoFormulario();
+    
     this.getAvaliadorInfo();
-    
-    //this.loadAvaliados();
-    //this.getAvaliadoInfo();
-    
-    
+
     this.colaboradorService.getColaboradores().subscribe(
       colaboradores => {
         this.colaboradores = colaboradores;
@@ -307,16 +295,7 @@ export class NovaliacaoComponent implements OnInit {
         console.error('Error fetching users:', error);
       }
     );
-    
-    this.getformularioService.getFormularios().subscribe(
-      formularios => {
-        this.formularios = formularios;
-      },
-      error => {
-        console.error('Error fetching users:',error);
-      }
-    );
-  
+
     this.avaliacaoService.getAvaliacoes().subscribe(
       avaliacoes => {
         this.avaliacoes = avaliacoes;
@@ -341,25 +320,13 @@ export class NovaliacaoComponent implements OnInit {
         console.error('Error fetching users:',error);
       }
     );
-    //const avaliadoId = this.avaliadoDetalhes.id
     
   }
-  
+
   sanitizeHtml(legenda: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(legenda);
-    
-    }
 
-  requireJustification: boolean = false;
-  justification: string = '';  
-  onOptionChange(option: any): void {
-    if (option.value === 5 || option.value === 1) {
-      this.requireJustification = true;
-    } else {
-      this.requireJustification = false;
-      this.justification = '';  // Clear the justification if not required
     }
-  }
 
   obterTrimestre() {
     const dataAtual = new Date();
@@ -382,26 +349,20 @@ export class NovaliacaoComponent implements OnInit {
     }
   }
 
-  // obterTrimestre(): string {
-  //   const dataAtual = new Date();
-  //   const mesAtual = dataAtual.getMonth() + 1; // +1 porque os meses em JavaScript são indexados a partir de 0
-  //   switch (Math.ceil(mesAtual / 3)) {
-  //     case 1:
-  //       return 'Q1-' + dataAtual.getFullYear();
-  //     case 2:
-  //       return 'Q2-' + dataAtual.getFullYear();
-  //     case 3:
-  //       return 'Q3-' + dataAtual.getFullYear();
-  //     case 4:
-  //       return 'Q4-' + dataAtual.getFullYear();
-  //     default:
-  //       return 'Indeterminado';
-  //   }
-  // }
-
+  getAvaliadorInfo(): void {
+    this.colaboradorService.getAvaliador().subscribe(
+      data => {
+        this.avaliador = data;
+      },
+      error => {
+        console.error('Erro ao obter informações do avaliador:', error);
+        this.avaliador = null; // Garanta que avaliador seja null em caso de erro
+      }
+    );
+  }
 
   onTipoAvaliacaoSelecionado(tipoavaliacao: any): void {
-    const id = tipoavaliacao.id;
+    const id = tipoavaliacao.nome;
     if (id !== undefined) {
       console.log('Tipo Avaliacao selecionado ID:', id); // Log para depuração
       this.tipoavSelecionadoId = id;
@@ -410,11 +371,6 @@ export class NovaliacaoComponent implements OnInit {
       console.error('O ID do avaliado é indefinido');
     }
   }
-  // onTipoAvaliacaoChange(event: Event): void {
-  //   const selectElement = event.target as HTMLSelectElement;
-  //   this.tipoAvaliacao = selectElement.value;
-  //   this.carregarMeusAvaliadosSemAvaliacao();
-  // }
 
   avaliadoByTipoAvaliacao(): void {
     if (this.tipoavSelecionadoId !== null) {
@@ -451,42 +407,8 @@ export class NovaliacaoComponent implements OnInit {
   getNomeTipoContrato(id: number): string {
     const tipocontrato = this.tipocontratos?.find(tipocontrato => tipocontrato.id === id);
     return tipocontrato ? tipocontrato.nome : 'Tipo de contrato não encontrado';
-  }  
-  // onAvaliadoSelecionado(avaliado: any): void {
-  //   const id =avaliado.id;
-  //   console.log('Avaliado selecionado ID:', id); // Log para depuração
-  //   this.avaliadoSelecionadoId = id;
-  //   this.obterDetalhesAvaliado();
-  //   this.carregarPerguntasDoFormulario();
-  // }
- 
-
-  // obterDetalhesAvaliado(): void {
-  //   if (this.avaliadoSelecionadoId !== undefined) {
-  //     this.avaliadoService.getAvaliado(this.avaliadoSelecionadoId).subscribe(
-  //       (data: any) => {
-  //         console.log('Dados do Avaliado:', data);
-  //         this.avaliadoDetalhes = data;
-  //       },
-  //       (error) => {
-  //         console.error('Erro ao obter detalhes do avaliado', error);
-  //       }
-  //     );
-  //   }
-  // }
-
-/////////////FUNCIONAAAAAAAAAAAAAAAAAAAAAAAAAA
-  // async onAvaliadoSelecionado(avaliado: any): Promise<void> {
-  //   const id = avaliado.id;
-  //   if (id !== undefined) {
-  //     console.log('Avaliado selecionado ID:', id); // Log para depuração
-  //     this.avaliadoSelecionadoId = id;
-  //     await this.obterDetalhesAvaliado(); // Espera a obtenção dos detalhes do avaliado
-  //     this.carregarPerguntasDoFormulario();
-  //   } else {
-  //     console.error('O ID do avaliado é indefinido');
-  //   }
-  // }
+  }
+  
   async onAvaliadoSelecionado(avaliado: any): Promise<void> {
     const id = avaliado.id;
     const form = avaliado.formulario;
@@ -499,7 +421,7 @@ export class NovaliacaoComponent implements OnInit {
       console.error('O ID do avaliado é indefinido');
     }
   }
-  
+
   obterDetalhesAvaliado(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (this.avaliadoSelecionadoId !== undefined) {
@@ -536,7 +458,7 @@ export class NovaliacaoComponent implements OnInit {
     }
   }
 
-  
+
   async carregarPerguntasDoFormulario(formularioId: number): Promise<void> {
     try {
       const perguntas = await this.perguntasService.carregarPerguntasDoFormulario(formularioId).toPromise();
@@ -548,392 +470,127 @@ export class NovaliacaoComponent implements OnInit {
     }
   }
 
-  // async carregarTipoAvaliacaoEFormularios(userId: number): Promise<void> {
-  //   try {
-  //     const tiposAvaliacao = await this.tipoAvaliacaoService.carregarTipoAvaliacao(userId).toPromise();
-  //     for (const tipoAvaliacao of tiposAvaliacao) {
-  //       const formularioId = tipoAvaliacao.formulario; // Ajuste conforme sua resposta da API
-  //       await this.carregarPerguntasDoFormulario(formularioId);
-  //     }
-  //   } catch (error) {
-  //     console.error('Erro ao carregar tipos de avaliação:', error);
-  //   }
-  // }
-  // onAvaliadoSelected(avaliadoId: number) {
-  //   // Faça algo com o valor selecionado (por exemplo, buscar informações adicionais).
-  //   console.log('Avaliado selecionado:', avaliadoId);
-  //   // Aqui você pode chamar sua API DRF para obter mais informações sobre o avaliado.
-  // }
+  get perguntasRespostasArray(): FormArray {
+    return this.registeravaliacaoForm.get('perguntasRespostas') as FormArray;
+  }
 
-//   selecionarAvaliado(avaliado: Avaliado) {
-//     this.avaliadoSelecionado.push(avaliado);
-// }
+preencherCamposPerguntas() {
+  const perguntasRespostasArray = this.registeravaliacaoForm.get('perguntasRespostas') as FormArray;
+ // perguntasRespostasArray.clear();
 
-// loadAvaliados(): void {
-//   // Chame o serviço para obter a lista de avaliados (ajuste conforme necessário)
-//   this.avaliadoService.getAvaliados().subscribe(
-//     data => {
-//       this.avaliados = data;
-//     },
-//     error => {
-//       console.error('Erro ao carregar a lista de avaliados:', error);
-//     }
-//   );
-// }
-
-// onAvaliadoChange(event: Event): void {
-//   const target = event.target as HTMLSelectElement;
-//   const avaliadoId = target.value ? parseInt(target.value, 10) : null;
-//   if (avaliadoId !== null) {
-//     this.getAvaliadoInfo(avaliadoId);
-//   } else {
-//     this.avaliado = null;
-//   }
-// }
-
-
-
-
-getAvaliadorInfo(): void {
-  this.colaboradorService.getAvaliador().subscribe(
-    data => {
-      this.avaliador = data;
-    },
-    error => {
-      console.error('Erro ao obter informações do avaliador:', error);
-      this.avaliador = null; // Garanta que avaliador seja null em caso de erro
-    }
-  );
+  this.perguntas.forEach((pergunta, index) => {
+    const perguntaGroup = this.fb.group({
+      pergunta: [pergunta.texto],
+      resposta: ['', Validators.required],
+      justificativa: ['']
+    },{ validators: respostaJustificativaValidator });
+    //perguntasRespostasArray.push(perguntaGroup);  
+    perguntasRespostasArray.push(perguntaGroup);
+    
+    });
+    
+ 
 }
-  // selecionarFormulario() {
-  //   if (this.formularioSelecionado) {
-  //     // Carregar perguntas ao selecionar um formulário
-  //     this.carregarPerguntasDoFormulario(this.formularioSelecionado);
-  //     this.cdRef.detectChanges();
-  //   }
-  // }
+onRespostaChange(index: number) {
+  const perguntaGroup = this.registeravaliacaoForm.get(`perguntasRespostas.pergunta-${this.perguntas[index].texto}`) as FormArray;
+  const respostaControl = perguntaGroup.get('resposta');
+  const justificativaControl = perguntaGroup.get('justificativa');
 
-  // getAvaliadoInfo(): void {
-  //   this.colaboradorService.getAvaliado().subscribe(
-  //     data => {
-  //       this.avaliado = data;
-  //     },
-  //     error => {
-  //       console.error('Erro ao obter informações do avaliado:', error);
-  //       this.avaliado = {}; // Em caso de erro, inicialize como objeto vazio
-  //     }
-  //   );
-  // }
-  
-  // getIdFormularioDoAvaliado(idAvaliado: number): number | null {
-  //   // Aqui você deve implementar a lógica para obter o ID do formulário associado ao avaliado
-  //   // Se o avaliado tem uma propriedade 'formularioId', você pode retorná-la diretamente
-  //   // Exemplo:
-  //   const avaliado = this.avaliados.find(avaliado => avaliado.id === idAvaliado);
-  //   return avaliado ? avaliado.formularioId : null;
-  // }
-
-  // onChangeAvaliado(idAvaliado: number) {
-  //   if (idAvaliado) {
-  //     // Obter o ID do formulário associado ao avaliado
-  //     const idFormulario = this.getIdFormularioDoAvaliado(idAvaliado);
-      
-  //     if (idFormulario) {
-  //       this.carregarPerguntasDoFormulario(idFormulario);
-  //     }
-  //   } else {
-  //     this.perguntas = [];  // Limpa as perguntas se nenhum avaliado for selecionado
-  //   }
-  // }
-
-  // carregarPerguntasDoFormulario(formularioId: number): Promise<void> {
-  //   return new Promise((resolve, reject) => {
-  //     this.perguntasService.carregarPerguntas(formularioId).subscribe(
-  //       (perguntas: any) => {
-  //         this.perguntas.push(...perguntas); // Adiciona as novas perguntas ao array existente
-  //         this.preencherCamposPerguntas();
-  //         console.log('Perguntas carregadas:', perguntas);
-  //         resolve();
-  //       },
-  //       error => {
-  //         console.error('Erro ao carregar perguntas:', error);
-  //         reject(error);
-  //       }
-  //     );
-  //   });
-  // }
-
-  // carregarPerguntasDoFormulario(formularioId: number) {
-  //   this.perguntasService.carregarPerguntas(formularioId).subscribe(
-  //     (perguntas: any) => {
-  //       this.perguntas = perguntas;
-  //       this.preencherCamposPerguntas();
-  //       console.log('Perguntas carregadas:', perguntas);
-  //     },
-  //     error => {
-  //       console.error('Erro ao carregar perguntas:', error);
-  //     }
-  //   );
-  // }
-
-/////////FUNCIONAAAAAAAAAAA
-    // carregarPerguntasDoFormulario() {
-    //   const formularioId = this.avaliadoDetalhes.tipoavaliacao;
-    //   this.perguntasService.carregarPerguntas(formularioId).subscribe(
-    //     (perguntas: any) => {
-    //       // Aqui você pode fazer o que quiser com as perguntas, como armazená-las em uma variável
-    //       this.perguntas = perguntas;
-    //       this.preencherCamposPerguntas();
-          
-    //       console.log()
-    //     },
-    //     error => {
-    //       console.error('Erro ao carregar perguntas:', error);
-    //     }
-    //   );
-    // }
-
-  
-
-    // getPerguntaFormGroup(perguntaId: number): FormGroup {
-    //   return this.fb.group({
-    //     perguntaId: [perguntaId],
-    //     resposta: ['', Validators.required],
-    //     justificativa: ['',]
-    //   });
-    // }
-    //correto
-    // preencherCamposPerguntas() {
-    //   const perguntasRespostasGroup = this.registeravaliacaoForm.get('perguntasRespostas') as FormGroup;
-  
-    //   this.perguntas.forEach(pergunta => {
-    //     const perguntaControlName = `pergunta-${pergunta.id}`;
-    //     perguntasRespostasGroup.addControl(perguntaControlName, this.fb.group({
-    //       resposta: ['', Validators.required], // Defina validadores conforme necessário
-    //       justificativa: ['',] // Pode ser obrigatória ou não, dependendo da lógica do seu aplicativo
-    //     },{ Validators: justificativaValidator() }));
-        
-    //   });
-    // }
-    // validacaoPersonalizada() {
-    //   return (formGroup: FormGroup) => {
-    //     let resposta = formGroup.controls['resposta'];
-    //     let justificativa = formGroup.controls['justificativa'];
-    
-    //     // Condição de validação
-    //     if ((resposta.value === 1 || resposta.value === 5) && justificativa.value === '') {
-    //       return justificativa.setErrors({ 'obrigatorio': true });
-    //     } else {
-    //       return justificativa.setErrors(null);
-    //     }
-    //   }
-    // }
-    // preencherCamposPerguntas() {
-    //   const perguntasRespostasGroup = this.registeravaliacaoForm.get('perguntasRespostas') as FormGroup;
-  
-    //   this.perguntas.forEach(pergunta => {
-    //     const perguntaGroup = this.fb.group({
-    //       resposta: ['', Validators.required],
-    //       justificativa: ['',]
-    //     }, { validators: this.validacaoPersonalizada() });
-    //     perguntasRespostasGroup.addControl(`pergunta-${pergunta.id}`, perguntaGroup);
-    //   });
-    // }
-
-    preencherCamposPerguntas() {
-      const perguntasRespostasGroup = this.registeravaliacaoForm.get('perguntasRespostas') as FormGroup;
-    
-      this.perguntas.forEach((pergunta, index) => {
-        const perguntaGroup = this.fb.group({
-          resposta: ['', Validators.required],
-          justificativa: ['']
-        });
-        perguntaGroup.get('resposta')!.valueChanges.subscribe(() => this.onRespostaChange(index));
-        perguntasRespostasGroup.addControl(`pergunta-${pergunta.texto}`, perguntaGroup);
-        // Chama a função de validação inicial para configurar os validadores corretamente
-        
-      });
+  if (respostaControl && justificativaControl) {
+    const resposta = respostaControl.value;
+    if (resposta === 1 || resposta === 5) { 
+      justificativaControl.setValidators([Validators.required]);
+    } else {
+      justificativaControl.clearValidators();
     }
-   
+    justificativaControl.updateValueAndValidity();
+  }
+}  
 
-    getRespostaValue(perguntaTxt: string): string {
-      const respostaControl = this.registeravaliacaoForm.get(`perguntasRespostas.pergunta-${perguntaTxt}.resposta`);
+getPerguntaControl(index: number): AbstractControl {
+  const perguntasRespostas = this.registeravaliacaoForm.get('perguntasRespostas') as FormArray;
+  return perguntasRespostas.at(index) || new FormGroup({});
+}
+    validacaoPersonalizada(formGroup: FormGroup) {
+      let resposta = formGroup.controls['resposta'];
+      let justificativa = formGroup.controls['justificativa'];
+  
+      if ((resposta.value === 1 || resposta.value === 5) && !justificativa.value.trim()) {
+        justificativa.setValidators([Validators.required]);
+        justificativa.updateValueAndValidity();
+      } else {
+        justificativa.clearValidators();
+        justificativa.updateValueAndValidity();
+      }
+    }
+
+    getRespostaValue(index: number): string {
+      const respostaControl = this.registeravaliacaoForm.get(`perguntasRespostas.${index}.resposta`);
       return respostaControl ? respostaControl.value : '';
     }
   
-    getJustificativaValue(perguntaTxt: string): string {
-      const justificativaControl = this.registeravaliacaoForm.get(`perguntasRespostas.pergunta-${perguntaTxt}.justificativa`);
+    getJustificativaValue(index: number): string {
+      const justificativaControl = this.registeravaliacaoForm.get(`perguntasRespostas.${index}.justificativa`);
       return justificativaControl ? justificativaControl.value : '';
     }
-   
-    
-    onRespostaChange(index: number) {
-      const perguntaGroup = this.registeravaliacaoForm.get(`perguntasRespostas.pergunta-${this.perguntas[index].id}`) as FormGroup;
-      const respostaControl = perguntaGroup.get('resposta');
-      const justificativaControl = perguntaGroup.get('justificativa');
-    
-      if (respostaControl && justificativaControl) {
-        const resposta = respostaControl.value;
-        if (resposta === 1 || resposta === 5) { // Verifica se a resposta é 5 ou 1
-          justificativaControl.setValidators([Validators.required]);
-        } else {
-          justificativaControl.clearValidators();
-        }
-        justificativaControl.updateValueAndValidity();
-      }
-    }
-  
-    isJustificativaRequired(index: number): boolean {
-      const perguntaGroup = this.registeravaliacaoForm.get(`perguntasRespostas.pergunta-${this.perguntas[index].texto}`) as FormGroup;
-      const justificativaControl = perguntaGroup?.get('justificativa');
-      return (justificativaControl?.hasError('required') && (justificativaControl?.touched || justificativaControl?.dirty)) ?? false;
-    }
-  
 
-    // preencherCamposPerguntas() {
-    //   if (this.registeravaliacaoForm instanceof FormGroup) {
-    //     // Acesse o grupo de controles dentro do perguntasRespostas
-    //     const perguntasRespostasGroup = this.registeravaliacaoForm.get('perguntasRespostas') as FormGroup;
-  
-    //     // Preencha os campos de perguntas no formulário
-    //     this.perguntas.forEach(pergunta => {
-    //       const perguntaControlName = `pergunta-${pergunta.id}`;
-    //       perguntasRespostasGroup.addControl(perguntaControlName, this.fb.group({
-    //         resposta: ['',] ,
-    //         justificativa: ['']
-    //       }));
-    //     });
-    //   }
+    // getRespostaValue(perguntaTxt: string): string {
+    //   const respostaControl = this.registeravaliacaoForm.get(`perguntasRespostas.pergunta-${perguntaTxt}.resposta`);
+    //   return respostaControl ? respostaControl.value : '';
     // }
 
-
-
-
-
-  //   preencherCamposPerguntas() {
-  //     if (this.registeravaliacaoForm instanceof FormGroup) {
-  //         // Acesse o grupo de controles dentro do perguntasRespostas
-  //         const perguntasRespostasGroup = this.registeravaliacaoForm.get('perguntasRespostas') as FormGroup;
-  
-  //         // Preencha os campos de perguntas no formulário
-  //         this.perguntas.forEach(pergunta => {
-  //             const perguntaControlName = `pergunta${pergunta.id}`;
-  //             const respostaControl = perguntasRespostasGroup.get(`${perguntaControlName}.resposta`);
-  //             const justificativaControl = perguntasRespostasGroup.get(`${perguntaControlName}.justificativa`);
-  
-  //             if (respostaControl && justificativaControl) {
-  //                 respostaControl.setValue(''); // Preencha a resposta conforme necessário
-  //                 justificativaControl.setValue(''); // Preencha a justificativa conforme necessário
-  //             } else {
-  //                 console.error(`Controle não encontrado para pergunta ${pergunta.id}`);
-  //             }
-  //         });
-  //     }
-  // }
-
-
-
-
-
-    // preencherCamposPerguntas() {
-    //   if (this.registeravaliacaoForm instanceof FormGroup) {
-    //     const perguntasRespostasGroup = this.registeravaliacaoForm.get('perguntasRespostas') as FormGroup;
-    
-    //     this.perguntas.forEach(pergunta => {
-    //       const perguntaControlName = `pergunta${pergunta.id}`;
-    //       perguntasRespostasGroup.get(perguntaControlName + '.resposta')?.setValue('');
-    //       perguntasRespostasGroup.get(perguntaControlName + '.justificativa')?.setValue('');
-    //     });
-    //   }
+    // getJustificativaValue(perguntaTxt: string): string {
+    //   const justificativaControl = this.registeravaliacaoForm.get(`perguntasRespostas.pergunta-${perguntaTxt}.justificativa`);
+    //   return justificativaControl ? justificativaControl.value : '';
     // }
-
-  //   preencherCamposPerguntas() {
-  //     if (this.registeravaliacaoForm instanceof FormGroup) {
-  //         // Acesse o grupo de controles dentro do perguntasRespostas
-  //         const perguntasRespostasGroup = this.registeravaliacaoForm.get('perguntasRespostas') as FormGroup;
-
-  //         // Preencha os campos de perguntas no formulário
-  //         this.perguntas.forEach(pergunta => {
-  //             const perguntaControlName = `${pergunta.id}_resposta`;
-  //             const justificativaControlName = `${pergunta.id}_justificativa`;
-  //             perguntasRespostasGroup.addControl(perguntaControlName, this.fb.control('', Validators.required));
-  //             perguntasRespostasGroup.addControl(justificativaControlName, this.fb.control(''));
-  //         });
-  //     }
-  // }
-  
-  // clear(table: Table) {
-  //   table.clear();
-  // }
-  
-  // avancarEtapa() {
-  //   if (this.perguntas && this.perguntas.length > 0) {
-  //     this.activeIndex++; // Avançar para a próxima etapa
-  //   }
-  // }
-
-  // proximaPergunta(index: number) {
-  //   // Lógica para avançar para a próxima pergunta
-  // }
-
-  // retrocederEtapa() {
-  //   this.activeIndex--; // Retroceder para a etapa anterior
-  // }
-  // onIndexChange(event: any) {
-  //   this.activeIndex = event; // Atualizar o índice ativo com base no evento
-  // }
-
-
-  // clearForm() {
-  // this.registeravaliacaoForm.reset();
-  // }
-  
-  // filterTable() {
-  // this.dt1.filterGlobal(this.inputValue, 'contains');
-  // }
-
-  //  inicializarRespostas(): void {
-  //   this.perguntas.forEach(pergunta => {
-  //     this.respostas[pergunta.id] = { resposta: '', justificativa: '', nota: 0 };
-  //   });}
-
-
-
 
   formatarPerguntasRespostas(perguntasRespostas: any): RespostasFormatadas {
     const respostasFormatadas: RespostasFormatadas = {};
 
     for (const key in perguntasRespostas) {
       if (perguntasRespostas.hasOwnProperty(key)) {
-        const perguntaId = key.replace('pergunta', ''); // Obtenha o ID da pergunta
+        const perguntaTexto = perguntasRespostas[key].pergunta; // Obtenha o ID da pergunta
         const resposta = perguntasRespostas[key].resposta;
         const justificativa = perguntasRespostas[key].justificativa;
 
-        respostasFormatadas[`pergunta${perguntaId}`] = { resposta, justificativa };
+        respostasFormatadas[`pergunta-${perguntaTexto}`] = { resposta, justificativa };
       }
     }
 
     return respostasFormatadas;
   }
 
+  // formatarPerguntasRespostas(perguntasRespostas: any): RespostasFormatadas {
+  //   const respostasFormatadas: RespostasFormatadas = {};
+  
+  //   perguntasRespostas.forEach((perguntaGroup: any) => {
+  //     const pergunta = perguntaGroup.texto;
+  //     const resposta = perguntaGroup.resposta;
+  //     const justificativa = perguntaGroup.justificativa;
+  
+  //     respostasFormatadas[pergunta] = { resposta, justificativa };
+  //   });
+  
+  //   return respostasFormatadas;
+  // }
+
+
 
   submit(){
     console.log(this.registeravaliacaoForm.value)
-    const tipoavaliacaoId = this.registeravaliacaoForm.value.tipoavaliacao.id;
+    const tipo = this.registeravaliacaoForm.value.tipo.nome;
     const avaliadorId = this.registeravaliacaoForm.value.avaliador.id;
     const avaliadoId = this.registeravaliacaoForm.value.avaliado.id;
     const periodo = this.registeravaliacaoForm.value.periodo;
     const perguntasRespostas: any = this.formatarPerguntasRespostas(this.registeravaliacaoForm.value.perguntasRespostas);
     const perguntasRespostasJSON: JSON = JSON.parse(JSON.stringify(perguntasRespostas));
-    const feedback = this.registeravaliacaoForm.value.feedback;
       this.registeravaliacaoService.registeravaliacao(
-        tipoavaliacaoId,
+        tipo,
         avaliadorId,
         avaliadoId,
         periodo,
-        //feedback,
         perguntasRespostasJSON,
-        
+
       ).subscribe({
         next: () => {
           this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Avaliação concluída com sucesso!' });
@@ -941,21 +598,8 @@ getAvaliadorInfo(): void {
             window.location.reload(); // Atualiza a página após o registro
           }, 1000); // Tempo em milissegundos (1 segundo de atraso)
         },
-        error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao concluir avaliação! Por favor revise as respostas e justificativas,caso necessárias, e tente novamente.' }), 
+        error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao concluir avaliação! Por favor revise as respostas e justificativas,caso necessárias, e tente novamente.' }),
       });
     }
 
-  
-//   submit() {
-//     if (this.registeravaliacao2Form.valid) {
-//         // Aqui você pode enviar os dados para o servidor
-//         const dadosFormulario = this.registeravaliacao2Form.value;
-//         console.log(dadosFormulario);
-//     } else {
-//         console.log('Formulário inválido. Preencha todos os campos obrigatórios.');
-//     }
-// }
-
-
-  
 }

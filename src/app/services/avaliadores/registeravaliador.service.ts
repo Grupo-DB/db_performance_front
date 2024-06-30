@@ -34,5 +34,9 @@ export class AvaliadorService {
     return this.httpClient.post(url,{avaliador,avaliado_id}).pipe(
 
     );
-  }     
+  }
+  removeAvaliado(avaliadorId: number, avaliadoId: number): Observable<Avaliador> {
+    return this.httpClient.post<Avaliador>(`${this.apiUrl}${avaliadorId}/remove_avaliado/`, { avaliado_id: avaliadoId });
+    }
+  
 }

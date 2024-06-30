@@ -21,7 +21,8 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { TabMenuModule } from 'primeng/tabmenu';
-
+import { LoginService } from '../../services/login/login.service';
+import { CommonModule } from '@angular/common';
 
 interface RegisterTipoAvaliacaoForm{
   nome: FormControl,
@@ -38,7 +39,7 @@ export interface TipoAvaliacao{
   standalone: true,
   imports: [ 
     ReactiveFormsModule,FormsModule,TabMenuModule,DividerModule,NzIconModule,NzLayoutModule,NzMenuModule,
-    FormLayoutComponent,InputMaskModule,DialogModule,ConfirmDialogModule,
+    FormLayoutComponent,InputMaskModule,DialogModule,ConfirmDialogModule,CommonModule,
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
   providers: [
@@ -61,7 +62,8 @@ export class TipoAvaliacaoComponent implements OnInit {
     private messageService: MessageService,
     private tipoavaliacaoService: TipoAvaliacaoService,
     private fb: FormBuilder,
-    private confirmationService: ConfirmationService 
+    private confirmationService: ConfirmationService,
+    private loginService: LoginService 
   )    
   {
     this.registertipoavaliacaoForm = new FormGroup({
@@ -74,6 +76,11 @@ export class TipoAvaliacaoComponent implements OnInit {
   
  });
 }
+
+hasGroup(groups: string[]): boolean {
+  return this.loginService.hasAnyGroup(groups);
+} 
+
  ngOnInit(): void {
  this.tipoavaliacaoService.getTipoAvaliacaos().subscribe(
   (tipoavaliacoes:TipoAvaliacao[]) => {
@@ -117,9 +124,20 @@ saveEdit() {
         window.location.reload(); // Atualiza a página após a exclusão
       }, 2000); // Tempo em milissegundos (1 segundo de atraso)
     },
-    error: () => {
-      this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao atualizar a Area.' });
-    }
+    error: (err) => {
+      console.error('Login error:', err); 
+    
+      if (err.status === 401) {
+        this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+      } else if (err.status === 403) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+      } else if (err.status === 400) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+      }
+      else {
+        this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+      } 
+  }
   });
 }
 excluirTipoAvaliacao(id: number) {
@@ -131,18 +149,25 @@ excluirTipoAvaliacao(id: number) {
     rejectIcon: 'pi pi-times',
     acceptLabel: 'Sim',
     rejectLabel: 'Cancelar',
-    acceptButtonStyleClass: 'p-button-success',
-    rejectButtonStyleClass: 'p-button-danger',
+    acceptButtonStyleClass: 'p-button-info',
+    rejectButtonStyleClass: 'p-button-secondary',
     accept: () => {
-      this.tipoavaliacaoService.deleteTipoAValiacao(id).subscribe(() => {
-        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Tipo de avaliação excluído com sucesso',life:4000 });
-        setTimeout(() => {
-          window.location.reload(); // Atualiza a página após a exclusão
-        }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+      this.tipoavaliacaoService.deleteTipoAValiacao(id).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Tipo de Avaliação excluído com sucesso!!', life: 1000 });
+          setTimeout(() => {
+            window.location.reload(); // Atualiza a página após a exclusão
+          }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+        },
+        error: (err) => {
+          if (err.status === 403) {
+            this.messageService.add({ severity: 'error', summary: 'Erro de autorização!', detail: 'Você não tem permissão para realizar esta ação.', life: 2000 });
+          } 
+        }
       });
     },
     reject: () => {
-      this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 3000 });
+      this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 1000 });
     }
   });
 }
@@ -156,8 +181,21 @@ submit(){
         window.location.reload(); // Atualiza a página após o registro
       }, 1000); // Tempo em milissegundos (1 segundo de atraso)
     },
-    error: () => this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' }),
-  })
-}
+    error: (err) => {
+      console.error('Login error:', err); 
+    
+      if (err.status === 401) {
+        this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+      } else if (err.status === 403) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+      } else if (err.status === 400) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+      }
+      else {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro no login. Por favor, tente novamente.' });
+      } 
+    }
+  });
+  }
 }
 

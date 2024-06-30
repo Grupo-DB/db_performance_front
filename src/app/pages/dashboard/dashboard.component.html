@@ -3,29 +3,29 @@
         <li nz-menu-item nzMatchRouter="#">
             <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
         </li>
-        <li nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
             <ul>
-                <li nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="../tipoavaliacao" >Tipos de Avaliações</a>
                 </li>
-                <li nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="../pergunta" >Perguntas</a>
                 </li>
-                <li nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="../formulario" >Formulários</a>
                 </li>
             </ul>
         </li>    
         
-        <li nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
             <ul>
-                <li nz-menu-item   nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
                     <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
                 </li>
-                <li nz-menu-item   nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
                     <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados a um Formulário</a>
                 </li>
-                <li nz-menu-item   nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
                     <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
                 </li>
             </ul>    
@@ -35,21 +35,283 @@
         <li nz-menu-item nzMatchRouter="">
             <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
         </li>
-        <li nz-menu-item nzMatchRouter="">
-            <a style="font-size: 13px;" routerLink="#" >Histórico de Avaliações</a>
+        <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['RHAvaliacao'])">
+            <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
         </li>
         <li nz-menu-item nzMatchRouter="">
-            <a style="font-size: 13px;" routerLink="#" >Relatórios</a>
+            <a style="font-size: 13px;" routerLink="../relatorios" >Relatórios</a>
         </li>
         
     </ul>
 </div>
     
+<div class="titulo">
+  <p-divider align="left" type="solid">
+      <b>Mapa de Colaboradores</b>
+  </p-divider> 
+</div>
 
 
-<br><br>
-<br><br>
+<div class="filtros">
+    
+    <!-- <select id="cargos" [(ngModel)]="selectedCargos" multiple>
+      <option *ngFor="let cargo of cargos" [value]="cargo">{{ cargo }}</option>
+    </select> -->
+    <div class="filial">
+      <mat-form-field>
+        <mat-label>Selecione a Filial</mat-label>
+        <mat-select [(ngModel)]="selectedFiliais" multiple  (ngModelChange)="onFilialSelecionada($event.value)">
+          <mat-option *ngFor="let filial of filiais" [value]="filial.id">{{ filial.nome }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="area">  
+      <mat-form-field>
+        <mat-label>Selecione a Área</mat-label>
+        <mat-select [(ngModel)]="selectedAreas" multiple (selectionChange)="onAreaSelecionada($event.value)">
+          <mat-option *ngFor="let area of areas" [value]="area.id">{{ area.nome }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>   
+    <div class="setor">  
+      <mat-form-field>
+        <mat-label>Selecione o Setor</mat-label>
+        <mat-select [(ngModel)]="selectedSetores" multiple (selectionChange)="onSetorSelecionado($event.value)">
+          <mat-option *ngFor="let setor of setores" [value]="setor.id">{{ setor.nome }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="ambientes">
+      <mat-form-field>
+        <mat-label>Selecione o Ambiente</mat-label>
+        <mat-select [(ngModel)]="selectedAmbientes" multiple (selectionChange)="onAmbienteSelecionado($event.value)">
+          <mat-option *ngFor="let ambiente of ambientes" [value]="ambiente.id">{{ ambiente.nome }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="cargos">
+      <mat-form-field>
+        <mat-label>Selecione o Cargo</mat-label>
+        <mat-select [(ngModel)]="selectedCargos" multiple (selectionChange)="applyFilters()">
+          <mat-option *ngFor="let cargo of cargos" [value]="cargo.id">{{ cargo.nome }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  
+  
+</div>
+  
+  <div class="cards">
+     
+      <p-card class="cardsWidth" header="{{ totalColaboradores }}">
+        <p class="m-0">
+           Colaboradores
+           <p-divider></p-divider>
+        </p>
+      </p-card>
+       
+    
+      <p-card class="cardsWidth" header=" {{ mediaSalarios | currency:'BRL':'symbol':'1.2-2' }}">
+        <p class="m-0">
+          Média Salarial
+          <p-divider></p-divider>
+        </p>
+      </p-card>
+    
+    
+      <p-card class="cardsWidth" header="{{ mediaIdade }} anos">
+        <p class="m-0">
+          Média Idade
+          <p-divider></p-divider>
+        </p>
+      </p-card>
+    
+    
+      <p-card class="cardsWidth" header="{{ mediaTempoServico }} anos">
+        <p class="m-0">
+          Média Tempo de Serviço
+          <p-divider></p-divider>
+        </p>
+      </p-card>
 
+  </div>
 
+  <div class="graficos">
+    <div class="chart-container">
+      <canvas id="pieChart"></canvas>
+    </div>
+    <div class="chart-container">
+      <canvas id="doughnutChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="salarioInstrucaoChart"></canvas>
+    </div>
+      
+  </div>
+  <div class="graficos2">
+    <div class="chart-container">
+      <canvas id="salarioRacaChart"></canvas>
+    </div>
+    <div class="chart-container">
+      <canvas id="salarioGeneroChart"></canvas>
+    </div>
+    <div class="chart-container">
+      <canvas id="polarAreaChart"></canvas>
+    </div>
+  </div>
+ 
+ 
+  <div class="titulo">
+    <p-divider align="left" type="solid">
+        <b>Avaliações e Feedbacks Totais</b>
+    </p-divider> 
+  </div>
 
-<h1>Dashboard em desenvolvimento...</h1>
+  <div class="avaliacoes">
+    <div class="avGeral">
+      
+        <p-card class="cardNota2" header="{{ totalAvaliacoesGeral }}" >
+          <p class="m-0">
+            Avaliações Totais
+            <p-divider></p-divider>
+          </p>
+        </p-card>
+       
+      <div class="cardNota2">
+        <p-card class="cardWidth" header="{{ avMediaTotal }}" >
+          <p class="m-0">
+            Nota Média
+            <p-divider></p-divider>
+          </p>
+        </p-card>
+      </div>
+      <div class="progressFb"> 
+        <div class="test">
+          <nz-progress
+            [nzSize]="'small'"
+            [nzStatus]="'normal'"
+            [nzWidth]="125"
+            [nzGapDegree]="80"
+            [nzGapPosition]="'bottom'"
+            [nzPercent]="percentCompleteGeral" 
+            nzType="dashboard" 
+            [nzFormat]="formatCompletedFeedbacksGeral">
+          </nz-progress>
+          <p>Feedbacks Realizados</p>
+        </div>  
+      </div>  
+    </div>
+  </div>
+  
+  <div class="titulo">
+    <p-divider align="left" type="solid">
+        <b>Avaliações e Feedbacks Gerais</b>
+    </p-divider> 
+  </div>
+
+  <div class="avaliacoesgerais">
+    <div class="avTotais">
+      <div class="cardAvTot">
+        <p-card header="{{ totalAvaliacoes }}">
+          <p>
+            Avaliações Geral
+            <p-divider></p-divider>
+          </p>
+        </p-card>
+      </div>
+    
+        <p-card class="cardAvTot" header="{{ mediaRespostas }}">
+          <p class="m-0">
+            Nota Média
+            <p-divider></p-divider>
+          </p>
+        </p-card>
+        <div class="progressFbGeral">  
+          <nz-progress
+            [nzSize]="'small'"
+            [nzStatus]="'normal'"
+            [nzWidth]="125"
+            [nzGapDegree]="80"
+            [nzGapPosition]="'bottom'"
+            [nzPercent]="percentComplete" 
+            nzType="circle" 
+            [nzFormat]="formatCompletedFeedbacks">
+          </nz-progress>
+          <p>Feedbacks Realizados</p>
+        </div>
+      
+      <div class="chartRadarGeral">
+        <canvas id="notaPerguntasChart"></canvas>
+      </div>  
+    </div>
+    
+  </div>
+
+  <div class="titulo">
+    <p-divider align="left" type="solid">
+        <b>Avaliações e Feedbacks Gestores</b>
+    </p-divider> 
+  </div>
+
+  <div class="avaliacoesGestores">
+    <div class="avGestor">
+      
+        <p-card class="cardAvGes1" header="{{ totalAvaliacoesGestor }}">
+          <p class="m-0">
+            Avaliações do Gestor
+            <p-divider></p-divider>
+          </p>
+        </p-card>
+        
+        <p-card class="cardAvGes" header="{{ avMediaGestor }}" >
+          <p class="m-0">
+            Nota Média
+            <p-divider></p-divider>
+          </p>
+        </p-card>
+
+        <div class="progressFbGestor">  
+          <nz-progress
+            [nzSize]="'small'"
+            [nzStatus]="'normal'"
+            [nzWidth]="125"
+            [nzGapDegree]="80"
+            [nzGapPosition]="'bottom'"
+            [nzPercent]="percentCompleteGestor" 
+            nzType="circle" 
+            [nzFormat]="formatCompletedFeedbacksGestor">
+          </nz-progress>
+          <p>Feedbacks Realizados</p>
+        </div>
+      <div class="chartRadarGestor">
+        <canvas id="notaGestorPerguntasChart"></canvas>
+      </div>
+
+    </div>  
+  </div>
+
+  <div class="chartRacaGen">
+    <canvas id="instrucaoRacaGeneroChart"></canvas>
+  </div>
+
+  <div class="chartAmbientes">
+    <canvas id="ambientesInfosChart"></canvas>
+  </div>
+  <!-- <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Cargo</th>
+        <th>Setor</th>
+        <th>Salário</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let colaborador of filteredColaboradores">
+        <td>{{ colaborador.nome }}</td>
+        <td>{{ colaborador.cargo }}</td>
+        <td>{{ colaborador.setor }}</td>
+        <td>{{ colaborador.salario }}</td>
+      </tr>
+    </tbody>
+  </table> -->

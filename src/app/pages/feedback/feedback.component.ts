@@ -106,13 +106,25 @@ export class FeedbackComponent implements OnInit{
   avaliadorSelecionadoId: number | null = null;
   loading: boolean = true;
   visible: boolean = false;
+  avaliadoDetalhes: any | undefined;
   perguntasRespostasFormatada: any;
   registerfbForm: FormGroup;
+  editForm!: FormGroup;
   inputValue: string = '';
   feedbackOptions = [
     { label: 'Sim', value: true },
     { label: 'Não', value: false }
   ];
+
+  conceitos: any[] = [
+    { value: 0, name: 'Não se aplica' },
+    { value: 1, name: 'Péssimo' },
+    { value: 2, name: 'Ruim' },
+    { value: 3, name: 'Regular' },
+    { value: 4, name: 'Bom' },
+    { value: 5, name: 'Ótimo' }
+  ];
+
   constructor(
     private router: Router,
     private messageService: MessageService,
@@ -139,6 +151,10 @@ export class FeedbackComponent implements OnInit{
     this.registerfbForm = this.fb.group({
       observacoes: ['',], 
     });
+    this.editForm = this.fb.group({
+      observacoes: [''],
+      
+     });
   }
   ngOnInit(): void {
     this.loading = false;
@@ -310,6 +326,7 @@ export class FeedbackComponent implements OnInit{
     const avaliado = this.avaliados?.find(avaliado => avaliado.id === id);
     return avaliado ? avaliado.nome : 'Avaliado não encontrada';
   }
+  
   getNomeAvaliador(id: number): string {
     const avaliador = this.avaliadores?.find(avaliador => avaliador.id === id);
     return avaliador ? avaliador.nome : 'Avaliador não encontrada';
@@ -324,35 +341,42 @@ export class FeedbackComponent implements OnInit{
       response => {
         if (response.status === 'success') {
           // Atualize a interface do usuário conforme necessário
-          console.log('Feedback atualizado com sucesso');
+          this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Feedback finalizado com sucesso!' });
+          setTimeout(() => {
+            window.location.reload(); // Atualiza a página após a exclusão
+           }, 2000);
         } else {
-          console.error('Erro ao atualizar o feedback:', response.message);
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: `Erro ao finalizar o feedback: ${response.message}` });
         }
       },
       error => {
-        console.error('Erro na requisição:', error);
+        this.messageService.add({ severity: 'error', summary: 'Erro na requisição!', detail: `Erro: ${error.message || error}` });
       }
     );
   }
-  abrirModalEdicao(id:number) {
+  abrirModalEdicao(id:number,avaliacao:Avaliacao) {
     this.visible = true;
-    
+     this.editForm.patchValue({
+       observacoes:avaliacao.observacoes
+     })
     this.avaliacaoService.getAvaliacao(id).subscribe(
       data => {
         if (data.perguntasRespostas && typeof data.perguntasRespostas === 'object') {
           //const perguntasRespostasObj = data.perguntasRespostas;
           //this.perguntasRespostasFormatada = JSON.stringify(perguntasRespostasObj, null, 2).slice(1, -1);
           //data.perguntasRespostas = JSON.stringify(data.perguntasRespostas, null, 2); // Converter para string formatada
-          this.perguntasRespostasFormatada = this.formatarPr(data.perguntasRespostas)
+          this.perguntasRespostasFormatada = this.formatarPr(data.perguntasRespostas);
+          
         } else{
           this.perguntasRespostasFormatada = data.perguntasRespostas;
+          
         }
         this.avaliacaoDetalhe = data;
       },
       error => {
         console.error('Erro ao buscar detalhes da avaliação:', error);
-      }
-    );
+      },
+  );
   }
   
   formatarPr(perguntasRespostasObj: any): string {
@@ -363,28 +387,37 @@ export class FeedbackComponent implements OnInit{
         perguntasRespostasFormatada += `${key}:\n`;
         for (const subKey in subObj) {
           if (subObj.hasOwnProperty(subKey)) {
-            perguntasRespostasFormatada += `  ${subKey}: ${subObj[subKey]}\n`;
+            if (subKey === 'resposta') {
+              perguntasRespostasFormatada += `  ${subKey}: ${this.getRespostaNome(subObj[subKey])}\n`;
+            } else {
+              perguntasRespostasFormatada += `  ${subKey}: ${subObj[subKey]}\n`;
+            }
           }
         }
       }
     }
     return perguntasRespostasFormatada;
   }
+
+  getRespostaNome(respostaValor: number): string {
+    const conceito = this.conceitos.find(c => c.value === respostaValor);
+    return conceito ? conceito.name : respostaValor.toString();
+  }
   submit(){
     const avaliacaoId = this.avaliacaoDetalhe.id;
     const dadosAtualizados: Partial<Avaliacao>={
-      observacoes: this.registerfbForm.value.observacoes
+      observacoes: this.editForm.value.observacoes
 
     };
     this.avaliacaoService.editAvaliacao(avaliacaoId, dadosAtualizados).subscribe({
       next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Setor atualizado com sucesso!' });
-        setTimeout(() => {
-         window.location.reload(); // Atualiza a página após a exclusão
-        }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+        this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Observações inseridas com sucesso!' });
+        // setTimeout(() => {
+        //  window.location.reload(); // Atualiza a página após a exclusão
+        // }, 2000); // Tempo em milissegundos (1 segundo de atraso)
       },
       error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao atualizar o setor.' });
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao inserir  observações.' });
       }
     });
   }

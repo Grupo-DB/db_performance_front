@@ -1,4 +1,4 @@
-<div class="menu">
+<div *ngIf="hasGroup(['Admin','RHGestor'])" class="menu">
     <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
         <li nz-menu-item nzMatchRouter="#">
             <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
@@ -35,11 +35,11 @@
         <li nz-menu-item nzMatchRouter="">
             <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
         </li>
-        <li nz-menu-item nzMatchRouter="">
-            <a style="font-size: 13px;" routerLink="#" >Histórico de Avaliações</a>
+        <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['RHAvaliacao'])">
+            <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
         </li>
         <li nz-menu-item nzMatchRouter="">
-            <a style="font-size: 13px;" routerLink="#" >Relatórios</a>
+            <a style="font-size: 13px;" routerLink="../relatorios">Relatórios</a>
         </li>
         
     </ul>
@@ -52,7 +52,7 @@
     (submit)="submit()"
 >
 
-<div class="card">
+<div *ngIf="hasGroup(['Admin','RHGestor'])" class="card">
     <div class="titulo">
         <p-divider align="left" type="solid">
             <b>Montar Formulários</b>
@@ -78,7 +78,7 @@
                     <div class="flex-1 flex flex-column gap-2">
                         <span class="font-bold">{{ pergunta.texto }}</span>
                         <div class="flex align-products-center gap-2">
-                            <i class="pi pi-tag text-sm"></i>
+                           
                             
                         </div>
                     </div>
@@ -88,14 +88,9 @@
         </p-pickList>
        
 </div>
-
-<div class="form1">
-
-    
-    
-</div>            
+          
 </form>
-<div class="botoes-form">
+<div *ngIf="hasGroup(['Admin','RHGestor'])" class="botoes-form">
     <p-toast></p-toast>
     <div class="botoes-form">
         <p-toast></p-toast>
@@ -108,3 +103,65 @@
     </div>   
     
 </div>
+
+
+<div *ngIf="hasGroup(['Admin','RHGestor'])" class="tabela">
+    <p-toast />
+    
+    <p-table
+        #dt1
+        [value]="formularios"
+        [paginator]="true"
+        [rows]="1"
+        [showCurrentPageReport]="true"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
+        [rowsPerPageOptions]="[1, 5, 10]"
+        [globalFilterFields]="['nome','perguntas']"
+    >
+        <ng-template pTemplate="caption">
+            <div class="flext">
+                <span class="p-input-icon-left ml-auto">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Digite o nome do formulário" />
+                </span>
+                <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
+                <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+            </div>
+        </ng-template>    
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width:25%" type="text" field="nome" display="menu">
+                    Nome
+                </th>
+                <th style="width:25%" type="text" field="perguntas" display="menu">
+                    Perguntas
+                </th>
+              
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-formulario>
+            <tr>
+                <td>{{ formulario.nome }}</td>
+                <td>
+                    <div class="perguntas" *ngFor="let pergunta of formulario.perguntas">
+                    <div class="pergunta">    
+                      {{ pergunta.texto }}
+                    </div>    
+                    <div class="btnprit" (click)="removePergunta(formulario, pergunta)">
+                        <p>-</p>            
+                    </div>
+                      
+                    </div>
+                    
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="paginatorleft">
+            <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+        </ng-template>
+        <ng-template pTemplate="paginatorright">
+            <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
+        </ng-template>
+    </p-table>
+</div>      

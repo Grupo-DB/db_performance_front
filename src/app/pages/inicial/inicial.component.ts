@@ -13,6 +13,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NotificacoesService } from '../../services/notifications/notificacoes.service';
 import { UserService } from '../../services/users/user.service';
 import { MessagesModule } from 'primeng/messages';
+import { ToastModule } from 'primeng/toast';
 
 
 
@@ -20,7 +21,8 @@ import { MessagesModule } from 'primeng/messages';
   selector: 'app-inicial',
   standalone: true,
   imports: [
-    CommonModule, RouterOutlet, NzIconModule,NzUploadModule, NzLayoutModule, NzMenuModule,RouterLink,DividerModule,FormsModule,MessagesModule
+    CommonModule, RouterOutlet, NzIconModule,NzUploadModule, NzLayoutModule, NzMenuModule,
+    RouterLink,DividerModule,FormsModule,MessagesModule,ToastModule
   ],
   providers: [MessageService,UploadService],
   templateUrl: './inicial.component.html',
@@ -33,7 +35,8 @@ export class InicialComponent implements OnInit {
   constructor(
     private msg: NzMessageService,
     private userService: UserService,
-    private notificacoesService: NotificacoesService
+    private notificacoesService: NotificacoesService,
+    private messageService: MessageService,
   ){}
 
   ngOnInit(): void {
@@ -67,15 +70,28 @@ export class InicialComponent implements OnInit {
   markAllAsRead(): void {
     this.notificacoesService.markAllAsRead().subscribe(
       (data: any) => {
-        console.log('Notificações marcadas como lidas:', data);
+        console.log('Notificações marcadas como lidas!', data);
         this.getUnreadNotifications();
-        
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Todas as notificações foram marcadas como lidas!'
+        });
+        setTimeout(() => {
+          window.location.reload(); // Atualiza a página após a exclusão
+         }, 1000); // Tempo em milissegundos (1 segundo de atraso)
       },
       (error: any) => {
         console.error('Erro ao marcar notificações como lidas:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao marcar todas as notificações como lidas.'
+        });
       }
     );
   }
+
 
   getUnreadCount(): void {
     this.notificacoesService.getUnreadCount().subscribe(
@@ -91,7 +107,7 @@ export class InicialComponent implements OnInit {
   updateMessages(): void {
     this.unreadCount = this.notificacoes.length;
     this.messages = this.notificacoes.map(notificacao => ({
-      severity: 'info',
+      severity: 'success',
       summary: notificacao.verb,
       detail: notificacao.description
     }));
