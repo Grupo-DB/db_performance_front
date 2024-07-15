@@ -1,4 +1,3 @@
-
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -91,6 +90,7 @@ export interface Colaborador{
   data_demissao: Date;
   image: ImageData;
   nome: string;
+  user: string;
   username: string;
   password: string
   email: string;
@@ -233,6 +233,7 @@ export class ColaboradorComponent implements OnInit {
     data_troca_setor:[''],
     data_troca_cargo:[''],
     data_demissao:[''],
+    user:[''],
     username:[''],
     password:[''],
     email:[''],
@@ -452,17 +453,6 @@ getNomeCargo(id: number): string {
   return cargo ? cargo.nome : 'Cargo não encontrada';
 }
 
-// onFileChange(event:any) {
-    
-//   if (event.target.files.length > 0) {
-//     const file = event.target.files[0];
-//     this.registercolaboradorForm.patchValue({
-//       image: file
-//     });
-//   }
-// }
-
-
 onFileChange(event: any, form: FormGroup) {
   if (event.target.files.length > 0) {
     const file = event.target.files[0];
@@ -626,9 +616,10 @@ abrirModalEdicao(colaborador: Colaborador) {
     data_troca_setor: colaborador.data_troca_setor,
     data_troca_cargo: colaborador.data_troca_cargo,
     data_demissao: colaborador.data_demissao,
+    email: colaborador.email,
+    user:colaborador.user,
     username:colaborador.username,
     password: colaborador.password,
-    email: colaborador.email,
     salario: colaborador.salario,
     raca: colaborador.raca,
     instrucao: colaborador.instrucao,
@@ -845,10 +836,6 @@ submit() {
     formData.append('categoria', categoriaNome || null);
     formData.append('tornar_avaliado', this.registercolaboradorForm.value.tornar_avaliado);
     formData.append('tornar_avaliador', this.registercolaboradorForm.value.tornar_avaliador)
-    // if (this.registercolaboradorForm.value.user) {
-    //   formData.append('user.username', this.registercolaboradorForm.value.user.username);
-    //   formData.append('user.password', this.registercolaboradorForm.value.user.password);
-    // }
 
     // Add a imagem ao FormData
     const image = this.registercolaboradorForm.get('image')?.value;

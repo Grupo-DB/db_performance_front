@@ -1,3 +1,4 @@
+@import "primeicons/primeicons.css";
 .menu{
     position:static;
      //transform: translate(-1%, -180%);
@@ -62,7 +63,8 @@
 .avaliacoes{
     display: flex;
     margin-top: 50px;
-    margin-bottom: 50px;
+    margin-bottom: 50px; 
+    justify-content: center;
     p{
         color:#1890FF;
     }
@@ -96,7 +98,13 @@
         }
     }
 }
-
+.calendarios{
+    display: flex;
+    justify-content: end;
+    .form5{
+        width: 320px;
+    }
+}
 .cardNota2{
     margin-left: 80px;
     width: 300px;
@@ -148,8 +156,6 @@
     margin-bottom: 50px;
 }
 
-
-
 .avaliacoesGestores{
     display: flex;
     margin-top: 50px;
@@ -188,7 +194,7 @@
             margin-left: 20px;
         }
         .cardAvGes1{
-            margin-left: 10px;
+            margin-left: 0px;
             margin-top: 80px;
             width: 200px;
             p{
@@ -198,4 +204,60 @@
     }
 }
  
- 
+.filtroAv{
+    margin-left: 30px;
+}
+
+.dashAvaliador{
+    display: flex;
+    margin-top: 0px;
+    margin-bottom: 50px;
+    height: 300px;
+    vertical-align: middle;
+    .avTotais{
+        display: flex;
+        margin-left: 10px;
+        p{
+            color:#1890FF;
+        }
+        .chartRadarAvaliadores{
+            width: 500px;
+            margin-left: 20px;
+        }
+        .progressFbGeral{
+            margin-left: 10px;
+            margin-top: 80px;
+            box-shadow: 0px 0px 10px rgba(0.1, 0, 0, 0.1);
+            border-radius: 5px;
+            width: 300px;
+            height: 168px;
+            
+            nz-progress{  
+                margin-top: 105px;
+                margin-left: 88px;
+            }
+            p{
+                margin-bottom: -92px;
+                text-align: center;
+            }
+        }
+        .cardAvTot{
+            margin-left: 50px;
+            margin-top: 80px;
+            width: 300px;
+        }
+        .cardAvTot2{
+            margin-left: 20px;
+            margin-top: 80px;
+            width: 200px;
+        }
+        .cardAvTot3{
+            margin-left: 20px;
+            margin-top: 80px;
+            width: 200px;
+            p{
+                font-size: 12px;
+            }
+        }
+    }    
+}

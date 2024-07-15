@@ -10,7 +10,7 @@ import { Area } from '../../pages/area/area.component';
   providedIn: 'root'
 })
 export class AreaService {
-  private apiUrl = 'http://localhost:8000/management/areas/';
+  private apiUrl = 'http://172.50.10.79:8008/management/areas/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
   registerarea(nome: string, empresa: string, filial: string,){

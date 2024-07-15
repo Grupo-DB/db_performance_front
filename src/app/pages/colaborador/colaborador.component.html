@@ -71,7 +71,7 @@
                     </p-dropdown>
                 </div>
                 <div class="dvset">    
-                    <p><label for="setor">Setor</label></p>
+                    <p><label for="setor">Ambiente</label></p>
                     <p-dropdown 
                         [style]="{'width':'75%'}"
                         [options]="setores"
@@ -84,7 +84,7 @@
                     </p-dropdown>
                 </div>
                 <div class="form4">
-                    <p><label for="ambiente">Ambiente</label></p> 
+                    <p><label for="ambiente">Setor</label></p> 
                     <p-dropdown 
                         [style]="{'width':'75%'}"
                         id="ambiente"
@@ -478,7 +478,7 @@
                     </p-dropdown>
                 </div>
                 <div class="dvseted">    
-                    <p><label for="setor">Setor</label></p>
+                    <p><label for="setor">Ambiente</label></p>
                     <p-dropdown 
                         [style]="{'width':'75%'}"
                         [options]="setores"
@@ -491,7 +491,7 @@
                     </p-dropdown>
                 </div>
                 <div class="form4ed">
-                    <p><label for="ambiente">Ambiente</label></p> 
+                    <p><label for="ambiente">Setor</label></p> 
                     <p-dropdown 
                         [style]="{'width':'75%'}"
                         id="ambiente"
@@ -703,8 +703,17 @@
                     <div class="tituseredit">
                         <p>Editar Usuário</p>
                     </div>
+                
+                    <input
+                        [style]="{'margin-bottom':'20px','width':'50px'}" 
+                        pInputText
+                        id="user"
+                        formControlName="user"
+                        type="text"
+                        readonly
+                    />   
+                    Usuário ID
                     <div class="dvusedit">
-                        
                         <p-inputGroup>
                                 <p-inputGroupAddon>
                                     <i class="pi pi-user"></i>

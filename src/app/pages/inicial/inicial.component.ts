@@ -15,8 +15,6 @@ import { UserService } from '../../services/users/user.service';
 import { MessagesModule } from 'primeng/messages';
 import { ToastModule } from 'primeng/toast';
 
-
-
 @Component({
   selector: 'app-inicial',
   standalone: true,
@@ -52,8 +50,6 @@ export class InicialComponent implements OnInit {
         console.error('Error fetching users:',error);
       }
     );
-
-
   }
 
   getUnreadNotifications(): void {
@@ -91,7 +87,6 @@ export class InicialComponent implements OnInit {
       }
     );
   }
-
 
   getUnreadCount(): void {
     this.notificacoesService.getUnreadCount().subscribe(

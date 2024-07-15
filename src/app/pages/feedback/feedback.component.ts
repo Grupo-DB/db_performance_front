@@ -21,7 +21,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { StepperModule } from 'primeng/stepper';
 import { StepsModule } from 'primeng/steps';
-import { Table, TableModule } from 'primeng/table';
+import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { FormLayoutComponent } from '../../components/form-layout/form-layout.component';
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
@@ -59,22 +59,19 @@ import { FilialService } from '../../services/filiais/registerfilial.service';
 import { GetFormularioService } from '../../services/formularios/getformulario.service';
 import { SetorService } from '../../services/setores/registersetor.service';
 import { Avaliado } from '../avaliado/avaliado.component';
-import { Avaliacao } from '../novaliacao/novaliacao.component';
+import { Avaliacao, RespostasFormatadas } from '../novaliacao/novaliacao.component';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { DialogModule } from 'primeng/dialog';
 import { MultiSelectModule } from 'primeng/multiselect';
-// interface Avaliador{
-//   id: number;
-//   nome: string;
-// }
-
+import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { TabMenuModule } from 'primeng/tabmenu';
 
 @Component({
   selector: 'app-feedback',
   standalone: true,
   imports: [
-    ReactiveFormsModule,FormsModule,StepperModule, RouterOutlet,CommonModule,MatStepperModule,MatFormFieldModule,CalendarModule,MatRadioModule,DividerModule,DialogModule,
+    ReactiveFormsModule,NzMenuModule,TabMenuModule,FormsModule,StepperModule, RouterOutlet,CommonModule,MatStepperModule,MatFormFieldModule,CalendarModule,MatRadioModule,DividerModule,DialogModule,
     FormLayoutComponent,InputMaskModule,StepsModule,NzStepsModule,MatInputModule,MatButtonModule,AsyncPipe,MatSelectModule,RadioButtonModule,InputTextareaModule,MultiSelectModule,
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,IconFieldModule,InputIconModule
   ],
@@ -152,10 +149,16 @@ export class FeedbackComponent implements OnInit{
       observacoes: ['',], 
     });
     this.editForm = this.fb.group({
+      perguntasRespostas:[''],
       observacoes: [''],
       
      });
   }
+
+  hasGroup(groups: string[]): boolean {
+    return this.loginService.hasAnyGroup(groups);
+  }
+
   ngOnInit(): void {
     this.loading = false;
     
@@ -357,14 +360,13 @@ export class FeedbackComponent implements OnInit{
   abrirModalEdicao(id:number,avaliacao:Avaliacao) {
     this.visible = true;
      this.editForm.patchValue({
+       perguntasRespostas:avaliacao.perguntasRespostas ? JSON.stringify(avaliacao.perguntasRespostas, null, 2) : '',
        observacoes:avaliacao.observacoes
-     })
+     });
+ 
     this.avaliacaoService.getAvaliacao(id).subscribe(
       data => {
         if (data.perguntasRespostas && typeof data.perguntasRespostas === 'object') {
-          //const perguntasRespostasObj = data.perguntasRespostas;
-          //this.perguntasRespostasFormatada = JSON.stringify(perguntasRespostasObj, null, 2).slice(1, -1);
-          //data.perguntasRespostas = JSON.stringify(data.perguntasRespostas, null, 2); // Converter para string formatada
           this.perguntasRespostasFormatada = this.formatarPr(data.perguntasRespostas);
           
         } else{
@@ -377,7 +379,7 @@ export class FeedbackComponent implements OnInit{
         console.error('Erro ao buscar detalhes da avaliação:', error);
       },
   );
-  }
+}
   
   formatarPr(perguntasRespostasObj: any): string {
     let perguntasRespostasFormatada = '';
@@ -403,24 +405,45 @@ export class FeedbackComponent implements OnInit{
     const conceito = this.conceitos.find(c => c.value === respostaValor);
     return conceito ? conceito.name : respostaValor.toString();
   }
-  submit(){
-    const avaliacaoId = this.avaliacaoDetalhe.id;
-    const dadosAtualizados: Partial<Avaliacao>={
-      observacoes: this.editForm.value.observacoes
 
-    };
-    this.avaliacaoService.editAvaliacao(avaliacaoId, dadosAtualizados).subscribe({
-      next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Observações inseridas com sucesso!' });
-        // setTimeout(() => {
-        //  window.location.reload(); // Atualiza a página após a exclusão
-        // }, 2000); // Tempo em milissegundos (1 segundo de atraso)
-      },
-      error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao inserir  observações.' });
+
+  formatarPerguntasRespostas(perguntasRespostas: any): RespostasFormatadas {
+    const respostasFormatadas: RespostasFormatadas = {};
+
+    for (const key in perguntasRespostas) {
+      if (perguntasRespostas.hasOwnProperty(key)) {
+        const perguntaTexto = perguntasRespostas[key].pergunta; // Obtenha o ID da pergunta
+        const resposta = perguntasRespostas[key].resposta;
+        const justificativa = perguntasRespostas[key].justificativa;
+
+        respostasFormatadas[`pergunta-${perguntaTexto}`] = { resposta, justificativa };
       }
-    });
-  }
+    }
+
+    return respostasFormatadas;
   }
 
+  submit() {
+    const avaliacaoId = this.avaliacaoDetalhe.id;
+    const perguntasRespostasAtualizadas: any = JSON.parse(this.editForm.value.perguntasRespostas);
+  
+    const dadosAtualizados: Partial<Avaliacao> = {
+      perguntasRespostas: perguntasRespostasAtualizadas,
+      observacoes: this.editForm.value.observacoes
+    };
+  
+    this.avaliacaoService.editAvaliacao(avaliacaoId, dadosAtualizados).subscribe(
+      response => {
+        console.log('Avaliação atualizada com sucesso:', response);
+      },
+      error => {
+        console.error('Erro ao atualizar a avaliação:', error);
+      }
+    );
+  }
+}
+
+function hasGroup(groups: any, arg1: any) {
+  throw new Error('Function not implemented.');
+}
 

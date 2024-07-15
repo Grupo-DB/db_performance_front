@@ -1,11 +1,57 @@
 <div class="container">
+
+    <div class="menu">
+        <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+            <li nz-menu-item nzMatchRouter="#">
+                <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
+            </li>
+            <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+                <ul>
+                    <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                        <a routerLink="../tipoavaliacao" >Tipos de Avaliações</a>
+                    </li>
+                    <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                        <a routerLink="../pergunta" >Perguntas</a>
+                    </li>
+                    <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                        <a routerLink="../formulario" >Formulários</a>
+                    </li>
+                </ul>
+            </li>    
+            
+            <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
+                <ul>
+                    <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+                        <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
+                    </li>
+                    <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+                        <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados a um Formulário</a>
+                    </li>
+                    <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+                        <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
+                    </li>
+                </ul>    
+            </li>
+    
+            
+            <li nz-menu-item nzMatchRouter="">
+                <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
+            </li>
+            <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['RHAvaliacao'])">
+                <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
+            </li>
+            <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item nzMatchRouter="">
+                <a style="font-size: 13px;" routerLink="../relatorios" >Relatórios</a>
+            </li>
+            
+        </ul>
+    </div>
+
     <div class="titulo">
         <p-divider align="left" type="solid">
             <b>Histórico de Avaliações</b>
         </p-divider>
     </div>
-
-
         <div class="card">
             <p-table
                 #dt2
@@ -20,7 +66,6 @@
             >
             <ng-template pTemplate="header">
                 <tr>
-
                     <th style="width:22%">Período</th>
                     <th style="width:22%">Avaliado</th>
                     <th style="width:22%">Avaliador</th>
@@ -31,7 +76,6 @@
                     <th style="width: 22%;">Ações</th>
                 </tr>
                 <tr>
-
                     <th>
                         <p-columnFilter
 
@@ -97,10 +141,7 @@
                     </td>
                     <td>
                         <i class="pi" [ngClass]="{ 'text-green-500 pi-check-circle': avaliacao.feedback, 'text-red-500 pi-times-circle': !avaliacao.feedback }"></i>
-
                     </td>
-                    <!-- <td><button (click)="onFeedbackButtonClick(avaliacao.id)">Marcar Feedback e Finalizar</button></td> -->
-
                     <td>{{avaliacao.finished_at}}</td>
                     <td>
                         <div class="btnpri" (click)="abrirModalEdicao(avaliacao.id,avaliacao)">
@@ -136,29 +177,6 @@
                 <pre>{{perguntasRespostasFormatada}}</pre>
             </div>
             <p-divider></p-divider>
-            <!-- <div class="obs">
-                <p-toast></p-toast>
-                <form [formGroup]="editForm" (submit)="submit()">
-                    <p><strong>Observações:</strong></p>
-                    <textarea
-
-                        rows="3"
-                        cols="30"
-                        pInputTextarea
-                        formControlName="observacoes"
-                    >
-                    </textarea>
-                    <div class="btnpri2" (click)="submit()">
-                        <p>Salvar</p>
-                    </div>
-
-
-                </form>
-            </div>
-            <p-divider></p-divider>
-            <div class="btnpri3" (click)="onFeedbackButtonClick(avaliacaoDetalhe.id)">
-               <br> <p>Finalizar</p>
-            </div> -->
         </div>
         </p-dialog>
 

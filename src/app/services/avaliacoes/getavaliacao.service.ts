@@ -7,10 +7,11 @@ import { Avaliacao } from '../../pages/novaliacao/novaliacao.component';
   providedIn: 'root'
 })
 export class AvaliacaoService {
-  private apiUrl = 'http://localhost:8000/management/avaliacoes/';
-  private apiUrlfb = 'http://localhost:8000/management/';
-  private filterUrl = 'http://localhost:8000/datacalc/filtrar-avaliacoes/';
-  private apiAvUrl = 'http://localhost:8000/management/avaliacoes/minhas_avaliacoes/'; 
+  private apiUrl = 'http://172.50.10.79:8008/management/avaliacoes/';
+  private apiUrlfb = 'http://172.50.10.79:8008/management/';
+  private filterUrl = 'http://172.50.10.79:8008/datacalc/filtrar-avaliacoes/';
+  private filterLogadoUrl = 'http://172.50.10.79:8008/datacalc/filtrar-avaliacoes-logado/';
+  private apiAvUrl = 'http://172.50.10.79:8008/management/avaliacoes/minhas_avaliacoes/'; 
 
   constructor(private http: HttpClient) { }
 
@@ -41,8 +42,16 @@ export class AvaliacaoService {
       catchError(this.handleError)
     );
   }
+  filterData2(filters: any): Observable<any> {
+    return this.http.post(this.filterLogadoUrl, filters, { responseType: 'text' }).pipe(
+      map(response => JSON.parse(response)),
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(error: HttpErrorResponse) {
     console.error('An error occurred:', error);
     return throwError(error);
   }
+
 }

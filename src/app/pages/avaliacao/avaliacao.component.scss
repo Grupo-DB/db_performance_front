@@ -32,8 +32,28 @@
             font-size: 30px;
             padding: 65px;
         }
-    }
-    
-
+    } 
 }
 
+.divAvaliacao.disabled {
+    pointer-events: none;
+    color: grey;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }  
+
+.titulo{
+    justify-content: center;
+    text-align: center;
+    margin-top: 50px;
+    h2{
+        color:slategrey;
+    }
+}
+.calendarios{
+    display: flex;
+    justify-content: end;
+    .form5{
+        width: 320px;
+    }
+}

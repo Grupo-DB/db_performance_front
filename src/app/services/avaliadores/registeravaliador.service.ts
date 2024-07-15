@@ -9,7 +9,7 @@ import { Avaliador } from '../../pages/avaliador/avaliador.component';
   providedIn: 'root'
 })
 export class AvaliadorService {
-  private apiUrl = 'http://localhost:8000/management/avaliadores/';
+  private apiUrl = 'http://172.50.10.79:8008/management/avaliadores/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
   registeravaliador(colaborador_ptr:number,usuario_id: number,){

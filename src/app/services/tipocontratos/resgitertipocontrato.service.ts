@@ -9,7 +9,7 @@ import { TipoContrato } from '../../pages/tipocontrato/tipocontrato.component';
   providedIn: 'root'
 })
 export class TipoContratoService {
-  private apiUrl = 'http://localhost:8000/management/tipocontratos/';
+  private apiUrl = 'http://172.50.10.79:8008/management/tipocontratos/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
   registertipocontrato(nome: string, empresa: string, filial: string,area:string,setor:string,cargo:string,ambiente:string){

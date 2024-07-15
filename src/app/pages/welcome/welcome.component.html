@@ -16,12 +16,9 @@
           <ul>
               <li  nz-submenu  style="background-color: #3a3e4c;"  nzTitle="Cadastros" nzIcon="appstore-add">
                 <ul>
-                 
                   <li *ngIf="hasGroup(['Admin','RHGestor'])" style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
                     <a routerLink="registercompany">Empresas</a>
-                   
                   </li>
-                  
                   <li *ngIf="hasGroup(['Admin','RHGestor'])" style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
                     <a routerLink="filial">Filiais</a>
                   </li>
@@ -29,17 +26,14 @@
                     <a routerLink="area">Áreas</a>
                   </li>
                   <li *ngIf="hasGroup(['Admin','RHGestor'])" style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
-                    <a routerLink="setor">Setores</a>
+                    <a routerLink="setor">Ambientes</a>
                   </li>
                   <li *ngIf="hasGroup(['Admin','RHGestor'])" style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
-                    <a routerLink="ambiente">Ambientes</a>
+                    <a routerLink="ambiente">Setores</a>
                   </li>
                   <li *ngIf="hasGroup(['Admin','RHGestor'])" style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
                     <a routerLink="cargo">Cargos</a>
                   </li>
-                  <!-- <li style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
-                    <a routerLink="tipocontrato">Tipos de Contrato</a>
-                  </li> -->
                 </ul>
               </li>        
           </ul>
@@ -70,12 +64,12 @@
           
         <div class="inicio">
           <div class="divnot">
-            <p>Olá<b>, {{ colaborador.nome }}.</b></p>
-          </div> 
-           <div class="divnot2">
-            <a routerLink="inicial">
-            <b>Você possui {{ unreadCount }} notificações</b>
-            </a>
+            <p>Olá, <b>{{ colaborador.nome }}</b>.</p>
+            <p style="margin-top: -55px;">
+              <a routerLink="inicial">
+                <b>Você possui {{ unreadCount }} notificações não lidas.</b>
+              </a>
+            </p>
           </div> 
          </div> 
           
@@ -85,88 +79,29 @@
            <div class="final">
             <div class="empresa">
               <p>Empresa:<strong> {{ getNomeEmpresa(colaborador.empresa) }}</strong>
-              
+              <p style="margin-top: -55px;">Filial ativa:<strong> {{ getNomeFilial(colaborador.filial) }}</strong></p>
             </div>
-            <div class="ep2">
-              <p>Filial ativa:<strong> {{ getNomeFilial(colaborador.filial) }}</strong></p>
-            </div> 
             <div class="btn">
               <a><p (click)="logout()"><span nz-icon nzType="poweroff" nzTheme="outline"></span></p></a>
-            </div>
-           </div>     
-            
-          
-          
-        
+            </div>  
+           </div>
+                 
         </div>
       </nz-header>
       <nz-content>
 
-        <!-- <li *ngFor="let notificacao of notificacoes">
-          {{ notificacao.timestamp }} -  {{ notificacao.verb }} {{ notificacao.description }}
-        </li>
-
-        <div>
-          <h2>Notificações</h2>
-          <p>Notificações não lidas: {{ unreadCount }}</p>
-          <button (click)="markAllAsRead()">Marcar todas como lidas</button>
-          <ul>
-            <li *ngFor="let notificacao of notificacoes">
-              {{ notificacao.verb }} - {{ notificacao.description }}
-            </li>
-          </ul>
-        </div> -->
-
-
-
         <div class="inner-content">
           <router-outlet></router-outlet>
         </div>
-      </nz-content>
-      
-        
-        
-          
+      </nz-content>  
           <div class="rodape">
             <img src="../assets/imagens/logoazul.png" width="30px" >
             Desenvolvido por Dagoberto Barcellos S A - Tecnologia de Informação | Direitos de uso reservados ao Grupo Dagoberto Barcellos S A 
-            
           </div>
-        
-        
-       
     </nz-layout>
   </nz-layout>
 
             
 
 
-          <!-- <p-fileUpload
-          chooseLabel="Choose"
-          name="imagem"
-          url="http://localhost:8000/management/upload/"
-          accept="image/*"
-          [maxFileSize]="1000000"
-          (onUpload)="onUpload($event)"
-          [multiple]="true"
-        >
-          <ng-template let-file pTemplate="file">
-            <div>{{ file.name }} {{ file.size }}</div>
-          </ng-template>
-        </p-fileUpload> -->
-
-        <!-- <nz-upload
-      nzType="drag"
-      nzName="imagem"
-      [nzMultiple]="true"
-      
-      
-    >
-      <p class="ant-upload-drag-icon">
-        <span nz-icon nzType="inbox"></span>
-      </p>
-      <p class="ant-upload-text">Click or drag file to this area to upload</p>
-      <p class="ant-upload-hint">
-        Support for a single or bulk upload. Strictly prohibit from uploading company data or other band files
-      </p>
-    </nz-upload> -->
+         

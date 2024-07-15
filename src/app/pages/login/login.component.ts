@@ -10,7 +10,6 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { LoginResponse } from '../../types/login-response.type';
 import { CommonModule } from '@angular/common';
 
 
@@ -65,12 +64,3 @@ export class LoginComponent {
     });
   }
 }
-
-
-
-  // submit(){
-  //   this.loginService.login(this.loginForm.value.email, this.loginForm.value.password).subscribe({
-  //   next: () => this.toastrService.success("Login feito com sucesso!!"),
-  //   error: () => this.toastrService.error("Erro!!")
-  // })
-  // }

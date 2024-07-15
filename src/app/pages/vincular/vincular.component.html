@@ -73,7 +73,7 @@ primaryBtnText="Cadastrar"
 </div>   
 <div *ngIf="hasGroup(['Admin','RHGestor'])" class="card">
     <p-pickList [source]="avaliados" [target]="targetAvaliados" sourceHeader="Avaliados" targetHeader="Selecionados" [dragdrop]="true" [responsive]="true" [sourceStyle]="{ height: '20rem' }"
-        [targetStyle]="{ height: '20rem' }" filterBy="name" sourceFilterPlaceholder="Pesquisa por nome" targetFilterPlaceholder="Pesquisa por nome" breakpoint="1400px"formControlName="pergunta">
+        [targetStyle]="{ height: '20rem' }" filterBy="nome" sourceFilterPlaceholder="Pesquisa por nome" targetFilterPlaceholder="Pesquisa por nome" breakpoint="1024px"formControlName="pergunta">
         <ng-template let-avaliado pTemplate="item">
             <div class="flex flex-wrap p-2 align-items-center gap-3">
                 

@@ -1,4 +1,52 @@
 <div class="container">
+
+    <div class="menu">
+        <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+            <li nz-menu-item nzMatchRouter="#">
+                <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
+            </li>
+            <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+                <ul>
+                    <li nz-menu-item  nzMatchRouter>
+                        <a routerLink="../tipoavaliacao" >Tipos de Avaliações</a>
+                    </li>
+                    <li nz-menu-item  nzMatchRouter>
+                        <a routerLink="../pergunta" >Perguntas</a>
+                    </li>
+                    <li nz-menu-item  nzMatchRouter>
+                        <a routerLink="../formulario" >Formulários</a>
+                    </li>
+                </ul>
+            </li>    
+            
+            <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
+                <ul>
+                    <li nz-menu-item   nzMatchRouter>
+                        <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
+                    </li>
+                    <li nz-menu-item   nzMatchRouter>
+                        <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados a um Formulário</a>
+                    </li>
+                    <li nz-menu-item   nzMatchRouter>
+                        <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
+                    </li>
+                </ul>    
+            </li>
+    
+            
+            <li nz-menu-item nzMatchRouter="" >
+                <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
+            </li>
+            <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['RHAvaliacao'])">
+                <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
+            </li>
+            <li nz-menu-item nzMatchRouter="">
+                <a style="font-size: 13px;" routerLink="../relatorios" >Relatórios</a>
+            </li>
+            
+        </ul>
+    </div>
+
     <div class="titulo">
         <p-divider align="left" type="solid">
             <b>Feedbacks</b>
@@ -136,51 +184,38 @@
                 <pre>{{perguntasRespostasFormatada}}</pre>
             </div>
             <p-divider></p-divider>
-            <div class="obs">
-                <p-toast></p-toast>
-                <form [formGroup]="editForm" (submit)="submit()">
-                    <p><strong>Observações:</strong></p>
-                    <textarea 
-                        
-                        rows="3"
-                        cols="30" 
-                        pInputTextarea 
-                        formControlName="observacoes"
-                    >
-                    </textarea>
-                    <div class="btnpri2" (click)="submit()">
-                        <p>Salvar</p>
-                    </div>
-                    
-                    
-                </form>    
-            </div>
+            <form [formGroup]="editForm">
+                <div class="obs">
+                        <p><strong>Editar Perguntas e Respostas:</strong></p>
+                        <textarea 
+                            
+                            rows="10"
+                            cols="30" 
+                            pInputTextarea 
+                            formControlName="perguntasRespostas"
+                        >
+                        </textarea>     
+                </div>
+                <div class="obs">
+                    <p-toast></p-toast>
+                        <p><strong>Observações:</strong></p>
+                        <textarea      
+                            rows="3"
+                            cols="30" 
+                            pInputTextarea 
+                            formControlName="observacoes"
+                        >
+                        </textarea>
+                        <div class="btnpri2" (click)="submit()">
+                            <p>Salvar</p>
+                        </div>
+                </div>
+            </form>    
             <p-divider></p-divider>
             <div class="btnpri3" (click)="onFeedbackButtonClick(avaliacaoDetalhe.id)">
                <br> <p>Finalizar</p>
             </div>
         </div>
         </p-dialog> 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 </div>

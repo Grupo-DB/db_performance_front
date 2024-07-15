@@ -119,8 +119,6 @@ abrirModalEdicao(pergunta: Pergunta) {
   });
 }
 
-
-
 saveEdit() {
   const perguntaId = this.editForm.value.id;
   const dadosAtualizados: Partial<Pergunta> = {

@@ -38,25 +38,19 @@
         <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['RHAvaliacao'])">
             <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
         </li>
-        <li nz-menu-item nzMatchRouter="">
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item nzMatchRouter="">
             <a style="font-size: 13px;" routerLink="../relatorios" >Relatórios</a>
         </li>
         
     </ul>
 </div>
-    
-<div class="titulo">
+<div *ngIf="hasGroup(['Admin','RHGestor'])" class="titulo">
   <p-divider align="left" type="solid">
       <b>Mapa de Colaboradores</b>
   </p-divider> 
 </div>
 
-
-<div class="filtros">
-    
-    <!-- <select id="cargos" [(ngModel)]="selectedCargos" multiple>
-      <option *ngFor="let cargo of cargos" [value]="cargo">{{ cargo }}</option>
-    </select> -->
+<div *ngIf="hasGroup(['Admin','RHGestor'])" class="filtros">
     <div class="filial">
       <mat-form-field>
         <mat-label>Selecione a Filial</mat-label>
@@ -75,7 +69,7 @@
     </div>   
     <div class="setor">  
       <mat-form-field>
-        <mat-label>Selecione o Setor</mat-label>
+        <mat-label>Selecione o Ambiente</mat-label>
         <mat-select [(ngModel)]="selectedSetores" multiple (selectionChange)="onSetorSelecionado($event.value)">
           <mat-option *ngFor="let setor of setores" [value]="setor.id">{{ setor.nome }}</mat-option>
         </mat-select>
@@ -83,7 +77,7 @@
     </div>
     <div class="ambientes">
       <mat-form-field>
-        <mat-label>Selecione o Ambiente</mat-label>
+        <mat-label>Selecione o Setor</mat-label>
         <mat-select [(ngModel)]="selectedAmbientes" multiple (selectionChange)="onAmbienteSelecionado($event.value)">
           <mat-option *ngFor="let ambiente of ambientes" [value]="ambiente.id">{{ ambiente.nome }}</mat-option>
         </mat-select>
@@ -101,9 +95,9 @@
   
 </div>
   
-  <div class="cards">
+  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="cards">
      
-      <p-card class="cardsWidth" header="{{ totalColaboradores }}">
+      <p-card *ngIf="hasGroup(['Admin','RHGestor'])" class="cardsWidth" header="{{ totalColaboradores }}">
         <p class="m-0">
            Colaboradores
            <p-divider></p-divider>
@@ -111,7 +105,7 @@
       </p-card>
        
     
-      <p-card class="cardsWidth" header=" {{ mediaSalarios | currency:'BRL':'symbol':'1.2-2' }}">
+      <p-card *ngIf="hasGroup(['Admin','RHGestor'])" class="cardsWidth" header=" {{ mediaSalarios | currency:'BRL':'symbol':'1.2-2' }}">
         <p class="m-0">
           Média Salarial
           <p-divider></p-divider>
@@ -119,7 +113,7 @@
       </p-card>
     
     
-      <p-card class="cardsWidth" header="{{ mediaIdade }} anos">
+      <p-card *ngIf="hasGroup(['Admin','RHGestor'])" class="cardsWidth" header="{{ mediaIdade }} anos">
         <p class="m-0">
           Média Idade
           <p-divider></p-divider>
@@ -127,7 +121,7 @@
       </p-card>
     
     
-      <p-card class="cardsWidth" header="{{ mediaTempoServico }} anos">
+      <p-card *ngIf="hasGroup(['Admin','RHGestor'])" class="cardsWidth" header="{{ mediaTempoServico }} anos">
         <p class="m-0">
           Média Tempo de Serviço
           <p-divider></p-divider>
@@ -136,56 +130,98 @@
 
   </div>
 
-  <div class="graficos">
-    <div class="chart-container">
+  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="graficos">
+    <div *ngIf="hasGroup(['Admin','RHGestor'])" class="chart-container">
       <canvas id="pieChart"></canvas>
     </div>
-    <div class="chart-container">
+    <div *ngIf="hasGroup(['Admin','RHGestor'])" class="chart-container">
       <canvas id="doughnutChart"></canvas>
     </div>
-    <div class="chart-container">
+    <div *ngIf="hasGroup(['Admin','RHGestor'])" class="chart-container">
         <canvas id="salarioInstrucaoChart"></canvas>
     </div>
       
   </div>
-  <div class="graficos2">
-    <div class="chart-container">
+  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="graficos2">
+    <div *ngIf="hasGroup(['Admin','RHGestor'])" class="chart-container">
       <canvas id="salarioRacaChart"></canvas>
     </div>
-    <div class="chart-container">
+    <div *ngIf="hasGroup(['Admin','RHGestor'])" class="chart-container">
       <canvas id="salarioGeneroChart"></canvas>
     </div>
-    <div class="chart-container">
+    <div *ngIf="hasGroup(['Admin','RHGestor'])" class="chart-container">
       <canvas id="polarAreaChart"></canvas>
     </div>
+
   </div>
  
+  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="chartAmbientes">
+    <canvas id="ambientesInfosChart"></canvas>
+  </div>
+
+  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="chartRacaGen">
+    <canvas id="instrucaoRacaGeneroChart"></canvas>
+  </div>
+  
+  
+  
  
-  <div class="titulo">
+  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="titulo">
     <p-divider align="left" type="solid">
         <b>Avaliações e Feedbacks Totais</b>
     </p-divider> 
   </div>
 
-  <div class="avaliacoes">
+<div *ngIf="hasGroup(['Admin','RHGestor'])" class="calendarios">
+  <div class="form5">
+    <p><label for="da">Data de Inicio</label></p>
+     <p-calendar
+         [style]="{'width':'76%','margin-left':'-2px'}"
+         id="da" 
+        [(ngModel)] = "data_inicio"
+         dateFormat="dd/mm/yy"                  
+         [showIcon]="true"
+         placeholder="SELECIONE"
+         (ngModelChange)="applyFilters()"
+     >
+     </p-calendar>
+     
+ </div>
+
+ <div *ngIf="hasGroup(['Admin','RHGestor'])" class="form5">
+  <p><label for="da">Data do Fim</label></p>
+   <p-calendar
+       [style]="{'width':'76%','margin-left':'-2px'}"
+       id="da" 
+      [(ngModel)] = "data_fim"
+       dateFormat="dd/mm/yy"                  
+       [showIcon]="true"
+       placeholder="SELECIONE"
+       (ngModelChange)="applyFilters()"
+   >
+   </p-calendar>
+  </div>   
+</div>
+
+
+  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="avaliacoes">
     <div class="avGeral">
-      
-        <p-card class="cardNota2" header="{{ totalAvaliacoesGeral }}" >
+        <p-card *ngIf="hasGroup(['Admin','RHGestor'])" class="cardNota2" header="{{ totalAvaliacoesGeral }}" >
           <p class="m-0">
             Avaliações Totais
             <p-divider></p-divider>
           </p>
         </p-card>
        
-      <div class="cardNota2">
-        <p-card class="cardWidth" header="{{ avMediaTotal }}" >
+      <div *ngIf="hasGroup(['Admin','RHGestor'])" class="cardNota2">
+        <p-card *ngIf="hasGroup(['Admin','RHGestor'])" class="cardWidth" header="{{ avMediaTotal }}" >
           <p class="m-0">
             Nota Média
             <p-divider></p-divider>
           </p>
         </p-card>
       </div>
-      <div class="progressFb"> 
+      <div *ngIf="hasGroup(['Admin','RHGestor'])" class="progressFb"> 
         <div class="test">
           <nz-progress
             [nzSize]="'small'"
@@ -203,24 +239,24 @@
     </div>
   </div>
   
-  <div class="titulo">
-    <p-divider align="left" type="solid">
+  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="titulo">
+    <p-divider *ngIf="hasGroup(['Admin','RHGestor'])" align="left" type="solid">
         <b>Avaliações e Feedbacks Gerais</b>
     </p-divider> 
   </div>
 
-  <div class="avaliacoesgerais">
+  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="avaliacoesgerais">
     <div class="avTotais">
-      <div class="cardAvTot">
-        <p-card header="{{ totalAvaliacoes }}">
+      
+        <p-card class="cardAvTot" header="{{ totalAvaliacoes }}">
           <p>
             Avaliações Geral
             <p-divider></p-divider>
           </p>
         </p-card>
-      </div>
+      
     
-        <p-card class="cardAvTot" header="{{ mediaRespostas }}">
+        <p-card *ngIf="hasGroup(['Admin','RHGestor'])" class="cardAvTot" header="{{ mediaRespostas }}">
           <p class="m-0">
             Nota Média
             <p-divider></p-divider>
@@ -247,30 +283,32 @@
     
   </div>
 
-  <div class="titulo">
+
+
+  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="titulo">
     <p-divider align="left" type="solid">
         <b>Avaliações e Feedbacks Gestores</b>
     </p-divider> 
   </div>
 
-  <div class="avaliacoesGestores">
-    <div class="avGestor">
+  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="avaliacoesGestores">
+    <div *ngIf="hasGroup(['Admin','RHGestor'])" class="avGestor">
       
-        <p-card class="cardAvGes1" header="{{ totalAvaliacoesGestor }}">
+        <p-card *ngIf="hasGroup(['Admin','RHGestor'])" class="cardAvGes1" header="{{ totalAvaliacoesGestor }}">
           <p class="m-0">
             Avaliações do Gestor
             <p-divider></p-divider>
           </p>
         </p-card>
         
-        <p-card class="cardAvGes" header="{{ avMediaGestor }}" >
+        <p-card *ngIf="hasGroup(['Admin','RHGestor'])" class="cardAvGes" header="{{ avMediaGestor }}" >
           <p class="m-0">
             Nota Média
             <p-divider></p-divider>
           </p>
         </p-card>
 
-        <div class="progressFbGestor">  
+        <div *ngIf="hasGroup(['Admin','RHGestor'])" class="progressFbGestor">  
           <nz-progress
             [nzSize]="'small'"
             [nzStatus]="'normal'"
@@ -283,35 +321,159 @@
           </nz-progress>
           <p>Feedbacks Realizados</p>
         </div>
-      <div class="chartRadarGestor">
+      <div *ngIf="hasGroup(['Admin','RHGestor'])" class="chartRadarGestor">
         <canvas id="notaGestorPerguntasChart"></canvas>
       </div>
 
     </div>  
   </div>
 
-  <div class="chartRacaGen">
-    <canvas id="instrucaoRacaGeneroChart"></canvas>
+
+
+  <div class="titulo">
+    <p-divider align="left" type="solid">
+        <b>Meus Indicadores Avaliação Geral</b>
+    </p-divider> 
+  </div>
+  
+<div class="dashAvaliador">
+  <div class="avTotais">
+
+    <p-card class="cardAvTot2" header=" {{ totalAvaliacoesAvaliador }}">
+      <p class="m-0">
+        Total de avaliações
+        <p-divider></p-divider>
+      </p>
+    </p-card>
+
+    <p-card class="cardAvTot2" header=" {{ mediaNotaAvaliador }}">
+      <p class="m-0">
+        Nota média
+        <p-divider></p-divider>
+      </p>
+    </p-card>
+
+    <p-card class="cardAvTot3" header=" {{ avSemAvaliacao }}">
+      <p class="m-0">
+        Avaliados sem avaliação
+        <p-divider></p-divider>
+      </p>
+    </p-card>
+
+    <div class="chartRadarAvaliadores">
+      <canvas id="notaAvaliadoresChart"></canvas>
+    </div>
+
+  </div>
+</div>
+
+<div class="titulo">
+  <p-divider align="left" type="solid">
+      <b>Meus Indicadores Avaliação do Gestor</b>
+  </p-divider> 
+</div>
+
+
+<div class="dashAvaliador">
+  <div class="avTotais">
+
+    <p-card class="cardAvTot" header=" {{ avaliador_total_av_gestor }}">
+      <p class="m-0">
+        Total de avaliações
+        <p-divider></p-divider>
+      </p>
+    </p-card>
+
+    <p-card class="cardAvTot" header=" {{ avaliador_media_nota_gestor }}">
+      <p class="m-0">
+        Nota média
+        <p-divider></p-divider>
+      </p>
+    </p-card>
+
+    
+
+    <div class="chartRadarAvaliadores">
+      <canvas id="notaAvaliadorGestorChart"></canvas>
+    </div>
+
+  </div>
+</div>
+
+
+
+  <div class="titulo">
+    <p-divider align="left" type="solid">
+        <b>Indicadores Meus Avaliados Avaliação Geral</b>
+    </p-divider> 
   </div>
 
-  <div class="chartAmbientes">
-    <canvas id="ambientesInfosChart"></canvas>
+
+  <div class="filtroAv">
+    <mat-form-field>
+      <mat-label>Selecione o avaliado</mat-label>
+      <mat-select [(ngModel)]="avaliadoSelecionadoId"  multiple (ngModelChange)="onAvaliadoSelecionado($event.value)">
+        <mat-option *ngFor="let avaliado of avaliados" [value]="avaliado.id">{{ avaliado.nome }}</mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
-  <!-- <table>
-    <thead>
-      <tr>
-        <th>Nome</th>
-        <th>Cargo</th>
-        <th>Setor</th>
-        <th>Salário</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let colaborador of filteredColaboradores">
-        <td>{{ colaborador.nome }}</td>
-        <td>{{ colaborador.cargo }}</td>
-        <td>{{ colaborador.setor }}</td>
-        <td>{{ colaborador.salario }}</td>
-      </tr>
-    </tbody>
-  </table> -->
+
+<div class="dashAvaliador">
+  <div class="avTotais">
+    <p-card class="cardAvTot" header="{{ totalAvaliacoesAvaliado }}">
+      <p class="m-0">
+        Avaliações
+        <p-divider></p-divider>
+      </p>
+    </p-card>
+
+    <p-card class="cardAvTot" header=" {{ mediaNotaAvaliado}}">
+      <p class="m-0">
+        Nota Média
+        <p-divider></p-divider>
+      </p>
+    </p-card>
+
+    <div class="chartRadarAvaliadores">
+      <canvas id="notaAvaliadosChart"></canvas>
+    </div>
+  </div> 
+</div>
+
+<div class="titulo">
+  <p-divider align="left" type="solid">
+      <b>Indicadores Meus Avaliados Avaliação do Gestor</b>
+  </p-divider> 
+</div>
+
+
+<div class="filtroAv">
+  <mat-form-field>
+    <mat-label>Selecione o avaliado</mat-label>
+    <mat-select [(ngModel)]="avaliadoSelecionadoId"  multiple (ngModelChange)="onAvaliadoSelecionado($event.value)">
+      <mat-option *ngFor="let avaliado of avaliados" [value]="avaliado.id">{{ avaliado.nome }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<div class="dashAvaliador">
+<div class="avTotais">
+  <p-card class="cardAvTot" header="{{ avaliado_total_av_gestor }}">
+    <p class="m-0">
+      Avaliações
+      <p-divider></p-divider>
+    </p>
+  </p-card>
+
+  <p-card class="cardAvTot" header=" {{ avaliado_media_nota_gestor }}">
+    <p class="m-0">
+      Nota Média
+      <p-divider></p-divider>
+    </p>
+  </p-card>
+
+  <div class="chartRadarAvaliadores">
+    <canvas id="notaAvaliadoGestorChart"></canvas>
+  </div>
+</div> 
+</div>

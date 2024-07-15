@@ -1,4 +1,52 @@
-<div class="container"> 
+<div class="container">
+  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="menu">
+    <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+        <li nz-menu-item nzMatchRouter="#">
+            <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
+        </li>
+        <li nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+            <ul>
+                <li nz-menu-item  nzMatchRouter>
+                    <a routerLink="../tipoavaliacao" >Tipos de Avaliações</a>
+                </li>
+                <li nz-menu-item  nzMatchRouter>
+                    <a routerLink="../pergunta" >Perguntas</a>
+                </li>
+                <li nz-menu-item  nzMatchRouter>
+                    <a routerLink="../formulario" >Formulários</a>
+                </li>
+            </ul>
+        </li>    
+        
+        <li nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
+            <ul>
+                <li nz-menu-item   nzMatchRouter>
+                    <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
+                </li>
+                <li nz-menu-item   nzMatchRouter>
+                    <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados a um Formulário</a>
+                </li>
+                <li nz-menu-item   nzMatchRouter>
+                    <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
+                </li>
+            </ul>    
+        </li>
+
+        
+        <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
+        </li>
+        <li nz-menu-item nzMatchRouter=""*ngIf="hasGroup(['RHAvaliacao'])">
+            <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
+        </li>
+        <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../relatorios" >Relatórios</a>
+        </li>
+        
+    </ul>
+  </div>
+  
+
   <p-divider align="left" type="solid">
     <b>Nova Avaliação</b> 
   </p-divider><br> 
@@ -15,16 +63,14 @@
     </div>
   </div>    
   <div class="infos">
-    
       <div class="avaliador">
-         
           <div class="av1">
             Nome: <br>
             Empresa: <br>
             Filial: <br>
             Área: <br>
-            Setor: <br>
             Ambiente: <br>
+            Setor: <br> 
             Cargo: <br>
           </div>
           <div class="av2">
@@ -36,18 +82,15 @@
             <strong> {{ getNomeAmbiente(avaliador.ambiente) }}</strong><br>
             <strong> {{ getNomeCargo(avaliador.cargo) }}</strong><br>
           </div>  
-      </div>
-      
-        
+      </div>      
       <div class="avaliado" *ngIf="avaliadoDetalhes">  
-            <div class="ava1">
-              
+            <div class="ava1">      
               Nome: <br>
               Empresa:<br>
               Filial: <br>
               Área:<br>
-              Setor:<br>
               Ambiente:<br>
+              Setor:<br>
               Cargo:<br>
             </div>
             <div class="ava2">
@@ -64,14 +107,15 @@
               <img [src]="avaliadoDetalhes.image"  width="80" class="shadow-4" />
             </div>  
       </div>
-    </div>  
+  </div>  
 
 <p-divider></p-divider>
+
   <div class="dvform">
     <form [formGroup]="registeravaliacaoForm" (submit)="submit()"> 
       <div class="drops"> 
         <div class="dp1">
-          <label for="tipav'">Tipo de Avaliação: </label>
+          <label for="tipav'">Tipo de Formulário: </label>
           <p-dropdown
               [style]="{'width':'60%'}"
               id="tipav" 
@@ -107,7 +151,7 @@
       <input type="hidden" formControlName="avaliador" [(ngModel)]="avaliador" > 
       <input type="hidden" formControlName="periodo" [(ngModel)]="trimestre">
 
-    <mat-horizontal-stepper  #stepper [selectedIndex]="activeIndex" (selectionChange)="stepper.selectedIndex = activeIndex">
+    <mat-horizontal-stepper linear="true" #stepper [selectedIndex]="activeIndex" (selectionChange)="stepper.selectedIndex = activeIndex">
       <ng-container formArrayName="perguntasRespostas">
         <mat-step
           *ngFor="let pergunta of perguntas; let i = index"
@@ -131,7 +175,7 @@
               </mat-radio-group>
             </div>
             <div class="pl">
-              <p [innerHTML]="sanitizeHtml(pergunta.legenda)"></p>
+              <p [innerHTML]="pergunta.legenda | safeHtml"></p>
             </div>
           </div>
           <div>
@@ -166,173 +210,9 @@
         </div>
       </mat-step>
     </mat-horizontal-stepper>
-
-   
     </form>
   </div>
 </div>    
-  <!-- <p-button 
-      label="Gravar" 
-      icon="pi pi-check"
-      iconPos="right" 
-      severity="success"
-      (click)="submit()">
-  </p-button>
-  {{ registeravaliacaoForm.value | json }}
-</form>   -->
-<!-- 
-  <p>{{ avaliado.nome }}</p> -->
-
-
-  <!-- <div *ngFor="let avaliado of avaliadoSelecionado">
-  <p>{{ avaliado.colaborador.nome }}</p>
-  <p>{{ colaborador.cargo_nome }}</p>
-  <p>{{ colaborador.area_nome }}</p>
-  <p>{{ colaborador.setor_nome }}</p>
-  <img [src]="'http://localhost:8000' + colaborador.image"  width="80" class="shadow-4" />
-</div> -->
-<!-- <div *ngIf="avaliado">
-  <h2>{{ avaliadoDetalhes.nome }}</h2> -->
-  <!-- Outras propriedades do avaliado -->
-
-      <!-- <p-dropdown 
-        [options]="tipoavaliacoes" 
-        formControlName="tipoavaliacao"
-        optionLabel="nome"
-        placeholder="Selecione o Tipo"
-      
-      >
-      </p-dropdown> 
-       <p-dropdown 
-      [options]="periodos" 
-      formControlName="periodo"
-      optionLabel="nome"
-      placeholder="Selecione o Periodo"
-    
-    >
-    </p-dropdown> -->
-  
-    
-
-      
-         <!-- <input type="hidden" formControlName="avaliador" [(ngModel)]="avaliadorInfo.avaliador" > -->
-         <!-- <button (click)="carregarPerguntasDoFormulario()">Carregar Perguntas</button> -->
-
-         
-    
-
-    <!-- <mat-form-field>
-      <mat-label>Selecione um formulário</mat-label>
-         <mat-select [(ngModel)]="formularioSelecionado" (selectionChange)="selecionarFormulario()">
-        <mat-option *ngFor="let formulario of formularios" [value]="formulario.id">{{ formulario.nome }}</mat-option>
-      </mat-select>
-    </mat-form-field> -->
-    <!-- <form [formGroup]="registeravaliacaoForm" (submit)="submit()">
-      <p-button 
-      label="Gravar" 
-      icon="pi pi-check"
-      iconPos="right" 
-      severity="success"
-      (click)="submit()">
-  </p-button> -->
-      
-      <!-- <div class="botoes-form">
-        <p-toast></p-toast>
-        <p-button 
-            label="Gravar" 
-            icon="pi pi-check"
-            iconPos="right" 
-            severity="success"
-            (click)="submit()">
-        </p-button>
-      </div>
-      {{ registeravaliacaoForm.value | json }}
-</form> -->
-<!-- <div *ngIf="colaboradorSelecionado">
-  <p>{{ colaboradorSelecionado.nome }}</p>
-  <p>{{ colaboradorSelecionado.cargo_nome }}</p>
-  <p>{{ colaboradorSelecionado.area_nome }}</p>
-  <p>{{ colaboradorSelecionado.setor_nome }}</p>
-  <img [src]="'http://localhost:8000' + colaboradorSelecionado.image"  width="80" class="shadow-4" />
-</div> -->
- 
-<!-- <mat-form-field>
-  <mat-label>Selecione um formulário</mat-label>
-    <mat-select [(ngModel)]="formularioSelecionado" (selectionChange)="selecionarFormulario()">
-      <mat-option *ngFor="let formulario of formularios" [value]="formulario.id">{{ formulario.nome }}</mat-option>
-    </mat-select>
-</mat-form-field>   -->
-
-<!-- <mat-horizontal-stepper linear [formGroup]="registeravaliacaoForm">
-  <mat-step *ngFor="let pergunta of perguntas; let i = index">
-    <ng-template matStepLabel>{{ 'Pergunta ' + (i + 1) }}</ng-template>
-    <mat-form-field>
-      <mat-label>Input</mat-label>
-      <input type="text" formControlName="resposta" placeholder="Resposta para a pergunta {{ pergunta.id }}" required>
-      <textarea formControlName="justificativa" placeholder="Justificativa (opcional)"></textarea>
-    </mat-form-field>
-    <div>
-      <button mat-button matStepperPrevious type="button">Back</button>
-      <button mat-button matStepperNext type="button">Next</button>
-    </div>
-  </mat-step>
-</mat-horizontal-stepper> -->
-
-
-
- 
-
-
-<!-- <form [formGroup]="registeravaliacao2Form" (ngSubmit)="submit()">
-  <div *ngFor="let pergunta of perguntas">
-      <label>{{ pergunta.texto }}</label>
-      <input type="text" [formControlName]="'resposta_' + pergunta.id">
-      <input type="text" [formControlName]="'justificativa_' + pergunta.id">
-  </div>
-  <button type="submit" [disabled]="!registeravaliacao2Form.valid">Enviar</button>
-</form> -->
-
-
-
-<!-- <mat-form-field>
-  <mat-label>Selecione um formulário</mat-label>
-    <mat-select [(ngModel)]="formularioSelecionado" (selectionChange)="selecionarFormulario()">
-      <mat-option *ngFor="let formulario of formularios" [value]="formulario.id">{{ formulario.nome }}</mat-option>
-    </mat-select>
-</mat-form-field>   -->
-<!-- <mat-horizontal-stepper linear>
-<mat-step *ngFor="let pergunta of perguntas; let i = index" [label]="'Pergunta ' + (i + 1)">
-  <ng-template matStepLabel>{{ 'Pergunta ' + (i + 1) }}</ng-template>
-  <div class="flex flex-column h-12rem">
-    <div class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
-      {{ pergunta.texto }}
-      <mat-form-field>
-        <mat-label>Input</mat-label>
-        <input matInput>
-      </mat-form-field>
-    </div>
-  </div>
-  <div>
-    <button mat-button matStepperPrevious type="button">Back</button>
-    <button mat-button matStepperNext type="button">Next</button>
-  </div>
-</mat-step> 
-
-</mat-horizontal-stepper> -->
- 
-
-
-
-
-    <!--FUNCIONA-->
-      <!-- <form [formGroup]="registeravaliacaoForm" (submit)="submit()">
-      <div formArrayName="perguntasRespostas">
-        <div *ngFor="let pergunta of perguntas; let i = index" [formGroupName]="'pergunta-' + pergunta.id">
-          <input type="text" formControlName="resposta" placeholder="Resposta para a pergunta {{ pergunta.id }}" required>
-          <textarea formControlName="justificativa" placeholder="Justificativa (opcional)"></textarea>
-        </div>
-      </div> 
-    </form> -->
 
 
 

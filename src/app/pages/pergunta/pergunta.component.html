@@ -123,16 +123,12 @@
                         <th style="width:25%" type="text" field="texto" display="menu">
                             Pergunta
                         </th>
-                        <!-- <th style="width:25%" type="text" field="legenda" display="menu">
-                            Legenda
-                        </th> -->
                         <th style="width: 25%;">Ações</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-pergunta>
                     <tr>
                         <td>{{ pergunta.texto }}</td>
-                        <!-- <td [innerHTML]="sanitizeHtml(pergunta.legenda)"></td> -->
                         <td class="td-acao">
                             <div class="btnsec" (click)="abrirModalEdicao(pergunta)">
                                 <p>Editar</p>
@@ -186,7 +182,6 @@
                     </div>
                     <div class="lged">
                         <p><strong>Legenda</strong></p>
-                        <!-- [innerHTML]="sanitizeHtml(editForm.get('legenda')?.value)" -->
                         <textarea
                             rows="10"
                             cols="60"

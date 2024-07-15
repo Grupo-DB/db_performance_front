@@ -1,12 +1,12 @@
 <div *ngIf="hasGroup(['Admin','RHGestor'])" class="container">
     <div class="titulo">
         <p-divider align="left" type="solid">
-            <b>Cadastro de Ambientes</b>
+            <b>Cadastro de Setores</b>
         </p-divider> 
     </div> 
     <div class="form-geral">  
         <form [formGroup]="registerambienteForm"
-        title="Cadastrar novo Ambiente"
+        title="Cadastrar novo Setor"
         primaryBtnText="Cadastrar"
         (submit)="submit()"
         >
@@ -168,7 +168,7 @@
         >
         
         <p-divider align="left" type="solid">
-            <b>Editar Ambiente</b>
+            <b>Editar Setor</b>
         </p-divider>
         
         <div class="editform">
@@ -227,7 +227,7 @@
                     </p-dropdown>
                 </div>
                 <div class="dvf6ed">        
-                    <p><label for="setor">Setor</label></p>    
+                    <p><label for="setor">Ambiente</label></p>    
                     <p-dropdown 
                         [style]="{'width':'95%'}"
                         [options]="setores" 

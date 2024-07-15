@@ -38,19 +38,60 @@
         <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['RHAvaliacao'])">
             <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
         </li>
-        <li nz-menu-item nzMatchRouter="">
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item nzMatchRouter="">
             <a style="font-size: 13px;" routerLink="../relatorios" >Relatórios</a>
         </li>
         
     </ul>
 </div>
 
+    <div *ngIf="hasGroup(['Admin','RHGestor'])" class="titulo">
+        <p-divider align="left" type="solid">
+            <b>Definir período de Avaliações</b>
+        </p-divider> 
+    </div>
+
+    <div *ngIf="hasGroup(['Admin','RHGestor'])" class="calendarios">
+        <div class="form5">
+          <p><label for="da">Data de Inicio</label></p>
+           <p-calendar
+               [style]="{'width':'76%','margin-left':'-2px'}"
+               id="da" 
+              [(ngModel)] = "dataInicio"
+               dateFormat="yy-mm-dd"                  
+               [showIcon]="true"
+               placeholder="SELECIONE"   
+           >
+           </p-calendar>
+           
+       </div>
+      
+       <div class="form5">
+        <p><label for="da">Data do Fim</label></p>
+         <p-calendar
+             [style]="{'width':'76%','margin-left':'-2px'}"
+             id="da" 
+            [(ngModel)] = "dataFim"
+             dateFormat="yy-mm-dd"                  
+             [showIcon]="true"
+             placeholder="SELECIONE"
+             (ngModelChange)="salvarPeriodo()"
+             
+         >
+         </p-calendar>
+        </div>   
+      </div>
+    
     <div class="buttons" >
         
-            <div class="divAvaliacao" routerLink="../novaliacao">
+            <div [class.disabled]="!periodoPermitido" class="divAvaliacao"  routerLink="../novaliacao">
                 <p> + NOVA AVALIAÇÃO </p>
             </div>  
-        
+            <ng-template #disabledLink>
+                <div class="divAvaliacao disabled">
+                  <p> + NOVA AVALIAÇÃO </p>
+                </div>
+              </ng-template>
         
             <div *ngIf="hasGroup(['Admin','RHGestor'])" class="divFeedbacks" routerLink="../feedback">
                 <p> FEEDBACKS </p>

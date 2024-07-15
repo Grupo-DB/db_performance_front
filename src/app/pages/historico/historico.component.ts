@@ -21,7 +21,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { StepperModule } from 'primeng/stepper';
 import { StepsModule } from 'primeng/steps';
-import { Table, TableModule } from 'primeng/table';
+import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { FormLayoutComponent } from '../../components/form-layout/form-layout.component';
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
@@ -64,6 +64,8 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { DialogModule } from 'primeng/dialog';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { TabMenuModule } from 'primeng/tabmenu';
 
 
 @Component({
@@ -72,7 +74,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
   imports: [
     ReactiveFormsModule,FormsModule,StepperModule, RouterOutlet,CommonModule,MatStepperModule,MatFormFieldModule,CalendarModule,MatRadioModule,DividerModule,DialogModule,
     FormLayoutComponent,InputMaskModule,StepsModule,NzStepsModule,MatInputModule,MatButtonModule,AsyncPipe,MatSelectModule,RadioButtonModule,InputTextareaModule,MultiSelectModule,
-    PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,IconFieldModule,InputIconModule
+    PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,IconFieldModule,InputIconModule,
+    NzMenuModule,TabMenuModule,
   ],
   providers:[
     MessageService,GetSetorService,TipoContratoService,PerguntasService,TipoAvaliacaoService,
@@ -152,6 +155,11 @@ export class HistoricoComponent implements OnInit{
       
      });
   }
+
+  hasGroup(groups: string[]): boolean {
+    return this.loginService.hasAnyGroup(groups);
+  }
+
   ngOnInit(): void {
     this.loading = false;
     
@@ -358,14 +366,9 @@ export class HistoricoComponent implements OnInit{
     this.avaliacaoService.getAvaliacao(id).subscribe(
       data => {
         if (data.perguntasRespostas && typeof data.perguntasRespostas === 'object') {
-          //const perguntasRespostasObj = data.perguntasRespostas;
-          //this.perguntasRespostasFormatada = JSON.stringify(perguntasRespostasObj, null, 2).slice(1, -1);
-          //data.perguntasRespostas = JSON.stringify(data.perguntasRespostas, null, 2); // Converter para string formatada
           this.perguntasRespostasFormatada = this.formatarPr(data.perguntasRespostas);
-          
         } else{
           this.perguntasRespostasFormatada = data.perguntasRespostas;
-          
         }
         this.avaliacaoDetalhe = data;
       },
@@ -408,9 +411,9 @@ export class HistoricoComponent implements OnInit{
     this.avaliacaoService.editAvaliacao(avaliacaoId, dadosAtualizados).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Observações inseridas com sucesso!' });
-        // setTimeout(() => {
-        //  window.location.reload(); // Atualiza a página após a exclusão
-        // }, 2000); // Tempo em milissegundos (1 segundo de atraso)
+         setTimeout(() => {
+          window.location.reload(); // Atualiza a página após a exclusão
+         }, 2000); // Tempo em milissegundos (1 segundo de atraso)
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro ao inserir  observações.' });

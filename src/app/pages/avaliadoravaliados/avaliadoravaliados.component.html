@@ -64,6 +64,8 @@ primaryBtnText="Cadastrar"
         [options]="avaliadores" 
         formControlName="avaliador"
         optionLabel="nome"
+        [filter]="true"
+        filterBy="nome"
         placeholder="Selecione o Avaliador"
         >
         </p-dropdown>
@@ -73,8 +75,8 @@ primaryBtnText="Cadastrar"
 
 
 <div *ngIf="hasGroup(['Admin','RHGestor'])" class="card">
-    <p-pickList [source]="avaliados" [target]="targetAvaliados" sourceHeader="Avaliados" targetHeader="Selecionados" [dragdrop]="true" [responsive]="true" [sourceStyle]="{ height: '30rem' }"
-        [targetStyle]="{ height: '30rem' }" filterBy="name" sourceFilterPlaceholder="Pesquisa por nome" targetFilterPlaceholder="Pesquisa por nome" breakpoint="1400px"formControlName="pergunta">
+    <p-pickList [source]="avaliados" [target]="targetAvaliados" sourceHeader="Avaliados" targetHeader="Selecionados" [dragdrop]="true" [responsive]="true" [sourceStyle]="{ height: '30rem'}"
+        [targetStyle]="{ height: '30rem'}" filterBy="nome" sourceFilterPlaceholder="Pesquisa por nome" targetFilterPlaceholder="Pesquisa por nome" breakpoint="1024px"formControlName="pergunta">
         <ng-template let-avaliado pTemplate="item">
             <div class="flex flex-wrap p-2 align-items-center gap-3">
                 

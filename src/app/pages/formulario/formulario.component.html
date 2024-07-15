@@ -127,16 +127,12 @@
                     <th style="width:25%" type="text" field="nome" display="menu">
                         Nome
                     </th>
-                    <!-- <th style="width:25%" type="text" field="tipoavaliacao" display="menu">
-                        Tipo de Avaliação
-                    </th> -->
                     <th style="width: 25%;">Ações</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-formulario>
                 <tr>
                     <td>{{ formulario.nome }}</td>
-                    <!-- <td>{{ getTipoAvaliacaoNome(formulario.tipoavaliacao) }}</td> -->
                     <td class="td-acao">                       
                         <div class="btnsec" (click)="abrirModalEdicao(formulario)">
                             <p>Editar</p>

@@ -9,7 +9,7 @@ import { QuestionarioResponse } from '../../types/questionario-response';
   providedIn: 'root'
 })
 export class RegisterQuestionarioService {
-  private apiUrl = 'http://localhost:8000/management/formularios/';
+  private apiUrl = 'http://172.50.10.79:8008/management/formularios/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
     
   registerquestionario(formulario: number, pergunta_id: number){

@@ -1,11 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AvaliadoService } from '../../services/avaliados/avaliado.service';
 import { Avaliado } from '../avaliado/avaliado.component';
 import { Avaliador } from '../avaliador/avaliador.component';
 import { AvaliadorService } from '../../services/avaliadores/registeravaliador.service';
 import { AvaliacaoService } from '../../services/avaliacoes/getavaliacao.service';
-import { ButtonModule } from 'primeng/button';
-import { RippleModule } from 'primeng/ripple';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -31,6 +29,7 @@ import { FilialService } from '../../services/filiais/registerfilial.service';
 import { LoginService } from '../../services/login/login.service';
 import { SetorService } from '../../services/setores/registersetor.service';
 import { Chart } from 'chart.js';
+import { Observable, Subscription, of, tap } from 'rxjs';
 
 @Component({
   selector: 'app-relatorios',
@@ -43,6 +42,9 @@ import { Chart } from 'chart.js';
   styleUrl: './relatorios.component.scss'
 })
 export class RelatoriosComponent implements OnInit {
+
+
+  private notaAvaliadorChartSub: Subscription | null = null
   avaliadores: Avaliador [] | undefined;
   avaliados: Avaliado [] = [];
   avaliadorSelecionadoId: any[] = [];
@@ -54,6 +56,7 @@ export class RelatoriosComponent implements OnInit {
   mediaNotaAvaliado!:number;
   notaAvaliadoresChart: Chart<'radar'> | undefined;
   notaAvaliadosChart: Chart<'radar'> | undefined;
+  
 
 constructor(
   private avaliadoService: AvaliadoService,
@@ -65,8 +68,8 @@ constructor(
   private areaService: AreaService,
   private filialService: FilialService,
   private ambienteService: AmbienteService,
-  private avaliacaoService: AvaliacaoService
-
+  private avaliacaoService: AvaliacaoService,
+  
 ){}
 
   hasGroup(groups: string[]): boolean {
@@ -107,15 +110,6 @@ constructor(
     }
   }
 
-  // avaliadoByTipoAvaliacao(): void {
-  //   if (this.avaliadorSelecionadoId !== null) {
-  //     this.avaliadoService.getAvaliadosByAvaliador(this.avaliadorSelecionadoId).subscribe(data => {
-  //       this.avaliados = data;
-  //       console.log('Filiais carregadas:', this.avaliados); // Log para depuração
-  //     });
-  //   }
-  // }
-
   onAvaliadoSelecionado(avaliado: any): void {
     const id = this.avaliadoSelecionadoId;
     if (id !== undefined) {
@@ -138,7 +132,7 @@ constructor(
       this.totalAvaliacoesAvaliado = data.total_avaliacoes_avaliados;
       this.mediaNotaAvaliador = data.media_geral;
       this.mediaNotaAvaliado = data.media_geral_avaliado;
-      this.updateNotaAvaliadoresChart(data.media_respostas);
+      this.loadNotaAvaliadoresChart(data.media_respostas);
       this.updateNotaAvaliadosChart(data.media_respostas_avaliado);
 
     },error => {
@@ -146,90 +140,19 @@ constructor(
   });
   }
 
-  updateNotaAvaliadoresChart(graficoNotasAvaliadores: any): void {
-    const ctx = document.getElementById('notaAvaliadoresChart') as HTMLCanvasElement;
-    if (this.notaAvaliadoresChart) {
-        this.notaAvaliadoresChart.destroy();
-    }
-    this.notaAvaliadoresChart = new Chart(ctx, {
-        type: 'radar',
-        data: {
-            labels: Object.keys(graficoNotasAvaliadores),
-            datasets: [{
-                data: Object.values(graficoNotasAvaliadores),
-                pointRadius:4,
-                backgroundColor: [
-                    //'#4C5264',
-                    //'#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
-                ],
-                hoverBackgroundColor: [
-                    '#4C5264',
-                    '#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: {
-                    display:false,
-                    beginAtZero: true,
-                    grid:{
-                        display:false,
-                    },
-                    ticks: {
-                        color: '#000'
-                    }
-                },
-                y: {
-                    display:false,
-                    beginAtZero: true,
-                    grid:{
-                        display:false,
-                    },
-                    ticks: {
-                        color: '#000'
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display:false
-                },
-                title: {
-                    display: true,
-                    text: 'Média de pontuação por Pergunta',
-                    color: '#1890FF',
-                }
-                
-            }
-        }
-        
-    });
-}
-
-updateNotaAvaliadosChart(graficoNotasAvaliados: any): void {
-  const ctx = document.getElementById('notaAvaliadosChart') as HTMLCanvasElement;
-  if (this.notaAvaliadosChart) {
-      this.notaAvaliadosChart.destroy();
+  updateNotaAvaliadoresChart(graficoNotasAvaliadores: any): Observable<any> {
+    return of(graficoNotasAvaliadores).pipe(
+      tap(data => {
+  const ctx = document.getElementById('notaAvaliadoresChart') as HTMLCanvasElement;
+  if (this.notaAvaliadoresChart) {
+      this.notaAvaliadoresChart.destroy();
   }
-  this.notaAvaliadosChart = new Chart(ctx, {
+  this.notaAvaliadoresChart = new Chart(ctx, {
       type: 'radar',
       data: {
-          labels: Object.keys(graficoNotasAvaliados),
+          labels: Object.keys(data),
           datasets: [{
-              data: Object.values(graficoNotasAvaliados),
+              data: Object.values(data),
               pointRadius:4,
               backgroundColor: [
                   //'#4C5264',
@@ -287,9 +210,99 @@ updateNotaAvaliadosChart(graficoNotasAvaliados: any): void {
               }
               
           }
+      }      
+  });
+})
+);
+}
+updateNotaAvaliadosChart(graficoNotasAvaliados: any): void {
+  const ctx = document.getElementById('notaAvaliadosChart') as HTMLCanvasElement;
+  if (this.notaAvaliadosChart) {
+      this.notaAvaliadosChart.destroy();
+  }
+  this.notaAvaliadosChart = new Chart(ctx, {
+      type: 'radar',
+      data: {
+          labels: Object.keys(graficoNotasAvaliados),
+          datasets: [{
+              data: Object.values(graficoNotasAvaliados),
+              pointRadius:4,
+              backgroundColor: [
+                  //'#4C5264',
+                  //'#07449b',
+                  '#12bfd7',
+                  '#242730',
+                  '#97a3c2',
+                  '#898993',
+                  '#1890FF',
+              ],
+              hoverBackgroundColor: [
+                  '#4C5264',
+                  '#07449b',
+                  '#12bfd7',
+                  '#242730',
+                  '#97a3c2',
+                  '#898993',
+                  '#1890FF',
+              ]
+          }]
+      },
+      options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+              x: {
+                  display:false,
+                  beginAtZero: true,
+                  grid:{
+                      display:false,
+                  },
+                  ticks: {
+                      color: '#000'
+                  }
+              },
+              y: {
+                  display:false,
+                  beginAtZero: false,
+                  grid:{
+                      display:false,
+                  },
+                  ticks: {
+                      color: '#000'
+                  }
+              }
+          },
+          plugins: {
+              legend: {
+                  display:false
+              },
+              title: {
+                  display: true,
+                  text: 'Média de pontuação por Pergunta',
+                  color: '#1890FF',
+              }
+              
+          }
       }
       
   });
+}
+
+loadNotaAvaliadoresChart(graficoNotasAvaliadores: any): void {
+  if (this.notaAvaliadorChartSub) {
+    this.notaAvaliadorChartSub.unsubscribe();
+  }
+  this.notaAvaliadorChartSub = this.updateNotaAvaliadoresChart(graficoNotasAvaliadores).subscribe(() => {
+    console.log('Gráfico atualizado com sucesso');
+  }, error => {
+    console.error('Erro ao atualizar gráfico:', error);
+  });
+}
+
+ngOnDestroy(): void {
+  if (this.notaAvaliadorChartSub) {
+    this.notaAvaliadorChartSub.unsubscribe();
+  }
 }
 
 }
