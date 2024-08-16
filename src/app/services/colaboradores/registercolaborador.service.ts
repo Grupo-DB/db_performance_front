@@ -45,6 +45,9 @@ export class ColaboradorService {
     getTotalColaboradores():Observable<any>{
       return this.httpClient.get<any>(this.calcUrl);
     }
+    getColaborador(id: number): Observable<any> {
+      return this.httpClient.get<any>(`${this.apiUrl}${id}/`);
+    }
     filterData(filters: any): Observable<any> {
       return this.httpClient.post(this.filterUrl, filters, { responseType: 'text' }).pipe(
         map(response => JSON.parse(response)),

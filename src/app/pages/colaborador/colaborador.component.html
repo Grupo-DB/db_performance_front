@@ -390,6 +390,9 @@
                         <td>{{ colaborador.situacao | booleanToStatus }}</td>
                         <td><img [src]="colaborador.image"  width="80" class="shadow-4" /></td>
                         <td class="td-acao">
+                            <div class="btnsect" style="margin-right: 5px;background-color: #97a3c2; color: white;" (click)="visualizarColaboradorDetalhes(colaborador.id)">
+                                <p>Visualizar</p>
+                            </div>
                             <div class="btnsect" (click)="abrirModalEdicao(colaborador)">
                                 <p>Editar</p>
                             </div>
@@ -774,6 +777,45 @@
         </div>
           </form>  
            
+        </p-dialog>
+        <p-dialog 
+            [modal]="true"
+            [(visible)]="detalhaColaboradorVisible" 
+            [style]="{ width: '70rem' }" 
+            [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+        >
+        <p-divider align="left" type="solid">
+            <b>Detalhes do Colaborador</b>
+        </p-divider>
+            <div *ngIf="colaboradorDetalhes">
+                <div class="detalhes">
+                    <p>Nome: <strong>{{ colaboradorDetalhes.nome }}</strong></p>
+                    <p>Salário: <strong>{{ colaboradorDetalhes.salario }}</strong></p>
+                    <p>Tipo de Contrato: <strong>{{ colaboradorDetalhes.tipocontrato }}</strong></p>
+                    <p>Data de Admissão: <strong>{{ colaboradorDetalhes.data_admissao }}</strong></p>
+                    <p>Gênero: <strong>{{ colaboradorDetalhes.genero }}</strong></p>
+                    <p>Situação: <strong>{{ colaboradorDetalhes.situacao }}</strong></p>
+                    <p>Estado Civil: <strong>{{ colaboradorDetalhes.estado_civil }}</strong></p>
+                    <p>Data de Nascimento: <strong>{{ colaboradorDetalhes.data_nascimento }}</strong></p>
+                    <p>Data da Troca de Setor: <strong>{{ colaboradorDetalhes.data_troca_setor }}</strong></p>
+                    <p>Data da Troca de Cargo: <strong>{{ colaboradorDetalhes.data_troca_cargo }}</strong></p>
+                    <p>Data de Demissão: <strong>{{ colaboradorDetalhes.data_demissao }}</strong></p>
+                    <p>Email: <strong>{{ colaboradorDetalhes.email }}</strong></p>
+                    <p>Raça: <strong>{{ colaboradorDetalhes.raca }}</strong></p>
+                    <p>Grau de Instrução: <strong>{{ colaboradorDetalhes.instrucao }}</strong></p>
+                    <p>Categoria: <strong>{{ colaboradorDetalhes.categoria }}</strong></p>
+                    <p>Empresa: <strong>{{ getNomeEmpresa(colaboradorDetalhes.empresa) }}</strong><p>
+                    <p>Filial: <strong>{{ getNomeFilial(colaboradorDetalhes.filial) }}</strong></p>
+                    <p>Área: <strong>{{ getNomeArea(colaboradorDetalhes.area) }} </strong></p>    
+                    <p>Setor: <strong>{{ getNomeSetor(colaboradorDetalhes.setor) }}</strong></p>
+                    <p>Ambiente: <strong>{{ getNomeAmbiente(colaboradorDetalhes.ambiente) }}</strong></p>
+                    <p>Cargo: <strong>{{ getNomeCargo(colaboradorDetalhes.cargo) }}</strong></p>
+                    <p>Usuário ID: <strong>{{ colaboradorDetalhes.user }}</strong></p>
+                </div>            
+                <div class="dvimg">  
+                    <img [src]="colaboradorDetalhes.image"  width="80" class="shadow-4" />
+                </div>
+            </div>    
         </p-dialog>    
         
   </div><!--end container-->

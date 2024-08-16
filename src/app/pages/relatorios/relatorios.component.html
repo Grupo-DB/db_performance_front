@@ -54,12 +54,42 @@
 
 <div class="filtros">
     <div class="filial">
-        <mat-form-field>
-          <mat-label>Selecione o avaliador</mat-label>
+        <mat-form-field style="width: 400px;">
+          <mat-label >Selecione o avaliador</mat-label>
           <mat-select [(ngModel)]="avaliadorSelecionadoId" multiple  (ngModelChange)="onAvaliadorSelecionado($event.value)">
-            <mat-option *ngFor="let avaliador of avaliadores" [value]="avaliador.id">{{ avaliador.nome }}</mat-option>
+            <mat-option  *ngFor="let avaliador of avaliadores" [value]="avaliador.id">{{ avaliador.nome }}</mat-option>
           </mat-select>
         </mat-form-field>
+    </div>
+    <div *ngIf="hasGroup(['Admin','RHGestor'])" class="calendarios">
+      <div class="form5">
+        <p><label for="da">Data de Inicio</label></p>
+         <p-calendar
+             [style]="{'width':'76%','margin-left':'-2px'}"
+             id="da" 
+            [(ngModel)] = "data_inicio"
+             dateFormat="dd/mm/yy"                  
+             [showIcon]="true"
+             placeholder="SELECIONE"
+             (ngModelChange)="applyFilters()"
+         >
+         </p-calendar>
+         
+     </div>
+    
+     <div *ngIf="hasGroup(['Admin','RHGestor'])" class="form5">
+      <p><label for="da">Data do Fim</label></p>
+       <p-calendar
+           [style]="{'width':'76%','margin-left':'-2px'}"
+           id="da" 
+          [(ngModel)] = "data_fim"
+           dateFormat="dd/mm/yy"                  
+           [showIcon]="true"
+           placeholder="SELECIONE"
+           (ngModelChange)="applyFilters()"
+       >
+       </p-calendar>
+      </div>   
     </div>
 </div>
 <div class="avaliacoesAvaliadores">
@@ -81,6 +111,35 @@
     </div>
   </div>  
 </div>
+<div class="filtros4">
+  <div class="filial">
+    <mat-form-field style="width: 400px;">
+      <mat-label >Selecione o avaliador</mat-label>
+      <mat-select [(ngModel)]="avaliadorSelecionadoId" multiple  (ngModelChange)="onAvaliadorSelecionado2($event.value)">
+        <mat-option  *ngFor="let avaliador of avaliadores" [value]="avaliador.id">{{ avaliador.nome }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="filial">
+    <mat-form-field style="width: 400px;">
+      <mat-label >Selecione o Periodo</mat-label>
+      <mat-select [(ngModel)]="periodoSelecionado" multiple  (ngModelChange)="onAvaliadorSelecionado2($event.value)">
+        <mat-option  *ngFor="let periodo of periodos"[value]="periodo" >{{ periodo }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="filial">
+    <mat-form-field style="width: 400px;">
+      <mat-label >Selecione o Tipo</mat-label>
+      <mat-select [(ngModel)]="tipoSelecionado" multiple  (ngModelChange)="onAvaliadorSelecionado2($event.value)">
+        <mat-option  *ngFor="let tipo of tipos"[value]="tipo" >{{ tipo }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div>  
+<div class="chartRadarAvaliadores3">
+  <canvas id="mediaNotaPeriodoAvaliadorChart"></canvas>
+</div>
 
 <div class="titulo">
   <p-divider align="left" type="solid">
@@ -90,9 +149,9 @@
 
 <div class="filtros">
   <div class="avaliado">
-    <mat-form-field>
+    <mat-form-field style="width: 400px;">
       <mat-label>Selecione o avaliado</mat-label>
-      <mat-select [(ngModel)]="avaliadoSelecionadoId"  multiple (ngModelChange)="onAvaliadoSelecionado($event.value)">
+      <mat-select [(ngModel)]="avaliadoSelecionadoId"  multiple (ngModelChange)="onAvaliadoSelecionado($event.value);applyFiltersHistorico()">
         <mat-option *ngFor="let avaliado of avaliados" [value]="avaliado.id">{{ avaliado.nome }}</mat-option>
       </mat-select>
     </mat-form-field>
@@ -117,3 +176,109 @@
     </div>
   </div> 
 </div>   
+<div class="chartRadarAvaliadores2">
+  <canvas id="mediaNotaPeriodoAvaliadoChart"></canvas>
+</div>
+
+<div class="titulo">
+  <p-divider align="left" type="solid">
+      <b>Evolução da Média Geral por Avaliado</b>
+  </p-divider> 
+</div>
+<div class="filtros">
+  <div class="avaliado">
+    <mat-form-field style="width: 400px;">
+      <mat-label>Selecione o avaliado</mat-label>
+      <mat-select [(ngModel)]="avaliadoSelecionadoId"   (ngModelChange)="applyFiltersHistorico()">
+        <mat-option *ngFor="let avaliado of avaliados" [value]="avaliado.id">{{ avaliado.nome }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div>  
+<div class="chartRadarAvaliadores2">
+  <canvas id="mediaNotaGeralPeriodoAvaliadoChart"></canvas>
+</div>
+
+<div class="titulo">
+  <p-divider align="left" type="solid">
+      <b>Relatórios em PDF</b>
+  </p-divider> 
+</div>
+
+<div *ngIf="hasGroup(['Admin','RHGestor'])" class="filtrosPdf">
+  <div class="pdf1">
+    <div class="empresa">
+      <mat-form-field>
+        <mat-label>Selecione a Empresa</mat-label>
+        <mat-select [(ngModel)]="selectedEmpresas" multiple  (ngModelChange)="onEmpresaSelecionada($event.value)">
+          <mat-option *ngFor="let empresa of empresas" [value]="empresa.id">{{ empresa.nome }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="filial">
+      <mat-form-field>
+        <mat-label>Selecione a Filial</mat-label>
+        <mat-select [(ngModel)]="selectedFiliais" multiple  (ngModelChange)="onFilialSelecionada($event.value)">
+          <mat-option *ngFor="let filial of filiais" [value]="filial.id">{{ filial.nome }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="area">  
+      <mat-form-field>
+        <mat-label>Selecione a Área</mat-label>
+        <mat-select [(ngModel)]="selectedAreas" multiple (selectionChange)="onAreaSelecionada($event.value)">
+          <mat-option *ngFor="let area of areas" [value]="area.id">{{ area.nome }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="pdf2">     
+    <div class="setor">  
+      <mat-form-field>
+        <mat-label>Selecione o Ambiente</mat-label>
+        <mat-select [(ngModel)]="selectedSetores" multiple (selectionChange)="onSetorSelecionado($event.value)">
+          <mat-option *ngFor="let setor of setores" [value]="setor.id">{{ setor.nome }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="ambientes">
+      <mat-form-field>
+        <mat-label>Selecione o Setor</mat-label>
+        <mat-select [(ngModel)]="selectedAmbientes" multiple (selectionChange)="onAmbienteSelecionado($event.value)">
+          <mat-option *ngFor="let ambiente of ambientes" [value]="ambiente.id">{{ ambiente.nome }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="cargos">
+      <mat-form-field>
+        <mat-label>Selecione o Cargo</mat-label>
+        <mat-select [(ngModel)]="selectedCargos" multiple (selectionChange)="applyFilters()">
+          <mat-option *ngFor="let cargo of cargos" [value]="cargo.id">{{ cargo.nome }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="pdf3">
+    <div class="btnsec" (click)="generateFilteredPDF()">
+      <p>Lista de Avaliados Filtrados</p>
+    </div>
+    <div class="btnsec" (click)="downloadPdf()">
+      <p style="vertical-align: middle;">Baixar Lista de Avaliadores</p>
+    </div>
+  </div>
+  <div class="pdf4">
+    <div class="avaliado">
+      <mat-form-field style="width: 400px;">
+        <mat-label>Selecione o avaliado</mat-label>
+        <mat-select [(ngModel)]="avaliadoSelecionadoId"   (ngModelChange)="applyFiltersHistorico()">
+          <mat-option *ngFor="let avaliado of avaliados" [value]="avaliado.id">{{ avaliado.nome }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="btnsecav" (click)="gerarRelatorioPDF()">
+      <p style="vertical-align: middle;">Histórico do Colaborador </p>
+    </div>
+  </div>    
+</div>
+
+

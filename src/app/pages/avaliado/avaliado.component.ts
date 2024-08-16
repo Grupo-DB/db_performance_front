@@ -37,7 +37,9 @@ interface RegisterAvaliadoForm{
 export interface Avaliado{
   id: number;
   nome: string;
-  colaborador: number;
+  colaborador: Colaborador;
+  setor: string;
+  cargo: string;
   formulario: number;
 }
 

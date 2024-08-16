@@ -27,6 +27,7 @@ import { User } from '../createuser/createuser.component';
 import { ColaboradorService } from '../../services/colaboradores/registercolaborador.service';
 import { AvaliadorService } from '../../services/avaliadores/registeravaliador.service';
 import { Colaborador } from '../colaborador/colaborador.component';
+import { Avaliado } from '../avaliado/avaliado.component';
 
 
 interface RegisterAvaliadorForm{
@@ -37,7 +38,10 @@ export interface Avaliador{
   id: number;
   user: number;
   nome: string;
-  colaborador: number;
+  colaborador: Colaborador;
+  setor: string;
+  cargo: string;
+  avaliados: Avaliado[];
 }
 
 @Component({

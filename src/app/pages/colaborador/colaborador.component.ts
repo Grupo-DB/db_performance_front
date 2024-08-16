@@ -39,6 +39,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { BooleanToStatusPipe } from '../../services/situacao/boolean-to-status.pipe';
 import { LoginService } from '../../services/login/login.service';
+import { DatePipe, CurrencyPipe } from '@angular/common';
 
 interface RegisterColaboradorForm {
   empresa: FormControl;
@@ -72,11 +73,12 @@ interface RegisterColaboradorForm {
     image: FormControl
   }
 export interface Colaborador{
+  setorNome: string;
   id: number;
   empresa: Empresa;
   filial: number;
   area: number;
-  setor: number;
+  setor: Setor;
   ambiente: number;
   cargo: number;
   tipocontrato: string;
@@ -100,6 +102,7 @@ export interface Colaborador{
   categoria: string;
   tornar_avaliador: boolean;
   tornar_avaliado: boolean;
+
 }
 interface Genero{
   nome: string,
@@ -129,7 +132,8 @@ interface TipoContrato{
   ],
   providers:[
     MessageService,SetorService,ColaboradorService,ColaboradorService,AmbienteService,TipoContratoService,
-    RegisterCompanyService,FilialService,AreaService,CargoService,ConfirmationService
+    RegisterCompanyService,FilialService,AreaService,CargoService,ConfirmationService,
+    DatePipe, CurrencyPipe
   ],
   templateUrl: './colaborador.component.html',
   styleUrl: './colaborador.component.scss'
@@ -155,6 +159,7 @@ export class ColaboradorComponent implements OnInit {
   editForm!: FormGroup;
   imgForm!: FormGroup<imgForm>;
   editFormVisible: boolean = false;
+  detalhaColaboradorVisible: boolean= false;
   loading: boolean = true;
   empresaSelecionadaId: number | null = null;
   filialSelecionadaId: number | null = null;
@@ -162,6 +167,7 @@ export class ColaboradorComponent implements OnInit {
   setorSelecionadoId: number | null = null;
   ambienteSelecionadoId: number | null = null;
   cargoSelecionadoId: number | null = null;
+  colaboradorDetalhes:any;
 
   registercolaboradorForm!: FormGroup<RegisterColaboradorForm>;
   @ViewChild('RegisterfilialForm') RegisterColaboradorForm: any;
@@ -183,7 +189,9 @@ export class ColaboradorComponent implements OnInit {
     private msg: NzMessageService,
     private fb: FormBuilder,
     private confirmationService: ConfirmationService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private datePipe: DatePipe, 
+    private currencyPipe: CurrencyPipe
   )
   
   {
@@ -441,11 +449,11 @@ getNomeArea(id: number): string {
   return area ? area.nome : 'Area não encontrada';
 }
 getNomeSetor(id: number): string {
-  const setor = this.setores?.find(set => set.id === id);
+  const setor = this.setores?.find(setor => setor.id === id);
   return setor ? setor.nome : 'Setor não encontrada';
 }
 getNomeAmbiente(id: number): string {
-  const ambiente = this.ambientes?.find(amb => amb.id === id);
+  const ambiente = this.ambientes?.find(ambiente => ambiente.id === id);
   return ambiente ? ambiente.nome : 'Ambiente não encontrada';
 }
 getNomeCargo(id: number): string {
@@ -628,6 +636,37 @@ abrirModalEdicao(colaborador: Colaborador) {
     tornar_avaliado:colaborador.tornar_avaliado
   });
 }
+
+visualizarColaboradorDetalhes(id: number) {
+  this.detalhaColaboradorVisible = true;
+  this.colaboradorService.getColaborador(id).subscribe(
+    data => {
+      // Formate as datas e o salário
+      this.formatarDatas(data);
+      if (data.salario) {
+        data.salario = this.currencyPipe.transform(data.salario, 'BRL', 'symbol', '1.2-2');
+      }
+      this.colaboradorDetalhes = data;
+    },
+    error => {
+      console.error('Erro ao buscar detalhes do colaborador:', error);
+    }
+  );
+}
+
+formatarDatas(obj: any) {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      const value = obj[key];
+      if (typeof value === 'string' && value.includes('T')) {
+        obj[key] = this.datePipe.transform(value, 'dd/MM/yyyy');
+      } else if (typeof value === 'object' && value !== null) {
+        this.formatarDatas(value); // Formatar objetos aninhados recursivamente
+      }
+    }
+  }
+}
+
 saveEdit(){
     const colaboradorId = this.editForm.value.id;
     const empresaId = this.editForm.value.empresa.id;

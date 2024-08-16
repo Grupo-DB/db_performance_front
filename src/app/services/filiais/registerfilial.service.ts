@@ -27,11 +27,12 @@ export class FilialService {
     const url = `${this.apiUrl}${id}/`;
     return this.httpClient.delete(url);
   }   
-  getFiliaisByEmpresa(id: number): Observable<any[]> {
+  getFiliaisByEmpresa(id: any): Observable<any[]> {
     return this.httpClient.get<any>(`${this.apiUrl}byEmpresa/?empresa_id=${id}`);
 
   }
   getFilial(id: string) {
     return this.httpClient.get<any>(`http://172.50.10.79:8008/management/filiais/${id}`);
 }
+  
 }

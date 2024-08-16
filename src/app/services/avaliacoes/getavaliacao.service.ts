@@ -11,7 +11,13 @@ export class AvaliacaoService {
   private apiUrlfb = 'http://172.50.10.79:8008/management/';
   private filterUrl = 'http://172.50.10.79:8008/datacalc/filtrar-avaliacoes/';
   private filterLogadoUrl = 'http://172.50.10.79:8008/datacalc/filtrar-avaliacoes-logado/';
-  private apiAvUrl = 'http://172.50.10.79:8008/management/avaliacoes/minhas_avaliacoes/'; 
+  private filterAvaliadosUrl = 'http://172.50.10.79:8008/datacalc/filtrar-avaliados/';
+  private filterAvaliacoesPeriodoUrl = 'http://172.50.10.79:8008/datacalc/filtrar-avaliacoes-periodo/';
+  private filterAvaliacoesAvaliadorPeriodoUrl = 'http://172.50.10.79:8008/datacalc/filtrar-avaliacoes-avaliador-periodo/';
+  private apiAvUrl = 'http://172.50.10.79:8008/management/avaliacoes/minhas_avaliacoes/';
+  private periodoUrl = 'http://172.50.10.79:8008/datacalc/get-periodos/';
+  private tipoUrl = 'http://172.50.10.79:8008/datacalc/get-tipos/';
+  private historicoUrl = 'http://172.50.10.79:8008/datacalc/filtrar-historico/';  
 
   constructor(private http: HttpClient) { }
 
@@ -47,6 +53,36 @@ export class AvaliacaoService {
       map(response => JSON.parse(response)),
       catchError(this.handleError)
     );
+  }
+  filterDataAvaliados(filters: any): Observable<any> {
+    return this.http.post(this.filterAvaliadosUrl, filters, { responseType: 'text' }).pipe(
+      map(response => JSON.parse(response)),
+      catchError(this.handleError)
+    );
+  }
+  filterDataAvaliacoesPeriodo(filters: any): Observable<any> {
+    return this.http.post(this.filterAvaliacoesPeriodoUrl, filters, { responseType: 'text' }).pipe(
+      map(response => JSON.parse(response)),
+      catchError(this.handleError)
+    );
+  }
+  filterDataAvaliacoesAvaliadorPeriodo(filters: any): Observable<any> {
+    return this.http.post(this.filterAvaliacoesAvaliadorPeriodoUrl, filters, { responseType: 'text' }).pipe(
+      map(response => JSON.parse(response)),
+      catchError(this.handleError)
+    );
+  }
+  filterHistorico(filters: any): Observable<any> {
+    return this.http.post(this.historicoUrl, filters, { responseType: 'text' }).pipe(
+      map(response => JSON.parse(response)),
+      catchError(this.handleError)
+    );
+  }
+  getPeriodos(): Observable<any[]>{
+    return this.http.get<any[]>(this.periodoUrl);
+  }
+  getTipos(): Observable<any[]>{
+    return this.http.get<any[]>(this.tipoUrl);
   }
 
   private handleError(error: HttpErrorResponse) {

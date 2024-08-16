@@ -264,7 +264,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.mediaIdade = data.media_idade;
       this.mediaRespostas = data.media_geral;
       this.mediaTempoServico = data.media_tempo;
-      this.totalAvaliacoes = data.total_avaliacoes;
+      this.totalAvaliacoes = data.total_avaliacoes_gerais;
       this.totalFeedbacks = data.total_feedbacks;
       this.totalFeedbacksGeral = data.total_feedbacks_geral;
       this.totalFeedbacksGestor = data.total_feedbacks_gestor;
@@ -281,7 +281,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.updatePolarAreaChart(data.grafico_dados_estado_civil);
       this.updateSalarioRacaChart(data.media_salario_por_raca, data.grafico_dados_racas),
       this.updateSalarioGeneroChart(data.media_salario_por_genero);
-      this.updateNotaPerguntasChart(data.media_respostas);
+      this.updateNotaPerguntasChart(data.media_respostas_geral);
       this.updateNotaGestorPerguntasChart(data.media_respostas_gestor);
       this.updateInstrucaoRacaChart(data.instrucao_por_raca);//(data.instrucao_por_genero);
       this.updateAmbientesInfosChart(data.media_salario_por_ambiente)
@@ -304,7 +304,9 @@ onAvaliadoSelecionado(avaliado: any): void {
 
 applyFilters2():void{
     const filters={
-      avaliadoSelecionadoId:this.avaliadoSelecionadoId
+      avaliadoSelecionadoId:this.avaliadoSelecionadoId,
+      data_inicio: this.data_inicio,
+      data_fim: this.data_fim,
     };
     this.avaliacaoService.filterData2(filters).subscribe(data => {
       this.totalAvaliacoesAvaliador = data.total_avaliacoes_logado;
@@ -774,8 +776,8 @@ updateNotaGestorPerguntasChart(graficoNotasPerguntasGestor: any): void {
             datasets: [{
                 data: Object.values(graficoNotasPerguntasGestor),
                 pointRadius:4,
-                fill:true,
-                spanGaps:false,
+                //fill:true,
+                //spanGaps:false,
                 backgroundColor: [
                     //'#4C5264',
                     //'#07449b',
@@ -812,7 +814,7 @@ updateNotaGestorPerguntasChart(graficoNotasPerguntasGestor: any): void {
                 },
                 y: {
                     display:false,
-                    beginAtZero: false,
+                    beginAtZero: true,
                     grid:{
                         display:false,
                     },

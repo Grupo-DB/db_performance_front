@@ -11,7 +11,19 @@
         color:slategrey;
     }
 }
-
+.filtros4{
+    display: flex;
+    justify-content: space-around;
+}
+.calendarios{
+    display: flex;
+    justify-content: end;
+    margin-top: -25px;
+    margin-left: 300px;
+    .form5{
+        width: 320px;
+    }
+}
  .cards{
     display: flex;
     text-align: center;
@@ -58,7 +70,52 @@
     }
     
 }
-
+.btnsec{
+    cursor: pointer;
+        background-color: #444959;
+        color: #fff;
+        width: 220px;
+        height: 60px;
+        border-radius: 5px;
+        margin-left: 5px;
+        p{
+            text-align: center;
+            margin-top: 10px;
+            margin-left: 2px;
+            padding: 20px;
+        }
+}
+.btnsecav{
+    cursor: pointer;
+        background-color: #444959;
+        color: #fff;
+        width: 400px;
+        height: 60px;
+        border-radius: 5px;
+        margin-left: 5px;
+        p{
+            text-align: center;
+            margin-top: 10px;
+            margin-left: 2px;
+            padding: 20px;
+        }
+}
+.filtrosPdf{
+    display: flex;
+    justify-content: space-around;
+ }
+.chartRadarAvaliadores3{
+    margin-top: 50px;
+    margin-left: 20px;
+    width: 98%;
+    height: 500px;
+}
+.chartRadarAvaliadores2{
+    margin-top: 50px;
+    margin-left: 20px;
+    width: 98%;
+    height: 500px;
+}
 .avaliacoes{
     display: flex;
     margin-top: 50px;

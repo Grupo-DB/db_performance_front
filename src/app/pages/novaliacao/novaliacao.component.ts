@@ -712,6 +712,7 @@ function respostaJustificativaValidator(control: AbstractControl): { [key: strin
 export interface Avaliacao{
   id: number;
   periodo: string;
+  tipo: string;
   perguntasRespostas: JSON;
   observacoes: Text;
   formulario: string;
@@ -815,7 +816,7 @@ export class NovaliacaoComponent implements OnInit, OnDestroy {
     { key: 'regular', name: 'Regular', value: 3 },
     { key: 'ruim', name: 'Ruim', value: 2 },
     { key: 'pessimo', name: 'Péssimo', value: 1 },
-    { key: 'nao_se_aplica', name: 'Não se aplica', value: 0 },
+    { key: 'nao_se_aplica', name: 'Não se aplica', value: 'nao_se_aplica' },
 ];
 
   constructor(
