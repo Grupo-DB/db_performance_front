@@ -4,7 +4,7 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
-import { TermosComponent } from './pages/termos/termos.component';
+import { TermosComponent } from './pages/avaliacoes/termos/termos.component';
 
 @Component({
   selector: 'app-root',

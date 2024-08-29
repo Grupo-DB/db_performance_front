@@ -1,0 +1,154 @@
+@import "primeicons/primeicons.css";
+// import Quill styles in styles.scss
+@import "../../../../../node_modules/quill/dist/quill.core.css";
+@import "../../../../../node_modules/quill/dist/quill.snow.css";
+
+.container{
+    
+    display: flex;
+    flex-flow: column wrap;
+    align-items: start;
+    
+}
+
+.form-geral{
+    margin-top: 20px;
+    margin-left: 20px;
+    width: 100%;
+    border-radius: 10px;
+    
+    .form1{
+        padding: 20px;
+        width: 630px;
+        .lg{
+            margin-left: 18px;
+        }
+    }
+    
+}
+.titulo{
+    margin-top: 10px;
+    margin-left: 30px;
+    text-align: start;
+    h2{
+        color:slategrey;
+    }
+}
+ form{
+    margin-top: 2%;
+    display: flex;
+    height: 6%;
+    
+        p-inputGroup{
+            padding: 15px;
+        }
+        p-dropdown{
+            padding: 15px;
+        }
+        p-inputMask{
+            padding: 15px;
+            width: 150px;
+        }    
+        .form3{
+            margin-top: 2%;
+            margin-bottom: 5%;
+        }
+
+        .teste{
+            margin-bottom: 5%;
+            margin-top: 6%;
+            label{
+                margin-left: 5%;
+            }
+        }
+ }
+ 
+ .botoes-form{
+    width:628px;
+    margin-bottom: 2%;
+    margin-top: 1%;
+    display: flex;
+    justify-content: end;
+    p-button{
+        margin-right: 3%;
+        
+    }
+}
+
+.flex{
+    
+    text-align: end;
+    button{
+        margin-left: 1%;
+    }
+}
+
+.tabela{
+    border-radius: 10px;
+    width: 100%;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+.td-acao{
+    display: flex;
+    button{
+        margin-left: 2px;
+    }
+}
+
+.btnpri{
+    cursor: pointer;
+    background-color: #444959;
+    color: #fff;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    margin-left: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}   
+.btnsec{
+    cursor: pointer;
+    background-color: #e3e3f3;
+    color: #444959;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}
+
+.menu{
+    position:static;
+     //transform: translate(-1%, -180%);
+     
+     width: 100%;
+ }
+ .form1ed{
+    width: 70%;
+    margin-left: 5px;
+ }
+ .lged{
+    height: 120px;
+    margin-left: 20px;
+ }
+ .botoes-formed{
+    display: flex;
+    margin-top: 150px;
+    margin-left: 20px;
+ }
+ .tabela{
+    border-radius: 10px;
+    width: 100%;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    th{
+        font-size: 14px;
+    }
+    td{
+        font-size:12px ;
+    }
+}

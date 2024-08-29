@@ -1,0 +1,136 @@
+<div class="container">
+  <p-divider align="left" type="solid">
+    <b>Painel Operacional</b>
+  </p-divider> 
+
+  <div class="rowBotoes">
+      <div class="btnCalc" (click)="calcular('atual')">
+        <p>Últ. dia</p>
+      </div>
+      <div class="btnCalc" (click)="calcular('mensal')">
+        <p>No mês</p>
+      </div>
+      <div class="btnCalc" (click)="calcular('anual')">
+        <p>No ano</p>
+      </div>
+  </div>
+  <div class="titulo">
+    <i class="pi pi-plus-circle"></i><span> <b> Mineração</b></span><br>
+  </div>
+  <div class="rowMineracao">
+    <div class="card">
+      <div class="valor">
+        <p></p>
+      </div>
+      <div class="unidade">
+        <p>Tn Desmontada</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="valor">
+        <p></p>
+      </div>
+      <div class="unidade">
+        <p>Tn para Britador</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="valor">
+        <p></p>
+      </div>
+      <div class="unidade">
+        <p>Equipamentos Ativos</p>
+      </div>
+    </div>
+  </div> <!--end rowMineracao-->
+  <div class="titulo">
+    <a routerLink="homeproducao"><i class="pi pi-plus-circle"></i><span> <b> Produção</b></span></a><br>
+  </div>  
+  <div class="rowProducao">
+    <div class="card">
+      <div class="valor">
+        <p>{{ volumeBritado }}</p>
+      </div>
+      <div class="unidade">
+        <p>Tn Volume Britado</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="valor">
+        <p>{{ producaoBritador }}</p>
+      </div>
+      <div class="unidade">
+        <p>Tn Produção Britador</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="valor">
+        <p>{{ tnCalcario }}</p>
+      </div>
+      <div class="unidade">
+        <p>Tn Calcario</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="valor">
+        <p>{{ tnFertilizante }}</p>
+      </div>
+      <div class="unidade">
+        <p>Tn Fertilizante</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="valor">
+        <p>{{ tnCal }}</p>
+      </div>
+      <div class="unidade">
+        <p>Tn Cal</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="valor">
+        <p>{{ tnArgamassa }}</p>
+      </div>
+      <div class="unidade">
+        <p>Tn Argamassa</p>
+      </div>
+    </div>
+  </div> <!-- end rowProducao -->
+  <div class="titulo">
+    <i class="pi pi-plus-circle"></i><span> <b> Manutenção</b></span><br>
+  </div>
+  <div class="rowManutencao">
+    <div class="card">
+      <div class="valor">
+        <p></p>
+      </div>
+      <div class="unidade">
+        <p>Total de Ordens de Serviço</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="valor">
+        <p></p>
+      </div>
+      <div class="unidade">
+        <p>OS Pendentes</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="valor">
+        <p></p>
+      </div>
+      <div class="unidade">
+        <p>OS Corretivas Pendentes</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="valor">
+        <p></p>
+      </div>
+      <div class="unidade">
+        <p>OS Preventivas Pendentes</p>
+      </div>
+    </div> <!--end rowManutencao-->
+  </div>
+</div>  

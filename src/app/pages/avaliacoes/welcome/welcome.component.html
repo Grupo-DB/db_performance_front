@@ -1,0 +1,119 @@
+<nz-layout class="app-layout">
+    <nz-sider class="menu-sidebar"
+      nzCollapsible
+      nzWidth="256px"
+      nzBreakpoint="md"
+      [(nzCollapsed)]="isCollapsed"
+      [nzTrigger]="null">
+      <div class="sidebar-logo">
+        <a routerLink="inicial">
+          <img src="/../assets/imagens/logo-sidebar.png" alt="logo">
+          <img style="width: 100px;" src="/assets/imagens/logonomemanager.png" alt="logo">
+        </a>
+      </div>
+      <ul nz-menu style="background-color:#444959;"  nzMode="inline" [nzInlineCollapsed]="isCollapsed">               
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu  style="background-color: #444959; width: 100%;"   nzTitle="Corporativo" nzIcon="global">
+          <ul>
+              <li  nz-submenu  style="background-color: #3a3e4c;"  nzTitle="Cadastros" nzIcon="appstore-add">
+                <ul>
+                  <li *ngIf="hasGroup(['Admin','RHGestor'])" style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
+                    <a routerLink="registercompany">Empresas</a>
+                  </li>
+                  <li *ngIf="hasGroup(['Admin','RHGestor'])" style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
+                    <a routerLink="filial">Filiais</a>
+                  </li>
+                  <li *ngIf="hasGroup(['Admin','RHGestor'])" style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
+                    <a routerLink="area">Áreas</a>
+                  </li>
+                  <li *ngIf="hasGroup(['Admin','RHGestor'])" style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
+                    <a routerLink="setor">Ambientes</a>
+                  </li>
+                  <li *ngIf="hasGroup(['Admin','RHGestor'])" style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
+                    <a routerLink="ambiente">Setores</a>
+                  </li>
+                  <li *ngIf="hasGroup(['Admin','RHGestor'])" style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
+                    <a routerLink="cargo">Cargos</a>
+                  </li>
+                </ul>
+              </li>        
+          </ul>
+        </li>
+        <li nz-submenu style="background-color: #444959;"  nzTitle="Gestão de Pessoas" nzIcon="team">
+          <ul>
+            <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+              <a routerLink="colaborador" ><span nz-icon nzType="user" nzTheme="outline"></span> Colaboradores</a>
+            </li> 
+          </ul>
+          <ul>
+            <li nz-menu-item   nzMatchRouter>
+              <a routerLink="dashboard" ><span nz-icon nzType="audit" nzTheme="outline"></span> Avaliação de Funcionários</a>
+            </li> 
+          </ul>
+        </li>
+        <li nz-submenu style="background-color: #444959;"  nzTitle="Gestão Operacional" nzIcon="bar-chart">
+          <ul>
+            <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+              <a routerLink="homeoperacoes" > Painel Operacional</a>
+            </li> 
+          </ul>
+          <ul>
+            <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+              <a routerLink="homeoperacoes" >BI - Produção</a>
+            </li> 
+          </ul>
+        </li>
+      </ul>
+    </nz-sider>
+    <nz-layout>
+      <nz-header>
+        <div class="app-header">
+          <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
+              <span class="trigger"
+                 nz-icon
+                 [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
+          ></span>
+          </span>
+          
+        <div class="inicio">
+          <div class="divnot">
+            <p>Olá, <b>{{ colaborador.nome }}</b>.</p>
+            <p style="margin-top: -55px;">
+              <a routerLink="inicial">
+                <b>Você possui {{ unreadCount }} notificações não lidas.</b>
+              </a>
+            </p>
+          </div> 
+         </div> 
+          
+          <div class="top">
+            <strong>{{ hoje | date:' HH:mm' }}</strong>
+          </div>
+           <div class="final">
+            <div class="empresa">
+              <p>Empresa:<strong> {{ getNomeEmpresa(colaborador.empresa) }}</strong>
+              <p style="margin-top: -55px;">Filial ativa:<strong> {{ getNomeFilial(colaborador.filial) }}</strong></p>
+            </div>
+            <div class="btn">
+              <a><p (click)="logout()"><span nz-icon nzType="poweroff" nzTheme="outline"></span></p></a>
+            </div>  
+           </div> 
+                 
+        </div>
+      </nz-header>
+      <nz-content>
+
+        <div class="inner-content">
+          <router-outlet></router-outlet>
+        </div>
+      </nz-content>  
+          <div class="rodape">
+            <img src="../assets/imagens/logoazul.png" width="30px" >
+            Desenvolvido por Dagoberto Barcellos S A - Tecnologia de Informação | Direitos de uso reservados ao Grupo Dagoberto Barcellos S A | Versão: 1.1.1
+          </div>
+    </nz-layout>
+  </nz-layout>
+
+            
+
+
+         

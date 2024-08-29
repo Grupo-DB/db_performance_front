@@ -1,34 +1,35 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './pages/login/login.component';
-import { WelcomeComponent } from './pages/welcome/welcome.component';
-import { CreateuserComponent } from './pages/createuser/createuser.component';
-import { RegisterCompanyComponent } from './pages/registercompany/registercompany.component';
-import { AreaComponent } from './pages/area/area.component';
-import { FilialComponent } from './pages/filial/filial.component';
-import { SetorComponent } from './pages/setor/setor.component';
-import { CargoComponent } from './pages/cargo/cargo.component';
-import { TipoContratoComponent } from './pages/tipocontrato/tipocontrato.component';
-import { ColaboradorComponent } from './pages/colaborador/colaborador.component';
-import { TipoAvaliacaoComponent } from './pages/tipoavaliacao/tipoavaliacao.component';
-import { AvaliadorComponent } from './pages/avaliador/avaliador.component';
-import { FormularioComponent } from './pages/formulario/formulario.component';
-import { PerguntaComponent } from './pages/pergunta/pergunta.component';
-import { AvaliacaoComponent } from './pages/avaliacao/avaliacao.component';
-import { QuestionarioComponent } from './pages/questionario/questionario.component';
-import { NovaliacaoComponent } from './pages/novaliacao/novaliacao.component';
-import { AvaliadoComponent } from './pages/avaliado/avaliado.component';
-import { AmbienteComponent } from './pages/ambiente/ambiente.component';
-import { AvaliadorAvaliadosComponent } from './pages/avaliadoravaliados/avaliadoravaliados.component';
-import { VincularComponent } from './pages/vincular/vincular.component';
-import { FeedbackComponent } from './pages/feedback/feedback.component';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { InicialComponent } from './pages/inicial/inicial.component';
-import { ResetpsComponent } from './pages/resetps/resetps.component';
-import { EsqueceuSenhaComponent } from './pages/esqueceusenha/esqueceusenha.component';
-import { RedefinirSenhaComponent } from './pages/redefinirsenha/redefinirsenha.component';
-import { HistoricoComponent } from './pages/historico/historico.component';
-import { RelatoriosComponent } from './pages/relatorios/relatorios.component';
-
+import { LoginComponent } from './pages/avaliacoes/login/login.component';
+import { WelcomeComponent } from './pages/avaliacoes/welcome/welcome.component';
+import { CreateuserComponent } from './pages/avaliacoes/createuser/createuser.component';
+import { RegisterCompanyComponent } from './pages/avaliacoes/registercompany/registercompany.component';
+import { AreaComponent } from './pages/avaliacoes/area/area.component';
+import { FilialComponent } from './pages/avaliacoes/filial/filial.component';
+import { SetorComponent } from './pages/avaliacoes/setor/setor.component';
+import { CargoComponent } from './pages/avaliacoes/cargo/cargo.component';
+import { TipoContratoComponent } from './pages/avaliacoes/tipocontrato/tipocontrato.component';
+import { ColaboradorComponent } from './pages/avaliacoes/colaborador/colaborador.component';
+import { TipoAvaliacaoComponent } from './pages/avaliacoes/tipoavaliacao/tipoavaliacao.component';
+import { AvaliadorComponent } from './pages/avaliacoes/avaliador/avaliador.component';
+import { FormularioComponent } from './pages/avaliacoes/formulario/formulario.component';
+import { PerguntaComponent } from './pages/avaliacoes/pergunta/pergunta.component';
+import { AvaliacaoComponent } from './pages/avaliacoes/avaliacao/avaliacao.component';
+import { QuestionarioComponent } from './pages/avaliacoes/questionario/questionario.component';
+import { NovaliacaoComponent } from './pages/avaliacoes/novaliacao/novaliacao.component';
+import { AvaliadoComponent } from './pages/avaliacoes/avaliado/avaliado.component';
+import { AmbienteComponent } from './pages/avaliacoes/ambiente/ambiente.component';
+import { AvaliadorAvaliadosComponent } from './pages/avaliacoes/avaliadoravaliados/avaliadoravaliados.component';
+import { VincularComponent } from './pages/avaliacoes/vincular/vincular.component';
+import { FeedbackComponent } from './pages/avaliacoes/feedback/feedback.component';
+import { DashboardComponent } from './pages/avaliacoes/dashboard/dashboard.component';
+import { InicialComponent } from './pages/avaliacoes/inicial/inicial.component';
+import { ResetpsComponent } from './pages/avaliacoes/resetps/resetps.component';
+import { EsqueceuSenhaComponent } from './pages/avaliacoes/esqueceusenha/esqueceusenha.component';
+import { RedefinirSenhaComponent } from './pages/avaliacoes/redefinirsenha/redefinirsenha.component';
+import { HistoricoComponent } from './pages/avaliacoes/historico/historico.component';
+import { RelatoriosComponent } from './pages/avaliacoes/relatorios/relatorios.component';
+import { HomeoperacoesComponent } from './pages/dashboardoperacoes/homeoperacoes/homeoperacoes.component';
+import { HomeproducaoComponent } from './pages/dashboardoperacoes/producao/homeproducao/homeproducao.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -61,6 +62,8 @@ export const routes: Routes = [
       { path: 'inicial', component:InicialComponent },
       { path: 'historico', component:HistoricoComponent },
       { path: 'relatorios', component:RelatoriosComponent },
+      { path: 'homeoperacoes',component:HomeoperacoesComponent},
+      { path: 'homeoperacoes/homeproducao', component:HomeproducaoComponent }
     ],
   },
   
