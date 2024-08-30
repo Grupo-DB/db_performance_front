@@ -1,1 +1,89 @@
-<p>homebritagem works!</p>
+<div class="container">
+    <div class="titulo">
+        <p-divider align="left" type="solid">
+            <b><a routerLink="../../">Painel Operacional</a> / <a routerLink="../">Produção</a> / Britagem</b>
+        </p-divider>
+    </div>
+    <div class="calculos">
+        <div class="calcEsquerda">
+           <div class="britadaCalcario">
+                <div class="titulo">
+                    <i class="pi pi-plus-circle"></i><span> <b> Tn Britada Para Calcário</b></span><br>
+                </div>
+                <div class="interna">
+                    <div class="card">
+                        <div class="valor">
+                        <p>{{ tnBritadaCalcarioDia }}</p>
+                        </div>
+                        <div class="unidade">
+                        <p>Último dia</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="valor">
+                        <p>{{ tnBritadaCalcarioMes }}</p>
+                        </div>
+                        <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="valor">
+                        <p>{{ tnBritadaCalcarioAno }}</p>
+                        </div>
+                        <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                        </div>
+                    </div>
+                </div>    
+           </div>
+           <div class="britadaCal">
+                <div class="titulo">
+                    <i class="pi pi-plus-circle"></i><span> <b> Tn Britada Para Cal</b></span><br>
+                </div>
+                <div class="interna">
+                    <div class="card">
+                        <div class="valor">
+                        <p>{{ tnBritadaCalDia }}</p>
+                        </div>
+                        <div class="unidade">
+                        <p>Último dia</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="valor">
+                        <p>{{ tnBritadaCalMes }}</p>
+                        </div>
+                        <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="valor">
+                        <p>{{ tnBritadaCalAno }}</p>
+                        </div>
+                        <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                        </div>
+                    </div>
+                </div>
+           </div> 
+        </div>
+        <div class="calcDireita">
+            <div class="titulo">
+                <span> <b> Paradas no Britador</b></span><br>
+            </div>
+           
+        </div>
+    </div>
+    <div class="calculos">
+        <div class="calcCargas">
+            <div class="titulo">
+                <span> <b> Movimentação de cargas</b></span><br>
+            </div>
+            <div class="interna">
+                    
+            </div>    
+        </div>
+    </div>   
+</div>

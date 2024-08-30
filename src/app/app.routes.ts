@@ -30,6 +30,7 @@ import { HistoricoComponent } from './pages/avaliacoes/historico/historico.compo
 import { RelatoriosComponent } from './pages/avaliacoes/relatorios/relatorios.component';
 import { HomeoperacoesComponent } from './pages/dashboardoperacoes/homeoperacoes/homeoperacoes.component';
 import { HomeproducaoComponent } from './pages/dashboardoperacoes/producao/homeproducao/homeproducao.component';
+import { HomebritagemComponent } from './pages/dashboardoperacoes/producao/britagem/homebritagem/homebritagem.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -63,7 +64,8 @@ export const routes: Routes = [
       { path: 'historico', component:HistoricoComponent },
       { path: 'relatorios', component:RelatoriosComponent },
       { path: 'homeoperacoes',component:HomeoperacoesComponent},
-      { path: 'homeoperacoes/homeproducao', component:HomeproducaoComponent }
+      { path: 'homeoperacoes/homeproducao', component:HomeproducaoComponent },
+      { path: 'homeoperacoes/homeproducao/homebritagem', component:HomebritagemComponent }
     ],
   },
   

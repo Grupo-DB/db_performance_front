@@ -28,11 +28,10 @@ export class HomeoperacoesComponent implements OnInit {
     private homeService: HomeService,
   ){}
   ngOnInit(): void {
-    
+    this.calcular('atual')    
 }
 calcular(tipoCalculo: string) {
   this.homeService.calcularCalcario(tipoCalculo).subscribe(response => {
-    this.totalCalcario = `${response.tipo_calculo} Total: ${response.total_calcario}`;
     this.volumeBritado = response.volume_britado_total;
     this.tnCal = response.resultados.cal;
     this.tnCalcario = response.resultados.calcario;
