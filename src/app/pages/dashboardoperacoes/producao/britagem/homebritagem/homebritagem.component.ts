@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { DividerModule } from 'primeng/divider';
 import { RouterLink } from '@angular/router';
 import { TableModule } from 'primeng/table';
@@ -8,7 +9,7 @@ import { forkJoin } from 'rxjs';
   selector: 'app-homebritagem',
   standalone: true,
   imports: [
-    DividerModule,RouterLink,TableModule
+    DividerModule,RouterLink,TableModule,CommonModule
   ],
   providers:[
     HomeService
@@ -23,12 +24,15 @@ export class HomebritagemComponent implements OnInit {
   tnBritadaCalDia!:number;
   tnBritadaCalMes!:number;
   tnBritadaCalAno!:number;
+  teste!:any;
+  dados: any;
   constructor(
     private homeService: HomeService,
   ){}
 
   ngOnInit(): void {
     this.calcular();
+    this.paradas('atual');
     
   }
   calcular() {
@@ -53,5 +57,15 @@ export class HomebritagemComponent implements OnInit {
     });
   }
 
+  paradas(tipoCalculo: string){
+    this.homeService.calcularBritagem(tipoCalculo).subscribe(response =>{
+      this.dados = [
+        { nome1: 'ALMOÇO/JANTA', tempo1:response.almoco_janta_tempo, percent1:response.almoco_janta_percentual },
+        { nome2: 'EMBUCHAMENTO(ROMPEDOR)', tempo2:response.embuchamento_rompedor_tempo, percent2:response.embuchamento_rompedor_percentual },
+        { nome3: 'EMBUCHAMENTO(DESARME)', tempo3:response.embuchamento_desarme_tempo, percent3:response.embuchamento_desarme_percentual },
+        { nome4: 'SETUP', tempo4:response.setup_tempo, percent4:response.setup_percentual },
+      ]
+    })
+  }
 
 }

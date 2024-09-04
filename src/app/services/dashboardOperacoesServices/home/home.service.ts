@@ -9,7 +9,8 @@ import { Observable } from 'rxjs';
 })
 export class HomeService {
   //declarar as urls
-  private calcarioUrl = 'http://localhost:8000/home/calcular_calcario/'
+  private calcarioUrl = 'http://localhost:8000/home/calcular_calcario/';
+  private britagemUrl =  'http://localhost:8000/britagem/calcular_britagem/';
 
   constructor(private  httpClient: HttpClient, private router: Router,) { }
 
@@ -23,5 +24,8 @@ export class HomeService {
   // }
   calcularCalcario(tipoCalculo: string): Observable<any> {
     return this.httpClient.post<any>(this.calcarioUrl, { tipo_calculo: tipoCalculo });
+  }
+  calcularBritagem(tipoCalculo: string): Observable<any> {
+    return this.httpClient.post<any>(this.britagemUrl, { tipo_calculo: tipoCalculo });
   }
 }

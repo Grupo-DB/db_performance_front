@@ -73,6 +73,38 @@
             <div class="titulo">
                 <span> <b> Paradas no Britador</b></span><br>
             </div>
+            
+            <p-table [value]="dados"   >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Descrição da Parada</th>
+                        <th>Tempo</th>
+                        <th>%</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-dado>
+                    <tr *ngIf="dado.nome1">
+                        <td>{{ dado.nome1 }}</td>
+                        <td>{{ dado.tempo1 }}</td>
+                        <td>{{ dado.percent1 }}</td>
+                    </tr>
+                    <tr *ngIf="dado.nome2">
+                        <td>{{ dado.nome2 }}</td>
+                        <td>{{ dado.tempo2 }}</td>
+                        <td>{{ dado.percent2 }}</td>
+                    </tr>
+                    <tr *ngIf="dado.nome3">
+                        <td>{{ dado.nome3 }}</td>
+                        <td>{{ dado.tempo3 }}</td>
+                        <td>{{ dado.percent3 }}</td>
+                    </tr>
+                    <tr *ngIf="dado.nome4">
+                        <td>{{ dado.nome4 }}</td>
+                        <td>{{ dado.tempo4 }}</td>
+                        <td>{{ dado.percent4 }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
            
         </div>
     </div>
