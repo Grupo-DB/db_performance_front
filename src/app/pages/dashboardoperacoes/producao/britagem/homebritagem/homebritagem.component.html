@@ -74,7 +74,11 @@
                 <span> <b> Paradas no Britador</b></span><br>
             </div>
             
-            <p-table [value]="dados"   >
+            <p-table 
+                [value]="dados" 
+                [scrollable]="true" 
+                scrollHeight="350px"  
+            >
                 <ng-template pTemplate="header">
                     <tr>
                         <th>Descrição da Parada</th>
@@ -103,6 +107,31 @@
                         <td>{{ dado.tempo4 }}</td>
                         <td>{{ dado.percent4 }}</td>
                     </tr>
+                    <tr *ngIf="dado.nome5">
+                        <td>{{ dado.nome5 }}</td>
+                        <td>{{ dado.tempo5 }}</td>
+                        <td>{{ dado.percent5 }}</td>
+                    </tr>
+                    <tr *ngIf="dado.nome6">
+                        <td>{{ dado.nome6 }}</td>
+                        <td>{{ dado.tempo6 }}</td>
+                        <td>{{ dado.percent6 }}</td>
+                    </tr>
+                    <tr *ngIf="dado.nome7">
+                        <td>{{ dado.nome7 }}</td>
+                        <td>{{ dado.tempo7 }}</td>
+                        <td>{{ dado.percent7 }}</td>
+                    </tr>
+                    <tr *ngIf="dado.nome8">
+                        <td>{{ dado.nome8 }}</td>
+                        <td>{{ dado.tempo8 }}</td>
+                        <td>{{ dado.percent8 }}</td>
+                    </tr>
+                    <tr *ngIf="dado.nome9">
+                        <td>{{ dado.nome9 }}</td>
+                        <td>{{ dado.tempo9 }}</td>
+                        <td>{{ dado.percent9 }}</td>
+                    </tr>
                 </ng-template>
             </p-table>
            
@@ -113,9 +142,30 @@
             <div class="titulo">
                 <span> <b> Movimentação de cargas</b></span><br>
             </div>
-            <div class="interna">
-                    
-            </div>    
+            <p-table 
+                [value]="movimentos" 
+                [scrollable]="true" 
+                scrollHeight="350px"  
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Origem</th>
+                        <th>Destino</th>
+                        <th>Volume Último Dia</th>
+                        <th>Volume Acumulado no Mês</th>
+                        <th>Volume Acumulado no Ano</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-movimento>
+                    <tr *ngIf="movimento.origem1">
+                        <td>{{ movimento.origem1 }}</td>
+                        <td>{{ movimento.destino1 }}</td>
+                        <td>{{ movimento.dia1 }}</td>
+                        <td>{{ movimento.mes1 }}</td>
+                        <td>{{ movimento.ano1 }}</td>
+                    </tr>
+                </ng-template>    
+            </p-table>  
         </div>
     </div>   
 </div>
