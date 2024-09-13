@@ -11,6 +11,7 @@ export class HomeService {
   //declarar as urls
   private calcarioUrl = 'http://localhost:8000/home/calcular_calcario/';
   private britagemUrl =  'http://localhost:8000/britagem/calcular_britagem/';
+  private graficosUrl =  'http://localhost:8000/britagem/calcular_graficos/';
 
   constructor(private  httpClient: HttpClient, private router: Router,) { }
 
@@ -27,5 +28,8 @@ export class HomeService {
   }
   calcularBritagem(tipoCalculo: string): Observable<any> {
     return this.httpClient.post<any>(this.britagemUrl, { tipo_calculo: tipoCalculo });
+  }
+  calcularGraficos(tipoCalculo: string): Observable<any>{
+    return this.httpClient.post<any>(this.graficosUrl, {tipo_calculo: tipoCalculo})
   }
 }
