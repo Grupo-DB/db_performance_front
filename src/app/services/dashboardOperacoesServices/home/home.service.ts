@@ -11,8 +11,11 @@ export class HomeService {
   //declarar as urls
   private calcarioUrl = 'http://localhost:8000/home/calcular_calcario/';
   private britagemUrl =  'http://localhost:8000/britagem/calcular_britagem/';
+  private rebritagemUrl =  'http://localhost:8000/rebritagem/calcular_rebritagem/';
+  private fabricaCalcarioUrl =  'http://localhost:8000/calcario/calcular_calcario/';
+  private rebritagemParadasUrl =  'http://localhost:8000/rebritagem/calcular_rebritagem_paradas/';
   private graficosUrl =  'http://localhost:8000/britagem/calcular_graficos/';
-
+  
   constructor(private  httpClient: HttpClient, private router: Router,) { }
 
   //méotodos executáveis
@@ -31,5 +34,14 @@ export class HomeService {
   }
   calcularGraficos(tipoCalculo: string): Observable<any>{
     return this.httpClient.post<any>(this.graficosUrl, {tipo_calculo: tipoCalculo})
+  }
+  calcularRebritagem(tipoCalculo: string): Observable<any> {
+    return this.httpClient.post<any>(this.rebritagemUrl, { tipo_calculo: tipoCalculo });
+  }
+  calcularRebritagemParadas(tipoCalculo: string): Observable<any> {
+    return this.httpClient.post<any>(this.rebritagemParadasUrl, { tipo_calculo: tipoCalculo });
+  }
+  fabricaCalcario(tipoCalculo: string,fabrica:number,): Observable<any> {
+    return this.httpClient.post<any>(this.fabricaCalcarioUrl, { tipo_calculo: tipoCalculo, fabrica:fabrica });
   }
 }

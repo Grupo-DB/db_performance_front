@@ -1,0 +1,130 @@
+<div class="container">
+    <div class="titulo">
+        <p-divider align="left" type="solid">
+            <b><a routerLink="../../">Painel Operacional</a> / <a routerLink="../">Produção</a> / Fábricas de Calcário</b>
+        </p-divider>
+    </div>
+    <div class="rows"><!--CArregamentos-->>
+        <div class="row1">
+            <div class="carregamento">
+                <div class="card">
+                    <div class="valor">
+                    <p>teste</p>
+                    </div>
+                    <div class="unidade">
+                    <p>Último dia</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="valor">
+                        <p>teste</p>
+                    </div>
+                    <div class="unidade">
+                    <p>Acomulado mês atual</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="valor">
+                        <p>teste</p>
+                    </div>
+                    <div class="unidade">
+                    <p>Acomulado ano atual</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row2"><!--FCM1-->
+            <div class="card">
+                <div class="valor">
+                <p>{{ fcmiTotalDia }}</p>
+                </div>
+                <div class="unidade">
+                <p>Último dia</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="valor">
+                    <p>{{ fcmiTotalMes }}</p>
+                </div>
+                <div class="unidade">
+                <p>Acomulado mês atual</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="valor">
+                    <p>{{ fcmiTotalAno }}</p>
+                </div>
+                <div class="unidade">
+                <p>Acomulado ano atual</p>
+                </div>
+            </div>
+            <p-table 
+                 
+                [scrollable]="true" 
+                scrollHeight="350px"  
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Período</th>
+                        <th>Horas Produção</th>
+                        <th>Tn/h</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-dado>
+                </ng-template>
+            </p-table>        
+        </div>
+        <div class="row3"><!--FCMII-->
+            <div class="card">
+                <div class="valor">
+                    <p>{{ fcmiiTotalDia }}</p>
+                </div>
+                <div class="unidade">
+                <p>Último dia</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="valor">
+                    <p>{{ fcmiiTotalMes }}</p>
+                </div>
+                <div class="unidade">
+                <p>Acomulado mês atual</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="valor">
+                    <p>{{ fcmiiTotalAno }}</p>
+                </div>
+                <div class="unidade">
+                <p>Acomulado ano atual</p>
+                </div>
+            </div>
+        </div>
+        <div class="row4"><!--FCMIII-->
+            <div class="card">
+                <div class="valor">
+                    <p>{{ fcmiiiTotalDia }}</p>
+                </div>
+                <div class="unidade">
+                <p>Último dia</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="valor">
+                    <p>{{ fcmiiiTotalMes }}</p>
+                </div>
+                <div class="unidade">
+                <p>Acomulado mês atual</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="valor">
+                    <p>{{ fcmiiiTotalAno }}</p>
+                </div>
+                <div class="unidade">
+                <p>Acomulado ano atual</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

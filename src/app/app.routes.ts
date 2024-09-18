@@ -31,6 +31,8 @@ import { RelatoriosComponent } from './pages/avaliacoes/relatorios/relatorios.co
 import { HomeoperacoesComponent } from './pages/dashboardoperacoes/homeoperacoes/homeoperacoes.component';
 import { HomeproducaoComponent } from './pages/dashboardoperacoes/producao/homeproducao/homeproducao.component';
 import { HomebritagemComponent } from './pages/dashboardoperacoes/producao/britagem/homebritagem/homebritagem.component';
+import { RebritagemComponent } from './pages/dashboardoperacoes/producao/rebritagem/rebritagem.component';
+import { CalcarioComponent } from './pages/dashboardoperacoes/producao/calcario/calcario.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -65,7 +67,9 @@ export const routes: Routes = [
       { path: 'relatorios', component:RelatoriosComponent },
       { path: 'homeoperacoes',component:HomeoperacoesComponent},
       { path: 'homeoperacoes/homeproducao', component:HomeproducaoComponent },
-      { path: 'homeoperacoes/homeproducao/homebritagem', component:HomebritagemComponent }
+      { path: 'homeoperacoes/homeproducao/homebritagem', component:HomebritagemComponent },
+      { path: 'homeoperacoes/homeproducao/rebritagem', component:RebritagemComponent },
+      { path: 'homeoperacoes/homeproducao/calcario', component:CalcarioComponent },
     ],
   },
   

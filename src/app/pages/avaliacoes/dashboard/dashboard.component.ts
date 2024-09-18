@@ -240,7 +240,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.applyFilters();
     });
   }
-
   
   formatCompletedFeedbacks = (percent: number): string => `${this.totalFeedbacks} `;
   formatCompletedFeedbacksGeral = (percent: number): string => `${this.totalFeedbacksGeral} `;

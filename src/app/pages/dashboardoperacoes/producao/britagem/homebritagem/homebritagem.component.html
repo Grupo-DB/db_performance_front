@@ -39,7 +39,7 @@
            </div>
            <div class="britadaCal">
                 <div class="titulo">
-                    <i class="pi pi-plus-circle"></i><span> <b> Tn Britada Para Cal</b></span><br>
+                    <i class="pi pi-plus-circle"></i><span (click)="exibirGraficoCal()" style="cursor: pointer;"> <b> Tn Britada Para Cal</b></span><br>
                 </div>
                 <div class="interna">
                     <div class="card">
@@ -195,7 +195,7 @@
 <!------------------------MOdal---------------------->
 <p-dialog 
     [modal]="true"
-    [(visible)]="graficoVisivel" 
+    [(visible)]="graficoVisivel1" 
     [style]="{ width: '80%', height: '70%' }" 
     [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"   
 >
@@ -205,9 +205,6 @@
         </p-divider> 
     </div>
     <div class="rowBotoes">
-    <!-- <div class="btnCalc" (click)="graficos('atual')">
-    <p>Últ. dia</p>
-    </div> -->
         <div class="btnCalc" (click)="graficoMensal('mensal')">
             <p>No mês</p>
         </div>
@@ -240,6 +237,63 @@
                 <div class="card2">
                     <div class="valor">
                         <p>{{ projecaoCalcario }}</p>
+                    </div>
+                    <div class="unidade2">
+                        <p>Tn</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+
+</p-dialog>
+
+<!-------------MODAL CAL--------------->
+
+<p-dialog 
+    [modal]="true"
+    [(visible)]="graficoVisivel" 
+    [style]="{ width: '80%', height: '70%' }" 
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"   
+>
+    <div class="titulo">
+        <p-divider align="left" type="solid">
+            <b>Produção Pedra Britada para Cal</b>
+        </p-divider> 
+    </div>
+    <div class="rowBotoes">
+        <div class="btnCalc" (click)="graficoMensalCal('mensal')">
+            <p>No mês</p>
+        </div>
+        <div class="btnCalc" (click)="graficoAnualCal('anual')">
+            <p>No ano</p>
+        </div>
+    </div>
+    <div class="containerModal">
+        <div class="chartRadarAvaliadores">
+            <canvas id="graficoPedraBritadaCalAnual"></canvas>
+        </div>
+        <div class="projecoes">
+            <div class="titulo2">
+                <span> <b>Média do Período</b></span><br>
+            </div>
+            <div class="media">
+                <div class="card2">
+                    <div class="valor">
+                        <p>{{ mediaCal }}</p>
+                    </div>
+                    <div class="unidade2">
+                        <p>Tn</p>
+                    </div>
+                </div>
+            </div>
+            <div class="titulo2">
+                <span> <b> Projeção para o Período</b></span><br>
+            </div>
+            <div class="projecao">
+                <div class="card2">
+                    <div class="valor">
+                        <p>{{ projecaoCal }}</p>
                     </div>
                     <div class="unidade2">
                         <p>Tn</p>
