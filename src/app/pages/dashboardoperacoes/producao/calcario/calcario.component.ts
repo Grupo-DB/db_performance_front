@@ -19,16 +19,35 @@ import { forkJoin } from 'rxjs';
   styleUrl: './calcario.component.scss'
 })
 export class CalcarioComponent implements OnInit {
+  //FCMI PRODUCAO
   fcmiTotalDia!:number;
   fcmiTotalMes!:number;
   fcmiTotalAno!:number;
+  //FCMI PRODUTIVIDADE
+  fcmiHsProducao!: number;
+  fcmiTnHora!: number;
+  fcmiDados!: any;  //Dicionario
+  //FCMII PRODUCAO
   fcmiiTotalDia!:number;
   fcmiiTotalMes!:number;
   fcmiiTotalAno!:number;
+  //FCMII PRODUTIVIDADE
+  fcmiiHsProducao!: number;
+  fcmiiTnHora!: number;
+  fcmiiDados!: any;  //Dicionario
+  //FCMIII PRODUÇAO
   fcmiiiTotalDia!:number;
   fcmiiiTotalMes!:number;
   fcmiiiTotalAno!:number;
-
+  //FCMIII PRODUTIVIDADE
+  fcmiiiHsProducao!: number;
+  fcmiiiTnHora!: number;
+  fcmiiiDados!: any;  //Dicionario
+  //MOVIMENTAÇÂO
+  movimentacaoDia!:number;
+  movimentacaoMes!:number;
+  movimentacaoAno!:number;
+  
   constructor(
     private homeService: HomeService,
   ){}
@@ -49,9 +68,21 @@ export class CalcarioComponent implements OnInit {
     const respostaAnual = response.anual;
 
     // Processando os dados Calcario
-    this.fcmiTotalDia = respostaAtual.total_fcm1;
-    this.fcmiTotalMes = respostaMensal.total_fcm1;
-    this.fcmiTotalAno = respostaAnual.total_fcm1; 
+    this.fcmiTotalDia = respostaAtual.total_fcm;
+    this.fcmiTotalMes = respostaMensal.total_fcm;
+    this.fcmiTotalAno = respostaAnual.total_fcm;
+    
+    //CALCULOS DAS MOVIMENTAÇÕES, A FÁBRICA NÃO É CONSIDERADA PARA O CALCULO
+    this.movimentacaoDia = respostaAtual.total_movimentacao;
+    this.movimentacaoMes = respostaMensal.total_movimentacao;
+    this.movimentacaoAno = respostaAnual.total_movimentacao;
+
+    this.fcmiDados = [
+      { dia:'Último dia', hsProdDia:respostaAtual.tot_hs, tnHoraDia:respostaAtual.tn_hora },
+      { mes:'Mês Atual', hsProdMes:respostaMensal.tot_hs, tnHoraMes:respostaMensal.tn_hora },
+      { ano:'Ano Anual', hsProdAno:respostaAnual.tot_hs, tnHoraAno:respostaAnual.tn_hora }
+    ]
+    
     });
   }
   calcularFcmii() {
@@ -66,9 +97,15 @@ export class CalcarioComponent implements OnInit {
     const respostaAnual = response.anual;
 
     // Processando os dados Calcario
-    this.fcmiiTotalDia = respostaAtual.total_fcm1;
-    this.fcmiiTotalMes = respostaMensal.total_fcm1;
-    this.fcmiiTotalAno = respostaAnual.total_fcm1;
+    this.fcmiiTotalDia = respostaAtual.total_fcm;
+    this.fcmiiTotalMes = respostaMensal.total_fcm;
+    this.fcmiiTotalAno = respostaAnual.total_fcm;
+
+    this.fcmiiDados = [
+      { dia:'Último dia', hsProdDia:respostaAtual.tot_hs, tnHoraDia:respostaAtual.tn_hora },
+      { mes:'Mês Atual', hsProdMes:respostaMensal.tot_hs, tnHoraMes:respostaMensal.tn_hora },
+      { ano:'Ano Atual', hsProdAno:respostaAnual.tot_hs, tnHoraAno:respostaAnual.tn_hora }
+    ]
     
     });
   }
@@ -84,9 +121,16 @@ export class CalcarioComponent implements OnInit {
     const respostaAnual = response.anual;
 
     // Processando os dados Calcario
-    this.fcmiiiTotalDia = respostaAtual.total_fcm1;
-    this.fcmiiiTotalMes = respostaMensal.total_fcm1;
-    this.fcmiiiTotalAno = respostaAnual.total_fcm1;
+    this.fcmiiiTotalDia = respostaAtual.total_fcm;
+    this.fcmiiiTotalMes = respostaMensal.total_fcm;
+    this.fcmiiiTotalAno = respostaAnual.total_fcm;
+  
+    this.fcmiiiDados = [
+      { dia:'Último dia', hsProdDia:respostaAtual.tot_hs, tnHoraDia:respostaAtual.tn_hora },
+      { mes:'Mês Atual', hsProdMes:respostaMensal.tot_hs, tnHoraMes:respostaMensal.tn_hora },
+      { ano:'Ano Atual', hsProdAno:respostaAnual.tot_hs, tnHoraAno:respostaAnual.tn_hora }
+    ]
+
     });
   }
 }

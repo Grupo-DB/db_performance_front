@@ -4,127 +4,244 @@
             <b><a routerLink="../../">Painel Operacional</a> / <a routerLink="../">Produção</a> / Fábricas de Calcário</b>
         </p-divider>
     </div>
-    <div class="rows"><!--CArregamentos-->>
+    <div class="rows"><!--CArregamentos-->
         <div class="row1">
-            <div class="carregamento">
-                <div class="card">
-                    <div class="valor">
-                    <p>teste</p>
+            <div class="right">
+                <div class="titulo">
+                    <span> <b> Carregamento geral</b></span><br>
+                </div>
+                <div class="carregamento">
+                    <div class="cardCarregmento">
+                        <div class="valorCarregamento">
+                            <p>{{ movimentacaoDia }}</p>
+                        </div>
+                        <div class="unidadeCarregamento">
+                            <p>Último dia</p>
+                        </div>
                     </div>
-                    <div class="unidade">
-                    <p>Último dia</p>
+                    <div class="cardCarregmento">
+                        <div class="valorCarregamento">
+                            <p>{{ movimentacaoMes }}</p>
+                        </div>
+                        <div class="unidadeCarregamento">
+                            <p>Acomulado mês atual</p>
+                        </div>
+                    </div>
+                    <div class="cardCarregmento">
+                        <div class="valorCarregamento">
+                            <p>{{ movimentacaoAno }}</p>
+                        </div>
+                        <div class="unidadeCarregamento">
+                            <p>Acomulado ano atual</p>
+                        </div>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="valor">
-                        <p>teste</p>
-                    </div>
-                    <div class="unidade">
-                    <p>Acomulado mês atual</p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="valor">
-                        <p>teste</p>
-                    </div>
-                    <div class="unidade">
-                    <p>Acomulado ano atual</p>
-                    </div>
-                </div>
-            </div>
+            </div>    
         </div>
         <div class="row2"><!--FCM1-->
-            <div class="card">
-                <div class="valor">
-                <p>{{ fcmiTotalDia }}</p>
+            <div class="left">
+                <div class="titulo">
+                    <i class="pi pi-plus-circle"></i><span style="cursor: pointer;"> <b> FCMI </b></span><br>
                 </div>
-                <div class="unidade">
-                <p>Último dia</p>
+                <div class="cardsAcumulados">
+                    <div class="card">
+                        <div class="valor">
+                        <p>{{ fcmiTotalDia }}</p>
+                        </div>
+                        <div class="unidade">
+                        <p>Último dia</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="valor">
+                            <p>{{ fcmiTotalMes }}</p>
+                        </div>
+                        <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="valor">
+                            <p>{{ fcmiTotalAno }}</p>
+                        </div>
+                        <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="card">
-                <div class="valor">
-                    <p>{{ fcmiTotalMes }}</p>
+            <div class="tabelaProdutividade">   
+                <div class="titulo">
+                    <span> <b> Produtividade</b></span><br>
                 </div>
-                <div class="unidade">
-                <p>Acomulado mês atual</p>
-                </div>
-            </div>
-            <div class="card">
-                <div class="valor">
-                    <p>{{ fcmiTotalAno }}</p>
-                </div>
-                <div class="unidade">
-                <p>Acomulado ano atual</p>
-                </div>
-            </div>
-            <p-table 
-                 
-                [scrollable]="true" 
-                scrollHeight="350px"  
-            >
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th>Período</th>
-                        <th>Horas Produção</th>
-                        <th>Tn/h</th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-dado>
-                </ng-template>
-            </p-table>        
+                <p-table 
+                    [value]="fcmiDados"
+                    [scrollable]="true" 
+                    scrollHeight="350px"  
+                >
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Período</th>
+                            <th>Horas Produção</th>
+                            <th>Tn/h</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-fcmiDado>
+                        <tr *ngIf="fcmiDado.dia">
+                            <td>{{ fcmiDado.dia }}</td>
+                            <td>{{ fcmiDado.hsProdDia }}</td>
+                            <td>{{ fcmiDado.tnHoraDia }}</td>
+                        </tr>
+                        <tr *ngIf="fcmiDado.mes">
+                            <td>{{ fcmiDado.mes }}</td>
+                            <td>{{ fcmiDado.hsProdMes }}</td>
+                            <td>{{ fcmiDado.tnHoraMes }}</td>
+                        </tr>
+                        <tr *ngIf="fcmiDado.ano">
+                            <td>{{ fcmiDado.ano }}</td>
+                            <td>{{ fcmiDado.hsProdAno }}</td>
+                            <td>{{ fcmiDado.tnHoraAno }}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>             
         </div>
         <div class="row3"><!--FCMII-->
-            <div class="card">
-                <div class="valor">
-                    <p>{{ fcmiiTotalDia }}</p>
+            <div class="left">
+                <div class="titulo">
+                    <i class="pi pi-plus-circle"></i><span style="cursor: pointer;"> <b> FCMII </b></span><br>
                 </div>
-                <div class="unidade">
-                <p>Último dia</p>
+                <div class="cardsAcumulados">
+                        <div class="card">
+                            <div class="valor">
+                                <p>{{ fcmiiTotalDia }}</p>
+                            </div>
+                            <div class="unidade">
+                            <p>Último dia</p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="valor">
+                                <p>{{ fcmiiTotalMes }}</p>
+                            </div>
+                            <div class="unidade">
+                            <p>Acomulado mês atual</p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="valor">
+                                <p>{{ fcmiiTotalAno }}</p>
+                            </div>
+                            <div class="unidade">
+                            <p>Acomulado ano atual</p>
+                            </div>
+                        </div>
                 </div>
             </div>
-            <div class="card">
-                <div class="valor">
-                    <p>{{ fcmiiTotalMes }}</p>
+            <div class="tabelaProdutividade">   
+                <div class="titulo">
+                    <span> <b> Produtividade</b></span><br>
                 </div>
-                <div class="unidade">
-                <p>Acomulado mês atual</p>
-                </div>
-            </div>
-            <div class="card">
-                <div class="valor">
-                    <p>{{ fcmiiTotalAno }}</p>
-                </div>
-                <div class="unidade">
-                <p>Acomulado ano atual</p>
-                </div>
-            </div>
+                <p-table 
+                    [value]="fcmiiDados"
+                    [scrollable]="true" 
+                    scrollHeight="350px"  
+                >
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Período</th>
+                            <th>Horas Produção</th>
+                            <th>Tn/h</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-fcmiiDado>
+                        <tr *ngIf="fcmiiDado.dia">
+                            <td>{{ fcmiiDado.dia }}</td>
+                            <td>{{ fcmiiDado.hsProdDia }}</td>
+                            <td>{{ fcmiiDado.tnHoraDia }}</td>
+                        </tr>
+                        <tr *ngIf="fcmiiDado.mes">
+                            <td>{{ fcmiiDado.mes }}</td>
+                            <td>{{ fcmiiDado.hsProdMes }}</td>
+                            <td>{{ fcmiiDado.tnHoraMes }}</td>
+                        </tr>
+                        <tr *ngIf="fcmiiDado.ano">
+                            <td>{{ fcmiiDado.ano }}</td>
+                            <td>{{ fcmiiDado.hsProdAno }}</td>
+                            <td>{{ fcmiiDado.tnHoraAno }}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>            
         </div>
         <div class="row4"><!--FCMIII-->
-            <div class="card">
-                <div class="valor">
-                    <p>{{ fcmiiiTotalDia }}</p>
+            <div class="left">
+                <div class="titulo">
+                    <i class="pi pi-plus-circle"></i><span style="cursor: pointer;"> <b> FCMIII </b></span><br>
                 </div>
-                <div class="unidade">
-                <p>Último dia</p>
+                <div class="cardsAcumulados">
+                    <div class="card">
+                        <div class="valor">
+                            <p>{{ fcmiiiTotalDia }}</p>
+                        </div>
+                        <div class="unidade">
+                        <p>Último dia</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="valor">
+                            <p>{{ fcmiiiTotalMes }}</p>
+                        </div>
+                        <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="valor">
+                            <p>{{ fcmiiiTotalAno }}</p>
+                        </div>
+                        <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="card">
-                <div class="valor">
-                    <p>{{ fcmiiiTotalMes }}</p>
+            <div class="tabelaProdutividade">   
+                <div class="titulo">
+                    <span> <b> Produtividade</b></span><br>
                 </div>
-                <div class="unidade">
-                <p>Acomulado mês atual</p>
-                </div>
-            </div>
-            <div class="card">
-                <div class="valor">
-                    <p>{{ fcmiiiTotalAno }}</p>
-                </div>
-                <div class="unidade">
-                <p>Acomulado ano atual</p>
-                </div>
-            </div>
+                <p-table 
+                    [value]="fcmiiiDados"
+                    [scrollable]="true" 
+                    scrollHeight="350px"
+                    
+                >
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Período</th>
+                            <th>Horas Produção</th>
+                            <th>Tn/h</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-fcmiiiDado>
+                        <tr *ngIf="fcmiiiDado.dia">
+                            <td>{{ fcmiiiDado.dia }}</td>
+                            <td>{{ fcmiiiDado.hsProdDia }}</td>
+                            <td>{{ fcmiiiDado.tnHoraDia }}</td>
+                        </tr>
+                        <tr *ngIf="fcmiiiDado.mes">
+                            <td>{{ fcmiiiDado.mes }}</td>
+                            <td>{{ fcmiiiDado.hsProdMes }}</td>
+                            <td>{{ fcmiiiDado.tnHoraMes }}</td>
+                        </tr>
+                        <tr *ngIf="fcmiiiDado.ano">
+                            <td>{{ fcmiiiDado.ano }}</td>
+                            <td>{{ fcmiiiDado.hsProdAno }}</td>
+                            <td>{{ fcmiiiDado.tnHoraAno }}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>   
         </div>
     </div>
 </div>
