@@ -13,6 +13,7 @@ export class HomeService {
   private britagemUrl =  'http://localhost:8000/britagem/calcular_britagem/';
   private rebritagemUrl =  'http://localhost:8000/rebritagem/calcular_rebritagem/';
   private fabricaCalcarioUrl =  'http://localhost:8000/calcario/calcular_calcario/';
+  private graficosFabricaCalcarioUrl =  'http://localhost:8000/calcario/calcular_calcario_graficos/';
   private rebritagemParadasUrl =  'http://localhost:8000/rebritagem/calcular_rebritagem_paradas/';
   private graficosUrl =  'http://localhost:8000/britagem/calcular_graficos/';
   
@@ -43,5 +44,8 @@ export class HomeService {
   }
   fabricaCalcario(tipoCalculo: string,fabrica:number,): Observable<any> {
     return this.httpClient.post<any>(this.fabricaCalcarioUrl, { tipo_calculo: tipoCalculo, fabrica:fabrica });
+  }
+  fabricaCalcarioGrafico(tipoCalculo: any,fabrica:any,): Observable<any> {
+    return this.httpClient.post<any>(this.graficosFabricaCalcarioUrl, { tipo_calculo: tipoCalculo, fabrica:fabrica });
   }
 }
