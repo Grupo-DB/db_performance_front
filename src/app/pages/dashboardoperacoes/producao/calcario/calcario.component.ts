@@ -148,23 +148,37 @@ export class CalcarioComponent implements OnInit {
   }
 
   graficoMensalAcumulado(tipoCalculo: string, fabrica: number){
-    this.selectedButton = 'mensal';
+    //this.selectedButton = 'mensal';
     this.homeService.fabricaCalcarioGrafico(tipoCalculo, fabrica).subscribe(response => {
       //this.graficoProducaoFcmMesChart(response.volume_diario)
       this.graficoProducaoTotalFabricaChart(response.volume_diario)
     })
   }
   graficoAnualAcumulado(tipoCalculo: string, fabrica: number){
-    this.selectedButton = 'anual';
+    //this.selectedButton = 'anual';
     this.homeService.fabricaCalcarioGrafico(tipoCalculo, fabrica).subscribe(response => {
       //this.graficoProducaoFcmMesChart(response.volume_mensal)
       this.graficoProducaoTotalFabricaChartAno(response.volume_mensal)
     })
   }
   graficoMensalFcmi(tipoCalculo: string, fabrica: number){
-    this.selectedButton = 'mensal';
+    //this.selectedButton = 'mensal';
     this.homeService.fabricaCalcarioGrafico(tipoCalculo, fabrica).subscribe(response => {
       this.graficoProducaoFcmiMesChart(response.volume_diario)
+      //this.graficoProducaoTotalFabricaChart(response.volume_diario)
+    })
+  }
+  graficoMensalFcmii(tipoCalculo: string, fabrica: number){
+    //this.selectedButton = 'mensal';
+    this.homeService.fabricaCalcarioGrafico(tipoCalculo, fabrica).subscribe(response => {
+      this.graficoProducaoFcmiiMesChart(response.volume_diario)
+      //this.graficoProducaoTotalFabricaChart(response.volume_diario)
+    })
+  }
+  graficoMensalFcmiii(tipoCalculo: string, fabrica: number){
+    //this.selectedButton = 'mensal';
+    this.homeService.fabricaCalcarioGrafico(tipoCalculo, fabrica).subscribe(response => {
+      this.graficoProducaoFcmiiiMesChart(response.volume_diario)
       //this.graficoProducaoTotalFabricaChart(response.volume_diario)
     })
   }
@@ -180,7 +194,7 @@ export class CalcarioComponent implements OnInit {
     }
   
     // Criando o gráfico com Chart.js
-    this.graficoProducaoFcmiMes = new Chart('graficoProducaoDiariaFcmi', {
+    this.graficoProducaoFcmiMes = new Chart('graficoTotalProducaoDiariaFcmi', {
       type: 'bar',
       data: {
         labels: labels, // Meses do ano
@@ -188,6 +202,148 @@ export class CalcarioComponent implements OnInit {
           {
             label: 'Tn Pedra Britada Calcario',
             data: fcmiData, // Dados de LOCCOD 44
+            backgroundColor: '#71AAE0',
+            borderColor: '#3A3E4C',
+            borderWidth: 1
+          },
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            display: true,
+            beginAtZero: true,
+            grid: {
+              display: false,
+            },
+            ticks: {
+              color: '#000'
+            }
+          },
+          y: {
+            display: false,
+            beginAtZero: true,
+            grid: {
+              display: false,
+            },
+            ticks: {
+              color: '#000'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false,
+            position: 'right',
+            fullSize: true,
+            labels: {
+              font: {
+                size: 10
+              }
+            }
+          },
+          title: {
+            display: true,
+            text: 'Total em Toneladas por Dia',
+            
+          }
+        }
+      }
+    });
+  }
+
+  graficoProducaoFcmiiMesChart(volumeDiario: any) {
+    // Preparando os dados para o gráfico
+    const labels = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]; // Meses
+    const fcmiiData = volumeDiario.fcmii.map((dia: any) => dia.PESO);
+  
+    // Verifica se o gráfico já foi criado e o destrói antes de criar um novo
+    if (this.graficoProducaoFcmiMes) {
+      this.graficoProducaoFcmiMes.destroy();
+    }
+  
+    // Criando o gráfico com Chart.js
+    this.graficoProducaoFcmiMes = new Chart('graficoTotalProducaoDiariaFcmi', {
+      type: 'bar',
+      data: {
+        labels: labels, // Meses do ano
+        datasets: [
+          {
+            label: 'Tn Pedra Britada Calcario',
+            data: fcmiiData, // Dados de LOCCOD 44
+            backgroundColor: '#71AAE0',
+            borderColor: '#3A3E4C',
+            borderWidth: 1
+          },
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            display: true,
+            beginAtZero: true,
+            grid: {
+              display: false,
+            },
+            ticks: {
+              color: '#000'
+            }
+          },
+          y: {
+            display: false,
+            beginAtZero: true,
+            grid: {
+              display: false,
+            },
+            ticks: {
+              color: '#000'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false,
+            position: 'right',
+            fullSize: true,
+            labels: {
+              font: {
+                size: 10
+              }
+            }
+          },
+          title: {
+            display: true,
+            text: 'Total em Toneladas por Dia',
+            
+          }
+        }
+      }
+    });
+  }
+
+  graficoProducaoFcmiiiMesChart(volumeDiario: any) {
+    // Preparando os dados para o gráfico
+    const labels = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]; // Meses
+    const fcmiiiData = volumeDiario.fcmiii.map((dia: any) => dia.PESO);
+  
+    // Verifica se o gráfico já foi criado e o destrói antes de criar um novo
+    if (this.graficoProducaoFcmiMes) {
+      this.graficoProducaoFcmiMes.destroy();
+    }
+  
+    // Criando o gráfico com Chart.js
+    this.graficoProducaoFcmiMes = new Chart('graficoTotalProducaoDiariaFcmi', {
+      type: 'bar',
+      data: {
+        labels: labels, // Meses do ano
+        datasets: [
+          {
+            label: 'Tn Pedra Britada Calcario',
+            data: fcmiiiData, // Dados de LOCCOD 44
             backgroundColor: '#71AAE0',
             borderColor: '#3A3E4C',
             borderWidth: 1
@@ -257,12 +413,12 @@ export class CalcarioComponent implements OnInit {
     });
   
     // Destroy the previous chart if it exists
-    if (this.graficoProducaoTotalFabrica) {
-      this.graficoProducaoTotalFabrica.destroy();
+    if (this.graficoProducaoFcmiMes) {
+      this.graficoProducaoFcmiMes.destroy();
     }
   
     // Create the chart with Chart.js
-    this.graficoProducaoTotalFabrica = new Chart('graficoTotalProducaoDiaria', {
+    this.graficoProducaoFcmiMes = new Chart('graficoTotalProducaoDiariaFcmi', {
       type: 'bar',
       data: {
         labels: labels, // Days of the month

@@ -257,7 +257,7 @@
             <b>Produção  Calcário</b>
         </p-divider> 
     </div>
-    <div class="rowBotoes">
+    <!-- <div class="rowBotoes">
         <div 
             class="btnCalc"
             (click)="graficoMensalAcumulado('mensal',23)"
@@ -272,7 +272,7 @@
         >
             <p>No ano</p>
         </div>
-    </div>
+    </div> -->
     <div class="rowBotoesFabricas">
         <div 
             class="btnCalc"
@@ -284,14 +284,19 @@
         </div>
         <div 
             class="btnCalc"
-            (click)="graficoMensalFcmi('mensal',23)"
+           (click)="graficoMensalFcmi('mensal',23)"
         >
             <p>FCM I</p>
         </div>
-        <div class="btnCalc" >
+        <div 
+            class="btnCalc"
+            (click)="graficoMensalFcmii('mensal',23)"
+        >
             <p>FCM II</p>
         </div>
-        <div class="btnCalc" >
+        <div class="btnCalc"
+        (click)="graficoMensalFcmiii('mensal',23)"
+        >
             <p>FCM III</p>
         </div>
         <div class="btnCalc" >
@@ -303,7 +308,13 @@
             <canvas id="graficoTotalProducaoDiaria"></canvas>
         </div>
         <div class="chartRadarAvaliadores">
-            <canvas id="'graficoProducaoDiariaFcmi"></canvas>
+            <canvas id="graficoTotalProducaoDiariaFcmi"></canvas>
+        </div>
+        <div class="chartRadarAvaliadores">
+            <canvas id="graficoTotalProducaoDiariaFcmii"></canvas>
+        </div>
+        <div class="chartRadarAvaliadores">
+            <canvas id="graficoTotalProducaoDiariaFcmiii"></canvas>
         </div>
         <div class="projecoes">
             <div class="titulo2">
