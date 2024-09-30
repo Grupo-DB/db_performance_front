@@ -257,64 +257,59 @@
             <b>Produção  Calcário</b>
         </p-divider> 
     </div>
-    <!-- <div class="rowBotoes">
+    <div class="rowBotoes">
         <div 
             class="btnCalc"
-            (click)="graficoMensalAcumulado('mensal',23)"
+            (click)="gerarGrafico('mensal','acumulado')"
             [ngClass]="{'active': selectedButton === 'mensal'}" 
         >
             <p>No mês</p>
         </div>
         <div 
             class="btnCalc" 
-            (click)="graficoAnualAcumulado('anual',23)"
+            (click)="gerarGrafico('anual','acumulado')"
             [ngClass]="{'active': selectedButton === 'anual'}" 
         >
             <p>No ano</p>
         </div>
-    </div> -->
+    </div>
     <div class="rowBotoesFabricas">
         <div 
             class="btnCalc"
-            (click)="graficoMensalAcumulado('mensal',23)"
-            [ngClass]="{'active': selectedButton === 'mensal'}"
-            [ngClass]="{'active': selectedButton === 'anual'}"  
+            (click)="gerarGrafico(selectedButton,'acumulado')"
+            [ngClass]="{'active': selectedFactory === 'acumulado'}"
         >
             <p>Acumulado</p>
         </div>
         <div 
             class="btnCalc"
-           (click)="graficoMensalFcmi('mensal',23)"
+           (click)="gerarGrafico(selectedButton,'fcmi')"
+           [ngClass]="{'active': selectedFactory === 'fcmi'}"
         >
             <p>FCM I</p>
         </div>
         <div 
             class="btnCalc"
-            (click)="graficoMensalFcmii('mensal',23)"
+            (click)="gerarGrafico(selectedButton,'fcmii')"
+            [ngClass]="{'active': selectedFactory === 'fcmii'}"
         >
             <p>FCM II</p>
         </div>
         <div class="btnCalc"
-        (click)="graficoMensalFcmiii('mensal',23)"
+        (click)="gerarGrafico(selectedButton,'fcmiii')"
+        [ngClass]="{'active': selectedFactory === 'fcmiii'}"
         >
             <p>FCM III</p>
         </div>
-        <div class="btnCalc" >
-            <p>Detalhar</p>
+        <div 
+            class="btnCalc" 
+        >
+            <a (click)="exibirEquipamentos()" style="color: inherit;"><p>Detalhar</p></a>
         </div>
     </div>
     <div class="containerModal">
         <div class="chartRadarAvaliadores">
-            <canvas id="graficoTotalProducaoDiaria"></canvas>
-        </div>
-        <div class="chartRadarAvaliadores">
             <canvas id="graficoTotalProducaoDiariaFcmi"></canvas>
-        </div>
-        <div class="chartRadarAvaliadores">
-            <canvas id="graficoTotalProducaoDiariaFcmii"></canvas>
-        </div>
-        <div class="chartRadarAvaliadores">
-            <canvas id="graficoTotalProducaoDiariaFcmiii"></canvas>
         </div>
         <div class="projecoes">
             <div class="titulo2">
@@ -323,7 +318,7 @@
             <div class="media">
                 <div class="card2">
                     <div class="valor">
-                        <p>54656</p>
+                        <p>{{ media }}</p>
                     </div>
                     <div class="unidade2">
                         <p>Tn</p>
@@ -336,7 +331,7 @@
             <div class="projecao">
                 <div class="card2">
                     <div class="valor">
-                        <p>46546</p>
+                        <p>{{ projecao }}</p>
                     </div>
                     <div class="unidade2">
                         <p>Tn</p>
@@ -346,4 +341,56 @@
         </div>
     </div>    
 
+</p-dialog>
+<!--MODAL EQUIPAMENTOS-->
+<p-dialog 
+    [modal]="true"
+    [(visible)]="equipamentosVisivel" 
+    [style]="{ width: '90%', height: '90%' }" 
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"   
+>
+<div class="titulo">
+    <p-divider align="left" type="solid">
+        <b>Produtividade Fábricas</b>
+    </p-divider>
+    <div class="container">
+        <div class="rowSuperior">
+
+            <p-calendar
+                [style]="{'width':'100%','margin-top':'40px'}"
+                id="da" 
+                formControlName="data_admissao"
+                dateFormat="dd/mm/yy"                  
+                [showIcon]="true"
+                placeholder="Data"
+            >
+            </p-calendar>
+            <div class="rightEqpto">
+                <div class="tituloEqpto">
+                    <span> <b> Carregamento geral</b></span><br>
+                </div>
+                <div class="media2">
+                    <div class="cardCarregamentoEqpto">
+                        <div class="valorCarregamentoEqpto">
+                            <p>99999999</p>
+                        </div>
+                        <div class="unidadeCarregamentoEqpto">
+                            <p>Último dia</p>
+                        </div>    
+                    </div>
+                </div>    
+            </div>    
+        </div><!--end rowSupeiror-->
+        <div class="containerInterno">
+            <div class="esquerda">
+                <div class="row1"></div><!--end row1-->
+                <div class="row2"></div><!--end row2-->
+                <div class="row3"></div><!--end row3-->   
+            </div><!--end Esquerda-->
+            <div class="direita">
+
+            </div><!--End Direita-->
+        </div><!--end containerInterno--> 
+    </div><!--end container--> 
+</div>
 </p-dialog>
