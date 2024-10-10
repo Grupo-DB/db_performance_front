@@ -94,9 +94,9 @@ export class AmbienteComponent implements OnInit {
   {
     this.registerambienteForm = new FormGroup({
       empresa: new FormControl('',[Validators.required]),
-      filial: new FormControl('',[Validators.required]),
-      area: new FormControl('',[Validators.required]),
-      setor: new FormControl('',[Validators.required]),
+      filial: new FormControl({ value: '', disabled: true }),  // FormControl desabilitado inicialmente
+      area: new FormControl({ value: '', disabled: true }),
+      setor: new FormControl({ value: '', disabled: true }),
       nome: new FormControl('',[Validators.required, Validators.minLength(3)]),
    });
    this.editForm = this.fb.group({
@@ -232,9 +232,17 @@ export class AmbienteComponent implements OnInit {
     }
   }
   filiaisByEmpresa(): void {
+    const filialControl = this.registerambienteForm.get('filial');
+    if (filialControl) {
+      filialControl.disable();
+    }
     if (this.empresaSelecionadaId !== null) {
+      this.filiais = [];
       this.filialService.getFiliaisByEmpresa(this.empresaSelecionadaId).subscribe(data => {
         this.filiais = data;
+        if (filialControl) {
+          filialControl.enable();
+        }
         console.log('Filiais carregadas:', this.filiais); // Log para depuração
       });
     }
@@ -250,9 +258,16 @@ export class AmbienteComponent implements OnInit {
     }
   }
   areasByFilial(): void {
+    const areaControl = this.registerambienteForm.get('area');
+    if (areaControl) {
+      areaControl.disable();
+    }
     if (this.filialSelecionadaId !== null) {
       this.areaService.getAreasByFilial(this.filialSelecionadaId).subscribe(data => {
         this.areas = data;
+        if (areaControl) {
+          areaControl.enable();
+        }
         console.log('Areas carregadas:', this.areas); // Log para depuração
       });
     }
@@ -268,15 +283,20 @@ export class AmbienteComponent implements OnInit {
     }
   }
   setoresByArea(): void {
+    const setorControl = this.registerambienteForm.get('setor');
+    if (setorControl) {
+      setorControl.disable();
+    }
     if (this.areaSelecionadaId !== null) {
       this.setorService.getSetorByArea(this.areaSelecionadaId).subscribe(data => {
         this.setores = data;
+        if (setorControl) {
+          setorControl.enable();
+        }
         console.log('Setores carregadas:', this.areas); // Log para depuração
       });
     }
   }
-
-
   cleareditForm() {
     this.editForm.reset();
   }

@@ -80,6 +80,7 @@ export class CargoComponent implements OnInit {
   filialSelecionadaId: number | null = null;
   areaSelecionadaId: number | null = null;
   setorSelecionadoId: number | null = null
+  ambienteSelecionadoId: number | null = null;
 
   registercargoForm!: FormGroup<RegisterCargoForm>;
   @ViewChild('RegistercargoForm') RegisterCargoForm: any;
@@ -104,10 +105,10 @@ export class CargoComponent implements OnInit {
     this.registercargoForm = new FormGroup({
       nome: new FormControl('',[Validators.required, Validators.minLength(3)]),
       empresa: new FormControl('',[Validators.required]),
-      filial: new FormControl('',[Validators.required]),
-      area: new FormControl('',[Validators.required]),
-      setor: new FormControl('',[Validators.required]),
-      ambiente: new FormControl('',[Validators.required]),
+      filial: new FormControl({ value: '', disabled: true }),  // FormControl desabilitado inicialmente
+      area: new FormControl({ value: '', disabled: true }),
+      setor: new FormControl({ value: '', disabled: true }),
+      ambiente: new FormControl({ value: '', disabled: true }),
    });
    this.editForm = this.fb.group({
     id: [''],
@@ -262,13 +263,21 @@ onEmpresaSelecionada(empresa: any): void {
   }
 }
 filiaisByEmpresa(): void {
+  const filialControl = this.registercargoForm.get('filial');
+  if (filialControl) {
+    filialControl.disable();
+  }
   if (this.empresaSelecionadaId !== null) {
+    this.filiais = [];
     this.filialService.getFiliaisByEmpresa(this.empresaSelecionadaId).subscribe(data => {
       this.filiais = data;
+      if (filialControl) {
+        filialControl.enable();
+      }
       console.log('Filiais carregadas:', this.filiais); // Log para depuração
     });
   }
-} 
+}
 onFilialSelecionada(filial: any): void {
   const id = filial.id;
   if (id !== undefined) {
@@ -280,9 +289,16 @@ onFilialSelecionada(filial: any): void {
   }
 }
 areasByFilial(): void {
+  const areaControl = this.registercargoForm.get('area');
+  if (areaControl) {
+    areaControl.disable();
+  }
   if (this.filialSelecionadaId !== null) {
     this.areaService.getAreasByFilial(this.filialSelecionadaId).subscribe(data => {
       this.areas = data;
+      if (areaControl) {
+        areaControl.enable();
+      }
       console.log('Areas carregadas:', this.areas); // Log para depuração
     });
   }
@@ -298,9 +314,16 @@ onAreaSelecionada(area: any): void {
   }
 }
 setoresByArea(): void {
+  const setorControl = this.registercargoForm.get('setor');
+  if (setorControl) {
+    setorControl.disable();
+  }
   if (this.areaSelecionadaId !== null) {
     this.setorService.getSetorByArea(this.areaSelecionadaId).subscribe(data => {
       this.setores = data;
+      if (setorControl) {
+        setorControl.enable();
+      }
       console.log('Setores carregadas:', this.areas); // Log para depuração
     });
   }
@@ -309,7 +332,7 @@ setoresByArea(): void {
 onSetorSelecionado(setor: any): void {
   const id = setor.id;
   if (id !== undefined) {
-    console.log('Setor selecionado ID:', id); // Log para depuração
+    console.log('Ambiente selecionado ID:', id); // Log para depuração
     this.setorSelecionadoId = id;
     this.ambientesBySetor();
   } else {
@@ -317,10 +340,17 @@ onSetorSelecionado(setor: any): void {
   }
 }
 ambientesBySetor(): void {
+  const ambienteControl = this.registercargoForm.get('ambiente');
+  if (ambienteControl) {
+    ambienteControl.disable();
+  }
   if (this.setorSelecionadoId !== null) {
     this.ambienteService.getAmbientesBySetor(this.setorSelecionadoId).subscribe(data => {
       this.ambientes = data;
-      console.log('Setores carregadas:', this.areas); // Log para depuração
+      if (ambienteControl) {
+        ambienteControl.enable();
+      }
+      console.log('Ambientes carregadas:', this.areas); // Log para depuração
     });
   }
 }

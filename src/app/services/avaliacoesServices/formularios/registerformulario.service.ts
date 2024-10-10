@@ -10,7 +10,7 @@ import { Formulario } from '../../../pages/avaliacoes/formulario/formulario.comp
   providedIn: 'root'
 })
 export class FormularioService {
-  private apiUrl = 'http://localhost:8000/management/formularios/';
+  private apiUrl = 'http://172.50.10.79:8008/management/formularios/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
   registerformulario(nome: string,tipoavaliacao:number){
@@ -45,7 +45,7 @@ export class FormularioService {
     return this.httpClient.post<Formulario>(`${this.apiUrl}${formularioId}/remove_avaliado/`, { avaliado_id: avaliadoId });
     }
   obterFormulariosDoAvaliado(avaliadoId: number): Observable<any> {
-    return this.httpClient.get<any>(`http://localhost:8000/management/avaliado/${avaliadoId}/formulario/`);
+    return this.httpClient.get<any>(`http://172.50.10.79:8008/management/avaliado/${avaliadoId}/formulario/`);
   }
      
 }

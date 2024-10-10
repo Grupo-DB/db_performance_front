@@ -87,9 +87,12 @@ export class RelatoriosComponent implements OnInit {
   periodos: any;
   tipos: any;
   avaliadorSelecionadoId: any[] = [];
+  avaliadorSelecionadoId2: any[] = [];
   avaliadoSelecionadoId: any[] = [];
   periodoSelecionado: any[] = [];
   tipoSelecionado: any[] = [];
+  tipoSelecionado2: any[] = [];
+  tipoSelecionado3: any[] = [];
   filteredAvaliacoes: any[] = [];
   selectedEmpresas: any [] = [];
   selectedCargos: any[] = [];
@@ -141,15 +144,15 @@ constructor(
   ngOnInit(): void {
     this.applyFiltersAvaliados();
     this.applyFilters();
-      this.applyFiltersAvaliacoesAvaliadorPeriodo();
+      //this.applyFiltersAvaliacoesAvaliadorPeriodo();
       this.applyFiltersAvaliacoesPeriodo();
       this.registercompanyService.getCompanys().subscribe(empresas => {
         this.empresas = empresas;
       })
 
-      this.filialService.getFiliais().subscribe(filiais => {
-        this.filiais = filiais;
-      })
+      // this.filialService.getFiliais().subscribe(filiais => {
+      //   this.filiais = filiais;
+      // })
     
       this.avaliadoService.getAvaliados().subscribe(
       avaliados => {
@@ -186,15 +189,15 @@ constructor(
         console.error('Error fetching users:',error);
       }
     );
-    this.setorService.getSetores().subscribe(
-      setores => {
-        this.setores = setores;
-        //this.mapSetores()
-      },
-      error => {
-        console.error('Error fetching users:',error);
-      }
-    );
+    // this.setorService.getSetores().subscribe(
+    //   setores => {
+    //     this.setores = setores;
+    //     //this.mapSetores()
+    //   },
+    //   error => {
+    //     console.error('Error fetching users:',error);
+    //   }
+    // );
     this.colaboradorService.getColaboradores().subscribe(
       colaboradores => {
         this.colaboradores = colaboradores;
@@ -315,10 +318,10 @@ constructor(
   onSetorSelecionado(setor: any): void {
     const id = this.selectedSetores;
     if (id !== undefined) {
-      console.log('Setor selecionado ID:', id); // Log para depuração
+      console.log('Ambiente selecionado ID:', id); // Log para depuração
       this.selectedSetores = id;
-      this.ambientesBySetor();
       this.applyFiltersAvaliados();
+      this.ambientesBySetor();
     } else {
       console.error('O ID do avaliado é indefinido');
     }
@@ -327,25 +330,25 @@ constructor(
     if (this.selectedSetores !== null) {
       this.ambienteService.getAmbientesBySetor(this.selectedSetores).subscribe(data => {
         this.ambientes = data;
-        console.log('Setores carregadas:', this.areas); // Log para depuração
+        console.log('Areas carregadas:', this.areas); // Log para depuração
       });
     }
   }
-
-  onAmbienteSelecionado(ambiente: any): void {
+  onAmbienteSelecionado(setor: any): void {
     const id = this.selectedAmbientes;
     if (id !== undefined) {
-      console.log('Ambiente selecionado ID:', id); // Log para depuração
+      console.log('Setor selecionado ID:', id); // Log para depuração
       this.selectedAmbientes = id;
-      this.cargosByAmbiente();
+      this.cargosByAmbientes();
       this.applyFiltersAvaliados();
     } else {
       console.error('O ID do avaliado é indefinido');
     }
   }
-  cargosByAmbiente(): void {
+ 
+  cargosByAmbientes(): void {
     if (this.selectedAmbientes !== null) {
-      this.cargoService.getCargosByAmbiente(this.selectedAmbientes).subscribe(data => {
+      this.cargoService.getCargosByAmbientes(this.selectedAmbientes).subscribe(data => {
         this.cargos = data;
         console.log('Setores carregadas:', this.areas); // Log para depuração
       });
@@ -392,6 +395,10 @@ constructor(
 
   applyFiltersAvaliacoesPeriodo():void{
     const filters={
+      avaliadorSelecionadoId:this.avaliadorSelecionadoId2,
+      tipoSelecionado: this.tipoSelecionado2,
+      data_inicio: this.data_inicio,
+      data_fim: this.data_fim,
       avaliadoSelecionadoId:this.avaliadoSelecionadoId,
       selectedEmpresas: this.selectedEmpresas,
       selectedFiliais: this.selectedFiliais,
@@ -426,8 +433,9 @@ constructor(
 
   applyFilters():void{
     const filters={
-      avaliadorSelecionadoId:this.avaliadorSelecionadoId,
+      avaliadorSelecionadoId:this.avaliadorSelecionadoId2,
       avaliadoSelecionadoId:this.avaliadoSelecionadoId,
+      tipoSelecionado: this.tipoSelecionado2,
       data_inicio: this.data_inicio,
       data_fim: this.data_fim,
     };
@@ -462,11 +470,12 @@ constructor(
               backgroundColor: [
                   //'#4C5264',
                   //'#07449b',
-                  '#12bfd7',
-                  '#242730',
-                  '#97a3c2',
-                  '#898993',
-                  '#1890FF',
+                  // '#12bfd7',
+                  // '#242730',
+                  // '#97a3c2',
+                  // '#898993',
+                  // '#1890FF',
+                  'rgba(18, 191, 215, 0.5)',
               ],
               hoverBackgroundColor: [
                   '#4C5264',
@@ -535,11 +544,12 @@ updateNotaAvaliadosChart(graficoNotasAvaliados: any): void {
               backgroundColor: [
                   //'#4C5264',
                   //'#07449b',
-                  '#12bfd7',
-                  '#242730',
-                  '#97a3c2',
-                  '#898993',
-                  '#1890FF',
+                  // '#12bfd7',
+                  // '#242730',
+                  // '#97a3c2',
+                  // '#898993',
+                  // '#1890FF',
+                  'rgba(18, 191, 215, 0.5)'
               ],
               hoverBackgroundColor: [
                   '#4C5264',
@@ -558,7 +568,7 @@ updateNotaAvaliadosChart(graficoNotasAvaliados: any): void {
           scales: {
               x: {
                   display:false,
-                  beginAtZero: true,
+                  beginAtZero: false,
                   grid:{
                       display:false,
                   },
@@ -616,17 +626,18 @@ graficoNotaPeriodoAvaliadoChart(graficoNotasAvaliadosPeriodo: any): void {
             const periodData = graficoNotasAvaliadosPeriodo[periodo];
             return periodData ? (periodData[pergunta] || 0) : 0;
         }),
-        fill: false,
-        tension: 0.1,
-        backgroundColor: [
-          '#4C5264',
-          '#07449b',
-          '#12bfd7',
-          '#242730',
-          '#97a3c2',
-          '#898993',
-          '#1890FF',
-      ],
+        fill:true,
+        tension: 0.5,
+        pointRadius:6,
+         backgroundColor: [
+          'rgba(76, 82, 100, 0.5)',   // '#4C5264' com transparência
+          'rgba(7, 68, 155, 0.5)',    // '#07449b' com transparência
+          'rgba(18, 191, 215, 0.5)',  // '#12bfd7' com transparência
+          'rgba(36, 39, 48, 0.5)',    // '#242730' com transparência
+          'rgba(151, 163, 194, 0.5)', // '#97a3c2' com transparência
+          'rgba(137, 137, 147, 0.5)', // '#898993' com transparência
+          'rgba(24, 144, 255, 0.5)'   // '#1890FF' com transparência
+       ],
       hoverBackgroundColor: [
           '#4C5264',
           '#07449b',
@@ -665,10 +676,11 @@ graficoNotaPeriodoAvaliadoChart(graficoNotasAvaliadosPeriodo: any): void {
                   }
               },
               y: {
-                  display:true,
+                  stacked: true,
+                  display:false,
                   beginAtZero: true,
                   grid:{
-                      display:false,
+                      display:true,
                   },
                   ticks: {
                       color: '#000'
@@ -678,8 +690,8 @@ graficoNotaPeriodoAvaliadoChart(graficoNotasAvaliadosPeriodo: any): void {
           plugins: {
               legend: {
                   display:true,
-                  position:'right',
-                  fullSize: true,
+                  position:'top',
+                  fullSize: false,
                   labels:{
                     font:{
                       size:10
@@ -944,14 +956,11 @@ graficoNotaGeralPeriodoAvaliadoChart(graficoNotaGeralPeriodoAvaliado: any): void
           labels: Object.keys(graficoNotaGeralPeriodoAvaliado),
           datasets: [{
               data: Object.values(graficoNotaGeralPeriodoAvaliado),
+              fill:true,
+              tension:0.6,
+              pointRadius:6,
               backgroundColor: [
-                  '#4C5264',
-                  '#07449b',
-                  '#12bfd7',
-                  '#242730',
-                  '#97a3c2',
-                  '#898993',
-                  '#1890FF',
+                  'rgba(18, 191, 215, 0.5)'
               ],
               hoverBackgroundColor: [
                   '#898993',
@@ -959,8 +968,8 @@ graficoNotaGeralPeriodoAvaliadoChart(graficoNotaGeralPeriodoAvaliado: any): void
                   '#4C5264',
                   '#07449b',
                   '#242730',
-              '#12bfd7',	            
-              '#1890FF',
+                  '#12bfd7',	            
+                  '#1890FF',
               ]
           }]
       },
@@ -981,8 +990,9 @@ graficoNotaGeralPeriodoAvaliadoChart(graficoNotaGeralPeriodoAvaliado: any): void
               y: {
                   display:true,
                   beginAtZero: true,
+                  max:5,
                   grid:{
-                      display:false,
+                      display:true,
                   },
                   ticks: {
                       color: '#000'

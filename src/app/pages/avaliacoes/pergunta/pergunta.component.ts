@@ -25,6 +25,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 
 
+
 interface RegisterPerguntaForm{
   texto: FormControl,
   legenda: FormControl

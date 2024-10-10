@@ -113,7 +113,7 @@ primaryBtnText="Cadastrar"
 <div *ngIf="hasGroup(['Admin','RHGestor'])" class="tabela">
     <p-toast />
     
-    <p-table
+    <!-- <p-table
         #dt1
         [value]="formularios"
         [paginator]="true"
@@ -168,5 +168,79 @@ primaryBtnText="Cadastrar"
         <ng-template pTemplate="paginatorright">
             <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
         </ng-template>
-    </p-table>
+    </p-table> -->
+
+   
+    <p-table 
+    #dt1
+    [value]="filteredAvaliados.length ? filteredAvaliados : formularios" 
+    [tableStyle]="{'min-width': '70rem'}" 
+    rowGroupMode="subheader" 
+    groupRowsBy="nome" 
+    dataKey="nome"
+    sortMode="single"
+    sortField="nome"
+    [globalFilterFields]="['nome']"
+>
+    <ng-template pTemplate="header">
+        <tr>
+            <th style="width:33%">Nome do Formulário</th>
+            <th style="width:33%">Avaliados</th>
+            <th style="width:33%">Remover</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="caption">
+        <div class="flext">
+            <span class="p-input-icon-left ml-auto">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Digite o nome do avaliado" />
+            </span>
+            <button pButton label="Pesquisar" severity="info" (click)="filterTable()"></button>
+            <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="groupheader" let-formulario let-rowIndex="rowIndex" let-expanded="expanded">
+        <tr>
+            <td colspan="5">
+                <span class="font-bold ml-2">{{formulario.nome}}</span>
+                <button 
+                    type="button" 
+                    pButton 
+                    pRipple 
+                    [pRowToggler]="formulario" 
+                    class="p-button-text p-button-rounded p-button-plain mr-2" 
+                    [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+                >
+                <i class="pi pi-chevron-right"></i>
+                </button>
+            </td>
+        </tr>
+    </ng-template>
+    
+    <ng-template pTemplate="rowexpansion" let-formulario>
+        <tr *ngFor="let avaliado of formulario.avaliados">
+            <td></td>
+            <td>
+                <div class="avaliado">
+                    {{ avaliado.nome }}
+                </div>
+                
+            </td>
+            <td>
+                <p-toast />
+                <div class="btnprit" (click)="removeAvaliado(formulario, avaliado)">
+                    <p>-</p>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+
+   
+    
+
+
+
+
 </div> 

@@ -198,11 +198,11 @@ export class ColaboradorComponent implements OnInit {
     this.registercolaboradorForm = new FormGroup({
       nome: new FormControl('',[Validators.required, Validators.minLength(3)]),
       empresa: new FormControl('',),
-      filial: new FormControl('',),
-      area: new FormControl('',),
-      setor: new FormControl('',),
-      ambiente: new FormControl('',),
-      cargo: new FormControl('',),
+      filial: new FormControl({ value: '', disabled: true }),  // FormControl desabilitado inicialmente
+      area: new FormControl({ value: '', disabled: true }),
+      setor: new FormControl({ value: '', disabled: true }),
+      ambiente: new FormControl({ value: '', disabled: true }),
+      cargo: new FormControl({ value: '', disabled: true }),
       tipocontrato: new FormControl('',),
       data_admissao: new FormControl('',),
       situacao: new FormControl<boolean>(true),
@@ -310,8 +310,6 @@ export class ColaboradorComponent implements OnInit {
 
 this.loading = false;
 
-
- 
   this.colaboradorService.getColaboradores().subscribe(
     (colaboradores: Colaborador[]) => {
       this.colaboradores = colaboradores;
@@ -324,7 +322,7 @@ this.loading = false;
   this.filialService.getFiliais().subscribe(
     filiais => {
       this.filiais = filiais;
-      this.mapFiliais();
+       
     },
     error => {
       console.error('Error fetching users:', error);
@@ -363,7 +361,7 @@ this.loading = false;
   this.areaService.getAreas().subscribe(
     areas => {
       this.areas = areas;
-      this.mapAreas();
+      //this.mapAreas();
     },
     error => {
       console.error('Error fetching users:',error);
@@ -496,9 +494,17 @@ onEmpresaSelecionada(empresa: any): void {
   }
 }
 filiaisByEmpresa(): void {
+  const filialControl = this.registercolaboradorForm.get('filial');
+  if (filialControl) {
+    filialControl.disable();
+  }
   if (this.empresaSelecionadaId !== null) {
+    this.filiais = [];
     this.filialService.getFiliaisByEmpresa(this.empresaSelecionadaId).subscribe(data => {
       this.filiais = data;
+      if (filialControl) {
+        filialControl.enable();
+      }
       console.log('Filiais carregadas:', this.filiais); // Log para depuração
     });
   }
@@ -514,9 +520,16 @@ onFilialSelecionada(filial: any): void {
   }
 }
 areasByFilial(): void {
+  const areaControl = this.registercolaboradorForm.get('area');
+  if (areaControl) {
+    areaControl.disable();
+  }
   if (this.filialSelecionadaId !== null) {
     this.areaService.getAreasByFilial(this.filialSelecionadaId).subscribe(data => {
       this.areas = data;
+      if (areaControl) {
+        areaControl.enable();
+      }
       console.log('Areas carregadas:', this.areas); // Log para depuração
     });
   }
@@ -532,32 +545,47 @@ onAreaSelecionada(area: any): void {
   }
 }
 setoresByArea(): void {
+  const setorControl = this.registercolaboradorForm.get('setor');
+  if (setorControl) {
+    setorControl.disable();
+  }
   if (this.areaSelecionadaId !== null) {
     this.setorService.getSetorByArea(this.areaSelecionadaId).subscribe(data => {
       this.setores = data;
+      if (setorControl) {
+        setorControl.enable();
+      }
       console.log('Setores carregadas:', this.areas); // Log para depuração
     });
   }
 }
-
 onSetorSelecionado(setor: any): void {
   const id = setor.id;
   if (id !== undefined) {
-    console.log('Setor selecionado ID:', id); // Log para depuração
+    console.log('Ambiente selecionado ID:', id); // Log para depuração
     this.setorSelecionadoId = id;
     this.ambientesBySetor();
   } else {
     console.error('O ID do avaliado é indefinido');
   }
 }
+
 ambientesBySetor(): void {
+  const ambienteControl = this.registercolaboradorForm.get('ambiente');
+  if (ambienteControl) {
+    ambienteControl.disable();
+  }
   if (this.setorSelecionadoId !== null) {
     this.ambienteService.getAmbientesBySetor(this.setorSelecionadoId).subscribe(data => {
       this.ambientes = data;
-      console.log('Setores carregadas:', this.areas); // Log para depuração
+      if (ambienteControl) {
+        ambienteControl.enable();
+      }
+      console.log('Ambientes carregadas:', this.areas); // Log para depuração
     });
   }
 }
+
 onAmbienteSelecionado(ambiente: any): void {
   const id = ambiente.id;
   if (id !== undefined) {
@@ -569,9 +597,16 @@ onAmbienteSelecionado(ambiente: any): void {
   }
 }
 cargosByAmbiente(): void {
+  const cargoControl = this.registercolaboradorForm.get('cargo');
+  if (cargoControl) {
+    cargoControl.disable();
+  }
   if (this.ambienteSelecionadoId !== null) {
-    this.cargoService.getCargosByAmbiente(this.ambienteSelecionadoId).subscribe(data => {
+    this.cargoService.getCargosByAmbientes(this.ambienteSelecionadoId).subscribe(data => {
       this.cargos = data;
+      if (cargoControl) {
+        cargoControl.enable();
+      }
       console.log('Setores carregadas:', this.areas); // Log para depuração
     });
   }

@@ -3,7 +3,8 @@ import { HttpInterceptorFn } from '@angular/common/http';
 export const customInterceptor: HttpInterceptorFn = (req, next) => {
   // Lista de URLs que devem ser excluídas do interceptor
   const skipUrls = [
-    '/forgot-password', // Adicione outras URLs que você quer excluir aqui
+    '/forgot-password',
+    '/reset-password' // Adicione outras URLs que você quer excluir aqui
   ];
 
   // Verifica se a URL da requisição está na lista de URLs a serem excluídas

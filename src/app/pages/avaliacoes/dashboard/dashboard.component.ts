@@ -197,10 +197,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   onSetorSelecionado(setor: any): void {
     const id = this.selectedSetores;
     if (id !== undefined) {
-      console.log('Setor selecionado ID:', id); // Log para depuração
+      console.log('Ambiente selecionado ID:', id); // Log para depuração
       this.selectedSetores = id;
-      this.ambientesBySetor();
       this.applyFilters();
+      this.ambientesBySetor();
     } else {
       console.error('O ID do avaliado é indefinido');
     }
@@ -209,25 +209,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (this.selectedSetores !== null) {
       this.ambienteService.getAmbientesBySetor(this.selectedSetores).subscribe(data => {
         this.ambientes = data;
-        console.log('Setores carregadas:', this.areas); // Log para depuração
+        console.log('Areas carregadas:', this.areas); // Log para depuração
       });
     }
   }
 
-  onAmbienteSelecionado(ambiente: any): void {
+  onAmbienteSelecionado(setor: any): void {
     const id = this.selectedAmbientes;
     if (id !== undefined) {
-      console.log('Ambiente selecionado ID:', id); // Log para depuração
+      console.log('Setor selecionado ID:', id); // Log para depuração
       this.selectedAmbientes = id;
-      this.cargosByAmbiente();
       this.applyFilters();
+      this.cargosByAmbientes();
     } else {
       console.error('O ID do avaliado é indefinido');
     }
   }
-  cargosByAmbiente(): void {
+  cargosByAmbientes(): void {
     if (this.selectedAmbientes !== null) {
-      this.cargoService.getCargosByAmbiente(this.selectedAmbientes).subscribe(data => {
+      this.cargoService.getCargosByAmbientes(this.selectedAmbientes).subscribe(data => {
         this.cargos = data;
         console.log('Setores carregadas:', this.areas); // Log para depuração
       });
@@ -703,13 +703,7 @@ updateNotaPerguntasChart(graficoNotasPerguntas: any): void {
                 data: Object.values(graficoNotasPerguntas),
                 pointRadius:4,
                 backgroundColor: [
-                    //'#4C5264',
-                    //'#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
+                    'rgba(18, 191, 215, 0.5)',
                 ],
                 hoverBackgroundColor: [
                     '#4C5264',
@@ -780,11 +774,12 @@ updateNotaGestorPerguntasChart(graficoNotasPerguntasGestor: any): void {
                 backgroundColor: [
                     //'#4C5264',
                     //'#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
+                    // '#12bfd7',
+                    // '#242730',
+                    // '#97a3c2',
+                    // '#898993',
+                    // '#1890FF',
+                    'rgba(18, 191, 215, 0.5)',
                 ],
                 hoverBackgroundColor: [
                     '#4C5264',
@@ -952,11 +947,12 @@ updateNotaAvaliadosChart(graficoNotasAvaliados: any): void {
                 backgroundColor: [
                     //'#4C5264',
                     //'#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
+                    // '#12bfd7',
+                    // '#242730',
+                    // '#97a3c2',
+                    // '#898993',
+                    // '#1890FF',
+                    'rgba(18, 191, 215, 0.5)',
                 ],
                 hoverBackgroundColor: [
                     '#4C5264',
@@ -1025,11 +1021,12 @@ updateNotaAvaliadosChart(graficoNotasAvaliados: any): void {
                 backgroundColor: [
                     //'#4C5264',
                     //'#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
+                    // '#12bfd7',
+                    // '#242730',
+                    // '#97a3c2',
+                    // '#898993',
+                    // '#1890FF',
+                    'rgba(18, 191, 215, 0.5)',
                 ],
                 hoverBackgroundColor: [
                     '#4C5264',
@@ -1099,11 +1096,12 @@ updateNotaAvaliadosChart(graficoNotasAvaliados: any): void {
                 backgroundColor: [
                     //'#4C5264',
                     //'#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
+                    // '#12bfd7',
+                    // '#242730',
+                    // '#97a3c2',
+                    // '#898993',
+                    // '#1890FF',
+                    'rgba(18, 191, 215, 0.5)',
                 ],
                 hoverBackgroundColor: [
                     '#4C5264',
@@ -1172,11 +1170,12 @@ updateNotaAvaliadosChart(graficoNotasAvaliados: any): void {
                 backgroundColor: [
                     //'#4C5264',
                     //'#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
+                    // '#12bfd7',
+                    // '#242730',
+                    // '#97a3c2',
+                    // '#898993',
+                    // '#1890FF',
+                    'rgba(18, 191, 215, 0.5)',
                 ],
                 hoverBackgroundColor: [
                     '#4C5264',

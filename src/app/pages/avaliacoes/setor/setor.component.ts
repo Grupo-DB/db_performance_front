@@ -87,8 +87,8 @@ export class SetorComponent implements OnInit {
     this.registersetorForm = new FormGroup({
       nome: new FormControl('',[Validators.required, Validators.minLength(3)]),
       empresa: new FormControl('',[Validators.required]),
-      filial: new FormControl('',[Validators.required]),
-      area: new FormControl('',[Validators.required]),
+      filial: new FormControl({ value: '', disabled: true }),  // FormControl desabilitado inicialmente
+      area: new FormControl({ value: '', disabled: true }),
    }); 
    this.editForm = this.fb.group({
     id: [''],
@@ -199,9 +199,17 @@ onEmpresaSelecionada(empresa: any): void {
   }
 }
 filiaisByEmpresa(): void {
+  const filialControl = this.registersetorForm.get('filial');
+  if (filialControl) {
+    filialControl.disable();
+  }
   if (this.empresaSelecionadaId !== null) {
+    this.filiais = [];
     this.filialService.getFiliaisByEmpresa(this.empresaSelecionadaId).subscribe(data => {
       this.filiais = data;
+      if (filialControl) {
+        filialControl.enable();
+      }
       console.log('Filiais carregadas:', this.filiais); // Log para depuração
     });
   }
@@ -217,13 +225,20 @@ onFilialSelecionada(filial: any): void {
   }
 }
 areasByFilial(): void {
+  const areaControl = this.registersetorForm.get('area');
+  if (areaControl) {
+    areaControl.disable();
+  }
   if (this.filialSelecionadaId !== null) {
     this.areaService.getAreasByFilial(this.filialSelecionadaId).subscribe(data => {
       this.areas = data;
+      if (areaControl) {
+        areaControl.enable();
+      }
       console.log('Areas carregadas:', this.areas); // Log para depuração
     });
   }
-} 
+}  
 cleareditForm() {
   this.editForm.reset();
 }

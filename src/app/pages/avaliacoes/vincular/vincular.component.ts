@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { MessageService } from 'primeng/api';
+import { MessageService, TreeNode } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputGroupModule } from 'primeng/inputgroup';
@@ -22,12 +22,13 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { TabMenuModule } from 'primeng/tabmenu';
-import { Divider, DividerModule } from 'primeng/divider';
+import { DividerModule } from 'primeng/divider';
 import { Formulario } from '../formulario/formulario.component';
 import { FormularioService } from '../../../services/avaliacoesServices/formularios/registerformulario.service';
 import { CommonModule } from '@angular/common';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
-
+import { TreeTableModule } from 'primeng/treetable';
+import { RippleModule } from 'primeng/ripple';
 
 interface RegisterAssociacaoForm{
   formulario: FormControl,
@@ -37,9 +38,9 @@ interface RegisterAssociacaoForm{
   selector: 'app-vincular',
   standalone: true,
   imports: [
-    NzIconModule,NzLayoutModule,NzMenuModule,TabMenuModule,
+    NzIconModule,NzLayoutModule,NzMenuModule,TabMenuModule,TreeTableModule,
     ReactiveFormsModule,FormsModule,PickListModule,CommonModule,
-    FormLayoutComponent,InputMaskModule,DividerModule,
+    FormLayoutComponent,InputMaskModule,DividerModule,RippleModule,
     PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,
   ],
   providers:[
@@ -50,11 +51,13 @@ interface RegisterAssociacaoForm{
 })
 export class VincularComponent implements OnInit {
   tipoavaliacoes: TipoAvaliacao[]|undefined;
-  formularios: Formulario [] = [];
-  avaliados: Avaliado [] | undefined;
+  formularios: any [] = [];
+  avaliados: any [] = [];
   targetAvaliados!: Avaliado[];
   vinculados: any[]=[];
   loading: boolean = true; 
+  filteredAvaliados: any[] = []; // Avaliados filtrados
+  
   registerassociacaoForm!: FormGroup<RegisterAssociacaoForm>;
   @ViewChild('RegisterAssociacaoForm') RegisterAssociacaoForm: any;
   @ViewChild('dt1') dt1!: Table;
@@ -84,17 +87,21 @@ export class VincularComponent implements OnInit {
      this.avaliadoService.getAvaliados().subscribe(
       avaliados => {
         this.avaliados = avaliados;
+      
         this.loading = false;
       },
       error =>{
         console.error('Error fetching users:', error);
       },
      );
+
+  
+
      this.formularioService.getFormularios().subscribe(
       formularios => {
         this.formularios = formularios;
         this.mapFormularios();
-        this.loading = false;
+        
       },
       error => {
         console.error('Error fetching users:', error);
@@ -102,12 +109,63 @@ export class VincularComponent implements OnInit {
     );
     }
 
-    mapFormularios(): void {
-      this.formularios.forEach(formulario => {
-        const perguntasTexto = formulario.perguntas.map(pergunta => pergunta.texto).join(', ');
-        formulario.perguntasTexto = perguntasTexto;
+    // Método para filtrar
+    filterTable() {
+      const searchTerm = this.inputValue.toLowerCase();
+      this.filteredAvaliados = this.formularios.map(formulario => {
+          return {
+              ...formulario,
+              avaliados: formulario.avaliados.filter((avaliado: { nome: string; }) => 
+                  avaliado.nome.toLowerCase().includes(searchTerm)
+              )
+          };
       });
-    }
+  }
+
+  // Método para limpar o filtro
+  clear(dt1: any) {
+      this.inputValue = '';
+      this.filteredAvaliados = [...this.formularios]; // Reinicia a lista original
+      dt1.filterGlobal('', 'contains');
+  }
+
+    calculateCustomerTotal(formulario: any) {
+      let total = 0;
+
+      if (this.avaliados) {
+          for (let avaliado of this.avaliados) {
+              if (avaliado.formulario === formulario) {
+                  total++;
+              }
+          }
+      }
+
+      return total;
+  }
+
+  
+  mapFormularios() {
+    this.avaliados.forEach(avaliado => {
+      const formulario = this.formularios?.find(formulario => formulario.id === avaliado.formulario);
+      if (formulario) {
+        avaliado.formularioNome = formulario.nome;
+      }
+    });
+    this.loading = false;
+  }
+  
+  getNomeFormulario(id: number): string {
+    const formulario = this.formularios?.find(form => form.id === id);
+    return formulario ? formulario.nome : 'Formulario não encontrado';
+  }
+
+
+    // mapFormularios(): void {
+    //   this.formularios.forEach(formulario => {
+    //     const perguntasTexto = formulario.perguntas.map(pergunta => pergunta.texto).join(', ');
+    //     formulario.perguntasTexto = perguntasTexto;
+    //   });
+    // }
     
     removeAvaliado(formulario: Formulario, avaliado: Avaliado): void {
       this.formularioService.removeAvaliado(formulario.id, avaliado.id).subscribe(
@@ -125,17 +183,17 @@ export class VincularComponent implements OnInit {
       );
     }
 
-    clear(table: Table) {
-      table.clear();
-    }
+    // clear(table: Table) {
+    //   table.clear();
+    // }
     
     clearForm() {
     this.registerassociacaoForm.reset();
     }
     
-    filterTable() {
-    this.dt1.filterGlobal(this.inputValue, 'contains');
-    }
+    // filterTable() {
+    // this.dt1.filterGlobal(this.inputValue, 'contains');
+    // }
     
     submit() {
       this.registerassociacaoForm.patchValue({

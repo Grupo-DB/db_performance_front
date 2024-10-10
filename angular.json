@@ -101,7 +101,7 @@
             ],
             "styles": [
               "@angular/material/prebuilt-themes/pink-bluegrey.css",
-              "./node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
+              "./node_modules/ng-zorro-antd/ng-zorro-antd.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -113,4 +113,5 @@
   "cli": {
     "analytics": false
   }
+  
 }

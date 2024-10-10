@@ -54,7 +54,7 @@ export class RedefinirSenhaComponent implements OnInit {
       new_password: this.resetPasswordForm.value.newPassword,
     };
 
-    this.http.post(`http://localhost:8000/management/reset-password/${this.uid}/${this.token}/`, formData).subscribe({
+    this.http.post(`http://172.50.10.79:8008/management/reset-password/${this.uid}/${this.token}/`, formData).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Senha redefinida com sucesso!' });
         this.router.navigate(['/login']);

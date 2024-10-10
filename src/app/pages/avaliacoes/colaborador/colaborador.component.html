@@ -53,6 +53,7 @@
                         formControlName="filial"
                         optionLabel="nome"
                         placeholder="Selecione "
+                        [disabled]="true"
                         (onChange)="onFilialSelecionada($event.value)"
                     >
                     </p-dropdown>
@@ -66,6 +67,7 @@
                         formControlName="area"
                         optionLabel="nome"
                         placeholder="Selecione"
+                        [disabled]="true"
                         (onChange)="onAreaSelecionada($event.value)"
                         >
                     </p-dropdown>
@@ -79,6 +81,7 @@
                         formControlName="setor"
                         optionLabel="nome"
                         placeholder="Selecione"
+                        [disabled]="true"
                         (onChange)="onSetorSelecionado($event.value)"
                         >
                     </p-dropdown>
@@ -91,6 +94,7 @@
                         [options]="ambientes" 
                         formControlName="ambiente"
                         optionLabel="nome"
+                        [disabled]="true"
                         placeholder="Selecione"
                         (onChange)="onAmbienteSelecionado($event.value)"
                     >
@@ -104,6 +108,7 @@
                         [options]="cargos" 
                         formControlName="cargo"
                         optionLabel="nome"
+                        [disabled]="true"
                         placeholder="Selecione"
                         (onChange)="onCargoSelecionado($event.value)"
                     >
