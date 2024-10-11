@@ -8,15 +8,17 @@ import { forkJoin } from 'rxjs';
 import { DialogModule } from 'primeng/dialog';
 import { Chart } from 'chart.js';
 import { CalendarModule } from 'primeng/calendar';
+import { FormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-calcario',
   standalone: true,
   imports: [
-    DividerModule,RouterLink,CommonModule,TableModule,DialogModule,CalendarModule
+    DividerModule,RouterLink,CommonModule,TableModule,DialogModule,CalendarModule,FormsModule
   ],
   providers:[
-    HomeService
+    HomeService,DatePipe
   ],
   templateUrl: './calcario.component.html',
   styleUrl: './calcario.component.scss'
@@ -62,8 +64,18 @@ export class CalcarioComponent implements OnInit {
   media!: number;
   projecaoAgregada!: number;
   projecao!: number;
+  ///Equipamentos
+  /**FCM1 */
+  fcmiMg01HoraProd!: number;
+  fcmiMg01HoraParado!: number;
+  fcmiMg01Producao!: number;
+  fcmiMg01Produtividade!: number;
+
+
+  data: any;
   constructor(
     private homeService: HomeService,
+    private datePipe: DatePipe,
   ){}
   ngOnInit(): void {
     this.calcularFcmi();
@@ -156,6 +168,14 @@ export class CalcarioComponent implements OnInit {
     this.equipamentosVisivel = true;
   }
 
+  calcularEquipamentos(data: any){
+    const formattedDate = this.datePipe.transform(this.data, 'yyyy-MM-dd');
+    this.homeService.calculosEquipamentosDetalhes(formattedDate).subscribe(response => {
+      this.fcmiMg01HoraProd = response.fcmi_mg01_hora_producao;
+      this.fcmiMg01HoraParado = response.fcmi_mg01_hora_parado;
+      this.fcmiMg01Producao = response.fcmi_mg01_producao;
+    })
+  }
 
 // Função para gerar gráfico com base no tipo e na fábrica
 gerarGrafico(tipoCalculo: string, local: string): void {

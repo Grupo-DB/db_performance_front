@@ -9,13 +9,14 @@ import { Observable } from 'rxjs';
 })
 export class HomeService {
   //declarar as urls
-  private calcarioUrl = 'http://172.50.10.79:8008/home/calcular_calcario/';
-  private britagemUrl =  'http://172.50.10.79:8008/britagem/calcular_britagem/';
-  private rebritagemUrl =  'http://172.50.10.79:8008/rebritagem/calcular_rebritagem/';
-  private fabricaCalcarioUrl =  'http://172.50.10.79:8008/calcario/calcular_calcario/';
-  private graficosFabricaCalcarioUrl =  'http://172.50.10.79:8008/calcario/calcular_calcario_graficos/';
-  private rebritagemParadasUrl =  'http://172.50.10.79:8008/rebritagem/calcular_rebritagem_paradas/';
-  private graficosUrl =  'http://172.50.10.79:8008/britagem/calcular_graficos/';
+  private calcarioUrl = 'http://localhost:8000/home/calcular_calcario/';
+  private britagemUrl =  'http://localhost:8000/britagem/calcular_britagem/';
+  private rebritagemUrl =  'http://localhost:8000/rebritagem/calcular_rebritagem/';
+  private fabricaCalcarioUrl =  'http://localhost:8000/calcario/calcular_calcario/';
+  private graficosFabricaCalcarioUrl =  'http://localhost:8000/calcario/calcular_calcario_graficos/';
+  private rebritagemParadasUrl =  'http://localhost:8000/rebritagem/calcular_rebritagem_paradas/';
+  private graficosUrl =  'http://localhost:8000/britagem/calcular_graficos/';
+  private calculosEquipamentosUrl = 'http://localhost:8000/calcario/calcular_equipamentos_detalhes/';
   
   constructor(private  httpClient: HttpClient, private router: Router,) { }
 
@@ -47,5 +48,8 @@ export class HomeService {
   }
   fabricaCalcarioGrafico(tipoCalculo: any,fabrica:any,): Observable<any> {
     return this.httpClient.post<any>(this.graficosFabricaCalcarioUrl, { tipo_calculo: tipoCalculo, fabrica:fabrica });
+  }
+  calculosEquipamentosDetalhes(data: any):Observable<any> {
+    return this.httpClient.post<any>(this.calculosEquipamentosUrl, { data: data }); 
   }
 }

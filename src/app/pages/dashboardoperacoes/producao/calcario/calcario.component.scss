@@ -423,32 +423,37 @@ tr {
     height: 240px;
     margin-top: 10px;
 }
+.coluna1FCM3{
+    width: 70%;
+    height: 360px;
+    margin-top: 10px;
+}
 .rowWrapFCM2{
     display: flex;
     flex-direction: column;
     height: 10%;
     border-radius: 8px;
-    background-color: #333;
+    background-color:#B8D4F0;
     margin: 5px;
 }
 .coluna1FCM2{
     display: flex;
-    justify-content: center;
-    align-items: center;
+    //justify-content: center;
+    //align-items: center;
     width: 70%;
-    height: 240px;
+    height: 10px;
     margin-top: 10px;
 }
 .cardFabFCM2{
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    //justify-content: space-between;
     align-items: center;
     padding: 20px;
     margin: 20px;
     margin-bottom: 23px;
     text-align: center;
-    height: 108px;
+    height: 158px;
     width: 200px;
     border-radius: 10px;
     background-color:#71AAE0;
@@ -458,8 +463,14 @@ tr {
 }
 .rowEsqFCM2{
     display: flex;
-    height: 200px;
+    height: 130px;
     margin: 5px;    
+}
+.coluna2FCM2{
+    display: flex;
+    margin-top: 10px;
+    height: 140px;
+    align-items: end;
 }
 .linha1{
     display: flex;
@@ -476,6 +487,9 @@ tr {
 .linha2{
     display: flex;
 }
+.linha3{
+    display: flex;
+}
 .esquerda .rowEsq{
     display: flex;
     //height: 33%;
@@ -486,6 +500,13 @@ tr {
     margin-top: 10px;
     height: 240px;
     align-items: end;
+}
+.coluna2FCM3{
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    //height: 240px;
+    align-items: center;
 }
 .rowWrap{
     display: flex;
@@ -548,7 +569,7 @@ tr {
     margin: 8px;
     text-align: center;
     height: 120px;
-    width: 317px;
+    width: 100%;
     border-radius: 8px;
     background-color:rgb(230, 234, 238);
     box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);

@@ -42,7 +42,7 @@ export class EsqueceuSenhaComponent {
   }
 
   submit() {
-    this.http.post('http://172.50.10.79:8008/management/forgot-password/', this.forgotPasswordForm.value).subscribe({
+    this.http.post('http://localhost:8000/management/forgot-password/', this.forgotPasswordForm.value).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Email enviado com sucesso!' });
         // Redireciona para a página de login após o sucesso

@@ -359,23 +359,25 @@
             <p-calendar
                 [style]="{'width':'100%','margin-left':'20px','margin-top':'40px'}"
                 id="da" 
-                formControlName="data_admissao"
+                
+                [(ngModel)]="data"
                 dateFormat="dd/mm/yy"                  
                 [showIcon]="true"
                 placeholder="Data"
             >
             </p-calendar>
+            <button (click)="calcularEquipamentos(data)">Calcular</button>
             <div class="rightEqpto">
                 <div class="tituloEqpto">
-                    <span> <b> Carregamento geral</b></span><br>
+                    <span> <b>Carregamento geral</b></span><br>
                 </div>
                 <div class="media2">
                     <div class="cardCarregamentoEqpto">
                         <div class="valorCarregamentoEqpto">
-                            <p>99999999</p>
+                            <p>9999999999</p>
                         </div>
                         <div class="unidadeCarregamentoEqpto">
-                            <p>Último dia</p>
+                            <p>Carregamento geral</p>
                         </div>    
                     </div>
                 </div>    
@@ -395,26 +397,26 @@
                                 </div>
                                 <div class="cardProd">
                                     <div class="valorCarregamentoProd">
-                                        <p>99999999</p>
+                                        <p>{{ fcmiMg01HoraProd }}</p>
                                     </div>
                                     <div class="unidadeCarregamentoProd">
-                                        <p>Último dia</p>
+                                        <p>Hora produção</p>
                                     </div>
                                 </div>
                                 <div class="cardProd">
                                     <div class="valorCarregamentoProd">
-                                        <p>99999999</p>
+                                        <p>{{ fcmiMg01HoraParado }}</p>
                                     </div>
                                     <div class="unidadeCarregamentoProd">
-                                        <p>Último dia</p>
+                                        <p>Hora parado</p>
                                     </div>
                                 </div>
                                 <div class="cardProd">
                                     <div class="valorCarregamentoProd">
-                                        <p>99999999</p>
+                                        <p>{{ fcmiMg01Producao }}</p>
                                     </div>
                                     <div class="unidadeCarregamentoProd">
-                                        <p>Último dia</p>
+                                        <p>Tn produzida</p>
                                     </div>
                                 </div>
                             </div>
@@ -505,7 +507,7 @@
                             </div>
                             
                         </div>
-                        <div class="coluna2">
+                        <div class="coluna2FCM2">
                             <div class="cardFabFCM2">
                                 <div class="valorCarregamentoFab">
                                     <p>99999999</p>
@@ -530,7 +532,7 @@
                         <b> FCM III </b>
                     </div>
                     <div class="rowEsq">
-                        <div class="coluna1">
+                        <div class="coluna1FCM3">
                             <div class="linha1">
                                 <div class="eqpto">
                                     <p>MG-01</p>
@@ -589,8 +591,37 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="linha3">
+                                <div class="eqpto">
+                                    <p>MG-03</p>
+                                </div>
+                                <div class="cardProd">
+                                    <div class="valorCarregamentoProd">
+                                        <p>99999999</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Último dia</p>
+                                    </div>
+                                </div>
+                                <div class="cardProd">
+                                    <div class="valorCarregamentoProd">
+                                        <p>99999999</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Último dia</p>
+                                    </div>
+                                </div>
+                                <div class="cardProd">
+                                    <div class="valorCarregamentoProd">
+                                        <p>99999999</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Último dia</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="coluna2">
+                        <div class="coluna2FCM3">
                             <div class="cardFab">
                                 <div class="valorCarregamentoFab">
                                     <p>99999999</p>
