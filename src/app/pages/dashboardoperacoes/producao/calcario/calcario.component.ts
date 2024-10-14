@@ -65,12 +65,44 @@ export class CalcarioComponent implements OnInit {
   projecaoAgregada!: number;
   projecao!: number;
   ///Equipamentos
-  /**FCM1 */
+  /**FCM1-MG01 */
   fcmiMg01HoraProd!: number;
   fcmiMg01HoraParado!: number;
   fcmiMg01Producao!: number;
   fcmiMg01Produtividade!: number;
-
+  /**FCM1-MG02 */
+  fcmiMg02HoraProd!: number;
+  fcmiMg02HoraParado!: number;
+  fcmiMg02Producao!: number;
+  fcmiMg02Produtividade!: number;
+  /**FCM1-TOTAIS */
+  fcmiProdutividadeGeral!: number;
+  fcmiProducaoGeral!: number;
+  /** FCM II*/
+  fcmiiMg01HoraProd!: number;
+  fcmiiMg01HoraParado!: number;
+  fcmiiMg01Producao!: number;
+  fcmiiMg01Produtividade!: number;
+  /**FCM III */
+  //FCM3 MG01
+  fcmiiiMg01HoraProd!: number;
+  fcmiiiMg01HoraParado!: number;
+  fcmiiiMg01Producao!: number;
+  //FCM3 MG02
+  fcmiiiMg02HoraProd!: number;
+  fcmiiiMg02HoraParado!: number;
+  fcmiiiMg02Producao!: number;
+  //FCM3 MG03
+  fcmiiiMg03HoraProd!: number;
+  fcmiiiMg03HoraParado!: number;
+  fcmiiiMg03Producao!: number;
+  //GERAIS FCMIII
+  fcmiiiProdutividadeGera!: number;
+  fcmiiiProducaoGeral!: number;
+  /**TOTAIS DAS FABRICAS */
+  produtividadeFabricasGeral!: number;
+  producaoGeralFabrica!: number; 
+  
 
   data: any;
   constructor(
@@ -174,6 +206,33 @@ export class CalcarioComponent implements OnInit {
       this.fcmiMg01HoraProd = response.fcmi_mg01_hora_producao;
       this.fcmiMg01HoraParado = response.fcmi_mg01_hora_parado;
       this.fcmiMg01Producao = response.fcmi_mg01_producao;
+      this.fcmiMg02HoraProd = response.fcmi_mg02_hora_producao;
+      this.fcmiMg02HoraParado = response.fcmi_mg02_hora_parado;
+      this.fcmiMg02Producao = response.fcmi_mg02_producao;
+      this.fcmiProducaoGeral = response.fcmi_producao_geral;
+      this.fcmiProdutividadeGeral = response.fcmi_produtividade_geral;
+      this.fcmiiMg01HoraProd = response.fcmii_mg01_hora_prod;
+      this.fcmiiMg01HoraParado = response.fcmii_mg01_hora_parado;
+      this.fcmiiMg01Producao = response.fcmii_mg01_producao;
+      this.fcmiiMg01Produtividade = response.fcmii_produtividade_geral;
+      //FCMIII - MG01
+      this.fcmiiiMg01HoraProd = response.fcmiii_mg01_hora_prod;
+      this.fcmiiiMg01HoraParado = response.fcmiii_mg01_hora_parado;
+      this.fcmiiiMg01Producao = response.fcmiii_mg01_producao;
+      //FCMIII - MG02
+      this.fcmiiiMg02HoraProd = response.fcmiii_mg02_hora_prod;
+      this.fcmiiiMg02HoraParado = response.fcmiii_mg02_hora_parado;
+      this.fcmiiiMg02Producao = response.fcmiii_mg02_producao;
+      //FCMIII - MG03
+      this.fcmiiiMg03HoraProd = response.fcmiii_mg03_hora_prod;
+      this.fcmiiiMg03HoraParado = response.fcmiii_mg03_hora_parado;
+      this.fcmiiiMg03Producao = response.fcmiii_mg03_producao;
+      //FCMIII - TOTAIS
+      this.fcmiiiProdutividadeGera = response.fcmiii_produtividade_geral;
+      this.fcmiiiProducaoGeral = response.fcmiii_producao_geral;
+      //TOTAIS FABRICAS
+      this.produtividadeFabricasGeral = response.produtividade_geral_fabricas;
+      this.producaoGeralFabrica = response.producao_geral_fabricas;
     })
   }
 
