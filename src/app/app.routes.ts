@@ -34,6 +34,7 @@ import { HomebritagemComponent } from './pages/dashboardoperacoes/producao/brita
 import { RebritagemComponent } from './pages/dashboardoperacoes/producao/rebritagem/rebritagem.component';
 import { CalcarioComponent } from './pages/dashboardoperacoes/producao/calcario/calcario.component';
 import { ProdutividadeComponent } from './pages/dashboardoperacoes/producao/produtividade/produtividade.component';
+import { FertilizanteComponent } from './pages/dashboardoperacoes/producao/fertilizante/fertilizante.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -72,6 +73,7 @@ export const routes: Routes = [
       { path: 'homeoperacoes/homeproducao/rebritagem', component:RebritagemComponent },
       { path: 'homeoperacoes/homeproducao/calcario', component:CalcarioComponent },
       { path: 'homeoperacoes/homeproducao/calcario/produtividade', component:ProdutividadeComponent },
+      { path: 'homeoperacoes/homeproducao/fertilizante', component:FertilizanteComponent },
     ],
   },
   

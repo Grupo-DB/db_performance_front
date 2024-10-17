@@ -82,6 +82,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   filiais: Filial[] = [];
   avaliados: Avaliado [] = [];
   avaliadoSelecionadoId: any[] = [];
+  avaliadoSelecionadoId2: any[] = [];
   totalAvaliacoesAvaliador!: number;
   totalAvaliacoesAvaliado!: number;
   mediaNotaAvaliador!:number;
@@ -301,6 +302,17 @@ onAvaliadoSelecionado(avaliado: any): void {
     }
   }
 
+  onAvaliadoSelecionado2(avaliado: any): void {
+    const id = this.avaliadoSelecionadoId2;
+    if (id !== undefined) {
+      console.log('Tipo Avaliacao selecionado ID:', id); // Log para depuração
+      this.avaliadoSelecionadoId2 = id;
+      this.applyFilters3();
+    } else {
+      console.error('O ID do avaliado é indefinido');
+    }
+  } 
+
 applyFilters2():void{
     const filters={
       avaliadoSelecionadoId:this.avaliadoSelecionadoId,
@@ -315,18 +327,42 @@ applyFilters2():void{
       this.avSemAvaliacao = data.total_avaliados_sem_avaliacao_logado;
       this.avaliador_total_av_gestor = data.total_avaliacoes_gestorMe;
       this.avaliador_media_nota_gestor = data.media_geral_gestorMe;
-      this.avaliado_total_av_gestor = data.total_avaliacoes_avaliados_logadoMe;
-      this.avaliado_media_nota_gestor = data.media_geral_avaliados_logadoMe;
+      //this.avaliado_total_av_gestor = data.total_avaliacoes_avaliados_logadoMe;
+      //this.avaliado_media_nota_gestor = data.media_geral_avaliados_logadoMe;
       this.updateNotaAvaliadoresChart(data.media_respostas_logado);
       this.updateNotaAvaliadosChart(data.media_respostas_avaliados_logado);
       this.figAvaliadorGestorChart(data.media_respostas_gestorMe);
+      //this.figAvaliadoGestorChart(data.media_respostas_avaliados_logadoMe);
+
+    },error => {
+      console.error('Error fetching data:', error);
+  });
+  }
+  applyFilters3():void{
+    const filters={
+      avaliadoSelecionadoId:this.avaliadoSelecionadoId2,
+      data_inicio: this.data_inicio,
+      data_fim: this.data_fim,
+    };
+    this.avaliacaoService.filterData2(filters).subscribe(data => {
+      this.totalAvaliacoesAvaliador = data.total_avaliacoes_logado;
+      //this.totalAvaliacoesAvaliado = data.total_avaliacoes_avaliados_logado;
+      this.mediaNotaAvaliador = data.media_geral_logado;
+      //this.mediaNotaAvaliado = data.media_geral_avaliados_logado;
+      this.avSemAvaliacao = data.total_avaliados_sem_avaliacao_logado;
+      this.avaliador_total_av_gestor = data.total_avaliacoes_gestorMe;
+      this.avaliador_media_nota_gestor = data.media_geral_gestorMe;
+      this.avaliado_total_av_gestor = data.total_avaliacoes_avaliados_logadoMe;
+      this.avaliado_media_nota_gestor = data.media_geral_avaliados_logadoMe;
+      this.updateNotaAvaliadoresChart(data.media_respostas_logado);
+      //this.updateNotaAvaliadosChart(data.media_respostas_avaliados_logado);
+      //this.figAvaliadorGestorChart(data.media_respostas_gestorMe);
       this.figAvaliadoGestorChart(data.media_respostas_avaliados_logadoMe);
 
     },error => {
       console.error('Error fetching data:', error);
   });
   }
-  
   updatePieChart(graficoDados: any): void {
     const ctx = document.getElementById('pieChart') as HTMLCanvasElement;
     if (this.pieChart) {

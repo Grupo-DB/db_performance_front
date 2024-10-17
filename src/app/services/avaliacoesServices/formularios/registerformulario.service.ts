@@ -47,5 +47,7 @@ export class FormularioService {
   obterFormulariosDoAvaliado(avaliadoId: number): Observable<any> {
     return this.httpClient.get<any>(`http://localhost:8000/management/avaliado/${avaliadoId}/formulario/`);
   }
-     
+  getFormularioDetalhes(formularioId: number) {
+    return this.httpClient.get<any>(`${this.apiUrl}${formularioId}/`);
+  }  
 }

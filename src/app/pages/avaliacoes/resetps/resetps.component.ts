@@ -47,7 +47,7 @@ export class ResetpsComponent {
     this.loginService.updatePasswordFirstLogin(
       this.createpassForm.value.newPassword
     ).subscribe(() => {
-      this.router.navigate(['/welcome/inicial']);
+      this.router.navigate(['/']);
     });
   }
 

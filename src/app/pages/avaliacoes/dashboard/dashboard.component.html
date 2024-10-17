@@ -447,10 +447,10 @@
 </div>
 
 
-<div class="filtroAv">
+<div class="filtroAvaliador">
   <mat-form-field>
     <mat-label>Selecione o avaliado</mat-label>
-    <mat-select [(ngModel)]="avaliadoSelecionadoId"  multiple (ngModelChange)="onAvaliadoSelecionado($event.value)">
+    <mat-select [(ngModel)]="avaliadoSelecionadoId2"  multiple (ngModelChange)="onAvaliadoSelecionado2($event.value)">
       <mat-option *ngFor="let avaliado of avaliados" [value]="avaliado.id">{{ avaliado.nome }}</mat-option>
     </mat-select>
   </mat-form-field>

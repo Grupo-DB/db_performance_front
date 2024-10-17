@@ -355,18 +355,21 @@
     </p-divider>
     <div class="container">
         <div class="rowSuperior">
-
-            <p-calendar
-                [style]="{'width':'100%','margin-left':'20px','margin-top':'40px'}"
-                id="da" 
-                
-                [(ngModel)]="data"
-                dateFormat="dd/mm/yy"                  
-                [showIcon]="true"
-                placeholder="Data"
-            >
-            </p-calendar>
-            <button (click)="calcularEquipamentos(data)">Calcular</button>
+            <div class="buttons">
+                <p-calendar
+                    [style]="{'width':'100%'}"
+                    id="da" 
+                    [(ngModel)]="data"
+                    dateFormat="dd/mm/yy"                  
+                    [showIcon]="true"
+                    placeholder="Data"
+                >
+                </p-calendar>
+                <div class="btnCalcProd" 
+                    (click)="calcularEquipamentos(data)">
+                    <p>Calcular</p>
+                </div>
+            </div>    
             <div class="rightEqpto">
                 <div class="tituloEqpto">
                     <span> <b>Carregamento geral</b></span><br>
@@ -374,7 +377,7 @@
                 <div class="media2">
                     <div class="cardCarregamentoEqpto">
                         <div class="valorCarregamentoEqpto">
-                            <p>9999999999</p>
+                            <p>{{ totalCarregamento }}</p>
                         </div>
                         <div class="unidadeCarregamentoEqpto">
                             <p>Carregamento geral</p>
@@ -660,8 +663,16 @@
                             <p>Produção diária</p>
                         </div>
                     </div>
+                    <div class="cardFabDir">
+                        <div class="valorCarregamentoFab">
+                            <p>{{ estoqueTotal }}</p>
+                        </div>
+                        <div class="unidadeCarregamentoFab">
+                            <p>Estoque calcário</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="estoques">
+                <!-- <div class="estoques">
                     <div class="cardEst">
                         <div class="valorCarregamentoProd">
                             <p>99999999</p>
@@ -686,7 +697,7 @@
                             <p>Último dia</p>
                         </div>
                     </div>
-                </div>    
+                </div>     -->
             </div><!--End Direita-->
         </div><!--end containerInterno--> 
     </div><!--end container--> 

@@ -95,6 +95,7 @@
             </div>
             <div class="ava2">
               <strong>{{ avaliadoDetalhes.nome }} </strong><br>
+              <strong>{{ formularioDetalhes.nome }} </strong><br>
               <strong> {{ getNomeEmpresa(avaliadoDetalhes.empresa) }}</strong><br>
               <strong> {{ getNomeFilial(avaliadoDetalhes.filial) }}</strong><br>
               <strong> {{ getNomeArea(avaliadoDetalhes.area) }}</strong><br>
@@ -114,22 +115,6 @@
   <div class="dvform">
     <form [formGroup]="registeravaliacaoForm" (submit)="submit()"> 
       <div class="drops"> 
-        <div class="dp1">
-          <label for="tipav'">Tipo de Formulário: </label>
-          <p-dropdown
-              [style]="{'width':'60%'}"
-              id="tipav" 
-              [options]="tipos"
-              formControlName="tipo" 
-              optionLabel="nome"
-              [filter]="true"
-              filterBy="nome" 
-              [showClear]="true"
-              placeholder="Selecione"
-              (onChange)="onTipoAvaliacaoSelecionado($event.value)">
-          >
-          </p-dropdown>
-        </div>
         <div class="dp2">  
           <label for="ava">Avaliado: </label>
           <p-dropdown
@@ -148,7 +133,7 @@
         </div> 
       </div>
       <br>  
-      <!-- <input type="hidden" formControlName="tipo" [(ngModel)]="avaliado.formulario" > -->
+      <input type="hidden" formControlName="tipo">
       <input type="hidden" formControlName="avaliador" [(ngModel)]="avaliador" > 
       <input type="hidden" formControlName="periodo" [(ngModel)]="trimestre">
 

@@ -102,7 +102,10 @@ export class CalcarioComponent implements OnInit {
   /**TOTAIS DAS FABRICAS */
   produtividadeFabricasGeral!: number;
   producaoGeralFabrica!: number; 
-  
+  /**TOTAL CARREGAMENTO */
+  totalCarregamento!: number;
+  /**ESTOQUE */
+  estoqueTotal!: number;
 
   data: any;
   constructor(
@@ -194,7 +197,7 @@ export class CalcarioComponent implements OnInit {
 
   exibirGrafico() {
   this.graficoVisivel = true; // Exibe o modal
-  //this.graficoMensalAcumulado('mensal',23);
+  this.graficoMensalAcumulado('mensal',23);
   }
   exibirEquipamentos(){
     this.equipamentosVisivel = true;
@@ -233,6 +236,9 @@ export class CalcarioComponent implements OnInit {
       //TOTAIS FABRICAS
       this.produtividadeFabricasGeral = response.produtividade_geral_fabricas;
       this.producaoGeralFabrica = response.producao_geral_fabricas;
+      this.totalCarregamento = response.total_carregamento;
+      //ESTOQUE
+      this.estoqueTotal = response.estoque_total
     })
   }
 
