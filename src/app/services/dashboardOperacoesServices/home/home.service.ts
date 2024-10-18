@@ -13,6 +13,7 @@ export class HomeService {
   private britagemUrl =  'http://localhost:8000/britagem/calcular_britagem/';
   private rebritagemUrl =  'http://localhost:8000/rebritagem/calcular_rebritagem/';
   private fabricaCalcarioUrl =  'http://localhost:8000/calcario/calcular_calcario/';
+  private fabricaFertilizanteUrl =  'http://localhost:8000/fertilizante/calcular_fertilizante/';
   private graficosFabricaCalcarioUrl =  'http://localhost:8000/calcario/calcular_calcario_graficos/';
   private rebritagemParadasUrl =  'http://localhost:8000/rebritagem/calcular_rebritagem_paradas/';
   private graficosUrl =  'http://localhost:8000/britagem/calcular_graficos/';
@@ -51,5 +52,8 @@ export class HomeService {
   }
   calculosEquipamentosDetalhes(data: any):Observable<any> {
     return this.httpClient.post<any>(this.calculosEquipamentosUrl, { data: data }); 
+  }
+  fabricaFertilizante(tipoCalculo: string): Observable<any> {
+    return this.httpClient.post<any>(this.fabricaFertilizanteUrl, { tipo_calculo: tipoCalculo});
   }
 }
