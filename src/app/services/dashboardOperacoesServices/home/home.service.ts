@@ -18,7 +18,8 @@ export class HomeService {
   private rebritagemParadasUrl =  'http://localhost:8000/rebritagem/calcular_rebritagem_paradas/';
   private graficosUrl =  'http://localhost:8000/britagem/calcular_graficos/';
   private calculosEquipamentosUrl = 'http://localhost:8000/calcario/calcular_equipamentos_detalhes/';
-  
+  private calUrl = 'http://localhost:8000/cal/calcular_cal/';
+
   constructor(private  httpClient: HttpClient, private router: Router,) { }
 
   //méotodos executáveis
@@ -55,5 +56,11 @@ export class HomeService {
   }
   fabricaFertilizante(tipoCalculo: string): Observable<any> {
     return this.httpClient.post<any>(this.fabricaFertilizanteUrl, { tipo_calculo: tipoCalculo});
+  }
+  fabricaCal(tipoCalculo: string): Observable<any> {
+    return this.httpClient.post<any>(this.calUrl, { tipo_calculo: tipoCalculo});
+  }
+  fabricaCalCalcinacao(tipoCalculo: string,etapa:number): Observable<any> {
+    return this.httpClient.post<any>(this.calUrl, { tipo_calculo: tipoCalculo, etapa: etapa});
   }
 }
