@@ -19,6 +19,8 @@ export class HomeService {
   private graficosUrl =  'http://localhost:8000/britagem/calcular_graficos/';
   private calculosEquipamentosUrl = 'http://localhost:8000/calcario/calcular_equipamentos_detalhes/';
   private calUrl = 'http://localhost:8000/cal/calcular_cal/';
+  private calProdutosUrl = 'http://localhost:8000/cal/calcular_cal_produtos/';
+  private calEquipamentosUrl = 'http://localhost:8000/cal/calcular_cal_equipamentos/';
 
   constructor(private  httpClient: HttpClient, private router: Router,) { }
 
@@ -60,7 +62,10 @@ export class HomeService {
   fabricaCal(tipoCalculo: string): Observable<any> {
     return this.httpClient.post<any>(this.calUrl, { tipo_calculo: tipoCalculo});
   }
-  fabricaCalCalcinacao(tipoCalculo: string,etapa:number): Observable<any> {
-    return this.httpClient.post<any>(this.calUrl, { tipo_calculo: tipoCalculo, etapa: etapa});
+  fabricaCalCalcinacao(tipoCalculo: string, etapa:number): Observable<any> {
+    return this.httpClient.post<any>(this.calProdutosUrl, { tipo_calculo: tipoCalculo, etapa:etapa});
+  }
+  fabricaCalEquipamentos(tipoCalculo: string,): Observable<any> {
+    return this.httpClient.post<any>(this.calEquipamentosUrl, { tipo_calculo: tipoCalculo});
   }
 }
