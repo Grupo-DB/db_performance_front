@@ -1,0 +1,135 @@
+<div class="container">
+    <div class="titulo">
+        <p-divider align="left" type="solid">
+            <b><a routerLink="../../" >Painel Operacional</a> / <a routerLink="../">Produção</a> / Fábrica de Argamassa</b>
+        </p-divider>
+    </div>
+
+    <div class="row1">
+        <div class="carregamentos">
+            <div class="tituloCarregamento">
+                <span> <b> Carregamento geral</b></span><br>
+            </div>
+                <div class="carregamentoWrap">
+                    <div class="cardCarregmento">
+                        <div class="valorCarregamento">
+                            <p>65465498754</p>
+                        </div>
+                        <div class="unidadeCarregamento">
+                            <p>Último dia</p>
+                        </div>
+                    </div>
+                    <div class="cardCarregmento">
+                        <div class="valorCarregamento">
+                            <p>654654879</p>
+                        </div>
+                        <div class="unidadeCarregamento">
+                            <p>Acomulado mês atual</p>
+                        </div>
+                    </div>
+                    <div class="cardCarregmento">
+                        <div class="valorCarregamento">
+                            <p>64564654646</p>
+                        </div>
+                        <div class="unidadeCarregamento">
+                            <p>Acomulado ano atual</p>
+                        </div>
+                    </div>
+                </div>        
+        </div>
+    </div><!--EndCarregamento-->
+    <div class="row2">
+        <div class="totaisWrap">
+            <div class="tituloCarregamento">
+                <b>Produção</b>
+            </div>
+            <div class="totais">
+                <div class="card">
+                    <div class="valor">
+                        <p>87786786</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Último dia</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="valor">
+                        <p>9809787</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="valor">
+                        <p>660000</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                    </div>
+                </div>
+            </div><!--EndTotais-->
+        </div>    
+        <div class="produtividadeWrap">
+            <div class="tituloCarregamento">
+                <b>Volume ensacado</b>
+            </div>
+            <div class="totais">
+                <div class="card">
+                    <div class="valor">
+                        <p>87786786</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Último dia</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="valor">
+                        <p>9809787</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="valor">
+                        <p>660000</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                    </div>
+                </div>
+            </div><!--EndTotais-->
+        </div><!--EndProdutividade-->
+    </div><!--enRow2-->
+    <p-inplace
+        closable="true"
+    >
+        <ng-template pTemplate="display">
+            <div class="inline-flex align-items-center">
+                
+                <span class="ml-2"><i class="pi pi-plus-circle"></i></span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+            <p-table  responsiveLayout="scroll">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Vin</th>
+                        <th>Year</th>
+                        <th>Brand</th>
+                        <th>Color</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-car>
+                    <tr>
+                        <td>{{ car.vin }}</td>
+                        <td>{{ car.year }}</td>
+                        <td>{{ car.brand }}</td>
+                        <td>{{ car.color }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </ng-template>
+    </p-inplace>
+</div>    
