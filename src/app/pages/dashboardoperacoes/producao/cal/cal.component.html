@@ -1,0 +1,329 @@
+<div class="container">
+    <div class="titulo">
+        <p-divider align="left" type="solid">
+            <b><a routerLink="../../">Painel Operacional</a> / <a routerLink="../">Produção</a> / Fábrica de Cal</b>
+        </p-divider>
+    </div>
+    <div class="row1">
+        <div class="carregamentos">
+            <div class="tituloCarregamento">
+                <span> <b> Carregamento geral</b></span><br>
+            </div>
+                <div class="carregamentoWrap">
+
+                    <div class="cardCarregmento">
+                        <div class="valorCarregamento">
+                            <p>{{ carregamentoGeralDia }}</p>
+                        </div>
+                        <div class="unidadeCarregamento">
+                            <p>Último dia</p>
+                        </div>
+                    </div>
+                    <div class="cardCarregmento">
+                        <div class="valorCarregamento">
+                            <p>{{ carregamentoGeralMes }}</p>
+                        </div>
+                        <div class="unidadeCarregamento">
+                            <p>Acomulado mês atual</p>
+                        </div>
+                    </div>
+                    <div class="cardCarregmento">
+                        <div class="valorCarregamento">
+                            <p>{{ carregamentoGeralAno }}</p>
+                        </div>
+                        <div class="unidadeCarregamento">
+                            <p>Acomulado ano atual</p>
+                        </div>
+                    </div>
+                </div>        
+        </div>
+    </div><!--EndCarregamento-->
+    <div class="row2">
+        <div class="totaisWrap">
+            <div class="tituloCarregamento">
+                <b> Calcinação</b>
+            </div>
+            <div class="totais">
+                <div class="nomes">
+                    <p>AZBE</p>
+                </div>
+                <div class="card">
+                    <div class="valor">
+                        <p>{{ azbeDia }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Último dia</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="valor">
+                        <p>{{ azbeMes }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="valor">
+                        <p>{{ azbeAno }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                    </div>
+                </div>
+            </div><!--EndTotais-->
+            <div class="totais">
+                <div class="nomes">
+                    <p>Metálicos</p>
+                </div>
+                <div class="card">
+                    <div class="valor">
+                        <p>{{ metalicosDia }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Último dia</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="valor">
+                        <p>{{ metalicosMes }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="valor">
+                        <p>{{ metalicosAno }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                    </div>
+                </div>
+            </div><!--EndTotais-->
+        </div>    
+        <div class="produtividadeWrap">
+            <div class="tituloCarregamento">
+                <b>Total dos Fornos</b>
+            </div>
+            <div class="produtividade">
+                <div class="cardForno">
+                    <div class="valorForno">
+                        <p>{{ fornosTotalDia }}</p>
+                    </div>
+                    <div class="unidadeForno">
+                        <p>Último dia</p>
+                    </div>
+                </div>
+                <div class="cardForno">
+                    <div class="valorForno">
+                        <p>{{ fornosTotalMes }}</p>
+                    </div>
+                    <div class="unidadeForno">
+                        <p>Acomulado mês atual</p>
+                    </div>
+                </div>
+                <div class="cardForno">
+                    <div class="valorForno">
+                        <p>{{ fornosTotalAno }}</p>
+                    </div>
+                    <div class="unidadeForno">
+                        <p>Acomulado ano atual</p>
+                    </div>
+                </div>
+            </div>
+        </div><!--EndProdutividade-->
+    </div><!--enRow2-->
+    <div class="row2">
+        <div class="totaisWrap">
+            <div class="tituloCarregamento">
+                <i class="pi pi-plus-circle"></i><span (click)="exibirGrafico()" style="cursor: pointer;"> <b> Beneficiamento </b></span><br>
+            </div>
+            <div class="totais">
+                <div class="nomes">
+                    <p>Cal Virgem CV-C</p>
+                </div>
+                <div class="cardCalcinacao">
+                    <div class="valor">
+                        <p>{{ cvcTotalDia }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Último dia</p>
+                    </div>
+                </div>
+                <div class="cardCalcinacao">
+                    <div class="valor">
+                        <p>{{ cvcTotalMes }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                    </div>
+                </div>
+                <div class="cardCalcinacao">
+                    <div class="valor">
+                        <p>{{ cvcTotalAno }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                    </div>
+                </div>
+            </div><!--EndTotais-->
+            <div class="totais">
+                <div class="nomes">
+                    <p>Cal Hidratada CH-II</p>
+                </div>
+                <div class="cardCalcinacao">
+                    <div class="valor">
+                        <p>{{ hidraulicaTotalDia }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Último dia</p>
+                    </div>
+                </div>
+                <div class="cardCalcinacao">
+                    <div class="valor">
+                        <p>{{ hidraulicaTotalMes }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                    </div>
+                </div>
+                <div class="cardCalcinacao">
+                    <div class="valor">
+                        <p>{{ hidraulicaTotalAno }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                    </div>
+                </div>
+            </div><!--EndTotais-->
+            <div class="totais">
+                <div class="nomes">
+                    <p>Cal Hidráulica</p>
+                </div>
+                <div class="cardCalcinacao">
+                    <div class="valor">
+                        <p>{{ ch2TotalDia }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Último dia</p>
+                    </div>
+                </div>
+                <div class="cardCalcinacao">
+                    <div class="valor">
+                        <p>{{ ch2TotalMes }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                    </div>
+                </div>
+                <div class="cardCalcinacao">
+                    <div class="valor">
+                        <p>{{ ch2TotalAno }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                    </div>
+                </div>
+            </div><!--EndTotais-->
+        </div>    
+        <div class="produtividadeWrap">
+            <div class="tituloCarregamento">
+                <b>Volume Ensacado</b>
+            </div>
+            <div class="produtividade">
+                <div class="totais">
+                    <div class="cardEnsacado">
+                        <div class="valor">
+                            <p>{{ cvcEnsacadosTotalDia }}</p>
+                        </div>
+                        <div class="unidade">
+                            <p>Último dia</p>
+                        </div>
+                    </div>
+                    <div class="cardEnsacado">
+                        <div class="valor">
+                            <p>{{ cvcEnsacadosTotalMes }}</p>
+                        </div>
+                        <div class="unidade">
+                            <p>Acomulado mês atual</p>
+                        </div>
+                    </div>
+                    <div class="cardEnsacado">
+                        <div class="valor">
+                            <p>{{ cvcEnsacadosTotalAno }}</p>
+                        </div>
+                        <div class="unidade">
+                            <p>Acomulado ano atual</p>
+                        </div>
+                    </div>
+                </div><!--EndTotais-->
+                <div class="totais">
+                    <div class="cardEnsacado">
+                        <div class="valor">
+                            <p>{{ ch2EnsacadosTotalDia }}</p>
+                        </div>
+                        <div class="unidade">
+                            <p>Último dia</p>
+                        </div>
+                    </div>
+                    <div class="cardEnsacado">
+                        <div class="valor">
+                            <p>{{ ch2EnsacadosTotalMes }}</p>
+                        </div>
+                        <div class="unidade">
+                            <p>Acomulado mês atual</p>
+                        </div>
+                    </div>
+                    <div class="cardEnsacado">
+                        <div class="valor">
+                            <p>{{ ch2EnsacadosTotalAno }}</p>
+                        </div>
+                        <div class="unidade">
+                            <p>Acomulado ano atual</p>
+                        </div>
+                    </div>
+                </div><!--EndTotais-->
+                <div class="totais">
+                    <div class="cardEnsacado">
+                        <div class="valor">
+                            <p>{{ hidraulicaEnsacadosTotalDia }}</p>
+                        </div>
+                        <div class="unidade">
+                            <p>Último dia</p>
+                        </div>
+                    </div>
+                    <div class="cardEnsacado">
+                        <div class="valor">
+                            <p>{{ hidraulicaEnsacadosTotalMes }}</p>
+                        </div>
+                        <div class="unidade">
+                            <p>Acomulado mês atual</p>
+                        </div>
+                    </div>
+                    <div class="cardEnsacado">
+                        <div class="valor">
+                            <p>{{ hidraulicaEnsacadosTotalAno }}</p>
+                        </div>
+                        <div class="unidade">
+                            <p>Acomulado ano atual</p>
+                        </div>
+                    </div>
+                </div><!--EndTotais-->
+        </div><!--EndProdutividade-->
+    </div><!--enRow2-->
+<!---------------------------------------------MODAIS--------------------------------->
+    <p-dialog
+        [modal]="true"
+        [(visible)]="abrirModal"
+        [style]="{ width: '90%', height:'90%' }"
+        [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"   
+    >
+    <div class="titulo">
+        <p-divider align="left" type="solid">
+            <b>Produção Cal</b>
+        </p-divider> 
+    </div>
+    
+    </p-dialog>    
+</div>

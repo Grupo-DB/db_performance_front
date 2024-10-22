@@ -1,0 +1,240 @@
+@import "primeicons/primeicons.css";
+.titulo a {
+    color: inherit; 
+    text-decoration: none; 
+}
+.titulo a:hover {
+    color:#1890FF; 
+}
+.tituloCarregamento{
+    font-family: 'Aptos', sans-serif;
+    margin-left: 25px;
+    margin-top: 5px;
+    margin-bottom: 8px;
+}
+.row1 {
+    display: flex;
+    width: 90%;
+    flex-direction: row-reverse;
+    margin: 5px auto;
+}
+.row1 .carregamentos{
+    background-color: #e2e7f3;
+    width: 50%;
+    border-radius: 8px;
+}
+.carregamentos .carregamentoWrap{
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 8px;
+}
+.cardCarregmento{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    margin-left: 5px;
+    text-align: center;
+    height: 80px;
+    width: 180px;
+    border-radius: 10px;
+    background-color:#2d53da;
+    box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+}
+.valorCarregamento{
+    font-size: 20px;
+    flex: 1;
+    display: flex;
+    align-items: center; /* Centraliza verticalmente */
+    justify-content: center; /* Centraliza horizontalmente */
+    height: 100%; /* Certifique-se de que o contêiner tenha uma altura definida */
+    font-family: 'Aptos', sans-serif;
+    font-weight: 700;
+    color: #eee;
+    p {
+        margin: 0; /* Remove a margem padrão */
+        text-align: center;
+    }
+}
+.unidadeCarregamento{
+    border-top: 1px solid #eee; /* Adiciona uma borda superior para separar o rodapé */
+    padding-top: 2px;
+    text-align: center; /* Centraliza o texto do rodapé */
+    font-size: 12px;
+    font-family: 'Aptos', sans-serif;
+    font-weight: 200;
+    color: #eee;
+}
+.row2{
+    display: flex;
+    width: 90%;
+    background-color: #e2e7f3;
+    margin: 5px auto;
+    border-radius: 10px;
+}
+.totaisWrap{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    //background-color: blueviolet;
+    
+}
+.totais{
+    display: flex;
+    justify-content: space-around;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    //background-color: antiquewhite;
+}
+.nomes{
+    display: flex;
+    width: 100px;
+    align-items: center;
+    justify-content:center;
+    font-family: 'Aptos', sans-serif;
+    font-weight: 700;
+}
+.card{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    margin-left: 5px;
+    text-align: center;
+    height: 140px;
+    width: 220px;
+    border-radius: 10px;
+    background-color:#2d53da;
+    box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+}
+.cardForno{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    margin: 10px;
+    text-align: center;
+    height: 100px;
+    width: 400px;
+    border-radius: 10px;
+    background-color:#444959;
+    box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+}
+.unidadeForno {
+    border-top: 1px solid #eee; /* Adiciona uma borda superior para separar o rodapé */
+    padding-top: 1px;
+    text-align: center; /* Centraliza o texto do rodapé */
+    font-family: 'Aptos', sans-serif;
+    font-weight: 200;
+    color: #eee;
+}
+.valor {
+    font-size: 30px;
+    flex: 1;
+    display: flex;
+    align-items: center; /* Centraliza verticalmente */
+    justify-content: center; /* Centraliza horizontalmente */
+    height: 100%; /* Certifique-se de que o contêiner tenha uma altura definida */
+    font-family: 'Aptos', sans-serif;
+    font-weight: 700;
+    color: #eee;
+    p {
+        margin: 0; /* Remove a margem padrão */
+        text-align: center;
+    }
+}
+.valorForno {
+    font-size: 30px;
+    flex: 1;
+    display: flex;
+    align-items: center; /* Centraliza verticalmente */
+    justify-content: center; /* Centraliza horizontalmente */
+    height: 100%; /* Certifique-se de que o contêiner tenha uma altura definida */
+    font-family: 'Aptos', sans-serif;
+    font-weight: 700;
+    color: #eee;
+    p {
+        margin: 5; /* Remove a margem padrão */
+        text-align: center;
+    }
+}
+.unidade {
+    border-top: 1px solid #eee; /* Adiciona uma borda superior para separar o rodapé */
+    padding-top: 2px;
+    text-align: center; /* Centraliza o texto do rodapé */
+    font-family: 'Aptos', sans-serif;
+    font-weight: 200;
+    color: #eee;
+}
+.produtividadeWrap{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+    
+}
+.cardCalcinacao{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    margin-left: 5px;
+    text-align: center;
+    height: 100px;
+    width: 180px;
+    border-radius: 10px;
+    background-color:#2d53da;
+    box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+}
+.unidadeCalcinacao{
+    border-top: 1px solid #eee; /* Adiciona uma borda superior para separar o rodapé */
+    padding-top: 1px;
+    text-align: center; /* Centraliza o texto do rodapé */
+    font-family: 'Aptos', sans-serif;
+    font-weight: 200;
+    color: #eee;
+}
+.valorCalcinacao {
+    font-size: 30px;
+    flex: 1;
+    display: flex;
+    align-items: center; /* Centraliza verticalmente */
+    justify-content: center; /* Centraliza horizontalmente */
+    height: 100%; /* Certifique-se de que o contêiner tenha uma altura definida */
+    font-family: 'Aptos', sans-serif;
+    font-weight: 700;
+    color: #eee;
+    p {
+        margin: 5; /* Remove a margem padrão */
+        text-align: center;
+    }
+}
+.cardEnsacado{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    margin-left: 5px;
+    text-align: center;
+    height: 100px;
+    width: 180px;
+    border-radius: 10px;
+    background-color:#444959;
+    box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+}
