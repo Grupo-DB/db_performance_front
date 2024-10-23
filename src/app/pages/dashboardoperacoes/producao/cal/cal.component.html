@@ -324,6 +324,360 @@
             <b>Produção Cal</b>
         </p-divider> 
     </div>
-    
-    </p-dialog>    
-</div>
+    <div class="rowBotoes">
+        <div 
+            class="btnCalc"
+            (click)="gerarGrafico('mensal','acumulado')"
+            [ngClass]="{'active': selectedButton === 'mensal'}" 
+        >
+            <p>No mês</p>
+        </div>
+        <div 
+            class="btnCalc" 
+            (click)="gerarGrafico('anual','acumulado')"
+            [ngClass]="{'active': selectedButton === 'anual'}" 
+        >
+            <p>No ano</p>
+        </div>
+    </div>
+    <div class="rowBotoesFabricas">
+        <div 
+            class="btnCalc"
+            (click)="gerarGrafico(selectedButton,'acumulado')"
+            [ngClass]="{'active': selectedProduct === 'acumulado'}"
+        >
+            <p>Acumulado</p>
+        </div>
+        <div 
+            class="btnCalc"
+           (click)="gerarGrafico(selectedButton,'cvc')"
+           [ngClass]="{'active': selectedProduct === 'cvc'}"
+        >
+            <p>CVC</p>
+        </div>
+        <div 
+            class="btnCalc"
+            (click)="gerarGrafico(selectedButton,'ch2')"
+            [ngClass]="{'active': selectedProduct === 'ch2'}"
+        >
+            <p>CH2</p>
+        </div>
+        <div class="btnCalc"
+        (click)="gerarGrafico(selectedButton,'hidraulica')"
+        [ngClass]="{'active': selectedProduct === 'hidraulica'}"
+        >
+            <p>Hidráulica</p>
+        </div>
+        <div 
+            class="btnCalc" 
+        >
+             <a (click)="exibirEquipamentos()" style="color: inherit;"><p>Detalhar</p></a> 
+        </div>
+    </div>
+    <div class="containerModal">
+        <div class="chartBarEnsacados">
+            <canvas id="graficoTotalProducaoDiaria"></canvas>
+        </div>
+        <div class="projecoes">
+            <div class="titulo2">
+                <span> <b>Média do Período</b></span><br>
+            </div>
+            <div class="media">
+                <div class="card2">
+                    <div class="valor">
+                        <p>{{ mediaEnsacados }}</p>
+                    </div>
+                    <div class="unidade2">
+                        <p>Tn</p>
+                    </div>
+                </div>
+            </div>
+            <div class="titulo2">
+                <span> <b> Projeção para o Período</b></span><br>
+            </div>
+            <div class="projecao">
+                <div class="card2">
+                    <div class="valor">
+                        <p>{{ projecaoEnsacados }}</p>
+                    </div>
+                    <div class="unidade2">
+                        <p>Tn</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+    </p-dialog>
+ <!---------------------------------  detalhes equipamentos ------------------ -->
+    <p-dialog 
+        [modal]="true"
+        [(visible)]="equipamentosVisivel" 
+        [style]="{ width: '90%', height: '90%' }" 
+        [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"   
+    >
+        <div class="titulo">
+            <p-divider align="left" type="solid">
+                <b>Produtividade Fábricas</b>
+            </p-divider>   
+            <div class="container">
+                <div class="rowSuperior">
+                    <div class="buttons">
+                        <p-calendar
+                            [style]="{'width':'100%'}"
+                            id="da" 
+                            [(ngModel)]="data"
+                            dateFormat="dd/mm/yy"                  
+                            [showIcon]="true"
+                            placeholder="Data"
+                        >
+                        </p-calendar>
+                        <div class="btnCalcProd" 
+                            (click)="calcularEquipamentosDetalhes(data)">
+                            <p>Calcular</p>
+                        </div>
+                    </div>    
+                    <div class="rightEqpto">
+                        <div class="tituloEqpto">
+                            <span> <b>Carregamento geral</b></span><br>
+                        </div>
+                        <div class="media2">
+                            <div class="cardCarregamentoEqpto">
+                                <div class="valorCarregamentoEqpto">
+                                    <p>{{ ensacadosCarregamento }}</p>
+                                </div>
+                                <div class="unidadeCarregamentoEqpto">
+                                    <p>Carregamento geral</p>
+                                </div>    
+                            </div>
+                        </div>    
+                    </div>    
+                </div><!--end rowSupeiror-->
+                <div class="containerInterno">
+                    <div class="esquerda">
+                        <div class="rowWrap">
+                            <div class="tituloFab">
+                                <b> Ensacados </b>
+                            </div>
+                            <div class="rowEsq">
+                                <div class="coluna1">
+                                    <div class="linha1">
+                                        <div class="eqpto">
+                                            <p>MB-01</p>
+                                        </div>
+                                        <div class="cardProd">
+                                            <div class="valorCarregamentoProd">
+                                                <p>{{ mb01HoraProd }}</p>
+                                            </div>
+                                            <div class="unidadeCarregamentoProd">
+                                                <p>Hora produção</p>
+                                            </div>
+                                        </div>
+                                        <div class="cardProd">
+                                            <div class="valorCarregamentoProd">
+                                                <p>{{ mb01HoraParado }}</p>
+                                            </div>
+                                            <div class="unidadeCarregamentoProd">
+                                                <p>Hora parado</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="coluna2">
+                                    <div class="cardFab">
+                                        <div class="valorCarregamentoFab">
+                                            <p>{{ mb01Produtividade }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoFab">
+                                            <p>Produtividade equipamento</p>
+                                        </div>
+                                    </div>
+                                    <div class="cardFab">
+                                        <div class="valorCarregamentoFab">
+                                            <p>{{ mb01Producao }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoFab">
+                                            <p>Produção equipamento</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!--end row1-->
+                        </div>    
+                        <div class="rowWrap">
+                            <div class="tituloFab">
+                                <b> Ensacados</b>
+                            </div>
+                            <div class="rowEsq">   
+                                <div class="coluna1">
+                                    <div class="linha1">
+                                        <div class="eqpto">
+                                            <p>MB-02</p>
+                                        </div>
+                                        <div class="cardProd">
+                                            <div class="valorCarregamentoProd">
+                                                <p>{{ mb02HoraProd }}</p>
+                                            </div>
+                                            <div class="unidadeCarregamentoProd">
+                                                <p>Hora produção</p>
+                                            </div>
+                                        </div>
+                                        <div class="cardProd">
+                                            <div class="valorCarregamentoProd">
+                                                <p>{{ mb02HoraParado }}</p>
+                                            </div>
+                                            <div class="unidadeCarregamentoProd">
+                                                <p>Hora parado</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="coluna2FCM2">
+                                    <div class="cardFabFCM2">
+                                        <div class="valorCarregamentoFab">
+                                            <p>{{ mb02Produtividade }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoFab">
+                                            <p>Produtividade equipamento</p>
+                                        </div>
+                                    </div>
+                                    <div class="cardFabFCM2">
+                                        <div class="valorCarregamentoFab">
+                                            <p>{{ mb02Producao }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoFab">
+                                            <p>Produção equipamento</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!--end row2-->
+                        </div><!--EndTitle-->    
+                        <div class="rowWrap">
+                            <div class="tituloFab">
+                                <b> Ensacados </b>
+                            </div>
+                            <div class="rowEsq">
+                                <div class="coluna1">
+                                    <div class="linha1">
+                                        <div class="eqpto">
+                                            <p>MB-03</p>
+                                        </div>
+                                        <div class="cardProd">
+                                            <div class="valorCarregamentoProd">
+                                                <p>{{ mb03HoraProd }}</p>
+                                            </div>
+                                            <div class="unidadeCarregamentoProd">
+                                                <p>Hora produção</p>
+                                            </div>
+                                        </div>
+                                        <div class="cardProd">
+                                            <div class="valorCarregamentoProd">
+                                                <p>{{ mb03HoraParado }}</p>
+                                            </div>
+                                            <div class="unidadeCarregamentoProd">
+                                                <p>Hora parado</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>    
+                                <div class="coluna2">
+                                    <div class="cardFab">
+                                        <div class="valorCarregamentoFab">
+                                            <p>{{ mb03Produtividade }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoFab">
+                                            <p>Produtividade equipamento</p>
+                                        </div>
+                                    </div>
+                                    <div class="cardFab">
+                                        <div class="valorCarregamentoFab">
+                                            <p>{{ mb03Producao }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoFab">
+                                            <p>Produção equipamento</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!--end row3-->
+                        </div>
+                        <div class="rowWrap">
+                            <div class="tituloFab">
+                                <b> Ensacados </b>
+                            </div>
+                            <div class="rowEsq">
+                                <div class="coluna1">
+                                    <div class="linha1">
+                                        <div class="eqpto">
+                                            <p>MG-01</p>
+                                        </div>
+                                        <div class="cardProd">
+                                            <div class="valorCarregamentoProd">
+                                                <p>{{ mg01HoraProd }}</p>
+                                            </div>
+                                            <div class="unidadeCarregamentoProd">
+                                                <p>Hora produção</p>
+                                            </div>
+                                        </div>
+                                        <div class="cardProd">
+                                            <div class="valorCarregamentoProd">
+                                                <p>{{ mg01HoraParado }}</p>
+                                            </div>
+                                            <div class="unidadeCarregamentoProd">
+                                                <p>Hora parado</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>    
+                                <div class="coluna2">
+                                    <div class="cardFab">
+                                        <div class="valorCarregamentoFab">
+                                            <p>{{ mg01Produtividade }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoFab">
+                                            <p>Produtividade equipamento</p>
+                                        </div>
+                                    </div>
+                                    <div class="cardFab">
+                                        <div class="valorCarregamentoFab">
+                                            <p>{{ mg01Producao }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoFab">
+                                            <p>Produção equipamento</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!--end row3-->
+                        </div>        
+                    </div><!--end Esquerda-->
+                    <div class="direita">
+                        <div class="totais">
+                            <div class="cardFabDir">
+                                <div class="valorCarregamentoFab">
+                                    <p>{{ ensacadosProdutividade }}</p>
+                                </div>
+                                <div class="unidadeCarregamentoFab">
+                                    <p>Produtividade</p>
+                                </div>
+                            </div>
+                            <div class="cardFabDir">
+                                <div class="valorCarregamentoFab">
+                                    <p>{{ ensacadosProducaoGeral }}</p>
+                                </div>
+                                <div class="unidadeCarregamentoFab">
+                                    <p>Produção diária</p>
+                                </div>
+                            </div>
+                            <div class="cardFabDir">
+                                <div class="valorCarregamentoFab">
+                                    <p>{{ ensacadosEstoque }}</p>
+                                </div>
+                                <div class="unidadeCarregamentoFab">
+                                    <p>Estoque ensacados</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--End Direita-->
+                </div><!--end containerInterno--> 
+            </div><!--end container--> 
+        </div>
+        
+</p-dialog>       
+
