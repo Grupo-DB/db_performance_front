@@ -9,20 +9,20 @@ import { Observable } from 'rxjs';
 })
 export class HomeService {
   //declarar as urls
-  private calcarioUrl = 'http://localhost:8000/home/calcular_calcario/';
-  private britagemUrl =  'http://localhost:8000/britagem/calcular_britagem/';
-  private rebritagemUrl =  'http://localhost:8000/rebritagem/calcular_rebritagem/';
-  private fabricaCalcarioUrl =  'http://localhost:8000/calcario/calcular_calcario/';
-  private fabricaFertilizanteUrl =  'http://localhost:8000/fertilizante/calcular_fertilizante/';
-  private graficosFabricaCalcarioUrl =  'http://localhost:8000/calcario/calcular_calcario_graficos/';
-  private rebritagemParadasUrl =  'http://localhost:8000/rebritagem/calcular_rebritagem_paradas/';
-  private graficosUrl =  'http://localhost:8000/britagem/calcular_graficos/';
-  private calculosEquipamentosUrl = 'http://localhost:8000/calcario/calcular_equipamentos_detalhes/';
-  private calUrl = 'http://localhost:8000/cal/calcular_cal/';
-  private calProdutosUrl = 'http://localhost:8000/cal/calcular_cal_produtos/';
-  private calEquipamentosUrl = 'http://localhost:8000/cal/calcular_cal_equipamentos/';
-  private calGraficosUrl = 'http://localhost:8000/cal/calcular_cal_graficos/';
-  private calEquipamentosDetalhesUrl = 'http://localhost:8000/cal/calcular_cal_detalhes/';
+  private calcarioUrl = 'http://172.50.10.79:8008/home/calcular_calcario/';
+  private britagemUrl =  'http://172.50.10.79:8008/britagem/calcular_britagem/';
+  private rebritagemUrl =  'http://172.50.10.79:8008/rebritagem/calcular_rebritagem/';
+  private fabricaCalcarioUrl =  'http://172.50.10.79:8008/calcario/calcular_calcario/';
+  private fabricaFertilizanteUrl =  'http://172.50.10.79:8008/fertilizante/calcular_fertilizante/';
+  private graficosFabricaCalcarioUrl =  'http://172.50.10.79:8008/calcario/calcular_calcario_graficos/';
+  private rebritagemParadasUrl =  'http://172.50.10.79:8008/rebritagem/calcular_rebritagem_paradas/';
+  private graficosUrl =  'http://172.50.10.79:8008/britagem/calcular_graficos/';
+  private calculosEquipamentosUrl = 'http://172.50.10.79:8008/calcario/calcular_equipamentos_detalhes/';
+  private calUrl = 'http://172.50.10.79:8008/cal/calcular_cal/';
+  private calProdutosUrl = 'http://172.50.10.79:8008/cal/calcular_cal_produtos/';
+  private calEquipamentosUrl = 'http://172.50.10.79:8008/cal/calcular_cal_equipamentos/';
+  private calGraficosUrl = 'http://172.50.10.79:8008/cal/calcular_cal_graficos/';
+  private calEquipamentosDetalhesUrl = 'http://172.50.10.79:8008/cal/calcular_cal_detalhes/';
 
   constructor(private  httpClient: HttpClient, private router: Router,) { }
 

@@ -55,6 +55,8 @@ export class HomebritagemComponent implements OnInit {
   teste:any;
   totalUltimoDia!:number;
   volumeMensal: any;
+  //
+  botaoSelecionado: string = '';
   constructor(
     private homeService: HomeService,
   ){}
@@ -66,7 +68,7 @@ export class HomebritagemComponent implements OnInit {
   }
   exibirGrafico() {
     this.graficoVisivel1 = true; // Exibe o modal
-    this.graficoMensal('mensal');
+    this.graficoMensal('atual');
 }
   exibirGraficoCal() {
   this.graficoVisivel = true; // Exibe o modal
@@ -94,6 +96,7 @@ export class HomebritagemComponent implements OnInit {
     });
   }
   graficoMensal(tipoCalculo: string){
+    this.botaoSelecionado = 'mensal';
     this.homeService.calcularGraficos(tipoCalculo).subscribe(response => {
       this.graficoBritadaCalcarioChartMes(response.volume_diario),
       this.mediaCalcario = response.volume_diario.media_diaria_calcario;
@@ -103,6 +106,7 @@ export class HomebritagemComponent implements OnInit {
     })
   }
   graficoMensalCal(tipoCalculo: string){
+    this.botaoSelecionado = 'mensal';
     this.homeService.calcularGraficos(tipoCalculo).subscribe(response => {
       this.graficoBritadaCalChartMes(response.volume_diario),
       this.mediaCalcario = response.volume_diario.media_diaria_calcario;
@@ -112,6 +116,7 @@ export class HomebritagemComponent implements OnInit {
     })
   }
   graficoAnual(tipoCalculo: string){
+    this.botaoSelecionado = 'anual';
     this.homeService.calcularGraficos(tipoCalculo).subscribe(response => {
       this.graficoBritadaCalcarioChartAno(response.volume_mensal),
       this.mediaCalcario = response.volume_mensal.media_mensal_calcario;
@@ -121,6 +126,7 @@ export class HomebritagemComponent implements OnInit {
     })
   }
   graficoAnualCal(tipoCalculo: string){
+    this.botaoSelecionado = 'anual';
     this.homeService.calcularGraficos(tipoCalculo).subscribe(response => {
       this.graficoBritadaCalChartAno(response.volume_mensal),
       this.mediaCalcario = response.volume_mensal.media_mensal_calcario;
@@ -180,7 +186,7 @@ export class HomebritagemComponent implements OnInit {
       
 
   }
-
+//CALCARIO ANO
 graficoBritadaCalcarioChartAno(volumeMensal: any) {
   // Preparando os dados para o gráfico
   const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']; // Meses
@@ -201,17 +207,10 @@ graficoBritadaCalcarioChartAno(volumeMensal: any) {
         {
           label: 'Tn Pedra Britada Calcario',
           data: loc44Data, // Dados de LOCCOD 44
-          backgroundColor: '#71AAE0',
-          borderColor: '#3A3E4C',
+          backgroundColor: '##4C5264',
+          borderColor: '#4C5264',
           borderWidth: 1
         },
-        // {
-        //   label: 'LOCCOD 62',
-        //   data: loc62Data, // Dados de LOCCOD 62
-        //   backgroundColor: 'rgba(255, 159, 64, 0.6)',
-        //   borderColor: 'rgba(255, 159, 64, 1)',
-        //   borderWidth: 1
-        // }
       ]
     },
     options: {
@@ -259,19 +258,17 @@ graficoBritadaCalcarioChartAno(volumeMensal: any) {
     }
   });
 }
-
+//CALCARIO MENSAL
 graficoBritadaCalcarioChartMes(volumeDiario: any) {
   // Preparando os dados para o gráfico
   const labels = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]; // Meses
   const loc44Data = volumeDiario.LOCCOD_44.map((dia: any) => dia.TOTAL);
-  //const loc62Data = volumeMensal.LOCCOD_62.map((mes: any) => mes.TOTAL);
-
+ 
   // Verifica se o gráfico já foi criado e o destrói antes de criar um novo
   if (this.graficoBritadaCalcarioAno) {
     this.graficoBritadaCalcarioAno.destroy();
   }
 
-  // Criando o gráfico com Chart.js
   this.graficoBritadaCalcarioAno = new Chart('graficoPedraBritadaCalcarioAnual', {
     type: 'bar',
     data: {
@@ -280,17 +277,10 @@ graficoBritadaCalcarioChartMes(volumeDiario: any) {
         {
           label: 'Tn Pedra Britada Calcario',
           data: loc44Data, // Dados de LOCCOD 44
-          backgroundColor: '#71AAE0',
-          borderColor: '#3A3E4C',
+          backgroundColor: '#4C5264',
+          borderColor: '#eee',
           borderWidth: 1
         },
-        // {
-        //   label: 'LOCCOD 62',
-        //   data: loc62Data, // Dados de LOCCOD 62
-        //   backgroundColor: 'rgba(255, 159, 64, 0.6)',
-        //   borderColor: 'rgba(255, 159, 64, 1)',
-        //   borderWidth: 1
-        // }
       ]
     },
     options: {
@@ -352,7 +342,7 @@ graficoBritadaCalChartAno(volumeMensal: any) {
     this.graficoBritadaCalAno.destroy();
   }
 
-  // Criando o gráfico com Chart.js
+  // CAL ANO
   this.graficoBritadaCalAno = new Chart('graficoPedraBritadaCalAnual', {
     type: 'bar',
     data: {
@@ -361,17 +351,10 @@ graficoBritadaCalChartAno(volumeMensal: any) {
         {
           label: 'Tn Pedra Britada Calcario',
           data: loc62Data, // Dados de LOCCOD 44
-          backgroundColor: '#71AAE0',
-          borderColor: '#3A3E4C',
+          backgroundColor: '#4C5264',
+          borderColor: '#4C5264',
           borderWidth: 1
         },
-        // {
-        //   label: 'LOCCOD 62',
-        //   data: loc62Data, // Dados de LOCCOD 62
-        //   backgroundColor: 'rgba(255, 159, 64, 0.6)',
-        //   borderColor: 'rgba(255, 159, 64, 1)',
-        //   borderWidth: 1
-        // }
       ]
     },
     options: {
@@ -420,6 +403,7 @@ graficoBritadaCalChartAno(volumeMensal: any) {
   });
 }
 
+//CAL MES
 graficoBritadaCalChartMes(volumeDiario: any) {
   // Preparando os dados para o gráfico
   const labels = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]; // Meses
@@ -440,17 +424,10 @@ graficoBritadaCalChartMes(volumeDiario: any) {
         {
           label: 'Tn Pedra Britada Cal',
           data: loc62Data, // Dados de LOCCOD 44
-          backgroundColor: '#71AAE0',
-          borderColor: '#3A3E4C',
+          backgroundColor: '#4C5264',
+          borderColor: '#4C5264',
           borderWidth: 1
         },
-        // {
-        //   label: 'LOCCOD 62',
-        //   data: loc62Data, // Dados de LOCCOD 62
-        //   backgroundColor: 'rgba(255, 159, 64, 0.6)',
-        //   borderColor: 'rgba(255, 159, 64, 1)',
-        //   borderWidth: 1
-        // }
       ]
     },
     options: {

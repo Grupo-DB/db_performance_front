@@ -205,10 +205,18 @@
         </p-divider> 
     </div>
     <div class="rowBotoes">
-        <div class="btnCalc" (click)="graficoMensal('mensal')">
+        <div 
+            class="btnCalc" 
+            (click)="graficoMensal('mensal')"
+            [ngClass]="{'selecionado': botaoSelecionado === 'mensal'}"    
+        >
             <p>No mês</p>
         </div>
-        <div class="btnCalc" (click)="graficoAnual('anual')">
+        <div 
+            class="btnCalc" 
+            (click)="graficoAnual('anual')"
+            [ngClass]="{'selecionado': botaoSelecionado === 'anual'}"
+        >
             <p>No ano</p>
         </div>
     </div>
@@ -262,10 +270,18 @@
         </p-divider> 
     </div>
     <div class="rowBotoes">
-        <div class="btnCalc" (click)="graficoMensalCal('mensal')">
+        <div 
+            class="btnCalc" 
+            (click)="graficoMensalCal('mensal')"
+            [ngClass]="{'selecionado': botaoSelecionado === 'mensal'}" 
+        >
             <p>No mês</p>
         </div>
-        <div class="btnCalc" (click)="graficoAnualCal('anual')">
+        <div 
+            class="btnCalc" 
+            (click)="graficoAnualCal('anual')"
+            [ngClass]="{'selecionado': botaoSelecionado === 'anual'}" 
+        >
             <p>No ano</p>
         </div>
     </div>

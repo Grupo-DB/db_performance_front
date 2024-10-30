@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class PeriodoService {
-  private apiUrl = 'http://localhost:8000/datacalc/periodo/';
+  private apiUrl = 'http://172.50.10.79:8008/datacalc/periodo/';
 
   constructor(private http: HttpClient) {}
 

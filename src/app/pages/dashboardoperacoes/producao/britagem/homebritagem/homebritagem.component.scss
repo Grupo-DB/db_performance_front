@@ -32,7 +32,7 @@
     .britadaCalcario{
         margin-left: 8px;
         margin-right: 8px;
-        background-color: #B8D4F0;
+        background-color: #e2e7f3;
         border-radius: 8px;
         height: 200px;
     }
@@ -40,7 +40,7 @@
         margin-left: 8px;
         margin-right: 8px;
         margin-top: 8px;
-        background-color: #B8D4F0;
+        background-color:#e2e7f3;
         border-radius: 8px;
         height: 200px;
     }
@@ -52,7 +52,7 @@
 .calcDireita{
     height: 400px;
     width: 40%;
-    background-color: #B8D4F0;
+    background-color: #e2e7f3;
     border-radius: 8px;
     margin-right: 8px;
 }
@@ -81,7 +81,7 @@
     height: 140px;
     width: 220px;
     border-radius: 10px;
-    background-color:#71AAE0;
+    background-color:#2d53da;
     box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
     -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
@@ -96,17 +96,19 @@
     height: 100%; /* Certifique-se de que o contêiner tenha uma altura definida */
     font-family: 'Aptos', sans-serif;
     font-weight: 700;
+    color: #eee;
     p {
         margin: 0; /* Remove a margem padrão */
         text-align: center;
     }
 }
 .unidade {
-    border-top: 1px solid #000; /* Adiciona uma borda superior para separar o rodapé */
+    border-top: 1px solid #eee; /* Adiciona uma borda superior para separar o rodapé */
     padding-top: 2px;
     text-align: center; /* Centraliza o texto do rodapé */
     font-family: 'Aptos', sans-serif;
     font-weight: 200;
+    color: #eee;
 }
 .calculos2{
     width: 100%;
@@ -116,20 +118,20 @@
     border-radius: 8px;
     margin-left: 8px;
     margin-right: 8px;
-    background-color: #B8D4F0;
+    background-color: #e2e7f3;
 }
 .calcCargas{
     width: 100%;
     margin-left: 8px;
     margin-right: 8px;
-    background-color: #B8D4F0;
+    background-color: #e2e7f3;
     border-radius: 8px;
     height: 300px;
 }
 
 tr {
-    background-color:#B8D4F0;
-    font-size: 10px;
+    background-color:#f2f1f0;
+    font-size: 16px;
     height: 10px;
     color: #333;
     border-radius: 8px;
@@ -138,7 +140,8 @@ tr {
     border-radius: 8px;
   }
   th{
-    background-color: #71AAE0;
+    background-color: #2d53da;
+    color: #eee;
   }
   .containerModal{
     justify-content: center;
@@ -147,7 +150,7 @@ tr {
     display: flex;
   }
   .chartRadarAvaliadores{
-    background-color: #B8D4F0;
+    background-color: #e2e7f3;
     border-radius: 8px;
     height: 80%;
     width: 65%;
@@ -163,7 +166,7 @@ tr {
     width: 25%;
     margin-left: 25px;
     border-radius: 8px;
-    background-color: #B8D4F0;
+    background-color: #e2e7f3;
   }
   .media{
     display: flex;
@@ -205,15 +208,21 @@ tr {
     height: 90%;
     width: 80%;
     border-radius: 10px;
-    background-color:#71AAE0;
+    background-color:#4C5264;
     box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
     -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
     .unidade2 {
-        border-top: 1px solid #000; /* Adiciona uma borda superior para separar o rodapé */
+        border-top: 1px solid #eee; /* Adiciona uma borda superior para separar o rodapé */
         padding-top: 1px;
         text-align: center; /* Centraliza o texto do rodapé */
         font-family: 'Aptos', sans-serif;
         font-weight: 200;
+        color:#eee;
     }
+}
+.selecionado {
+    background-color: #71AAE0; /* Cor de fundo do botão selecionado */
+    color: white;              /* Cor do texto do botão selecionado */
+    /* Adicione outros estilos, como borda ou sombra, se quiser */
 }
