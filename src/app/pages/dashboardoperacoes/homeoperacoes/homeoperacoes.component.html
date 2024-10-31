@@ -4,13 +4,25 @@
   </p-divider> 
 
   <div class="rowBotoes">
-      <div class="btnCalc" (click)="calcular('atual')">
+      <div 
+        class="btnCalc" 
+        (click)="calcular('atual')"
+        [ngClass]="{'selecionado': botaoSelecionado === 'atual'}"
+      >
         <p>Últ. dia</p>
       </div>
-      <div class="btnCalc" (click)="calcular('mensal')">
+      <div 
+        class="btnCalc" 
+        (click)="calcular('mensal')"
+        [ngClass]="{'selecionado': botaoSelecionado ==='mensal'}"  
+      >
         <p>No mês</p>
       </div>
-      <div class="btnCalc" (click)="calcular('anual')">
+      <div 
+        class="btnCalc" 
+        (click)="calcular('anual')"
+        [ngClass]="{'selecionado':botaoSelecionado === 'anual'}"  
+      >
         <p>No ano</p>
       </div>
   </div>

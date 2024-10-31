@@ -40,7 +40,7 @@
     </div><!--EndCarregamento-->
     <div class="row2">
         <div class="totaisWrap">
-            <div class="tituloCarregamento">
+            <div class="tituloCarregamento2">
                 <b> Calcinação</b>
             </div>
             <div class="totais">
@@ -103,7 +103,7 @@
             </div><!--EndTotais-->
         </div>    
         <div class="produtividadeWrap">
-            <div class="tituloCarregamento">
+            <div class="tituloCarregamento2">
                 <b>Total dos Fornos</b>
             </div>
             <div class="produtividade">
@@ -136,7 +136,7 @@
     </div><!--enRow2-->
     <div class="row2">
         <div class="totaisWrap">
-            <div class="tituloCarregamento">
+            <div class="tituloCarregamento2">
                 <i class="pi pi-plus-circle"></i><span (click)="exibirGrafico()" style="cursor: pointer;"> <b> Beneficiamento </b></span><br>
             </div>
             <div class="totais">
@@ -228,10 +228,10 @@
             </div><!--EndTotais-->
         </div>    
         <div class="produtividadeWrap">
-            <div class="tituloCarregamento">
+            <div class="tituloCarregamento2">
                 <b>Volume Ensacado</b>
             </div>
-            <div class="produtividade">
+            <!-- <div class="produtividade"> -->
                 <div class="totais">
                     <div class="cardEnsacado">
                         <div class="valor">
@@ -310,13 +310,13 @@
                         </div>
                     </div>
                 </div><!--EndTotais-->
-        </div><!--EndProdutividade-->
+        <!--EndProdutividade-->
     </div><!--enRow2-->
 <!---------------------------------------------MODAIS--------------------------------->
     <p-dialog
         [modal]="true"
         [(visible)]="abrirModal"
-        [style]="{ width: '90%', height:'90%' }"
+        [style]="{ width: '95%', height:'95%' }"
         [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"   
     >
     <div class="titulo">
@@ -406,7 +406,41 @@
                 </div>
             </div>
         </div>
-    </div>    
+    </div>
+    <br/>
+    <div class="containerModal">
+        <div class="chartBarEnsacados">
+            <canvas id="graficoTotalCarregamentoDiario"></canvas>
+        </div>    
+        <div class="projecoes">
+            <div class="titulo2">
+                <span> <b>Média do Período</b></span><br>
+            </div>
+            <div class="media">
+                <div class="card2">
+                    <div class="valor">
+                        <p>{{ mediaEnsacadosCarregamento }}</p>
+                    </div>
+                    <div class="unidade2">
+                        <p>Tn</p>
+                    </div>
+                </div>
+            </div>
+            <div class="titulo2">
+                <span> <b> Projeção para o Período</b></span><br>
+            </div>
+            <div class="projecao">
+                <div class="card2">
+                    <div class="valor">
+                        <p>{{ projecaoEnsacadosCarregamento }}</p>
+                    </div>
+                    <div class="unidade2">
+                        <p>Tn</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     </p-dialog>
  <!---------------------------------  detalhes equipamentos ------------------ -->
     <p-dialog 
@@ -484,18 +518,18 @@
                                 </div>
                                 <div class="coluna2">
                                     <div class="cardFab">
-                                        <div class="valorCarregamentoFab">
+                                        <div class="valorCarregamentoProd">
                                             <p>{{ mb01Produtividade }}</p>
                                         </div>
-                                        <div class="unidadeCarregamentoFab">
+                                        <div class="unidadeCarregamentoProd">
                                             <p>Produtividade equipamento</p>
                                         </div>
                                     </div>
                                     <div class="cardFab">
-                                        <div class="valorCarregamentoFab">
+                                        <div class="valorCarregamentoProd">
                                             <p>{{ mb01Producao }}</p>
                                         </div>
-                                        <div class="unidadeCarregamentoFab">
+                                        <div class="unidadeCarregamentoProd">
                                             <p>Produção equipamento</p>
                                         </div>
                                     </div>
@@ -530,20 +564,20 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="coluna2FCM2">
-                                    <div class="cardFabFCM2">
-                                        <div class="valorCarregamentoFab">
+                                <div class="coluna2">
+                                    <div class="cardFab">
+                                        <div class="valorCarregamentoProd">
                                             <p>{{ mb02Produtividade }}</p>
                                         </div>
-                                        <div class="unidadeCarregamentoFab">
+                                        <div class="unidadeCarregamentoProd">
                                             <p>Produtividade equipamento</p>
                                         </div>
                                     </div>
-                                    <div class="cardFabFCM2">
-                                        <div class="valorCarregamentoFab">
+                                    <div class="cardFab">
+                                        <div class="valorCarregamentoProd">
                                             <p>{{ mb02Producao }}</p>
                                         </div>
-                                        <div class="unidadeCarregamentoFab">
+                                        <div class="unidadeCarregamentoProd">
                                             <p>Produção equipamento</p>
                                         </div>
                                     </div>
@@ -580,18 +614,18 @@
                                 </div>    
                                 <div class="coluna2">
                                     <div class="cardFab">
-                                        <div class="valorCarregamentoFab">
+                                        <div class="valorCarregamentoProd">
                                             <p>{{ mb03Produtividade }}</p>
                                         </div>
-                                        <div class="unidadeCarregamentoFab">
+                                        <div class="unidadeCarregamentoProd">
                                             <p>Produtividade equipamento</p>
                                         </div>
                                     </div>
                                     <div class="cardFab">
-                                        <div class="valorCarregamentoFab">
+                                        <div class="valorCarregamentoProd">
                                             <p>{{ mb03Producao }}</p>
                                         </div>
-                                        <div class="unidadeCarregamentoFab">
+                                        <div class="unidadeCarregamentoProd">
                                             <p>Produção equipamento</p>
                                         </div>
                                     </div>
@@ -628,18 +662,18 @@
                                 </div>    
                                 <div class="coluna2">
                                     <div class="cardFab">
-                                        <div class="valorCarregamentoFab">
+                                        <div class="valorCarregamentoProd">
                                             <p>{{ mg01Produtividade }}</p>
                                         </div>
-                                        <div class="unidadeCarregamentoFab">
+                                        <div class="unidadeCarregamentoProd">
                                             <p>Produtividade equipamento</p>
                                         </div>
                                     </div>
                                     <div class="cardFab">
-                                        <div class="valorCarregamentoFab">
+                                        <div class="valorCarregamentoProd">
                                             <p>{{ mg01Producao }}</p>
                                         </div>
-                                        <div class="unidadeCarregamentoFab">
+                                        <div class="unidadeCarregamentoProd">
                                             <p>Produção equipamento</p>
                                         </div>
                                     </div>
@@ -650,26 +684,26 @@
                     <div class="direita">
                         <div class="totais">
                             <div class="cardFabDir">
-                                <div class="valorCarregamentoFab">
+                                <div class="valorCarregamentoProd">
                                     <p>{{ ensacadosProdutividade }}</p>
                                 </div>
-                                <div class="unidadeCarregamentoFab">
+                                <div class="unidadeCarregamentoProd">
                                     <p>Produtividade</p>
                                 </div>
                             </div>
                             <div class="cardFabDir">
-                                <div class="valorCarregamentoFab">
+                                <div class="valorCarregamentoProd">
                                     <p>{{ ensacadosProducaoGeral }}</p>
                                 </div>
-                                <div class="unidadeCarregamentoFab">
+                                <div class="unidadeCarregamentoProd">
                                     <p>Produção diária</p>
                                 </div>
                             </div>
                             <div class="cardFabDir">
-                                <div class="valorCarregamentoFab">
+                                <div class="valorCarregamentoProd">
                                     <p>{{ ensacadosEstoque }}</p>
                                 </div>
-                                <div class="unidadeCarregamentoFab">
+                                <div class="unidadeCarregamentoProd">
                                     <p>Estoque ensacados</p>
                                 </div>
                             </div>

@@ -23,7 +23,7 @@ export class HomeoperacoesComponent implements OnInit {
   tnArgamassa!:number;
   tnFertilizante!:number;
   producaoBritador!: number;
-
+  botaoSelecionado: string = '';
   constructor(
     private homeService: HomeService,
   ){}
@@ -31,6 +31,7 @@ export class HomeoperacoesComponent implements OnInit {
     this.calcular('atual')    
 }
 calcular(tipoCalculo: string) {
+  this.botaoSelecionado = tipoCalculo
   this.homeService.calcularCalcario(tipoCalculo).subscribe(response => {
     this.volumeBritado = response.volume_britado_total;
     this.tnCal = response.resultados.cal;

@@ -59,9 +59,14 @@ export class CalComponent implements OnInit {
   /**ENSACADOS */
   mediaEnsacados!: number;
   projecaoEnsacados!: number;
+  /**CARREGAMENTO ENSACADOS */
+  mediaEnsacadosCarregamento!: number;
+  projecaoEnsacadosCarregamento!: number;
   /**GRAFICOS */
   graficoProducaoTotalEnsacadosMes:Chart<'bar'> | undefined;
+  graficoCarregamentoTotalEnsacadosMes:Chart<'bar'> | undefined;
   graficoProducaoTotalEnsacadosAno:Chart<'bar'> | undefined;
+  graficoCarregamentoTotalEnsacadosAno:Chart<'bar'> | undefined;
   //HIDRAULICA
   hidraulicaEnsacadosTotalDia!: number;
   hidraulicaEnsacadosTotalMes!: number;
@@ -222,6 +227,7 @@ export class CalComponent implements OnInit {
 exibirGrafico(){
   this.abrirModal = true;
   this.graficoMensalAcumulado('mensal',5);
+  this.graficoMensalAcumuladoCarrgamento('mensal');
 }
 exibirEquipamentos(){
   this.equipamentosVisivel = true;
@@ -234,59 +240,85 @@ gerarGrafico(tipoCalculo: string, produto: string): void {
       case 'acumulado':
           if (tipoCalculo === 'mensal') {
               this.graficoMensalAcumulado(tipoCalculo, 5);
+              this.graficoMensalAcumuladoCarrgamento(tipoCalculo);
           } else {
               this.graficoAnualAcumulado(tipoCalculo, 5);
+              this.graficoAnualAcumuladoCarrgamento(tipoCalculo);
           }
           break;
       case 'cvc':
           if (tipoCalculo === 'mensal') {
-              this.graficoMensalCvc(tipoCalculo, 5); 
+              this.graficoMensalCvc(tipoCalculo, 5);
+              this.graficoMensalCvcCarregamento(tipoCalculo); 
           } else {
               this.graficoAnualCvc(tipoCalculo, 5);
+              this.graficoAnualCvcCarregamento(tipoCalculo);
           }
           break;
       case 'ch2':
           if (tipoCalculo === 'mensal') {
-              this.graficoMensalCh2(tipoCalculo, 5);  
+              this.graficoMensalCh2(tipoCalculo, 5);
+              this.graficoMensalCh2Carregamento(tipoCalculo);  
           } else {
               this.graficoAnualCh2(tipoCalculo, 5);
+              this.graficoAnualCh2Carregamento(tipoCalculo);
           }
           break;
       case 'hidraulica':
           if (tipoCalculo === 'mensal') {
-              this.graficoMensalHidraulica(tipoCalculo, 5); 
+              this.graficoMensalHidraulica(tipoCalculo, 5);
+              this.graficoMensalHidraulicaCarregamento(tipoCalculo); 
           } else {
               this.graficoAnualHidraulica(tipoCalculo, 5);
+              this.graficoAnualHidraulicaCarregamento(tipoCalculo);
           }
           break;
       default:
           console.log('Local não reconhecido');
   }
 }
-
+//**ACUMULADOS */
 graficoMensalAcumulado(tipoCalculo: string, etapa: number){
-  //this.selectedButton = 'mensal';
   this.homeService.fabricaCalGraficos(tipoCalculo,etapa).subscribe(response => {
-    //this.graficoProducaoFcmMesChart(response.volume_diario)
     this.graficoProducaoTotalEnsacadosChartMes(response.volume_diario);
     this.projecaoEnsacados = response.volume_diario.projecao_total;
     this.mediaEnsacados = response.volume_diario.media_diaria_agregada;
   })
 }
+graficoMensalAcumuladoCarrgamento(tipoCalculo: string){
+  this.homeService.fabricaCalGraficosCarregamento(tipoCalculo).subscribe(response =>{
+    this.graficoCarregamentoEnsacadosChartMes(response.volume_diario);
+    this.projecaoEnsacadosCarregamento = response.volume_diario.projecao_total;
+    this.mediaEnsacadosCarregamento = response.volume_diario.media_diaria_agregada;
+  })
+};
 graficoAnualAcumulado(tipoCalculo: string, etapa: number){
-  //this.selectedButton = 'anual';
   this.homeService.fabricaCalGraficos(tipoCalculo, etapa).subscribe(response => {
     this.graficoProducaoTotalEnsacadosChartAno(response.volume_mensal);
     this.projecaoEnsacados = response.volume_mensal.projecao_anual_total;
     this.mediaEnsacados = response.volume_mensal.media_mensal_agregada;
   });
 };
+graficoAnualAcumuladoCarrgamento(tipoCalculo: string){
+  this.homeService.fabricaCalGraficosCarregamento(tipoCalculo).subscribe(response =>{
+    this.graficoCarregamentoEnsacadosChartAno(response.volume_mensal);
+    this.projecaoEnsacadosCarregamento = response.volume_mensal.projecao_anual_total;
+    this.mediaEnsacadosCarregamento = response.volume_mensal.media_mensal_agregada;
+  })
+}
+//**CVC */
 graficoMensalCvc(tipoCalculo: string, etapa: number){
-  //this.selectedButton = 'mensal';
   this.homeService.fabricaCalGraficos(tipoCalculo, etapa).subscribe(response => {
     this.graficoProducaoCvcEnsacadosChartMes(response.volume_diario)
     this.projecaoEnsacados = response.volume_diario.projecao_cvc;
     this.mediaEnsacados = response.volume_diario.media_diaria_cvc;
+  });
+};
+graficoMensalCvcCarregamento(tipoCalculo: string){
+  this.homeService.fabricaCalGraficosCarregamento(tipoCalculo).subscribe(response => {
+    this.graficoCarregamentoCvcEnsacadosChartMes(response.volume_diario)
+    this.projecaoEnsacadosCarregamento = response.volume_diario.projecao_cvc;
+    this.mediaEnsacadosCarregamento = response.volume_diario.media_diaria_cvc;
   });
 };
 graficoAnualCvc(tipoCalculo: string, etapa: number){
@@ -296,12 +328,26 @@ graficoAnualCvc(tipoCalculo: string, etapa: number){
     this.mediaEnsacados = response.volume_mensal.media_mensal_cvc;
   });
 };
+graficoAnualCvcCarregamento(tipoCalculo: string){
+  this.homeService.fabricaCalGraficosCarregamento(tipoCalculo).subscribe(response => {
+    this.graficoCarregamentoCvcEnsacadosChartAno(response.volume_mensal)
+    this.projecaoEnsacadosCarregamento = response.volume_mensal.projecao_anual_cvc;
+    this.mediaEnsacadosCarregamento = response.volume_mensal.media_mensal_cvc;
+  });
+};
+//**CH2 */
 graficoMensalCh2(tipoCalculo: string, etapa: number){
-  //this.selectedButton = 'mensal';
   this.homeService.fabricaCalGraficos(tipoCalculo, etapa).subscribe(response => {
     this.graficoProducaoCh2EnsacadosChartMes(response.volume_diario)
     this.projecaoEnsacados = response.volume_diario.projecao_ch2;
     this.mediaEnsacados = response.volume_diario.media_diaria_ch2;
+  });
+};
+graficoMensalCh2Carregamento(tipoCalculo: string){
+  this.homeService.fabricaCalGraficosCarregamento(tipoCalculo).subscribe(response => {
+    this.graficoCarregamentoCh2EnsacadosChartMes(response.volume_diario)
+    this.projecaoEnsacadosCarregamento = response.volume_diario.projecao_ch2;
+    this.mediaEnsacadosCarregamento = response.volume_diario.media_diaria_ch2;
   });
 };
 graficoAnualCh2(tipoCalculo: string, etapa: number){
@@ -311,12 +357,26 @@ graficoAnualCh2(tipoCalculo: string, etapa: number){
     this.mediaEnsacados = response.volume_mensal.media_mensal_ch2;
   });
 };
+graficoAnualCh2Carregamento(tipoCalculo: string){
+  this.homeService.fabricaCalGraficosCarregamento(tipoCalculo).subscribe(response => {
+    this.graficoCarregamentoCh2EnsacadosChartAno(response.volume_mensal)
+    this.projecaoEnsacadosCarregamento = response.volume_mensal.projecao_anual_ch2;
+    this.mediaEnsacadosCarregamento = response.volume_mensal.media_mensal_ch2;
+  });
+};
+/**HIDRAULICA */
 graficoMensalHidraulica(tipoCalculo: string, etapa: number){
-  //this.selectedButton = 'mensal';
   this.homeService.fabricaCalGraficos(tipoCalculo, etapa).subscribe(response => {
     this.graficoProducaoHidraulicaEnsacadosChartMes(response.volume_diario)
     this.projecaoEnsacados = response.volume_diario.projecao_hidraulica;
     this.mediaEnsacados = response.volume_diario.media_diaria_hidraulica;
+  });
+};
+graficoMensalHidraulicaCarregamento(tipoCalculo: string){
+  this.homeService.fabricaCalGraficosCarregamento(tipoCalculo).subscribe(response => {
+    this.graficoCarregamentoHidraulicaEnsacadosChartMes(response.volume_diario)
+    this.projecaoEnsacadosCarregamento = response.volume_diario.projecao_hidraulica;
+    this.mediaEnsacadosCarregamento = response.volume_diario.media_diaria_hidraulica;
   });
 };
 graficoAnualHidraulica(tipoCalculo: string, etapa: number){
@@ -326,6 +386,14 @@ graficoAnualHidraulica(tipoCalculo: string, etapa: number){
     this.mediaEnsacados = response.volume_mensal.media_mensal_hidraulica;
   });
 };
+graficoAnualHidraulicaCarregamento(tipoCalculo: string){
+  this.homeService.fabricaCalGraficosCarregamento(tipoCalculo).subscribe(response => {
+    this.graficoCarregamentoHidraulicaEnsacadosChartAno(response.volume_mensal)
+    this.projecaoEnsacadosCarregamento = response.volume_mensal.projecao_anual_hidraulica;
+    this.mediaEnsacadosCarregamento = response.volume_mensal.media_mensal_hidraulica;
+  });
+};
+////////////////////
 calcularEquipamentosDetalhes(data: any){
   const formattedDate = this.datePipe.transform(this.data, 'yyyy-MM-dd');
   this.homeService.calculosCalEquipamentosDetalhes(formattedDate).subscribe(response => {
@@ -449,7 +517,7 @@ graficoProducaoTotalEnsacadosChartMes(volumeDiario: any) {
         },
         title: {
           display: true,
-          text: 'Total de produção por dia (Ensacados)',
+          text: 'Total produção diária (Ensacados)',
         }
       }
     }
@@ -480,28 +548,28 @@ graficoProducaoTotalEnsacadosChartAno(volumeMensal: any) {
       labels: labels, // Days of the month
       datasets: [
         {
-          label: 'Produção Total Diária Acumulada (Tn)',
+          label: 'Produção Total Mensal Acumulada (Tn)',
           data: totalProductionData, // Data for total production
           backgroundColor: '#1890FF',
           //borderColor: '#FF4500',
           borderWidth: 1
         },
         {
-          label: 'Produção Total Diária CVC (Tn)',
+          label: 'Produção Total Mensal CVC (Tn)',
           data: cvcData, // Data for total production
           backgroundColor: '#242730',
           //borderColor: '#FF4500',
           borderWidth: 1
         },
         {
-          label: 'Produção Total Diária CH2 (Tn)',
+          label: 'Produção Total Mensal CH2 (Tn)',
           data: ch2Data, // Data for total production
           backgroundColor: '#12bfd7',
           //borderColor: '#FF4500',
           borderWidth: 1
         },
         {
-          label: 'Produção Total Diária Hidráulica (Tn)',
+          label: 'Produção Total Mensal Hidráulica (Tn)',
           data: hidraulicaData, // Data for total production
           backgroundColor: '#97A3C2',
           //borderColor: '#FF4500',
@@ -684,7 +752,7 @@ graficoProducaoCvcEnsacadosChartAno(volumeDiario: any) {
         },
         title: {
           display: true,
-          text: 'Total em Toneladas Produzidas por Dia',
+          text: 'Total em Toneladas Produzidas por Mês',
           
         }
       }
@@ -710,7 +778,7 @@ graficoProducaoCh2EnsacadosChartMes(volumeDiario: any) {
         {
           label: 'Volume Ensacados CH2 Diário',
           data: ch2Data, // Dados de LOCCOD 44
-          backgroundColor: '#242730',
+          backgroundColor: '#12bfd7',
           //borderColor: '#3A3E4C',
           borderWidth: 1
         },
@@ -779,7 +847,7 @@ graficoProducaoCh2EnsacadosChartAno(volumeDiario: any) {
         {
           label: 'Volume Ensacados CH2 Mensal',
           data: ch2Data, // Dados de LOCCOD 44
-          backgroundColor: '#242730',
+          backgroundColor: '#12bfd7',
           //borderColor: '#3A3E4C',
           borderWidth: 1
         },
@@ -823,7 +891,7 @@ graficoProducaoCh2EnsacadosChartAno(volumeDiario: any) {
         },
         title: {
           display: true,
-          text: 'Total em Toneladas Produzidas por Dia',
+          text: 'Total em Toneladas Produzidas por Mês',
           
         }
       }
@@ -835,7 +903,7 @@ graficoProducaoCh2EnsacadosChartAno(volumeDiario: any) {
 graficoProducaoHidraulicaEnsacadosChartMes(volumeDiario: any) {
   // Preparando os dados para o gráfico
   const labels = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]; // Meses
-  const cvcData = volumeDiario.cvc.map((dia: any) => dia.PESO);
+  const hidraulicaData = volumeDiario.hidraulica.map((dia: any) => dia.PESO);
   // Verifica se o gráfico já foi criado e o destrói antes de criar um novo
   if (this.graficoProducaoTotalEnsacadosMes) {
     this.graficoProducaoTotalEnsacadosMes.destroy();
@@ -848,8 +916,8 @@ graficoProducaoHidraulicaEnsacadosChartMes(volumeDiario: any) {
       datasets: [
         {
           label: 'Volume Ensacados CVC Diário',
-          data: cvcData, // Dados de LOCCOD 44
-          backgroundColor: '#242730',
+          data: hidraulicaData, // Dados de LOCCOD 44
+          backgroundColor: '#97A3C2',
           //borderColor: '#3A3E4C',
           borderWidth: 1
         },
@@ -918,6 +986,275 @@ graficoProducaoHidraulicaEnsacadosChartAno(volumeDiario: any) {
         {
           label: 'Volume Ensacados Hidráulica Mensal',
           data: hidraulicaData, // Dados de LOCCOD 44
+          backgroundColor: '#97A3C2',
+          //borderColor: '#3A3E4C',
+          borderWidth: 1
+        },
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          display: true,
+          beginAtZero: true,
+          grid: {
+            display: false,
+          },
+          ticks: {
+            color: '#000'
+          }
+        },
+        y: {
+          display: false,
+          beginAtZero: true,
+          grid: {
+            display: false,
+          },
+          ticks: {
+            color: '#000'
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false,
+          position: 'right',
+          fullSize: true,
+          labels: {
+            font: {
+              size: 10
+            }
+          }
+        },
+        title: {
+          display: true,
+          text: 'Total em Toneladas Produzidas por Mês',
+          
+        }
+      }
+    }
+  });
+}
+
+//////////////////////** GRAFICOS CARREGAMENTO *////////////////////////////////
+//Acumulado do Mês
+graficoCarregamentoEnsacadosChartMes(volumeDiario: any){
+ 
+  const labels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]; 
+  // Extract production data for each factory
+  const cvcData = volumeDiario.cvc.map((dia: any) => dia.INFQUANT);
+  const ch2Data = volumeDiario.ch2.map((dia: any) => dia.INFQUANT);
+  const hidraulicaData = volumeDiario.hidraulica.map((dia: any) => dia.INFQUANT);
+  // Calculate total daily production by summing up production from all three factories
+  const totalProductionData = cvcData.map((cvc: number, index: number) => {
+    const ch2 = ch2Data[index] || 0;
+    const hidraulica = hidraulicaData[index] || 0;
+    return cvc + ch2 + hidraulica; // Sum the production of all three factories for the day
+  });
+
+  // Destroy the previous chart if it exists
+  if (this.graficoCarregamentoTotalEnsacadosMes) {
+    this.graficoCarregamentoTotalEnsacadosMes.destroy();
+  }
+  // Create the chart with Chart.js
+  this.graficoCarregamentoTotalEnsacadosMes = new Chart('graficoTotalCarregamentoDiario', {
+    type: 'bar',
+    data: {
+      labels: labels, // Days of the month
+      datasets: [
+        {
+          label: 'Carregamento Total Diário Acumulada (Tn)',
+          data: totalProductionData, // Data for total production
+          backgroundColor: '#1890FF',
+          //borderColor: '#FF4500',
+          borderWidth: 1
+        },
+        {
+          label: 'Carregamento Total Diário CVC (Tn)',
+          data: cvcData, // Data for total production
+          backgroundColor: '#242730',
+          //borderColor: '#FF4500',
+          borderWidth: 1
+        },
+        {
+          label: 'Carregamento Total Diário CH2 (Tn)',
+          data: ch2Data, // Data for total production
+          backgroundColor: '#12bfd7',
+          //borderColor: '#FF4500',
+          borderWidth: 1
+        },
+        {
+          label: 'Carregamento Total Diário Hidráulica (Tn)',
+          data: hidraulicaData, // Data for total production
+          backgroundColor: '#97A3C2',
+          //borderColor: '#FF4500',
+          borderWidth: 1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          display: true,
+          beginAtZero: true,
+          grid: {
+            display: false,
+          },
+          ticks: {
+            color: '#000'
+          }
+        },
+        y: {
+          display: false,
+          beginAtZero: true,
+          grid: {
+            display: true,
+          },
+          ticks: {
+            color: '#000'
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          labels: {
+            font: {
+              size: 10
+            }
+          }
+        },
+        title: {
+          display: true,
+          text: 'Total carregamento diário (Ensacados)',
+        }
+      }
+    }
+  });
+}
+
+///////////////////////////////////////////////////**GRAFICO CARREGAMENTO ACUMULADO TOTAL ANUAL*/
+graficoCarregamentoEnsacadosChartAno(volumeMensal: any) {
+  // Prepare the labels (days of the month)
+  const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']; // Meses
+  // Extract production data for each factory
+  const cvcData = volumeMensal.cvc.map((mes: any) => mes.INFQUANT);
+  const ch2Data = volumeMensal.ch2.map((mes: any) => mes.INFQUANT);
+  const hidraulicaData = volumeMensal.hidraulica.map((mes: any) => mes.INFQUANT);
+  // Calculate total daily production by summing up production from all three factories
+  const totalProductionData = cvcData.map((cvc: number, index: number) => {
+    const ch2 = ch2Data[index] || 0;
+    const hidraulica = hidraulicaData[index] || 0;
+    return cvc + ch2 + hidraulica; // Sum the production of all three factories for the day
+  });
+  // Destroy the previous chart if it exists
+  if (this.graficoCarregamentoTotalEnsacadosMes) {
+    this.graficoCarregamentoTotalEnsacadosMes.destroy();
+  }
+  // Create the chart with Chart.js
+  this.graficoCarregamentoTotalEnsacadosMes = new Chart('graficoTotalCarregamentoDiario', {
+    type: 'bar',
+    data: {
+      labels: labels, // Days of the month
+      datasets: [
+        {
+          label: 'Carregamento Total Mensal Acumulado (Tn)',
+          data: totalProductionData, // Data for total production
+          backgroundColor: '#1890FF',
+          //borderColor: '#FF4500',
+          borderWidth: 1
+        },
+        {
+          label: 'Carregamento Total Mensal CVC (Tn)',
+          data: cvcData, // Data for total production
+          backgroundColor: '#242730',
+          //borderColor: '#FF4500',
+          borderWidth: 1
+        },
+        {
+          label: 'Carregamento Total Mensal CH2 (Tn)',
+          data: ch2Data, // Data for total production
+          backgroundColor: '#12bfd7',
+          //borderColor: '#FF4500',
+          borderWidth: 1
+        },
+        {
+          label: 'Carregamento Total Mensal Hidráulica (Tn)',
+          data: hidraulicaData, // Data for total production
+          backgroundColor: '#97A3C2',
+          //borderColor: '#FF4500',
+          borderWidth: 1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          display: true,
+          beginAtZero: true,
+          grid: {
+            display: false,
+          },
+          ticks: {
+            color: '#000'
+          }
+        },
+        y: {
+          display: false,
+          beginAtZero: true,
+          grid: {
+            display: true,
+          },
+          ticks: {
+            color: '#000'
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          labels: {
+            font: {
+              size: 10
+            }
+          }
+        },
+        title: {
+          display: true,
+          text: 'Total Carregamento Acumulado Todos Produtos(Tons)',
+        }
+      }
+    }
+  });
+}
+
+////----------------------------------------GRAFICOS CVC CARREGAMENTO-----------------------------////////////////
+/** MENSAL */
+graficoCarregamentoCvcEnsacadosChartMes(volumeDiario: any) {
+  // Preparando os dados para o gráfico
+  const labels = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]; // Meses
+  const cvcData = volumeDiario.cvc.map((dia: any) => dia.INFQUANT);
+  // Verifica se o gráfico já foi criado e o destrói antes de criar um novo
+  if (this.graficoCarregamentoTotalEnsacadosMes) {
+    this.graficoCarregamentoTotalEnsacadosMes.destroy();
+  }
+  // Criando o gráfico com Chart.js
+  this.graficoCarregamentoTotalEnsacadosMes = new Chart('graficoTotalCarregamentoDiario', {
+    type: 'bar',
+    data: {
+      labels: labels, // Meses do ano
+      datasets: [
+        {
+          label: 'Volume Carregamento CVC Diário',
+          data: cvcData, // Dados de LOCCOD 44
           backgroundColor: '#242730',
           //borderColor: '#3A3E4C',
           borderWidth: 1
@@ -962,11 +1299,361 @@ graficoProducaoHidraulicaEnsacadosChartAno(volumeDiario: any) {
         },
         title: {
           display: true,
-          text: 'Total em Toneladas Produzidas por Dia',
+          text: 'Total em Toneladas Carregadas por Dia',
           
         }
       }
     }
   });
 }
+/** ANUAL */
+graficoCarregamentoCvcEnsacadosChartAno(volumeDiario: any) {
+  // Preparando os dados para o gráfico
+  const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']; // Meses
+  const cvcData = volumeDiario.cvc.map((mes: any) => mes.INFQUANT);
+  // Verifica se o gráfico já foi criado e o destrói antes de criar um novo
+  if (this.graficoCarregamentoTotalEnsacadosMes) {
+    this.graficoCarregamentoTotalEnsacadosMes.destroy();
+  }
+  // Criando o gráfico com Chart.js
+  this.graficoCarregamentoTotalEnsacadosMes = new Chart('graficoTotalCarregamentoDiario', {
+    type: 'bar',
+    data: {
+      labels: labels, // Meses do ano
+      datasets: [
+        {
+          label: 'Volume Carregamento CVC Mensal',
+          data: cvcData, // Dados de LOCCOD 44
+          backgroundColor: '#242730',
+          //borderColor: '#3A3E4C',
+          borderWidth: 1
+        },
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          display: true,
+          beginAtZero: true,
+          grid: {
+            display: false,
+          },
+          ticks: {
+            color: '#000'
+          }
+        },
+        y: {
+          display: false,
+          beginAtZero: true,
+          grid: {
+            display: false,
+          },
+          ticks: {
+            color: '#000'
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false,
+          position: 'right',
+          fullSize: true,
+          labels: {
+            font: {
+              size: 10
+            }
+          }
+        },
+        title: {
+          display: true,
+          text: 'Total em Toneladas Carregada por Mês',
+          
+        }
+      }
+    }
+  });
 }
+
+////----------------------------------------GRAFICOS CH2 CARREGAMENTO-----------------------------////////////////
+/** MENSAL */
+graficoCarregamentoCh2EnsacadosChartMes(volumeDiario: any) {
+  // Preparando os dados para o gráfico
+  const labels = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]; // Meses
+  const ch2Data = volumeDiario.ch2.map((dia: any) => dia.INFQUANT);
+  // Verifica se o gráfico já foi criado e o destrói antes de criar um novo
+  if (this.graficoCarregamentoTotalEnsacadosMes) {
+    this.graficoCarregamentoTotalEnsacadosMes.destroy();
+  }
+  // Criando o gráfico com Chart.js
+  this.graficoCarregamentoTotalEnsacadosMes = new Chart('graficoTotalCarregamentoDiario', {
+    type: 'bar',
+    data: {
+      labels: labels, // Meses do ano
+      datasets: [
+        {
+          label: 'Volume Carregamento CH2 Diário',
+          data: ch2Data, // Dados de LOCCOD 44
+          backgroundColor: '#12bfd7',
+          //borderColor: '#3A3E4C',
+          borderWidth: 1
+        },
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          display: true,
+          beginAtZero: true,
+          grid: {
+            display: false,
+          },
+          ticks: {
+            color: '#000'
+          }
+        },
+        y: {
+          display: false,
+          beginAtZero: true,
+          grid: {
+            display: false,
+          },
+          ticks: {
+            color: '#000'
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false,
+          position: 'right',
+          fullSize: true,
+          labels: {
+            font: {
+              size: 10
+            }
+          }
+        },
+        title: {
+          display: true,
+          text: 'Total em Toneladas Carregadas por Dia',
+          
+        }
+      }
+    }
+  });
+}
+/** ANUAL */
+graficoCarregamentoCh2EnsacadosChartAno(volumeDiario: any) {
+  // Preparando os dados para o gráfico
+  const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']; // Meses
+  const ch2Data = volumeDiario.ch2.map((mes: any) => mes.INFQUANT);
+  // Verifica se o gráfico já foi criado e o destrói antes de criar um novo
+  if (this.graficoCarregamentoTotalEnsacadosMes) {
+    this.graficoCarregamentoTotalEnsacadosMes.destroy();
+  }
+  // Criando o gráfico com Chart.js
+  this.graficoCarregamentoTotalEnsacadosMes = new Chart('graficoTotalCarregamentoDiario', {
+    type: 'bar',
+    data: {
+      labels: labels, // Meses do ano
+      datasets: [
+        {
+          label: 'Volume Carregamento CH2 Mensal',
+          data: ch2Data, // Dados de LOCCOD 44
+          backgroundColor: '#12bfd7',
+          //borderColor: '#3A3E4C',
+          borderWidth: 1
+        },
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          display: true,
+          beginAtZero: true,
+          grid: {
+            display: false,
+          },
+          ticks: {
+            color: '#000'
+          }
+        },
+        y: {
+          display: false,
+          beginAtZero: true,
+          grid: {
+            display: false,
+          },
+          ticks: {
+            color: '#000'
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false,
+          position: 'right',
+          fullSize: true,
+          labels: {
+            font: {
+              size: 10
+            }
+          }
+        },
+        title: {
+          display: true,
+          text: 'Total em Toneladas Carregada por Mês',
+          
+        }
+      }
+    }
+  });
+}
+
+////----------------------------------------GRAFICOS CH2 CARREGAMENTO-----------------------------////////////////
+/** MENSAL */
+graficoCarregamentoHidraulicaEnsacadosChartMes(volumeDiario: any) {
+  // Preparando os dados para o gráfico
+  const labels = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]; // Meses
+  const hidraulicaData = volumeDiario.hidraulica.map((dia: any) => dia.INFQUANT);
+  // Verifica se o gráfico já foi criado e o destrói antes de criar um novo
+  if (this.graficoCarregamentoTotalEnsacadosMes) {
+    this.graficoCarregamentoTotalEnsacadosMes.destroy();
+  }
+  // Criando o gráfico com Chart.js
+  this.graficoCarregamentoTotalEnsacadosMes = new Chart('graficoTotalCarregamentoDiario', {
+    type: 'bar',
+    data: {
+      labels: labels, // Meses do ano
+      datasets: [
+        {
+          label: 'Volume Carregamento Hidraulica Diário',
+          data: hidraulicaData, // Dados de LOCCOD 44
+          backgroundColor: '#97A3C2',
+          //borderColor: '#3A3E4C',
+          borderWidth: 1
+        },
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          display: true,
+          beginAtZero: true,
+          grid: {
+            display: false,
+          },
+          ticks: {
+            color: '#000'
+          }
+        },
+        y: {
+          display: false,
+          beginAtZero: true,
+          grid: {
+            display: false,
+          },
+          ticks: {
+            color: '#000'
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false,
+          position: 'right',
+          fullSize: true,
+          labels: {
+            font: {
+              size: 10
+            }
+          }
+        },
+        title: {
+          display: true,
+          text: 'Total em Toneladas Carregadas por Dia',
+          
+        }
+      }
+    }
+  });
+}
+/** ANUAL */
+graficoCarregamentoHidraulicaEnsacadosChartAno(volumeDiario: any) {
+  // Preparando os dados para o gráfico
+  const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']; // Meses
+  const hidraulicaData = volumeDiario.hidraulica.map((mes: any) => mes.INFQUANT);
+  // Verifica se o gráfico já foi criado e o destrói antes de criar um novo
+  if (this.graficoCarregamentoTotalEnsacadosMes) {
+    this.graficoCarregamentoTotalEnsacadosMes.destroy();
+  }
+  // Criando o gráfico com Chart.js
+  this.graficoCarregamentoTotalEnsacadosMes = new Chart('graficoTotalCarregamentoDiario', {
+    type: 'bar',
+    data: {
+      labels: labels, // Meses do ano
+      datasets: [
+        {
+          label: 'Volume Carregamento Hidraulica Mensal',
+          data: hidraulicaData, // Dados de LOCCOD 44
+          backgroundColor: '#97A3C2',
+          //borderColor: '#3A3E4C',
+          borderWidth: 1
+        },
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          display: true,
+          beginAtZero: true,
+          grid: {
+            display: false,
+          },
+          ticks: {
+            color: '#000'
+          }
+        },
+        y: {
+          display: false,
+          beginAtZero: true,
+          grid: {
+            display: false,
+          },
+          ticks: {
+            color: '#000'
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false,
+          position: 'right',
+          fullSize: true,
+          labels: {
+            font: {
+              size: 10
+            }
+          }
+        },
+        title: {
+          display: true,
+          text: 'Total em Toneladas Carregada por Mês',
+          
+        }
+      }
+    }
+  });
+}
+
+} /// end 

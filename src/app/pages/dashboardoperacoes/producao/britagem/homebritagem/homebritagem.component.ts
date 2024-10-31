@@ -68,7 +68,7 @@ export class HomebritagemComponent implements OnInit {
   }
   exibirGrafico() {
     this.graficoVisivel1 = true; // Exibe o modal
-    this.graficoMensal('atual');
+    this.graficoMensal('mensal');
 }
   exibirGraficoCal() {
   this.graficoVisivel = true; // Exibe o modal
