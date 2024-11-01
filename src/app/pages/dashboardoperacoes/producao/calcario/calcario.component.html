@@ -339,7 +339,41 @@
                 </div>
             </div>
         </div>
-    </div>    
+    </div>
+    <br/>
+    <div class="containerModal">
+        <div class="chartRadarAvaliadores">
+            <canvas id="graficoTotalCarregamentoDiario"></canvas>
+        </div>
+        <div class="projecoes">
+            <div class="titulo2">
+                <span> <b>Média do Período</b></span><br>
+            </div>
+            <div class="media">
+                <div class="card2">
+                    <div class="valor">
+                        <p>{{ mediaCarregamento }}</p>
+                    </div>
+                    <div class="unidade2">
+                        <p>Tn</p>
+                    </div>
+                </div>
+            </div>
+            <div class="titulo2">
+                <span> <b> Projeção para o Período</b></span><br>
+            </div>
+            <div class="projecao">
+                <div class="card2">
+                    <div class="valor">
+                        <p>{{ projecaoCarregamento }}</p>
+                    </div>
+                    <div class="unidade2">
+                        <p>Tn</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>     
 
 </p-dialog>
 <!--MODAL EQUIPAMENTOS-->
