@@ -54,6 +54,7 @@
     font-family: 'Aptos', sans-serif;
     font-weight: 700;
     color: #eee;
+    margin-bottom: 10px;
     p {
         margin: 0; /* Remove a margem padrão */
         text-align: center;
@@ -114,6 +115,11 @@
     margin: 5px auto;
     border-radius: 10px;
 }
+.wrapInplace{
+    width: 90%;
+    margin: 20px auto;
+    height: 500px;
+}
 .totaisWrap{
     display: flex;
     flex-direction: column;
@@ -124,7 +130,23 @@
 .totais{
     display: flex;
     justify-content: space-around;
-    margin-top: 30px;
+    //margin-top: 30px;
     margin-bottom: 10px;
     //background-color: antiquewhite;
 }
+tr {
+    background-color:#f2f1f0;
+    font-size: 16px;
+    height: 8px;
+    color: #333;
+    border-radius: 8px;
+    width: 100%;
+  }
+  td{
+    border-radius: 8px;
+  }
+  th{
+    height: 2px;
+    background-color: #2d53da;
+    color: #eee;
+  }

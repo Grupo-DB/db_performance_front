@@ -24,7 +24,9 @@ export class HomeService {
   private calGraficosUrl = 'http://localhost:8000/cal/calcular_cal_graficos/';
   private calEquipamentosDetalhesUrl = 'http://localhost:8000/cal/calcular_cal_detalhes/';
   private calGraficosCarregamentoUrl = 'http://localhost:8000/cal/calcular_cal_carregamento_graficos/';
-  private calcarioGraficosCarregamentoUrl = 'http://localhost:8000/calcario/calcular_calcario_carregamento_graficos/'
+  private calcarioGraficosCarregamentoUrl = 'http://localhost:8000/calcario/calcular_calcario_carregamento_graficos/';
+  private argamasssaCarregamentoUrl = 'http://localhost:8000/argamassa/calcular_argamassa/';
+  private argamassaProdutosUrl = 'http://localhost:8000/argamassa/calcular_argamassa_produtos/'
 
   constructor(private  httpClient: HttpClient, private router: Router,) { }
 
@@ -81,7 +83,13 @@ export class HomeService {
   fabricaCalGraficosCarregamento(tipoCalculo: string,): Observable<any>{
     return this.httpClient.post<any>(this.calGraficosCarregamentoUrl, { tipo_calculo: tipoCalculo})
   }
-  fabricaCalcarioGraficosCarregamento(tipoCalculo: string,): Observable<any>{
+  fabricaCalcarioGraficosCarregamento(tipoCalculo: string): Observable<any>{
     return this.httpClient.post<any>(this.calcarioGraficosCarregamentoUrl, { tipo_calculo: tipoCalculo})
+  }
+  argamassaCarregamentoGeral(tipoCalculo: string): Observable<any>{
+    return this.httpClient.post<any>(this.argamasssaCarregamentoUrl, {tipo_calculo: tipoCalculo})
+  }
+  argamassaProducaoGeral(tipoCalculo: string, etapa: number): Observable<any>{
+    return this,this.httpClient.post<any>(this.argamassaProdutosUrl, {tipo_calculo: tipoCalculo, etapa: etapa})
   }
 }

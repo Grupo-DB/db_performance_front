@@ -13,7 +13,7 @@
                 <div class="carregamentoWrap">
                     <div class="cardCarregmento">
                         <div class="valorCarregamento">
-                            <p>65465498754</p>
+                            <p>{{ totalCarregamentoDia }}</p>
                         </div>
                         <div class="unidadeCarregamento">
                             <p>Último dia</p>
@@ -21,7 +21,7 @@
                     </div>
                     <div class="cardCarregmento">
                         <div class="valorCarregamento">
-                            <p>654654879</p>
+                            <p>{{ totalCarregamentoMes }}</p>
                         </div>
                         <div class="unidadeCarregamento">
                             <p>Acomulado mês atual</p>
@@ -29,7 +29,7 @@
                     </div>
                     <div class="cardCarregmento">
                         <div class="valorCarregamento">
-                            <p>64564654646</p>
+                            <p>{{ totalCarregamentoAno }}</p>
                         </div>
                         <div class="unidadeCarregamento">
                             <p>Acomulado ano atual</p>
@@ -46,7 +46,7 @@
             <div class="totais">
                 <div class="card">
                     <div class="valor">
-                        <p>87786786</p>
+                        <p>{{ totalProducaoDia }}</p>
                     </div>
                     <div class="unidade">
                         <p>Último dia</p>
@@ -54,7 +54,7 @@
                 </div>
                 <div class="card">
                     <div class="valor">
-                        <p>9809787</p>
+                        <p>{{ totalProducaoMes }}</p>
                     </div>
                     <div class="unidade">
                         <p>Acomulado mês atual</p>
@@ -62,7 +62,7 @@
                 </div>
                 <div class="card">
                     <div class="valor">
-                        <p>660000</p>
+                        <p>{{ totalProducaoAno }}</p>
                     </div>
                     <div class="unidade">
                         <p>Acomulado ano atual</p>
@@ -77,7 +77,7 @@
             <div class="totais">
                 <div class="card">
                     <div class="valor">
-                        <p>87786786</p>
+                        <p>{{ totalEnsacadosDia }}</p>
                     </div>
                     <div class="unidade">
                         <p>Último dia</p>
@@ -85,7 +85,7 @@
                 </div>
                 <div class="card">
                     <div class="valor">
-                        <p>9809787</p>
+                        <p>{{ totalEnsacadosMes }}</p>
                     </div>
                     <div class="unidade">
                         <p>Acomulado mês atual</p>
@@ -93,7 +93,7 @@
                 </div>
                 <div class="card">
                     <div class="valor">
-                        <p>660000</p>
+                        <p>{{ totalEnsacadosAno }}</p>
                     </div>
                     <div class="unidade">
                         <p>Acomulado ano atual</p>
@@ -102,34 +102,42 @@
             </div><!--EndTotais-->
         </div><!--EndProdutividade-->
     </div><!--enRow2-->
-    <p-inplace
-        closable="true"
-    >
-        <ng-template pTemplate="display">
-            <div class="inline-flex align-items-center">
-                
-                <span class="ml-2"><i class="pi pi-plus-circle"></i></span>
-            </div>
-        </ng-template>
-        <ng-template pTemplate="content">
-            <p-table  responsiveLayout="scroll">
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th>Vin</th>
-                        <th>Year</th>
-                        <th>Brand</th>
-                        <th>Color</th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-car>
-                    <tr>
-                        <td>{{ car.vin }}</td>
-                        <td>{{ car.year }}</td>
-                        <td>{{ car.brand }}</td>
-                        <td>{{ car.color }}</td>
-                    </tr>
-                </ng-template>
-            </p-table>
-        </ng-template>
-    </p-inplace>
+    <div class="wrapInplace">
+        <p-inplace
+            
+            closable="true"
+        >
+            <ng-template pTemplate="display">
+                <div class="inline-flex align-items-center">
+                    <span class="ml-2"><i class="pi pi-plus-circle"></i></span>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="content">
+                <p-table [value]="dados" responsiveLayout="scroll">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Produto</th>
+                            <th>Último dia</th>
+                            <th>Acumulado Mês</th>
+                            <th>Acumulado Ano</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-dado>
+                        <tr *ngIf="dado.nome">
+                            <td>{{ dado.nome }}</td>
+                            <td>{{ dado.dia }}</td>
+                            <td>{{ dado.mes }}</td>
+                            <td>{{ dado.ano }}</td>
+                        </tr>
+                        <tr *ngIf="dado.nome1">
+                            <td>{{ dado.nome1 }}</td>
+                            <td>{{ dado.dia1 }}</td>
+                            <td>{{ dado.mes1 }}</td>
+                            <td>{{ dado.ano1 }}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </ng-template>
+        </p-inplace>
+    </div>    
 </div>    
