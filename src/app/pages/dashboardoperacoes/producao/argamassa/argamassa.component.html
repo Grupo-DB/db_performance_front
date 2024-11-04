@@ -124,13 +124,17 @@
                     </ng-template>
                     <ng-template pTemplate="body" let-dado>
                         <tr *ngIf="dado.nome">
-                            <td>{{ dado.nome }}</td>
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',2728);calcularGraficosCarregamentoMensal('mensal',2728)" style="cursor: pointer;"></i> {{ dado.nome }} 
+                            </td>
                             <td>{{ dado.dia }}</td>
                             <td>{{ dado.mes }}</td>
                             <td>{{ dado.ano }}</td>
                         </tr>
                         <tr *ngIf="dado.nome1">
-                            <td>{{ dado.nome1 }}</td>
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',22089);calcularGraficosCarregamentoMensal('mensal',22089)" style="cursor: pointer;"></i> {{ dado.nome1 }}
+                            </td>
                             <td>{{ dado.dia1 }}</td>
                             <td>{{ dado.mes1 }}</td>
                             <td>{{ dado.ano1 }}</td>
@@ -140,4 +144,90 @@
             </ng-template>
         </p-inplace>
     </div>    
-</div>    
+</div> 
+
+<!------------------------MODAIS------------------------------------>
+<p-dialog
+    [modal]="true"
+    [(visible)]="exibirGraficos" 
+    [style]="{ width: '90%', height: '90%' }" 
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" 
+>
+    <div class="titulo">
+        <p-divider align="left" type="solid">
+            <b>Produção e Carregamento</b>
+        </p-divider>
+    </div>
+    <div class="rowInit">
+        <div class="dropdown">
+            <p-dropdown
+                [style]="{'width':'80%'}"
+                [options]="produtos"
+                optionLabel="nome"
+                optionValue="cod"
+                [(ngModel)]="selectedProduto"
+                (onChange)="onProdutoSelecionado($event)"
+            >
+            </p-dropdown>   
+        </div>
+        <div class="rowBotoes">
+            <div 
+                class="btnCalc"
+                (click)="gerarGraficos('mensal',selectedProduto)"
+                [ngClass]="{'active': selectedButton === 'mensal'}" 
+            >
+                <p>No mês</p>
+            </div>
+            <div 
+                class="btnCalc" 
+                (click)="gerarGraficos('anual',selectedProduto)"
+                [ngClass]="{'active': selectedButton === 'anual'}" 
+            >
+                <p>No ano</p>
+            </div>
+        </div>
+    </div>
+    <div class="containerModal">
+        
+            <div class="chartProdutosArgamassa">
+                <canvas id="graficoProducaoProduto"></canvas>
+            </div>
+            
+            
+        
+        <!--Garficos-->
+        <div class="projecoes">
+            <div class="titulo2">
+                <span> <b>Média do Período</b></span><br>
+            </div>
+            <div class="media">
+                <div class="card2">
+                    <div class="valor">
+                        <p>{{ mediaCarregamento }}</p>
+                    </div>
+                    <div class="unidade2">
+                        <p>Tn</p>
+                    </div>
+                </div>
+            </div>
+            <div class="titulo2">
+                <span> <b> Projeção para o Período</b></span><br>
+            </div>
+            <div class="projecao">
+                <div class="card2">
+                    <div class="valor">
+                        <p>{{ projecaoCarregamento }}</p>
+                    </div>
+                    <div class="unidade2">
+                        <p>Tn</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="containerModal">
+        <div class="chartProdutosArgamassa">
+            <canvas id="graficoProdutoCarregamento"></canvas>
+        </div>
+    </div>    
+</p-dialog>

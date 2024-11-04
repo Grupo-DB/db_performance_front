@@ -936,7 +936,7 @@ gerarGrafico(tipoCalculo: string, local: string): void {
     const totalProductionData = fcmiData.map((fcmi: number, index: number) => {
       const fcmii = fcmiiData[index] || 0;
       const fcmiii = fcmiiiData[index] || 0;
-      return fcmi + fcmii + fcmiii; // Sum the production of all three factories for the day
+      return fcmi + fcmii + fcmiii; //
     });
     // Destroy the previous chart if it exists
     if (this.graficoProducaoFcmiMes) {
