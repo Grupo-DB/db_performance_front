@@ -26,9 +26,11 @@ export class HomeService {
   private calGraficosCarregamentoUrl = 'http://localhost:8000/cal/calcular_cal_carregamento_graficos/';
   private calcarioGraficosCarregamentoUrl = 'http://localhost:8000/calcario/calcular_calcario_carregamento_graficos/';
   private argamasssaCarregamentoUrl = 'http://localhost:8000/argamassa/calcular_argamassa/';
-  private argamassaProdutosUrl = 'http://localhost:8000/argamassa/calcular_argamassa_produtos/'
-  private argamassaProdutosGraficolUrl = 'http://localhost:8000/argamassa/calcular_argamassa_graficos/'
-  private argamassaProdutosGraficoCarregamentolUrl = 'http://localhost:8000/argamassa/calcular_argamassa_graficos_carregamento/'
+  private argamassaProdutosUrl = 'http://localhost:8000/argamassa/calcular_argamassa_produtos/';
+  private argamassaProdutosCarregamentoUrl = 'http://localhost:8000/argamassa/calcular_argamassa_produtos_carregamento/';
+  private argamassaProdutosGraficolUrl = 'http://localhost:8000/argamassa/calcular_argamassa_graficos/';
+  private argamassaProdutosGraficoCarregamentolUrl = 'http://localhost:8000/argamassa/calcular_argamassa_graficos_carregamento/';
+  private argamassaEquipamentosDetalhesUrl = 'http://localhost:8000/argamassa/calcular_argamassa_equipamentos/';
 
   constructor(private  httpClient: HttpClient, private router: Router,) { }
 
@@ -91,13 +93,19 @@ export class HomeService {
   argamassaCarregamentoGeral(tipoCalculo: string): Observable<any>{
     return this.httpClient.post<any>(this.argamasssaCarregamentoUrl, {tipo_calculo: tipoCalculo})
   }
-  argamassaProducaoGeral(tipoCalculo: string, etapa: number): Observable<any>{
-    return this.httpClient.post<any>(this.argamassaProdutosUrl, {tipo_calculo: tipoCalculo, etapa: etapa})
+  argamassaProducaoGeral(tipoCalculo: string): Observable<any>{
+    return this.httpClient.post<any>(this.argamassaProdutosUrl, {tipo_calculo: tipoCalculo})
   }
   argamassaProdutoGrafico(tipoCalculo: string, produto: number): Observable<any>{
     return this.httpClient.post<any>(this.argamassaProdutosGraficolUrl, { tipo_calculo: tipoCalculo, produto: produto})
   }
   argamassaProdutosGraficosCarregamento(tipoCalculo: string, produto: number): Observable<any>{
     return this.httpClient.post<any>(this.argamassaProdutosGraficoCarregamentolUrl, {tipo_calculo: tipoCalculo, produto:produto })
+  }
+  argamassaProducaoGeralCarregamento(tipoCalculo: any):Observable<any>{
+    return this.httpClient.post<any>(this.argamassaProdutosCarregamentoUrl, {tipo_calculo: tipoCalculo})
+  }
+  argamassaEquipamentosDetalhes(data: any):Observable<any>{
+    return this.httpClient.post<any>(this.argamassaEquipamentosDetalhesUrl, {data: data})
   }
 }

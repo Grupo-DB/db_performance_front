@@ -155,22 +155,42 @@
 >
     <div class="titulo">
         <p-divider align="left" type="solid">
-            <b>Produção e Carregamento</b>
+            <b>Produção e Carregamento Argamassa</b>
         </p-divider>
     </div>
     <div class="rowInit">
         <div class="dropdown">
             <p-dropdown
-                [style]="{'width':'80%'}"
+                [style]="{'width':'100%'}"
                 [options]="produtos"
                 optionLabel="nome"
                 optionValue="cod"
                 [(ngModel)]="selectedProduto"
                 (onChange)="onProdutoSelecionado($event)"
             >
-            </p-dropdown>   
+            </p-dropdown>
+               
         </div>
+
+        <div class="rowBotoes"> 
+            <div 
+                class="btnCalc"
+                (click)="exibirEquipamentos()"
+                [ngClass]="{'active': selectedButton === 'acumulado'}" 
+            >
+                <p>Detalhar</p>
+            </div> 
+            <div 
+                class="btnCalc"
+                (click)="exibirAcumulados()"
+                [ngClass]="{'active': selectedButton === 'acumulado'}" 
+            >
+                <p>Acumulado</p>
+            </div>
+        </div> 
+
         <div class="rowBotoes">
+            
             <div 
                 class="btnCalc"
                 (click)="gerarGraficos('mensal',selectedProduto)"
@@ -192,10 +212,43 @@
             <div class="chartProdutosArgamassa">
                 <canvas id="graficoProducaoProduto"></canvas>
             </div>
-            
-            
+        
         
         <!--Garficos-->
+        <div class="projecoes">
+            <div class="titulo2">
+                <span> <b>Média do Período</b></span><br>
+            </div>
+            <div class="media">
+                <div class="card2">
+                    <div class="valor">
+                        <p>{{ mediaProducao }}</p>
+                    </div>
+                    <div class="unidade2">
+                        <p>Sc</p>
+                    </div>
+                </div>
+            </div>
+            <div class="titulo2">
+                <span> <b> Projeção para o Período</b></span><br>
+            </div>
+            <div class="media">
+                <div class="card2">
+                    <div class="valor">
+                        <p>{{ projecaoProducao }}</p>
+                    </div>
+                    <div class="unidade2">
+                        <p>Sc</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="containerModal">
+        <div class="chartProdutosArgamassa">
+            <canvas id="graficoProdutoCarregamento"></canvas>
+        </div>
+
         <div class="projecoes">
             <div class="titulo2">
                 <span> <b>Média do Período</b></span><br>
@@ -206,28 +259,243 @@
                         <p>{{ mediaCarregamento }}</p>
                     </div>
                     <div class="unidade2">
-                        <p>Tn</p>
+                        <p>Sc</p>
                     </div>
                 </div>
             </div>
             <div class="titulo2">
                 <span> <b> Projeção para o Período</b></span><br>
             </div>
-            <div class="projecao">
+            <div class="media">
                 <div class="card2">
                     <div class="valor">
                         <p>{{ projecaoCarregamento }}</p>
                     </div>
                     <div class="unidade2">
-                        <p>Tn</p>
+                        <p>Sc</p>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="containerModal">
-        <div class="chartProdutosArgamassa">
-            <canvas id="graficoProdutoCarregamento"></canvas>
-        </div>
+
     </div>    
 </p-dialog>
+<!---------------------------------  detalhes equipamentos ------------------ -->
+<p-dialog 
+[modal]="true"
+[(visible)]="equipamentosVisivel" 
+[style]="{ width: '90%', height: '90%' }" 
+[breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"   
+>
+<div class="titulo">
+    <p-divider align="left" type="solid">
+        <b>Produtividade Fábrica</b>
+    </p-divider>   
+    <div class="container">
+        <div class="rowSuperior">
+            <div class="buttons">
+                <p-calendar
+                    [style]="{'width':'100%'}"
+                    id="da" 
+                    [(ngModel)]="data"
+                    dateFormat="dd/mm/yy"                  
+                    [showIcon]="true"
+                    placeholder="Data"
+                >
+                </p-calendar>
+                <div 
+                    class="btnCalcProd"
+                    (click)="calcularEquipamentosDetalhes(data)" 
+                >
+                    <p>Calcular</p>
+                </div>
+            </div>    
+            <div class="rightEqpto">
+                <div class="tituloEqpto">
+                    <span> <b>Carregamento geral</b></span><br>
+                </div>
+                <div class="media2">
+                    <div class="cardCarregamentoEqpto">
+                        <div class="valorCarregamentoEqpto">
+                            <p>{{ argamassaCarregamentoDia }}</p>
+                        </div>
+                        <div class="unidadeCarregamentoEqpto">
+                            <p>Carregamento geral</p>
+                        </div>    
+                    </div>
+                </div>    
+            </div>    
+        </div><!--end rowSupeiror-->
+        <div class="containerInterno">
+            <div class="esquerda">
+                <div class="rowWrap">
+                    <div class="tituloFab">
+                        <b> Ensacados </b>
+                    </div>
+                    <div class="rowEsq">
+                        <div class="coluna1">
+                            <div class="linha1">
+                                <div class="eqpto">
+                                    <p>MH-01</p>
+                                </div>
+                                <div class="cardProd">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ mh01HoraProd }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Hora produção</p>
+                                    </div>
+                                </div>
+                                <div class="cardProd">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ mh01HoraParado }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Hora parado</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="coluna2">
+                            <div class="cardFab">
+                                <div class="valorCarregamentoProd">
+                                    <p>{{ mh01Produtividade }}</p>
+                                </div>
+                                <div class="unidadeCarregamentoProd">
+                                    <p>Produtividade equipamento</p>
+                                </div>
+                            </div>
+                            <div class="cardFab">
+                                <div class="valorCarregamentoProd">
+                                    <p>{{ mh01Producao }}</p>
+                                </div>
+                                <div class="unidadeCarregamentoProd">
+                                    <p>Produção equipamento</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--end row1-->
+                </div>    
+                <div class="rowWrap">
+                    <div class="tituloFab">
+                        <b> Ensacados</b>
+                    </div>
+                    <div class="rowEsq">   
+                        <div class="coluna1">
+                            <div class="linha1">
+                                <div class="eqpto">
+                                    <p>MH-02</p>
+                                </div>
+                                <div class="cardProd">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ mh02HoraProd }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Hora produção</p>
+                                    </div>
+                                </div>
+                                <div class="cardProd">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ mh02HoraParado }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Hora parado</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="coluna2">
+                            <div class="cardFab">
+                                <div class="valorCarregamentoProd">
+                                    <p>{{ mh02Produtividade }}</p>
+                                </div>
+                                <div class="unidadeCarregamentoProd">
+                                    <p>Produtividade equipamento</p>
+                                </div>
+                            </div>
+                            <div class="cardFab">
+                                <div class="valorCarregamentoProd">
+                                    <p>{{ mh02Producao }}</p>
+                                </div>
+                                <div class="unidadeCarregamentoProd">
+                                    <p>Produção equipamento</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--end row2-->
+                </div><!--EndTitle-->          
+            </div><!--end Esquerda-->
+            <div class="direita">
+                <div class="totais">
+                    <div class="cardFabDir">
+                        <div class="valorCarregamentoProd">
+                            <p>{{ argamassaProdutividade }}</p>
+                        </div>
+                        <div class="unidadeCarregamentoProd">
+                            <p>Produtividade do Dia</p>
+                        </div>
+                    </div>
+                    <div class="cardFabDir">
+                        <div class="valorCarregamentoProd">
+                            <p>{{ argamassaProducao }}</p>
+                        </div>
+                        <div class="unidadeCarregamentoProd">
+                            <p>Produção do Dia</p>
+                        </div>
+                    </div>
+                </div>
+            </div><!--End Direita-->
+        </div><!--end containerInterno--> 
+    </div><!--end container--> 
+</div>
+
+</p-dialog> 
+<!----------------------ACUMULADOS----------------------->
+<p-dialog 
+    [modal]="true"
+    [(visible)]="acumuladoVisivel" 
+    [style]="{ width: '90%', height: '90%' }" 
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"   
+>
+<div class="titulo">
+    <p-divider align="left" type="solid">
+        <b>Produção e Carregamento Acumulados</b>
+    </p-divider>   
+    
+        <div class="rowBotoesAcumulado">
+            <div 
+                class="btnCalc"
+                (click)="gerarGraficosAcumulado('atual')"
+                [ngClass]="{'active': selectedButton === 'atual'}" 
+            >
+                <p>Último dia</p>
+            </div>
+            <div 
+                class="btnCalc"
+                (click)="gerarGraficosAcumulado('mensal')"
+                [ngClass]="{'active': selectedButton === 'mensal'}" 
+            >
+                <p>No mês</p>
+            </div>
+            <div 
+                class="btnCalc" 
+                (click)="gerarGraficosAcumulado('anual')"
+                [ngClass]="{'active': selectedButton === 'anual'}" 
+            >
+                <p>No ano</p>
+            </div>
+        </div><!--end rowSupeiror-->
+        <div class="containerModalAcumulado">
+            <div class="chartProdutosArgamassaAcumulado">
+                <canvas id="graficoAcumuladoProduto"></canvas>
+            </div>
+        </div>     
+    
+        <div class="containerModalAcumulado">
+            <div class="chartProdutosArgamassaAcumulado">
+                <canvas id="graficoAcumuladoCarregamento"></canvas>
+            </div>
+        </div>
+    
+</div>
+</p-dialog> 
