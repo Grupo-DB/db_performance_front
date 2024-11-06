@@ -341,8 +341,8 @@ gerarGrafico(tipoCalculo: string, local: string): void {
   graficoMensalFcmiCarregamento(tipoCalculo: string){
     this.homeService.fabricaCalcarioGraficosCarregamento(tipoCalculo).subscribe(response =>{
       this.graficoCarregamentoFcmiChartMes(response.volume_diario);
-      this.projecaoCarregamento = response.volume_diario.projecao_fcmii;
-      this.mediaCarregamento = response.volume_diario.media_fcmii;
+      this.projecaoCarregamento = response.volume_diario.projecao_fcmi;
+      this.mediaCarregamento = response.volume_diario.media_diaria_fcmi;
     })
   }
   graficoAnualFcmiCarregamento(tipoCalculo: string){
@@ -364,7 +364,7 @@ gerarGrafico(tipoCalculo: string, local: string): void {
     this.homeService.fabricaCalcarioGraficosCarregamento(tipoCalculo).subscribe(response =>{
       this.graficoCarregamentoFcmiiChartMes(response.volume_diario);
       this.projecaoCarregamento = response.volume_diario.projecao_fcmii;
-      this.mediaCarregamento = response.volume_diario.media_fcmii;
+      this.mediaCarregamento = response.volume_diario.media_diaria_fcmii;
     })
   }
   graficoAnualFcmii(tipoCalculo: string, fabrica: number){
@@ -394,7 +394,7 @@ gerarGrafico(tipoCalculo: string, local: string): void {
     this.homeService.fabricaCalcarioGraficosCarregamento(tipoCalculo).subscribe(response =>{
       this.graficoCarregamentoFcmiiiChartMes(response.volume_diario);
       this.projecaoCarregamento = response.volume_diario.projecao_fcmiii;
-      this.mediaCarregamento = response.volume_diario.media_fcmiii;
+      this.mediaCarregamento = response.volume_diario.media_diaria_fcmiii;
     })
   }
   graficoAnualFcmiii(tipoCalculo: string, fabrica: number){
