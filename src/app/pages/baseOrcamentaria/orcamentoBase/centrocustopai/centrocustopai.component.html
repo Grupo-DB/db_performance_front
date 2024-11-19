@@ -1,0 +1,349 @@
+<div class="menu">
+    <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+        <li nz-menu-item nzMatchRouter="#">
+            <a style="font-size: 13px;" routerLink="/welcome/baseOrcamentaria/orcamentoBase/homeOrcamento">Início</a>
+        </li>
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizAnalitica" >Raízes Analíticas</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/centrocustopai" >Centro de Custo Pai</a>
+                </li>
+            </ul>
+        </li>    
+    </ul>
+</div>
+
+<div class="titulo">
+    <p-divider align="left" type="solid">
+        <b>Cadastro de Centro de Custo Pai</b>
+    </p-divider>
+</div>
+
+<div class="container">
+    <div class="formWrap">
+        <form 
+            [formGroup]="registercentrocustopaiForm"
+            title="Cadastrar novo Centro de Custo Pai"
+            primaryBtnText="Cadastrar"
+            (submit)="submit()"
+            enctype="multipart/form-data"
+        >
+            <div class="form">
+                <div class="coluna">
+                    <div class="raiz">
+                        <p-inputGroup >
+                            <p-inputGroupAddon>
+                                <i class="pi pi-file-edit"></i>
+                            </p-inputGroupAddon>
+                            <span class="p-float-label">
+                                <input
+                                    [style]="{'width':'100%'}"
+                                    pInputText
+                                    id="nome"
+                                    formControlName="nome"
+                                    type="text"
+                                />  
+                                <label for="raiz_contabil">Informe o nome</label>
+                            </span>          
+                        </p-inputGroup>
+                    </div>
+                    <div class="raiz">
+                        <p-dropdown
+                            id="empresa" 
+                            [style]="{'width':'100%'}"
+                            [options]="empresas" 
+                            formControlName="empresa"
+                            optionLabel="nome"
+                            placeholder="Selecione a Empresa"
+                            (onChange)="onEmpresaSelecionada($event.value)"
+                        >
+                        </p-dropdown>
+                        
+                    </div>
+                    <div class="raiz">
+                        <p-dropdown
+                            id="filial"
+                            [style]="{'width':'100%'}"
+                            [options]="filiais" 
+                            formControlName="filial"
+                            optionLabel="nome"
+                            placeholder="Selecione a Filial"
+                            [disabled]="true"
+                            (onChange)="onFilialSelecionada($event.value)"
+                        >
+                        </p-dropdown>
+                        
+                    </div>
+                </div>
+
+                <div class="coluna">
+                    <div class="raiz">
+                        <p-dropdown
+                            id="area" 
+                            [style]="{'width':'100%'}"
+                            [options]="areas" 
+                            formControlName="area"
+                            optionLabel="nome"
+                            placeholder="Selecione a Area"
+                            [disabled]="true"
+                            (onChange)="onAreaSelecionada($event.value)"
+                        >
+                        </p-dropdown>
+                        
+                    </div>
+                    <div class="raiz">
+                        <p-dropdown
+                            id="setor" 
+                            [style]="{'width':'100%'}"
+                            [options]="setores" 
+                            formControlName="setor"
+                            optionLabel="nome"
+                            placeholder="Selecione o Ambiente"
+                            [disabled]="true"
+                            (onChange)="onSetorSelecionado($event.value)"
+                        >
+                        </p-dropdown>
+                        
+                    </div>
+                    <div class="raiz">
+                        <p-dropdown
+                            id="ambiente" 
+                            [style]="{'width':'100%'}"
+                            [options]="ambientes" 
+                            formControlName="ambiente"
+                            optionLabel="nome"
+                            placeholder="Selecione o Setor"
+                            [disabled]="true"
+                        >
+                        </p-dropdown>
+                        
+                    </div>      
+                </div>
+
+            </div>
+        </form>
+        <div class="botoes-form">
+            <p-toast></p-toast>
+            <div class="btnsec" (click)="clearForm()">
+                <p>Limpar</p>
+            </div>
+            <div class="btnpri" (click)="submit()">
+                <p>Salvar</p>            
+            </div>
+        
+        </div>
+    </div><!--endForm-->
+
+
+    <div class="tabela">
+        <p-table
+            #dt1
+            [value]="centrosCustoPai"
+            [paginator]="true"
+            [rows]="5"
+            [showCurrentPageReport]="true"
+            [tableStyle]="{ 'min-width': '50rem' }"
+            currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
+            [rowsPerPageOptions]="[5, 10, 20]"
+            [globalFilterFields]="['id', 'nome','empresa','filial','area','ambiente','setor']"
+        >
+            <ng-template pTemplate="caption">
+                <p-toast />
+                <p-confirmDialog />
+                <div class="flex">
+                    <span class="p-input-icon-left ml-auto">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Digite o nome" />
+                    </span>
+                    <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
+                    <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+                </div>
+            </ng-template>    
+            <ng-template pTemplate="header">
+                <tr>
+                    
+                    <th style="width:25%" type="text" field="id" display="menu">
+                        id
+                    </th>
+                    <th style="width:25%" type="text" field="nome" display="menu">
+                        Nome
+                    </th>
+                    <th style="width:25%" type="text" field="empresa" display="menu">
+                        Empresa
+                    </th>
+                    <th style="width:25%" type="text" field="filial" display="menu">
+                        Filial
+                    </th>
+                    <th style="width:25%" type="text" field="area" display="menu">
+                        Area
+                    </th>
+                    <th style="width:25%" type="text" field="setor" display="menu">
+                        Ambiente
+                    </th>
+                    <th style="width:25%" type="text" field="ambiente" display="menu">
+                        Setor
+                    </th>
+                    
+                    <th style="width: 25%;text-align: center;">Ações</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-centroCustoPai>
+                <tr>                      
+                    <td>{{ centroCustoPai.id }}</td>
+                    <td>{{ centroCustoPai.nome }}</td>
+                    <td>{{ getNomeEmpresa(centroCustoPai.empresa) }}</td>
+                    <td>{{ getNomeFilial(centroCustoPai.filial) }}</td>
+                    <td>{{ getNomeArea(centroCustoPai.area) }}</td>
+                    <td>{{ getNomeSetor(centroCustoPai.setor) }}</td>
+                    <td>{{ getNomeAmbiente(centroCustoPai.ambiente) }}</td>
+                    <td class="td-acao">
+                        <div class="btnsec" (click)="abirModalEdicao(centroCustoPai)">
+                            <p>Editar</p>
+                        </div>
+                        
+                        <div class="btnpri" (click)="excluirCentroCustoPai(centroCustoPai.id)">
+                            <p>Excluir</p>            
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="paginatorleft">
+                <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+            </ng-template>
+            <ng-template pTemplate="paginatorright">
+                <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
+            </ng-template>
+        </p-table>
+    </div>
+    
+            <p-dialog 
+                [modal]="true"
+                [(visible)]="editFormVisible" 
+                [style]="{ width: '65rem' }" 
+                [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+            >
+                <div class="titulo">
+                    <p-divider align="left" type="solid">
+                        <b>Editar Centro de Custo Pai</b>
+                    </p-divider> 
+                </div>
+                <div class="container">
+                    <div class="formWrap">
+                        <form 
+                            [formGroup]="editForm"
+                            title="Editar Centro de Custo Pai"      
+                        >
+                        <div class="form">
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                pInputText
+                                                id="nome"
+                                                formControlName="nome"
+                                                type="text"
+                                            />  
+                                            <label for="raiz_contabil">Informe o nome</label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>
+                                <div class="raiz">
+                                    <p-dropdown
+                                        id="empresa" 
+                                        [style]="{'width':'100%'}"
+                                        [options]="empresas" 
+                                        formControlName="empresa"
+                                        optionLabel="nome"
+                                        placeholder="Selecione a Empresa"
+                                        (onChange)="onEmpresaSelecionada($event.value)"
+                                    >
+                                    </p-dropdown>
+                                    
+                                </div>
+                                <div class="raiz">
+                                    <p-dropdown
+                                        id="filial"
+                                        [style]="{'width':'100%'}"
+                                        [options]="filiais" 
+                                        formControlName="filial"
+                                        optionLabel="nome"
+                                        placeholder="Selecione a Filial"
+                                        [disabled]="true"
+                                        (onChange)="onFilialSelecionada($event.value)"
+                                    >
+                                    </p-dropdown>
+                                    
+                                </div>
+                            </div>
+            
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-dropdown
+                                        id="area" 
+                                        [style]="{'width':'100%'}"
+                                        [options]="areas" 
+                                        formControlName="area"
+                                        optionLabel="nome"
+                                        placeholder="Selecione a Area"
+                                        [disabled]="true"
+                                        (onChange)="onAreaSelecionada($event.value)"
+                                    >
+                                    </p-dropdown>
+                                    
+                                </div>
+                                <div class="raiz">
+                                    <p-dropdown
+                                        id="ambiente" 
+                                        [style]="{'width':'100%'}"
+                                        [options]="setores" 
+                                        formControlName="ambiente"
+                                        optionLabel="nome"
+                                        placeholder="Selecione o Ambiente"
+                                        [disabled]="true"
+                                        (onChange)="onSetorSelecionado($event.value)"
+                                    >
+                                    </p-dropdown>
+                                    
+                                </div>
+                                <div class="raiz">
+                                    <p-dropdown
+                                        id="setor" 
+                                        [style]="{'width':'100%'}"
+                                        [options]="ambientes" 
+                                        formControlName="setor"
+                                        optionLabel="nome"
+                                        placeholder="Selecione o Setor"
+                                        [disabled]="true"
+                                    >
+                                    </p-dropdown>
+                                    
+                                </div>      
+                            </div>
+            
+                        </div>
+    
+                            <div class="botoes-form">
+                                <div class="btnsec" (click)="clearEditForm()">
+                                    <p>Limpar</p>
+                                </div>
+                                
+                                <div class="btnpri" (click)="saveEdit()">
+                                    <p>Salvar</p>            
+                                </div>
+                            </div>
+    
+                        </form>
+                    </div>    
+                </div>
+            </p-dialog>
+
+
+</div>            

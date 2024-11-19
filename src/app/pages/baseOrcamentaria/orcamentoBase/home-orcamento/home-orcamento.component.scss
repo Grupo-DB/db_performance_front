@@ -1,0 +1,29 @@
+@import "primeicons/primeicons.css";
+.menu{
+    position:static;
+     //transform: translate(-1%, -180%);
+     
+     width: 100%;
+ }
+ .titulo{
+    justify-content: center;
+    text-align: center;
+    margin-top: 50px;
+    h2{
+        color:slategrey;
+    }
+}
+:host ::ng-deep .p-rowgroup-footer td {
+    font-weight: 700;
+}
+
+:host ::ng-deep .p-rowgroup-header {
+    span {
+        font-weight: 700;
+    }
+
+    .p-row-toggler {
+        vertical-align: middle;
+        margin-right: .25rem;
+    }
+}

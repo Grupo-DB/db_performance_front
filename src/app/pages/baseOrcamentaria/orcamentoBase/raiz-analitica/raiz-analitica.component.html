@@ -1,0 +1,222 @@
+<div class="menu">
+    <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+        <li nz-menu-item nzMatchRouter="#">
+            <a style="font-size: 13px;" routerLink="/welcome/baseOrcamentaria/orcamentoBase/homeOrcamento">Início</a>
+        </li>
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizAnalitica" >Raízes Analíticas</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/centrocustopai" >Centro de Custos Pai</a>
+                </li>
+            </ul>
+        </li>    
+    </ul>
+</div>
+
+<div class="titulo">
+    <p-divider align="left" type="solid">
+        <b>Cadastro de Raízes Analíticas</b>
+    </p-divider> 
+</div>
+<div class="container">
+    <div class="formWrap">
+        <form 
+            [formGroup]="registerForm"
+            title="Cadastrar nova Raiz Analítica"
+            primaryBtnText="Cadastrar"
+            (submit)="submit()"
+        >
+            <div class="form">
+                <div class="coluna">
+                    <div class="raiz">
+                        <p-inputGroup >
+                            <p-inputGroupAddon>
+                                <i class="pi pi-file-edit"></i>
+                            </p-inputGroupAddon>
+                            <span class="p-float-label">
+                                <input
+                                    [style]="{'width':'100%'}"
+                                    pInputText
+                                    id="raiz_contabil"
+                                    formControlName="raiz_contabil"
+                                    type="text"
+                                />  
+                                <label for="raiz_contabil">Informe a Raíz</label>
+                            </span>          
+                        </p-inputGroup>
+                    </div>    
+                </div>
+
+                <div class="coluna">
+                    <div class="raiz">
+                        <p-dropdown
+                            class="" 
+                            [style]="{'width':'91%'}"
+                            [options]="gestores" 
+                            formControlName="gestor"
+                            optionLabel="nome"
+                            placeholder="Selecione o Gestor"
+                        >
+                        </p-dropdown>
+                        
+                    </div>    
+                </div>
+
+            </div>
+        </form>
+        <div class="botoes-form">
+            <p-toast></p-toast>
+            <div class="btnsec" (click)="clearForm()">
+                <p>Limpar</p>
+            </div>
+            <div class="btnpri" (click)="submit()">
+                <p>Salvar</p>            
+            </div>
+        
+        </div>
+    </div><!--endForm-->
+
+
+<div class="tabela">
+    <p-table
+        #dt1
+        [value]="raizesAnaliticas"
+        [paginator]="true"
+        [rows]="5"
+        [showCurrentPageReport]="true"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
+        [rowsPerPageOptions]="[5, 10, 20]"
+        [globalFilterFields]="['id', 'raiz_contabil','descricao','gestorNome']"
+    >
+        <ng-template pTemplate="caption">
+            <p-toast />
+            <p-confirmDialog />
+            <div class="flex">
+                <span class="p-input-icon-left ml-auto">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Digite o nome" />
+                </span>
+                <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
+                <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+            </div>
+        </ng-template>    
+        <ng-template pTemplate="header">
+            <tr>
+                
+                <th style="width:25%" type="text" field="id" display="menu">
+                    id
+                </th>
+                <th style="width:25%" type="text" field="raiz_contabil" display="menu">
+                    Raíz Contábil
+                </th>
+                <th style="width:25%" type="text" field="descricao" display="menu">
+                    Descrição
+                </th>
+                <th style="width:25%" type="text" field="gestor" display="menu">
+                    Gestor
+                </th>
+                <th style="width: 25%;text-align: center;">Ações</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-raizAnalitica>
+            <tr>                      
+                <td>{{ raizAnalitica.id }}</td>
+                <td>{{ raizAnalitica.raiz_contabil }}</td>
+                <td>{{ raizAnalitica.descricao }}</td>
+                <td>{{ getNomeGestor(raizAnalitica.gestor) }}</td>
+                
+                <td class="td-acao">
+                    <div class="btnsec" (click)="abrirModalEdicao(raizAnalitica)">
+                        <p>Editar</p>
+                    </div>
+                    
+                    <div class="btnpri" (click)="excluirRaizAnalitica(raizAnalitica.id)">
+                        <p>Excluir</p>            
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="paginatorleft">
+            <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+        </ng-template>
+        <ng-template pTemplate="paginatorright">
+            <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
+        </ng-template>
+    </p-table>
+</div>
+
+        <p-dialog 
+            [modal]="true"
+            [(visible)]="editFormVisible" 
+            [style]="{ width: '65rem' }" 
+            [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+        >
+            <div class="titulo">
+                <p-divider align="left" type="solid">
+                    <b>Editar Raíz Analítica</b>
+                </p-divider> 
+            </div>
+            <div class="container">
+                <div class="formWrap">
+                    <form 
+                        [formGroup]="editForm"
+                        title="Editar Area"      
+                    >
+                        <div class="form">
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'55%'}"
+                                                pInputText
+                                                id="raiz_contabil"
+                                                formControlName="raiz_contabil"
+                                                type="text"
+                                            />  
+                                            <label for="raiz_contabil">Informe a Raíz</label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>    
+                            </div>
+
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-dropdown
+                                        class="" 
+                                        [style]="{'width':'95%'}"
+                                        [options]="gestores" 
+                                        formControlName="gestor"
+                                        optionLabel="nome"
+                                        placeholder="Selecione o Gestor"
+                                    >
+                                    </p-dropdown>
+                                    
+                                </div>    
+                            </div>
+
+                        </div>
+
+                        <div class="botoes-form">
+                            <div class="btnsec" (click)="clearEditForm()">
+                                <p>Limpar</p>
+                            </div>
+                            
+                            <div class="btnpri" (click)="saveEdit()">
+                                <p>Salvar</p>            
+                            </div>
+                        </div>
+
+                    </form>
+                </div>    
+            </div>
+        </p-dialog>
+
+</div>
