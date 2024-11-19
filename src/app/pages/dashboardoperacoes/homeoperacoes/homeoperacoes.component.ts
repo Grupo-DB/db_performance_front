@@ -3,14 +3,24 @@ import { HomeService } from '../../../services/dashboardOperacoesServices/home/h
 import { CommonModule } from '@angular/common';
 import { DividerModule } from 'primeng/divider';
 import { RouterLink,RouterModule } from '@angular/router';
+import { trigger, state, style, transition, animate } from '@angular/animations';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-homeoperacoes',
   standalone: true,
   imports: [
-    CommonModule,DividerModule,RouterLink,RouterModule
+    CommonModule,DividerModule,RouterLink,RouterModule,ProgressSpinnerModule
   ],
   providers:[HomeService],
+  animations: [
+    trigger('slideAnimation', [
+      transition(':enter', [
+        style({ transform: 'translateX(100%)' }),
+        animate('1s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+    ]),
+  ],
   templateUrl: './homeoperacoes.component.html',
   styleUrl: './homeoperacoes.component.scss'
 })
@@ -24,6 +34,7 @@ export class HomeoperacoesComponent implements OnInit {
   tnFertilizante!:number;
   producaoBritador!: number;
   botaoSelecionado: string = '';
+  loading: boolean = true;
   constructor(
     private homeService: HomeService,
   ){}
@@ -31,8 +42,10 @@ export class HomeoperacoesComponent implements OnInit {
     this.calcular('atual')    
 }
 calcular(tipoCalculo: string) {
+  this.loading=true;
   this.botaoSelecionado = tipoCalculo
   this.homeService.calcularCalcario(tipoCalculo).subscribe(response => {
+    this.loading=false;
     this.volumeBritado = response.volume_britado_total;
     this.tnCal = response.resultados.cal;
     this.tnCalcario = response.resultados.calcario;

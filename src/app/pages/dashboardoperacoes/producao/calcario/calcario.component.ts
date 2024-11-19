@@ -10,20 +10,29 @@ import { Chart } from 'chart.js';
 import { CalendarModule } from 'primeng/calendar';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { trigger, state, style, transition, animate, query, stagger } from '@angular/animations';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-calcario',
   standalone: true,
   imports: [
-    DividerModule,RouterLink,CommonModule,TableModule,DialogModule,CalendarModule,FormsModule,MatProgressSpinnerModule
+    DividerModule,RouterLink,CommonModule,TableModule,DialogModule,CalendarModule,FormsModule,MatProgressSpinnerModule,ProgressSpinnerModule,ProgressBarModule
+   
   ], 
   providers:[
-    HomeService,DatePipe
+    HomeService,DatePipe,MessageService
   ],
+
   templateUrl: './calcario.component.html',
-  styleUrl: './calcario.component.scss'
+  styleUrl: './calcario.component.scss',
+
 })
+
+
 export class CalcarioComponent implements OnInit {
   selectedButton: string = 'mensal';  // Define o valor inicial (mensal ou anual)
   selectedFactory: string = 'acumulado';
@@ -110,6 +119,11 @@ export class CalcarioComponent implements OnInit {
   totalCarregamento!: number;
   /**ESTOQUE */
   estoqueTotal!: number;
+  ////
+  mostrarElemento = true;
+  loading: boolean = true;
+  loading2: boolean = true;
+  loading3: boolean = true;
 
   data: any;
   constructor(
@@ -122,11 +136,13 @@ export class CalcarioComponent implements OnInit {
     this.calcularFcmiii();
   }
   calcularFcmi() {
+    this.loading = true; // Ativa o estado de carregamento
     forkJoin({
       atual: this.homeService.fabricaCalcario('atual',23),
       mensal: this.homeService.fabricaCalcario('mensal',23),
       anual: this.homeService.fabricaCalcario('anual',23)
     }).subscribe(response => {
+    this.loading = false; // Finaliza o carregamento
       // Respostas para cada tipo de cálculo
     const respostaAtual = response.atual;
     const respostaMensal = response.mensal;
@@ -151,11 +167,13 @@ export class CalcarioComponent implements OnInit {
     });
   }
   calcularFcmii() {
+    this.loading2 = true;
     forkJoin({
       atual: this.homeService.fabricaCalcario('atual',24),
       mensal: this.homeService.fabricaCalcario('mensal',24),
       anual: this.homeService.fabricaCalcario('anual',24)
     }).subscribe(response => {
+    this.loading2 = false;
       // Respostas para cada tipo de cálculo
     const respostaAtual = response.atual;
     const respostaMensal = response.mensal;
@@ -175,11 +193,13 @@ export class CalcarioComponent implements OnInit {
     });
   }
   calcularFcmiii() {
+    this.loading3 = true
     forkJoin({
       atual: this.homeService.fabricaCalcario('atual',25),
       mensal: this.homeService.fabricaCalcario('mensal',25),
       anual: this.homeService.fabricaCalcario('anual',25)
     }).subscribe(response => {
+    this.loading3 = false  
       // Respostas para cada tipo de cálculo
     const respostaAtual = response.atual;
     const respostaMensal = response.mensal;

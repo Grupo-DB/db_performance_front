@@ -29,7 +29,7 @@
   <div class="titulo">
     <i class="pi pi-plus-circle"></i><span> <b> Mineração</b></span><br>
   </div>
-  <div class="rowMineracao">
+  <div class="rowMineracao"@slideAnimation>
     <div class="card">
       <div class="valor">
         <p></p>
@@ -57,8 +57,12 @@
   </div> <!--end rowMineracao-->
   <div class="titulo">
     <a routerLink="homeproducao"><i class="pi pi-plus-circle"></i><span> <b> Produção</b></span></a><br>
-  </div>  
-  <div class="rowProducao">
+  </div> 
+   <!-- Indicador de carregamento -->
+   <div *ngIf="loading" class="loading-indicator">
+      <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+    </div> 
+  <div class="rowProducao"@slideAnimation *ngIf="!loading">
     <div class="card">
       <div class="valor">
         <p>{{ volumeBritado }}</p>
@@ -111,7 +115,7 @@
   <div class="titulo">
     <i class="pi pi-plus-circle"></i><span> <b> Manutenção</b></span><br>
   </div>
-  <div class="rowManutencao">
+  <div class="rowManutencao"@slideAnimation>
     <div class="card">
       <div class="valor">
         <p></p>

@@ -10,6 +10,7 @@ import { Chart } from 'chart.js';
 import { DatePipe } from '@angular/common';
 import { CalendarModule } from 'primeng/calendar';
 import { FormsModule } from '@angular/forms';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-cal',
@@ -19,6 +20,14 @@ import { FormsModule } from '@angular/forms';
   ],
   providers: [
     HomeService,DatePipe
+  ],
+  animations:[
+    trigger('efeitoFade',[
+      transition(':enter',[
+        style({ opacity: 0 }),
+        animate('2s', style({ opacity:1 }))
+      ])
+    ]),
   ],
   templateUrl: './cal.component.html',
   styleUrl: './cal.component.scss'

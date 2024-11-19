@@ -122,6 +122,7 @@
                 
             }
             .dvft{
+                display: flex;
                 padding: 5PX;
                 margin-left: 50px;
                 margin-top: 20px;
@@ -130,6 +131,15 @@
                 }
                 input{
                     margin-left: 5px;
+                }
+            }
+            .sistemas{
+                display: flex;
+                padding: 5PX;
+                margin-left: 50px;
+                margin-top: 20px;
+                span{
+                    margin: 5px;
                 }
             }
             .dvemail{
@@ -451,6 +461,7 @@
                 width: 80%;
             }
         }
+        
         .dvcbed{
             margin-top: 20px;
             margin-bottom: 30px;
@@ -461,7 +472,18 @@
     }
 
 }
-
+.sistemasEd{
+    display: flex;
+    padding: 5px;
+    margin-left: 10px;
+    margin-top: 20px;
+    span{
+        margin: 5px;
+    }
+    input{
+        width: 170px;
+    }
+}
 .botoes-formedit{
     display: flex;
     justify-content: end;

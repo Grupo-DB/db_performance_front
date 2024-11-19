@@ -6,6 +6,7 @@ import { DividerModule } from 'primeng/divider';
 import { TableModule } from 'primeng/table';
 import { HomeService } from '../../../../services/dashboardOperacoesServices/home/home.service';
 import { forkJoin } from 'rxjs';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-rebritagem',
@@ -15,6 +16,14 @@ import { forkJoin } from 'rxjs';
   ],
   providers:[
     HomeService
+  ],
+  animations: [
+    trigger('slideAnimation', [
+      transition(':enter', [
+        style({ transform: 'translateY(100%)' }),
+        animate('2s ease-out', style({ transform: 'translateY(0)' })),
+      ]),
+    ]),
   ],
   templateUrl: './rebritagem.component.html',
   styleUrl: './rebritagem.component.scss'

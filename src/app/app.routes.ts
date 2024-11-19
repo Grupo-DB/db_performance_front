@@ -37,6 +37,10 @@ import { ProdutividadeComponent } from './pages/dashboardoperacoes/producao/prod
 import { FertilizanteComponent } from './pages/dashboardoperacoes/producao/fertilizante/fertilizante.component';
 import { CalComponent } from './pages/dashboardoperacoes/producao/cal/cal.component';
 import { ArgamassaComponent } from './pages/dashboardoperacoes/producao/argamassa/argamassa.component';
+import { RaizAnaliticaComponent } from './pages/baseOrcamentaria/orcamentoBase/raiz-analitica/raiz-analitica.component';
+import { HomeOrcamentoComponent } from './pages/baseOrcamentaria/orcamentoBase/home-orcamento/home-orcamento.component';
+import { CentrocustopaiComponent } from './pages/baseOrcamentaria/orcamentoBase/centrocustopai/centrocustopai.component';
+import { CentrocustoComponent } from './pages/baseOrcamentaria/orcamentoBase/centrocusto/centrocusto.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -77,7 +81,11 @@ export const routes: Routes = [
       { path: 'homeoperacoes/homeproducao/calcario/produtividade', component:ProdutividadeComponent },
       { path: 'homeoperacoes/homeproducao/fertilizante', component:FertilizanteComponent },
       { path: 'homeoperacoes/homeproducao/cal', component:CalComponent },
-      { path: 'homeoperacoes/homeproducao/argamassa', component:ArgamassaComponent }
+      { path: 'homeoperacoes/homeproducao/argamassa', component:ArgamassaComponent },
+      { path: 'baseOrcamentaria/orcamentoBase/raizAnalitica', component:RaizAnaliticaComponent },
+      { path: 'baseOrcamentaria/orcamentoBase/homeOrcamento', component:HomeOrcamentoComponent },
+      { path: 'baseOrcamentaria/orcamentoBase/centrocustopai', component:CentrocustopaiComponent },
+      { path: 'baseOrcamentaria/orcamentoBase/centrocusto', component:CentrocustoComponent }
     ],
   },
   

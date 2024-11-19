@@ -234,7 +234,33 @@
                         class="form-control"
                         (change)="onFileChange($event,registercolaboradorForm)"
                     />
-                </div>
+                </div>    
+                <div class="sistemas">
+                    <span class="p-float-label">
+                        <input pInputText
+                            id="minerion_id"
+                            formControlName="minerion_id"
+                            type="text"
+                        />  
+                        <label for="minerion_id">Minerion ID</label>
+                    </span>
+                    <span class="p-float-label">
+                        <input pInputText
+                            id="dominio_id"
+                            formControlName="dominio_id"
+                            type="text"
+                        />  
+                        <label for="dominio_id">Dominio ID</label>
+                    </span>
+                    <span class="p-float-label">
+                        <input pInputText
+                            id="sgg_id"
+                            formControlName="sgg_id"
+                            type="text"
+                        />  
+                        <label for="sgg_id">SGG ID</label>
+                    </span>  
+                </div>    
                 <div class="dvemail">
                     <p-inputGroup>
                         <p-inputGroupAddon>
@@ -273,6 +299,12 @@
                                     formControlName="situacao"
                                 >
                                 </p-inputSwitch>
+                            <p><label for="sit"[style]="{'margin-left':'30px'}">Gestor de Orçamento </label></p>
+                                <p-inputSwitch 
+                                    id="sit"
+                                    formControlName="tornar_gestor"
+                                >
+                                </p-inputSwitch>    
                         </div>
                 </div>
                 <div class="tituser">
@@ -366,10 +398,10 @@
                             Area
                         </th>
                         <th style="width:25%" type="text" field="setorNome" display="menu">
-                            Setor
+                            Ambiente
                         </th>
                         <th style="width:25%" type="text" field="ambienteNome" display="menu">
-                            Ambiente
+                            Setor
                         </th>
                         <th style="width:25%" type="text" field="cargoNome" display="menu">
                             Cargo
@@ -418,7 +450,7 @@
         <p-dialog 
             [modal]="true"
             [(visible)]="editFormVisible" 
-            [style]="{ width: '70rem' }" 
+            [style]="{ width: '90rem' }" 
             [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
         >
         <div>   
@@ -667,6 +699,32 @@
                             >
                             </p-calendar>
                     </div>
+                    <div class="sistemasEd">
+                        <span class="p-float-label">
+                            <input pInputText
+                                id="minerion_id"
+                                formControlName="minerion_id"
+                                type="text"
+                            />  
+                            <label for="minerion_id">Minerion ID</label>
+                        </span>
+                        <span class="p-float-label">
+                            <input pInputText
+                                id="dominio_id"
+                                formControlName="dominio_id"
+                                type="text"
+                            />  
+                            <label for="dominio_id">Dominio ID</label>
+                        </span>
+                        <span class="p-float-label">
+                            <input pInputText
+                                id="sgg_id"
+                                formControlName="sgg_id"
+                                type="text"
+                            />  
+                            <label for="sgg_id">SGG ID</label>
+                        </span>  
+                    </div>   
                     <div class="dvemailed">
                         <p-inputGroup>
                             <p-inputGroupAddon>
@@ -681,7 +739,7 @@
                                 <label for="email">Digite o email</label>
                             </span>          
                         </p-inputGroup>
-                    </div>    
+                    </div> 
                     <div class="dvcbed">
                         <div class="titclas">
                             <p>Classificação do Colaborador</p>
@@ -693,18 +751,24 @@
                                 formControlName="tornar_avaliador"
                             >
                             </p-inputSwitch>
-                            <p><label for="sit"[style]="{'margin-left':'20px'}">Avaliado </label></p>
+                            <p><label for="sit"[style]="{'margin-left':'10px'}">Avaliado </label></p>
                             <p-inputSwitch 
                                 id="sit"
                                 formControlName="tornar_avaliado"
                             >
                             </p-inputSwitch>
-                            <p><label for="sit"[style]="{'margin-left':'30px'}">Situação </label></p>
+                            <p><label for="sit"[style]="{'margin-left':'10px'}">Situação </label></p>
                                 <p-inputSwitch 
                                     id="sit"
                                     formControlName="situacao"
                                 >
                                 </p-inputSwitch>
+                            <p><label for="sit"[style]="{'margin-left':'10px'}">Gestor de Orçamento </label></p>
+                                <p-inputSwitch 
+                                    id="sit"
+                                    formControlName="tornar_gestor"
+                                >
+                                </p-inputSwitch>      
                         </div>
                         
                     </div>
@@ -816,6 +880,9 @@
                     <p>Ambiente: <strong>{{ getNomeAmbiente(colaboradorDetalhes.ambiente) }}</strong></p>
                     <p>Cargo: <strong>{{ getNomeCargo(colaboradorDetalhes.cargo) }}</strong></p>
                     <p>Usuário ID: <strong>{{ colaboradorDetalhes.user }}</strong></p>
+                    <p>Domínio ID: <strong>{{ colaboradorDetalhes.dominio_id }}</strong></p>
+                    <p>Minerion ID: <strong>{{ colaboradorDetalhes.minerion_id }}</strong></p>
+                    <p>SGG ID: <strong>{{ colaboradorDetalhes.sgg_id }}</strong></p>
                 </div>            
                 <div class="dvimg">  
                     <img [src]="colaboradorDetalhes.image"  width="80" class="shadow-4" />

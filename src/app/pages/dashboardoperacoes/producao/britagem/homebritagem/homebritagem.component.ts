@@ -8,6 +8,7 @@ import { DialogModule } from 'primeng/dialog';
 import { Chart } from 'chart.js';
 import { forkJoin } from 'rxjs';
 import { KnobModule } from 'primeng/knob';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-homebritagem',
@@ -17,6 +18,14 @@ import { KnobModule } from 'primeng/knob';
   ],
   providers:[
     HomeService
+  ],
+  animations: [
+    trigger('slideAnimation', [
+      transition(':enter', [
+        style({ transform: 'translateY(-100%)' }),
+        animate('2s ease-out', style({ transform: 'translateY(0)' })),
+      ]),
+    ]),
   ],
   templateUrl: './homebritagem.component.html',
   styleUrl: './homebritagem.component.scss'

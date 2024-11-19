@@ -609,3 +609,23 @@ tr {
         margin-top: 15px;
     }
 }
+.loading-indicator {
+    text-align: center;
+    font-size: 18px;
+    color: #666;
+    animation: fadeIn 1s ease-in-out infinite alternate;
+    margin: auto;
+}
+.loading-indicator2 {
+    text-align: center;
+    font-size: 18px;
+    color: #666;
+    animation: fadeIn 3s ease-in-out infinite alternate;
+    margin: auto;
+}
+
+
+@keyframes fadeIn {
+    from { opacity: 0.5; }
+    to { opacity: 1; }
+}

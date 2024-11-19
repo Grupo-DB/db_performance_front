@@ -68,6 +68,10 @@ interface RegisterColaboradorForm {
   categoria: FormControl;
   tornar_avaliado: FormControl;
   tornar_avaliador: FormControl;
+  tornar_gestor: FormControl;
+  minerion_id: FormControl;
+  dominio_id: FormControl;
+  sgg_id: FormControl;
 }
   interface imgForm{
     image: FormControl
@@ -100,8 +104,12 @@ export interface Colaborador{
   raca: string;
   instrucao: string;
   categoria: string;
+  dominio_id: number;
+  minerion_id: number;
+  sgg_id: number;
   tornar_avaliador: boolean;
   tornar_avaliado: boolean;
+  tornar_gestor: boolean;
 
 }
 interface Genero{
@@ -220,8 +228,12 @@ export class ColaboradorComponent implements OnInit {
       raca: new FormControl('',),
       instrucao: new FormControl('',),
       categoria: new FormControl('',),
+      minerion_id: new FormControl('',),
+      dominio_id: new FormControl('',),
+      sgg_id: new FormControl('',),
       tornar_avaliado: new FormControl<boolean>(true),
-      tornar_avaliador: new FormControl<boolean>(false)
+      tornar_avaliador: new FormControl<boolean>(false),
+      tornar_gestor: new FormControl<boolean>(false)
    }); 
    this.editForm = this.fb.group({
     id: [''],
@@ -249,8 +261,12 @@ export class ColaboradorComponent implements OnInit {
     raca:[''],
     instrucao:[''],
     categoria:[''],
+    dominio_id:[''],
+    minerion_id:[''],
+    sgg_id:[''],
     tornar_avaliador:[''],
-    tornar_avaliado:['']
+    tornar_avaliado:[''],
+    tornar_gestor:['']
 ,   });
    this.imgForm = new FormGroup({
     image: new FormControl('',)
@@ -667,8 +683,12 @@ abrirModalEdicao(colaborador: Colaborador) {
     raca: colaborador.raca,
     instrucao: colaborador.instrucao,
     categoria: colaborador.categoria,
+    dominio_id: colaborador.dominio_id,
+    minerion_id: colaborador.minerion_id,
+    sgg_id: colaborador.sgg_id,
     tornar_avaliador:colaborador.tornar_avaliador,
-    tornar_avaliado:colaborador.tornar_avaliado
+    tornar_avaliado:colaborador.tornar_avaliado,
+    tornar_gestor:colaborador.tornar_gestor
   });
 }
 
@@ -738,8 +758,12 @@ saveEdit(){
       raca: racaNome,
       instrucao: instrucaoNome,
       categoria: categoriaNome,
+      dominio_id: this.editForm.value.dominio_id,
+      minerion_id: this.editForm.value.minerion_id,
+      sgg_id: this.editForm.value.sgg_id,
       tornar_avaliador: this.editForm.value.tornar_avaliador,
       tornar_avaliado: this.editForm.value.tornar_avaliado,
+      tornar_gestor: this.editForm.value.tornar_gestor,
       situacao:this.editForm.value.situacao
     };
     
@@ -908,8 +932,12 @@ submit() {
     formData.append('raca', racaNome || null);
     formData.append('instrucao', instrucaoNome || null);
     formData.append('categoria', categoriaNome || null);
+    formData.append('minerion_id',this.registercolaboradorForm.value.minerion_id);
+    formData.append('dominio_id',this.registercolaboradorForm.value.dominio_id);
+    formData.append('sgg_id',this.registercolaboradorForm.value.sgg_id);
     formData.append('tornar_avaliado', this.registercolaboradorForm.value.tornar_avaliado);
-    formData.append('tornar_avaliador', this.registercolaboradorForm.value.tornar_avaliador)
+    formData.append('tornar_avaliador', this.registercolaboradorForm.value.tornar_avaliador);
+    formData.append('tornar_gestor', this.registercolaboradorForm.value.tornar_gestor)
 
     // Add a imagem ao FormData
     const image = this.registercolaboradorForm.get('image')?.value;

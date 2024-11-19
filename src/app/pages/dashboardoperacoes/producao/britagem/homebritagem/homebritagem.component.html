@@ -10,7 +10,7 @@
                 <div class="titulo">
                     <i class="pi pi-plus-circle"></i><span (click)="exibirGrafico()" style="cursor: pointer;"> <b> Tn Britada Para Calcário</b></span><br>
                 </div>
-                <div class="interna">
+                <div class="interna"@slideAnimation>
                     <div class="card">
                         <div class="valor">
                         <p>{{ tnBritadaCalcarioDia }}</p>
@@ -41,7 +41,7 @@
                 <div class="titulo">
                     <i class="pi pi-plus-circle"></i><span (click)="exibirGraficoCal()" style="cursor: pointer;"> <b> Tn Britada Para Cal</b></span><br>
                 </div>
-                <div class="interna">
+                <div class="interna"@slideAnimation>
                     <div class="card">
                         <div class="valor">
                         <p>{{ tnBritadaCalDia }}</p>
@@ -69,7 +69,7 @@
                 </div>
            </div> 
         </div>
-        <div class="calcDireita">
+        <div class="calcDireita"@slideAnimation>
             <div class="titulo">
                 <span> <b> Paradas no Britador</b></span><br>
             </div>
@@ -138,7 +138,7 @@
         </div>
     </div>
 
-    <div class="calculos">
+    <div class="calculos"@slideAnimation>
         <div class="calcCargas">
             <div class="titulo">
                 <span> <b> Movimentação de cargas</b></span><br>

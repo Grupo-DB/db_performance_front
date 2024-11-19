@@ -1,70 +1,5 @@
  @import "primeicons/primeicons.css";
 
-// .container{
-//     display: flex;
-//     width: 100%;
-//     justify-content: center;
-
-//     .login{
-//         width: 35%;
-//         margin-top: 10%;
-//         //margin-left: 33%;
-//         border-radius: 10px;
-//         box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
-//         .lgimg{
-//             margin-top: 20px;
-//         }
-//         img{
-//             max-width: 85%;
-//             max-height: 85%;
-//             width: auto;
-//             height: auto;
-//             display: block;
-            
-            
-//         }
-//         p-inputGroup{
-//             margin-left: 60px;
-//             padding: 20px;
-//             width: 400px;
-//         }
-
-// }
-//     .botoes-form{
-//         display: flex;
-//         justify-content: center;
-//         margin-bottom: 20px;
-        
-        
-//     }
-// .btnpri{
-//     cursor: pointer;
-//     background-color: #444959;
-//     color: #fff;
-//     width: 120px;
-//     height: 40px;
-//     border-radius: 5px;
-//     margin-left: 5px;
-//     p{
-//         text-align: center;
-//         margin-top: 10px;
-//     }
-// }   
-// .btnsec{
-//     cursor: pointer;
-//     background-color: #e3e3f3;
-//     color: #444959;
-//     width: 120px;
-//     height: 40px;
-//     border-radius: 5px;
-//     p{
-//         text-align: center;
-//         margin-top: 10px;
-//     }
-// }
-// }
-
-
 .container {
     display: flex;
     width: 100%;
@@ -72,7 +7,7 @@
 }
 
 .login {
-    width: 35%;
+    max-width: 100%;
     margin-top: 10%;
     border-radius: 10px;
     box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
@@ -85,8 +20,8 @@
     }
 
     img {
-        max-width: 85%;
-        max-height: 85%;
+        max-width: 80%;
+        //max-height: 100%;
         width: auto;
         height: auto;
         display: block;
@@ -131,3 +66,78 @@
         margin-top: 10px;
     }
 }
+/* Tela pequena (móvel) */
+@media (max-width: 768px) {
+    .container {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+    
+    .login {
+      width: 80%;
+      margin-top: 20%;
+      form{
+        width: 100%;
+        margin: auto;
+        p-inputGroup{
+            width: 80vw;
+        }
+      }
+      .lgimg{
+        max-width: 100%;
+        margin: auto;
+      }
+    }
+  }
+}  
+  
+  /* Tela média (tablet) */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .container {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+    
+    .login {
+      width: 80%;
+      margin-top: 20%;
+      form{
+        width: 100%;
+        margin: auto;
+        p-inputGroup{
+            width: 80vw;
+        }
+      }
+      .lgimg{
+        max-width: 100%;
+        margin: auto;
+      }
+    }
+  }
+  }
+  
+  /* Tela grande (desktop) */
+//   @media (min-width: 1025px) {
+//     .container {
+//         display: flex;
+//         width: 100%;
+//         justify-content: center;
+    
+//     .login {
+//       width: 80%;
+//       margin-top: 20%;
+//       form{
+//         width: 100%;
+//         margin: auto;
+//         p-inputGroup{
+//             width: 80vw;
+//         }
+//       }
+//       .lgimg{
+//         max-width: 100%;
+//         margin: auto;
+//       }
+//     }
+//   }
+//   }
+  
