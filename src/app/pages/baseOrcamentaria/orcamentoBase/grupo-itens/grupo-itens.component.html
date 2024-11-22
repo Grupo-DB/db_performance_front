@@ -1,0 +1,499 @@
+<div class="menu">
+    <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+        <li nz-menu-item nzMatchRouter="#">
+            <a style="font-size: 13px;" routerLink="homeOrcamento">Início</a>
+        </li>
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizAnalitica" >Raízes Analíticas</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/centrocustopai" >Centro de Custo Pai</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/centrocusto" >Centro de Custo </a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizSintetica" >Raiz Sintética</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/contaContabil" >Conta Contabil</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/grupoItens" >Grupos de Itens</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/orcamentoBase" >Orçamento Base</a>
+                </li>
+            </ul>
+        </li>    
+    </ul>
+</div>
+
+<div class="titulo">
+    <p-divider align="left" type="solid">
+        <b>Cadastro de Grupo de Itens</b>
+    </p-divider>
+</div>
+
+<div class="container">
+    <div class="formWrap">
+        <form
+            [formGroup]="registerForm"
+            title="Cadastrar novo Grupo de Itens"
+            primaryBtnText="Cadastrar"
+            (submit)="submit()" 
+        >
+            <div class="form">
+                <div class="coluna">
+                    <div class="raiz">
+                        <p-inputGroup >
+                            <p-inputGroupAddon>
+                                <i class="pi pi-file-edit"></i>
+                            </p-inputGroupAddon>
+                            <span class="p-float-label">
+                                <input
+                                    [style]="{'width':'100%'}"
+                                    pInputText
+                                    id="codigo"
+                                    formControlName="codigo"
+                                    type="text"
+                                />  
+                                <label for="codigo">Informe o Codigo</label>
+                            </span>          
+                        </p-inputGroup>
+                    </div>
+                    <div class="raiz">
+                        <p-inputGroup >
+                            <p-inputGroupAddon>
+                                <i class="pi pi-file-edit"></i>
+                            </p-inputGroupAddon>
+                            <span class="p-float-label">
+                                <input
+                                    [style]="{'width':'100%'}"
+                                    pInputText
+                                    id="nome_completo"
+                                    formControlName="nome_completo"
+                                    type="text"
+                                />  
+                                <label for="nome_completo">Informe o Nome Completo</label>
+                            </span>          
+                        </p-inputGroup>
+                    </div>
+                    <div class="raiz">
+                        <p-inputGroup >
+                            <p-inputGroupAddon>
+                                <i class="pi pi-file-edit"></i>
+                            </p-inputGroupAddon>
+                            <span class="p-float-label">
+                                <input
+                                    [style]="{'width':'100%'}"
+                                    pInputText
+                                    id="nivel_1"
+                                    formControlName="nivel_1"
+                                    type="text"
+                                />  
+                                <label for="nivel_1">Informe o Nível 1</label>
+                            </span>          
+                        </p-inputGroup>
+                    </div>
+                    <div class="raiz">
+                        <p-inputGroup >
+                            <p-inputGroupAddon>
+                                <i class="pi pi-file-edit"></i>
+                            </p-inputGroupAddon>
+                            <span class="p-float-label">
+                                <input
+                                    [style]="{'width':'100%'}"
+                                    pInputText
+                                    id="nivel_2"
+                                    formControlName="nivel_2"
+                                    type="text"
+                                />  
+                                <label for="nivel_2">Informe o Nível 2</label>
+                            </span>          
+                        </p-inputGroup>
+                    </div>
+                    <div class="raiz">
+                        <p-inputGroup >
+                            <p-inputGroupAddon>
+                                <i class="pi pi-file-edit"></i>
+                            </p-inputGroupAddon>
+                            <span class="p-float-label">
+                                <input
+                                    [style]="{'width':'100%'}"
+                                    pInputText
+                                    id="nivel_3"
+                                    formControlName="nivel_3"
+                                    type="text"
+                                />  
+                                <label for="nivel_3">Informe o Nível 3</label>
+                            </span>          
+                        </p-inputGroup>
+                    </div>
+                </div><!--endColuna-->
+                <div class="coluna">
+                    <div class="raiz">
+                        <p-inputGroup >
+                            <p-inputGroupAddon>
+                                <i class="pi pi-file-edit"></i>
+                            </p-inputGroupAddon>
+                            <span class="p-float-label">
+                                <input
+                                    [style]="{'width':'100%'}"
+                                    pInputText
+                                    id="nivel_4"
+                                    formControlName="nivel_4"
+                                    type="text"
+                                />  
+                                <label for="nivel_4">Informe o Nível 4</label>
+                            </span>          
+                        </p-inputGroup>
+                    </div>
+                    <div class="raiz">
+                        <p-inputGroup >
+                            <p-inputGroupAddon>
+                                <i class="pi pi-file-edit"></i>
+                            </p-inputGroupAddon>
+                            <span class="p-float-label">
+                                <input
+                                    [style]="{'width':'100%'}"
+                                    pInputText
+                                    id="nivel_5"
+                                    formControlName="nivel_5"
+                                    type="text"
+                                />  
+                                <label for="nivel_5">Informe o Nível 5</label>
+                            </span>          
+                        </p-inputGroup>
+                    </div>
+                    <div class="raiz">
+                        <p-inputGroup >
+                            <p-inputGroupAddon>
+                                <i class="pi pi-file-edit"></i>
+                            </p-inputGroupAddon>
+                            <span class="p-float-label">
+                                <input
+                                    [style]="{'width':'100%'}"
+                                    pInputText
+                                    id="nivel_6"
+                                    formControlName="nivel_6"
+                                    type="text"
+                                />  
+                                <label for="nivel_6">Informe o Nível 6</label>
+                            </span>          
+                        </p-inputGroup>
+                    </div>
+                    <div class="raiz">
+                        <p-inputGroup >
+                            <p-inputGroupAddon>
+                                <i class="pi pi-file-edit"></i>
+                            </p-inputGroupAddon>
+                            <span class="p-float-label">
+                                <input
+                                    [style]="{'width':'100%'}"
+                                    pInputText
+                                    id="nivel_7"
+                                    formControlName="nivel_7"
+                                    type="text"
+                                />  
+                                <label for="nivel_7">Informe o Nível 7</label>
+                            </span>          
+                        </p-inputGroup>
+                    </div>
+                    <div class="raiz">
+                        <p-dropdown
+                            id="ccPai" 
+                            [style]="{'width':'100%'}"
+                            [options]="gestores" 
+                            formControlName="gestor"
+                            optionLabel="nome"
+                            placeholder="Selecione o Gestor"
+                            [disabled]="true"
+                        >
+                        </p-dropdown>
+                    </div> 
+                </div><!--endColuna-->
+            </div>
+        </form>
+        <div class="botoes-form">
+            <p-toast></p-toast>
+            <div class="btnsec" (click)="clearForm()">
+                <p>Limpar</p>
+            </div>
+            <div class="btnpri" (click)="submit()">
+                <p>Salvar</p>            
+            </div>
+        
+        </div>
+    </div>
+
+    <div class="tabela">
+        <p-table
+            #dt1
+            [value]="gruposItens"
+            [paginator]="true"
+            [rows]="5"
+            [showCurrentPageReport]="true"
+            [tableStyle]="{ 'min-width': '50rem' }"
+            currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
+            [rowsPerPageOptions]="[5, 10, 20]"
+            [globalFilterFields]="['nome','codigo','ccPaiNome','gestorNome']"
+        >
+            <ng-template pTemplate="caption">
+                <p-toast />
+                <p-confirmDialog />
+                <div class="flex">
+                    <span class="p-input-icon-left ml-auto">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Digite o nome" />
+                    </span>
+                    <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
+                    <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width:10%" type="text" field="codigo" display="menu">
+                        Codigo
+                    </th>
+                    <th style="width:50%" type="text" field="nome" display="menu">
+                        Nome Completo
+                    </th>
+                    <th style="width:50%" type="text" field="gestorNome" display="menu">
+                        Gestor
+                    </th>
+                    <th style="width:25%;text-align: center;">Ações</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-grupoItens>
+                <tr>                      
+                    <td>{{ grupoItens.codigo}}</td>
+                    <td>{{ grupoItens.nome_completo }}</td>
+                    <td>{{ getNomeGestor(grupoItens.gestor) }}</td>
+                    
+                    <td class="td-acao">
+                        <div class="btnsec" (click)="abrirModalEdicao(grupoItens)">
+                            <p>Editar</p>
+                        </div>
+                        
+                        <div class="btnpri" (click)="excluirGrupoItens(grupoItens.id)">
+                            <p>Excluir</p>            
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="paginatorleft">
+                <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+            </ng-template>
+            <ng-template pTemplate="paginatorright">
+                <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
+            </ng-template> 
+        </p-table>
+    </div>
+
+    <p-dialog 
+        [modal]="true"
+        [(visible)]="editFormVisible" 
+        [style]="{ width: '65rem' }" 
+        [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+    >
+        <div class="titulo">
+            <p-divider align="left" type="solid">
+                <b>Editar Grupo de Itens</b>
+            </p-divider> 
+        </div>
+        <div class="container">
+            <div class="formWrap">
+                <form 
+                    [formGroup]="editForm"
+                    title="Editar Conta Contabil"      
+                >
+                    <div class="form">
+                        <div class="coluna">
+                            <div class="raiz">
+                                <p-inputGroup >
+                                    <p-inputGroupAddon>
+                                        <i class="pi pi-file-edit"></i>
+                                    </p-inputGroupAddon>
+                                    <span class="p-float-label">
+                                        <input
+                                            [style]="{'width':'100%'}"
+                                            pInputText
+                                            id="codigo"
+                                            formControlName="codigo"
+                                            type="text"
+                                        />  
+                                        <label for="codigo">Informe o Codigo</label>
+                                    </span>          
+                                </p-inputGroup>
+                            </div>
+                            <div class="raiz">
+                                <p-inputGroup >
+                                    <p-inputGroupAddon>
+                                        <i class="pi pi-file-edit"></i>
+                                    </p-inputGroupAddon>
+                                    <span class="p-float-label">
+                                        <input
+                                            [style]="{'width':'100%'}"
+                                            pInputText
+                                            id="nome_completo"
+                                            formControlName="nome_completo"
+                                            type="text"
+                                        />  
+                                        <label for="nome_completo">Informe o Nome Completo</label>
+                                    </span>          
+                                </p-inputGroup>
+                            </div>
+                            <div class="raiz">
+                                <p-inputGroup >
+                                    <p-inputGroupAddon>
+                                        <i class="pi pi-file-edit"></i>
+                                    </p-inputGroupAddon>
+                                    <span class="p-float-label">
+                                        <input
+                                            [style]="{'width':'100%'}"
+                                            pInputText
+                                            id="nivel_1"
+                                            formControlName="nivel_1"
+                                            type="text"
+                                        />  
+                                        <label for="nivel_1">Informe o Nível 1</label>
+                                    </span>          
+                                </p-inputGroup>
+                            </div>
+                            <div class="raiz">
+                                <p-inputGroup >
+                                    <p-inputGroupAddon>
+                                        <i class="pi pi-file-edit"></i>
+                                    </p-inputGroupAddon>
+                                    <span class="p-float-label">
+                                        <input
+                                            [style]="{'width':'100%'}"
+                                            pInputText
+                                            id="nivel_2"
+                                            formControlName="nivel_2"
+                                            type="text"
+                                        />  
+                                        <label for="nivel_2">Informe o Nível 2</label>
+                                    </span>          
+                                </p-inputGroup>
+                            </div>
+                            <div class="raiz">
+                                <p-inputGroup >
+                                    <p-inputGroupAddon>
+                                        <i class="pi pi-file-edit"></i>
+                                    </p-inputGroupAddon>
+                                    <span class="p-float-label">
+                                        <input
+                                            [style]="{'width':'100%'}"
+                                            pInputText
+                                            id="nivel_3"
+                                            formControlName="nivel_3"
+                                            type="text"
+                                        />  
+                                        <label for="nivel_3">Informe o Nível 3</label>
+                                    </span>          
+                                </p-inputGroup>
+                            </div>
+                        </div><!--endColuna-->
+                        <div class="coluna">
+                            <div class="raiz">
+                                <p-inputGroup >
+                                    <p-inputGroupAddon>
+                                        <i class="pi pi-file-edit"></i>
+                                    </p-inputGroupAddon>
+                                    <span class="p-float-label">
+                                        <input
+                                            [style]="{'width':'100%'}"
+                                            pInputText
+                                            id="nivel_4"
+                                            formControlName="nivel_4"
+                                            type="text"
+                                        />  
+                                        <label for="nivel_4">Informe o Nível 4</label>
+                                    </span>          
+                                </p-inputGroup>
+                            </div>
+                            <div class="raiz">
+                                <p-inputGroup >
+                                    <p-inputGroupAddon>
+                                        <i class="pi pi-file-edit"></i>
+                                    </p-inputGroupAddon>
+                                    <span class="p-float-label">
+                                        <input
+                                            [style]="{'width':'100%'}"
+                                            pInputText
+                                            id="nivel_5"
+                                            formControlName="nivel_5"
+                                            type="text"
+                                        />  
+                                        <label for="nivel_5">Informe o Nível 5</label>
+                                    </span>          
+                                </p-inputGroup>
+                            </div>
+                            <div class="raiz">
+                                <p-inputGroup >
+                                    <p-inputGroupAddon>
+                                        <i class="pi pi-file-edit"></i>
+                                    </p-inputGroupAddon>
+                                    <span class="p-float-label">
+                                        <input
+                                            [style]="{'width':'100%'}"
+                                            pInputText
+                                            id="nivel_6"
+                                            formControlName="nivel_6"
+                                            type="text"
+                                        />  
+                                        <label for="nivel_6">Informe o Nível 6</label>
+                                    </span>          
+                                </p-inputGroup>
+                            </div>
+                            <div class="raiz">
+                                <p-inputGroup >
+                                    <p-inputGroupAddon>
+                                        <i class="pi pi-file-edit"></i>
+                                    </p-inputGroupAddon>
+                                    <span class="p-float-label">
+                                        <input
+                                            [style]="{'width':'100%'}"
+                                            pInputText
+                                            id="nivel_7"
+                                            formControlName="nivel_7"
+                                            type="text"
+                                        />  
+                                        <label for="nivel_7">Informe o Nível 7</label>
+                                    </span>          
+                                </p-inputGroup>
+                            </div>
+                            <div class="raiz">
+                                <p-dropdown
+                                    id="ccPai" 
+                                    [style]="{'width':'100%'}"
+                                    [options]="gestores" 
+                                    formControlName="gestor"
+                                    optionLabel="nome"
+                                    placeholder="Selecione o Gestor"
+                                    [disabled]="true"
+                                >
+                                </p-dropdown>
+                            </div> 
+                        </div><!--endColuna-->
+                    </div>
+                    <div class="botoes-form">
+                        <div class="btnsec" (click)="clearEditForm()">
+                            <p>Limpar</p>
+                        </div>
+                        
+                        <div class="btnpri" (click)="saveEdit()">
+                            <p>Salvar</p>            
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </p-dialog>
+
+
+</div>
