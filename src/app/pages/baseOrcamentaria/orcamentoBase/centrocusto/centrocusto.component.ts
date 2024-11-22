@@ -16,6 +16,8 @@ import { ToastModule } from 'primeng/toast';
 import { LoginService } from '../../../../services/avaliacoesServices/login/login.service';
 import { RaizAnaliticaService } from '../../../../services/baseOrcamentariaServices/orcamento/RaizAnalitica/raiz-analitica.service';
 import { CentrocustoService } from '../../../../services/baseOrcamentariaServices/orcamento/CentroCusto/centrocusto.service';
+import { CentroCustoPai } from '../centrocustopai/centrocustopai.component';
+import { CentrocustopaiService } from '../../../../services/baseOrcamentariaServices/orcamento/CentroCustoPai/centrocustopai.service';
 
 interface RegisterCentroCustoForm{
   codigo: FormControl;
@@ -48,6 +50,7 @@ export interface CentroCusto{
 export class CentrocustoComponent implements OnInit{
   centrosCusto: any[]=[];
   gestores: any;
+  ccsPai: CentroCustoPai[]|undefined;
   //
   editForm!: FormGroup;
   registercentrocustoForm!: FormGroup<RegisterCentroCustoForm>;
@@ -64,7 +67,8 @@ export class CentrocustoComponent implements OnInit{
     private fb :FormBuilder,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private centroCustoService: CentrocustoService
+    private centroCustoService: CentrocustoService,
+    private centroCustoPaiService: CentrocustopaiService
   ){
     this.registercentrocustoForm = new FormGroup({
       codigo: new FormControl('',[Validators.required, Validators.maxLength(4), Validators.minLength(4)]),
@@ -89,6 +93,40 @@ export class CentrocustoComponent implements OnInit{
         console.error('Não carregou:',error)
       }
     )
+    this.centroCustoPaiService.getCentrosCustoPai().subscribe(
+      ccsPai => {
+        this.ccsPai = ccsPai
+        this.mapCcsPai();
+      },
+      error => {
+        console.error('Não carregou:',error)
+      }
+    )
+    this.centroCustoService.getCentroCusto().subscribe(
+      centrosCusto => {
+        this.centrosCusto = centrosCusto
+      }
+    )
+  }
+
+  mapCcsPai() {
+    this.centrosCusto.forEach(centroCusto => {
+      const ccPai = this.ccsPai?.find(ccPai => ccPai.id === centroCusto.ccPai);
+      if (ccPai) {
+        centroCusto.ccPaiNome = ccPai.nome;
+      }
+    });
+    this.loading = false;
+  }
+
+  getNomeCcPai(id: number): string{
+    const ccPai = this.ccsPai?.find((ccPai: {id: number}) => ccPai.id === id);
+    return ccPai ? ccPai.nome : 'CC Pai não encontrado'
+  }
+
+  getNomeGestor(id: number): string{
+    const gestor = this.gestores?.find((gestor: {id: number;}) => gestor.id === id);
+    return gestor ? gestor.nome: 'Gestor não encontrado'
   }
 
   clear(table: Table) {
@@ -113,6 +151,7 @@ export class CentrocustoComponent implements OnInit{
     this.editForm.patchValue({
       id: centroCusto.id,
       codigo: centroCusto.codigo,
+      nome: centroCusto.nome,
       cc_pai: centroCusto.ccPai,
       gestor: centroCusto.gestor
     })
@@ -121,7 +160,7 @@ export class CentrocustoComponent implements OnInit{
   saveEdit(){
     const centroCustoId = this.editForm.value.id;
     const gestorId = this.editForm.value.gestor.id;
-    const ccPaiId = this.editForm.value.cc_pai.id;
+    const ccPaiId = this.editForm.value.ccPai.id;
     const dadosAtualizados: Partial<CentroCusto> = {
       codigo: this.editForm.value.codigo,
       nome: this.editForm.value.nome,

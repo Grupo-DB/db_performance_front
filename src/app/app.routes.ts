@@ -41,6 +41,10 @@ import { RaizAnaliticaComponent } from './pages/baseOrcamentaria/orcamentoBase/r
 import { HomeOrcamentoComponent } from './pages/baseOrcamentaria/orcamentoBase/home-orcamento/home-orcamento.component';
 import { CentrocustopaiComponent } from './pages/baseOrcamentaria/orcamentoBase/centrocustopai/centrocustopai.component';
 import { CentrocustoComponent } from './pages/baseOrcamentaria/orcamentoBase/centrocusto/centrocusto.component';
+import { RaizSinteticaComponent } from './pages/baseOrcamentaria/orcamentoBase/raiz-sintetica/raiz-sintetica.component';
+import { ContaContabilComponent } from './pages/baseOrcamentaria/orcamentoBase/conta-contabil/conta-contabil.component';
+import { GrupoItensComponent } from './pages/baseOrcamentaria/orcamentoBase/grupo-itens/grupo-itens.component';
+import { OrcamentoBaseComponent } from './pages/baseOrcamentaria/orcamentoBase/orcamento-base/orcamento-base.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -85,7 +89,11 @@ export const routes: Routes = [
       { path: 'baseOrcamentaria/orcamentoBase/raizAnalitica', component:RaizAnaliticaComponent },
       { path: 'baseOrcamentaria/orcamentoBase/homeOrcamento', component:HomeOrcamentoComponent },
       { path: 'baseOrcamentaria/orcamentoBase/centrocustopai', component:CentrocustopaiComponent },
-      { path: 'baseOrcamentaria/orcamentoBase/centrocusto', component:CentrocustoComponent }
+      { path: 'baseOrcamentaria/orcamentoBase/centrocusto', component:CentrocustoComponent },
+      { path: 'baseOrcamentaria/orcamentoBase/raizSintetica', component:RaizSinteticaComponent },
+      { path: 'baseOrcamentaria/orcamentoBase/contaContabil', component:ContaContabilComponent },
+      { path: 'baseOrcamentaria/orcamentoBase/grupoItens', component:GrupoItensComponent },
+      { path: 'baseOrcamentaria/orcamentoBase/orcamentoBase', component:OrcamentoBaseComponent }
     ],
   },
   
