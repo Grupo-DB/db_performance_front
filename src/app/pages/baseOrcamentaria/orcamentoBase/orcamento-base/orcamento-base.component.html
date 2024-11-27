@@ -1,1 +1,290 @@
-<p>orcamento-base works!</p>
+<div class="menu">
+    <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+        <li nz-menu-item nzMatchRouter="#">
+            <a style="font-size: 13px;" routerLink="homeOrcamento">Início</a>
+        </li>
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizAnalitica" >Raízes Analíticas</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/centrocustopai" >Centro de Custo Pai</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/centrocusto" >Centro de Custo </a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizSintetica" >Raiz Sintética</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/contaContabil" >Conta Contabil</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/grupoItens" >Grupos de Itens</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/orcamentoBase" >Orçamento Base</a>
+                </li>
+            </ul>
+        </li>    
+    </ul>
+</div>
+
+<div class="titulo">
+    <p-divider align="left" type="solid">
+        <b>Cadastro de Orçamento Base</b>
+    </p-divider>
+</div>
+
+<div class="container">
+    <div class="formWrap">
+        <form
+            [formGroup]="registerForm"
+
+        >
+            <div class="form">
+                <div class="row3">
+                    <div class="coluna">
+                        <div class="raiz">
+                            <p-floatLabel>
+                                <p-dropdown
+                                    inputId="float-label" 
+                                    [style]="{'width':'100%'}"
+                                    [options]="ccsPai" 
+                                    formControlName="ccPai"
+                                    optionLabel="label"
+                                    [(ngModel)]="selectedCcPai"
+                                    (onChange)="onCcPaiSelecionado($event.value)"
+                                    optionValue="id" 
+                                >
+                                </p-dropdown>
+                                <label for="float-label">Selecione o Centro de Custo Pai</label>
+                            </p-floatLabel>
+                        </div>
+                    </div>
+                    <div class="coluna">
+                        <div class="raiz">
+                            <p-floatLabel>
+                                <p-dropdown
+                                    inputId="float-label" 
+                                    [style]="{'width':'100%'}"
+                                    [options]="centrosCusto" 
+                                    formControlName="centroCusto"
+                                    optionLabel="nome"
+                                    optionValue="id"
+                                    [(ngModel)]="selectedCc"
+                                    (onChange)="onCcSelecionado($event.value)"                            
+                                >
+                                </p-dropdown>
+                                <label for="float-label">Selecione o Centro de Custo</label>  
+                            </p-floatLabel>  
+                        </div>
+                    </div>
+                </div>
+                <div class="row3">
+                    <div class="coluna">
+                        <div class="raizDetalhes" >
+                            <div class="detalhes">
+                                Nome:  <br>
+                                Empresa:<br>
+                                Filial: <br>
+                                Área:<br>
+                                Setor:<br>
+                                Ambiente:<br>
+                                
+                            </div>    
+                        
+                            <div class="detalhes" *ngIf="ccsPaiDetalhes">
+                                <strong>{{ ccsPaiDetalhes.nome }}</strong><br>
+                                <strong>{{ ccsPaiDetalhes.empresa.nome }}</strong><br>
+                                <strong>{{ ccsPaiDetalhes.filial.nome }}</strong><br>
+                                <strong>{{ ccsPaiDetalhes.area.nome }}</strong><br>
+                                <strong>{{ ccsPaiDetalhes.setor.nome }}</strong><br>
+                                <strong>{{ ccsPaiDetalhes.ambiente.nome }}</strong><br>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="coluna">
+                        <div class="raizDetalhesDir" >
+                            <div class="detalhes">
+                                Codigo:  <br>
+                                Nome:<br>
+                                Gestor: <br>
+                            </div>    
+                            <div class="detalhes" *ngIf="ccsDetalhes">
+                                <strong>{{ ccsDetalhes.codigo }}</strong><br>
+                                <strong>{{ ccsDetalhes.nome }}</strong><br>
+                                <strong>{{ ccsDetalhes.gestor_detalhes.nome }}</strong><br>
+                    
+                            </div>
+                        </div>
+                        <div class="raizSinteticaDetalhes"> 
+                            <div class="detalhes">
+                                Raiz Sintetica: <br>
+                                Raiz Sintetica Descrição:
+                            </div> 
+                            <div class="detalhes" *ngIf="raizSinteticaDetalhes">
+                                <strong>{{ raizSinteticaDetalhes.raiz_contabil }}</strong><br>
+                                <strong>{{ raizSinteticaDetalhes.descricao }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row3">        
+                    <div class="coluna">   
+                        <div class="raiz">
+                            <p-floatLabel>
+                                <p-dropdown
+                                    [style]="{'width':'100%'}"
+                                    [options]="baseOrcamentos"
+                                    formControlName="baseOrcamento"
+                                    optionLabel="value"
+                                    inputId="float-label"
+                                >
+                                </p-dropdown>
+                                <label for="float-label">Selecione a Base de Orçamento</label>
+                            </p-floatLabel>    
+                        </div>
+                    </div>
+                    <div class="coluna">
+                        <div class="raiz">
+                            <p-floatLabel>
+                                <p-dropdown
+                                    inputId="float-label" 
+                                    [style]="{'width':'100%'}"
+                                    [options]="raizesAnaliticas" 
+                                    formControlName="raizAnalitica"
+                                    optionLabel="label"
+                                    [(ngModel)]="selectedRaizAnalitica"
+                                    (onChange)="onRaizAnaliticaSelecionada($event.value)"
+                                    [filter]="true" 
+                                    filterBy="descricao"
+                                    [showClear]="true" 
+                                >
+                                    <ng-template pTemplate="filter" let-options="options">
+                                        <div class="flex gap-1">
+                                            <div class="p-inputgroup" (click)="$event.stopPropagation()">
+                                                <span class="p-inputgroup-addon"><i class="pi pi-search"></i></span>
+                                                <input 
+                                                    type="text"
+                                                    pInputText
+                                                    placeholder="Filter"
+                                                    [(ngModel)]="filterValue"
+                                                    (keyup)="customFilterFunction($event, options)" />
+                                            </div>
+                                            <button pButton icon="pi pi-times" (click)="resetFunction(options)"></button>
+                                        </div>
+                                    </ng-template>
+                                </p-dropdown>
+                                <label for="float-label">Selecione a Raíz Analítica</label>
+                            </p-floatLabel>
+                        </div>   
+                    </div>    
+                </div><!--endRow-->  
+                <div class="row3">
+                    <div class="coluna">
+                        <div class="raiz">
+                            <p><label for="sit">Suplementação </label></p>
+                                <p-inputSwitch 
+                                    id="sit"
+                                    formControlName="suplementacao"
+                                >
+                                </p-inputSwitch>
+                        </div>
+                        <div>
+                            <label>Conta Contábil:</label>
+                            <span>{{ contaContabil }}</span>
+                          </div>
+                    </div>
+                    <div class="coluna">
+                        <div class="raiz">
+                            <p><label for="sal">Valor</label></p>    
+                            <p-inputNumber
+                                [style]="{'width':'100%'}" 
+                                id="sal"
+                                formControlName="valor" 
+                                inputId="currency-us" 
+                                mode="currency" 
+                                currency="BRL" 
+                                locale="pt-BR" 
+                            />  
+                        </div>
+                    </div>
+                </div> <!--endRow>-->
+                <div class="row3">    
+                    <div class="coluna">
+                        <div class="raiz">
+                            <p-floatLabel>
+                                <p-dropdown
+                                    inputId="float-label"
+                                    [style]="{'width':'100%'}"
+                                    [options]="recorrencias" 
+                                    formControlName="periodicidade"
+                                    optionLabel="value"
+                                    optionValue="key"
+                                >
+                                </p-dropdown>
+                                <label for="float-label">Selecione a Periodicidade</label>
+                            </p-floatLabel>    
+                            <div class="raiz" *ngIf="registerForm.get('periodicidade')?.value === 'mensal'">
+                                <p-floatLabel>
+                                    <p-dropdown
+                                    inputId="float-label"
+                                        [style]="{'width':'100%'}"
+                                        [options]="mensalTipos"
+                                        formControlName="mensalTipo"
+                                        optionLabel="value"
+                                        optionValue="key"
+                                    >
+                                    </p-dropdown>
+                                    <label for="float-label">Selecione o Tipo de Recorrência</label>
+                                </p-floatLabel>    
+                            </div>    
+                            <div class="raiz" *ngIf="registerForm.get('mensalTipo')?.value === 'especifico'">
+                                <p-floatLabel>
+                                    <p-dropdown
+                                        inputId="float-label"
+                                        [style]="{'width':'100%'}"
+                                        [options]="meses"
+                                        formControlName="mesEspecifico"
+                                        optionLabel="value"
+                                        optionValue="key"
+                                    >
+                                    </p-dropdown>
+                                    <label for="float-label">Selecione o(s) Mês(s)</label>
+                                </p-floatLabel>    
+                            </div>
+                            <div class="raiz" *ngIf="registerForm.get('mensalTipo')?.value === 'recorrente'">
+                                <p-multiSelect
+                                    [style]="{'width':'100%'}"
+                                    [options]="meses"
+                                    formControlName="mesesRecorrentes"
+                                    optionLabel="value"
+                                    optionValue="key"
+                                    placeholder="Selecione o Centro de Custo"
+                                >
+                                </p-multiSelect>
+                            </div>
+        
+                        </div>
+                        
+                    </div>
+                </div>    
+            </div>
+        
+        </form>
+        
+        <div class="botoes-form">
+            <p-toast></p-toast>
+            <div class="btnsec" >
+                <p>Limpar</p>
+            </div>
+            <div class="btnpri">
+                <p>Salvar</p>            
+            </div>
+        
+        </div>
+    </div>   
+
+</div>

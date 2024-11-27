@@ -20,6 +20,9 @@ export class CentrocustopaiService {
   getCentrosCustoPai():Observable<any[]>{
     return this.httpClient.get<any[]>(this.apiUrl);
   }
+  getCentrosCustoPaiDetalhes(id: any):Observable<any[]>{
+    return this.httpClient.get<any[]>(`${this.apiUrl}${id}/`);
+  }
   editCentroCustoPai(id: number, dadosAtualizados: Partial<CentroCustoPai>): Observable<any> {
     const url = `${this.apiUrl}${id}/`;
     return this.httpClient.patch(url, dadosAtualizados); 

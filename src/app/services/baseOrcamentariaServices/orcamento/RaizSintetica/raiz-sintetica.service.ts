@@ -19,6 +19,9 @@ export class RaizSinteticaService {
     getRaizSintetica():Observable<any[]>{
       return this.httpClient.get<any[]>(this.apiUrl);
     }
+    getRaizSinteticaByCc(id: any): Observable<any>{
+      return this.httpClient.get<any>(`${this.apiUrl}byCc/?centro_custo_id=${id}`)
+    }
     editRaizSintetica(id: number, dadosAtualizados: Partial<RaizSintetica>): Observable<any> {
       const url = `${this.apiUrl}${id}/`;
       return this.httpClient.patch(url, dadosAtualizados);

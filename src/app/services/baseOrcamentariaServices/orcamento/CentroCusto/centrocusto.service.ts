@@ -19,6 +19,13 @@ export class CentrocustoService {
   getCentroCusto():Observable<any[]>{
     return this.httpClient.get<any[]>(this.apiUrl);
   }
+  getCentroCustoDetalhe(id: any):Observable<any>{
+    return this.httpClient.get<any>(`${this.apiUrl}${id}/`);
+  }
+  getCentroCustoByCcPai(id: any): Observable<any[]>{
+    //return this.httpClient.get(`${this.apiUrl}byCcPai/`,{ params: { cc_pai: ccPaiId.toString() } })
+      return this.httpClient.get<any>(`${this.apiUrl}byCcPai/?cc_pai_id=${id}`);
+  }
   editCentroCusto(id: number, dadosAtualizados: Partial<CentroCusto>):Observable<any>{
     const url = `${this.apiUrl}${id}/`;
     return this.httpClient.patch(url, dadosAtualizados);
