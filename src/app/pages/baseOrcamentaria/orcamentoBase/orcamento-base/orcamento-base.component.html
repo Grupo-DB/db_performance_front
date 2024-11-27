@@ -56,7 +56,10 @@
                                     optionLabel="label"
                                     [(ngModel)]="selectedCcPai"
                                     (onChange)="onCcPaiSelecionado($event.value)"
-                                    optionValue="id" 
+                                    optionValue="id"
+                                    [filter]="true" 
+                                    filterBy="label"
+                                    [showClear]="true"  
                                 >
                                 </p-dropdown>
                                 <label for="float-label">Selecione o Centro de Custo Pai</label>
@@ -74,7 +77,10 @@
                                     optionLabel="nome"
                                     optionValue="id"
                                     [(ngModel)]="selectedCc"
-                                    (onChange)="onCcSelecionado($event.value)"                            
+                                    (onChange)="onCcSelecionado($event.value)" 
+                                    [filter]="true" 
+                                    filterBy="nome"
+                                    [showClear]="true"                             
                                 >
                                 </p-dropdown>
                                 <label for="float-label">Selecione o Centro de Custo</label>  
@@ -98,10 +104,15 @@
                             <div class="detalhes" *ngIf="ccsPaiDetalhes">
                                 <strong>{{ ccsPaiDetalhes.nome }}</strong><br>
                                 <strong>{{ ccsPaiDetalhes.empresa.nome }}</strong><br>
+                                <input type="hidden" formControlName="empresa" [(ngModel)]="ccsPaiDetalhes.empresa.nome">
                                 <strong>{{ ccsPaiDetalhes.filial.nome }}</strong><br>
+                                <input type="hidden" formControlName="filial" [(ngModel)]="ccsPaiDetalhes.filial.nome">
                                 <strong>{{ ccsPaiDetalhes.area.nome }}</strong><br>
+                                <input type="hidden" formControlName="area" [(ngModel)]="ccsPaiDetalhes.area.nome">
                                 <strong>{{ ccsPaiDetalhes.setor.nome }}</strong><br>
+                                <input type="hidden" formControlName="setor" [(ngModel)]="ccsPaiDetalhes.setor.nome">
                                 <strong>{{ ccsPaiDetalhes.ambiente.nome }}</strong><br>
+                                <input type="hidden" formControlName="ambiente" [(ngModel)]="ccsPaiDetalhes.ambiente.nome">
                             </div>
                         </div>
                     </div>
@@ -115,8 +126,9 @@
                             <div class="detalhes" *ngIf="ccsDetalhes">
                                 <strong>{{ ccsDetalhes.codigo }}</strong><br>
                                 <strong>{{ ccsDetalhes.nome }}</strong><br>
+                                <input type="hidden" formControlName="gestor" [(ngModel)]="ccsDetalhes.gestor_detalhes.nome ">
                                 <strong>{{ ccsDetalhes.gestor_detalhes.nome }}</strong><br>
-                    
+                               
                             </div>
                         </div>
                         <div class="raizSinteticaDetalhes"> 
@@ -126,7 +138,9 @@
                             </div> 
                             <div class="detalhes" *ngIf="raizSinteticaDetalhes">
                                 <strong>{{ raizSinteticaDetalhes.raiz_contabil }}</strong><br>
+                                <input type="hidden" formControlName="raizSintetica" [(ngModel)]="raizSinteticaDetalhes.raiz_contabil">
                                 <strong>{{ raizSinteticaDetalhes.descricao }}</strong>
+                                <input type="hidden" formControlName="raizSinteticaDesc" [(ngModel)]="raizSinteticaDetalhes.descricao">
                             </div>
                         </div>
                     </div>
@@ -140,12 +154,22 @@
                                     [options]="baseOrcamentos"
                                     formControlName="baseOrcamento"
                                     optionLabel="value"
+                                    optionValue="value"
                                     inputId="float-label"
                                 >
                                 </p-dropdown>
                                 <label for="float-label">Selecione a Base de Orçamento</label>
                             </p-floatLabel>    
                         </div>
+                        <div class="raizDetalhesCc">
+                            <div class="detalhes">
+                                Raiz Contabil Grupo:
+                            </div>
+                            <div class="detalhes">
+                                <strong>{{ rcGrupoDesc }}</strong>
+                                <input type="hidden" formControlName="raizContGrupoDesc" [(ngModel)]="rcGrupoDesc">
+                            </div>
+                        </div> 
                     </div>
                     <div class="coluna">
                         <div class="raiz">
@@ -156,6 +180,7 @@
                                     [options]="raizesAnaliticas" 
                                     formControlName="raizAnalitica"
                                     optionLabel="label"
+                                    
                                     [(ngModel)]="selectedRaizAnalitica"
                                     (onChange)="onRaizAnaliticaSelecionada($event.value)"
                                     [filter]="true" 
@@ -178,8 +203,18 @@
                                     </ng-template>
                                 </p-dropdown>
                                 <label for="float-label">Selecione a Raíz Analítica</label>
+                                <input type="hidden" formControlName="raizContGrupoDesc" [(ngModel)]="contaContabil">
                             </p-floatLabel>
-                        </div>   
+                        </div> 
+                        <div class="raizDetalhesCc">
+                            <div class="detalhes">
+                                Conta Contábil:
+                            </div>
+                            <div class="detalhes">
+                                <strong>{{ contaContabil }}</strong>
+                                <input type="hidden" formControlName="raizContGrupoDesc" [(ngModel)]="contaContabil">
+                            </div>
+                        </div>  
                     </div>    
                 </div><!--endRow-->  
                 <div class="row3">
@@ -192,10 +227,6 @@
                                 >
                                 </p-inputSwitch>
                         </div>
-                        <div>
-                            <label>Conta Contábil:</label>
-                            <span>{{ contaContabil }}</span>
-                          </div>
                     </div>
                     <div class="coluna">
                         <div class="raiz">
@@ -211,8 +242,33 @@
                             />  
                         </div>
                     </div>
+                    <div class="coluna">
+                        <div class="raiz">
+                            <label class="mb-2 block font-bold" for="ano">
+                                Ano<br>
+                            </label>
+                            <p-inputNumber 
+                                mode="decimal"
+                                [showButtons]="true" 
+                                inputId="ano" 
+                                [min]="2024" 
+                                [max]="2999"
+                                [useGrouping]="false" 
+                            />
+                        </div>
+                    </div>
                 </div> <!--endRow>-->
-                <div class="row3">    
+                <div class="row3">
+                    <div class="coluna">
+                        <div class="raizDetalhesCc">
+                            <div class="detalhes">
+                                Id Base:
+                            </div>
+                            <div class="detalhes">
+                                <strong>{{ idBase }}</strong>
+                            </div>
+                        </div> 
+                    </div>
                     <div class="coluna">
                         <div class="raiz">
                             <p-floatLabel>
@@ -226,7 +282,12 @@
                                 >
                                 </p-dropdown>
                                 <label for="float-label">Selecione a Periodicidade</label>
-                            </p-floatLabel>    
+                            </p-floatLabel> 
+                        </div>
+                    </div>
+                </div>
+                <div class="row3">    
+                    <div class="coluna">
                             <div class="raiz" *ngIf="registerForm.get('periodicidade')?.value === 'mensal'">
                                 <p-floatLabel>
                                     <p-dropdown
@@ -238,43 +299,43 @@
                                         optionValue="key"
                                     >
                                     </p-dropdown>
-                                    <label for="float-label">Selecione o Tipo de Recorrência</label>
+                                    <label for="float-label">Selecione o Tipo de Ocorrência</label>
                                 </p-floatLabel>    
                             </div>    
-                            <div class="raiz" *ngIf="registerForm.get('mensalTipo')?.value === 'especifico'">
-                                <p-floatLabel>
-                                    <p-dropdown
-                                        inputId="float-label"
-                                        [style]="{'width':'100%'}"
-                                        [options]="meses"
-                                        formControlName="mesEspecifico"
-                                        optionLabel="value"
-                                        optionValue="key"
-                                    >
-                                    </p-dropdown>
-                                    <label for="float-label">Selecione o(s) Mês(s)</label>
-                                </p-floatLabel>    
-                            </div>
-                            <div class="raiz" *ngIf="registerForm.get('mensalTipo')?.value === 'recorrente'">
+                    </div>
+                    <div class="coluna">
+                        <div class="raiz" *ngIf="registerForm.get('mensalTipo')?.value === 'especifico'">
+                            <p-floatLabel>
+                                <p-dropdown
+                                    inputId="float-label"
+                                    [style]="{'width':'100%'}"
+                                    [options]="meses"
+                                    formControlName="mesEspecifico"
+                                    optionLabel="value"
+                                    optionValue="key"
+                                >
+                                </p-dropdown>
+                                <label for="float-label">Selecione o Mês</label>
+                            </p-floatLabel>    
+                        </div>
+                        <div class="raiz" *ngIf="registerForm.get('mensalTipo')?.value === 'recorrente'">
+                            <p-floatLabel>    
                                 <p-multiSelect
                                     [style]="{'width':'100%'}"
                                     [options]="meses"
                                     formControlName="mesesRecorrentes"
                                     optionLabel="value"
                                     optionValue="key"
-                                    placeholder="Selecione o Centro de Custo"
+                                    inputId="float-label"
                                 >
                                 </p-multiSelect>
-                            </div>
-        
+                                <label for="float-label">Selecione os Meses</label>
+                            </p-floatLabel>    
                         </div>
-                        
                     </div>
-                </div>    
+                </div>  
             </div>
-        
         </form>
-        
         <div class="botoes-form">
             <p-toast></p-toast>
             <div class="btnsec" >
@@ -286,5 +347,5 @@
         
         </div>
     </div>   
-
+    <pre>{{ registerForm.value | json }}</pre>
 </div>

@@ -46,6 +46,9 @@ export class ContaContabilService {
   getContaContabil():Observable<any[]>{
     return this.httpClient.get<any[]>(this.apiUrl);
   }
+  getContaContabilByOb(nivel_analitico_conta: any):Observable<any>{
+    return this.httpClient.get<any>(`${this.apiUrl}byOb/?nivel_analitico_conta=${nivel_analitico_conta}`)
+  }
   editContaContabil(id: number, dadosAtualizados: Partial<ContaContabil>): Observable<any> {
     const url = `${this.apiUrl}${id}/`;
     return this.httpClient.patch(url, dadosAtualizados);

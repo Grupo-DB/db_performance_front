@@ -27,16 +27,33 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { FloatLabelModule } from "primeng/floatlabel"
+import { ContaContabilService } from '../../../../services/baseOrcamentariaServices/orcamento/ContaContabil/conta-contabil.service';
 
 interface RegisterOrcamentoBaseForm{
   ccPai: FormControl;
   centroCusto: FormControl;
+  gestor: FormControl;
+  empresa: FormControl;
+  filial: FormControl;
+  area: FormControl;
+  setor: FormControl;
+  ambiente: FormControl;
+  raizSintetica: FormControl;
+  raizSinteticaDesc: FormControl;
+  raizAnalitica: FormControl;
+  raizAnaliticaDesc: FormControl;
+  contaContabil: FormControl;
+  contaContabilDesc: FormControl;
+  raizContGrupoDesc: FormControl;
   periodicidade: FormControl;
   mensalTipo: FormControl;
+  mesEspecifico: FormControl;
   mesesRecorrentes: FormControl;
   suplementacao: FormControl;
   baseOrcamento: FormControl;
-
+  idBase: FormControl;
+  valor: FormControl;
+  ano: FormControl
 }
 
 export interface OrcamentoBase{
@@ -104,6 +121,11 @@ export class OrcamentoBaseComponent implements OnInit{
   selectedRaizAnalitica: RaizAnalitica | null = null;
   selectedMesEspecifico: number | null = null;
   selectedMesesRecorrentes: number[] = [];
+  //
+  rcGrupoDesc: any;
+  idBase: any;
+  //
+  gestor: any = null;
 
   recorrencias = [
     { key: 'mensal', value:'Mensal'},
@@ -133,15 +155,34 @@ export class OrcamentoBaseComponent implements OnInit{
     private centrosCustoService: CentrocustoService,
     private raizSinteticaService: RaizSinteticaService,
     private raizAnaliticaService: RaizAnaliticaService,
+    private contaContabilService: ContaContabilService
+
   ){
     this.registerForm = new FormGroup({
       ccPai: new FormControl(''),
       centroCusto: new FormControl(''),
+      gestor: new FormControl(''),
+      empresa: new FormControl(''),
+      filial: new FormControl(''),
+      area: new FormControl(''),
+      setor: new FormControl(''),
+      ambiente: new FormControl(''),
+      raizSintetica: new FormControl(''),
+      raizSinteticaDesc: new FormControl(''),
+      raizAnalitica: new FormControl(''),
+      raizAnaliticaDesc: new FormControl(''),
+      contaContabil: new FormControl(''),
+      contaContabilDesc: new FormControl(''),
+      raizContGrupoDesc: new FormControl(''),
       periodicidade: new FormControl(''),
       mensalTipo: new FormControl(''),
+      mesEspecifico: new FormControl(''),
       mesesRecorrentes: new FormControl(''),
       suplementacao: new FormControl(''),
-      baseOrcamento: new FormControl('')
+      baseOrcamento: new FormControl(''),
+      idBase: new FormControl(''),
+      valor: new FormControl(''),
+      ano: new FormControl(''),
     })
   }
 
@@ -168,6 +209,10 @@ export class OrcamentoBaseComponent implements OnInit{
         console.error('Não carregou',error)
       }
     )
+
+    this.registerForm.valueChanges.subscribe(values => {
+      console.log('Valores do formulário:', values);
+    });
    
   }
 
@@ -276,10 +321,30 @@ export class OrcamentoBaseComponent implements OnInit{
   
       // Combine os valores para formar `conta_contabil`
       this.contaContabil = `${raizContabilSintetica}${raizContabilAnalitica}`;
+      this.raizContabilGrupoDesc(this.contaContabil);
+      this.montarIdBase();
       console.log('Conta Contábil Montada:', this.contaContabil);
     } else {
       console.warn('Raiz Sintética ou Raiz Analítica não estão definidas');
     }
+  }
+
+  montarIdBase(){
+    if(this.ccsDetalhes && this.contaContabil ){
+      const ccCodigo = this.ccsDetalhes.codigo;
+      this.idBase = `${ccCodigo}${this.contaContabil}`
+    }
+  }
+
+  raizContabilGrupoDesc(contaContabil: any): void{
+    this.contaContabilService.getContaContabilByOb(contaContabil).subscribe(
+      rcGrupoDesc => {
+        this.rcGrupoDesc = rcGrupoDesc[0].nivel_4_nome
+        console.log('Descrição:',rcGrupoDesc)
+      },error => {
+        console.error('Não Carregou', error)
+      }
+    )
   }
 
   hasGroup(groups: string[]): boolean {
