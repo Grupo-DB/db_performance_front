@@ -28,6 +28,7 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { FloatLabelModule } from "primeng/floatlabel"
 import { ContaContabilService } from '../../../../services/baseOrcamentariaServices/orcamento/ContaContabil/conta-contabil.service';
+import { OrcamentoBaseService } from '../../../../services/baseOrcamentariaServices/orcamento/OrcamentoBase/orcamento-base.service';
 
 interface RegisterOrcamentoBaseForm{
   ccPai: FormControl;
@@ -42,6 +43,7 @@ interface RegisterOrcamentoBaseForm{
   raizSinteticaDesc: FormControl;
   raizAnalitica: FormControl;
   raizAnaliticaDesc: FormControl;
+  raizAnaliticaCod: FormControl;
   contaContabil: FormControl;
   contaContabilDesc: FormControl;
   raizContGrupoDesc: FormControl;
@@ -70,6 +72,7 @@ export interface OrcamentoBase{
   raiz_sintetica_desc: string;
   raiz_analitica: string;
   raiz_analitica_desc: string;
+  raiz_analitica_cod: string;
   conta_contabil: string;
   conta_contabil_descricao: string;
   raiz_contabil_grupo: string;
@@ -124,8 +127,12 @@ export class OrcamentoBaseComponent implements OnInit{
   //
   rcGrupoDesc: any;
   idBase: any;
+  contaContabilDesc: any;
+  raizAnaliticaDesc: any;
+  raizAnaliticaCod: any;
   //
   gestor: any = null;
+  porcentagemDissidio!: number;
 
   recorrencias = [
     { key: 'mensal', value:'Mensal'},
@@ -155,8 +162,9 @@ export class OrcamentoBaseComponent implements OnInit{
     private centrosCustoService: CentrocustoService,
     private raizSinteticaService: RaizSinteticaService,
     private raizAnaliticaService: RaizAnaliticaService,
-    private contaContabilService: ContaContabilService
-
+    private contaContabilService: ContaContabilService,
+    private orcamentoBaseService: OrcamentoBaseService,
+    private messageService: MessageService
   ){
     this.registerForm = new FormGroup({
       ccPai: new FormControl(''),
@@ -171,6 +179,7 @@ export class OrcamentoBaseComponent implements OnInit{
       raizSinteticaDesc: new FormControl(''),
       raizAnalitica: new FormControl(''),
       raizAnaliticaDesc: new FormControl(''),
+      raizAnaliticaCod: new FormControl(''),
       contaContabil: new FormControl(''),
       contaContabilDesc: new FormControl(''),
       raizContGrupoDesc: new FormControl(''),
@@ -203,7 +212,9 @@ export class OrcamentoBaseComponent implements OnInit{
       raizesAnaliticas => {
         this.raizesAnaliticas = raizesAnaliticas.map(raizAnalitica =>({
           ...raizAnalitica,
-          label: `${raizAnalitica.raiz_contabil} - ${raizAnalitica.descricao}`
+          label: `${raizAnalitica.raiz_contabil} - ${raizAnalitica.descricao}`,
+          raizAnaliticaDesc :raizAnalitica.descricao,
+          raizAnaliticaCod :raizAnalitica.raiz_contabil
         }))
       },error =>{
         console.error('Não carregou',error)
@@ -246,8 +257,6 @@ export class OrcamentoBaseComponent implements OnInit{
       console.error('O ID do cc é indefinido');
     }
   }
-
-  
 
   ccPaiDetalhes():Promise <void>{
     return new Promise((resolve, reject) => {
@@ -339,7 +348,8 @@ export class OrcamentoBaseComponent implements OnInit{
   raizContabilGrupoDesc(contaContabil: any): void{
     this.contaContabilService.getContaContabilByOb(contaContabil).subscribe(
       rcGrupoDesc => {
-        this.rcGrupoDesc = rcGrupoDesc[0].nivel_4_nome
+        this.rcGrupoDesc = rcGrupoDesc[0].nivel_4_nome;
+        this.contaContabilDesc = rcGrupoDesc[0].nivel_analitico_nome;
         console.log('Descrição:',rcGrupoDesc)
       },error => {
         console.error('Não Carregou', error)
@@ -367,4 +377,78 @@ export class OrcamentoBaseComponent implements OnInit{
       console.warn('Opções de filtro não definidas ou filtro ausente');
     }
   }
+
+  calcularDissidio(porcentagemDissidio: number){
+    this.orcamentoBaseService.aplicarDissidio(this.porcentagemDissidio).subscribe(
+      response =>{
+        console.log('Sucesso', response);
+      }, error =>{
+        console.error('Erro', error);
+      }
+    )
+  }
+
+
+  submit(){
+    const raizAnaliticaId = this.registerForm.value.raizAnalitica.id;
+    const raizAnaliticaDesc = this.registerForm.value.raizAnalitica.descricao;
+    const raizAnaliticaCod = this.registerForm.value.raizAnalitica.raiz_contabil;
+    let mesesRecorrentes = this.registerForm.value.mesesRecorrentes;
+
+    // Se for uma string, converta para array de números
+    if (typeof mesesRecorrentes === 'string') {
+    mesesRecorrentes = mesesRecorrentes.split(',').map((mes: string) => parseInt(mes.trim(), 10));
+    }
+    this.orcamentoBaseService.registerOrcamentoBase(
+      this.registerForm.value.ano,
+      this.registerForm.value.ccPai,
+      this.registerForm.value.centroCusto,
+      this.registerForm.value.gestor,
+      this.registerForm.value.empresa,
+      this.registerForm.value.filial,
+      this.registerForm.value.area,
+      this.registerForm.value.setor,
+      this.registerForm.value.ambiente,
+      this.registerForm.value.raizSintetica,
+      this.registerForm.value.raizSinteticaDesc,
+      raizAnaliticaId,
+      raizAnaliticaDesc,
+      raizAnaliticaCod,
+      this.registerForm.value.contaContabil,
+      this.registerForm.value.contaContabilDesc,
+      this.registerForm.value.raizContGrupoDesc,
+      this.registerForm.value.periodicidade,
+      this.registerForm.value.mensalTipo,
+      this.registerForm.value.mesEspecifico,
+      mesesRecorrentes,
+      //this.registerForm.value.mesesRecorrentes.join(','),
+      this.registerForm.value.suplementacao,
+      this.registerForm.value.baseOrcamento,
+      this.registerForm.value.idBase,
+      this.registerForm.value.valor,
+  
+    ).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Conta Contábil registrada com sucesso!' });
+        setTimeout(() => {
+          window.location.reload(); // Atualiza a página após o registro
+        }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro no login. Por favor, tente novamente.' });
+        } 
+      }
+    });
+  }
+
 }

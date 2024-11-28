@@ -27,11 +27,11 @@ export class OrcamentoBaseService {
     raizSinteticaDesc: string,
     raizAnalitica: string,
     raizAnaliticaDesc: string,
+    raizAnaliticaCod: string,
     contaContabil: string,
     contaContabilDesc: string,
-    raizContabilGrupo: string,
     raizContabilGrupoDesc: string,
-    recorrencia: string,
+    periodicidade: string,
     mensalTipo: string,
     mesEspecifico: string,
     mesesRecorrentes: string,
@@ -54,11 +54,11 @@ export class OrcamentoBaseService {
       raiz_sintetica_desc: raizSinteticaDesc,
       raiz_analitica: raizAnalitica,
       raiz_analitica_desc: raizAnaliticaDesc,
+      raiz_analitica_cod: raizAnaliticaCod,
       conta_contabil: contaContabil,
       conta_contabil_descricao: contaContabilDesc,
-      raiz_contabil_grupo: raizContabilGrupo,
       raiz_contabil_grupo_desc: raizContabilGrupoDesc,
-      recorrencia: recorrencia,
+      periodicidade: periodicidade,
       mensal_tipo: mensalTipo,
       mes_especifico: mesEspecifico,
       meses_recorrentes: mesesRecorrentes,
@@ -78,5 +78,9 @@ export class OrcamentoBaseService {
   deleteOrcamentoBase(id:number): Observable<any>{
     const url = `${this.apiUrl}${id}/`;
     return this.httpClient.delete(url);
+  }
+  aplicarDissidio(porcentagem: number){
+    const dissidioUrl = 'http://localhost:8000/orcamento/aplicarDissidio/';
+    return this.httpClient.post<any>(dissidioUrl, {porcentagem:porcentagem})
   }
 }
