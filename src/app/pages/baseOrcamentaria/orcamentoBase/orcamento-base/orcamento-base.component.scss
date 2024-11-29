@@ -104,6 +104,9 @@
     button{
         margin-left: 1%;
     }
+    span{
+        margin-left: 10%;
+    }
 }
 
 .tabela{
@@ -157,4 +160,11 @@
         margin-right: 2%;
         margin-left: 2%;
     } 
+}
+.colunaAno{
+    display: flex;
+    width: 50%;
+    .raizAno{
+        width: 50%;
+    }
 }

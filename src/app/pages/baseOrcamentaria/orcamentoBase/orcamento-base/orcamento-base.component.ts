@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { MessageService, ConfirmationService } from 'primeng/api';
@@ -11,7 +11,7 @@ import { DropdownFilterOptions, DropdownModule } from 'primeng/dropdown';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputTextModule } from 'primeng/inputtext';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { LoginService } from '../../../../services/avaliacoesServices/login/login.service';
 import { CentroCustoPai } from '../centrocustopai/centrocustopai.component';
@@ -59,6 +59,7 @@ interface RegisterOrcamentoBaseForm{
 }
 
 export interface OrcamentoBase{
+  id: number;
   ano: Date;
   centro_de_custo_pai: string;
   centro_custo_nome: string;
@@ -77,7 +78,7 @@ export interface OrcamentoBase{
   conta_contabil_descricao: string;
   raiz_contabil_grupo: string;
   raiz_contabil_grupo_desc: string;
-  recorrencia: string;
+  periodicidade: string;
   mensal_tipo: string;
   mes_especifico: string;
   meses_recorrentes: string;
@@ -85,6 +86,8 @@ export interface OrcamentoBase{
   base_orcamento: string;
   id_base: string;
   valor: string;
+  valor_ajustado: string;
+  valor_real: string;
 }
 
 @Component({
@@ -105,6 +108,7 @@ export class OrcamentoBaseComponent implements OnInit{
   ano!: string;
   ccsPai: CentroCustoPai[] = [];
   centrosCusto: CentroCusto [] = [];
+  orcamentosBases: any[] = [];
   //
   selectedCcPai:any [] = [];
   selectedCc: any [] = [];
@@ -133,6 +137,12 @@ export class OrcamentoBaseComponent implements OnInit{
   //
   gestor: any = null;
   porcentagemDissidio!: number;
+  //
+  editForm!: FormGroup;
+  editFormVisible: boolean = false;
+  @ViewChild('RegisterOrcamentoBaseForm') RegisterOrcamentoBaseForm: any;
+  @ViewChild('dt1') dt1!: Table;
+  inputValue: string = '';
 
   recorrencias = [
     { key: 'mensal', value:'Mensal'},
@@ -164,7 +174,9 @@ export class OrcamentoBaseComponent implements OnInit{
     private raizAnaliticaService: RaizAnaliticaService,
     private contaContabilService: ContaContabilService,
     private orcamentoBaseService: OrcamentoBaseService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private fb: FormBuilder,
+    private confirmationService: ConfirmationService,
   ){
     this.registerForm = new FormGroup({
       ccPai: new FormControl(''),
@@ -192,6 +204,36 @@ export class OrcamentoBaseComponent implements OnInit{
       idBase: new FormControl(''),
       valor: new FormControl(''),
       ano: new FormControl(''),
+    });
+    this.editForm = this.fb.group({
+      id:[''],
+      ano:[''],
+      centro_de_custo_pai:[''],
+      centro_custo_nome:[''],
+      gestor:[''],
+      empresa:[''],
+      filial:[''],
+      area:[''],
+      setor:[''],
+      ambiente:[''],
+      raiz_sintetica:[''],
+      raiz_sintetica_desc:[''],
+      raiz_analitica:[''],
+      raiz_analitica_desc:[''],
+      raiz_analitica_cod:[''],
+      conta_contabil:[''],
+      conta_contabil_descricao:[''],
+      raiz_contabil_grupo_desc:[''],
+      periodicidade:[''],
+      mensal_tipo:[''],
+      mes_especifico:[''],
+      meses_recorrentes:[''],
+      suplementacao:[''],
+      base_orcamento:[''],
+      id_base:[''],
+      valor:[''],
+      valor_ajustado:[''],
+      valor_real:['']
     })
   }
 
@@ -224,7 +266,135 @@ export class OrcamentoBaseComponent implements OnInit{
     this.registerForm.valueChanges.subscribe(values => {
       console.log('Valores do formulário:', values);
     });
+
+    this.orcamentoBaseService.getOrcamentosBases().subscribe(
+      orcamentosBases =>{
+        this.orcamentosBases = orcamentosBases;
+      }, error => {
+        console.error('Não Carregou', error)
+      }
+    )
    
+  }
+
+  abrirModalEdicao(orcamentoBase: OrcamentoBase){
+    this.editFormVisible = true;
+    this.editForm.patchValue({
+      id: orcamentoBase.id,
+      ano: orcamentoBase.ano,
+      centro_de_custo_pai: orcamentoBase.centro_de_custo_pai,
+      centro_custo_nome: orcamentoBase.centro_custo_nome,
+      gestor: orcamentoBase.gestor,
+      empresa: orcamentoBase.empresa,
+      filial: orcamentoBase.filial,
+      area: orcamentoBase.area,
+      setor: orcamentoBase.setor,
+      ambiente: orcamentoBase.ambiente,
+      raiz_sintetica: orcamentoBase.raiz_sintetica,
+      raiz_sintetica_desc: orcamentoBase.raiz_sintetica_desc,
+      raiz_analitica: orcamentoBase.raiz_analitica,
+      raiz_analitica_desc: orcamentoBase.raiz_analitica_desc,
+      raiz_analitica_cod: orcamentoBase.raiz_analitica_cod,
+      conta_contabil: orcamentoBase.conta_contabil,
+      conta_contabil_descricao: orcamentoBase.conta_contabil_descricao,
+      raiz_contabil_grupo_desc: orcamentoBase.raiz_contabil_grupo_desc,
+      periodicidade: orcamentoBase.periodicidade,
+      mensal_tipo: orcamentoBase.mensal_tipo,
+      mes_especifico: orcamentoBase.mes_especifico,
+      meses_recorrentes: orcamentoBase.meses_recorrentes,
+      suplementacao: orcamentoBase.suplementacao,
+      base_orcamento: orcamentoBase.base_orcamento,
+      id_base: orcamentoBase.id_base,
+      valor: orcamentoBase.valor,
+      valor_ajustado: orcamentoBase.valor_ajustado,
+      valor_real: orcamentoBase.valor_real
+    })
+  }
+  saveEdit(){
+    const orcamentoBaseId = this.editForm.value.id;
+    const dadosAtualizados: Partial<OrcamentoBase> = {
+      ano: this.editForm.value.ano,
+      centro_de_custo_pai: this.editForm.value.centro_de_custo_pai,
+      centro_custo_nome: this.editForm.value.centro_custo_nome,
+      gestor: this.editForm.value.gestor,
+      empresa: this.editForm.value.empresa,
+      filial: this.editForm.value.filial,
+      area: this.editForm.value.area,
+      setor: this.editForm.value.setor,
+      ambiente: this.editForm.value.ambiente,
+      raiz_sintetica: this.editForm.value.raiz_sintetica,
+      raiz_sintetica_desc: this.editForm.value.raiz_sintetica_desc,
+      raiz_analitica: this.editForm.value.raiz_analitica,
+      raiz_analitica_desc: this.editForm.value.raiz_analitica_desc,
+      raiz_analitica_cod: this.editForm.value.raiz_analitica_cod,
+      conta_contabil: this.editForm.value.conta_contabil,
+      conta_contabil_descricao: this.editForm.value.conta_contabil_descricao,
+      raiz_contabil_grupo_desc: this.editForm.value.raiz_contabil_grupo_desc,
+      periodicidade: this.editForm.value.periodicidade,
+      mensal_tipo: this.editForm.value.mensal_tipo,
+      mes_especifico: this.editForm.value.mes_especifico,
+      meses_recorrentes: this.editForm.value.meses_recorrentes,
+      suplementacao: this.editForm.value.suplementacao,
+      base_orcamento: this.editForm.value.base_orcamento,
+      id_base: this.editForm.value.id_base,
+      valor: this.editForm.value.valor,
+      valor_ajustado: this.editForm.value.valor_ajustado,
+      valor_real: this.editForm.value.valor_real
+    };
+    this.orcamentoBaseService.editOrcamentoBase(orcamentoBaseId, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Orçamento Base atualizado com sucesso!' });
+        setTimeout(() => {
+        window.location.reload(); // Atualiza a página após a exclusão
+        }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+    }
+    });
+  }
+
+  excluirOrcamentoBase(id: number) {
+    this.confirmationService.confirm({
+      message: 'Tem certeza que deseja excluir esse Orçamento Base?',
+      header: 'Confirmação',
+      icon: 'pi pi-exclamation-triangle',
+      acceptIcon: 'pi pi-check',
+      rejectIcon: 'pi pi-times',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-info',
+      rejectButtonStyleClass: 'p-button-secondary',
+      accept: () => {
+        this.orcamentoBaseService.deleteOrcamentoBase(id).subscribe({
+          next: () => {
+            this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Orçamento Base excluído com sucesso!!', life: 1000 });
+            setTimeout(() => {
+              window.location.reload(); // Atualiza a página após a exclusão
+            }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+          },
+          error: (err) => {
+            if (err.status === 403) {
+              this.messageService.add({ severity: 'error', summary: 'Erro de autorização!', detail: 'Você não tem permissão para realizar esta ação.', life: 2000 });
+            } 
+          }
+        });
+      },
+      reject: () => {
+        this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 1000 });
+      }
+    });
   }
 
   onCcPaiSelecionado(ccPaiId: any): void {
@@ -388,6 +558,19 @@ export class OrcamentoBaseComponent implements OnInit{
     )
   }
 
+  clear(table: Table) {
+    table.clear();
+  }
+  clearForm() {
+    this.registerForm.reset();
+  }
+  clearEditForm() {
+    this.editForm.reset();
+  }
+  filterTable() {
+    this.dt1.filterGlobal(this.inputValue, 'contains');
+  }
+
 
   submit(){
     const raizAnaliticaId = this.registerForm.value.raizAnalitica.id;
@@ -429,7 +612,7 @@ export class OrcamentoBaseComponent implements OnInit{
   
     ).subscribe({
       next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Conta Contábil registrada com sucesso!' });
+        this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Orçamento Base registrado com sucesso!' });
         setTimeout(() => {
           window.location.reload(); // Atualiza a página após o registro
         }, 1000); // Tempo em milissegundos (1 segundo de atraso)

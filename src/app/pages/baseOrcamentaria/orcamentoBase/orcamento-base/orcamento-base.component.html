@@ -161,16 +161,14 @@
                                 <label for="float-label">Selecione a Base de Orçamento</label>
                             </p-floatLabel>    
                         </div>
-                        <input type="hidden" formControlName="raizContGrupoDesc" [(ngModel)]="rcGrupoDesc">
-                        <div class="raizDetalhesCc">
-                            <div class="detalhes">
-                                Raiz Contabil Grupo:
-                            </div>
-                            <div class="detalhes">
-                                <strong>{{ rcGrupoDesc }}</strong>
-                                <input type="hidden" formControlName="raizContGrupoDesc" [(ngModel)]="rcGrupoDesc">
-                            </div>
-                        </div> 
+                        <div class="raiz" style="margin-left: 20px;">
+                            <p><label for="sit">Suplementação </label></p>
+                                <p-inputSwitch 
+                                    id="sit"
+                                    formControlName="suplementacao"
+                                >
+                                </p-inputSwitch>
+                        </div>
                     </div>
                     <div class="coluna">
                         <div class="raiz">
@@ -217,23 +215,48 @@
                                 <input type="hidden" formControlName="raizAnaliticaDesc" [(ngModel)]="raizAnaliticaDesc">
                                 <input type="hidden" formControlName="raizAnaliticaCod" [(ngModel)]="raizAnaliticaCod">
                             </div>
-                        </div>  
+                        </div>
+                        <input type="hidden" formControlName="raizContGrupoDesc" [(ngModel)]="rcGrupoDesc">
+                        <div class="raizDetalhesCc">
+                            <div class="detalhes">
+                                Raiz Contabil Grupo:
+                            </div>
+                            <div class="detalhes">
+                                <strong>{{ rcGrupoDesc }}</strong>
+                                <input type="hidden" formControlName="raizContGrupoDesc" [(ngModel)]="rcGrupoDesc">
+                            </div>
+                        </div>
+                        <div class="raizDetalhesCc">
+                            <div class="detalhes">
+                                Id Base:
+                            </div>
+                            <div class="detalhes">
+                                <strong>{{ idBase }}</strong>
+                                <input type="hidden" formControlName="idBase" [(ngModel)]="idBase">
+                            </div>
+                        </div>   
                     </div>    
                 </div><!--endRow-->  
                 <div class="row3">
-                    <div class="coluna">
-                        <div class="raiz">
-                            <p><label for="sit">Suplementação </label></p>
-                                <p-inputSwitch 
-                                    id="sit"
-                                    formControlName="suplementacao"
-                                >
-                                </p-inputSwitch>
+                    <div class="colunaAno">
+                        <div class="raizAno">
+                            <p><label style="margin-left: 20px;" class="mb-2 block font-bold" for="ano">
+                                Ano
+                            </label></p>
+                            <p-inputNumber 
+                                mode="decimal"
+                                formControlName="ano"
+                                [showButtons]="true" 
+                                inputId="ano" 
+                                [min]="2024" 
+                                [max]="2999"
+                                [useGrouping]="false" 
+                            />
                         </div>
-                    </div>
-                    <div class="coluna">
-                        <div class="raiz">
-                            <p><label for="sal">Valor</label></p>    
+                    
+                    
+                        <div class="raizAno">
+                            <p><label style="margin-left: 20px;" for="sal">Valor</label></p>    
                             <p-inputNumber
                                 [style]="{'width':'100%'}" 
                                 id="sal"
@@ -246,36 +269,7 @@
                         </div>
                     </div>
                     <div class="coluna">
-                        <div class="raiz">
-                            <label class="mb-2 block font-bold" for="ano">
-                                Ano<br>
-                            </label>
-                            <p-inputNumber 
-                                mode="decimal"
-                                formControlName="ano"
-                                [showButtons]="true" 
-                                inputId="ano" 
-                                [min]="2024" 
-                                [max]="2999"
-                                [useGrouping]="false" 
-                            />
-                        </div>
-                    </div>
-                </div> <!--endRow>-->
-                <div class="row3">
-                    <div class="coluna">
-                        <div class="raizDetalhesCc">
-                            <div class="detalhes">
-                                Id Base:
-                            </div>
-                            <div class="detalhes">
-                                <strong>{{ idBase }}</strong>
-                                <input type="hidden" formControlName="idBase" [(ngModel)]="idBase">
-                            </div>
-                        </div> 
-                    </div>
-                    <div class="coluna">
-                        <div class="raiz">
+                        <div class="raiz" style="margin-top: 30px;">
                             <p-floatLabel>
                                 <p-dropdown
                                     inputId="float-label"
@@ -290,6 +284,13 @@
                             </p-floatLabel> 
                         </div>
                     </div>
+                    
+                </div> <!--endRow>-->
+                <div class="row3">
+                    <div class="coluna">
+                        
+                    </div>
+                    
                 </div>
                 <div class="row3">    
                     <div class="coluna">
@@ -343,7 +344,7 @@
         </form>
         <div class="botoes-form">
             <p-toast></p-toast>
-            <div class="btnsec" >
+            <div class="btnsec" (click)="clearForm()" >
                 <p>Limpar</p>
             </div>
             <div class="btnpri" (click)="submit()">
@@ -357,15 +358,630 @@
     <!-- <pre>{{ registerForm.value | json }}</pre> -->
 </div>
 
-<label class="mb-2 block font-bold" for="ano">
-    Ano<br>
-</label>
-<p-inputNumber 
-    mode="decimal"
-    [(ngModel)]="porcentagemDissidio"
-    [showButtons]="true" 
-    inputId="ano"  
-/>
-<div class="btnpri" (click)="calcularDissidio(porcentagemDissidio)">
-    <p>Adicionar Dissídio</p>            
+
+<div class="tabela">
+    <p-table
+        #dt1
+        [value]="orcamentosBases"
+        [paginator]="true"
+        [rows]="5"
+        dataKey="id" 
+        [showCurrentPageReport]="true"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
+        [rowsPerPageOptions]="[5, 10, 20]"
+        [globalFilterFields]="['ano','raiz_analitica_desc','raiz_contabil_grupo_desc','mes_especifico']"
+    >
+        <ng-template pTemplate="caption">
+            <p-toast />
+            <p-confirmDialog />
+            <div class="flex">
+                <span class="p-input-icon-left ml-auto">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Palavra-Chave" />
+                </span>
+                <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
+                <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+                <span class="p-input-icon-left ml-auto">
+                    <p-inputNumber 
+                        mode="decimal"
+                        [(ngModel)]="porcentagemDissidio"
+                        [showButtons]="true" 
+                        placeholder="informe o Percentual"
+                    />
+                </span>
+                <button pButton label="Aplicar Dissídio" severity="info" icon="pi pi-filter-slash" (click)="calcularDissidio(porcentagemDissidio)"></button>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="ano" style="width:10%" type="text" field="ano" display="menu">
+                    Ano <p-sortIcon field="ano" />
+                </th>          
+                <th pSortableColumn="raiz_analitica_desc" style="width:10%" type="text" field="raiz_analitica_desc" display="menu">
+                    Raiz Analítica Descrição <p-sortIcon field="raiz_analitica_desc"></p-sortIcon>
+                </th>
+                <th pSortableColumn="raiz_contabil_grupo_desc" style="width:10%" type="text" field="raiz_contabil_grupo_desc" display="menu">
+                    Raiz CC Grupo Descrição <p-sortIcon field="raiz_contabil_grupo_desc"></p-sortIcon>
+                </th>
+                <th pSortableColumn="mes_especifico" style="width:10%" type="text" field="mes_especifico" display="menu">
+                    Mês <p-sortIcon field="mes_especifico"></p-sortIcon>
+                </th>
+                <th pSortableColumn="periodicidade" style="width:10%" type="text" field="periodicidade" display="menu">
+                    Periodicidade <p-sortIcon field="periodicidade"></p-sortIcon>
+                </th>
+                <th pSortableColumn="valor" style="width:10%" type="text" field="valor" display="menu">
+                    Valor <p-sortIcon field="valor"></p-sortIcon>
+                </th>
+                <th pSortableColumn="setor" style="width:10%" type="text" field="setor" display="menu">
+                    Setor <p-sortIcon field="setor"></p-sortIcon>
+                </th>
+                <th pSortableColumn="ambiente" style="width:10%" type="text" field="ambiente" display="menu">
+                    Ambiente <p-sortIcon field="ambiente"></p-sortIcon>
+                </th>
+                <th style="width: 10%;text-align: center;">Ações</th>
+            </tr>
+            <tr>
+                <th>
+                    <p-columnFilter 
+                        showMenu="false"
+                        type="text"
+                        field="ano" 
+                        placeholder="Pesquisar" 
+                        ariaLabel="Filter" />
+                </th>
+                <th>
+                    <p-columnFilter 
+                        showMenu="false"
+                        type="text"
+                        field="raiz_analitica_desc" 
+                        placeholder="Pesquisar" 
+                        ariaLabel="Filter" />
+                </th>
+                <th>
+                    <p-columnFilter 
+                        showMenu="false"
+                        type="text"
+                        field="raiz_contabil_grupo_desc" 
+                        placeholder="Pesquisar" 
+                        ariaLabel="Filter" />
+                </th>
+                <th>
+                    <p-columnFilter 
+                        showMenu="false"
+                        type="text"
+                        field="mes_especifico" 
+                        placeholder="Pesquisar" 
+                        ariaLabel="Filter" />
+                </th>
+                <th>
+                    <p-columnFilter
+                        showMenu="false" 
+                        type="text"
+                        field="periodicidade" 
+                        placeholder="Pesquisar" 
+                        ariaLabel="Filter" />
+                </th>
+                <th>
+                    <p-columnFilter 
+                        showMenu="false"
+                        type="text"
+                        field="valor" 
+                        placeholder="Pesquisar" 
+                        ariaLabel="Filter" />
+                </th>
+                <th>
+                    <p-columnFilter
+                        showMenu="false"
+                        type="text"
+                        field="setor" 
+                        placeholder="Pesquisar" 
+                        ariaLabel="Filter" />
+                </th>
+                <th>
+                    <p-columnFilter 
+                        showMenu="false"
+                        type="text"
+                        field="ambiente" 
+                        placeholder="Pesquisar" 
+                        ariaLabel="Filter" />
+                </th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-orcamentoBase>
+            <tr>                      
+                <td>{{ orcamentoBase.ano}}</td>
+                <td>{{ orcamentoBase.raiz_analitica_desc }}</td>
+                <td>{{ orcamentoBase.raiz_contabil_grupo_desc }}</td>
+                <td>{{ orcamentoBase.mes_especifico }}</td>
+                <td>{{ orcamentoBase.periodicidade }}</td>
+                <td>{{ orcamentoBase.valor }} </td>
+                <td>{{ orcamentoBase.setor }}</td>
+                <td>{{ orcamentoBase.ambiente }}</td>
+                
+                <td class="td-acao">
+                    <div class="btnsec" (click)="abrirModalEdicao(orcamentoBase)">
+                        <p>Editar</p>
+                    </div>
+                    
+                    <div class="btnpri" (click)="excluirOrcamentoBase(orcamentoBase.id)">
+                        <p>Excluir</p>            
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
 </div>
+
+
+<!-----------------------------------Modal--------------------------------->
+
+    <p-dialog 
+        [modal]="true"
+        [(visible)]="editFormVisible" 
+        [style]="{ width: '90%', height:'90%'}" 
+        [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+    >
+        <div class="titulo">
+            <p-divider align="left" type="solid">
+                <b>Editar Orçamento Base</b>
+            </p-divider> 
+        </div>
+        <div class="container">
+            <div class="formWrap">
+                <form
+                    [formGroup]="editForm"
+                    title="Editar Conta Contabil"
+                >
+                    <div class="form">
+                        <div class="row3">
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-floatLabel>
+                                        <p-dropdown
+                                            inputId="float-label" 
+                                            [style]="{'width':'100%'}"
+                                            [options]="ccsPai" 
+                                            formControlName="ccPai"
+                                            optionLabel="label"
+                                            [(ngModel)]="selectedCcPai"
+                                            (onChange)="onCcPaiSelecionado($event.value)"
+                                            optionValue="id"
+                                            [filter]="true" 
+                                            filterBy="label"
+                                            [showClear]="true"  
+                                        >
+                                        </p-dropdown>
+                                        <label for="float-label">Selecione o Centro de Custo Pai</label>
+                                    </p-floatLabel>
+                                </div>
+                            </div>
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-floatLabel>
+                                        <p-dropdown
+                                            inputId="float-label" 
+                                            [style]="{'width':'100%'}"
+                                            [options]="centrosCusto" 
+                                            formControlName="centroCusto"
+                                            optionLabel="nome"
+                                            optionValue="id"
+                                            [(ngModel)]="selectedCc"
+                                            (onChange)="onCcSelecionado($event.value)" 
+                                            [filter]="true" 
+                                            filterBy="nome"
+                                            [showClear]="true"                             
+                                        >
+                                        </p-dropdown>
+                                        <label for="float-label">Selecione o Centro de Custo</label>  
+                                    </p-floatLabel>  
+                                </div>
+                            </div>
+                        </div><!--endRow-->
+                        <div class="row3">
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                pInputText
+                                                id="empresa"
+                                                formControlName="empresa"
+                                                type="text"
+                                            />  
+                                            <label for="empresa">Empresa </label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>
+                            </div>
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                pInputText
+                                                id="filial"
+                                                formControlName="filial"
+                                                type="text"
+                                            />  
+                                            <label for="filial">Filial</label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>
+                            </div>
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                pInputText
+                                                id="area"
+                                                formControlName="area"
+                                                type="text"
+                                            />  
+                                            <label for="area">Area</label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>
+                            </div>
+                        </div><!--endRow-->
+                        <div class="row3">
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                pInputText
+                                                id="setor"
+                                                formControlName="setor"
+                                                type="text"
+                                            />  
+                                            <label for="setor">Setor</label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>
+                            </div>
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                pInputText
+                                                id="ambiente"
+                                                formControlName="ambiente"
+                                                type="text"
+                                            />  
+                                            <label for="ambiente">Ambiente</label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>
+                            </div>
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                pInputText
+                                                id="periodicidade"
+                                                formControlName="periodicidade"
+                                                type="text"
+                                            />  
+                                            <label for="periodicidade">Periodicidade</label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>
+                            </div>
+                        </div><!--endRow-->
+                        <div class="row3">
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                pInputText
+                                                id="raiz_sintetica"
+                                                formControlName="raiz_sintetica_desc"
+                                                type="text"
+                                            />  
+                                            <label for="raiz_sintetica">Raíz Sintética Descrição</label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>
+                            </div>
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                pInputText
+                                                id="raiz_analitica"
+                                                formControlName="raiz_analitica_desc"
+                                                type="text"
+                                            />  
+                                            <label for="raiz_analitica">Raíz Analítica Descrição</label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>
+                            </div>
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                pInputText
+                                                id="cc"
+                                                formControlName="conta_contabil_descricao"
+                                                type="text"
+                                            />  
+                                            <label for="cc">Conta Contábil Descrição</label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>
+                            </div>
+                        </div><!--endRow-->
+                        <div class="row3">
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                pInputText
+                                                id="rcgd"
+                                                formControlName="raiz_contabil_grupo_desc"
+                                                type="text"
+                                            />  
+                                            <label for="rcgd">Raíz Contábil Grupo Descrição</label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>
+                            </div>
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                pInputText
+                                                id="me"
+                                                formControlName="mes_especifico"
+                                                type="text"
+                                            />  
+                                            <label for="me">Mês Específico</label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>
+                            </div>
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                pInputText
+                                                id="me"
+                                                formControlName="meses_recorrentes"
+                                                type="text"
+                                            />  
+                                            <label for="me">Meses Recorrentes</label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>
+                            </div>
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                pInputText
+                                                id="me"
+                                                formControlName="suplmentacao"
+                                                type="text"
+                                            />  
+                                            <label for="me">Suplementação</label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>
+                            </div>
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                pInputText
+                                                id="me"
+                                                formControlName="base_orcamento"
+                                                type="text"
+                                            />  
+                                            <label for="me">Base Orçamento</label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>
+                            </div>
+                        </div><!--endRow-->
+                        <div class="row3">
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                pInputText
+                                                id="me"
+                                                formControlName="id_base"
+                                                type="text"
+                                            />  
+                                            <label for="me">Id Base</label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>
+                            </div>
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                pInputText
+                                                id="me"
+                                                formControlName="raiz_sintetica"
+                                                type="text"
+                                            />  
+                                            <label for="me">Raíz Sintética</label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>
+                            </div>
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                pInputText
+                                                id="me"
+                                                formControlName="raiz_analitica_cod"
+                                                type="text"
+                                            />  
+                                            <label for="me">Raíz Analítica Código</label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>
+                            </div>
+                        </div><!--endRow-->
+                        <div class="row3">
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                pInputText
+                                                id="me"
+                                                formControlName="valor"
+                                                type="text"
+                                            />  
+                                            <label for="me">Valor</label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>
+                            </div>
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                pInputText
+                                                id="me"
+                                                formControlName="valor_ajustado"
+                                                type="text"
+                                            />  
+                                            <label for="me">Valor Previsto</label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>
+                            </div>
+                            <div class="coluna">
+                                <div class="raiz">
+                                    <p-inputGroup >
+                                        <p-inputGroupAddon>
+                                            <i class="pi pi-file-edit"></i>
+                                        </p-inputGroupAddon>
+                                        <span class="p-float-label">
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                pInputText
+                                                id="me"
+                                                formControlName="valor_real"
+                                                type="text"
+                                            />  
+                                            <label for="me">Valor Real</label>
+                                        </span>          
+                                    </p-inputGroup>
+                                </div>
+                            </div>
+                        </div><!--endRow-->
+                    </div><!--endForm-->
+                    <div class="botoes-form">
+                        <div class="btnsec" (click)="clearEditForm()">
+                            <p>Limpar</p>
+                        </div>
+                        
+                        <div class="btnpri" (click)="saveEdit()">
+                            <p>Salvar</p>            
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </p-dialog>    
