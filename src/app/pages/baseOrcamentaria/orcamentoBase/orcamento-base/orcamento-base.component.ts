@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -55,7 +55,8 @@ interface RegisterOrcamentoBaseForm{
   baseOrcamento: FormControl;
   idBase: FormControl;
   valor: FormControl;
-  ano: FormControl
+  ano: FormControl;
+  tipoCusto: FormControl;
 }
 
 export interface OrcamentoBase{
@@ -88,6 +89,7 @@ export interface OrcamentoBase{
   valor: string;
   valor_ajustado: string;
   valor_real: string;
+  tipoCusto: string;
 }
 
 @Component({
@@ -99,7 +101,7 @@ export interface OrcamentoBase{
     ConfirmDialogModule,ToastModule,MultiSelectModule,InputSwitchModule,InputNumberModule,FloatLabelModule
   ],
   providers: [
-    MessageService,ConfirmationService
+    MessageService,ConfirmationService,CurrencyPipe
   ],
   templateUrl: './orcamento-base.component.html',
   styleUrl: './orcamento-base.component.scss'
@@ -129,12 +131,16 @@ export class OrcamentoBaseComponent implements OnInit{
   selectedMesEspecifico: number | null = null;
   selectedMesesRecorrentes: number[] = [];
   //
+  detalhaOrcamentoBaseVisible: boolean = false;
+  orcamentoBaseDetalhes: any;
+  //
   rcGrupoDesc: any;
   idBase: any;
   contaContabilDesc: any;
   raizAnaliticaDesc: any;
   raizAnaliticaCod: any;
   //
+  tipoCusto!: any;
   gestor: any = null;
   porcentagemDissidio!: number;
   //
@@ -161,6 +167,13 @@ export class OrcamentoBaseComponent implements OnInit{
     { key:'usoConsumo', value:'Uso e Consumo' }
   ]
 
+  tiposCustos = [
+    { key: '3401', value:'Despesas Administrativas' },
+    { key: '3402', value: 'Despesas Comerciais'},
+    { key: '42', value: 'Custos Indiretos'},
+
+  ]
+
   meses = Array.from({ length: 12 }, (_, i) => ({
     key: i + 1,
     value: new Date(0, i).toLocaleString('default', { month: 'long' }),
@@ -177,6 +190,7 @@ export class OrcamentoBaseComponent implements OnInit{
     private messageService: MessageService,
     private fb: FormBuilder,
     private confirmationService: ConfirmationService,
+    private currencyPipe: CurrencyPipe
   ){
     this.registerForm = new FormGroup({
       ccPai: new FormControl(''),
@@ -204,6 +218,7 @@ export class OrcamentoBaseComponent implements OnInit{
       idBase: new FormControl(''),
       valor: new FormControl(''),
       ano: new FormControl(''),
+      tipoCusto: new FormControl(''),
     });
     this.editForm = this.fb.group({
       id:[''],
@@ -249,6 +264,14 @@ export class OrcamentoBaseComponent implements OnInit{
         console.error('Não carregou',error)
       }
     )
+
+    this.centrosCustoService.getCentroCusto().subscribe(
+      centrosCusto => {
+        this.centrosCusto = centrosCusto
+      }, error => {
+        console.error('Não Carregou',error)
+      } 
+    )
     
     this.raizAnaliticaService.getRaizesAnaliticas().subscribe(
       raizesAnaliticas => {
@@ -277,6 +300,16 @@ export class OrcamentoBaseComponent implements OnInit{
    
   }
 
+  getNomeCcPai(id: number): string {
+    const ccPai = this.ccsPai?.find(ccPai => ccPai.id === id);
+    return ccPai ? ccPai.nome : 'CcPai não encontrado';
+  }
+
+  getNomeCc(id: number): string {
+    const cc = this.centrosCusto?.find(cc => cc.id === id);
+    return cc ? cc.nome : 'Cc não encontrado';
+  }
+ 
   abrirModalEdicao(orcamentoBase: OrcamentoBase){
     this.editFormVisible = true;
     this.editForm.patchValue({
@@ -499,12 +532,65 @@ export class OrcamentoBaseComponent implements OnInit{
       const raizContabilAnalitica = this.selectedRaizAnalitica.raiz_contabil; // Pegue da raiz analítica selecionada
   
       // Combine os valores para formar `conta_contabil`
-      this.contaContabil = `${raizContabilSintetica}${raizContabilAnalitica}`;
+      this.contaContabil = `${raizContabilAnalitica}`;
       this.raizContabilGrupoDesc(this.contaContabil);
       this.montarIdBase();
+      this.montarTipoCusto();
       console.log('Conta Contábil Montada:', this.contaContabil);
     } else {
       console.warn('Raiz Sintética ou Raiz Analítica não estão definidas');
+    }
+  }
+
+
+
+  montarTipoCusto() {
+    const custosInsumos = [
+      '4101021', '4102021', '4103021', '4104021', '4105021', '4106021',
+      '4107021', '4108021', '4109021', '4110021', '4111021', '4112021'
+    ];
+    const custosMateriaPrima = [
+      '4101023', '4102023', '4103023', '4104023', '4105023', '4106023',
+      '4107023', '4108023', '4109023', '4110023', '4111023', '4112023'
+    ];
+    const custosEmbalagens = [
+      '4101022', '4102022', '4103022', '4104022', '4105022', '4106022',
+      '4107022', '4108022', '4109022', '4110022', '4111022', '4112022'
+    ];
+  
+    const caracteres = this.contaContabil.substring(0, 4); // Pega os 4 primeiros dígitos
+    const contaCompleta = this.contaContabil.substring(0,7); // A conta completa para comparação
+  
+    console.log('Conta completa:', contaCompleta); // Log para verificar o valor da conta
+    console.log('Prefixo:', caracteres); // Log do prefixo avaliado
+  
+    if (caracteres === '3401') {
+      this.tipoCusto = 'Despesas Administrativas';
+    } else if (caracteres === '3402') {
+      this.tipoCusto = 'Despesas Comerciais';
+    } else if (caracteres.startsWith('42')) {
+      this.tipoCusto = 'Custos Indiretos';
+    } else if (caracteres.startsWith('41')) {
+      console.log('Conta iniciada com 41, verificando detalhes...');
+  
+      // Verifica os tipos de custos diretos fixos
+      if (custosInsumos.includes(contaCompleta)) {
+        this.tipoCusto = 'Custo Direto Variável Insumos';
+        console.log('Categorizado como: Custo Direto Variável Insumos');
+      } else if (custosMateriaPrima.includes(contaCompleta)) {
+        this.tipoCusto = 'Custo Direto Variável Matéria Prima';
+        console.log('Categorizado como: Custo Direto Variável Matéria Prima');
+      } else if (custosEmbalagens.includes(contaCompleta)) {
+        this.tipoCusto = 'Custo Direto Variável Embalagens';
+        console.log('Categorizado como: Custo Direto Variável Embalagens');
+      } else {
+        this.tipoCusto = 'Custo Direto Fixo';
+        console.log('Categorizado como: Custo Direto Fixo');
+      }
+    } else {
+      // Caso desconhecido
+      this.tipoCusto = 'Tipo de custo desconhecido';
+      console.warn('Tipo de custo desconhecido para a conta:', this.contaContabil);
     }
   }
 
@@ -558,6 +644,28 @@ export class OrcamentoBaseComponent implements OnInit{
     )
   }
 
+  visualizarOrcamentoBaseDetalhes(id: number) {
+    this.detalhaOrcamentoBaseVisible = true;
+    this.orcamentoBaseService.getOrcamentoBaseDetalhe(id).subscribe(
+      detalhes => {
+        if (detalhes.valor) {
+          detalhes.valor = this.currencyPipe.transform(detalhes.valor, 'BRL', 'symbol', '1.2-2');
+        }
+        if (detalhes.valor_ajustado) {
+          detalhes.valor_ajustado = this.currencyPipe.transform(detalhes.valor_ajustado, 'BRL', 'symbol', '1.2-2');
+        }
+        if (detalhes.valor_real) {
+          detalhes.valor_real = this.currencyPipe.transform(detalhes.valor_real, 'BRL', 'symbol', '1.2-2');
+        }
+  
+        this.orcamentoBaseDetalhes = detalhes;
+      },
+      error => {
+        console.error('Não Carregou', error);
+      }
+    );
+  }
+
   clear(table: Table) {
     table.clear();
   }
@@ -609,7 +717,7 @@ export class OrcamentoBaseComponent implements OnInit{
       this.registerForm.value.baseOrcamento,
       this.registerForm.value.idBase,
       this.registerForm.value.valor,
-  
+      this.registerForm.value.tipoCusto
     ).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Orçamento Base registrado com sucesso!' });

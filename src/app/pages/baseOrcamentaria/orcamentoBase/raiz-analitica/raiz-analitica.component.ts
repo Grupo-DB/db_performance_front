@@ -62,7 +62,7 @@ constructor(
 )
 {
  this.registerForm = new FormGroup({
-  raiz_contabil: new FormControl('',[Validators.required, Validators.minLength(9), Validators.maxLength(9)]),
+  raiz_contabil: new FormControl('',[Validators.required, Validators.minLength(13), Validators.maxLength(13)]),
   gestor: new FormControl('',[Validators.required])
  });
  this.editForm = this.fb.group({

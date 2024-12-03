@@ -76,6 +76,8 @@
                             optionLabel="label"
                             placeholder="Selecione o Centro de Custo"
                             [disabled]="true"
+                            [filter]="true" 
+                            filterBy="codigo"
                         >
                         </p-dropdown>
                     </div>
@@ -208,7 +210,9 @@
                                     formControlName="cc"
                                     optionLabel="label"
                                     placeholder="Selecione o Centro de Custo"
-                                    [disabled]="true"
+                                    
+                                    [filter]="true" 
+                                    filterBy="codigo"
                                 >
                                 </p-dropdown>
                             </div>    

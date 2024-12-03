@@ -74,6 +74,8 @@
                             formControlName="gestor"
                             optionLabel="nome"
                             placeholder="Selecione o Gestor"
+                            [filter]="true" 
+                            filterBy="nome"
                         >
                         </p-dropdown>
                         
@@ -211,6 +213,8 @@
                                         formControlName="gestor"
                                         optionLabel="nome"
                                         placeholder="Selecione o Gestor"
+                                        [filter]="true" 
+                                        filterBy="codigo"
                                     >
                                     </p-dropdown>
                                     

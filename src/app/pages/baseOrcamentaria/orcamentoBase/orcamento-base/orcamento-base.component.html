@@ -233,6 +233,7 @@
                             <div class="detalhes">
                                 <strong>{{ idBase }}</strong>
                                 <input type="hidden" formControlName="idBase" [(ngModel)]="idBase">
+                                <input type="hidden" formControlName="tipoCusto" [(ngModel)]="tipoCusto">
                             </div>
                         </div>   
                     </div>    
@@ -501,6 +502,11 @@
                 <td>{{ orcamentoBase.ambiente }}</td>
                 
                 <td class="td-acao">
+
+                    <div class="btnsect" style="margin-right: 5px;background-color: #97a3c2; color: white;" (click)="visualizarOrcamentoBaseDetalhes(orcamentoBase.id)">
+                        <p>Visualizar</p>
+                    </div>
+
                     <div class="btnsec" (click)="abrirModalEdicao(orcamentoBase)">
                         <p>Editar</p>
                     </div>
@@ -535,7 +541,7 @@
                     title="Editar Conta Contabil"
                 >
                     <div class="form">
-                        <div class="row3">
+                        <!-- <div class="row3">
                             <div class="coluna">
                                 <div class="raiz">
                                     <p-floatLabel>
@@ -578,8 +584,8 @@
                                     </p-floatLabel>  
                                 </div>
                             </div>
-                        </div><!--endRow-->
-                        <div class="row3">
+                        </div> -->
+                        <!-- <div class="row3">
                             <div class="coluna">
                                 <div class="raiz">
                                     <p-inputGroup >
@@ -637,8 +643,8 @@
                                     </p-inputGroup>
                                 </div>
                             </div>
-                        </div><!--endRow-->
-                        <div class="row3">
+                        </div> -->
+                        <!-- <div class="row3">
                             <div class="coluna">
                                 <div class="raiz">
                                     <p-inputGroup >
@@ -696,8 +702,8 @@
                                     </p-inputGroup>
                                 </div>
                             </div>
-                        </div><!--endRow-->
-                        <div class="row3">
+                        </div> -->
+                        <!-- <div class="row3">
                             <div class="coluna">
                                 <div class="raiz">
                                     <p-inputGroup >
@@ -755,8 +761,8 @@
                                     </p-inputGroup>
                                 </div>
                             </div>
-                        </div><!--endRow-->
-                        <div class="row3">
+                        </div> -->
+                        <!-- <div class="row3">
                             <div class="coluna">
                                 <div class="raiz">
                                     <p-inputGroup >
@@ -852,8 +858,8 @@
                                     </p-inputGroup>
                                 </div>
                             </div>
-                        </div><!--endRow-->
-                        <div class="row3">
+                        </div> -->
+                        <!-- <div class="row3">
                             <div class="coluna">
                                 <div class="raiz">
                                     <p-inputGroup >
@@ -911,7 +917,7 @@
                                     </p-inputGroup>
                                 </div>
                             </div>
-                        </div><!--endRow-->
+                        </div> -->
                         <div class="row3">
                             <div class="coluna">
                                 <div class="raiz">
@@ -985,3 +991,47 @@
             </div>
         </div>
     </p-dialog>    
+
+
+<!---------------------------Visualizar Moda-------------------------------->
+    <p-dialog 
+        [modal]="true"
+        [(visible)]="detalhaOrcamentoBaseVisible" 
+        [style]="{ width: '90%', height:'90%'}" 
+        [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+    >
+<div *ngIf="orcamentoBaseDetalhes">
+    <div class="detalha">
+        <p>Ano: <strong>{{  orcamentoBaseDetalhes.ano }}</strong></p>
+        <p>Gestor: <strong>{{  orcamentoBaseDetalhes.gestor }}</strong></p>
+        <p>Empresa: <strong>{{  orcamentoBaseDetalhes.empresa }}</strong></p>
+        <p>Filial: <strong>{{  orcamentoBaseDetalhes.filial }}</strong></p>
+        <p>Area: <strong>{{  orcamentoBaseDetalhes.area }}</strong></p>
+        <p>Ambiente: <strong>{{  orcamentoBaseDetalhes.setor }}</strong></p>
+        <p>Setor: <strong>{{  orcamentoBaseDetalhes.ambiente }}</strong></p>
+        <p>Raiz Sintética: <strong>{{  orcamentoBaseDetalhes.raiz_sintetica }}</strong></p>
+        <p>Raiz Sintética Descrição: <strong>{{  orcamentoBaseDetalhes.raiz_sintetica_desc }}</strong></p>
+        <p>Raiz Analítica: <strong>{{  orcamentoBaseDetalhes.raiz_analitica_cod }}</strong></p>
+        <p>Raiz Analítica Descrição: <strong>{{  orcamentoBaseDetalhes.raiz_analitica_desc }}</strong></p>
+        <p>Conta Contábil: <strong>{{  orcamentoBaseDetalhes.conta_contabil }}</strong></p>
+        <p>Conta Contábil Descrição: <strong>{{  orcamentoBaseDetalhes.conta_contabil_desc }}</strong></p>
+        <p>Grupo Contábil Raiz Descrição: <strong>{{  orcamentoBaseDetalhes.raiz_contabil_grupo_desc }}</strong></p>
+        <p>Periodicidade: <strong>{{  orcamentoBaseDetalhes.periodicidade }}</strong></p>
+        <p>Tipo Mensal: <strong>{{  orcamentoBaseDetalhes.mensal_tipo }}</strong></p>
+        <p>Mês Específico: <strong>{{  orcamentoBaseDetalhes.mes_especifico }}</strong></p>
+        <p>Meses Recorrentes: <strong> {{ orcamentoBaseDetalhes.meses_recorrentes }}</strong></p>
+        <p>Suplementação: <strong> {{ orcamentoBaseDetalhes.suplementacao }}</strong></p>
+        <p>Base Orçamento: <strong> {{ orcamentoBaseDetalhes.base_orcamento }}</strong></p>
+        <p>Id Base: <strong> {{ orcamentoBaseDetalhes.id_base }}</strong></p>
+        <p>Tipo de Custo: <strong> {{ orcamentoBaseDetalhes.tipo_custo }}</strong></p>
+        <p>Valor: <strong> {{ orcamentoBaseDetalhes.valor }}</strong></p>
+        <p>Valor Ajustado: <strong> {{ orcamentoBaseDetalhes.valor_ajustado }}</strong></p>
+        <p>Valor Real: <strong> {{ orcamentoBaseDetalhes.valor_real }}</strong></p>
+        <p>Centro de Custo Pai: <strong>{{ getNomeCcPai(orcamentoBaseDetalhes.centro_de_custo_pai)}}</strong></p>
+        <p>Centro de custo: <strong>{{ getNomeCc(orcamentoBaseDetalhes.centro_custo_nome)}}</strong></p>
+    </div>    
+
+</div>
+
+   
+    </p-dialog>

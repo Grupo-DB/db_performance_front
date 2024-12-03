@@ -38,7 +38,8 @@ export class OrcamentoBaseService {
     suplementacao: string,
     baseOrcamento: string,
     idBase: string,
-    valor: string
+    valor: string,
+    tipoCusto: string,
   ){
     return this.httpClient.post<any>(this.apiUrl, {
       ano: ano,
@@ -66,10 +67,14 @@ export class OrcamentoBaseService {
       base_orcamento: baseOrcamento,
       id_base: idBase,
       valor: valor,
+      tipo_custo: tipoCusto
     })
   }
   getOrcamentosBases():Observable<any[]>{
     return this.httpClient.get<any[]>(this.apiUrl);
+  }
+  getOrcamentoBaseDetalhe(id: number): Observable<any>{
+    return this.httpClient.get(`${this.apiUrl}${id}/`);
   }
   editOrcamentoBase(id: number, dadosAtualizados: Partial<OrcamentoBase>): Observable<any>{
     const url = `${this.apiUrl}${id}/`;
