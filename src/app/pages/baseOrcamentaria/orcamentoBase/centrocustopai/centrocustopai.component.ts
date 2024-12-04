@@ -64,7 +64,7 @@ export class CentrocustopaiComponent implements OnInit {
   areas: Area[]|undefined;
   ambientes: Ambiente[]|undefined;
   setores: Setor[]|undefined;
-  centrosCustoPai: any [] = [];
+  centrosCustoPai: any[] = [];
   //
   empresaSelecionadaId: number | null = null;
   filialSelecionadaId: number | null = null;
@@ -115,6 +115,7 @@ export class CentrocustopaiComponent implements OnInit {
     this.empresaService.getCompanys().subscribe(
       empresas => {
         this.empresas = empresas;
+        this.mapEmpresas();
       },
       error => {
         console.error('Não carregou:',error)
@@ -267,6 +268,16 @@ export class CentrocustopaiComponent implements OnInit {
         console.log('Ambientes carregadas:', this.areas); // Log para depuração
       });
     }
+  }
+
+  mapEmpresas() {
+    this.centrosCustoPai.forEach(centroCustoPai => {
+      const empresa = this.empresas?.find(empresa => empresa.id === centroCustoPai.empresa);
+      if (empresa) {
+        centroCustoPai.empresaNome = empresa.nome;
+      }
+    });
+    this.loading = false;
   }
 
   mapFiliais() {

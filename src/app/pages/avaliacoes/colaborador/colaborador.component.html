@@ -1,11 +1,11 @@
 
-<div *ngIf="hasGroup(['Admin','RHGestor'])" class="container">   
-    <div class="form-geral">
-        <div class="titulo">
-            <p-divider align="left" type="solid">
-                <b>Cadastro de Colaboradores</b>
-            </p-divider> 
-        </div>    
+<div *ngIf="hasGroup(['Admin','RHGestor'])" class="container">
+    <div class="titulo2">
+        <p-divider align="left" type="solid">
+            <b>Cadastro de Colaboradores</b>
+        </p-divider> 
+    </div>      
+    <div class="form-geral"> 
         <form 
             [formGroup]="registercolaboradorForm"
             title="Cadastrar novo Colaborador"
@@ -32,198 +32,257 @@
                 </div>    
                     
                 <div class="form2">
-                    <p><label for="empresa">Empresa</label></p>
-                    <p-dropdown 
-                        [style]="{'width':'75%'}"
-                        [options]="empresas" 
-                        id="empresa"
-                        formControlName="empresa"
-                        optionLabel="nome"
-                        placeholder="Selecione"
-                        (onChange)="onEmpresaSelecionada($event.value)"
-                    >
-                    </p-dropdown>
+                    <p-floatLabel>
+                        <p-dropdown 
+                            inputId="float-label" 
+                            [style]="{'width':'75%'}"
+                            [options]="empresas" 
+                            id="empresa"
+                            formControlName="empresa"
+                            optionLabel="nome"
+                            (onChange)="onEmpresaSelecionada($event.value)"
+                        >
+                        </p-dropdown>
+                        <label for="float-label" style="margin-left: 15px;">Selecione a Empresa</label>
+                    </p-floatLabel>    
                 </div>
                 <div class="filial">
-                        <p><label for="filial">Filial</label></p>    
-                    <p-dropdown
-                        [style]="{'width':'75%'}"
-                        [options]="filiais" 
-                        id="filial"
-                        formControlName="filial"
-                        optionLabel="nome"
-                        placeholder="Selecione "
-                        [disabled]="true"
-                        (onChange)="onFilialSelecionada($event.value)"
-                    >
-                    </p-dropdown>
+                    <p-floatLabel> 
+                        <p-dropdown
+                            inputId="float-label" 
+                            [style]="{'width':'75%'}"
+                            [options]="filiais" 
+                            id="filial"
+                            formControlName="filial"
+                            optionLabel="nome"
+                            [disabled]="true"
+                            (onChange)="onFilialSelecionada($event.value)"
+                        >
+                        </p-dropdown>
+                        <label for="float-label" style="margin-left: 15px;">Selecione a Filial</label>
+                    </p-floatLabel>
                 </div>
                 <div class="form3">
-                    <p><label for="area">Área</label></p>    
-                    <p-dropdown 
-                        [style]="{'width':'75%'}"
-                        [options]="areas"
-                        id="area" 
-                        formControlName="area"
-                        optionLabel="nome"
-                        placeholder="Selecione"
-                        [disabled]="true"
-                        (onChange)="onAreaSelecionada($event.value)"
-                        >
-                    </p-dropdown>
+                    <p-floatLabel> 
+                        <p-dropdown 
+                            [style]="{'width':'75%'}"
+                            [options]="areas"
+                            id="area" 
+                            formControlName="area"
+                            optionLabel="nome"
+                            inputId="float-label" 
+                            [disabled]="true"
+                            (onChange)="onAreaSelecionada($event.value)"
+                            >
+                        </p-dropdown>
+                        <label for="float-label" style="margin-left: 15px;">Selecione a Área</label>
+                    </p-floatLabel>    
                 </div>
                 <div class="dvset">    
-                    <p><label for="setor">Ambiente</label></p>
-                    <p-dropdown 
-                        [style]="{'width':'75%'}"
-                        [options]="setores"
-                        id="setor" 
-                        formControlName="setor"
-                        optionLabel="nome"
-                        placeholder="Selecione"
-                        [disabled]="true"
-                        (onChange)="onSetorSelecionado($event.value)"
-                        >
-                    </p-dropdown>
+                    <p-floatLabel>
+                        <p-dropdown 
+                            [style]="{'width':'75%'}"
+                            [options]="setores"
+                            id="setor" 
+                            formControlName="setor"
+                            optionLabel="nome"
+                            inputId="float-label" 
+                            [disabled]="true"
+                            (onChange)="onSetorSelecionado($event.value)"
+                            >
+                        </p-dropdown>
+                        <label for="float-label" style="margin-left: 15px;">Selecione o Ambiente</label>
+                    </p-floatLabel>    
                 </div>
                 <div class="form4">
-                    <p><label for="ambiente">Setor</label></p> 
-                    <p-dropdown 
-                        [style]="{'width':'75%'}"
-                        id="ambiente"
-                        [options]="ambientes" 
-                        formControlName="ambiente"
-                        optionLabel="nome"
-                        [disabled]="true"
-                        placeholder="Selecione"
-                        (onChange)="onAmbienteSelecionado($event.value)"
-                    >
-                    </p-dropdown>
+                    <p-floatLabel>
+                        <p-dropdown 
+                            [style]="{'width':'75%'}"
+                            id="ambiente"
+                            [options]="ambientes" 
+                            formControlName="ambiente"
+                            optionLabel="nome"
+                            [disabled]="true"
+                            inputId="float-label" 
+                            (onChange)="onAmbienteSelecionado($event.value)"
+                        >
+                        </p-dropdown>
+                        <label for="float-label" style="margin-left: 15px;">Selecione o Setor</label>
+                    </p-floatLabel>    
                 </div>
                 <div class="dvcarg">     
-                    <p><label for="cargo">Cargo</label></p>
-                    <p-dropdown
-                        [style]="{'width':'75%'}" 
-                        id="cargo"
-                        [options]="cargos" 
-                        formControlName="cargo"
-                        optionLabel="nome"
-                        [disabled]="true"
-                        placeholder="Selecione"
-                        (onChange)="onCargoSelecionado($event.value)"
-                    >
-                    </p-dropdown>
+                    <p-floatLabel>
+                        <p-dropdown
+                            [style]="{'width':'75%'}" 
+                            id="cargo"
+                            [options]="cargos" 
+                            formControlName="cargo"
+                            optionLabel="nome"
+                            [disabled]="true"
+                            inputId="float-label" 
+                            (onChange)="onCargoSelecionado($event.value)"
+                        >
+                        </p-dropdown>
+                        <label for="float-label" style="margin-left: 15px;">Selecione o Cargo</label>
+                    </p-floatLabel>    
                 </div>
                 <div class="dvtc">    
-                    <p><label for="tipocontrato">Tipo de Contrato</label></p>
-                    <p-dropdown
-                        [style]="{'width':'75%'}"
-                        id="tipocontrato" 
-                        [options]="tipocontratos" 
-                        formControlName="tipocontrato"
-                        optionLabel="nome"
-                        placeholder="Selecione"
-                    >
-                    </p-dropdown>
+                    <p-floatLabel>
+                        <p-dropdown
+                            [style]="{'width':'75%'}"
+                            id="tipocontrato" 
+                            [options]="tipocontratos" 
+                            formControlName="tipocontrato"
+                            optionLabel="nome"
+                            inputId="float-label" 
+                        >
+                        </p-dropdown>
+                        <label for="float-label" style="margin-left: 15px;">Selecione o Tipo de Contrato</label>
+                    </p-floatLabel>    
                 </div>
                 <div class="dvraca">    
-                    <p><label for="raca">Raça</label></p>
-                    <p-dropdown
-                        [style]="{'width':'75%'}"
-                        id="raca" 
-                        [options]="racas" 
-                        formControlName="raca"
-                        optionLabel="nome"
-                        placeholder="Selecione"
-                    >
-                    </p-dropdown>
+                    <p-floatLabel>
+                        <p-dropdown
+                            [style]="{'width':'75%'}"
+                            id="raca" 
+                            [options]="racas" 
+                            formControlName="raca"
+                            optionLabel="nome"
+                            inputId="float-label" 
+                        >
+                        </p-dropdown>
+                        <label for="float-label" style="margin-left: 15px;">Selecione a Raça</label>
+                    </p-floatLabel>    
                 </div>
                 <div class="dvinst">    
-                    <p><label for="inst">Grau de Instrução</label></p>
-                    <p-dropdown
-                        [style]="{'width':'75%'}"
-                        id="inst" 
-                        [options]="instrucoes" 
-                        formControlName="instrucao"
-                        optionLabel="nome"
-                        placeholder="Selecione"
-                    >
-                    </p-dropdown>
+                    <p-floatLabel>
+                        <p-dropdown
+                            [style]="{'width':'75%'}"
+                            id="inst" 
+                            [options]="instrucoes" 
+                            formControlName="instrucao"
+                            optionLabel="nome"
+                            inputId="float-label" 
+                        >
+                        </p-dropdown>
+                        <label for="float-label" style="margin-left: 15px;">Selecione o Grau de Instrução</label>
+                    </p-floatLabel>    
                 </div>
+                <div class="sistemas">
+                    <span class="p-float-label">
+                        <input pInputText
+                            id="minerion_id"
+                            formControlName="minerion_id"
+                            type="text"
+                            [style]="{'width':'60%'}"
+                        />  
+                        <label for="minerion_id">Minerion ID</label>
+                    </span>
+                    <span class="p-float-label">
+                        <input pInputText
+                            id="dominio_id"
+                            formControlName="dominio_id"
+                            type="text"
+                            [style]="{'width':'60%'}"
+                        />  
+                        <label for="dominio_id">Dominio ID</label>
+                    </span>
+                    <span class="p-float-label">
+                        <input pInputText
+                            id="sgg_id"
+                            formControlName="sgg_id"
+                            type="text"
+                            [style]="{'width':'60%'}"
+                        />  
+                        <label for="sgg_id">SGG ID</label>
+                    </span>  
+                </div> 
             </div>
             <div class="fg2">
                 <div class="dvsal">
-                    <p><label for="sal">Salário</label></p>    
-                    <p-inputNumber
-                        [style]="{'width':'79%'}" 
-                        id="sal"
-                        formControlName="salario" 
-                        inputId="currency-us" 
-                        mode="currency" 
-                        currency="BRL" 
-                        locale="pt-BR" 
-                    />  
+                    <p-floatLabel>   
+                        <p-inputNumber
+                            [style]="{'width':'75%'}" 
+                            id="sal"
+                            formControlName="salario" 
+                            inputId="currency-us" 
+                            mode="currency" 
+                            currency="BRL" 
+                            locale="pt-BR"
+                            inputId="float-label"  
+                        />
+                        <label for="float-label" style="margin-left: 75px;">Informe o Salário</label>
+                    </p-floatLabel>      
                 </div>    
                 <div class="dvcat">    
-                    <p><label for="cat">Categoria</label></p>
-                    <p-dropdown
-                        [style]="{'width':'75%'}"
-                        id="cat" 
-                        [options]="categorias" 
-                        formControlName="categoria"
-                        optionLabel="nome"
-                        placeholder="Selecione"
-                    >
-                    </p-dropdown>
+                    <p-floatLabel>
+                        <p-dropdown
+                            [style]="{'width':'75%'}"
+                            id="cat" 
+                            [options]="categorias" 
+                            formControlName="categoria"
+                            optionLabel="nome"
+                            inputId="float-label" 
+                        >
+                        </p-dropdown>
+                        <label for="float-label" style="margin-left: 5px;">Selecione a Categoria</label>
+                    </p-floatLabel>    
                 </div>       
                 <div class="form5">
-                   <p><label for="da">Data de Admissão</label></p>
-                    <p-calendar
-                        [style]="{'width':'76%','margin-left':'-2px'}"
-                        id="da" 
-                        formControlName="data_admissao"
-                        dateFormat="dd/mm/yy"                  
-                        [showIcon]="true"
-                        placeholder="SELECIONE"
-                    >
-                    </p-calendar>
-                    
+                    <p-floatLabel>
+                        <p-calendar
+                            [style]="{'width':'75%'}"
+                            id="da" 
+                            formControlName="data_admissao"
+                            dateFormat="dd/mm/yy"                  
+                            [showIcon]="true"
+                            inputId="float-label" 
+                        >
+                        </p-calendar>
+                        <label for="float-label" >Selecione a Data de Admissão</label>
+                    </p-floatLabel>
                 </div>
                 <div class="dvgen">
-                    <p><label for="gen">Gênero</label></p>     
-                    <p-dropdown 
-                        id="gen"
-                        [style]="{'width':'76%','margin-left':'-5px'}"
-                        [options]="generos" 
-                        formControlName="genero"
-                        optionLabel="nome"
-                        placeholder="Selecione "        
-                    >
-                    </p-dropdown>
+                    <p-floatLabel>
+                        <p-dropdown 
+                            id="gen"
+                            [style]="{'width':'75%'}"
+                            [options]="generos" 
+                            formControlName="genero"
+                            optionLabel="nome"
+                            inputId="float-label"    
+                        >
+                        </p-dropdown>
+                        <label for="float-label" >Selecione o Gênero</label>
+                    </p-floatLabel>    
                 </div>
                 <div class="form6">                     
-                    <p><label for="es">Estado Civil</label></p>
-                    <p-dropdown
-                        [style]="{'width':'76%','margin-left':'-5px'}"
-                        id="es"
-                        [options]="estados_civis" 
-                        formControlName="estado_civil"
-                        optionLabel="nome"
-                        placeholder="Selecione "
-                    >
-                    </p-dropdown>   
+                    <p-floatLabel>
+                        <p-dropdown
+                            [style]="{'width':'75%'}"
+                            id="es"
+                            [options]="estados_civis" 
+                            formControlName="estado_civil"
+                            optionLabel="nome"
+                            inputId="float-label"   
+                        >
+                        </p-dropdown>
+                        <label for="float-label" style="margin-left: 5px;">Selecione o Estado Civil</label>
+                    </p-floatLabel>       
                 </div>
                 <div class="form7"> 
-                    <p><label for="dn">Data de Nascimento</label></p>               
-                    <p-calendar
-                        id="dc" 
-                        [style]="{'width':'76%','margin-left':'-2px'}"
-                        formControlName="data_nascimento"
-                        dateFormat="dd/mm/yy"
-                        [showIcon]="true"
-                        placeholder="SELECIONE"
-                    >
-                    </p-calendar>
+                    <p-floatLabel>       
+                        <p-calendar
+                            id="dc" 
+                            [style]="{'width':'75%'}"
+                            formControlName="data_nascimento"
+                            dateFormat="dd/mm/yy"
+                            [showIcon]="true"
+                            inputId="float-label"
+                        >
+                        </p-calendar>
+                        <label for="float-label" style="margin-left: 5px;">Selecione a Data de Nascimento</label>
+                    </p-floatLabel>    
                 </div>
                 <div class="dvft">    
                     <p><label for="foto">Carregar Foto</label></p>
@@ -235,32 +294,7 @@
                         (change)="onFileChange($event,registercolaboradorForm)"
                     />
                 </div>    
-                <div class="sistemas">
-                    <span class="p-float-label">
-                        <input pInputText
-                            id="minerion_id"
-                            formControlName="minerion_id"
-                            type="text"
-                        />  
-                        <label for="minerion_id">Minerion ID</label>
-                    </span>
-                    <span class="p-float-label">
-                        <input pInputText
-                            id="dominio_id"
-                            formControlName="dominio_id"
-                            type="text"
-                        />  
-                        <label for="dominio_id">Dominio ID</label>
-                    </span>
-                    <span class="p-float-label">
-                        <input pInputText
-                            id="sgg_id"
-                            formControlName="sgg_id"
-                            type="text"
-                        />  
-                        <label for="sgg_id">SGG ID</label>
-                    </span>  
-                </div>    
+                   
                 <div class="dvemail">
                     <p-inputGroup>
                         <p-inputGroupAddon>
@@ -278,7 +312,7 @@
                 </div>
                 <div class="dvcb">
                     <div class="titclas">
-                        <p>Classificação do Colaborador</p>
+                        <p><strong>Classificação do Colaborador</strong></p>
                     </div> 
                         <div class="btns">
                             <p><label  for="sit" >Avaliador </label></p>
@@ -308,7 +342,7 @@
                         </div>
                 </div>
                 <div class="tituser">
-                    <p>Criar Usuário</p>
+                    <p><strong>Criar Usuário</strong></p>
                 </div>
                 <div class="dvus">
                     
@@ -326,21 +360,22 @@
                                 />  
                                 <label for="nome">Digite o nome de usuário</label>
                             </span>          
-                        </p-inputGroup>
-                        <p-inputGroup>
+                    </p-inputGroup>
+                    <p-inputGroup>
                             <p-inputGroupAddon>
                                 <i class="pi pi-key"></i>
                             </p-inputGroupAddon>
-                            
+                            <span class="p-float-label">
                                 <input pInputText
                                     id="password"
                                     formControlName="password"
                                     type="password"
                                     placeholder="Digite a senha"
-                                />  
-                                
+                                /> 
+                                <label for="senha">Digite a Senha</label> 
+                            </span>    
                                       
-                        </p-inputGroup>
+                    </p-inputGroup>
                 </div>    
                             
             </div>
@@ -358,7 +393,7 @@
                  <p>Cadastrar</p>            
             </div>
     </div>
-    <hr>
+    
         <div class="tabela">
             <p-toast/>
             <p-confirmDialog />
@@ -462,268 +497,332 @@
             <form [formGroup]="editForm">
             <div class="fg1edit">
               <div class="form1edit">
-                    <p><label for="nome">Digite o nome</label></p>
-                    <p-inputGroup>
-                        <p-inputGroupAddon>
-                            <i class="pi pi-user"></i>
-                        </p-inputGroupAddon>
-                        <span class="p-float-label">
-                            <input  pInputText
-                                id="nome"
-                                formControlName="nome"
-                                type="text"
-                            />  
-                            <label for="nome">Digite o nome</label>
-                        </span>          
-                    </p-inputGroup>
+                <p-inputGroup>
+                    <p-inputGroupAddon>
+                        <i class="pi pi-user-edit"></i>
+                    </p-inputGroupAddon>
+                    <span class="p-float-label">
+                        <input  pInputText
+                            id="nome"
+                            formControlName="nome"
+                            type="text"
+                        />
+                        <label for="nome">Digite o nome</label>  
+                    </span>          
+                </p-inputGroup>
                 </div>    
                     
                 <div class="form2edit">
-                    <p><label for="empresa">Empresa</label></p>
-                    <p-dropdown 
-                        [style]="{'width':'75%'}"
-                        [options]="empresas" 
-                        id="empresa"
-                        formControlName="empresa"
-                        optionLabel="nome"
-                        placeholder="Selecione"
-                        (onChange)="onEmpresaSelecionada($event.value)"
-                    >
-                    </p-dropdown>
+                    <p-floatLabel>
+                        <p-dropdown 
+                            inputId="float-label" 
+                            [style]="{'width':'75%'}"
+                            [options]="empresas" 
+                            id="empresa"
+                            formControlName="empresa"
+                            optionLabel="nome"
+                            optionValue="id" 
+                            (onChange)="onEmpresaSelecionada($event.value)"
+                        >
+                        </p-dropdown>
+                        <label for="float-label" style="margin-left: 15px;">Selecione a Empresa</label>
+                    </p-floatLabel>  
                 </div>
                 <div class="filialed">
-                        <p><label for="filial">Filial</label></p>    
-                    <p-dropdown
-                        [style]="{'width':'75%'}"
-                        [options]="filiais" 
-                        id="filial"
-                        formControlName="filial"
-                        optionLabel="nome"
-                        placeholder="Selecione "
-                        (onChange)="onFilialSelecionada($event.value)"
-                    >
-                    </p-dropdown>
+                    <p-floatLabel> 
+                        <p-dropdown
+                            inputId="float-label" 
+                            [style]="{'width':'75%'}"
+                            [options]="filiais" 
+                            id="filial"
+                            optionValue="id" 
+                            formControlName="filial"
+                            optionLabel="nome"
+                            [disabled]="true"
+                            (onChange)="onFilialSelecionada($event.value)"
+                        >
+                        </p-dropdown>
+                        <label for="float-label" style="margin-left: 15px;">Selecione a Filial</label>
+                    </p-floatLabel>
                 </div>
                 <div class="form3ed">
-                    <p><label for="area">Área</label></p>    
-                    <p-dropdown 
-                        [style]="{'width':'75%'}"
-                        [options]="areas"
-                        id="area" 
-                        formControlName="area"
-                        optionLabel="nome"
-                        placeholder="Selecione"
-                        (onChange)="onAreaSelecionada($event.value)"
-                        >
-                    </p-dropdown>
+                    <p-floatLabel> 
+                        <p-dropdown 
+                            [style]="{'width':'75%'}"
+                            [options]="areas"
+                            id="area"
+                            optionValue="id"  
+                            formControlName="area"
+                            optionLabel="nome"
+                            inputId="float-label" 
+                            [disabled]="true"
+                            (onChange)="onAreaSelecionada($event.value)"
+                            >
+                        </p-dropdown>
+                        <label for="float-label" style="margin-left: 15px;">Selecione a Área</label>
+                    </p-floatLabel> 
                 </div>
                 <div class="dvseted">    
-                    <p><label for="setor">Ambiente</label></p>
-                    <p-dropdown 
-                        [style]="{'width':'75%'}"
-                        [options]="setores"
-                        id="setor" 
-                        formControlName="setor"
-                        optionLabel="nome"
-                        placeholder="Selecione o Setor"
-                        (onChange)="onSetorSelecionado($event.value)"
-                        >
-                    </p-dropdown>
+                    <p-floatLabel>
+                        <p-dropdown 
+                            [style]="{'width':'75%'}"
+                            [options]="setores"
+                            id="setor" 
+                            optionValue="id" 
+                            formControlName="setor"
+                            optionLabel="nome"
+                            inputId="float-label" 
+                            [disabled]="true"
+                            (onChange)="onSetorSelecionado($event.value)"
+                            >
+                        </p-dropdown>
+                        <label for="float-label" style="margin-left: 15px;">Selecione o Ambiente</label>
+                    </p-floatLabel> 
                 </div>
                 <div class="form4ed">
-                    <p><label for="ambiente">Setor</label></p> 
-                    <p-dropdown 
-                        [style]="{'width':'75%'}"
-                        id="ambiente"
-                        [options]="ambientes" 
-                        formControlName="ambiente"
-                        optionLabel="nome"
-                        placeholder="Selecione"
-                        (onChange)="onAmbienteSelecionado($event.value)"
-                    >
-                    </p-dropdown>
+                    <p-floatLabel>
+                        <p-dropdown 
+                            [style]="{'width':'75%'}"
+                            id="ambiente"
+                            [options]="ambientes" 
+                            optionValue="id" 
+                            formControlName="ambiente"
+                            optionLabel="nome"
+                            [disabled]="true"
+                            inputId="float-label" 
+                            (onChange)="onAmbienteSelecionado($event.value)"
+                        >
+                        </p-dropdown>
+                        <label for="float-label" style="margin-left: 15px;">Selecione o Setor</label>
+                    </p-floatLabel> 
                 </div>
                 <div class="dvcarged">     
-                    <p><label for="cargo">Cargo</label></p>
-                    <p-dropdown
-                        [style]="{'width':'75%'}" 
-                        id="cargo"
-                        [options]="cargos" 
-                        formControlName="cargo"
-                        optionLabel="nome"
-                        placeholder="Selecione"
-                        (onChange)="onCargoSelecionado($event.value)"
-                    >
-                    </p-dropdown>
+                    <p-floatLabel>
+                        <p-dropdown
+                            [style]="{'width':'75%'}" 
+                            id="cargo"
+                            [options]="cargos" 
+                            optionValue="id" 
+                            formControlName="cargo"
+                            optionLabel="nome"
+                            [disabled]="true"
+                            inputId="float-label" 
+                            (onChange)="onCargoSelecionado($event.value)"
+                        >
+                        </p-dropdown>
+                        <label for="float-label" style="margin-left: 15px;">Selecione o Cargo</label>
+                    </p-floatLabel> 
                 </div>
                 <div class="dvtced">    
-                    <p><label for="tipocontrato">Tipo de Contrato</label></p>
-                    <p-dropdown
-                        [style]="{'width':'75%'}"
-                        id="tipocontrato" 
-                        [options]="tipocontratos" 
-                        formControlName="tipocontrato"
-                        optionLabel="nome"
-                        placeholder="Selecione"
-                    >
-                    </p-dropdown>
+                    <p-floatLabel>
+                        <p-dropdown
+                            [style]="{'width':'75%'}"
+                            id="tipocontrato" 
+                            [options]="tipocontratos" 
+                            optionValue="nome" 
+                            formControlName="tipocontrato"
+                            optionLabel="nome"
+                            inputId="float-label" 
+                        >
+                        </p-dropdown>
+                        <label for="float-label" style="margin-left: 15px;">Selecione o Tipo de Contrato</label>
+                    </p-floatLabel> 
                 </div>
                 <div class="dvracaed">    
-                    <p><label for="raca">Raça</label></p>
-                    <p-dropdown
-                        [style]="{'width':'75%'}"
-                        id="raca" 
-                        [options]="racas" 
-                        formControlName="raca"
-                        optionLabel="nome"
-                        placeholder="Selecione"
-                    >
-                    </p-dropdown>
+                    <p-floatLabel>
+                        <p-dropdown
+                            [style]="{'width':'75%'}"
+                            id="raca" 
+                            [options]="racas" 
+                            formControlName="raca"
+                            optionValue="nome" 
+                            optionLabel="nome"
+                            inputId="float-label" 
+                        >
+                        </p-dropdown>
+                        <label for="float-label" style="margin-left: 15px;">Selecione a Raça</label>
+                    </p-floatLabel> 
                 </div>
                 <div class="dvinsted">    
-                    <p><label for="inst">Grau de Instrução</label></p>
-                    <p-dropdown
-                        [style]="{'width':'75%'}"
-                        id="inst" 
-                        [options]="instrucoes" 
-                        formControlName="instrucao"
-                        optionLabel="nome"
-                        placeholder="Selecione"
-                    >
-                    </p-dropdown>
+                    <p-floatLabel>
+                        <p-dropdown
+                            [style]="{'width':'75%'}"
+                            id="inst" 
+                            [options]="instrucoes" 
+                            formControlName="instrucao"
+                            optionLabel="nome"
+                            optionValue="nome" 
+                            inputId="float-label" 
+                        >
+                        </p-dropdown>
+                        <label for="float-label" style="margin-left: 15px;">Selecione o Grau de Instrução</label>
+                    </p-floatLabel>  
                 </div>
                 <div class="form5ed">
-                    <p><label for="da">Data de Admissão</label></p>
-                     <p-calendar
-                         [style]="{'width':'75%'}"
-                         id="da" 
-                         formControlName="data_admissao"
-                         dateFormat="dd/mm/yy"                    
-                         [showIcon]="true"
-                         placeholder="SELECIONE"
-                     >
-                     </p-calendar>                     
-                 </div>
+                    <p-floatLabel>
+                        <p-calendar
+                            [style]="{'width':'75%'}"
+                            id="da" 
+                            formControlName="data_admissao"
+                            dateFormat="dd/mm/yy"                  
+                            [showIcon]="true"
+                            inputId="float-label" 
+                        >
+                        </p-calendar>
+                        <label for="float-label" >Selecione a Data de Admissão</label>
+                    </p-floatLabel>                  
+                </div>
+                <div class="sistemasEd">
+                    <span class="p-float-label" style="margin-left: 15px;">
+                        <input pInputText
+                            id="minerion_id"
+                            formControlName="minerion_id"
+                            type="text"
+                            [style]="{'width':'50%'}"
+                        />  
+                        <label for="minerion_id">Minerion ID</label>
+                    </span>
+                    <span class="p-float-label" style="margin-left: -60px;">
+                        <input pInputText
+                            id="dominio_id"
+                            formControlName="dominio_id"
+                            type="text"
+                            [style]="{'width':'50%'}"
+                        />  
+                        <label for="dominio_id">Dominio ID</label>
+                    </span>
+                    <span class="p-float-label" style="margin-left: -60px;">
+                        <input pInputText
+                            id="sgg_id"
+                            formControlName="sgg_id"
+                            type="text"
+                            [style]="{'width':'50%'}"
+                        />  
+                        <label for="sgg_id">SGG ID</label>
+                    </span>
+                    <span class="p-float-label" style="margin-left: -60px;">
+                        <input pInputText
+                            id="user"
+                            formControlName="user"
+                            type="text"
+                            [style]="{'width':'50%'}"
+                            readonly
+                        />  
+                        <label for="User">User ID</label>
+                    </span> 
+                </div> 
             </div>
                 <div class="fg2edit">
                     <div class="dvsaled">
-                        <p><label for="sal">Salário</label></p>    
-                        <p-inputNumber
-                            [style]="{'width':'98%'}" 
-                            id="sal"
-                            formControlName="salario" 
-                            inputId="currency-us" 
-                            mode="currency" 
-                            currency="BRL" 
-                            locale="pt-BR" 
-                        />  
+                        <p-floatLabel>   
+                            <p-inputNumber
+                                [style]="{'width':'75%'}" 
+                                id="sal"
+                                formControlName="salario" 
+                                inputId="currency-us" 
+                                mode="currency" 
+                                currency="BRL" 
+                                locale="pt-BR"
+                                inputId="float-label"  
+                            />
+                            <label for="float-label" style="margin-left: 75px;">Informe o Salário</label>
+                        </p-floatLabel>  
                     </div>
                     <div class="dvcated">    
-                        <p><label for="cat">Categoria</label></p>
-                        <p-dropdown
-                            [style]="{'width':'75%'}"
-                            id="cat" 
-                            [options]="categorias" 
-                            formControlName="categoria"
-                            optionLabel="nome"
-                            placeholder="Selecione"
-                        >
-                        </p-dropdown>
+                        <p-floatLabel>
+                            <p-dropdown
+                                [style]="{'width':'75%'}"
+                                id="cat" 
+                                [options]="categorias" 
+                                formControlName="categoria"
+                                optionLabel="nome"
+                                inputId="float-label" 
+                            >
+                            </p-dropdown>
+                            <label for="float-label" style="margin-left: 5px;">Selecione a Categoria</label>
+                        </p-floatLabel> 
                     </div>      
                      <div class="dvgened">
-                         <p><label for="gen">Gênero</label></p>     
-                         <p-dropdown 
-                             id="gen"
-                             [style]="{'width':'75%'}"
-                             [options]="generos" 
-                             formControlName="genero"
-                             optionLabel="nome"
-                             placeholder="Selecione "        
-                         >
-                         </p-dropdown>
+                        <p-floatLabel>
+                            <p-dropdown 
+                                id="gen"
+                                [style]="{'width':'75%'}"
+                                [options]="generos" 
+                                formControlName="genero"
+                                optionLabel="nome"
+                                inputId="float-label"    
+                            >
+                            </p-dropdown>
+                            <label for="float-label" >Selecione o Gênero</label>
+                        </p-floatLabel> 
                      </div>
                      <div class="form6ed">                     
-                         <p><label for="es">Estado Civil</label></p>
-                         <p-dropdown
-                             [style]="{'width':'75%'}"
-                             id="es"
-                             [options]="estados_civis" 
-                             formControlName="estado_civil"
-                             optionLabel="nome"
-                             placeholder="Selecione "
-                         >
-                         </p-dropdown>   
+                        <p-floatLabel>
+                            <p-dropdown
+                                [style]="{'width':'75%'}"
+                                id="es"
+                                [options]="estados_civis" 
+                                formControlName="estado_civil"
+                                optionLabel="nome"
+                                inputId="float-label"   
+                            >
+                            </p-dropdown>
+                            <label for="float-label" style="margin-left: 5px;">Selecione o Estado Civil</label>
+                        </p-floatLabel>  
                      </div>
                      <div class="form7ed"> 
-                         <p><label for="da">Data de Nascimento</label></p>               
-                         <p-calendar 
-                             [style]="{'width':'75%'}"
-                             formControlName="data_nascimento"
-                             dateFormat="dd/mm/yy"
-                             [showIcon]="true"
-                             placeholder="SELECIONE"
-                         >
-                         </p-calendar>
-                     </div>
-                     <div class="form8ed">
-                        <p><label for="da">Data de Troca de Setor</label></p>
-                        <p-calendar 
-                            [style]="{'width':'75%'}"
-                            formControlName="data_troca_setor"
-                            [disabled]="true"
-                            dateFormat="dd/mm/yy"
-                            [showIcon]="true"
-                            placeholder="SELECIONE"
-                        >
-                        </p-calendar>
-                    </div>
-                    <div class="form9ed">
-                        <p><label for="da">Data de Troca de Cargo</label></p>    
-                        <p-calendar
-                            [style]="{'width':'75%'}"
-                            formControlName="data_troca_cargo"
-                            dateFormat="dd/mm/yy"
-                            [showIcon]="true"
-                            placeholder="SELECIONE"
-                        >
-                        </p-calendar>
-                    </div>    
-                    <div class="form10ed">    
-                            <p><label for="da">Data da Demissão</label></p>
-                            <p-calendar 
+                        <p-floatLabel>       
+                            <p-calendar
+                                id="dc" 
                                 [style]="{'width':'75%'}"
-                                formControlName="data_demissao"
+                                formControlName="data_nascimento"
                                 dateFormat="dd/mm/yy"
                                 [showIcon]="true"
-                                placeholder="SELECIONE"
+                                inputId="float-label"
                             >
                             </p-calendar>
+                            <label for="float-label" style="margin-left: 5px;">Selecione a Data de Nascimento</label>
+                        </p-floatLabel> 
+                     </div>
+                     <div class="form8ed">
+                        <p-floatLabel>
+                            <p-calendar 
+                                [style]="{'width':'75%'}"
+                                formControlName="data_troca_setor"
+                                [disabled]="true"
+                                dateFormat="dd/mm/yy"
+                                [showIcon]="true"
+                                inputId="float-label"
+                            >
+                            </p-calendar>
+                            <label for="float-label" style="margin-left: 5px;">Selecione a Data de Troca de Setor</label>
+                        </p-floatLabel>     
                     </div>
-                    <div class="sistemasEd">
-                        <span class="p-float-label">
-                            <input pInputText
-                                id="minerion_id"
-                                formControlName="minerion_id"
-                                type="text"
-                            />  
-                            <label for="minerion_id">Minerion ID</label>
-                        </span>
-                        <span class="p-float-label">
-                            <input pInputText
-                                id="dominio_id"
-                                formControlName="dominio_id"
-                                type="text"
-                            />  
-                            <label for="dominio_id">Dominio ID</label>
-                        </span>
-                        <span class="p-float-label">
-                            <input pInputText
-                                id="sgg_id"
-                                formControlName="sgg_id"
-                                type="text"
-                            />  
-                            <label for="sgg_id">SGG ID</label>
-                        </span>  
+                    <div class="form9ed">
+                        <p-floatLabel>
+                            <p-calendar
+                                [style]="{'width':'75%'}"
+                                formControlName="data_troca_cargo"
+                                dateFormat="dd/mm/yy"
+                                [showIcon]="true"
+                                inputId="float-label"
+                            >
+                            </p-calendar>
+                            <label for="float-label" style="margin-left: 5px;">Selecione a Data de Troca de Cargo</label>
+                        </p-floatLabel>    
+                    </div>    
+                    <div class="form10ed">    
+                        <p-floatLabel>
+                                <p-calendar 
+                                    [style]="{'width':'75%'}"
+                                    formControlName="data_demissao"
+                                    dateFormat="dd/mm/yy"
+                                    [showIcon]="true"
+                                    inputId="float-label"
+                                >
+                                </p-calendar>
+                                <label for="float-label" style="margin-left: 5px;">Selecione a Data de Demissão</label>
+                            </p-floatLabel>    
                     </div>   
                     <div class="dvemailed">
                         <p-inputGroup>
@@ -742,79 +841,72 @@
                     </div> 
                     <div class="dvcbed">
                         <div class="titclas">
-                            <p>Classificação do Colaborador</p>
-                        </div>     
-                        <div class="btnsed">
-                            <p><label  for="sit" >Avaliador </label></p>
-                            <p-inputSwitch                           
-                                id="sit"
-                                formControlName="tornar_avaliador"
-                            >
-                            </p-inputSwitch>
-                            <p><label for="sit">Avaliado </label></p>
-                            <p-inputSwitch 
-                                id="sit"
-                                formControlName="tornar_avaliado"
-                            >
-                            </p-inputSwitch>
-                            <p><label for="sit"[style]="{'margin-left':'10px'}">Situação </label></p>
-                                <p-inputSwitch 
+                            <p><strong>Classificação do Colaborador</strong></p>
+                        </div> 
+                            <div class="btns">
+                                <p><label  for="sit" >Avaliador </label></p>
+                                <p-inputSwitch                           
                                     id="sit"
-                                    formControlName="situacao"
+                                    formControlName="tornar_avaliador"
                                 >
                                 </p-inputSwitch>
-                            <p><label for="sit"[style]="{'margin-left':'10px'}">Gestor de Orçamento </label></p>
+                                <p><label for="sit"[style]="{'margin-left':'20px'}">Avaliado </label></p>
                                 <p-inputSwitch 
                                     id="sit"
-                                    formControlName="tornar_gestor"
+                                    formControlName="tornar_avaliado"
                                 >
-                                </p-inputSwitch>      
-                        </div>
+                                </p-inputSwitch>
+                                <p><label for="sit"[style]="{'margin-left':'30px'}">Situação </label></p>
+                                    <p-inputSwitch 
+                                        id="sit"
+                                        formControlName="situacao"
+                                    >
+                                    </p-inputSwitch>
+                                <p><label for="sit"[style]="{'margin-left':'30px'}">Gestor de Orçamento </label></p>
+                                    <p-inputSwitch 
+                                        id="sit"
+                                        formControlName="tornar_gestor"
+                                    >
+                                    </p-inputSwitch>    
+                            </div>
                         
                     </div>
                     <div class="tituseredit">
-                        <p>Editar Usuário</p>
+                        <p><strong>Editar Usuário</strong></p>
                     </div>
                 
-                    <input
-                        [style]="{'margin-bottom':'20px','width':'50px'}" 
-                        pInputText
-                        id="user"
-                        formControlName="user"
-                        type="text"
-                        readonly
-                    />   
-                    Usuário ID
+                   
                     <div class="dvusedit">
                         <p-inputGroup>
-                                <p-inputGroupAddon>
-                                    <i class="pi pi-user"></i>
-                                </p-inputGroupAddon>
-                                <span class="p-float-label">
-                                    <input 
-                                        
-                                        pInputText
-                                        id="username"
-                                        formControlName="username"
-                                        type="text"
-                                    />  
-                                    <label for="nome">Digite o nome de usuário</label>
-                                </span>          
-                            </p-inputGroup>
-                            <p-inputGroup>
-                                <p-inputGroupAddon>
-                                    <i class="pi pi-key"></i>
-                                </p-inputGroupAddon>
-                                
-                                    <input pInputText
-                                        id="password"
-                                        formControlName="password"
-                                        type="password"
-                                        placeholder="Digite a senha"
-                                />  
+                            <p-inputGroupAddon>
+                                <i class="pi pi-user"></i>
+                            </p-inputGroupAddon>
+                            <span class="p-float-label">
+                                <input 
                                     
-                                          
-                            </p-inputGroup>
+                                    pInputText
+                                    id="username"
+                                    formControlName="username"
+                                    type="text"
+                                />  
+                                <label for="nome">Digite o nome de usuário</label>
+                            </span>          
+                    </p-inputGroup>
+                    <p-inputGroup>
+                            <p-inputGroupAddon>
+                                <i class="pi pi-key"></i>
+                            </p-inputGroupAddon>
+                            <span class="p-float-label">
+                                <input pInputText
+                                    id="password"
+                                    formControlName="password"
+                                    type="password"
+                                    placeholder="Digite a senha"
+                                /> 
+                                <label for="senha">Digite a Senha</label> 
+                            </span>    
+                                      
+                    </p-inputGroup>
                     </div>    
                     <div class="botoes-formedit">
                             <div class="btnsecedit" (click)="cleareditForm()">

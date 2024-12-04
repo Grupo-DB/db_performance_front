@@ -40,6 +40,7 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { BooleanToStatusPipe } from '../../../services/avaliacoesServices/situacao/boolean-to-status.pipe';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { DatePipe, CurrencyPipe } from '@angular/common';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 interface RegisterColaboradorForm {
   empresa: FormControl;
@@ -136,7 +137,7 @@ interface TipoContrato{
   imports: [
     ReactiveFormsModule,FormsModule,NzUploadModule,CommonModule,DialogModule,InputNumberModule,InputSwitchModule,BooleanToStatusPipe,
     FormLayoutComponent,InputMaskModule,CalendarModule,CheckboxModule,ConfirmDialogModule,DividerModule,
-    PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,
+    FloatLabelModule,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,
   ],
   providers:[
     MessageService,SetorService,ColaboradorService,ColaboradorService,AmbienteService,TipoContratoService,
@@ -657,6 +658,27 @@ cleareditForm() {
 
 abrirModalEdicao(colaborador: Colaborador) {
   this.editFormVisible = true;
+  
+  const dataAdmissao = colaborador.data_admissao
+  ? new Date(colaborador.data_admissao)
+  : null;
+
+  const dataNascimento = colaborador.data_nascimento
+  ? new Date(colaborador.data_nascimento)
+  : null;
+
+  const dataTrocaSetor = colaborador.data_troca_setor
+  ? new Date(colaborador.data_troca_setor)
+  : null;
+
+  const dataTrocaCargo = colaborador.data_troca_cargo
+  ? new Date(colaborador.data_troca_cargo)
+  : null;
+
+  const dataDemissao = colaborador.data_demissao
+  ? new Date(colaborador.data_demissao)
+  : null;
+
   this.editForm.patchValue({  
     id: colaborador.id,
     nome: colaborador.nome,
@@ -667,14 +689,14 @@ abrirModalEdicao(colaborador: Colaborador) {
     ambiente: colaborador.ambiente,
     cargo: colaborador.cargo,
     tipocontrato: colaborador.tipocontrato,
-    data_admissao: colaborador.data_admissao,
+    data_admissao: dataAdmissao,
     situacao: colaborador.situacao,
     genero: colaborador.genero,
     estado_civil: colaborador.estado_civil,
-    data_nascimento: colaborador.data_nascimento,
-    data_troca_setor: colaborador.data_troca_setor,
-    data_troca_cargo: colaborador.data_troca_cargo,
-    data_demissao: colaborador.data_demissao,
+    data_nascimento: dataNascimento,
+    data_troca_setor: dataTrocaSetor,
+    data_troca_cargo: dataTrocaCargo,
+    data_demissao: dataDemissao,
     email: colaborador.email,
     user:colaborador.user,
     username:colaborador.username,
@@ -747,6 +769,7 @@ saveEdit(){
       tipocontrato: tipocontratoNome,
       genero: generoNome,
       estado_civil: estado_civilNome,
+      data_admissao: this.editForm.value.data_admissao,
       data_nascimento: this.editForm.value.data_nascimento,
       data_troca_setor: this.editForm.value.data_troca_setor,
       data_troca_cargo: this.editForm.value.data_troca_cargo,

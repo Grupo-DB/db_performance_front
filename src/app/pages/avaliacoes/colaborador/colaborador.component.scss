@@ -1,130 +1,113 @@
 @import "primeicons/primeicons.css";
 
 .container{
-    
-    display: flex;
-    flex-flow: column wrap;
-    align-items: center;   
+    width: 100%;
 }
 // .uppercase-text {
 //     text-transform: uppercase;
 //   }
 
 .form-geral{
-    width: 100%;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
         .fg1{
             width: 100%;
-            margin-top: 25px;
+            margin-top: 45px;
             p{
                 margin-left: 20px;
             }
             .form1{
                 margin-top: 16px;
-                margin-left: 35px;
+                margin-left: 20px;
                 p{
                     margin-left: auto;
                 }
                 p-inputGroup{
-                    width: 77%;
+                    width: 75%;
                 }
             }
             .form2{
-                margin-top: 16px;
+                margin-top: 35px;
                 margin-left: 20px;
-                
-                p{
-                    margin-left: 20px;
-                }
             }
             .filial{
-                margin-top: 16px;
+                margin-top: 35px;
                 margin-left: 20px;
-                p{
-                    margin-left: 20px;
-                }
-                
             }
             .form3{
-                margin-top: 16px;
+                margin-top: 35px;
                 margin-left: 20px;
             }
             .dvset{
-                margin-top: 16px;
+                margin-top: 35px;
                 margin-left: 20px;
             }
             .form4{
-                margin-top: 16px;
+                margin-top: 35px;
                 margin-left: 20px;
             }
             .dvcarg{
-                margin-top: 16px;
+                margin-top: 35px;
                 margin-left: 20px;
             }
             .dvtc{
-                margin-top: 16px;
+                margin-top: 35px;
                 margin-left: 20px;
             }
             .dvraca{
-                margin-top: 16px;
+                margin-top: 35px;
                 margin-left: 20px;
             }
             .dvinst{
-                margin-top: 16px;
+                margin-top: 35px;
                 margin-left: 20px;
+            }
+            .sistemas{
+                display: flex;
+                margin-top: 35px;
+                margin-left: 20px;
+                margin-bottom: 20px;
+                span{
+                    margin: 2px;
+                }
             }
         }
         .fg2{
             width: 100%;
-            p-dropdown{
-                margin-left: 18px;
-            }
+            margin-top: 45px;
            
-            p{
-                margin-left: 30px;
-            }
             .dvgen{
-                padding: 5PX;
-                margin-left: 35px;
+                margin-top: 35px;
+
             }
             .dvcat{
-                padding: 5PX;
-                margin-left: 15px;
-                p{
-                    margin-left: 34px;
-                }
+                margin-top: 35px;
+                
+                //margin-left: 15px;
+                
             }
             .dvsal{
-                padding: 5PX;
-                margin-left: 50px;
+                margin-top: 16px;
                 p-inputNumber{
                     width: 100%;
-                }
-                p{
-                    margin-left: 2px;
                 }
                 
             }
             .form5{
-                padding: 5PX;
-                margin-left: 20px;
-            }
-            .dvgen{
-                padding: 5PX;
-                margin-left: 20px;
+                margin-top: 35px;
             }
             .form6{
-                padding: 5PX;
-                margin-left: 20px;
+                margin-top: 35px;
             }
             .form7{
-                padding: 5PX;
-                margin-left: 20px;
-                
+                margin-top: 35px;
             }
             .dvft{
                 display: flex;
-                padding: 5PX;
-                margin-left: 50px;
+                
                 margin-top: 20px;
                 p{
                     margin-left: 2px;
@@ -133,31 +116,15 @@
                     margin-left: 5px;
                 }
             }
-            .sistemas{
-                display: flex;
-                padding: 5PX;
-                margin-left: 50px;
-                margin-top: 20px;
-                span{
-                    margin: 5px;
-                }
-            }
             .dvemail{
-                padding: 5PX;
-                margin-left: 50px;
                 margin-top: 20px;
                 p-inputGroup{
-                    width: 80%;
+                    width: 75%;
                 }
             }
             .dvcb{
-                margin-top: 5PX;
-                padding: 8PX;
-                margin-left: 20px;
-                
-                p{
-                    margin-left: 28px;
-                }
+                margin-top: 35PX;
+               
                 .btns{
                     display: flex;
                     P{
@@ -168,18 +135,21 @@
 
             }
             .dvus{
-                margin-top: 20px;
-                margin-left: 55px;
-                margin-bottom: 1px;
+                margin-top: 5px;
+                margin-bottom: 20px;
+                padding: 15px;
                 width: 75%;
                 background-color: #e0ede9;
                 border-radius: 5px;
+                    p-inputGroup{
+                        margin-top: 25px;
+                    }
                
             }
             .tituser{
                 margin-top: 20px;
                 p{
-                    margin-left: 55px;
+                    margin-left: 25px;
                     
                 }
             }
@@ -215,20 +185,20 @@
 
         
 
-        p-calendar{
-            padding: 5%;
-        }
+        // p-calendar{
+        //     padding: 5%;
+        // }
     
-        p-inputGroup{
-            padding: 2px;
-        }
-        p-dropdown{
-            padding: 15px;
-        }
-        p-inputMask{
-            padding: 15px;
-            width: 150px;
-        }    
+        // p-inputGroup{
+        //     padding: 2px;
+        // }
+        // p-dropdown{
+        //     padding: 15px;
+        // }
+        // p-inputMask{
+        //     padding: 15px;
+        //     width: 150px;
+        // }    
         
 
         .teste{
@@ -337,157 +307,144 @@
  
 .editgeral{
     width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
     .fg1edit{
         width: 50%;
-        p{
-            margin-left: 20px;
-        }
+        margin-top: 45px;
         .form1edit{
             margin-left: 15px;            
-            p{
-                margin-left: 2px;
-                margin-bottom: 20px;
-            }
             p-inputGroup{
-                width: 77%;
+                width: 75%;
             }
         }
         .form2edit{
-            margin-top: 10px;
+            margin-left: 15px; 
+            margin-top: 35px;
             
         }
         .filialed{
-            margin-top: 10px;
+            margin-left: 15px; 
+            margin-top: 35px;
         }
         .form3ed{
-            margin-top: 10px;
+            margin-left: 15px; 
+            margin-top: 35px;
         }
         .dvseted{
-            margin-top: 10px;
+            margin-left: 15px; 
+            margin-top: 35px;
         }
         .form4ed{
-            margin-top: 10px;
+            margin-left: 15px; 
+            margin-top: 35px;
         }
         .dvcarged{
-            margin-top: 10px;
+            margin-left: 15px; 
+            margin-top: 35px;
         }
         .dvtced{
-            margin-top: 10px;
+            margin-left: 15px; 
+            margin-top: 35px;
         }
         .dvracaed{
-            margin-top: 10px;
+            margin-left: 15px; 
+            margin-top: 35px;
         }
         .dvinsted{
-            margin-top: 10px;
+            margin-left: 15px; 
+            margin-top: 35px;
         }
         .form5ed{
-            margin-top: 10px;
+            margin-left: 15px; 
+            margin-top: 35px;
             p{
                 margin-left: 20px;
             }
-            p-calendar{
-                margin-left:-10px;
-            }
+            
         }
     }    
     .fg2edit{
         width: 50%;
-        p{
-            margin-left: 20px;
-        }
+        margin-top: 45px;
         .dvsaled{
-            margin-top: 10px;
-            margin-left: 17px;
+            margin-left: 15px; 
            p-inputNumber{
-            width: 80%;
+            width: 100%;
            } 
         }
         .dvcated{
-            margin-top: 10px;
+            margin-left: 15px; 
+            margin-top: 35px;
         }
         .btnsed{
-            display: flex;
+            margin-left: 15px; 
+            margin-top: 35px;
             P{
                 margin-top: 5px
             }
         }
         .dvgened{
-            margin-top: 10px;
+            margin-left: 15px; 
+            margin-top: 35px;
         }
         .form6ed{
-            margin-top: 10px;
+            margin-left: 15px; 
+            margin-top: 35px;
         }
         .form7ed{
-            margin-top: 10px;
-            p{
-                margin-left: 20px;
-            }
-            p-calendar{
-                margin-left:-10px;
-            }
+            margin-left: 15px; 
+            margin-top: 35px;   
         }
         .form8ed{
-            margin-top: 10px;
-            p{
-                margin-left: 20px;
-            }
-            p-calendar{
-                margin-left:-10px;
-            }
+            margin-left: 15px; 
+            margin-top: 35px;
         }
         .form9ed{
-            margin-top: 10px;
-            p{
-                margin-left: 20px;
-            }
-            p-calendar{
-                margin-left:-10px;
-            }
+            margin-left: 15px; 
+            margin-top: 35px;
         }
         .form10ed{
-            margin-top: 10px;
-            p{
-                margin-left: 20px;
-            }
-            p-calendar{
-                margin-left:-10px;
-            }
+            margin-left: 15px; 
+            margin-top: 35px;
         }
         .dvemailed{
             margin-top: 30px;
             margin-left: 15px;
             margin-bottom: 10px;
             p-inputgroup{
-                width: 80%;
+                width: 75%;
             }
         }
         
         .dvcbed{
-            margin-top: 20px;
-            margin-bottom: 30px;
-            p{
-                margin-right: 2px;
+            margin-top: 35PX;
+           
+            .btns{
+                display: flex;
+                P{
+                    margin-top: 5px;
+                    margin-right: 2px;
+                }
             }
+
         }
     }
 
 }
 .sistemasEd{
     display: flex;
-    padding: 5px;
-    margin-left: 10px;
-    margin-top: 20px;
-    span{
-        margin: 5px;
-    }
-    input{
-        width: 170px;
-    }
+    margin-top: 35px;
+    
 }
 .botoes-formedit{
     display: flex;
     justify-content: end;
     margin-top: 20px;
+    margin-right: 50px;
+    margin-bottom: 20px;
  
     .btnpriedit{
         cursor: pointer;
@@ -522,9 +479,16 @@
 
 
 .dvusedit{
-    margin-top: 15px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    padding: 15px;
+    width: 75%;
     background-color: #e0ede9;
     border-radius: 5px;
+        p-inputGroup{
+            margin-top: 25px;
+        }
+   
 }
 .tituseredit{
     margin-top: 15px;

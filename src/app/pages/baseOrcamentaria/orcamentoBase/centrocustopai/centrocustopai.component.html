@@ -179,10 +179,6 @@
             </ng-template>    
             <ng-template pTemplate="header">
                 <tr>
-                    
-                    <th style="width:25%" type="text" field="id" display="menu">
-                        id
-                    </th>
                     <th style="width:25%" type="text" field="nome" display="menu">
                         Nome
                     </th>
@@ -207,13 +203,12 @@
             </ng-template>
             <ng-template pTemplate="body" let-centroCustoPai>
                 <tr>                      
-                    <td>{{ centroCustoPai.id }}</td>
                     <td>{{ centroCustoPai.nome }}</td>
-                    <td>{{ getNomeEmpresa(centroCustoPai.empresa) }}</td>
-                    <td>{{ getNomeFilial(centroCustoPai.filial) }}</td>
-                    <td>{{ getNomeArea(centroCustoPai.area) }}</td>
-                    <td>{{ getNomeSetor(centroCustoPai.setor) }}</td>
-                    <td>{{ getNomeAmbiente(centroCustoPai.ambiente) }}</td>
+                    <td>{{ centroCustoPai.empresa.nome }}</td>
+                    <td>{{ centroCustoPai.filial.nome }}</td>
+                    <td>{{ centroCustoPai.area.nome }}</td>
+                    <td>{{ centroCustoPai.setor.nome }}</td>
+                    <td>{{ centroCustoPai.ambiente.nome }}</td>
                     <td class="td-acao">
                         <div class="btnsec" (click)="abirModalEdicao(centroCustoPai)">
                             <p>Editar</p>
@@ -276,6 +271,7 @@
                                         [style]="{'width':'100%'}"
                                         [options]="empresas" 
                                         formControlName="empresa"
+                                        optionValue="id"
                                         optionLabel="nome"
                                         placeholder="Selecione a Empresa"
                                         (onChange)="onEmpresaSelecionada($event.value)"
@@ -289,6 +285,7 @@
                                         [style]="{'width':'100%'}"
                                         [options]="filiais" 
                                         formControlName="filial"
+                                        optionValue="id"
                                         optionLabel="nome"
                                         placeholder="Selecione a Filial"
                                         [disabled]="true"
@@ -306,6 +303,7 @@
                                         [style]="{'width':'100%'}"
                                         [options]="areas" 
                                         formControlName="area"
+                                        optionValue="id"
                                         optionLabel="nome"
                                         placeholder="Selecione a Area"
                                         [disabled]="true"
@@ -320,6 +318,7 @@
                                         [style]="{'width':'100%'}"
                                         [options]="setores" 
                                         formControlName="ambiente"
+                                        optionValue="id"
                                         optionLabel="nome"
                                         placeholder="Selecione o Ambiente"
                                         [disabled]="true"
@@ -334,6 +333,7 @@
                                         [style]="{'width':'100%'}"
                                         [options]="ambientes" 
                                         formControlName="setor"
+                                        optionValue="id"
                                         optionLabel="nome"
                                         placeholder="Selecione o Setor"
                                         [disabled]="true"

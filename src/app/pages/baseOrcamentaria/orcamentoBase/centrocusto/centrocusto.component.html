@@ -172,7 +172,7 @@
                     <td>{{ centroCusto.codigo}}</td>
                     <td>{{ centroCusto.nome }}</td>
                     <td>{{ getNomeCcPai(centroCusto.cc_pai) }}</td>
-                    <td>{{ getNomeGestor(centroCusto.gestor) }}</td>
+                    <td>{{ centroCusto.gestor_detalhes.nome }}</td>
                     <td class="td-acao">
                         <div class="btnsec" (click)="abrirModalEdicao(centroCusto)">
                             <p>Editar</p>
@@ -249,17 +249,20 @@
                         </div>
                         <div class="coluna">
                             <div class="raiz">
-                                <p-dropdown
-                                    id="ccPai" 
-                                    [style]="{'width':'100%'}"
-                                    [options]="ccsPai" 
-                                    formControlName="ccPai"
-                                    optionLabel="nome"
-                                    placeholder="Selecione o Centro de Custo Pai"
-                                    [disabled]="true"
-                                >
-                                </p-dropdown>
-                                
+                                <p-floatLabel> 
+                                    <p-dropdown
+                                        id="ccPai" 
+                                        [style]="{'width':'100%'}"
+                                        [options]="ccsPai" 
+                                        formControlName="ccPai"
+                                        optionValue="id"
+                                        optionLabel="nome"
+                                        
+                                        inputId="float-label" 
+                                    >
+                                    </p-dropdown>
+                                    <label for="float-label" style="margin-left: 15px;">Selecione o CC Pai</label>
+                                </p-floatLabel>
                             </div>
                             <div class="raiz">
                                 <p-dropdown

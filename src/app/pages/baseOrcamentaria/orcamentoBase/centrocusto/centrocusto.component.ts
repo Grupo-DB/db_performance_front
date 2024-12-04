@@ -18,6 +18,8 @@ import { RaizAnaliticaService } from '../../../../services/baseOrcamentariaServi
 import { CentrocustoService } from '../../../../services/baseOrcamentariaServices/orcamento/CentroCusto/centrocusto.service';
 import { CentroCustoPai } from '../centrocustopai/centrocustopai.component';
 import { CentrocustopaiService } from '../../../../services/baseOrcamentariaServices/orcamento/CentroCustoPai/centrocustopai.service';
+import { Colaborador } from '../../../avaliacoes/colaborador/colaborador.component';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 interface RegisterCentroCustoForm{
   codigo: FormControl;
@@ -29,7 +31,7 @@ export interface CentroCusto{
   id: number;
   codigo: string;
   nome: string;
-  ccPai: any;
+  cc_pai: any;
   gestor: any
 }
 
@@ -39,7 +41,7 @@ export interface CentroCusto{
   imports: [
     CommonModule,RouterLink,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
     DropdownModule,FormsModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,
-    ConfirmDialogModule,ToastModule
+    ConfirmDialogModule,ToastModule,FloatLabelModule
   ],
   providers: [
     MessageService,ConfirmationService
@@ -80,14 +82,15 @@ export class CentrocustoComponent implements OnInit{
       id: [''],
       codigo:[''],
       nome:[''],
-      ccPai:[''],
+      cc_pai:[''],
       gestor:[''],
     })
   }
   ngOnInit(): void {
     this.raizAnaliticaService.getGestores().subscribe(
       gestores => {
-        this.gestores = gestores
+        this.gestores = gestores;
+        this.mapGestores();
       },
       error =>{
         console.error('Não carregou:',error)
@@ -105,6 +108,10 @@ export class CentrocustoComponent implements OnInit{
     this.centroCustoService.getCentroCusto().subscribe(
       centrosCusto => {
         this.centrosCusto = centrosCusto
+        
+      },
+      error => {
+        console.error('Não carregou:',error)
       }
     )
   }
@@ -119,14 +126,35 @@ export class CentrocustoComponent implements OnInit{
     this.loading = false;
   }
 
+  mapGestores() {
+    this.centrosCusto.forEach(centroCusto => {
+      // Verifica se o gestor existe e se o id do gestor bate com o id do centroCusto
+      const gestor = this.gestores?.find((gestor_detalhes: { id: any; }) => gestor_detalhes.id === centroCusto.gestor_detalhes);
+  
+      // Se o gestor for encontrado, associamos o nome ao centroCusto
+      if (gestor) {
+        centroCusto.gestorNome = gestor.gestor_detalhes ? gestor.gestor_detalhes.nome : 'Nome não encontrado';
+      } else {
+        centroCusto.gestorNome = 'Gestor não encontrado';
+      }
+    });
+  
+    this.loading = false;
+  }
+
   getNomeCcPai(id: number): string{
     const ccPai = this.ccsPai?.find((ccPai: {id: number}) => ccPai.id === id);
     return ccPai ? ccPai.nome : 'CC Pai não encontrado'
   }
 
-  getNomeGestor(id: number): string{
-    const gestor = this.gestores?.find((gestor: {id: number;}) => gestor.id === id);
-    return gestor ? gestor.nome: 'Gestor não encontrado'
+  getNomeGestor(gestor: any): string {
+    // Verifica se o campo 'gestor_detalhes' está presente e tem o nome
+    if (gestor && gestor.gestor_detalhes && gestor.gestor_detalhes.nome) {
+      return gestor.gestor_detalhes.nome; // Retorna o nome do gestor
+    }
+  
+    // Caso o campo 'gestor_detalhes' ou 'nome' não existam ou sejam nulos
+    return 'Gestor não encontrado ou estrutura inválida';
   }
 
   clear(table: Table) {
@@ -152,7 +180,7 @@ export class CentrocustoComponent implements OnInit{
       id: centroCusto.id,
       codigo: centroCusto.codigo,
       nome: centroCusto.nome,
-      cc_pai: centroCusto.ccPai,
+      cc_pai: centroCusto.cc_pai,
       gestor: centroCusto.gestor
     })
   }
@@ -160,11 +188,11 @@ export class CentrocustoComponent implements OnInit{
   saveEdit(){
     const centroCustoId = this.editForm.value.id;
     const gestorId = this.editForm.value.gestor.id;
-    const ccPaiId = this.editForm.value.ccPai.id;
+    const ccPaiId = this.editForm.value.cc_pai.id;
     const dadosAtualizados: Partial<CentroCusto> = {
       codigo: this.editForm.value.codigo,
       nome: this.editForm.value.nome,
-      ccPai: ccPaiId,
+      cc_pai: ccPaiId,
       gestor: gestorId
     };
     this.centroCustoService.editCentroCusto(centroCustoId, dadosAtualizados).subscribe({
