@@ -25,6 +25,7 @@ import { Empresa } from '../../../avaliacoes/registercompany/registercompany.com
 import { Ambiente } from '../../../avaliacoes/ambiente/ambiente.component';
 import { Area } from '../../../avaliacoes/area/area.component';
 import { Setor } from '../../../avaliacoes/setor/setor.component';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 interface RegisterCentroCustoPaiForm {
   nome: FormControl,
@@ -42,6 +43,11 @@ export interface CentroCustoPai {
   area: any,
   ambiente: any,
   setor: any,
+  empresa_detalhes: any,
+  filial_detalhes: any,
+  area_detalhes: any,
+  ambiente_detalhes: any,
+  setor_detalhes: any,
 }
 
 @Component({
@@ -50,7 +56,7 @@ export interface CentroCustoPai {
   imports: [
     CommonModule,RouterLink,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
     DropdownModule,FormsModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,
-    ConfirmDialogModule,ToastModule
+    ConfirmDialogModule,ToastModule, FloatLabelModule
   ],
   providers: [
     MessageService,ConfirmationService
@@ -361,21 +367,21 @@ export class CentrocustopaiComponent implements OnInit {
     this.editForm.patchValue({
       id: centroCustoPai.id,
       nome: centroCustoPai.nome,
-      empresa: centroCustoPai.empresa,
-      filial: centroCustoPai.filial,
-      area: centroCustoPai.area,
-      ambiente: centroCustoPai.ambiente,
-      setor: centroCustoPai.setor
+      empresa: centroCustoPai.empresa_detalhes.id,
+      filial: centroCustoPai.filial_detalhes.id,
+      area: centroCustoPai.area_detalhes.id,
+      ambiente: centroCustoPai.ambiente_detalhes.id,
+      setor: centroCustoPai.setor_detalhes.id
     })
   }
 
   saveEdit(){
     const centroCustoPaiId = this.editForm.value.id;
-    const empresaId = this.editForm.value.empresa.id;
-    const filialId = this.editForm.value.filial.id;
-    const areaId = this.editForm.value.area.id;
-    const ambienteId = this.editForm.value.ambiente.id;
-    const setorId = this.editForm.value.setor.id;
+    const empresaId = this.editForm.value.empresa;
+    const filialId = this.editForm.value.filial;
+    const areaId = this.editForm.value.area;
+    const ambienteId = this.editForm.value.ambiente;
+    const setorId = this.editForm.value.setor;
     const dadosAtualizados: Partial<CentroCustoPai> = {
       nome: this.editForm.value.nome,
       empresa: empresaId,

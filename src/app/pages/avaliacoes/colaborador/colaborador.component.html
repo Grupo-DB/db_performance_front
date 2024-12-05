@@ -453,12 +453,12 @@
                 <ng-template pTemplate="body" let-colaborador>
                     <tr>
                         <td>{{ colaborador.nome }}</td>
-                        <td>{{ getNomeEmpresa(colaborador.empresa) }}</td>
-                        <td>{{ getNomeFilial(colaborador.filial) }}</td>
-                        <td>{{ getNomeArea(colaborador.area) }}</td>
-                        <td>{{ getNomeSetor(colaborador.setor) }}</td>
-                        <td>{{ getNomeAmbiente(colaborador.ambiente) }}</td>
-                        <td>{{ getNomeCargo(colaborador.cargo) }}</td>
+                        <td>{{ colaborador.empresa_detalhes.nome }}</td>
+                        <td>{{ colaborador.filial_detalhes.nome }}</td>
+                        <td>{{ colaborador.area_detalhes.nome }}</td>
+                        <td>{{ colaborador.setor_detalhes.nome }}</td>
+                        <td>{{ colaborador.ambiente_detalhes.nome }}</td>
+                        <td>{{ colaborador.cargo_detalhes.nome }}</td>
                         <td>{{ colaborador.situacao | booleanToStatus }}</td>
                         <td><img [src]="colaborador.image"  width="80" class="shadow-4" /></td>
                         <td class="td-acao">

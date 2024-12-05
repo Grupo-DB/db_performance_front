@@ -93,6 +93,8 @@
                             optionLabel="nome"
                             placeholder="Selecione o Centro de Custo Pai"
                             [disabled]="true"
+                            [filter]="true" 
+                            filterBy="nome"
                         >
                         </p-dropdown>
                         
@@ -106,7 +108,8 @@
                                 optionLabel="nome"
                                 placeholder="Selecione o Gestor"
                                 [disabled]="true"
-                                
+                                [filter]="true" 
+                                filterBy="nome"
                             >
                             </p-dropdown>
                     </div>
@@ -208,7 +211,7 @@
             <div class="formWrap">
                 <form 
                     [formGroup]="editForm"
-                    title="Editar Centro de Custo Pai"      
+                    title="Editar Centro de Custo"      
                 >
                     <div class="form">
                         <div class="coluna">
@@ -254,14 +257,15 @@
                                         id="ccPai" 
                                         [style]="{'width':'100%'}"
                                         [options]="ccsPai" 
-                                        formControlName="ccPai"
+                                        formControlName="cc_pai"
                                         optionValue="id"
                                         optionLabel="nome"
-                                        
+                                        [filter]="true" 
+                                        filterBy="nome"
                                         inputId="float-label" 
                                     >
                                     </p-dropdown>
-                                    <label for="float-label" style="margin-left: 15px;">Selecione o CC Pai</label>
+                                    <label for="float-label">Selecione o CC Pai</label>
                                 </p-floatLabel>
                             </div>
                             <div class="raiz">
@@ -270,10 +274,11 @@
                                         [style]="{'width':'100%'}"
                                         [options]="gestores" 
                                         formControlName="gestor"
+                                        optionValue="id"
                                         optionLabel="nome"
                                         placeholder="Selecione o Gestor"
-                                        [disabled]="true"
-                                        
+                                        [filter]="true" 
+                                        filterBy="nome"
                                     >
                                     </p-dropdown>
                             </div>

@@ -66,75 +66,96 @@
                         </p-inputGroup>
                     </div>
                     <div class="raiz">
-                        <p-dropdown
-                            id="empresa" 
-                            [style]="{'width':'100%'}"
-                            [options]="empresas" 
-                            formControlName="empresa"
-                            optionLabel="nome"
-                            placeholder="Selecione a Empresa"
-                            (onChange)="onEmpresaSelecionada($event.value)"
-                        >
-                        </p-dropdown>
-                        
+                        <p-floatLabel>
+                            <p-dropdown
+                                id="empresa"
+                                inputId="float-label" 
+                                [style]="{'width':'100%'}"
+                                [options]="empresas" 
+                                formControlName="empresa"
+                                optionLabel="nome"
+                                (onChange)="onEmpresaSelecionada($event.value)"
+                                [filter]="true" 
+                                filterBy="nome"
+                            >
+                            </p-dropdown>
+                            <label for="float-label">Selecione a Empresa</label>
+                        </p-floatLabel>
                     </div>
                     <div class="raiz">
-                        <p-dropdown
-                            id="filial"
-                            [style]="{'width':'100%'}"
-                            [options]="filiais" 
-                            formControlName="filial"
-                            optionLabel="nome"
-                            placeholder="Selecione a Filial"
-                            [disabled]="true"
-                            (onChange)="onFilialSelecionada($event.value)"
-                        >
-                        </p-dropdown>
-                        
+                        <p-floatLabel>
+                            <p-dropdown
+                                id="filial"
+                                [style]="{'width':'100%'}"
+                                inputId="float-label" 
+                                [options]="filiais" 
+                                formControlName="filial"
+                                optionLabel="nome"
+                                [disabled]="true"
+                                (onChange)="onFilialSelecionada($event.value)"
+                                [filter]="true" 
+                                filterBy="nome"
+                            >
+                            </p-dropdown>
+                            <label for="float-label">Selecione a Filial</label>
+                        </p-floatLabel>
                     </div>
                 </div>
 
                 <div class="coluna">
                     <div class="raiz">
-                        <p-dropdown
-                            id="area" 
-                            [style]="{'width':'100%'}"
-                            [options]="areas" 
-                            formControlName="area"
-                            optionLabel="nome"
-                            placeholder="Selecione a Area"
-                            [disabled]="true"
-                            (onChange)="onAreaSelecionada($event.value)"
-                        >
-                        </p-dropdown>
-                        
+                        <p-floatLabel>
+                            <p-dropdown
+                                id="area" 
+                                inputId="float-label" 
+                                [style]="{'width':'100%'}"
+                                [options]="areas" 
+                                formControlName="area"
+                                optionLabel="nome"
+                                [disabled]="true"
+                                (onChange)="onAreaSelecionada($event.value)"
+                                [filter]="true" 
+                                filterBy="nome"
+                                >
+                            </p-dropdown>
+                            <label for="float-label">Selecione a Area</label>
+                        </p-floatLabel>
                     </div>
                     <div class="raiz">
-                        <p-dropdown
-                            id="setor" 
-                            [style]="{'width':'100%'}"
-                            [options]="setores" 
-                            formControlName="setor"
-                            optionLabel="nome"
-                            placeholder="Selecione o Ambiente"
-                            [disabled]="true"
-                            (onChange)="onSetorSelecionado($event.value)"
-                        >
-                        </p-dropdown>
-                        
+                        <p-floatLabel>
+                            <p-dropdown
+                                id="setor" 
+                                inputId="float-label" 
+                                [style]="{'width':'100%'}"
+                                [options]="setores" 
+                                formControlName="setor"
+                                optionLabel="nome"
+                                [disabled]="true"
+                                (onChange)="onSetorSelecionado($event.value)"
+                                [filter]="true" 
+                                filterBy="nome"
+                            >
+                            </p-dropdown>
+                            <label for="float-label">Selecione o Ambiente</label>
+                        </p-floatLabel>
                     </div>
                     <div class="raiz">
-                        <p-dropdown
-                            id="ambiente" 
-                            [style]="{'width':'100%'}"
-                            [options]="ambientes" 
-                            formControlName="ambiente"
-                            optionLabel="nome"
-                            placeholder="Selecione o Setor"
-                            [disabled]="true"
-                        >
-                        </p-dropdown>
-                        
+                        <p-floatLabel>
+                            <p-dropdown
+                                id="ambiente"
+                                inputId="float-label"  
+                                [style]="{'width':'100%'}"
+                                [options]="ambientes" 
+                                formControlName="ambiente"
+                                optionLabel="nome"
+                                placeholder="Selecione o Setor"
+                                [disabled]="true"
+                                [filter]="true" 
+                                filterBy="nome"
+                            >
+                            </p-dropdown>
+                            <label for="float-label">Selecione o Setor</label>
+                        </p-floatLabel>
                     </div>      
                 </div>
 
@@ -204,11 +225,11 @@
             <ng-template pTemplate="body" let-centroCustoPai>
                 <tr>                      
                     <td>{{ centroCustoPai.nome }}</td>
-                    <td>{{ centroCustoPai.empresa.nome }}</td>
-                    <td>{{ centroCustoPai.filial.nome }}</td>
-                    <td>{{ centroCustoPai.area.nome }}</td>
-                    <td>{{ centroCustoPai.setor.nome }}</td>
-                    <td>{{ centroCustoPai.ambiente.nome }}</td>
+                    <td>{{ centroCustoPai.empresa_detalhes.nome }}</td>
+                    <td>{{ centroCustoPai.filial_detalhes.nome }}</td>
+                    <td>{{ centroCustoPai.area_detalhes.nome }}</td>
+                    <td>{{ centroCustoPai.setor_detalhes.nome }}</td>
+                    <td>{{ centroCustoPai.ambiente_detalhes.nome }}</td>
                     <td class="td-acao">
                         <div class="btnsec" (click)="abirModalEdicao(centroCustoPai)">
                             <p>Editar</p>
@@ -248,7 +269,7 @@
                         >
                         <div class="form">
                             <div class="coluna">
-                                <div class="raiz">
+                                <div class="raizEd">
                                     <p-inputGroup >
                                         <p-inputGroupAddon>
                                             <i class="pi pi-file-edit"></i>
@@ -265,81 +286,101 @@
                                         </span>          
                                     </p-inputGroup>
                                 </div>
-                                <div class="raiz">
-                                    <p-dropdown
-                                        id="empresa" 
-                                        [style]="{'width':'100%'}"
-                                        [options]="empresas" 
-                                        formControlName="empresa"
-                                        optionValue="id"
-                                        optionLabel="nome"
-                                        placeholder="Selecione a Empresa"
-                                        (onChange)="onEmpresaSelecionada($event.value)"
-                                    >
-                                    </p-dropdown>
-                                    
+                                <div class="raizEd">
+                                    <p-floatLabel>
+                                        <p-dropdown
+                                            id="empresa"
+                                            inputId="float-label" 
+                                            [style]="{'width':'100%'}"
+                                            [options]="empresas" 
+                                            formControlName="empresa"
+                                            optionValue="id"
+                                            optionLabel="nome"
+                                            (onChange)="onEmpresaSelecionada($event.value)"
+                                            [filter]="true" 
+                                            filterBy="nome"
+                                        >
+                                        </p-dropdown>
+                                        <label for="float-label">Selecione a Empresa</label>
+                                    </p-floatLabel>
                                 </div>
-                                <div class="raiz">
-                                    <p-dropdown
-                                        id="filial"
-                                        [style]="{'width':'100%'}"
-                                        [options]="filiais" 
-                                        formControlName="filial"
-                                        optionValue="id"
-                                        optionLabel="nome"
-                                        placeholder="Selecione a Filial"
-                                        [disabled]="true"
-                                        (onChange)="onFilialSelecionada($event.value)"
-                                    >
-                                    </p-dropdown>
-                                    
+                                <div class="raizEd">
+                                    <p-floatLabel>
+                                        <p-dropdown
+                                            id="filial"
+                                            inputId="float-label"
+                                            [style]="{'width':'100%'}"
+                                            [options]="filiais" 
+                                            formControlName="filial"
+                                            optionValue="id"
+                                            optionLabel="nome"
+                                            [disabled]="true"
+                                            (onChange)="onFilialSelecionada($event.value)"
+                                            [filter]="true" 
+                                            filterBy="nome"
+                                        >
+                                        </p-dropdown>
+                                        <label for="float-label">Selecione a Filial</label>
+                                    </p-floatLabel>
                                 </div>
                             </div>
             
                             <div class="coluna">
-                                <div class="raiz">
-                                    <p-dropdown
-                                        id="area" 
-                                        [style]="{'width':'100%'}"
-                                        [options]="areas" 
-                                        formControlName="area"
-                                        optionValue="id"
-                                        optionLabel="nome"
-                                        placeholder="Selecione a Area"
-                                        [disabled]="true"
-                                        (onChange)="onAreaSelecionada($event.value)"
-                                    >
-                                    </p-dropdown>
-                                    
+                                <div class="raizEd">
+                                    <p-floatLabel>
+                                        <p-dropdown
+                                            id="area"
+                                            inputId="float-label" 
+                                            [style]="{'width':'100%'}"
+                                            [options]="areas" 
+                                            formControlName="area"
+                                            optionValue="id"
+                                            optionLabel="nome"                                           placeholder="Selecione a Area"
+                                            [disabled]="true"
+                                            (onChange)="onAreaSelecionada($event.value)"
+                                            [filter]="true" 
+                                            filterBy="nome"
+                                        >
+                                        </p-dropdown>
+                                        <label for="float-label">Selecione a Area</label>
+                                    </p-floatLabel>
                                 </div>
-                                <div class="raiz">
-                                    <p-dropdown
-                                        id="ambiente" 
-                                        [style]="{'width':'100%'}"
-                                        [options]="setores" 
-                                        formControlName="ambiente"
-                                        optionValue="id"
-                                        optionLabel="nome"
-                                        placeholder="Selecione o Ambiente"
-                                        [disabled]="true"
-                                        (onChange)="onSetorSelecionado($event.value)"
-                                    >
-                                    </p-dropdown>
-                                    
+                                <div class="raizEd">
+                                    <p-floatLabel>
+                                        <p-dropdown
+                                            id="ambiente"
+                                            inputId="float-label" 
+                                            [style]="{'width':'100%'}"
+                                            [options]="setores" 
+                                            formControlName="ambiente"
+                                            optionValue="id"
+                                            optionLabel="nome"                                            placeholder="Selecione o Ambiente"
+                                            [disabled]="true"
+                                            (onChange)="onSetorSelecionado($event.value)"
+                                            [filter]="true" 
+                                            filterBy="nome"
+                                        >
+                                        </p-dropdown>
+                                        <label for="float-label">Selecione o Setor</label>
+                                    </p-floatLabel>
                                 </div>
-                                <div class="raiz">
-                                    <p-dropdown
-                                        id="setor" 
-                                        [style]="{'width':'100%'}"
-                                        [options]="ambientes" 
-                                        formControlName="setor"
-                                        optionValue="id"
-                                        optionLabel="nome"
-                                        placeholder="Selecione o Setor"
-                                        [disabled]="true"
-                                    >
-                                    </p-dropdown>
-                                    
+                                <div class="raizEd">
+                                    <p-floatLabel>
+                                        <p-dropdown
+                                            id="setor"
+                                            inputId="float-label" 
+                                            [style]="{'width':'100%'}"
+                                            [options]="ambientes" 
+                                            formControlName="setor"
+                                            optionValue="id"
+                                            optionLabel="nome"                                            placeholder="Selecione o Setor"
+                                            [disabled]="true"
+                                            [filter]="true" 
+                                            filterBy="nome"
+                                        >
+                                        </p-dropdown>
+                                        <label for="float-label">Selecione o Ambiente</label>
+                                    </p-floatLabel>
                                 </div>      
                             </div>
             

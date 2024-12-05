@@ -32,7 +32,8 @@ export interface CentroCusto{
   codigo: string;
   nome: string;
   cc_pai: any;
-  gestor: any
+  gestor: any;
+  gestor_detalhes: any;
 }
 
 @Component({
@@ -181,14 +182,14 @@ export class CentrocustoComponent implements OnInit{
       codigo: centroCusto.codigo,
       nome: centroCusto.nome,
       cc_pai: centroCusto.cc_pai,
-      gestor: centroCusto.gestor
+      gestor: centroCusto.gestor_detalhes.id
     })
   }
 
   saveEdit(){
     const centroCustoId = this.editForm.value.id;
-    const gestorId = this.editForm.value.gestor.id;
-    const ccPaiId = this.editForm.value.cc_pai.id;
+    const gestorId = this.editForm.value.gestor;
+    const ccPaiId = this.editForm.value.cc_pai;
     const dadosAtualizados: Partial<CentroCusto> = {
       codigo: this.editForm.value.codigo,
       nome: this.editForm.value.nome,

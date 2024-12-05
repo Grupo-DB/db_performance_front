@@ -86,6 +86,12 @@ export interface Colaborador{
   setor: Setor;
   ambiente: number;
   cargo: number;
+  empresa_detalhes: any,
+  filial_detalhes: any,
+  area_detalhes: any,
+  ambiente_detalhes: any,
+  setor_detalhes: any,
+  cargo_detalhes: any;
   tipocontrato: string;
   data_admissao: Date;
   situacao: boolean;
@@ -682,12 +688,12 @@ abrirModalEdicao(colaborador: Colaborador) {
   this.editForm.patchValue({  
     id: colaborador.id,
     nome: colaborador.nome,
-    empresa: colaborador.empresa,
-    filial: colaborador.filial,
-    area: colaborador.area,
-    setor: colaborador.setor,
-    ambiente: colaborador.ambiente,
-    cargo: colaborador.cargo,
+    empresa: colaborador.empresa_detalhes.id,
+    filial: colaborador.filial_detalhes.id,
+    area: colaborador.area_detalhes.id,
+    setor: colaborador.setor_detalhes.id,
+    ambiente: colaborador.ambiente_detalhes.id,
+    cargo: colaborador.cargo_detalhes.id,
     tipocontrato: colaborador.tipocontrato,
     data_admissao: dataAdmissao,
     situacao: colaborador.situacao,
@@ -746,12 +752,12 @@ formatarDatas(obj: any) {
 
 saveEdit(){
     const colaboradorId = this.editForm.value.id;
-    const empresaId = this.editForm.value.empresa.id;
-    const filialId = this.editForm.value.filial.id;
-    const areaId = this.editForm.value.area.id;
-    const setorId = this.editForm.value.setor.id;
-    const ambienteId = this.editForm.value.ambiente.id;
-    const cargoId = this.editForm.value.cargo.id;
+    const empresaId = this.editForm.value.empresa;
+    const filialId = this.editForm.value.filial;
+    const areaId = this.editForm.value.area;
+    const setorId = this.editForm.value.setor;
+    const ambienteId = this.editForm.value.ambiente;
+    const cargoId = this.editForm.value.cargo;
     const tipocontratoNome = this.editForm.value.tipocontrato.nome;
     const generoNome = this.editForm.value.genero.nome;
     const estado_civilNome = this.editForm.value.estado_civil.nome;

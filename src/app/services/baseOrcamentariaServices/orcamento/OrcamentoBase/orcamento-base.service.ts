@@ -8,7 +8,7 @@ import { OrcamentoBase } from '../../../../pages/baseOrcamentaria/orcamentoBase/
   providedIn: 'root'
 })
 export class OrcamentoBaseService {
-  private apiUrl = 'http://localhost:8000/orcamento/orcamentosbase/'
+  private apiUrl = 'http://172.50.10.79:8008/orcamento/orcamentosbase/'
   constructor(
     private httpClient: HttpClient,
     private router: Router,
@@ -85,7 +85,7 @@ export class OrcamentoBaseService {
     return this.httpClient.delete(url);
   }
   aplicarDissidio(porcentagem: number){
-    const dissidioUrl = 'http://localhost:8000/orcamento/aplicarDissidio/';
+    const dissidioUrl = 'http://172.50.10.79:8008/orcamento/aplicarDissidio/';
     return this.httpClient.post<any>(dissidioUrl, {porcentagem:porcentagem})
   }
 }
