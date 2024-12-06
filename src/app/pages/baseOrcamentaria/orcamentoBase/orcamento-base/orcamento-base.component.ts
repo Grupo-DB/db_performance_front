@@ -257,7 +257,7 @@ export class OrcamentoBaseComponent implements OnInit{
       ccsPai => {
         this.ccsPai = ccsPai.map(ccPai =>({
           ...ccPai,
-          label: `${ccPai.nome} - ${ccPai.filial.nome}`
+          label: `${ccPai.nome} - ${ccPai.filial_detalhes.nome}`
         }))
       },
       error => {
@@ -635,13 +635,28 @@ export class OrcamentoBaseComponent implements OnInit{
   }
 
   calcularDissidio(porcentagemDissidio: number){
-    this.orcamentoBaseService.aplicarDissidio(this.porcentagemDissidio).subscribe(
-      response =>{
-        console.log('Sucesso', response);
-      }, error =>{
-        console.error('Erro', error);
-      }
-    )
+    this.orcamentoBaseService.aplicarDissidio(this.porcentagemDissidio).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Porcentagem de dissídio aplicada com sucesso!' });
+        setTimeout(() => {
+        window.location.reload(); // Atualiza a página após a exclusão
+        }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+    }
+  });
   }
 
   visualizarOrcamentoBaseDetalhes(id: number) {

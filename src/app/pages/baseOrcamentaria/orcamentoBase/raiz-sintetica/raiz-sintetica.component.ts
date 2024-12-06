@@ -90,7 +90,7 @@ export class RaizSinteticaComponent implements OnInit{
       ccs => {
         this.ccs = ccs.map(cc => ({
           ...cc,
-          label: `${cc.codigo} - ${cc.nome}` // Cria o rótulo combinado
+          label: `${cc.codigo} - ${cc.nome} - ${cc.cc_pai_detalhes.filial_detalhes.nome}` // Cria o rótulo combinado
         }));
       },
       error => {
