@@ -362,16 +362,15 @@ export class NovaliacaoComponent implements OnInit, OnDestroy {
 
     switch (Math.ceil(mesAtual / 3)) {
       case 1:
-        trimestre = 'Quarto Trimestre';
-        break;
-      case 2:
         trimestre = 'Primeiro Trimestre';
         break;
+      case 2: 
+        break;
       case 3:
-        trimestre = 'Segundo Trimestre';
+        trimestre = 'Terceiro Trimestre';
         break;
       case 4:
-        trimestre = 'Terceiro Trimestre';
+        trimestre = 'Quarto Trimestre';
         break;
       default:
         trimestre = 'Indeterminado';

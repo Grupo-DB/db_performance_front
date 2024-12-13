@@ -45,6 +45,7 @@ import { RaizSinteticaComponent } from './pages/baseOrcamentaria/orcamentoBase/r
 import { ContaContabilComponent } from './pages/baseOrcamentaria/orcamentoBase/conta-contabil/conta-contabil.component';
 import { GrupoItensComponent } from './pages/baseOrcamentaria/orcamentoBase/grupo-itens/grupo-itens.component';
 import { OrcamentoBaseComponent } from './pages/baseOrcamentaria/orcamentoBase/orcamento-base/orcamento-base.component';
+import { RealizadoComponent } from './pages/baseOrcamentaria/orcamentoRealizado/realizado/realizado.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -93,7 +94,8 @@ export const routes: Routes = [
       { path: 'baseOrcamentaria/orcamentoBase/raizSintetica', component:RaizSinteticaComponent },
       { path: 'baseOrcamentaria/orcamentoBase/contaContabil', component:ContaContabilComponent },
       { path: 'baseOrcamentaria/orcamentoBase/grupoItens', component:GrupoItensComponent },
-      { path: 'baseOrcamentaria/orcamentoBase/orcamentoBase', component:OrcamentoBaseComponent }
+      { path: 'baseOrcamentaria/orcamentoBase/orcamentoBase', component:OrcamentoBaseComponent },
+      { path: 'baseOrcamentaria/orcamentoRealizado/realizado', component:RealizadoComponent }
     ],
   },
   

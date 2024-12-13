@@ -123,10 +123,6 @@
         </ng-template>    
         <ng-template pTemplate="header">
             <tr>
-                
-                <th style="width:25%" type="text" field="id" display="menu">
-                    id
-                </th>
                 <th style="width:25%" type="text" field="raiz_contabil" display="menu">
                     Raíz Contábil
                 </th>
@@ -141,7 +137,6 @@
         </ng-template>
         <ng-template pTemplate="body" let-raizAnalitica>
             <tr>                      
-                <td>{{ raizAnalitica.id }}</td>
                 <td>{{ raizAnalitica.raiz_contabil }}</td>
                 <td>{{ raizAnalitica.descricao }}</td>
                 <td>{{ getNomeGestor(raizAnalitica.gestor) }}</td>

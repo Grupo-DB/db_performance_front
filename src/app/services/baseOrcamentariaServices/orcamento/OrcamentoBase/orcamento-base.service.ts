@@ -8,7 +8,7 @@ import { OrcamentoBase } from '../../../../pages/baseOrcamentaria/orcamentoBase/
   providedIn: 'root'
 })
 export class OrcamentoBaseService {
-  private apiUrl = 'http://172.50.10.79:8008/orcamento/orcamentosbase/'
+  private apiUrl = 'http://localhost:8000/orcamento/orcamentosbase/'
   constructor(
     private httpClient: HttpClient,
     private router: Router,
@@ -76,6 +76,9 @@ export class OrcamentoBaseService {
   getOrcamentoBaseDetalhe(id: number): Observable<any>{
     return this.httpClient.get(`${this.apiUrl}${id}/`);
   }
+  getOrcamentoBaseByCcPai(id: any, ano: any): Observable<any>{
+    return this.httpClient.get<any>(`${this.apiUrl}byCcPai/?centro_de_custo_pai_id=${id}&ano=${ano}`)
+  }
   editOrcamentoBase(id: number, dadosAtualizados: Partial<OrcamentoBase>): Observable<any>{
     const url = `${this.apiUrl}${id}/`;
     return this.httpClient.patch(url, dadosAtualizados);
@@ -85,7 +88,7 @@ export class OrcamentoBaseService {
     return this.httpClient.delete(url);
   }
   aplicarDissidio(porcentagem: number){
-    const dissidioUrl = 'http://172.50.10.79:8008/orcamento/aplicarDissidio/';
+    const dissidioUrl = 'http://localhost:8000/orcamento/aplicarDissidio/';
     return this.httpClient.post<any>(dissidioUrl, {porcentagem:porcentagem})
   }
 }

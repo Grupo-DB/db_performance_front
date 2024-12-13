@@ -174,7 +174,7 @@
                 <tr>                      
                     <td>{{ centroCusto.codigo}}</td>
                     <td>{{ centroCusto.nome }}</td>
-                    <td>{{ getNomeCcPai(centroCusto.cc_pai) }}</td>
+                    <td>{{ centroCusto.cc_pai_detalhes.nome }}</td>
                     <td>{{ centroCusto.gestor_detalhes.nome }}</td>
                     <td class="td-acao">
                         <div class="btnsec" (click)="abrirModalEdicao(centroCusto)">
