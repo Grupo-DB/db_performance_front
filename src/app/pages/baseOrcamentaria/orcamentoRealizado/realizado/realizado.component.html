@@ -1,0 +1,428 @@
+<div class="titulo">
+    <p-divider align="left" type="solid">
+        <b>Orçamentos Realizados</b>
+    </p-divider>
+</div>
+
+<div class="container">
+    <div class="formWrap">
+        <div class="form">
+            <div class="row3">
+                <div class="coluna">
+                    <div class="raiz">
+                        <p-floatLabel> 
+                            <p-dropdown
+                                id="ccPai" 
+                                [style]="{'width':'100%'}"
+                                [options]="ccsPai" 
+                                [(ngModel)]="selectedCcPai"
+                                optionValue="id"
+                                optionLabel="nome"
+                                [filter]="true" 
+                                filterBy="nome"
+                                inputId="float-label" 
+                                (onChange)="onCcPaiSelecionado($event.value)"
+                            >
+                            </p-dropdown>
+                            <label for="float-label">Selecione o Centro de Curso Pai</label>
+                        </p-floatLabel>
+                    </div>
+                </div>
+                <div class="colunaAno">
+                    <div class="raizAno">
+                        <p><label style="margin-left: 20px;" class="mb-2 block font-bold" for="ano">
+                            Ano
+                        </label></p>
+                        <p-inputNumber 
+                            mode="decimal"
+                            [(ngModel)]="selectedAno"
+                            [showButtons]="true" 
+                            [min]="2024" 
+                            [max]="2999"
+                            [useGrouping]="false" 
+                            (ngModelChange)="onAnoInformado($event)"
+                        />
+                    </div>
+                </div>
+            
+            </div>
+            <div class="row3">
+                <div class="coluna">
+                    <div class="raizDetalhes">
+                        <div class="detalhe">
+                            Gestor:<br>
+                            Empresa:<br>
+                            Filial:<br>
+                            Área:<br>
+                            Ambiente:<br>
+                            Setor:<br>
+                        </div>
+                        <div class="detalhes">
+                            <strong>{{ gestor }}</strong><br>
+                            <strong>{{ empresa }}</strong><br>
+                            <strong>{{ filial }}</strong><br>
+                            <strong>{{ area }}</strong><br>
+                            <strong>{{ setor }}</strong><br>
+                            <strong>{{ ambiente }}</strong><br>
+                        </div>
+                    </div>
+                </div>
+                <div class="coluna">
+                    <p-meterGroup [value]="resultadosTotais" labelPosition="start">
+                        <ng-template pTemplate="label">
+                            <div class="flex flex-wrap gap-3">
+                                <ng-container *ngFor="let meterItem of resultadosTotais; let index = index">
+                                    <p-card class="flex-grow-1">
+                                        <div class="flex justify-content-between gap-2">
+                                            <div class="flex flex-column gap-2">
+                                                <span class="text-secondary text-lg" style="white-space: nowrap;">{{ meterItem.label }}</span>
+                                                <span class="font-bold text-lg">R$ {{ meterItem.value }}</span>
+                                            </div>
+                                            <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                <i style="font-size: 1rem" [class]="meterItem.icon"></i>
+                                            </span>
+                                        </div>
+                                    </p-card>
+                                </ng-container>
+                            </div>
+                        </ng-template>
+                    </p-meterGroup>
+                </div>    
+            </div>
+            
+            <div class="row4">
+                <div class="wrapInplace">
+                    <p-inplace
+                        closable="True"
+                    >
+                    <ng-template pTemplate="display">
+                        <div class="inline-flex align-items-start">
+                            <span class="ml-2"><i class="pi pi-plus-circle"></i> Detalhar Mensal</span>
+                        </div>
+                    </ng-template>
+                        <ng-template pTemplate="content">
+                            <div class="titulo">
+                                <p-divider align="left" type="solid">
+                                    <b>Detalhado por mês</b>
+                                </p-divider>
+                            </div>
+                            <p-meterGroup [value]="resultadosMensais" labelPosition="start">
+                                <ng-template pTemplate="label">
+                                    <div class="flex flex-wrap gap-3">
+                                        <ng-container *ngFor="let meterItem of resultadosMensais; let index = index">
+                                            <p-card class="flex-grow-1" >
+                                                <div class="flex justify-content-between gap-2">
+                                                    <div class="flex flex-column gap-3">
+                                                        <span class="text-secondary text-sm" style="white-space: nowrap;">{{ meterItem.label }}</span>
+                                                        <span class="font-bold text-sm"style="white-space: nowrap;">R$ {{ meterItem.value }}</span>
+                                                    </div>
+                                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                        <a (click)="modalDetalhes(meterItem)"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
+                                                    </span>
+                                                </div>
+                                            </p-card>
+                                        </ng-container>
+                                    </div>
+                                </ng-template>
+                            </p-meterGroup>    
+                        </ng-template>
+                    </p-inplace>
+                </div>           
+            </div>
+            
+            <div class="row4">
+                <div class="wrapInplace">
+                    <p-inplace
+                        closable="True"
+                    >
+                    <ng-template pTemplate="display">
+                        <div class="inline-flex align-items-start">
+                            <span class="ml-2"><i class="pi pi-plus-circle"></i> Detalhar Contas Mensais</span>
+                        </div>
+                    </ng-template>
+                        <ng-template pTemplate="content">
+                            <div class="titulo">
+                                <p-divider align="left" type="solid">
+                                    <b>Detalhado por mês</b>
+                                </p-divider>
+                            </div>
+                            <p-meterGroup [value]="contasMensais" labelPosition="start">
+                                <ng-template pTemplate="label">
+                                    <div class="flex flex-wrap gap-3">
+                                        <ng-container *ngFor="let meterItem of contasMensais; let index = index">
+                                            <p-card class="flex-grow-1" >
+                                                <div class="flex justify-content-between gap-2">
+                                                    <div class="flex flex-column gap-3">
+                                                        <span class="text-secondary text-sm" style="white-space: nowrap;">{{ meterItem.label }}</span>
+                                                        <span class="font-bold text-sm"style="white-space: nowrap;">R$ {{ meterItem.value }}</span>
+                                                    </div>
+                                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                        <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                    </span>
+                                                </div>
+                                            </p-card>
+                                        </ng-container>
+                                    </div>
+                                </ng-template>
+                            </p-meterGroup>    
+                        </ng-template>
+                    </p-inplace>
+                </div>           
+            </div>
+            
+            <div class="row4">
+                <div class="wrapInplace">
+                    <p-inplace
+                        closable="True"
+                    >
+                    <ng-template pTemplate="display">
+                        <div class="inline-flex align-items-start">
+                            <span class="ml-2"><i class="pi pi-plus-circle"></i> Detalhar Contas Anuais</span>
+                        </div>
+                    </ng-template>
+                        <ng-template pTemplate="content">
+                            <div class="titulo">
+                                <p-divider align="left" type="solid">
+                                    <b>Detalhado por Ano</b>
+                                </p-divider>
+                            </div>
+                            <p-meterGroup [value]="contasAnuais" labelPosition="start">
+                                <ng-template pTemplate="label">
+                                    <div class="flex flex-wrap gap-3">
+                                        <ng-container *ngFor="let meterItem of contasAnuais; let index = index">
+                                            <p-card class="flex-grow-1" >
+                                                <div class="flex justify-content-between gap-2">
+                                                    <div class="flex flex-column gap-3">
+                                                        <span class="text-secondary text-sm" style="white-space: nowrap;">{{ meterItem.label }}</span>
+                                                        <span class="font-bold text-sm"style="white-space: nowrap;">R$ {{ meterItem.value }}</span>
+                                                    </div>
+                                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                        <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                    </span>
+                                                </div>
+                                            </p-card>
+                                        </ng-container>
+                                    </div>
+                                </ng-template>
+                            </p-meterGroup>    
+                        </ng-template>
+                    </p-inplace>
+                </div>           
+            </div>
+            
+            
+            <div class="row4">
+                <div class="wrapInplace">
+                    <p-inplace
+                        closable="True"
+                    >
+                    <ng-template pTemplate="display">
+                        <div class="inline-flex align-items-start">
+                            <span class="ml-2"><i class="pi pi-plus-circle"></i> Detalhar por Tipos Mensal</span>
+                        </div>
+                    </ng-template>
+                        <ng-template pTemplate="content">
+                            <div class="titulo">
+                                <p-divider align="left" type="solid">
+                                    <b>Detalhado por Mês</b>
+                                </p-divider>
+                            </div>
+                            <p-meterGroup [value]="tiposMensais" labelPosition="start">
+                                <ng-template pTemplate="label">
+                                    <div class="flex flex-wrap gap-3">
+                                        <ng-container *ngFor="let meterItem of tiposMensais; let index = index">
+                                            <p-card class="flex-grow-1" >
+                                                <div class="flex justify-content-between gap-2">
+                                                    <div class="flex flex-column gap-3">
+                                                        <span class="text-secondary text-sm" style="white-space: nowrap;">{{ meterItem.label }}</span>
+                                                        <span class="font-bold text-sm"style="white-space: nowrap;">R$ {{ meterItem.value }}</span>
+                                                    </div>
+                                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                        <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                    </span>
+                                                </div>
+                                            </p-card>
+                                        </ng-container>
+                                    </div>
+                                </ng-template>
+                            </p-meterGroup>    
+                        </ng-template>
+                    </p-inplace>
+                </div>           
+            </div>
+            
+            <div class="row4">
+                <div class="wrapInplace">
+                    <p-inplace
+                        closable="True"
+                    >
+                    <ng-template pTemplate="display">
+                        <div class="inline-flex align-items-start">
+                            <span class="ml-2"><i class="pi pi-plus-circle"></i> Detalhar por Tipos Anual</span>
+                        </div>
+                    </ng-template>
+                        <ng-template pTemplate="content">
+                            <div class="titulo">
+                                <p-divider align="left" type="solid">
+                                    <b>Detalhado por Ano</b>
+                                </p-divider>
+                            </div>
+                            <p-meterGroup [value]="tiposAnuais" labelPosition="start">
+                                <ng-template pTemplate="label">
+                                    <div class="flex flex-wrap gap-3">
+                                        <ng-container *ngFor="let meterItem of tiposAnuais; let index = index">
+                                            <p-card class="flex-grow-1" >
+                                                <div class="flex justify-content-between gap-2">
+                                                    <div class="flex flex-column gap-3">
+                                                        <span class="text-secondary text-sm" style="white-space: nowrap;">{{ meterItem.label }}</span>
+                                                        <span class="font-bold text-sm"style="white-space: nowrap;">R$ {{ meterItem.value }}</span>
+                                                    </div>
+                                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                        <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                    </span>
+                                                </div>
+                                            </p-card>
+                                        </ng-container>
+                                    </div>
+                                </ng-template>
+                            </p-meterGroup>    
+                        </ng-template>
+                    </p-inplace>
+                </div>           
+            </div> 
+
+            <div class="row4">
+                <div class="wrapInplace">
+                    <p-inplace
+                        closable="True"
+                    >
+                    <ng-template pTemplate="display">
+                        <div class="inline-flex align-items-start">
+                            <span class="ml-2"><i class="pi pi-plus-circle"></i> Detalhar por Raiz Mensal</span>
+                        </div>
+                    </ng-template>
+                        <ng-template pTemplate="content">
+                            <div class="titulo">
+                                <p-divider align="left" type="solid">
+                                    <b>Detalhado por Mês</b>
+                                </p-divider>
+                            </div>
+                            <p-meterGroup [value]="raizMensais" labelPosition="start">
+                                <ng-template pTemplate="label">
+                                    <div class="flex flex-wrap gap-3">
+                                        <ng-container *ngFor="let meterItem of raizMensais; let index = index">
+                                            <p-card class="flex-grow-1" >
+                                                <div class="flex justify-content-between gap-2">
+                                                    <div class="flex flex-column gap-3">
+                                                        <span class="text-secondary text-sm" style="white-space: nowrap;">{{ meterItem.label }}</span>
+                                                        <span class="font-bold text-sm"style="white-space: nowrap;">R$ {{ meterItem.value }}</span>
+                                                    </div>
+                                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                        <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                    </span>
+                                                </div>
+                                            </p-card>
+                                        </ng-container>
+                                    </div>
+                                </ng-template>
+                            </p-meterGroup>    
+                        </ng-template>
+                    </p-inplace>
+                </div>           
+            </div>
+
+            <div class="row4">
+                <div class="wrapInplaceFim">
+                    <p-inplace
+                        closable="True"
+                    >
+                    <ng-template pTemplate="display">
+                        <div class="inline-flex align-items-start">
+                            <span class="ml-2"><i class="pi pi-plus-circle"></i> Detalhar por Raiz Anual</span>
+                        </div>
+                    </ng-template>
+                        <ng-template pTemplate="content">
+                            <div class="titulo">
+                                <p-divider align="left" type="solid">
+                                    <b>Detalhado por Ano</b>
+                                </p-divider>
+                            </div>
+                            <p-meterGroup [value]="raizAnuais" labelPosition="start">
+                                <ng-template pTemplate="label">
+                                    <div class="flex flex-wrap gap-3">
+                                        <ng-container *ngFor="let meterItem of raizAnuais; let index = index">
+                                            <p-card class="flex-grow-1" >
+                                                <div class="flex justify-content-between gap-2">
+                                                    <div class="flex flex-column gap-3">
+                                                        <span class="text-secondary text-sm" style="white-space: nowrap;">{{ meterItem.label }}</span>
+                                                        <span class="font-bold text-sm"style="white-space: nowrap;">R$ {{ meterItem.value }}</span>
+                                                    </div>
+                                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                        <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                    </span>
+                                                </div>
+                                            </p-card>
+                                        </ng-container>
+                                    </div>
+                                </ng-template>
+                            </p-meterGroup>    
+                        </ng-template>
+                    </p-inplace>
+                </div>           
+            </div> 
+
+
+        </div>
+    </div>
+</div>
+
+<div class="row3">
+    <div class="raiz">
+        <p-floatLabel> 
+            <p-dropdown
+                id="ccPai" 
+                [style]="{'width':'100%'}"
+                [options]="centrosCusto" 
+                
+                optionValue="id"
+                optionLabel="nome"
+                [filter]="true" 
+                filterBy="nome"
+                inputId="float-label" 
+                
+            >
+            </p-dropdown>
+            <label for="float-label">Selecione o Centro de Curso Pai</label>
+        </p-floatLabel>
+    </div>
+</div>
+
+
+<p-sidebar [(visible)]="modalVisible" position="right" [style]="{ width: '700px' }">
+    <div *ngIf="detalhesMensais && detalhesMensais.length">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Mês</th>
+                    <th>Tipo</th>
+                    <th>Grupo Contábil</th>
+                    <th>Valor</th>
+                    <th>Valor Real</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let detalhe of detalhesMensais">
+                    <td style="margin: 35px;">{{ detalhe.mes_especifico }} </td>
+                    <td style="margin-right: 335px;">{{ detalhe.tipo_custo}} </td>
+                    <td style="margin: 35px;">{{ detalhe.raiz_contabil_grupo_desc }} </td>
+                    <td style="margin: 35px;">R$ {{ detalhe.valor | number: '1.2-2' }} </td>
+                    <td style="margin: 35px;">R$ {{ detalhe.valor_real | number: '1.2-2' }} </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+
+</p-sidebar>
+
+

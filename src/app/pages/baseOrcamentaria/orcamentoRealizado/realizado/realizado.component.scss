@@ -1,0 +1,213 @@
+@import "primeicons/primeicons.css";
+.container{
+    max-width: 100%;
+}
+.titulo{
+    margin-top: 4%;
+}
+.formWrap{
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+
+    .form{
+        margin-top: 2%;
+        height: 50%;
+        width: 95%;
+        //display: flex;
+        margin-left: auto;
+        margin-right: auto;
+        
+        
+            .coluna{
+                display: flex;
+                flex-direction: column;
+                width: 50%;
+                justify-content: center;
+                
+                .raiz{
+                    width: 99%;
+                    margin-top: 5%;
+                
+                }
+            }
+            
+    }
+} 
+.row{
+    background-color: aqua;
+    display: flex;
+    width: 100%;
+}  
+.row2{
+    background-color: chartreuse;
+    width: 100%;
+} 
+.row3{
+    //background-color: rgb(104, 117, 90);
+    width: 100%;
+    display: flex;
+    margin-top: 1%;
+}
+.row4{
+    //background-color: rgb(104, 117, 90);
+    width: 90%;
+    display: flex;
+    margin-top: 1%;
+}      
+.botoes-form{
+    display: flex;
+    width: 75%;
+    margin-top: 4%;
+    margin-left: auto;
+    margin-right: auto; 
+    margin-bottom: 2%;
+    justify-content: center;
+}
+.btnpri{
+    cursor: pointer;
+    background-color: #444959;
+    color: #fff;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    margin-left: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}   
+.btnsec{
+    cursor: pointer;
+    background-color: #e3e3f3;
+    color: #444959;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}
+.tabela{
+    border-radius: 10px;
+    width: 100%;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    th{
+        font-size: 14px;
+    }
+    td{
+        font-size:12px ;
+    }
+}
+.flex{
+    
+    text-align: end;
+    button{
+        margin-left: 1%;
+    }
+    span{
+        margin-left: 10%;
+    }
+}
+
+.tabela{
+    border-radius: 10px;
+    margin: auto;
+    margin-top: 10%;
+    width: 99%;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+.td-acao{
+    display: flex;
+    button{
+        margin-left: 2px;
+    }
+}
+.raizDetalhes{
+    display: flex;
+    height: 50%;
+    margin-bottom: 4%;
+    //margin-top: 5%;
+    .detalhes{
+        margin-left: 2%;
+        margin-right: 2%;
+        
+       
+    }   
+}
+.raizDetalhesDir{
+    display: flex;
+    height: 50%;
+    .detalhes{
+        margin-right: 2%;
+        margin-left: 2%;
+    }   
+}
+.raizSinteticaDetalhes{
+    display: flex;
+    //height: 50%;
+    //margin-top: -20%;
+    //background-color: #444959;
+    .detalhes{
+        margin-right: 2%;
+        margin-left: 2%;
+    }   
+}
+.raizDetalhesCc{
+    display: flex;
+    margin-top: 2%;
+    .detalhes{
+        margin-right: 2%;
+        margin-left: 2%;
+    } 
+}
+.colunaAno{
+    display: flex;
+    width: 50%;
+    .raizAno{
+        width: 50%;
+        margin-left: 50%;
+    }
+}
+.btnsect{
+    cursor: pointer;
+    background-color: #e3e3f3;
+    color: #444959;
+    width: 100px;
+    height: 40px;
+    border-radius: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}
+.visualizar{
+    display: flex;
+    .detalha{
+        width: 50%;
+        margin-left: 5%;
+        margin-top: 3%;
+    }
+}
+.grid-6 {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 2px;
+    grid-auto-columns: 1fr;
+  }
+  .wrapInplace{
+    width: 100%;
+    margin-left: -20px;
+    margin-bottom: 20px;
+}
+.wrapInplaceFim{
+    width: 100%;
+    margin-left: -20px;
+    margin-bottom: 50px;
+}    
