@@ -32,6 +32,7 @@ export interface CentroCusto{
   codigo: string;
   nome: string;
   cc_pai: any;
+  cc_pai_detalhes: any;
   gestor: any;
   gestor_detalhes: any;
 }
@@ -181,7 +182,7 @@ export class CentrocustoComponent implements OnInit{
       id: centroCusto.id,
       codigo: centroCusto.codigo,
       nome: centroCusto.nome,
-      cc_pai: centroCusto.cc_pai,
+      cc_pai: centroCusto.cc_pai_detalhes.id,
       gestor: centroCusto.gestor_detalhes.id
     })
   }

@@ -18,8 +18,18 @@ import { ButtonModule } from 'primeng/button';
 import { InplaceModule } from 'primeng/inplace';
 import { DialogModule } from 'primeng/dialog';
 import { SidebarModule } from 'primeng/sidebar';
+import { TabViewModule } from 'primeng/tabview';
+import { TableModule } from 'primeng/table';
 
 export interface ResultadosTotaisArrayItem {
+  label: string;
+  value: number;
+  icon: string;
+  color1: string;
+  color2: string;
+  num: number;
+}
+export interface ResultadosTotaisRealizadoArrayItem {
   label: string;
   value: number;
   icon: string;
@@ -77,14 +87,20 @@ export interface RaizAnuaisArrayItem {
   color1: string;
   color2: string;
 }
-
+export interface TiposCustoArrayItem {
+  label: string;
+  value: number;
+  icon: string;
+  color1: string;
+  color2: string;
+}
 
 @Component({
   selector: 'app-realizado',
   standalone: true,
   imports: [
-    DropdownModule,FloatLabelModule,DividerModule,CommonModule,FormsModule,InputNumberModule,
-    MeterGroupModule,CardModule,ButtonModule,InplaceModule,DialogModule,SidebarModule
+    DropdownModule,FloatLabelModule,DividerModule,CommonModule,FormsModule,InputNumberModule,TableModule,
+    MeterGroupModule,CardModule,ButtonModule,InplaceModule,DialogModule,SidebarModule,TabViewModule
   ],
   templateUrl: './realizado.component.html',
   styleUrl: './realizado.component.scss'
@@ -93,7 +109,8 @@ export class RealizadoComponent implements OnInit {
   realizados: any;
   ccsPai: CentroCustoPai[]|undefined;
   orcamentosBase: OrcamentoBase[]|undefined;
-  centrosCusto: CentroCusto[]|undefined; 
+  centrosCusto: CentroCusto[]|undefined;
+  
   //
   selectedCcPai: any;
   selectedAno: number = 2024;
@@ -126,6 +143,7 @@ export class RealizadoComponent implements OnInit {
   //
   teste: any;
   resultadosTotais: ResultadosTotaisArrayItem[] = [];
+  resultadosTotaisRealizado: ResultadosTotaisRealizadoArrayItem[] = [];
   resultadosMensais: ResultadosMensaisArrayItem[]= [];
   contasAnuais: ContasAnuaisArrayItem[]=[];
   contasMensais: ContasMensaisArrayItem[]=[];
@@ -133,6 +151,7 @@ export class RealizadoComponent implements OnInit {
   tiposMensais: TiposMensaisArrayItem[]=[];
   raizAnuais: RaizAnuaisArrayItem[]=[];
   raizMensais: RaizMensaisArrayItem[]=[];
+  tiposCusto: TiposCustoArrayItem[]=[];
   
   constructor(
     private realizadoService: RealizadoService,
@@ -179,6 +198,7 @@ export class RealizadoComponent implements OnInit {
       
       this.selectedAno = ano; //Atualiza o ano
       this.orcamentosBaseByCcpai();
+      this.calculosOrcamentosRealizados();
   }
   
   onCcPaiSelecionado(ccPaiId: any): void {
@@ -222,72 +242,72 @@ export class RealizadoComponent implements OnInit {
         response => {
           // Mapeando os dados para um array (resultados totais)
           this.resultadosTotais = [
-            { label: 'Total Orçado', num: 1, color1: '#34d399', color2: '#fbbf24',  value: response.total, icon:'pi pi-wallet' },
-            { label: 'Gasto Mensal', num: 2, color1: '#34d399', color2: '#fbbf24',  value: response.total_mensal, icon:'pi pi-money-bill' },
-            { label: 'Gasto Anual',num: 3, color1: '#34d399', color2: '#fbbf24', value: response.total_anual, icon:'pi pi-money-bill' },
+            { label: 'Orçamento Total', num: 1, color1: '#004EAE', color2: '#fbbf24',  value: response.total, icon:'pi pi-wallet' },
+            { label: 'Orçado Mensal', num: 2, color1: '#FFB100', color2: '#fbbf24',  value: response.total_mensal, icon:'pi pi-wallet' },
+            { label: 'Orçado Anual',num: 3, color1: '#00B036', color2: '#fbbf24', value: response.total_anual, icon:'pi pi-wallet' },
           ];
           
           this.resultadosMensais = [
-            { label: 'Janeiro',num: 1, color1: '#34d399', color2: '#fbbf24', value: response.mensal_por_mes[1], icon:'pi pi-money-bill' },
-            { label: 'Fevereiro', num: 2, color1: '#34d399', color2: '#fbbf24', value: response.mensal_por_mes[2], icon:'pi pi-money-bill' },
-            { label: 'Março', num: 3, color1: '#34d399', color2: '#fbbf24', value: response.mensal_por_mes[3], icon:'pi pi-money-bill' },
-            { label: 'Abril', num: 4, color1: '#34d399', color2: '#fbbf24', value: response.mensal_por_mes[4], icon:'pi pi-money-bill' },
-            { label: 'Maio', num: 5, color1: '#34d399', color2: '#fbbf24', value: response.mensal_por_mes[5], icon:'pi pi-money-bill' },
-            { label: 'Junho', num: 6, color1: '#34d399', color2: '#fbbf24', value: response.mensal_por_mes[6], icon:'pi pi-money-bill' },
-            { label: 'Julho', num: 7, color1: '#34d399', color2: '#fbbf24', value: response.mensal_por_mes[7], icon:'pi pi-money-bill' },
-            { label: 'Agosto', num: 8, color1: '#34d399', color2: '#fbbf24', value: response.mensal_por_mes[8], icon:'pi pi-money-bill' },
-            { label: 'Setembro', num: 9, color1: '#34d399', color2: '#fbbf24', value: response.mensal_por_mes[9], icon:'pi pi-money-bill' },
-            { label: 'Outubro', num: 10, color1: '#34d399', color2: '#fbbf24', value: response.mensal_por_mes[10], icon:'pi pi-money-bill' },
-            { label: 'Novembro', num: 11, color1: '#34d399', color2: '#fbbf24', value: response.mensal_por_mes[11], icon:'pi pi-money-bill' },
-            { label: 'Dezembro', num: 12, color1: '#34d399', color2: '#fbbf24', value: response.mensal_por_mes[12], icon:'pi pi-money-bill' },
+            { label: 'Janeiro',num: 1, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[1], icon:'pi pi-money-bill' },
+            { label: 'Fevereiro', num: 2, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[2], icon:'pi pi-money-bill' },
+            { label: 'Março', num: 3, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[3], icon:'pi pi-money-bill' },
+            { label: 'Abril', num: 4, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[4], icon:'pi pi-money-bill' },
+            { label: 'Maio', num: 5, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[5], icon:'pi pi-money-bill' },
+            { label: 'Junho', num: 6, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[6], icon:'pi pi-money-bill' },
+            { label: 'Julho', num: 7, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[7], icon:'pi pi-money-bill' },
+            { label: 'Agosto', num: 8, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[8], icon:'pi pi-money-bill' },
+            { label: 'Setembro', num: 9, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[9], icon:'pi pi-money-bill' },
+            { label: 'Outubro', num: 10, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[10], icon:'pi pi-money-bill' },
+            { label: 'Novembro', num: 11, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[11], icon:'pi pi-money-bill' },
+            { label: 'Dezembro', num: 12, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[12], icon:'pi pi-money-bill' },
           ];
 
           this.contasMensais = Object.keys(response.conta_por_mes).map((key) => ({
             label: key,
-            color1: '#34d399',
+            color1: '#004EAE',
             color2: '#fbbf24',
             value: response.conta_por_mes[key],
-            icon: 'pi pi-money-bill',
+            icon: 'pi pi-dollar',
           }));
 
           this.contasAnuais = Object.keys(response.conta_por_ano).map((key) => ({
             label: key,
-            color1: '#34d399',
+            color1: '#FFB100',
             color2: '#fbbf24',
             value: response.conta_por_ano[key],
-            icon: 'pi pi-money-bill',
+            icon: 'pi pi-dollar',
           }));
 
           this.tiposMensais = Object.keys(response.tipo_por_mes).map((key) => ({
             label: key,
-            color1: '#34d399',
+            color1: '#FFB100',
             color2: '#fbbf24',
             value: response.tipo_por_mes[key],
-            icon: 'pi pi-money-bill',
+            icon: 'pi pi-dollar',
           }));
 
           this.tiposAnuais = Object.keys(response.tipo_por_ano).map((key) => ({
             label: key,
-            color1: '#34d399',
+            color1: '#004EAE',
             color2: '#fbbf24',
             value: response.tipo_por_ano[key],
-            icon: 'pi pi-money-bill',
+            icon: 'pi pi-dollar',
           }));
           
           this.raizMensais = Object.keys(response.raiz_por_mes).map((key) => ({
             label: key,
-            color1: '#34d399',
+            color1: '#00CFDD',
             color2: '#fbbf24',
             value: response.raiz_por_mes[key],
-            icon: 'pi pi-money-bill',
+            icon: 'pi pi-dollar',
           }));
 
           this.raizAnuais = Object.keys(response.raiz_por_ano).map((key) => ({
             label: key,
-            color1: '#34d399',
+            color1: '#00CFDD',
             color2: '#fbbf24',
             value: response.raiz_por_ano[key],
-            icon: 'pi pi-money-bill',
+            icon: 'pi pi-dollar',
           }));
 
         }
@@ -298,12 +318,39 @@ export class RealizadoComponent implements OnInit {
   carregarCcs(ccPaiId: any): void{
     this.centroCustoService.getCentroCustoByCcPai(ccPaiId).subscribe(
       centrosCusto =>{
-        this.centrosCusto = centrosCusto
+        console.log('Centros de Custo Originais:', centrosCusto);
+        this.centrosCusto = centrosCusto.map((centroCusto: any)=>centroCusto.codigo);
+        this.calculosOrcamentosRealizados();
+        console.log('Ccs',this.centrosCusto)
       }, error =>{
         console.error('Não rolou',error)
       }
       
     )
+  }
+
+  calculosOrcamentosRealizados(){
+    if (this.selectedCcPai !== null){
+      this.orcamentoBaseService.calcularOrcamentoRealizado(this.centrosCusto,this.selectedAno).subscribe(
+        response =>{
+          
+            this.resultadosTotaisRealizado = [
+              { label: 'Orçamento Total', num: 1, color1: '#004EAE', color2: '#fbbf24',  value: response.total, icon:'pi pi-wallet' },
+              //{ label: 'Orçado Mensal', num: 2, color1: '#FFB100', color2: '#fbbf24',  value: response.total_mensal, icon:'pi pi-wallet' },
+              //{ label: 'Orçado Anual',num: 3, color1: '#00B036', color2: '#fbbf24', value: response.total_anual, icon:'pi pi-wallet' },
+            ];
+
+            this.tiposCusto = Object.keys(response.total_tipo_deb).map((key) => ({
+              label: key,
+              color1: '#00CFDD',
+              color2: '#fbbf24',
+              value: response.total_tipo_deb[key],
+              icon: 'pi pi-dollar',
+            }));
+          
+        }
+      )
+    }
   }
 
 }

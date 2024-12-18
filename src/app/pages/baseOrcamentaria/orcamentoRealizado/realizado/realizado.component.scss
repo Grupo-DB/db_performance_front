@@ -3,12 +3,12 @@
     max-width: 100%;
 }
 .titulo{
-    margin-top: 4%;
+    margin-top: 1%;
 }
 .formWrap{
     display: flex;
     flex-direction: column;
-    width: 90%;
+    width: 95%;
     margin-left: auto;
     margin-right: auto;
     border-radius: 8px;
@@ -17,8 +17,8 @@
     .form{
         margin-top: 2%;
         height: 50%;
-        width: 95%;
-        //display: flex;
+        width: 98%;
+        display: flex;
         margin-left: auto;
         margin-right: auto;
         
@@ -34,10 +34,26 @@
                     margin-top: 5%;
                 
                 }
+                .raizAno{
+                    width: 100%;
+                    margin-left: 50%;
+                    background-color: blue;
+                }
             }
             
     }
 } 
+
+.colunaEsq{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+}
+.colunaDir{
+    width: 50%;
+    margin-bottom: 30px;
+}
 .row{
     background-color: aqua;
     display: flex;
@@ -47,11 +63,22 @@
     background-color: chartreuse;
     width: 100%;
 } 
-.row3{
+.row3 {
     //background-color: rgb(104, 117, 90);
     width: 100%;
     display: flex;
     margin-top: 1%;
+}
+
+.row3 .raiz {
+    width: 99%;
+    margin-top: 2%;
+}
+
+.row3 .raizAno2 {
+    width: 99%;
+    margin-top: 3%;
+    
 }
 .row4{
     //background-color: rgb(104, 117, 90);
@@ -129,15 +156,24 @@
         margin-left: 2px;
     }
 }
+.detalhe{
+    width: 15%;
+    margin-top: 3%;
+}
+.detalhe1{
+    width: 50%;
+    margin-top: 3%;
+}
 .raizDetalhes{
     display: flex;
     height: 50%;
     margin-bottom: 4%;
-    //margin-top: 5%;
+    margin-top: 3%;
+    background-color: aquamarine;
     .detalhes{
         margin-left: 2%;
         margin-right: 2%;
-        
+        background-color: #444959;
        
     }   
 }
@@ -202,12 +238,35 @@
     grid-auto-columns: 1fr;
   }
   .wrapInplace{
-    width: 100%;
-    margin-left: -20px;
-    margin-bottom: 20px;
-}
+    //display: flex;
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-bottom: 30px;
+  }    
 .wrapInplaceFim{
     width: 100%;
-    margin-left: -20px;
     margin-bottom: 50px;
-}    
+}
+.wrapInplacePrincipal{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+tr {
+    background-color:#f2f1f0;
+    font-size: 16px;
+    height: 8px;
+    color: #333;
+    border-radius: 8px;
+    width: 100%;
+  }
+  td{
+    border-radius: 8px;
+  }
+  th{
+    height: 2px;
+    background-color: #2d53da;
+    color: #eee;
+  }    

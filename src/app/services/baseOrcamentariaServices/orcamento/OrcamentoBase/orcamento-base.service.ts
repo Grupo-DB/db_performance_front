@@ -9,6 +9,8 @@ import { OrcamentoBase } from '../../../../pages/baseOrcamentaria/orcamentoBase/
 })
 export class OrcamentoBaseService {
   private apiUrl = 'http://localhost:8000/orcamento/orcamentosbase/'
+  private apiRealizadoUrl = 'http://localhost:8000/realizado/realizado/'
+
   constructor(
     private httpClient: HttpClient,
     private router: Router,
@@ -90,5 +92,8 @@ export class OrcamentoBaseService {
   aplicarDissidio(porcentagem: number){
     const dissidioUrl = 'http://localhost:8000/orcamento/aplicarDissidio/';
     return this.httpClient.post<any>(dissidioUrl, {porcentagem:porcentagem})
+  }
+  calcularOrcamentoRealizado(ccs: any, ano: any,): Observable<any>{
+    return this.httpClient.post<any>(this.apiRealizadoUrl, {ccs:ccs, ano:ano})
   }
 }
