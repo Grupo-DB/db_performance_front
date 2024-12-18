@@ -20,6 +20,7 @@ import { DialogModule } from 'primeng/dialog';
 import { SidebarModule } from 'primeng/sidebar';
 import { TabViewModule } from 'primeng/tabview';
 import { TableModule } from 'primeng/table';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 export interface ResultadosTotaisArrayItem {
   label: string;
@@ -94,13 +95,25 @@ export interface TiposCustoArrayItem {
   color1: string;
   color2: string;
 }
+export interface GruposContabilArrayItem {
+  label: string;
+  value: number;
+  icon: string;
+  color1: string;
+  color2: string;
+}
+export interface FilialSga{
+  nome: string;
+  cod: number;
+  codManager: string;
+}
 
 @Component({
   selector: 'app-realizado',
   standalone: true,
   imports: [
     DropdownModule,FloatLabelModule,DividerModule,CommonModule,FormsModule,InputNumberModule,TableModule,
-    MeterGroupModule,CardModule,ButtonModule,InplaceModule,DialogModule,SidebarModule,TabViewModule
+    MeterGroupModule,CardModule,ButtonModule,InplaceModule,DialogModule,SidebarModule,TabViewModule,MultiSelectModule
   ],
   templateUrl: './realizado.component.html',
   styleUrl: './realizado.component.scss'
@@ -110,13 +123,15 @@ export class RealizadoComponent implements OnInit {
   ccsPai: CentroCustoPai[]|undefined;
   orcamentosBase: OrcamentoBase[]|undefined;
   centrosCusto: CentroCusto[]|undefined;
-  
+  filiaisSga: FilialSga[] = []
   //
+
   selectedCcPai: any;
   selectedAno: number = 2024;
   valorOrcadoTotal!: number;
   valorOrcadoGastoMensal!: number;
   valorOrcadoGastoAnual!: number;
+  selectedsFiliais: any[]=[];
   //
   Janeiro!: number;
   Fevereiro!: number;
@@ -152,6 +167,9 @@ export class RealizadoComponent implements OnInit {
   raizAnuais: RaizAnuaisArrayItem[]=[];
   raizMensais: RaizMensaisArrayItem[]=[];
   tiposCusto: TiposCustoArrayItem[]=[];
+  gruposContabeis: GruposContabilArrayItem[]=[];
+
+  selectedCodManagers: any;
   
   constructor(
     private realizadoService: RealizadoService,
@@ -175,6 +193,13 @@ export class RealizadoComponent implements OnInit {
         console.error('Não carregou', error)
       }
     )
+
+    this.filiaisSga = [
+      { nome: 'Matriz', cod: 0, codManager: 'Matriz'},
+      { nome: 'MPA', cod: 1, codManager: 'F07 - CD MPA'},
+      { nome: 'ATM', cod: 3, codManager: 'F08 - UP ATM'},
+      { nome: 'MFL', cod: 5, codManager: 'F09 - CD MFL'}
+    ]
   } 
 
   modalDetalhes(meterItem:any) {
@@ -182,7 +207,7 @@ export class RealizadoComponent implements OnInit {
     console.log('Index:', meterItem);
     const mes = meterItem.num;
     if (this.selectedCcPai !== null) {
-      this.orcamentoBaseService.getOrcamentoBaseByCcPai(this.selectedCcPai, this.selectedAno).subscribe(
+      this.orcamentoBaseService.getOrcamentoBaseByCcPai(this.selectedCcPai, this.selectedAno, this.selectedsFiliais).subscribe(
         response => {
            this.detalhesMensais = response.detalhamento_mensal[mes];
           }, erro =>{
@@ -192,7 +217,12 @@ export class RealizadoComponent implements OnInit {
   
   }
   
-  
+  onFiliaisInformada(selectedCods: any[]): void{
+    const selectedFiliais = this.filiaisSga.filter(filial => selectedCods.includes(filial.cod));
+    this.selectedCodManagers = selectedFiliais.map(filial => filial.codManager).join(',');
+    this.orcamentosBaseByCcpai();
+    this.calculosOrcamentosRealizados();
+  }
 
   onAnoInformado(ano: any):void{
       
@@ -238,7 +268,7 @@ export class RealizadoComponent implements OnInit {
 
   orcamentosBaseByCcpai(): void {
     if (this.selectedCcPai !== null) {
-      this.orcamentoBaseService.getOrcamentoBaseByCcPai(this.selectedCcPai,this.selectedAno).subscribe(
+      this.orcamentoBaseService.getOrcamentoBaseByCcPai(this.selectedCcPai,this.selectedAno,this.selectedCodManagers).subscribe(
         response => {
           // Mapeando os dados para um array (resultados totais)
           this.resultadosTotais = [
@@ -331,7 +361,7 @@ export class RealizadoComponent implements OnInit {
 
   calculosOrcamentosRealizados(){
     if (this.selectedCcPai !== null){
-      this.orcamentoBaseService.calcularOrcamentoRealizado(this.centrosCusto,this.selectedAno).subscribe(
+      this.orcamentoBaseService.calcularOrcamentoRealizado(this.centrosCusto,this.selectedAno,this.selectedsFiliais).subscribe(
         response =>{
           
             this.resultadosTotaisRealizado = [
@@ -345,6 +375,14 @@ export class RealizadoComponent implements OnInit {
               color1: '#00CFDD',
               color2: '#fbbf24',
               value: response.total_tipo_deb[key],
+              icon: 'pi pi-dollar',
+            }));
+
+            this.gruposContabeis = Object.keys(response.total_grupo_com_nomes).map((key) => ({
+              label: key,
+              color1: '#00CFDD',
+              color2: '#fbbf24',
+              value: response.total_grupo_com_nomes[key],
               icon: 'pi pi-dollar',
             }));
           

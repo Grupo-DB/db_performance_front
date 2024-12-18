@@ -27,6 +27,26 @@
                                 <label for="float-label">Selecione o Centro de Curso Pai</label>
                             </p-floatLabel>
                         </div>  
+                </div>
+                <div class="row3">
+                    <div class="raiz">
+                        <p-floatLabel> 
+                            <p-multiSelect
+                                id="ccPai" 
+                                [style]="{'width':'600px'}"
+                                [options]="filiaisSga" 
+                                [(ngModel)]="selectedsFiliais"
+                                optionValue="cod"
+                                optionLabel="nome"
+                                [filter]="true" 
+                                filterBy="nome"
+                                inputId="float-label" 
+                                (onChange)="onFiliaisInformada($event.value)"
+                            >
+                            </p-multiSelect>
+                            <label for="float-label">Selecione as Filiais</label>
+                        </p-floatLabel>
+                    </div>
                 </div>    
                     <div class="row3">
                         <div class="raizAno2">
@@ -375,6 +395,36 @@
                                         </ng-template>
                                     </p-meterGroup> 
                                 </p-tabPanel>
+
+                                <p-tabPanel>
+                                    <ng-template pTemplate="header">
+                                        <div class="flex align-items-center gap-2">
+                                            <span class=" white-space-nowrap m-0" style="color: #444959;"> Grupos Contabeis</span>
+                                        </div>
+                                    </ng-template>
+                                    <p-meterGroup [value]="gruposContabeis" labelPosition="start">
+                                        <ng-template pTemplate="label">
+                                            <div style="max-height: 300px; overflow-y: auto;">
+                                                <div class="flex flex-wrap gap-1">
+                                                    <ng-container *ngFor="let meterItem of gruposContabeis; let index = index">
+                                                        <p-card class="flex-grow-1" >
+                                                            <div class="flex justify-content-between gap-2">
+                                                                <div class="flex flex-column gap-3">
+                                                                    <span class="text-secondary text-sm" style="white-space: nowrap; margin-left: -10px;">{{ meterItem.label }}</span>
+                                                                    <span class="font-bold text-sm"style="white-space: nowrap;">R$ {{ meterItem.value }}</span>
+                                                                </div>
+                                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                                    <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                                </span>
+                                                            </div>
+                                                        </p-card>
+                                                    </ng-container>
+                                                </div>
+                                            </div>    
+                                        </ng-template>
+                                    </p-meterGroup> 
+                                </p-tabPanel>
+
                             </p-tabView>
                         </ng-template>
                         </p-inplace>

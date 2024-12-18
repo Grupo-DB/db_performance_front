@@ -78,8 +78,8 @@ export class OrcamentoBaseService {
   getOrcamentoBaseDetalhe(id: number): Observable<any>{
     return this.httpClient.get(`${this.apiUrl}${id}/`);
   }
-  getOrcamentoBaseByCcPai(id: any, ano: any): Observable<any>{
-    return this.httpClient.get<any>(`${this.apiUrl}byCcPai/?centro_de_custo_pai_id=${id}&ano=${ano}`)
+  getOrcamentoBaseByCcPai(id: any, ano: any, filiais:any): Observable<any>{
+    return this.httpClient.get<any>(`${this.apiUrl}byCcPai/?centro_de_custo_pai_id=${id}&ano=${ano}&filial=${filiais}`)
   }
   editOrcamentoBase(id: number, dadosAtualizados: Partial<OrcamentoBase>): Observable<any>{
     const url = `${this.apiUrl}${id}/`;
@@ -93,7 +93,7 @@ export class OrcamentoBaseService {
     const dissidioUrl = 'http://localhost:8000/orcamento/aplicarDissidio/';
     return this.httpClient.post<any>(dissidioUrl, {porcentagem:porcentagem})
   }
-  calcularOrcamentoRealizado(ccs: any, ano: any,): Observable<any>{
-    return this.httpClient.post<any>(this.apiRealizadoUrl, {ccs:ccs, ano:ano})
+  calcularOrcamentoRealizado(ccs: any, ano: any, filiais:any): Observable<any>{
+    return this.httpClient.post<any>(this.apiRealizadoUrl, {ccs:ccs, ano:ano, filiais:filiais})
   }
 }
