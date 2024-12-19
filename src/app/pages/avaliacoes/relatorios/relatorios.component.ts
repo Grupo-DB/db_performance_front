@@ -63,8 +63,8 @@ interface ExtendedAvaliado extends Avaliado {
   selector: 'app-relatorios',
   standalone: true,
   imports: [
-    RouterLink,RouterOutlet,TabMenuModule,FormsModule,ReactiveFormsModule,DropdownModule,MatFormFieldModule,MatSelectModule,CardModule,DividerModule,CalendarModule,
-    CommonModule, RouterOutlet, NzIconModule,NzUploadModule, NzLayoutModule, NzMenuModule,RouterLink,CardModule,MultiSelectModule,ChartModule,KnobModule,NzProgressModule,
+    RouterLink,TabMenuModule,FormsModule,ReactiveFormsModule,DropdownModule,MatFormFieldModule,MatSelectModule,CardModule,DividerModule,CalendarModule,
+    CommonModule,NzIconModule,NzUploadModule, NzLayoutModule, NzMenuModule,RouterLink,CardModule,MultiSelectModule,ChartModule,KnobModule,NzProgressModule,
     
   ],
   templateUrl: './relatorios.component.html',
@@ -837,113 +837,6 @@ getRandomColor(): string {
   return color;
 }
 
-// graficoNotaPeriodoAvaliadorChart(graficoNotasAvaliadoresPeriodo: any, graficoNomesAvaliadores: any): void {
-//   const ctx = document.getElementById('mediaNotaPeriodoAvaliadorChart') as HTMLCanvasElement;
-//   if (this.mediaNotaPeriodoAvaliadorChart) {
-//     this.mediaNotaPeriodoAvaliadorChart.destroy();
-//   }
-
-//   const periodos = Object.keys(graficoNotasAvaliadoresPeriodo);
-//   const perguntas = new Set<string>();
-
-//   // Coletando todas as perguntas únicas
-//   periodos.forEach(periodo => {
-//     const avaliadores = Object.keys(graficoNotasAvaliadoresPeriodo[periodo]);
-//     avaliadores.forEach(avaliador => {
-//       const perguntasAvaliador = graficoNotasAvaliadoresPeriodo[periodo][avaliador];
-//       Object.keys(perguntasAvaliador).forEach(pergunta => {
-//         perguntas.add(pergunta);
-//       });
-//     });
-//   });
-
-//   const datasets = Array.from(perguntas).map(pergunta => {
-//     return {
-//       label: pergunta,
-//       data: periodos.map(periodo => {
-//         const avaliadores = Object.keys(graficoNotasAvaliadoresPeriodo[periodo]);
-//         const mediaNotas = avaliadores.map(avaliador => {
-//           const perguntasAvaliador = graficoNotasAvaliadoresPeriodo[periodo][avaliador];
-//           return perguntasAvaliador[pergunta] || 0;
-//         });
-//         return mediaNotas.reduce((a, b) => a + b, 0) / mediaNotas.length;
-//       }),
-//       fill: false,
-//       tension: 0.1,
-//       backgroundColor: [
-//         '#4C5264',
-//         '#07449b',
-//         '#12bfd7',
-//         '#242730',
-//         '#97a3c2',
-//         '#898993',
-//         '#1890FF',
-//       ],
-//       hoverBackgroundColor: [
-//         '#4C5264',
-//         '#07449b',
-//         '#12bfd7',
-//         '#242730',
-//         '#97a3c2',
-//         '#898993',
-//         '#1890FF',
-//       ]
-//     };
-//   });
-
-//   console.log('Datasets para o gráfico:', datasets);
-
-//   this.mediaNotaPeriodoAvaliadorChart = new Chart(ctx, {
-//     type: 'bar',
-//     data: {
-//       labels: periodos,
-//       datasets: datasets,
-//     },
-//     options: {
-//       responsive: true,
-//       maintainAspectRatio: false,
-//       scales: {
-//         x: {
-//           display: true,
-//           beginAtZero: true,
-//           grid: {
-//             display: false,
-//           },
-//           ticks: {
-//             color: '#000'
-//           }
-//         },
-//         y: {
-//           display: true,
-//           beginAtZero: true,
-//           grid: {
-//             display: false,
-//           },
-//           ticks: {
-//             color: '#000'
-//           }
-//         }
-//       },
-//       plugins: {
-//         legend: {
-//           display: true,
-//           position: 'right',
-//           fullSize: true,
-//           labels: {
-//             font: {
-//               size: 10
-//             }
-//           }
-//         },
-//         title: {
-//           display: true,
-//           text: 'Médias das Notas por Avaliador e Pergunta',
-//           color: '#1890FF',
-//         }
-//       }
-//     }
-//   });
-// }
 
 graficoNotaGeralPeriodoAvaliadoChart(graficoNotaGeralPeriodoAvaliado: any): void {
   const ctx = document.getElementById('mediaNotaGeralPeriodoAvaliadoChart') as HTMLCanvasElement;

@@ -21,6 +21,9 @@ import { SidebarModule } from 'primeng/sidebar';
 import { TabViewModule } from 'primeng/tabview';
 import { TableModule } from 'primeng/table';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { ChartModule } from 'primeng/chart';
+import { Chart } from 'chart.js';
+import { Observable } from 'rxjs';
 
 export interface ResultadosTotaisArrayItem {
   label: string;
@@ -102,6 +105,20 @@ export interface GruposContabilArrayItem {
   color1: string;
   color2: string;
 }
+export interface CCsArrayItem {
+  label: string;
+  value: number;
+  icon: string;
+  color1: string;
+  color2: string;
+}
+export interface ContasCompletasArrayItem {
+  label: string;
+  value: number;
+  icon: string;
+  color1: string;
+  color2: string;
+}
 export interface FilialSga{
   nome: string;
   cod: number;
@@ -112,8 +129,9 @@ export interface FilialSga{
   selector: 'app-realizado',
   standalone: true,
   imports: [
-    DropdownModule,FloatLabelModule,DividerModule,CommonModule,FormsModule,InputNumberModule,TableModule,
-    MeterGroupModule,CardModule,ButtonModule,InplaceModule,DialogModule,SidebarModule,TabViewModule,MultiSelectModule
+    DropdownModule,FloatLabelModule,DividerModule,CommonModule,FormsModule,InputNumberModule,
+    MeterGroupModule,CardModule,ButtonModule,InplaceModule,DialogModule,TableModule,ChartModule,
+    SidebarModule,TabViewModule,MultiSelectModule,
   ],
   templateUrl: './realizado.component.html',
   styleUrl: './realizado.component.scss'
@@ -125,7 +143,7 @@ export class RealizadoComponent implements OnInit {
   centrosCusto: CentroCusto[]|undefined;
   filiaisSga: FilialSga[] = []
   //
-
+  detalhes: any | undefined;
   selectedCcPai: any;
   selectedAno: number = 2024;
   valorOrcadoTotal!: number;
@@ -157,6 +175,7 @@ export class RealizadoComponent implements OnInit {
   detalhesMensais: any[] = [];
   //
   teste: any;
+  teste2: any;
   resultadosTotais: ResultadosTotaisArrayItem[] = [];
   resultadosTotaisRealizado: ResultadosTotaisRealizadoArrayItem[] = [];
   resultadosMensais: ResultadosMensaisArrayItem[]= [];
@@ -168,9 +187,14 @@ export class RealizadoComponent implements OnInit {
   raizMensais: RaizMensaisArrayItem[]=[];
   tiposCusto: TiposCustoArrayItem[]=[];
   gruposContabeis: GruposContabilArrayItem[]=[];
-
+  ccs: CCsArrayItem[]=[];
+  contasCompletas: ContasCompletasArrayItem[]=[];
+  //
   selectedCodManagers: any;
-  
+  //
+  totaisChart: Chart<'bar'> | undefined;
+  gruposChart: Chart<'pie'> | undefined;
+
   constructor(
     private realizadoService: RealizadoService,
     private centroCustoService: CentrocustoService,
@@ -200,6 +224,7 @@ export class RealizadoComponent implements OnInit {
       { nome: 'ATM', cod: 3, codManager: 'F08 - UP ATM'},
       { nome: 'MFL', cod: 5, codManager: 'F09 - CD MFL'}
     ]
+    
   } 
 
   modalDetalhes(meterItem:any) {
@@ -207,7 +232,7 @@ export class RealizadoComponent implements OnInit {
     console.log('Index:', meterItem);
     const mes = meterItem.num;
     if (this.selectedCcPai !== null) {
-      this.orcamentoBaseService.getOrcamentoBaseByCcPai(this.selectedCcPai, this.selectedAno, this.selectedsFiliais).subscribe(
+      this.orcamentoBaseService.getOrcamentoBaseByCcPai(this.selectedCcPai, this.selectedAno, this.selectedCodManagers).subscribe(
         response => {
            this.detalhesMensais = response.detalhamento_mensal[mes];
           }, erro =>{
@@ -222,6 +247,7 @@ export class RealizadoComponent implements OnInit {
     this.selectedCodManagers = selectedFiliais.map(filial => filial.codManager).join(',');
     this.orcamentosBaseByCcpai();
     this.calculosOrcamentosRealizados();
+    
   }
 
   onAnoInformado(ano: any):void{
@@ -250,7 +276,6 @@ export class RealizadoComponent implements OnInit {
       if(this.selectedCcPai !== undefined){
         this.orcamentoBaseService.getOrcamentoBaseDetalhe(this.selectedCcPai).subscribe(
           (response) => {
-            this.gestor = response.gestor;
             this.empresa = response.empresa;
             this.filial = response.filial;
             this.area = response.area;
@@ -270,6 +295,8 @@ export class RealizadoComponent implements OnInit {
     if (this.selectedCcPai !== null) {
       this.orcamentoBaseService.getOrcamentoBaseByCcPai(this.selectedCcPai,this.selectedAno,this.selectedCodManagers).subscribe(
         response => {
+          this.teste2 = response.total;
+          
           // Mapeando os dados para um array (resultados totais)
           this.resultadosTotais = [
             { label: 'Orçamento Total', num: 1, color1: '#004EAE', color2: '#fbbf24',  value: response.total, icon:'pi pi-wallet' },
@@ -323,7 +350,7 @@ export class RealizadoComponent implements OnInit {
             value: response.tipo_por_ano[key],
             icon: 'pi pi-dollar',
           }));
-          
+
           this.raizMensais = Object.keys(response.raiz_por_mes).map((key) => ({
             label: key,
             color1: '#00CFDD',
@@ -350,6 +377,7 @@ export class RealizadoComponent implements OnInit {
       centrosCusto =>{
         console.log('Centros de Custo Originais:', centrosCusto);
         this.centrosCusto = centrosCusto.map((centroCusto: any)=>centroCusto.codigo);
+        this.detalhes = centrosCusto[0];
         this.calculosOrcamentosRealizados();
         console.log('Ccs',this.centrosCusto)
       }, error =>{
@@ -364,8 +392,11 @@ export class RealizadoComponent implements OnInit {
       this.orcamentoBaseService.calcularOrcamentoRealizado(this.centrosCusto,this.selectedAno,this.selectedsFiliais).subscribe(
         response =>{
           
+             
+            this.teste = response.total_realizado;
+
             this.resultadosTotaisRealizado = [
-              { label: 'Orçamento Total', num: 1, color1: '#004EAE', color2: '#fbbf24',  value: response.total, icon:'pi pi-wallet' },
+              { label: 'Orçamento Total', num: 1, color1: '#004EAE', color2: '#fbbf24',  value: response.total_realizado, icon:'pi pi-wallet' },
               //{ label: 'Orçado Mensal', num: 2, color1: '#FFB100', color2: '#fbbf24',  value: response.total_mensal, icon:'pi pi-wallet' },
               //{ label: 'Orçado Anual',num: 3, color1: '#00B036', color2: '#fbbf24', value: response.total_anual, icon:'pi pi-wallet' },
             ];
@@ -378,17 +409,157 @@ export class RealizadoComponent implements OnInit {
               icon: 'pi pi-dollar',
             }));
 
+            this.ccs = Object.keys(response.df_agrupado).map((key) => ({
+              label: key,
+              color1: '#004EAE',
+              color2: '#fbbf24',
+              value: response.df_agrupado[key],
+              icon: 'pi pi-dollar',
+            }));
+
             this.gruposContabeis = Object.keys(response.total_grupo_com_nomes).map((key) => ({
               label: key,
-              color1: '#00CFDD',
+              color1: '#FFB100',
               color2: '#fbbf24',
               value: response.total_grupo_com_nomes[key],
               icon: 'pi pi-dollar',
             }));
-          
+
+            this.graficoRealizadoGrupos(response.total_grupo_com_nomes)
+
+            this.contasCompletas = Object.keys(response.conta_completa_nomes).map((key) => ({
+              label: key,
+              color1: '#00B036',
+              color2: '#fbbf24',
+              value: response.conta_completa_nomes[key],
+              icon: 'pi pi-dollar',
+            }));
+            this.montarGraficoTotais();
         }
+       
       )
     }
   }
+
+  montarGraficoTotais(): void {
+   const valorTotal = this.teste;
+   const valorRealizadoTotal = this.teste2;
+   this.graficoTotais(valorTotal,valorRealizadoTotal)
+}
+
+
+  //======================================GRAFICOS=====================================////
+
+  graficoTotais(valorTotal: any, valorRealizadoTotal: any): void {
+    const ctx = document.getElementById('graficoTotalChart') as HTMLCanvasElement;
+    if (this.totaisChart) {
+        this.totaisChart.destroy();
+    }
+
+     // Parse para números, se necessário
+     const valor1 = typeof valorTotal === 'string' ? parseFloat(valorTotal.replace(/\./g, '').replace(',', '.')) : valorTotal;
+     const valor2 = typeof valorRealizadoTotal === 'string' ? parseFloat(valorRealizadoTotal.replace(/\./g, '').replace(',', '.')) : valorRealizadoTotal;
+ 
+
+    this.totaisChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Orçamento Total'],
+            datasets: [
+                {
+                    label: 'Base',
+                    data:[valor2], // Apenas o valor de `response.total`
+                    backgroundColor: '#00B036',
+                    hoverBackgroundColor: '#00CFDD'
+                },
+                {
+                    label: 'Realizado',
+                    data: [valor1], // Apenas o valor de `response.total` do realizado
+                    backgroundColor: '#004EAE',
+                    hoverBackgroundColor: '#00CFDD'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#000' }
+                },
+                y: {
+                    display: false,
+                    beginAtZero: true,
+                    grid: { display: false },
+                    ticks: { color: '#000' }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true
+                },
+                title: {
+                    display: true,
+                    text: 'Orçado x Realizado',
+                    color: '#1890FF'
+                }
+            }
+        }
+    });
+}
+
+
+graficoRealizadoGrupos(realizadosGrupos: any): void{
+  const ctx = document.getElementById('gruposContasRealizadosChart') as HTMLCanvasElement;
+  if (this.gruposChart) {
+    this.gruposChart.destroy();
+}
+this.gruposChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: Object.keys(realizadosGrupos),
+        datasets: [{
+            data: Object.values(realizadosGrupos),
+            backgroundColor: [
+                '#4C5264',
+                '#07449b',
+                '#12bfd7',
+                '#242730',
+                '#97a3c2',
+                '#898993',
+                '#1890FF',                   
+            ],
+            hoverBackgroundColor: [
+                '#898993',
+                '#97a3c2',
+                '#4C5264',
+                '#07449b',
+                '#242730',
+            '#12bfd7',	            
+            '#1890FF',
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display:true,
+                position:'right'
+            },
+            title: {
+                display: true,
+                text: 'Realizado por Grupo Contabil',
+                color: '#1890FF',
+            }
+        }
+    }
+});
+}
+
+
+
 
 }

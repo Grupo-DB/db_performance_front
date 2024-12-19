@@ -9,11 +9,11 @@
         <div class="form">
             <div class="colunaEsq">
                 <div class="row3">
-                    <div class="raiz">
+                        <div class="raiz">
                             <p-floatLabel> 
                                 <p-dropdown
                                     id="ccPai" 
-                                    [style]="{'width':'600px'}"
+                                    [style]="{'width':'400px'}"
                                     [options]="ccsPai" 
                                     [(ngModel)]="selectedCcPai"
                                     optionValue="id"
@@ -26,14 +26,31 @@
                                 </p-dropdown>
                                 <label for="float-label">Selecione o Centro de Curso Pai</label>
                             </p-floatLabel>
-                        </div>  
+                        </div>
+                        
+                        <div class="detalhe">
+                            Gestor:<br>
+                            Empresa:<br>
+                            Filial:<br>
+                            Área:<br>
+                            Ambiente:<br>
+                            Setor:<br>
+                        </div>
+                        <div class="detalhe1" *ngIf="detalhes">
+                            <strong>{{ detalhes.gestor_detalhes.nome }}</strong><br>
+                            <strong>{{ detalhes.cc_pai_detalhes.empresa_detalhes.nome }}</strong><br>
+                            <strong>{{ detalhes.cc_pai_detalhes.filial_detalhes.nome }}</strong><br>
+                            <strong>{{ detalhes.cc_pai_detalhes.area_detalhes.nome }}</strong><br>
+                            <strong>{{ detalhes.cc_pai_detalhes.setor_detalhes.nome }}</strong><br>
+                            <strong>{{ detalhes.cc_pai_detalhes.ambiente_detalhes.nome }}</strong><br>
+                        </div>
                 </div>
                 <div class="row3">
                     <div class="raiz">
                         <p-floatLabel> 
                             <p-multiSelect
                                 id="ccPai" 
-                                [style]="{'width':'600px'}"
+                                [style]="{'width':'400px'}"
                                 [options]="filiaisSga" 
                                 [(ngModel)]="selectedsFiliais"
                                 optionValue="cod"
@@ -55,7 +72,7 @@
                             </label></p>
                             <p-inputNumber 
                                 mode="decimal"
-                                [style]="{'width':'600px'}"
+                                [style]="{'width':'400px'}"
                                 [(ngModel)]="selectedAno"
                                 [showButtons]="true" 
                                 [min]="2024" 
@@ -64,25 +81,18 @@
                                 (ngModelChange)="onAnoInformado($event)"
                             />
                         </div>
+                    
+                            
                     </div>
                     <div class="row3">
-                            <div class="detalhe">
-                                Gestor:<br>
-                                Empresa:<br>
-                                Filial:<br>
-                                Área:<br>
-                                Ambiente:<br>
-                                Setor:<br>
+                        
+                            <div class="grafico">
+                                <canvas id="graficoTotalChart"></canvas>
                             </div>
-                            <div class="detalhe1">
-                                <strong>{{ gestor }}</strong><br>
-                                <strong>{{ empresa }}</strong><br>
-                                <strong>{{ filial }}</strong><br>
-                                <strong>{{ area }}</strong><br>
-                                <strong>{{ setor }}</strong><br>
-                                <strong>{{ ambiente }}</strong><br>
+                            <div class="grafico">
+                                <canvas id="gruposContasRealizadosChart"></canvas>
                             </div>
-                        </div> 
+                    </div> 
             </div>
             <div class="colunaDir">
                 <div class="titulo">
@@ -94,11 +104,11 @@
                         <ng-template pTemplate="label">
                             <div class="flex flex-wrap gap-1">
                                 <ng-container *ngFor="let meterItem of resultadosTotais; let index = index">
-                                    <p-card class="w-14rem p-1 m-1 flex-grow-1"> 
+                                    <p-card class="w-14rem flex-grow-1 shadow-2  hover:shadow-6"> 
                                         <div class="flex justify-content-between gap-1">
                                             <div class="flex flex-column gap-1">
-                                                <span class="text-secondary text-sm" style="white-space: nowrap; margin-left: -10px;">{{ meterItem.label }}</span>
-                                                <span class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px;">R$ {{ meterItem.value }}</span>
+                                                <span class="text-secondary text-md" style="white-space: nowrap; margin-left: -10px; text-align: start;">{{ meterItem.label }}</span>
+                                                <span class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start;">R$ {{ meterItem.value }}</span>
                                             </div>
                                             <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
                                                 <i style="font-size: 1rem" [class]="meterItem.icon"></i>
@@ -130,21 +140,23 @@
                                         </ng-template>
                                             <p-meterGroup [value]="resultadosMensais" labelPosition="start">
                                                 <ng-template pTemplate="label">
-                                                    <div class="flex flex-wrap gap-3">
-                                                        <ng-container *ngFor="let meterItem of resultadosMensais; let index = index">
-                                                            <p-card class="w-12rem p-1 m-1 flex-grow-1" >
-                                                                <div class="flex justify-content-between gap-2">
-                                                                    <div class="flex flex-column gap-3">
-                                                                        <span class="text-secondary text-sm" style="white-space: nowrap;">{{ meterItem.label }}</span>
-                                                                        <span class="font-bold text-sm"style="white-space: nowrap;">R$ {{ meterItem.value }}</span>
+                                                    <div style="max-height: 500px; overflow-y: auto;">
+                                                        <div class="flex flex-wrap gap-3 ml-2">
+                                                            <ng-container *ngFor="let meterItem of resultadosMensais; let index = index">
+                                                                <p-card class="w-5 shadow-2 border-round-md hover:shadow-6 border-0.2" >
+                                                                    <div class="flex justify-content-between gap-2">
+                                                                        <div class="flex flex-column gap-3">
+                                                                            <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label }}</span>
+                                                                            <span class="font-bold text-md"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
+                                                                        </div>
+                                                                        <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff',}">
+                                                                            <a (click)="modalDetalhes(meterItem)"style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
+                                                                        </span>
                                                                     </div>
-                                                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff',}">
-                                                                        <a (click)="modalDetalhes(meterItem)"style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
-                                                                    </span>
-                                                                </div>
-                                                            </p-card>
-                                                        </ng-container>
-                                                    </div>
+                                                                </p-card>
+                                                            </ng-container>
+                                                        </div>
+                                                    </div>    
                                                 </ng-template>
                                             </p-meterGroup>
                                     </p-tabPanel>
@@ -158,21 +170,23 @@
                                         <div class="w-full">
                                             <p-meterGroup [value]="contasMensais" labelPosition="start">
                                                 <ng-template pTemplate="label">
-                                                    <div class="flex flex-wrap gap-1">
-                                                        <ng-container *ngFor="let meterItem of contasMensais; let index = index">
-                                                            <p-card class="w-20rem p-1 m-1 flex-grow-1" >
-                                                                <div class="flex justify-content-between gap-2">
-                                                                    <div class="flex flex-column gap-3">
-                                                                        <span class="text-secondary text-sm" style="white-space: nowrap;margin-left: -10px;">{{ meterItem.label }}</span>
-                                                                        <span class="font-bold text-sm"style="white-space: nowrap;">R$ {{ meterItem.value }}</span>
+                                                    <div class="w-full" style="max-height: 500px; overflow-y: auto;">
+                                                        <div class="flex flex-wrap gap-3 ml-2">
+                                                            <ng-container *ngFor="let meterItem of contasMensais; let index = index">
+                                                                <p-card class="w-10 shadow-2 border-round-md hover:shadow-6 border-0.2" >
+                                                                    <div class="flex justify-content-between gap-3">
+                                                                        <div class="flex flex-column gap-3">
+                                                                            <span class="text-secondary text-lg" style="white-space: nowrap;text-align: start;">{{ meterItem.label }}</span>
+                                                                            <span class="font-bold text-lg"style="white-space: nowrap;text-align: start;">R$ {{ meterItem.value }}</span>
+                                                                        </div>
+                                                                        <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                                            <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                                        </span>
                                                                     </div>
-                                                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                        <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
-                                                                    </span>
-                                                                </div>
-                                                            </p-card>
-                                                        </ng-container>
-                                                    </div>
+                                                                </p-card>
+                                                            </ng-container>
+                                                        </div>
+                                                    </div>    
                                                 </ng-template>
                                             </p-meterGroup>
                                         </div>    
@@ -186,21 +200,23 @@
                                         </ng-template>
                                         <p-meterGroup [value]="tiposMensais" labelPosition="start">
                                             <ng-template pTemplate="label">
-                                                <div class="flex flex-wrap gap-3">
-                                                    <ng-container *ngFor="let meterItem of tiposMensais; let index = index">
-                                                        <p-card class="w-20rem p-1 m-1 flex-grow-1">
-                                                            <div class="flex justify-content-between gap-2">
-                                                                <div class="flex flex-column gap-3">
-                                                                    <span class="text-secondary text-sm" style="white-space: nowrap; margin-left: -10px">{{ meterItem.label }}</span>
-                                                                    <span class="font-bold text-sm"style="white-space: nowrap;">R$ {{ meterItem.value }}</span>
+                                                <div class="w-full" style="max-height: 500px; overflow-y: auto;">
+                                                    <div class="flex flex-wrap gap-3 ml-2">
+                                                        <ng-container *ngFor="let meterItem of tiposMensais; let index = index">
+                                                            <p-card class="w-10 flex-grow-1 shadow-2 border-round-md hover:shadow-6 border-0.2">
+                                                                <div class="flex justify-content-between gap-3">
+                                                                    <div class="flex flex-column gap-3">
+                                                                        <span class="text-secondary text-lg" style="white-space: nowrap; text-align: start; ">{{ meterItem.label }}</span>
+                                                                        <span class="font-bold text-lg"style="white-space: nowrap; text-align: start; ">R$ {{ meterItem.value }}</span>
+                                                                    </div>
+                                                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                                        <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                                    </span>
                                                                 </div>
-                                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                    <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
-                                                                </span>
-                                                            </div>
-                                                        </p-card>
-                                                    </ng-container>
-                                                </div>
+                                                            </p-card>
+                                                        </ng-container>
+                                                    </div>
+                                                </div>    
                                             </ng-template>
                                         </p-meterGroup>
                                     </p-tabPanel>
@@ -213,21 +229,23 @@
                                         </ng-template>
                                         <p-meterGroup [value]="raizMensais" labelPosition="start">
                                             <ng-template pTemplate="label">
-                                                <div class="flex flex-wrap gap-1">
-                                                    <ng-container *ngFor="let meterItem of raizMensais; let index = index">
-                                                        <p-card class="flex-grow-1" >
-                                                            <div class="flex justify-content-between gap-2">
-                                                                <div class="flex flex-column gap-3">
-                                                                    <span class="text-secondary text-sm" style="white-space: nowrap; margin-left: -10px;">{{ meterItem.label }}</span>
-                                                                    <span class="font-bold text-sm"style="white-space: nowrap;">R$ {{ meterItem.value }}</span>
+                                                <div class="w-full" style="max-height: 500px; overflow-y: auto;">
+                                                    <div class="flex flex-wrap gap-1 ml-2">
+                                                        <ng-container *ngFor="let meterItem of raizMensais; let index = index">
+                                                            <p-card class="w-12 shadow-2 border-round-md hover:shadow-6 border-0.2" >
+                                                                <div class="flex justify-content-between gap-2">
+                                                                    <div class="flex flex-column gap-3">
+                                                                        <span class="text-secondary text-sm" style="white-space: nowrap; text-align: start;">{{ meterItem.label }}</span>
+                                                                        <span class="font-bold text-lg"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
+                                                                    </div>
+                                                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                                        <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                                    </span>
                                                                 </div>
-                                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                    <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
-                                                                </span>
-                                                            </div>
-                                                        </p-card>
-                                                    </ng-container>
-                                                </div>
+                                                            </p-card>
+                                                        </ng-container>
+                                                    </div>
+                                                </div>    
                                             </ng-template>
                                         </p-meterGroup> 
                                     </p-tabPanel>
@@ -256,21 +274,23 @@
                                         </ng-template>
                                         <p-meterGroup [value]="tiposAnuais" labelPosition="start">
                                             <ng-template pTemplate="label">
-                                                <div class="flex flex-wrap gap-3">
-                                                    <ng-container *ngFor="let meterItem of tiposAnuais; let index = index">
-                                                        <p-card class="w-20rem p-1 m-1 flex-grow-1" >
-                                                            <div class="flex justify-content-between gap-2">
-                                                                <div class="flex flex-column gap-3">
-                                                                    <span class="text-secondary text-sm" style="white-space: nowrap;">{{ meterItem.label }}</span>
-                                                                    <span class="font-bold text-sm"style="white-space: nowrap;">R$ {{ meterItem.value }}</span>
+                                                <div class="w-full" style="max-height: 500px; overflow-y: auto;">
+                                                    <div class="flex flex-wrap gap-3 ml-2">
+                                                        <ng-container *ngFor="let meterItem of tiposAnuais; let index = index">
+                                                            <p-card class="w-10 shadow-2 border-round-md hover:shadow-6 border-0.2" >
+                                                                <div class="flex justify-content-between gap-2">
+                                                                    <div class="flex flex-column gap-3">
+                                                                        <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label }}</span>
+                                                                        <span class="font-bold text-lg"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
+                                                                    </div>
+                                                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                                        <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                                    </span>
                                                                 </div>
-                                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                    <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
-                                                                </span>
-                                                            </div>
-                                                        </p-card>
-                                                    </ng-container>
-                                                </div>
+                                                            </p-card>
+                                                        </ng-container>
+                                                    </div>
+                                                </div>    
                                             </ng-template>
                                         </p-meterGroup>
                                     </p-tabPanel>
@@ -282,21 +302,23 @@
                                         </ng-template>
                                         <p-meterGroup [value]="contasAnuais" labelPosition="start">
                                             <ng-template pTemplate="label">
-                                                <div class="flex flex-wrap gap-3">
-                                                    <ng-container *ngFor="let meterItem of contasAnuais; let index = index">
-                                                        <p-card class="w-14rem p-1 m-1 flex-grow-1" >
-                                                            <div class="flex justify-content-between gap-2">
-                                                                <div class="flex flex-column gap-3">
-                                                                    <span class="text-secondary text-sm" style="white-space: nowrap; margin-left: -10px;">{{ meterItem.label }}</span>
-                                                                    <span class="font-bold text-sm"style="white-space: nowrap;">R$ {{ meterItem.value }}</span>
+                                                <div class="w-full" style="max-height: 500px; overflow-y: auto;">
+                                                    <div class="flex flex-wrap gap-3 ml-2">
+                                                        <ng-container *ngFor="let meterItem of contasAnuais; let index = index">
+                                                            <p-card class="w-10 shadow-2 border-round-md hover:shadow-6 border-0.2" >
+                                                                <div class="flex justify-content-between gap-2">
+                                                                    <div class="flex flex-column gap-3">
+                                                                        <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label }}</span>
+                                                                        <span class="font-bold text-md"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
+                                                                    </div>
+                                                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                                        <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                                    </span>
                                                                 </div>
-                                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                    <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
-                                                                </span>
-                                                            </div>
-                                                        </p-card>
-                                                    </ng-container>
-                                                </div>
+                                                            </p-card>
+                                                        </ng-container>
+                                                    </div>
+                                                </div>    
                                             </ng-template>
                                         </p-meterGroup>     
                                     </p-tabPanel>
@@ -308,21 +330,23 @@
                                         </ng-template>
                                         <p-meterGroup [value]="raizAnuais" labelPosition="start">
                                             <ng-template pTemplate="label">
-                                                <div class="flex flex-wrap gap-3">
-                                                    <ng-container *ngFor="let meterItem of raizAnuais; let index = index">
-                                                        <p-card class="w-20rem p-1 m-1 flex-grow-1">
-                                                            <div class="flex justify-content-between gap-2">
-                                                                <div class="flex flex-column gap-3">
-                                                                    <span class="text-secondary text-sm" style="white-space: nowrap;">{{ meterItem.label }}</span>
-                                                                    <span class="font-bold text-sm"style="white-space: nowrap;">R$ {{ meterItem.value }}</span>
+                                                <div class="w-full" style="max-height: 500px; overflow-y: auto;">
+                                                    <div class="flex flex-wrap gap-3 ml-2">
+                                                        <ng-container *ngFor="let meterItem of raizAnuais; let index = index">
+                                                            <p-card class="w-10 shadow-2 border-round-md hover:shadow-6 border-0.2">
+                                                                <div class="flex justify-content-between gap-2">
+                                                                    <div class="flex flex-column gap-3">
+                                                                        <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label }}</span>
+                                                                        <span class="font-bold text-lg"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
+                                                                    </div>
+                                                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                                        <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                                    </span>
                                                                 </div>
-                                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                    <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
-                                                                </span>
-                                                            </div>
-                                                        </p-card>
-                                                    </ng-container>
-                                                </div>
+                                                            </p-card>
+                                                        </ng-container>
+                                                    </div>
+                                                </div>    
                                             </ng-template>
                                         </p-meterGroup>
                                     </p-tabPanel>
@@ -339,13 +363,13 @@
 
                 <p-meterGroup [value]="resultadosTotaisRealizado" labelPosition="start">
                     <ng-template pTemplate="label">
-                        <div class="flex flex-wrap gap-1">
+                        <div class="flex flex-wrap gap-1 m-2">
                             <ng-container *ngFor="let meterItem of resultadosTotaisRealizado; let index = index">
-                                <p-card class="w-14rem p-1 m-1 flex-grow-1"> 
-                                    <div class="flex justify-content-between gap-1">
+                                <p-card class="w-10 shadow-2 border-round-md hover:shadow-6 border-0.4"> 
+                                    <div class="flex justify-content-between gap-3">
                                         <div class="flex flex-column gap-1">
-                                            <span class="text-secondary text-sm" style="white-space: nowrap; margin-left: -10px;">{{ meterItem.label }}</span>
-                                            <span class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px;">R$ {{ meterItem.value }}</span>
+                                            <span class="text-secondary text-lg" style="white-space: nowrap; text-align: start;">{{ meterItem.label }}</span>
+                                            <span class="font-bold text-lg" style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
                                         </div>
                                         <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
                                             <i style="font-size: 1rem" [class]="meterItem.icon"></i>
@@ -377,21 +401,52 @@
                                     </ng-template>
                                     <p-meterGroup [value]="tiposCusto" labelPosition="start">
                                         <ng-template pTemplate="label">
-                                            <div class="flex flex-wrap gap-1">
-                                                <ng-container *ngFor="let meterItem of tiposCusto; let index = index">
-                                                    <p-card class="flex-grow-1" >
-                                                        <div class="flex justify-content-between gap-2">
-                                                            <div class="flex flex-column gap-3">
-                                                                <span class="text-secondary text-sm" style="white-space: nowrap; margin-left: -10px;">{{ meterItem.label }}</span>
-                                                                <span class="font-bold text-sm"style="white-space: nowrap;">R$ {{ meterItem.value }}</span>
+                                            <div style="max-height: 500px; overflow-y: auto;">
+                                                <div class="flex flex-wrap gap-5 ml-2">
+                                                    <ng-container *ngFor="let meterItem of tiposCusto; let index = index">
+                                                        <p-card class="w-10 shadow-2 border-round-md hover:shadow-6 border-0.2" >
+                                                            <div class="flex justify-content-between gap-2">
+                                                                <div class="flex flex-column gap-3">
+                                                                    <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label }}</span>
+                                                                    <span class="font-bold text-md"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
+                                                                </div>
+                                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                                    <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                                </span>
                                                             </div>
-                                                            <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
-                                                            </span>
-                                                        </div>
-                                                    </p-card>
-                                                </ng-container>
-                                            </div>
+                                                        </p-card>
+                                                    </ng-container>
+                                                </div>
+                                            </div>    
+                                        </ng-template>
+                                    </p-meterGroup> 
+                                </p-tabPanel>
+
+                                <p-tabPanel>
+                                    <ng-template pTemplate="header">
+                                        <div class="flex align-items-center gap-2">
+                                            <span class=" white-space-nowrap m-0" style="color: #444959;"> Centros de Custo</span>
+                                        </div>
+                                    </ng-template>
+                                    <p-meterGroup [value]="ccs" labelPosition="start">
+                                        <ng-template pTemplate="label">
+                                            <div style="max-height: 500px; overflow-y: auto;">
+                                                <div class="flex flex-wrap gap-5 ml-2">
+                                                    <ng-container *ngFor="let meterItem of ccs; let index = index">
+                                                        <p-card class="w-10 shadow-2 border-round-md hover:shadow-6 border-0.2" >
+                                                            <div class="flex justify-content-between gap-2">
+                                                                <div class="flex flex-column gap-3">
+                                                                    <span class="text-secondary text-md" style="white-space: nowrap;text-align: start;">{{ meterItem.label }}</span>
+                                                                    <span class="font-bold text-lg"style="white-space: nowrap;text-align: start;">R$ {{ meterItem.value }}</span>
+                                                                </div>
+                                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                                    <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                                </span>
+                                                            </div>
+                                                        </p-card>
+                                                    </ng-container>
+                                                </div>
+                                            </div>    
                                         </ng-template>
                                     </p-meterGroup> 
                                 </p-tabPanel>
@@ -404,14 +459,43 @@
                                     </ng-template>
                                     <p-meterGroup [value]="gruposContabeis" labelPosition="start">
                                         <ng-template pTemplate="label">
-                                            <div style="max-height: 300px; overflow-y: auto;">
-                                                <div class="flex flex-wrap gap-1">
+                                            <div style="max-height: 500px; overflow-y: auto;">
+                                                <div class="flex flex-wrap gap-5 ml-2">
                                                     <ng-container *ngFor="let meterItem of gruposContabeis; let index = index">
-                                                        <p-card class="flex-grow-1" >
+                                                        <p-card class="w-10 shadow-2 border-round-md hover:shadow-6 border-0.2" >
                                                             <div class="flex justify-content-between gap-2">
                                                                 <div class="flex flex-column gap-3">
-                                                                    <span class="text-secondary text-sm" style="white-space: nowrap; margin-left: -10px;">{{ meterItem.label }}</span>
-                                                                    <span class="font-bold text-sm"style="white-space: nowrap;">R$ {{ meterItem.value }}</span>
+                                                                    <span class="text-secondary text-md" style="white-space: nowrap;text-align: start;">{{ meterItem.label }}</span>
+                                                                    <span class="font-bold text-lg"style="white-space: nowrap;text-align: start;">R$ {{ meterItem.value }}</span>
+                                                                </div>
+                                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                                    <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                                </span>
+                                                            </div>
+                                                        </p-card>
+                                                    </ng-container>
+                                                </div>
+                                            </div>    
+                                        </ng-template>
+                                    </p-meterGroup> 
+                                </p-tabPanel>
+
+                                <p-tabPanel>
+                                    <ng-template pTemplate="header">
+                                        <div class="flex align-items-center gap-2">
+                                            <span class=" white-space-nowrap m-0" style="color: #444959;"> Contas Analiticas</span>
+                                        </div>
+                                    </ng-template>
+                                    <p-meterGroup [value]="contasCompletas" labelPosition="start">
+                                        <ng-template pTemplate="label">
+                                            <div style="max-height: 500px; overflow-y: auto;">
+                                                <div class="flex flex-wrap gap-5 ml-2">
+                                                    <ng-container *ngFor="let meterItem of contasCompletas; let index = index">
+                                                        <p-card class="w-12 shadow-2 border-round-md hover:shadow-6 border-0.2" >
+                                                            <div class="flex justify-content-between gap-2">
+                                                                <div class="flex flex-column gap-3">
+                                                                    <span class="text-secondary text-sm" style="white-space: nowrap;text-align: start;">{{ meterItem.label }}</span>
+                                                                    <span class="font-bold text-lg"style="white-space: nowrap;text-align: start;">R$ {{ meterItem.value }}</span>
                                                                 </div>
                                                                 <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
                                                                     <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
@@ -437,28 +521,8 @@
     </div>
 </div>
 
-<div class="row3">
-    <div class="raiz">
-        <p-floatLabel> 
-            <p-dropdown
-                id="ccPai" 
-                [style]="{'width':'100%'}"
-                [options]="centrosCusto" 
-                
-                optionValue="id"
-                optionLabel="nome"
-                [filter]="true" 
-                filterBy="nome"
-                inputId="float-label" 
-                
-            >
-            </p-dropdown>
-            <label for="float-label">Selecione o Centro de Curso Pai</label>
-        </p-floatLabel>
-    </div>
-</div>
 
-
+<!----------------SIDEBAR_______________________________-->
 <p-sidebar [(visible)]="modalVisible" position="right" [style]="{ width: '900px' }">
 
     

@@ -74,6 +74,11 @@
     width: 99%;
     margin-top: 3%;
 }
+.fixed-card {
+    width: 200px;
+    height: 150px;
+    overflow: hidden; /* Opcional: para esconder conteúdo que exceda o tamanho fixo */
+}
 
 .row3 .raizAno2 {
     width: 99%;
@@ -269,4 +274,8 @@ tr {
     height: 2px;
     background-color: #2d53da;
     color: #eee;
+  }
+  .grafico{
+    margin-top: 2%;
+    height: 300px;
   }    
