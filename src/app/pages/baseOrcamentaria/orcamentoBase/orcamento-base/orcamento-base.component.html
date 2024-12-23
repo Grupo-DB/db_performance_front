@@ -27,6 +27,15 @@
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/orcamentoBase" >Orçamento Base</a>
                 </li>
             </ul>
+        </li >
+        
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Acompanhamento "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoRealizado/realizado"> Orçado x Realizado Setorial</a>
+                </li>
+            </ul>
+           
         </li>    
     </ul>
 </div>
@@ -365,13 +374,13 @@
         #dt1
         [value]="orcamentosBases"
         [paginator]="true"
-        [rows]="5"
+        [rows]="20"
         dataKey="id" 
         [showCurrentPageReport]="true"
         [tableStyle]="{ 'min-width': '50rem' }"
         currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
-        [rowsPerPageOptions]="[5, 10, 20]"
-        [globalFilterFields]="['ano','raiz_analitica_desc','raiz_contabil_grupo_desc','mes_especifico']"
+        [rowsPerPageOptions]="[20, 40, 60]"
+        [globalFilterFields]="['id','ano','raiz_analitica_desc','raiz_contabil_grupo_desc','mes_especifico']"
         sortMode="multiple"
     >
         <ng-template pTemplate="caption">
@@ -397,6 +406,9 @@
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
+                <th pSortableColumn="id" style="width:10%" type="text" field="id" display="menu">
+                    Id <p-sortIcon field="id" />
+                </th>
                 <th pSortableColumn="ano" style="width:10%" type="text" field="ano" display="menu">
                     Ano <p-sortIcon field="ano" />
                 </th>          
@@ -424,6 +436,14 @@
                 <th style="width: 10%;text-align: center;">Ações</th>
             </tr>
             <tr>
+                <th>
+                    <p-columnFilter 
+                        showMenu="false"
+                        type="text"
+                        field="id" 
+                        placeholder="Pesquisar" 
+                        ariaLabel="Filter" />
+                </th>
                 <th>
                     <p-columnFilter 
                         showMenu="false"
@@ -492,8 +512,9 @@
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-orcamentoBase>
-            <tr>                      
-                <td>{{ orcamentoBase.ano}}</td>
+            <tr>     
+                <td>{{ orcamentoBase.id }}</td>                 
+                <td>{{ orcamentoBase.ano }}</td>
                 <td>{{ orcamentoBase.raiz_analitica_desc }}</td>
                 <td>{{ orcamentoBase.raiz_contabil_grupo_desc }}</td>
                 <td>{{ orcamentoBase.mes_especifico }}</td>

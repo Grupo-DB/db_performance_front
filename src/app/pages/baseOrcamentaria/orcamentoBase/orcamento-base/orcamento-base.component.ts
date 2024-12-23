@@ -164,7 +164,8 @@ export class OrcamentoBaseComponent implements OnInit{
     { key:'contratos', value:'Contratos' },
     { key:'planejamentoEquipes', value:'Planejamento de Equipes' },
     { key:'planejamentoProducao', value:'Planejamento Produção' },
-    { key:'usoConsumo', value:'Uso e Consumo' }
+    { key:'usoConsumo', value:'Uso e Consumo' },
+    { key:'depreciacao', value:'Depreciação' }
   ]
 
   tiposCustos = [

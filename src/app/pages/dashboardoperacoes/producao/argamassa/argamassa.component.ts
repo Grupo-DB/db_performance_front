@@ -254,8 +254,6 @@ constructor(
             console.error("A resposta não contém response_data:", response);
             return;
         }
-
-        // Passe `response.response_data` para o gráfico após a verificação
         this.graficoProducaoGeral(response);
     });
 }

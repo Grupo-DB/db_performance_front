@@ -26,10 +26,16 @@
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/orcamentoBase" >Orçamento Base</a>
                 </li>
+            </ul>
+        </li >
+        
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Acompanhamento "  style="font-size: 13px; ">
+            <ul>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/baseOrcamentaria/orcamentoRealizado/realizado" >Orçamento Realizado</a>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoRealizado/realizado"> Orçado x Realizado Setorial</a>
                 </li>
             </ul>
+           
         </li>    
     </ul>
 </div>

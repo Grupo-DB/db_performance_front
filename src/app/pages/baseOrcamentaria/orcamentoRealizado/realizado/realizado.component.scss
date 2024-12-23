@@ -8,7 +8,7 @@
 .formWrap{
     display: flex;
     flex-direction: column;
-    width: 95%;
+    width: 98%;
     margin-left: auto;
     margin-right: auto;
     border-radius: 8px;
@@ -82,7 +82,7 @@
 
 .row3 .raizAno2 {
     width: 99%;
-    margin-top: 3%;
+    margin-top: 1%;
     
 }
 .row4{
@@ -162,12 +162,14 @@
     }
 }
 .detalhe{
-    width: 15%;
-    margin-top: 3%;
+    width: 20%;
+    margin-top: 10%;
+    margin-left: 10%;
 }
 .detalhe1{
-    width: 50%;
-    margin-top: 3%;
+    width: 100%;
+    margin-top: 10%;
+    margin-left: 5%;
 }
 .raizDetalhes{
     display: flex;
@@ -178,7 +180,7 @@
     .detalhes{
         margin-left: 2%;
         margin-right: 2%;
-        background-color: #444959;
+        
        
     }   
 }
@@ -275,7 +277,44 @@ tr {
     background-color: #2d53da;
     color: #eee;
   }
-  .grafico{
-    margin-top: 2%;
-    height: 300px;
-  }    
+  .grafico1{
+    margin-left: -5%;
+    margin-top: 5%;
+    height: 400px;
+    width: 50%;
+    
+  }
+  .grafico2{
+    margin-top: 5%;
+    height: 400px;
+    width: 50%;
+    
+  }
+  .grafico3{
+    margin-top: 5%;
+    height: 400px;
+    width: 100%;
+    //background-color: burlywood;
+  }
+  .coluna2{
+    display: flex;
+    width: 100%;
+  }
+  .coluna3{
+    display: flex;
+    width: 100%;
+  }
+  .coluna3Wrap{
+    display: flex;
+    flex-direction: column;
+  }
+  .raiz{
+    width: 99%;
+    margin-top: 8%;
+}    
+.modalContainer{
+    margin: auto;
+    width: 100%;
+    height: 100%;
+    background-color: #f2f1f0;
+}

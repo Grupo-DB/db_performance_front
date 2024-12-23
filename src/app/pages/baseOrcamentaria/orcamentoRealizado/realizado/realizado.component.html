@@ -1,6 +1,48 @@
+<div class="menu">
+    <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+        <li nz-menu-item nzMatchRouter="#">
+            <a style="font-size: 13px;" routerLink="homeOrcamento">Início</a>
+        </li>
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizAnalitica" >Raízes Analíticas</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/centrocustopai" >Centro de Custo Pai</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/centrocusto" >Centro de Custo </a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizSintetica" >Raiz Sintética</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/contaContabil" >Conta Contabil</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/grupoItens" >Grupos de Itens</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/orcamentoBase" >Orçamento Base</a>
+                </li>
+            </ul>
+        </li >
+        
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Acompanhamento "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoRealizado/realizado"> Orçado x Realizado Setorial</a>
+                </li>
+            </ul>
+           
+        </li>    
+    </ul>
+</div>
+
 <div class="titulo">
     <p-divider align="left" type="solid">
-        <b>Orçamentos Realizados</b>
+        <b>Acompanhamento do Orçamento</b>
     </p-divider>
 </div>
 
@@ -8,26 +50,48 @@
     <div class="formWrap">
         <div class="form">
             <div class="colunaEsq">
-                <div class="row3">
-                        <div class="raiz">
-                            <p-floatLabel> 
-                                <p-dropdown
-                                    id="ccPai" 
-                                    [style]="{'width':'400px'}"
-                                    [options]="ccsPai" 
-                                    [(ngModel)]="selectedCcPai"
-                                    optionValue="id"
-                                    optionLabel="nome"
-                                    [filter]="true" 
-                                    filterBy="nome"
-                                    inputId="float-label" 
-                                    (onChange)="onCcPaiSelecionado($event.value)"
-                                >
-                                </p-dropdown>
-                                <label for="float-label">Selecione o Centro de Curso Pai</label>
-                            </p-floatLabel>
-                        </div>
-                        
+                <div class="coluna2">
+                    <div class="coluna3">
+                        <div class="coluna3Wrap">
+                            <div class="raiz">
+                                <p-floatLabel> 
+                                    <p-dropdown
+                                        id="ccPai" 
+                                        [style]="{'width':'400px'}"
+                                        [options]="ccsPai" 
+                                        [(ngModel)]="selectedCcPai"
+                                        optionValue="id"
+                                        optionLabel="nome"
+                                        [filter]="true" 
+                                        filterBy="nome"
+                                        inputId="float-label" 
+                                        (onChange)="onCcPaiSelecionado($event.value)"
+                                    >
+                                    </p-dropdown>
+                                    <label for="float-label">Selecione o Centro de Curso Pai</label>
+                                </p-floatLabel>
+                            </div>
+                            <div class="raiz">
+                                <p-floatLabel> 
+                                    <p-multiSelect
+                                        id="ccPai" 
+                                        [style]="{'width':'400px'}"
+                                        [options]="filiaisSga" 
+                                        [(ngModel)]="selectedsFiliais"
+                                        optionValue="cod"
+                                        optionLabel="nome"
+                                        [filter]="true" 
+                                        filterBy="nome"
+                                        inputId="float-label" 
+                                        (onChange)="onFiliaisInformada($event.value)"
+                                    >
+                                    </p-multiSelect>
+                                    <label for="float-label">Selecione as Filiais</label>
+                                </p-floatLabel>
+                            </div>
+                        </div>    
+                    </div>
+                    <div class="coluna3">    
                         <div class="detalhe">
                             Gestor:<br>
                             Empresa:<br>
@@ -44,31 +108,17 @@
                             <strong>{{ detalhes.cc_pai_detalhes.setor_detalhes.nome }}</strong><br>
                             <strong>{{ detalhes.cc_pai_detalhes.ambiente_detalhes.nome }}</strong><br>
                         </div>
+                    </div>  
                 </div>
-                <div class="row3">
+                <div class="coluna">
                     <div class="raiz">
-                        <p-floatLabel> 
-                            <p-multiSelect
-                                id="ccPai" 
-                                [style]="{'width':'400px'}"
-                                [options]="filiaisSga" 
-                                [(ngModel)]="selectedsFiliais"
-                                optionValue="cod"
-                                optionLabel="nome"
-                                [filter]="true" 
-                                filterBy="nome"
-                                inputId="float-label" 
-                                (onChange)="onFiliaisInformada($event.value)"
-                            >
-                            </p-multiSelect>
-                            <label for="float-label">Selecione as Filiais</label>
-                        </p-floatLabel>
+                        
                     </div>
                 </div>    
                     <div class="row3">
                         <div class="raizAno2">
                             <p><label style="margin-left: 5px;" class="mb-2 block font-bold" for="ano">
-                               Alterar ano
+                               Alterar Ano
                             </label></p>
                             <p-inputNumber 
                                 mode="decimal"
@@ -86,13 +136,33 @@
                     </div>
                     <div class="row3">
                         
-                            <div class="grafico">
+                            <div class="grafico3">
                                 <canvas id="graficoTotalChart"></canvas>
                             </div>
-                            <div class="grafico">
-                                <canvas id="gruposContasRealizadosChart"></canvas>
-                            </div>
-                    </div> 
+                            <!-- <div class="grafico3">
+                                <nz-progress
+                                    [nzSize]="'small'"
+                                    [nzStatus]="'normal'"
+                                    [nzWidth]="300"
+                                    [nzGapDegree]="180"
+                                    [nzGapPosition]="'bottom'"
+                                    [nzPercent]="percent" 
+                                    nzType="dashboard" 
+                                    [nzFormat]="formatTeste2">
+                                </nz-progress>
+                                <nz-progress [nzFormat]="formatTeste2" [nzPercent]="percent" [nzSteps]="10" nzStrokeColor="#1890ff"></nz-progress>
+                            </div> -->
+                            
+                    </div>
+                    <div class="row3">
+                        <div class="grafico2">
+                            <canvas id="graficoBaseChart"></canvas>
+                        </div>
+                        <div class="grafico2">
+                            <canvas id="gruposContasRealizadosChart"></canvas>
+                        </div>  
+                    </div>
+                   
             </div>
             <div class="colunaDir">
                 <div class="titulo">
@@ -168,11 +238,11 @@
                                             </div>
                                         </ng-template>
                                         <div class="w-full">
-                                            <p-meterGroup [value]="contasMensais" labelPosition="start">
+                                            <p-meterGroup [value]="tiposMensais" labelPosition="start">
                                                 <ng-template pTemplate="label">
                                                     <div class="w-full" style="max-height: 500px; overflow-y: auto;">
                                                         <div class="flex flex-wrap gap-3 ml-2">
-                                                            <ng-container *ngFor="let meterItem of contasMensais; let index = index">
+                                                            <ng-container *ngFor="let meterItem of tiposMensais; let index = index">
                                                                 <p-card class="w-10 shadow-2 border-round-md hover:shadow-6 border-0.2" >
                                                                     <div class="flex justify-content-between gap-3">
                                                                         <div class="flex flex-column gap-3">
@@ -180,7 +250,7 @@
                                                                             <span class="font-bold text-lg"style="white-space: nowrap;text-align: start;">R$ {{ meterItem.value }}</span>
                                                                         </div>
                                                                         <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                            <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                                            <a (click)="abrirModalGrupoMensais()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
                                                                         </span>
                                                                     </div>
                                                                 </p-card>
@@ -198,11 +268,11 @@
                                                 <span class="white-space-nowrap m-0" style="color: #444959;"> Grupo de Contas</span>
                                             </div>
                                         </ng-template>
-                                        <p-meterGroup [value]="tiposMensais" labelPosition="start">
+                                        <p-meterGroup [value]="contasMensais" labelPosition="start">
                                             <ng-template pTemplate="label">
                                                 <div class="w-full" style="max-height: 500px; overflow-y: auto;">
                                                     <div class="flex flex-wrap gap-3 ml-2">
-                                                        <ng-container *ngFor="let meterItem of tiposMensais; let index = index">
+                                                        <ng-container *ngFor="let meterItem of contasMensais; let index = index">
                                                             <p-card class="w-10 flex-grow-1 shadow-2 border-round-md hover:shadow-6 border-0.2">
                                                                 <div class="flex justify-content-between gap-3">
                                                                     <div class="flex flex-column gap-3">
@@ -210,7 +280,7 @@
                                                                         <span class="font-bold text-lg"style="white-space: nowrap; text-align: start; ">R$ {{ meterItem.value }}</span>
                                                                     </div>
                                                                     <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                        <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                                        <a (click)="abrirModalTiposMensais()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
                                                                     </span>
                                                                 </div>
                                                             </p-card>
@@ -239,7 +309,7 @@
                                                                         <span class="font-bold text-lg"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
                                                                     </div>
                                                                     <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                        <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                                        <a (click)="abrirModalContasAnaliticas()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
                                                                     </span>
                                                                 </div>
                                                             </p-card>
@@ -272,11 +342,11 @@
                                                 <span class=" white-space-nowrap m-0" style="color: #444959;"> Tipo de Custo</span>
                                             </div>
                                         </ng-template>
-                                        <p-meterGroup [value]="tiposAnuais" labelPosition="start">
+                                        <p-meterGroup [value]="contasAnuais" labelPosition="start">
                                             <ng-template pTemplate="label">
                                                 <div class="w-full" style="max-height: 500px; overflow-y: auto;">
                                                     <div class="flex flex-wrap gap-3 ml-2">
-                                                        <ng-container *ngFor="let meterItem of tiposAnuais; let index = index">
+                                                        <ng-container *ngFor="let meterItem of contasAnuais; let index = index">
                                                             <p-card class="w-10 shadow-2 border-round-md hover:shadow-6 border-0.2" >
                                                                 <div class="flex justify-content-between gap-2">
                                                                     <div class="flex flex-column gap-3">
@@ -284,7 +354,7 @@
                                                                         <span class="font-bold text-lg"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
                                                                     </div>
                                                                     <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                        <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                                        <a (click)="abrirModalTiposAnual()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
                                                                     </span>
                                                                 </div>
                                                             </p-card>
@@ -300,11 +370,11 @@
                                                 <span class=" white-space-nowrap m-0" style="color: #444959;"> Grupo de Contas</span>
                                             </div>
                                         </ng-template>
-                                        <p-meterGroup [value]="contasAnuais" labelPosition="start">
+                                        <p-meterGroup [value]="tiposAnuais" labelPosition="start">
                                             <ng-template pTemplate="label">
                                                 <div class="w-full" style="max-height: 500px; overflow-y: auto;">
                                                     <div class="flex flex-wrap gap-3 ml-2">
-                                                        <ng-container *ngFor="let meterItem of contasAnuais; let index = index">
+                                                        <ng-container *ngFor="let meterItem of tiposAnuais; let index = index">
                                                             <p-card class="w-10 shadow-2 border-round-md hover:shadow-6 border-0.2" >
                                                                 <div class="flex justify-content-between gap-2">
                                                                     <div class="flex flex-column gap-3">
@@ -312,7 +382,7 @@
                                                                         <span class="font-bold text-md"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
                                                                     </div>
                                                                     <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                        <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                                        <a (click)="abrirModalGruposAnual()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
                                                                     </span>
                                                                 </div>
                                                             </p-card>
@@ -340,7 +410,7 @@
                                                                         <span class="font-bold text-lg"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
                                                                     </div>
                                                                     <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                        <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                                        <a (click)="abrirModalContasAnual()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
                                                                     </span>
                                                                 </div>
                                                             </p-card>
@@ -411,7 +481,7 @@
                                                                     <span class="font-bold text-md"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
                                                                 </div>
                                                                 <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                    <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                                    <a (click)="abrirModalRealizadoTipos()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
                                                                 </span>
                                                             </div>
                                                         </p-card>
@@ -440,7 +510,7 @@
                                                                     <span class="font-bold text-lg"style="white-space: nowrap;text-align: start;">R$ {{ meterItem.value }}</span>
                                                                 </div>
                                                                 <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                    <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                                    <a (click)="abrirModalRealizadoCcs()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
                                                                 </span>
                                                             </div>
                                                         </p-card>
@@ -469,7 +539,7 @@
                                                                     <span class="font-bold text-lg"style="white-space: nowrap;text-align: start;">R$ {{ meterItem.value }}</span>
                                                                 </div>
                                                                 <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                    <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                                    <a (click)="abrirModalRealizadoGruposContabeis()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
                                                                 </span>
                                                             </div>
                                                         </p-card>
@@ -498,7 +568,7 @@
                                                                     <span class="font-bold text-lg"style="white-space: nowrap;text-align: start;">R$ {{ meterItem.value }}</span>
                                                                 </div>
                                                                 <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                    <i style="font-size: 1.5rem" [class]="meterItem.icon"></i>
+                                                                    <a (click)="abrirModalRealizadoContasAnaliticas()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
                                                                 </span>
                                                             </div>
                                                         </p-card>
@@ -537,19 +607,96 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-detalheMensal>
-                <tr *ngFor="let detalhe of detalhesMensais">
-                    <td style="margin: 35px;">{{ detalhe.mes_especifico }} </td>
-                    <td style="margin-right: 335px;">{{ detalhe.tipo_custo}} </td>
-                    <td style="margin: 35px;">{{ detalhe.raiz_contabil_grupo_desc }} </td>
-                    <td style="margin: 35px;">R$ {{ detalhe.valor | number: '1.2-2' }} </td>
-                    <td style="margin: 35px;">R$ {{ detalhe.valor_real | number: '1.2-2' }} </td>
+                <tr>
+                    <td>{{ detalheMensal.mes_especifico }} </td>
+                    <td>{{ detalheMensal.tipo_custo}} </td>
+                    <td>{{ detalheMensal.raiz_contabil_grupo_desc }} </td>
+                    <td>R$ {{ detalheMensal.valor | number: '1.2-2' }} </td>
+                    <td>R$ {{ detalheMensal.valor_real | number: '1.2-2' }} </td>
                 </tr>
             </ng-template>
            
         </p-table>
    
-    
-
 </p-sidebar>
 
-
+<!-----------------------------MODAL GRAFICOS-->
+<!--Grafico Tipos de Custo Mensal-->
+<p-dialog 
+    [(visible)]="modalGrafVisible"
+    [modal]="true"
+    [style]="{ width: '90%', height: '90%' }" 
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+>
+    <div class="modalContainer">
+        <canvas id="polarAreaChart"></canvas>
+    </div>
+    
+</p-dialog>
+<!----------------------Grafico Grupo de Contas Mensais-------------------------------------->
+    <p-dialog 
+        [(visible)]="modalGrafVisible2"
+        [modal]="true"
+        [style]="{ width: '90%', height: '90%' }" 
+        [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+    >
+        <div class="modalContainer">
+            <canvas id="polarAreaChart2"></canvas>
+        </div>
+        
+    </p-dialog>
+<!-----------------------------Grafico Contas Analiticas Mensal---------------------------------------------->    
+<p-dialog 
+    [(visible)]="modalGrafVisible3"
+    [modal]="true"
+    [style]="{ width: '90%', height: '90%' }" 
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+>
+    <div class="modalContainer">
+        <canvas id="polarAreaChart3"></canvas>
+    </div>
+</p-dialog>
+<!------------------------Grafico tipos de custos Anual---------------------------------------------------------->
+<p-dialog 
+    [(visible)]="modalGrafVisible5"
+    [modal]="true"
+    [style]="{ width: '90%', height: '90%' }" 
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+>
+    <div class="modalContainer">
+        <canvas id="polarAreaChart5"></canvas>
+    </div>
+</p-dialog>
+<!------------------------Grafico grupos de contas Anual---------------------------------------------------------->
+<p-dialog 
+    [(visible)]="modalGrafVisible6"
+    [modal]="true"
+    [style]="{ width: '90%', height: '90%' }" 
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+>
+    <div class="modalContainer">
+        <canvas id="polarAreaChart6"></canvas>
+    </div>
+</p-dialog>
+<!------------------------Grafico contas Analiticas Anual---------------------------------------------------------->
+<p-dialog 
+    [(visible)]="modalGrafVisible7"
+    [modal]="true"
+    [style]="{ width: '90%', height: '90%' }" 
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+>
+    <div class="modalContainer">
+        <canvas id="polarAreaChart7"></canvas>
+    </div>
+</p-dialog>
+<!------------------------Graficos Realizados---------------------------------------------------------->
+<p-dialog 
+    [(visible)]="modalGrafVisibleRealizado"
+    [modal]="true"
+    [style]="{ width: '90%', height: '90%' }" 
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+>
+    <div class="modalContainer">
+        <canvas id="graficoRealizadoChart"></canvas>
+    </div>
+</p-dialog>
