@@ -55,7 +55,7 @@
                         <div class="coluna3Wrap">
                             <div class="raiz">
                                 <p-floatLabel> 
-                                    <p-dropdown
+                                    <p-multiSelect
                                         id="ccPai" 
                                         [style]="{'width':'400px'}"
                                         [options]="ccsPai" 
@@ -67,7 +67,7 @@
                                         inputId="float-label" 
                                         (onChange)="onCcPaiSelecionado($event.value)"
                                     >
-                                    </p-dropdown>
+                                    </p-multiSelect>
                                     <label for="float-label">Selecione o Centro de Curso Pai</label>
                                 </p-floatLabel>
                             </div>
@@ -130,29 +130,13 @@
                                 [useGrouping]="false" 
                                 (ngModelChange)="onAnoInformado($event)"
                             />
-                        </div>
-                    
-                            
+                        </div>     
                     </div>
                     <div class="row3">
                         
                             <div class="grafico3">
                                 <canvas id="graficoTotalChart"></canvas>
                             </div>
-                            <!-- <div class="grafico3">
-                                <nz-progress
-                                    [nzSize]="'small'"
-                                    [nzStatus]="'normal'"
-                                    [nzWidth]="300"
-                                    [nzGapDegree]="180"
-                                    [nzGapPosition]="'bottom'"
-                                    [nzPercent]="percent" 
-                                    nzType="dashboard" 
-                                    [nzFormat]="formatTeste2">
-                                </nz-progress>
-                                <nz-progress [nzFormat]="formatTeste2" [nzPercent]="percent" [nzSteps]="10" nzStrokeColor="#1890ff"></nz-progress>
-                            </div> -->
-                            
                     </div>
                     <div class="row3">
                         <div class="grafico2">

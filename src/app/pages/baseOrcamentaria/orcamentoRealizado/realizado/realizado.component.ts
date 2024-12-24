@@ -23,7 +23,6 @@ import { TableModule } from 'primeng/table';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ChartModule } from 'primeng/chart';
 import { Chart } from 'chart.js';
-import { Observable } from 'rxjs';
 import { KnobModule } from 'primeng/knob';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { LoginService } from '../../../../services/avaliacoesServices/login/login.service';
@@ -148,7 +147,7 @@ export class RealizadoComponent implements OnInit {
   filiaisSga: FilialSga[] = []
   //
   detalhes: any | undefined;
-  selectedCcPai: any;
+  selectedCcPai: any[]=[];
   selectedAno: number = 2024;
   valorOrcadoTotal!: number;
   valorOrcadoGastoMensal!: number;
@@ -192,6 +191,7 @@ export class RealizadoComponent implements OnInit {
   teste: any;
   teste2: any;
   percent: any;
+
   //
   dictOrcadoTiposCusto: any;
   dictOrcadoGrupoContas2: any;
@@ -221,6 +221,7 @@ export class RealizadoComponent implements OnInit {
   contasCompletas: ContasCompletasArrayItem[]=[];
   //
   selectedCodManagers: any;
+  totais!: any;
   //
   totaisChart: Chart<'bar'> | undefined;
   gruposChart: Chart<'pie'> | undefined;
@@ -334,6 +335,14 @@ export class RealizadoComponent implements OnInit {
         )
       }
     })
+  }
+
+  calcularTotal(): void{
+    this.orcamentoBaseService.calculosTotais(this.selectedAno,this.selectedsFiliais).subscribe(
+      response => {
+        this.totais = response;
+      }
+    )
   }
 
   orcamentosBaseByCcpai(): void {
