@@ -11,7 +11,7 @@ import { Pergunta } from '../../../pages/avaliacoes/pergunta/pergunta.component'
   providedIn: 'root'
 })
 export class PerguntaService {
-  private apiUrl = 'http://localhost:8000/management/perguntas/';
+  private apiUrl = 'http://http://172.50.10.79:8008/management/perguntas/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
   registerpergunta(texto: string,legenda:Text){

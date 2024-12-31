@@ -6,8 +6,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class GetAvaliadorService {
-  private apiUrl = 'http://localhost:8000/management/get_avaliador/';
-  private colaboradorUrl = 'http://localhost:8000/management/get_colaborador/';  // URL para obter dados do colaborador
+  private apiUrl = 'http://http://172.50.10.79:8008/management/get_avaliador/';
+  private colaboradorUrl = 'http://http://172.50.10.79:8008/management/get_colaborador/';  // URL para obter dados do colaborador
 
   constructor(private http: HttpClient) { }
 

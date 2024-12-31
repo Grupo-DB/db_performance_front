@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class GetFormularioService {
-  private apiUrl = 'http://localhost:8000/management/get_formulario/'; 
+  private apiUrl = 'http://http://172.50.10.79:8008/management/get_formulario/'; 
   constructor(private http: HttpClient) { }
 
   getFormularios(): Observable<any[]>{

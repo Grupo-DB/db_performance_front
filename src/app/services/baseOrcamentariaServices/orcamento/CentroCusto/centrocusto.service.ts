@@ -8,7 +8,7 @@ import { CentroCusto } from '../../../../pages/baseOrcamentaria/orcamentoBase/ce
   providedIn: 'root'
 })
 export class CentrocustoService {
-  private apiUrl = 'http://localhost:8000/orcamento/centroscusto/';
+  private apiUrl = 'http://http://172.50.10.79:8008/orcamento/centroscusto/';
   constructor(
     private httpClient: HttpClient,
     private router: Router,

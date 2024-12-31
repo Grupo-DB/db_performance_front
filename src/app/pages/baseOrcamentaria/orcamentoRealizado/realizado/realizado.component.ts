@@ -27,6 +27,8 @@ import { KnobModule } from 'primeng/knob';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { LoginService } from '../../../../services/avaliacoesServices/login/login.service';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { RouterLink } from '@angular/router';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 export interface ResultadosTotaisArrayItem {
   label: string;
@@ -134,8 +136,16 @@ export interface FilialSga{
   imports: [
     DropdownModule,FloatLabelModule,DividerModule,CommonModule,FormsModule,InputNumberModule,
     MeterGroupModule,CardModule,ButtonModule,InplaceModule,DialogModule,TableModule,ChartModule,
-    SidebarModule,TabViewModule,MultiSelectModule,KnobModule,NzProgressModule,NzMenuModule
+    SidebarModule,TabViewModule,MultiSelectModule,KnobModule,NzProgressModule,NzMenuModule,RouterLink
   ],
+  animations: [
+      trigger('slideAnimation', [
+        transition(':enter', [
+          style({ transform: 'translateX(100%)' }),
+          animate('1s ease-out', style({ transform: 'translateX(0)' })),
+        ]),
+      ]),
+    ],
   templateUrl: './realizado.component.html',
   styleUrl: './realizado.component.scss'
 })
@@ -243,13 +253,6 @@ export class RealizadoComponent implements OnInit {
     private loginService: LoginService,
   ){}
   ngOnInit(): void {
-    this.realizadoService.getRealizados().subscribe(
-      realizados => {
-        this.realizados = realizados
-      }, error => {
-        console.error('Não carregou', error)
-      }
-    )
 
     this.centroCustoPaiService.getCentrosCustoPai().subscribe(
       ccsPai => {
@@ -301,17 +304,17 @@ export class RealizadoComponent implements OnInit {
       this.selectedAno = ano; //Atualiza o ano
       this.orcamentosBaseByCcpai();
       this.calculosOrcamentosRealizados();
+      this.calcularSaldo();
   }
   
-  onCcPaiSelecionado(ccPaiId: any): void {
-    //const id = this.selectedCcPai
+  onCcPaiSelecionado(ccPaiId: any[]): void {
     if (ccPaiId) {
       console.log('Centro de Custo Pai selecionado ID:', ccPaiId); // Log para depuração
       this.selectedCcPai = ccPaiId; // Atualiza a variável
       this.orcamentosBaseByCcpai(); // Chama a API com o ID
       this.ccPaiDetalhes();
       this.carregarCcs(ccPaiId);
-      //this.ccPaiDetalhes();
+      
     } else {
       console.error('O ID do cc é indefinido');
     }
@@ -350,10 +353,10 @@ export class RealizadoComponent implements OnInit {
       this.orcamentoBaseService.getOrcamentoBaseByCcPai(this.selectedCcPai,this.selectedAno,this.selectedCodManagers).subscribe(
         response => {
           this.dictOrcadoTiposCusto = response.conta_por_mes;
-          this.dictAnualOrcadoTiposCusto = response.conta_por_ano;
+          //this.dictAnualOrcadoTiposCusto = response.tipo_por_ano;
           //
           this.graficoBaseOrcamentos(response.total_bases)
-          this.dictAnualOrcadoGrupoContas = response.tipo_por_ano;
+          this.dictAnualOrcadoGrupoContas = response.conta_por_ano;
           //
           this.dictOrcadoContasAnaliticas = response.raiz_por_mes;
           this.dictAnualOrcadoContasAnaliticas = response.raiz_por_ano;
@@ -411,6 +414,7 @@ export class RealizadoComponent implements OnInit {
             icon: 'pi pi-chart-bar',
           }));
 
+          this.dictAnualOrcadoTiposCusto = response.tipo_por_ano;
           this.tiposAnuais = Object.keys(response.tipo_por_ano).map((key) => ({
             label: key,
             color1: '#004EAE',
@@ -436,7 +440,9 @@ export class RealizadoComponent implements OnInit {
           }));
 
         }
+        
       );
+      this.montarGraficoTotais();
     }
   }
 
@@ -454,6 +460,8 @@ export class RealizadoComponent implements OnInit {
       
     )
   }
+
+
   //Grafico Tipos Custos Mensais
   abrirModalTiposMensais(): void{
     this.modalGrafVisible = true;
@@ -611,6 +619,7 @@ graficoContasAnaliticasAnual(): void{
               icon: 'pi pi-chart-bar',
             }));
             this.montarGraficoTotais();
+            this.calcularSaldo();
         }
        
       )
@@ -724,6 +733,7 @@ calcularSaldo() {
 
   // Salva o saldo original para uso no nz-progress
   this.saldo = saldoFormatado;
+  this.montarGraficoTotais();
 }
 
   //======================================GRAFICOS=====================================////

@@ -26,6 +26,12 @@
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/orcamentoBase" >Orçamento Base</a>
                 </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/projecao"> Projeções</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/produto">Linha de Produtos</a>
+                </li>
             </ul>
         </li >
         
@@ -33,6 +39,9 @@
             <ul>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoRealizado/realizado"> Orçado x Realizado Setorial</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/projetado"> DRE Projetado</a>
                 </li>
             </ul>
            
@@ -161,7 +170,7 @@
                                     <p-card class="w-14rem flex-grow-1 shadow-2  hover:shadow-6"> 
                                         <div class="flex justify-content-between gap-1">
                                             <div class="flex flex-column gap-1">
-                                                <span class="text-secondary text-md" style="white-space: nowrap; margin-left: -10px; text-align: start;">{{ meterItem.label }}</span>
+                                                <span class="text-secondary text-md" style="white-space: nowrap; margin-left: -10px; text-align: start;">{{ meterItem.label | uppercase }}</span>
                                                 <span class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start;">R$ {{ meterItem.value }}</span>
                                             </div>
                                             <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
@@ -200,7 +209,7 @@
                                                                 <p-card class="w-5 shadow-2 border-round-md hover:shadow-6 border-0.2" >
                                                                     <div class="flex justify-content-between gap-2">
                                                                         <div class="flex flex-column gap-3">
-                                                                            <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label }}</span>
+                                                                            <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label | uppercase }}</span>
                                                                             <span class="font-bold text-md"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
                                                                         </div>
                                                                         <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff',}">
@@ -230,8 +239,8 @@
                                                                 <p-card class="w-10 shadow-2 border-round-md hover:shadow-6 border-0.2" >
                                                                     <div class="flex justify-content-between gap-3">
                                                                         <div class="flex flex-column gap-3">
-                                                                            <span class="text-secondary text-lg" style="white-space: nowrap;text-align: start;">{{ meterItem.label }}</span>
-                                                                            <span class="font-bold text-lg"style="white-space: nowrap;text-align: start;">R$ {{ meterItem.value }}</span>
+                                                                            <span class="text-secondary text-md" style="white-space: nowrap;text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                                            <span class="font-bold text-md"style="white-space: nowrap;text-align: start;">R$ {{ meterItem.value }}</span>
                                                                         </div>
                                                                         <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
                                                                             <a (click)="abrirModalGrupoMensais()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
@@ -260,8 +269,8 @@
                                                             <p-card class="w-10 flex-grow-1 shadow-2 border-round-md hover:shadow-6 border-0.2">
                                                                 <div class="flex justify-content-between gap-3">
                                                                     <div class="flex flex-column gap-3">
-                                                                        <span class="text-secondary text-lg" style="white-space: nowrap; text-align: start; ">{{ meterItem.label }}</span>
-                                                                        <span class="font-bold text-lg"style="white-space: nowrap; text-align: start; ">R$ {{ meterItem.value }}</span>
+                                                                        <span class="text-secondary text-md" style="white-space: nowrap; text-align: start; ">{{ meterItem.label | uppercase }}</span>
+                                                                        <span class="font-bold text-md"style="white-space: nowrap; text-align: start; ">R$ {{ meterItem.value }}</span>
                                                                     </div>
                                                                     <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
                                                                         <a (click)="abrirModalTiposMensais()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
@@ -289,8 +298,8 @@
                                                             <p-card class="w-12 shadow-2 border-round-md hover:shadow-6 border-0.2" >
                                                                 <div class="flex justify-content-between gap-2">
                                                                     <div class="flex flex-column gap-3">
-                                                                        <span class="text-secondary text-sm" style="white-space: nowrap; text-align: start;">{{ meterItem.label }}</span>
-                                                                        <span class="font-bold text-lg"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
+                                                                        <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                                        <span class="font-bold text-md"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
                                                                     </div>
                                                                     <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
                                                                         <a (click)="abrirModalContasAnaliticas()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
@@ -326,16 +335,16 @@
                                                 <span class=" white-space-nowrap m-0" style="color: #444959;"> Tipo de Custo</span>
                                             </div>
                                         </ng-template>
-                                        <p-meterGroup [value]="contasAnuais" labelPosition="start">
+                                        <p-meterGroup [value]="tiposAnuais" labelPosition="start">
                                             <ng-template pTemplate="label">
                                                 <div class="w-full" style="max-height: 500px; overflow-y: auto;">
                                                     <div class="flex flex-wrap gap-3 ml-2">
-                                                        <ng-container *ngFor="let meterItem of contasAnuais; let index = index">
+                                                        <ng-container *ngFor="let meterItem of tiposAnuais; let index = index">
                                                             <p-card class="w-10 shadow-2 border-round-md hover:shadow-6 border-0.2" >
                                                                 <div class="flex justify-content-between gap-2">
                                                                     <div class="flex flex-column gap-3">
-                                                                        <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label }}</span>
-                                                                        <span class="font-bold text-lg"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
+                                                                        <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                                        <span class="font-bold text-md"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
                                                                     </div>
                                                                     <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
                                                                         <a (click)="abrirModalTiposAnual()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
@@ -354,15 +363,15 @@
                                                 <span class=" white-space-nowrap m-0" style="color: #444959;"> Grupo de Contas</span>
                                             </div>
                                         </ng-template>
-                                        <p-meterGroup [value]="tiposAnuais" labelPosition="start">
+                                        <p-meterGroup [value]="contasAnuais" labelPosition="start">
                                             <ng-template pTemplate="label">
                                                 <div class="w-full" style="max-height: 500px; overflow-y: auto;">
                                                     <div class="flex flex-wrap gap-3 ml-2">
-                                                        <ng-container *ngFor="let meterItem of tiposAnuais; let index = index">
+                                                        <ng-container *ngFor="let meterItem of contasAnuais; let index = index">
                                                             <p-card class="w-10 shadow-2 border-round-md hover:shadow-6 border-0.2" >
                                                                 <div class="flex justify-content-between gap-2">
                                                                     <div class="flex flex-column gap-3">
-                                                                        <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label }}</span>
+                                                                        <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label | uppercase }}</span>
                                                                         <span class="font-bold text-md"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
                                                                     </div>
                                                                     <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
@@ -390,8 +399,8 @@
                                                             <p-card class="w-10 shadow-2 border-round-md hover:shadow-6 border-0.2">
                                                                 <div class="flex justify-content-between gap-2">
                                                                     <div class="flex flex-column gap-3">
-                                                                        <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label }}</span>
-                                                                        <span class="font-bold text-lg"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
+                                                                        <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                                        <span class="font-bold text-md"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
                                                                     </div>
                                                                     <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
                                                                         <a (click)="abrirModalContasAnual()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
@@ -422,8 +431,8 @@
                                 <p-card class="w-10 shadow-2 border-round-md hover:shadow-6 border-0.4"> 
                                     <div class="flex justify-content-between gap-3">
                                         <div class="flex flex-column gap-1">
-                                            <span class="text-secondary text-lg" style="white-space: nowrap; text-align: start;">{{ meterItem.label }}</span>
-                                            <span class="font-bold text-lg" style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
+                                            <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                            <span class="font-bold text-md" style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
                                         </div>
                                         <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
                                             <i style="font-size: 1rem" [class]="meterItem.icon"></i>
@@ -461,7 +470,7 @@
                                                         <p-card class="w-10 shadow-2 border-round-md hover:shadow-6 border-0.2" >
                                                             <div class="flex justify-content-between gap-2">
                                                                 <div class="flex flex-column gap-3">
-                                                                    <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label }}</span>
+                                                                    <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label | uppercase }}</span>
                                                                     <span class="font-bold text-md"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
                                                                 </div>
                                                                 <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
@@ -490,8 +499,8 @@
                                                         <p-card class="w-10 shadow-2 border-round-md hover:shadow-6 border-0.2" >
                                                             <div class="flex justify-content-between gap-2">
                                                                 <div class="flex flex-column gap-3">
-                                                                    <span class="text-secondary text-md" style="white-space: nowrap;text-align: start;">{{ meterItem.label }}</span>
-                                                                    <span class="font-bold text-lg"style="white-space: nowrap;text-align: start;">R$ {{ meterItem.value }}</span>
+                                                                    <span class="text-secondary text-md" style="white-space: nowrap;text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                                    <span class="font-bold text-md"style="white-space: nowrap;text-align: start;">R$ {{ meterItem.value }}</span>
                                                                 </div>
                                                                 <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
                                                                     <a (click)="abrirModalRealizadoCcs()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
@@ -519,8 +528,8 @@
                                                         <p-card class="w-10 shadow-2 border-round-md hover:shadow-6 border-0.2" >
                                                             <div class="flex justify-content-between gap-2">
                                                                 <div class="flex flex-column gap-3">
-                                                                    <span class="text-secondary text-md" style="white-space: nowrap;text-align: start;">{{ meterItem.label }}</span>
-                                                                    <span class="font-bold text-lg"style="white-space: nowrap;text-align: start;">R$ {{ meterItem.value }}</span>
+                                                                    <span class="text-secondary text-md" style="white-space: nowrap;text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                                    <span class="font-bold text-md"style="white-space: nowrap;text-align: start;">R$ {{ meterItem.value }}</span>
                                                                 </div>
                                                                 <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
                                                                     <a (click)="abrirModalRealizadoGruposContabeis()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
@@ -548,8 +557,8 @@
                                                         <p-card class="w-12 shadow-2 border-round-md hover:shadow-6 border-0.2" >
                                                             <div class="flex justify-content-between gap-2">
                                                                 <div class="flex flex-column gap-3">
-                                                                    <span class="text-secondary text-sm" style="white-space: nowrap;text-align: start;">{{ meterItem.label }}</span>
-                                                                    <span class="font-bold text-lg"style="white-space: nowrap;text-align: start;">R$ {{ meterItem.value }}</span>
+                                                                    <span class="text-secondary text-md" style="white-space: nowrap;text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                                    <span class="font-bold text-md"style="white-space: nowrap;text-align: start;">R$ {{ meterItem.value }}</span>
                                                                 </div>
                                                                 <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
                                                                     <a (click)="abrirModalRealizadoContasAnaliticas()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>

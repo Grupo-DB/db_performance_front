@@ -8,7 +8,7 @@ import { Ambiente } from '../../../pages/avaliacoes/ambiente/ambiente.component'
   providedIn: 'root'
 })
 export class AmbienteService {
-  private apiUrl = 'http://localhost:8000/management/ambientes/';
+  private apiUrl = 'http://http://172.50.10.79:8008/management/ambientes/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
   registerAmbiente(nome:string, empresa: string, filial: string, area: string, setor: string){

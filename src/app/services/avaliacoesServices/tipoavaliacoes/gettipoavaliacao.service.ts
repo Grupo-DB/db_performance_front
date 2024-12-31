@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class GetTipoAvaliacaoService {
-  private apiUrl = 'http://localhost:8000/management/get_tipoavaliacao/'; 
+  private apiUrl = 'http://http://172.50.10.79:8008/management/get_tipoavaliacao/'; 
   constructor(private http: HttpClient) { }
 
   getTipoavaliacoes(): Observable<any[]>{

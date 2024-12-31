@@ -8,7 +8,7 @@ import { ContaContabil } from '../../../../pages/baseOrcamentaria/orcamentoBase/
   providedIn: 'root'
 })
 export class ContaContabilService {
-  private apiUrl = 'http://localhost:8000/orcamento/contascontabeis/'
+  private apiUrl = 'http://http://172.50.10.79:8008/orcamento/contascontabeis/'
   constructor(
     private httpClient: HttpClient,
     private router: Router,

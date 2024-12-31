@@ -73,15 +73,6 @@ export class WelcomeComponent implements OnInit,OnDestroy  {
       }
     );
 
-    // this.notificacoesService.getNotifications().subscribe(
-    //   notificacoes => {
-    //     this.notificacoes = notificacoes;
-    //   },
-    //   error => {
-    //     console.error('Error fetching users:',error);
-    //   }
-    // );
-
     this.filialService.getFiliais().subscribe(
       filiais => {
         this.filiais = filiais;
@@ -195,15 +186,5 @@ export class WelcomeComponent implements OnInit,OnDestroy  {
   }
 
 
-  // async onUpload($event: FileUploadEvent) {
 
-  //   const promises: any[] = [];
-  //   $event.files.forEach(file => promises.push(this.apiService.upload));
-  //   const observable = forkJoin([promises]);
-  //   observable.subscribe({
-  //     next: value => console.log(value),
-  //     complete: () => console.log('all done')
-  //   })
-
-  // }
 }

@@ -9,7 +9,7 @@ import { Cargo } from '../../../pages/avaliacoes/cargo/cargo.component';
   providedIn: 'root'
 })
 export class CargoService {
-  private apiUrl = 'http://localhost:8000/management/cargos/';
+  private apiUrl = 'http://http://172.50.10.79:8008/management/cargos/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
   registercargo(nome: string, empresa: string, filial: string,area:string,setor:string,ambiente:string){

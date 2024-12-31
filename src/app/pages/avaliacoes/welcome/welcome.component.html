@@ -95,8 +95,8 @@
           </div>
            <div class="final">
             <div class="empresa">
-              <p>Empresa:<strong> {{ getNomeEmpresa(colaborador.empresa) }}</strong>
-              <p style="margin-top: -55px;">Filial ativa:<strong> {{ getNomeFilial(colaborador.filial) }}</strong></p>
+              <p>Empresa:<strong> {{ colaborador.empresa_detalhes.nome }}</strong>
+              <p style="margin-top: -55px;">Filial ativa:<strong> {{ colaborador.filial_detalhes.nome }}</strong></p>
             </div>
             <div class="btn">
               <a><p (click)="logout()"><span nz-icon nzType="poweroff" nzTheme="outline"></span></p></a>

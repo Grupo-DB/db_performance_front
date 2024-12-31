@@ -46,6 +46,9 @@ import { ContaContabilComponent } from './pages/baseOrcamentaria/orcamentoBase/c
 import { GrupoItensComponent } from './pages/baseOrcamentaria/orcamentoBase/grupo-itens/grupo-itens.component';
 import { OrcamentoBaseComponent } from './pages/baseOrcamentaria/orcamentoBase/orcamento-base/orcamento-base.component';
 import { RealizadoComponent } from './pages/baseOrcamentaria/orcamentoRealizado/realizado/realizado.component';
+import { ProjecaoComponent } from './pages/baseOrcamentaria/dre/projecao/projecao.component';
+import { ProdutoComponent } from './pages/baseOrcamentaria/dre/produto/produto.component';
+import { ProjetadoComponent } from './pages/baseOrcamentaria/dre/projetado/projetado.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -95,7 +98,10 @@ export const routes: Routes = [
       { path: 'baseOrcamentaria/orcamentoBase/contaContabil', component:ContaContabilComponent },
       { path: 'baseOrcamentaria/orcamentoBase/grupoItens', component:GrupoItensComponent },
       { path: 'baseOrcamentaria/orcamentoBase/orcamentoBase', component:OrcamentoBaseComponent },
-      { path: 'baseOrcamentaria/orcamentoRealizado/realizado', component:RealizadoComponent }
+      { path: 'baseOrcamentaria/orcamentoRealizado/realizado', component:RealizadoComponent },
+      { path: 'baseOrcamentaria/dre/projecao', component:ProjecaoComponent },
+      { path: 'baseOrcamentaria/dre/produto', component:ProdutoComponent },
+      { path: 'baseOrcamentaria/dre/projetado', component:ProjetadoComponent }
     ],
   },
   
