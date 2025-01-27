@@ -10,7 +10,7 @@ import { Setor } from '../../../pages/avaliacoes/setor/setor.component';
   providedIn: 'root'
 })
 export class SetorService {
-  private apiUrl = 'http://http://172.50.10.79:8008/management/setores/';
+  private apiUrl = 'http://localhost:8000/management/setores/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
   registersetor(nome: string, empresa: string, filial: string,area:string){

@@ -141,7 +141,11 @@
                             />
                         </div>     
                     </div>
-                    <div class="row3">
+                    <div *ngIf="isLoading" class="loading-animation">
+                        <!-- Coloque aqui a sua animação de carregamento -->
+                        <img src="assets/imagens/animation.gif" alt="Loading...">
+                    </div>
+                    <div  class="row3">
                         
                             <div class="grafico3">
                                 <canvas id="graficoTotalChart"></canvas>

@@ -17,9 +17,8 @@ import { CommonModule } from '@angular/common';
   selector: 'app-login',
   standalone: true,
   imports: [
-    DefaultLoginLayoutComponent,
     ReactiveFormsModule,ButtonModule,ToastModule,
-    PrimaryInputComponent,InputTextModule,InputGroupAddonModule,InputGroupModule,CommonModule, RouterOutlet, RouterLink, RouterLinkActive
+    InputTextModule,InputGroupAddonModule,InputGroupModule,CommonModule, RouterOutlet, RouterLink,
   ],
   providers: [
     MessageService,

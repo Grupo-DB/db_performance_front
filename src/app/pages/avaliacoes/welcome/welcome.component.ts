@@ -45,6 +45,7 @@ export class WelcomeComponent implements OnInit,OnDestroy  {
   message: any;
   recipient_list: any;
   private intervalId: any;
+  isLoading: boolean = true;
 
   constructor(
     private apiService: UploadService,
@@ -67,9 +68,15 @@ export class WelcomeComponent implements OnInit,OnDestroy  {
     this.registercompanyService.getCompanys().subscribe(
       empresas => {
         this.empresas = empresas;
+        setTimeout(() => {
+          this.isLoading = false; // Defina como false após o tempo de atraso
+        }, 3200); // Tempo de atraso em milissegundos (2 segundos)
       },
       error => {
         console.error('Error fetching users:',error);
+        setTimeout(() => {
+          this.isLoading = false; // Defina como false após o tempo de atraso
+        }, 3200); // Tempo de atraso em milissegundos (2 segundos)
       }
     );
 

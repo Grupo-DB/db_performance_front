@@ -118,7 +118,7 @@ export class OrcamentoBaseComponent implements OnInit{
   selectedGestor: any [] = [];
   ccsDetalhes: any | undefined;
   raizSinteticaDetalhes: any;
-  raizesAnaliticas: RaizAnalitica[]|undefined;
+  raizesAnaliticas: RaizAnalitica[]=[];
   //
   filterValue: string | undefined = '';
   registerForm!: FormGroup <RegisterOrcamentoBaseForm>;
@@ -179,6 +179,7 @@ export class OrcamentoBaseComponent implements OnInit{
     key: i + 1,
     value: new Date(0, i).toLocaleString('default', { month: 'long' }),
   }));
+  dropdown: any;
 
   constructor(
     private loginService: LoginService,
@@ -502,6 +503,11 @@ export class OrcamentoBaseComponent implements OnInit{
           (response) => {
             if (response && response.length > 0) {
               this.raizSinteticaDetalhes = response[0];
+              this.filterValue = this.raizSinteticaDetalhes.raiz_contabil;
+
+              
+
+              console.log('filterValue:', this.filterValue);
               console.log('Raiz Sintética Detalhes:', this.raizSinteticaDetalhes);
               resolve(); // Resolve a promessa com sucesso
             } else {
@@ -521,6 +527,10 @@ export class OrcamentoBaseComponent implements OnInit{
       }
     });
   }
+
+
+  
+
 
   onRaizAnaliticaSelecionada(raizAnalitica: RaizAnalitica){
     this.selectedRaizAnalitica = raizAnalitica;
@@ -626,6 +636,8 @@ export class OrcamentoBaseComponent implements OnInit{
       console.warn('As opções de filtro ou a função reset não estão definidas');
     }
   }
+
+  
 
   customFilterFunction(event: KeyboardEvent, options: DropdownFilterOptions) {
     if (options && options.filter) {

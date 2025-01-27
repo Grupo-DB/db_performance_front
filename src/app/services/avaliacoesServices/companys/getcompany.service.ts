@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class GetCompanyService {
-  private apiUrl = 'http://http://172.50.10.79:8008/management/get_company/'; 
+  private apiUrl = 'http://localhost:8000/management/get_company/'; 
   constructor(private http: HttpClient) { }
 
   getCompanys(): Observable<any[]>{

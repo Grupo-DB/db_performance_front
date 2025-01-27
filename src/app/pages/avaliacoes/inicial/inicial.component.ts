@@ -14,13 +14,14 @@ import { NotificacoesService } from '../../../services/avaliacoesServices/notifi
 import { UserService } from '../../../services/avaliacoesServices/users/user.service';
 import { MessagesModule } from 'primeng/messages';
 import { ToastModule } from 'primeng/toast';
+import { th } from 'date-fns/locale';
 
 @Component({
   selector: 'app-inicial',
   standalone: true,
   imports: [
-    CommonModule, RouterOutlet, NzIconModule,NzUploadModule, NzLayoutModule, NzMenuModule,
-    RouterLink,DividerModule,FormsModule,MessagesModule,ToastModule
+    CommonModule,NzIconModule,NzUploadModule, NzLayoutModule, NzMenuModule,
+    DividerModule,FormsModule,MessagesModule,ToastModule
   ],
   providers: [MessageService,UploadService],
   templateUrl: './inicial.component.html',
@@ -30,6 +31,7 @@ export class InicialComponent implements OnInit {
   notificacoes: any[] = [];
   unreadCount: number = 0;
   messages: any[] = [];
+  isLoading: boolean = true;
   constructor(
     private msg: NzMessageService,
     private userService: UserService,
@@ -45,9 +47,15 @@ export class InicialComponent implements OnInit {
       notificacoes => {
         this.notificacoes = notificacoes;
         this.updateMessages();
+        
+      
       },
       error => {
         console.error('Error fetching users:',error);
+        this.isLoading = false;
+        setTimeout(() => {
+          this.isLoading = false; // Defina como false mesmo em caso de erro após o tempo de atraso
+        }, 2000);
       }
     );
   }

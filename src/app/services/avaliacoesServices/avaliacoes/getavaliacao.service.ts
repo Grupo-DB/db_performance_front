@@ -7,17 +7,17 @@ import { Avaliacao } from '../../../pages/avaliacoes/novaliacao/novaliacao.compo
   providedIn: 'root'
 })
 export class AvaliacaoService {
-  private apiUrl = 'http://http://172.50.10.79:8008/management/avaliacoes/';
-  private apiUrlfb = 'http://http://172.50.10.79:8008/management/';
-  private filterUrl = 'http://http://172.50.10.79:8008/datacalc/filtrar-avaliacoes/';
-  private filterLogadoUrl = 'http://http://172.50.10.79:8008/datacalc/filtrar-avaliacoes-logado/';
-  private filterAvaliadosUrl = 'http://http://172.50.10.79:8008/datacalc/filtrar-avaliados/';
-  private filterAvaliacoesPeriodoUrl = 'http://http://172.50.10.79:8008/datacalc/filtrar-avaliacoes-periodo/';
-  private filterAvaliacoesAvaliadorPeriodoUrl = 'http://http://172.50.10.79:8008/datacalc/filtrar-avaliacoes-avaliador-periodo/';
-  private apiAvUrl = 'http://http://172.50.10.79:8008/management/avaliacoes/minhas_avaliacoes/';
-  private periodoUrl = 'http://http://172.50.10.79:8008/datacalc/get-periodos/';
-  private tipoUrl = 'http://http://172.50.10.79:8008/datacalc/get-tipos/';
-  private historicoUrl = 'http://http://172.50.10.79:8008/datacalc/filtrar-historico/';  
+  private apiUrl = 'http://localhost:8000/management/avaliacoes/';
+  private apiUrlfb = 'http://localhost:8000/management/';
+  private filterUrl = 'http://localhost:8000/datacalc/filtrar-avaliacoes/';
+  private filterLogadoUrl = 'http://localhost:8000/datacalc/filtrar-avaliacoes-logado/';
+  private filterAvaliadosUrl = 'http://localhost:8000/datacalc/filtrar-avaliados/';
+  private filterAvaliacoesPeriodoUrl = 'http://localhost:8000/datacalc/filtrar-avaliacoes-periodo/';
+  private filterAvaliacoesAvaliadorPeriodoUrl = 'http://localhost:8000/datacalc/filtrar-avaliacoes-avaliador-periodo/';
+  private apiAvUrl = 'http://localhost:8000/management/avaliacoes/minhas_avaliacoes/';
+  private periodoUrl = 'http://localhost:8000/datacalc/get-periodos/';
+  private tipoUrl = 'http://localhost:8000/datacalc/get-tipos/';
+  private historicoUrl = 'http://localhost:8000/datacalc/filtrar-historico/';  
 
   constructor(private http: HttpClient) { }
 

@@ -1,4 +1,8 @@
-<nz-layout class="app-layout">
+<div *ngIf="isLoading" class="loading-animation">
+  <!-- Coloque aqui a sua animação de carregamento -->
+  <img src="assets/imagens/db.gif" alt="Loading...">
+</div>
+<nz-layout *ngIf="!isLoading" class="app-layout">
     <nz-sider class="menu-sidebar"
       nzCollapsible
       nzWidth="256px"
@@ -39,10 +43,12 @@
           </ul> 
           <ul>
             <li nz-menu-item   nzMatchRouter>
-              <a routerLink="baseOrcamentaria/orcamentoBase/homeOrcamento" ><span nz-icon nzType="dollar" nzTheme="outline"></span>  Orçamento </a>
+              <a routerLink="baseOrcamentaria/orcamentoBase/homeOrcamento" ><span nz-icon nzType="dollar" nzTheme="outline"></span>  Orçamento</a>
             </li> 
           </ul>
         </li>
+
+
         <li nz-submenu style="background-color: #444959;"  nzTitle="Gestão de Pessoas" nzIcon="team">
           <ul>
             <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>

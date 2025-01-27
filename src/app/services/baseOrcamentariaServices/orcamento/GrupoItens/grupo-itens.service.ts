@@ -8,7 +8,7 @@ import { GrupoItens } from '../../../../pages/baseOrcamentaria/orcamentoBase/gru
   providedIn: 'root'
 })
 export class GrupoItensService {
-  private apiUrl = 'http://http://172.50.10.79:8008/orcamento/grupositens/'
+  private apiUrl = 'http://localhost:8000/orcamento/grupositens/'
   constructor(
     private httpClient: HttpClient,
     private router: Router

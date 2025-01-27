@@ -6,8 +6,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://http://172.50.10.79:8008/management/get_users/'; 
-  private apiUrl2 = 'http://http://172.50.10.79:8008/management/email/'; 
+  private apiUrl = 'http://localhost:8000/management/get_users/'; 
+  private apiUrl2 = 'http://localhost:8000/management/email/'; 
   constructor(private http: HttpClient) { }
 
   getUsers(): Observable<any[]>{

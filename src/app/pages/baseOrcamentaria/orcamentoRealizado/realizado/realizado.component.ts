@@ -233,6 +233,8 @@ export class RealizadoComponent implements OnInit {
   selectedCodManagers: any;
   totais!: any;
   //
+  isLoading: boolean = true;
+  //  
   totaisChart: Chart<'bar'> | undefined;
   gruposChart: Chart<'pie'> | undefined;
   //
@@ -568,9 +570,13 @@ graficoContasAnaliticasAnual(): void{
 }
 
   calculosOrcamentosRealizados(){
+    this.isLoading=true;
+
     if (this.selectedCcPai !== null){
       this.orcamentoBaseService.calcularOrcamentoRealizado(this.centrosCusto,this.selectedAno,this.selectedsFiliais).subscribe(
         response =>{
+            this.isLoading=false;
+
             this.teste = response.total_realizado;
             
             this.totalRealizado = Number(response.total_real);
@@ -712,7 +718,7 @@ calcularSaldo() {
   const realizado = parseFloat(this.totalRealizado);
 
   // Calcula o saldo
-  const saldoCalculado = orcado - realizado;
+  const saldoCalculado = (orcado) - (realizado);
 
   // Formata o saldo para incluir pontuações (milhares)
   const saldoFormatado = saldoCalculado.toLocaleString('pt-BR', {

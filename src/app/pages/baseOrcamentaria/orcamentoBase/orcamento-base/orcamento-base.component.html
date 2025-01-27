@@ -202,18 +202,18 @@
                                     [(ngModel)]="selectedRaizAnalitica"
                                     (onChange)="onRaizAnaliticaSelecionada($event.value)"
                                     [filter]="true" 
-                                    filterBy="descricao"
+                                    filterBy="raiz_contabil"
                                     [showClear]="true" 
                                 >
                                     <ng-template pTemplate="filter" let-options="options">
                                         <div class="flex gap-1">
                                             <div class="p-inputgroup" (click)="$event.stopPropagation()">
-                                                <span class="p-inputgroup-addon"><i class="pi pi-search"></i></span>
+                                                <span class="p-inputgroup-addon"><i class="pi pi-search" ></i></span>
                                                 <input 
                                                     type="text"
                                                     pInputText
                                                     placeholder="Filter"
-                                                    [(ngModel)]="filterValue"
+                                                    [value]="filterValue"
                                                     (keyup)="customFilterFunction($event, options)" />
                                             </div>
                                             <button pButton icon="pi pi-times" (click)="resetFunction(options)"></button>

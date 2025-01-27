@@ -9,7 +9,7 @@ import { TipoAvaliacao } from '../../../pages/avaliacoes/tipoavaliacao/tipoavali
   providedIn: 'root'
 })
 export class TipoAvaliacaoService {
-  private apiUrl = 'http://http://172.50.10.79:8008/management/tipoavaliacoes/';
+  private apiUrl = 'http://localhost:8000/management/tipoavaliacoes/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
   registertipoavaliacao(nome: string){

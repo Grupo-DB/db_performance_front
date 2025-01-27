@@ -9,11 +9,11 @@ import { catchError, map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class ColaboradorService {
-  private apiUrl = 'http://http://172.50.10.79:8008/management/colaboradores/';
-  private urlme= 'http://http://172.50.10.79:8008/management/avaliadores/';
-  private calcUrl = 'http://http://172.50.10.79:8008/datacalc/total-colaboradores/';
-  private filterUrl = 'http://http://172.50.10.79:8008/datacalc/filtrar-colaboradores/';
-  private baseCalcUrl = 'http://http://172.50.10.79:8008/datacalc/';
+  private apiUrl = 'http://localhost:8000/management/colaboradores/';
+  private urlme= 'http://localhost:8000/management/avaliadores/';
+  private calcUrl = 'http://localhost:8000/datacalc/total-colaboradores/';
+  private filterUrl = 'http://localhost:8000/datacalc/filtrar-colaboradores/';
+  private baseCalcUrl = 'http://localhost:8000/datacalc/';
 
   constructor(private  httpClient: HttpClient, private router: Router) { }
    
