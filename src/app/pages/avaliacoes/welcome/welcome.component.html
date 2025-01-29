@@ -83,23 +83,21 @@
                  nz-icon
                  [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
               ></span>
-          </span>
-          
-        <div class="inicio">
-          <div class="divnot">
-            <p>Olá, <b>{{ colaborador.nome }}</b>.</p>
-            <p style="margin-top: -55px;">
-              <a routerLink="inicial">
-                <b>Você possui {{ unreadCount }} notificações não lidas.</b>
-              </a>
-            </p>
-          </div> 
-         </div> 
-          
+          </span>   
+          <div class="inicio">
+            <div class="divnot">
+              <p>Olá, <b>{{ colaborador.nome }}</b>.</p>
+              <p style="margin-top: -55px;">
+                <a routerLink="inicial">
+                  <b>Você possui {{ unreadCount }} notificações não lidas.</b>
+                </a>
+              </p>
+            </div> 
+          </div>  
           <div class="top">
             <strong>{{ hoje | date:' HH:mm' }}</strong>
           </div>
-           <div class="final">
+          <div class="final">
             <div class="empresa">
               <p>Empresa:<strong> {{ colaborador.empresa_detalhes.nome }}</strong>
               <p style="margin-top: -55px;">Filial ativa:<strong> {{ colaborador.filial_detalhes.nome }}</strong></p>
@@ -107,11 +105,10 @@
             <div class="btn">
               <a><p (click)="logout()"><span nz-icon nzType="poweroff" nzTheme="outline"></span></p></a>
             </div>  
-           </div> 
-                 
+          </div>     
         </div>
       </nz-header>
-      <nz-content>
+    <nz-content>
 
         <div class="inner-content">
           <router-outlet></router-outlet>

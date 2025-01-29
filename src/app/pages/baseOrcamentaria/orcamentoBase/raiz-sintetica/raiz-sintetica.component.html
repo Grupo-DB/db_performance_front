@@ -18,13 +18,19 @@
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizSintetica" >Raiz Sintética</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/contaContabil" >Conta Contabil</a>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/contaContabil" >Conta Contábil</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/grupoItens" >Grupos de Itens</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/orcamentoBase" >Orçamento Base</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/produto">Linha de Produtos</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/projecao"> Projeções</a>
                 </li>
             </ul>
         </li >
@@ -33,6 +39,9 @@
             <ul>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoRealizado/realizado"> Orçado x Realizado Setorial</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/projetado"> DRE Projetado</a>
                 </li>
             </ul>
            
@@ -47,7 +56,7 @@
 </div>
 
 <div class="container">
-    <div class="formWrap">
+    <div class="formWrap"@swipeAnimationReverse>
         <form
             [formGroup]="registerForm"
             title="Cadastrar nova Raiz Sintetica"
@@ -64,7 +73,7 @@
                             </p-inputGroupAddon>
                             <span class="p-float-label">
                                 <input
-                                    [style]="{'width':'100%'}"
+                                    [style]="{'width':'100%','font-size':'16px'}"
                                     pInputText
                                     id="raiz_contabil"
                                     formControlName="raiz_contabil"
@@ -105,7 +114,7 @@
         </div>
     </div>
 
-    <div class="tabela">
+    <div class="tabela"@swipeAnimation>
         <p-table
             #dt1
             [value]="raizesSinteticas"

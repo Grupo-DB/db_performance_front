@@ -142,8 +142,14 @@ export interface FilialSga{
       trigger('slideAnimation', [
         transition(':enter', [
           style({ transform: 'translateX(100%)' }),
-          animate('1s ease-out', style({ transform: 'translateX(0)' })),
+          animate('2s ease-out', style({ transform: 'translateX(0)' })),
         ]),
+      ]),
+      trigger('efeitoFade',[
+        transition(':enter',[
+          style({ opacity: 0 }),
+          animate('2s', style({ opacity:1 }))
+        ])
       ]),
     ],
   templateUrl: './realizado.component.html',
@@ -158,7 +164,7 @@ export class RealizadoComponent implements OnInit {
   //
   detalhes: any | undefined;
   selectedCcPai: any[]=[];
-  selectedAno: number = 2024;
+  selectedAno: number = 2025;
   valorOrcadoTotal!: number;
   valorOrcadoGastoMensal!: number;
   valorOrcadoGastoAnual!: number;
@@ -310,7 +316,7 @@ export class RealizadoComponent implements OnInit {
   }
   
   onCcPaiSelecionado(ccPaiId: any[]): void {
-    if (ccPaiId) {
+    if (ccPaiId.length <= 1) {
       console.log('Centro de Custo Pai selecionado ID:', ccPaiId); // Log para depuração
       this.selectedCcPai = ccPaiId; // Atualiza a variável
       this.orcamentosBaseByCcpai(); // Chama a API com o ID
@@ -318,7 +324,9 @@ export class RealizadoComponent implements OnInit {
       this.carregarCcs(ccPaiId);
       
     } else {
-      console.error('O ID do cc é indefinido');
+      this.selectedCcPai = ccPaiId;
+      this.carregarCcs(ccPaiId);
+      this.orcamentosBaseByCcpai();
     }
   }
 
@@ -765,7 +773,7 @@ calcularSaldo() {
                 {
                     label: 'Base',
                     data:[valor2], // Apenas o valor de `response.total`
-                    backgroundColor: '#898993',
+                    backgroundColor: '#1890FF',
                     hoverBackgroundColor: '#FFB100'
                 },
                 {
@@ -843,13 +851,23 @@ this.gruposChart = new Chart(ctx, {
         datasets: [{
             data: values,
             backgroundColor: [
-                '#4C5264',
-                '#07449b',
-                '#12bfd7',
-                '#242730',
-                '#97a3c2',
-                '#898993',
-                '#1890FF',                   
+              '#1890FF',
+              '#4C5264',
+              '#e0ede9',
+              '#07449b',
+              '#12bfd7',
+              '#242730',
+              '#97a3c2',
+              '#898993',
+              '#4C5264',
+              '#e0ede9',
+              '#f2f1f0',
+              '#e3e3f3',
+              '#444959',
+              '#97a3c2',
+              '#898993',
+              '#3A3E4C',
+              '#242730',                  
             ],
             hoverBackgroundColor: [
                 '#FFB100',
@@ -920,13 +938,23 @@ graficoBaseOrcamentos(tipoOrcadoMes: any): void {
           datasets: [{
               data: values,
               backgroundColor: [
+                '#1890FF',
                 '#4C5264',
+                '#e0ede9',
                 '#07449b',
                 '#12bfd7',
                 '#242730',
                 '#97a3c2',
                 '#898993',
-                '#1890FF', 
+                '#4C5264',
+                '#e0ede9',
+                '#f2f1f0',
+                '#e3e3f3',
+                '#444959',
+                '#97a3c2',
+                '#898993',
+                '#3A3E4C',
+                '#242730', 
               ],
               hoverBackgroundColor: [
                   '#FFB100',
@@ -1015,13 +1043,23 @@ graficoOrcadoTipoCustoMensal(tipoOrcadoMes: any): void{
           datasets: [{
               data: values,
               backgroundColor: [
+                '#1890FF',
                 '#4C5264',
+                '#e0ede9',
                 '#07449b',
                 '#12bfd7',
                 '#242730',
                 '#97a3c2',
                 '#898993',
-                '#1890FF', 
+                '#4C5264',
+                '#e0ede9',
+                '#f2f1f0',
+                '#e3e3f3',
+                '#444959',
+                '#97a3c2',
+                '#898993',
+                '#3A3E4C',
+                '#242730', 
               ],
               hoverBackgroundColor: [
                   '#FFB100',
@@ -1083,13 +1121,23 @@ graficoOrcadoGrupoContas(tipoOrcado: any): void{
           datasets: [{
               data: values,
               backgroundColor: [
+                '#1890FF',
                 '#4C5264',
+                '#e0ede9',
                 '#07449b',
                 '#12bfd7',
                 '#242730',
                 '#97a3c2',
                 '#898993',
-                '#1890FF', 
+                '#4C5264',
+                '#e0ede9',
+                '#f2f1f0',
+                '#e3e3f3',
+                '#444959',
+                '#97a3c2',
+                '#898993',
+                '#3A3E4C',
+                '#242730', 
               ],
               hoverBackgroundColor: [
                   '#FFB100',
@@ -1151,13 +1199,23 @@ graficoOrcadoContasAnaliticas(tipoOrcadoMes: any): void{
           datasets: [{
               data: values,
               backgroundColor: [
+                '#1890FF',
                 '#4C5264',
+                '#e0ede9',
                 '#07449b',
                 '#12bfd7',
                 '#242730',
                 '#97a3c2',
                 '#898993',
-                '#1890FF', 
+                '#4C5264',
+                '#e0ede9',
+                '#f2f1f0',
+                '#e3e3f3',
+                '#444959',
+                '#97a3c2',
+                '#898993',
+                '#3A3E4C',
+                '#242730', 
               ],
               hoverBackgroundColor: [
                   '#FFB100',
@@ -1220,13 +1278,23 @@ graficoOrcadoTiposCustosAnual(tipoOrcadoMes: any): void{
           datasets: [{
               data: values,
               backgroundColor: [
+                '#1890FF',
                 '#4C5264',
+                '#e0ede9',
                 '#07449b',
                 '#12bfd7',
                 '#242730',
                 '#97a3c2',
                 '#898993',
-                '#1890FF', 
+                '#4C5264',
+                '#e0ede9',
+                '#f2f1f0',
+                '#e3e3f3',
+                '#444959',
+                '#97a3c2',
+                '#898993',
+                '#3A3E4C',
+                '#242730', 
               ],
               hoverBackgroundColor: [
                   '#FFB100',
@@ -1288,13 +1356,23 @@ graficoOrcadoGruposContasAnual(tipoOrcadoMes: any): void{
           datasets: [{
               data: values,
               backgroundColor: [
+                '#1890FF',
                 '#4C5264',
+                '#e0ede9',
                 '#07449b',
                 '#12bfd7',
                 '#242730',
                 '#97a3c2',
                 '#898993',
-                '#1890FF', 
+                '#4C5264',
+                '#e0ede9',
+                '#f2f1f0',
+                '#e3e3f3',
+                '#444959',
+                '#97a3c2',
+                '#898993',
+                '#3A3E4C',
+                '#242730',  
               ],
               hoverBackgroundColor: [
                   '#FFB100',
@@ -1356,13 +1434,23 @@ graficoOrcadoContasAnaliticasAnual(tipoOrcadoMes: any): void{
           datasets: [{
               data: values,
               backgroundColor: [
+                '#1890FF',
                 '#4C5264',
+                '#e0ede9',
                 '#07449b',
                 '#12bfd7',
                 '#242730',
                 '#97a3c2',
                 '#898993',
-                '#1890FF', 
+                '#4C5264',
+                '#e0ede9',
+                '#f2f1f0',
+                '#e3e3f3',
+                '#444959',
+                '#97a3c2',
+                '#898993',
+                '#3A3E4C',
+                '#242730',  
               ],
               hoverBackgroundColor: [
                   '#FFB100',
@@ -1426,13 +1514,23 @@ graficoRealizadoTiposCustos(tipoOrcadoMes: any): void {
           datasets: [{
               data: values,
               backgroundColor: [
+                '#1890FF',
                 '#4C5264',
+                '#e0ede9',
                 '#07449b',
                 '#12bfd7',
                 '#242730',
                 '#97a3c2',
                 '#898993',
-                '#1890FF', 
+                '#4C5264',
+                '#e0ede9',
+                '#f2f1f0',
+                '#e3e3f3',
+                '#444959',
+                '#97a3c2',
+                '#898993',
+                '#3A3E4C',
+                '#242730',  
               ],
               hoverBackgroundColor: [
                   '#FFB100',
@@ -1518,13 +1616,23 @@ graficoRealizadoCentrosCustos(tipoOrcadoMes: any): void {
           datasets: [{
               data: values,
               backgroundColor: [
+                '#1890FF',
                 '#4C5264',
+                '#e0ede9',
                 '#07449b',
                 '#12bfd7',
                 '#242730',
                 '#97a3c2',
                 '#898993',
-                '#1890FF', 
+                '#4C5264',
+                '#e0ede9',
+                '#f2f1f0',
+                '#e3e3f3',
+                '#444959',
+                '#97a3c2',
+                '#898993',
+                '#3A3E4C',
+                '#242730', 
               ],
               hoverBackgroundColor: [
                   '#FFB100',
@@ -1610,13 +1718,23 @@ graficoRealizadoGruposContabeis(tipoOrcadoMes: any): void {
           datasets: [{
               data: values,
               backgroundColor: [
+                '#1890FF',
                 '#4C5264',
+                '#e0ede9',
                 '#07449b',
                 '#12bfd7',
                 '#242730',
                 '#97a3c2',
                 '#898993',
-                '#1890FF', 
+                '#4C5264',
+                '#e0ede9',
+                '#f2f1f0',
+                '#e3e3f3',
+                '#444959',
+                '#97a3c2',
+                '#898993',
+                '#3A3E4C',
+                '#242730', 
               ],
               hoverBackgroundColor: [
                   '#FFB100',
@@ -1702,13 +1820,23 @@ graficoRealizadoContasAnaliticas(tipoOrcadoMes: any): void {
           datasets: [{
               data: values,
               backgroundColor: [
+                '#1890FF',
                 '#4C5264',
+                '#e0ede9',
                 '#07449b',
                 '#12bfd7',
                 '#242730',
                 '#97a3c2',
                 '#898993',
-                '#1890FF', 
+                '#4C5264',
+                '#e0ede9',
+                '#f2f1f0',
+                '#e3e3f3',
+                '#444959',
+                '#97a3c2',
+                '#898993',
+                '#3A3E4C',
+                '#242730', 
               ],
               hoverBackgroundColor: [
                   '#FFB100',

@@ -18,7 +18,7 @@
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizSintetica" >Raiz Sintética</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/contaContabil" >Conta Contabil</a>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/contaContabil" >Conta Contábil</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/grupoItens" >Grupos de Itens</a>
@@ -27,10 +27,10 @@
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/orcamentoBase" >Orçamento Base</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/baseOrcamentaria/dre/projecao"> Projeções</a>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/produto">Linha de Produtos</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/baseOrcamentaria/dre/produto">Linha de Produtos</a>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/projecao"> Projeções</a>
                 </li>
             </ul>
         </li >
@@ -57,7 +57,7 @@
 
 <div class="container">
     
-            <div class="tabela">
+            <div class="tabela" @efeitoFade>
                 <p-table
                     #dt1
                     [value]="resultados"
@@ -73,7 +73,7 @@
                 >
                    
                     <ng-template pTemplate="header">
-                        <tr>
+                        <tr class="footer-row">
                             <th style="width:10%" type="text" field="codigo" display="menu">
                                 Linha de Produtos
                             </th>
@@ -134,11 +134,11 @@
                 >
                     <ng-template pTemplate="display">
                         <div class="inline-flex align-items-center">
-                            <span class="ml-2"><i class="pi pi-plus-circle"></i> Detalhamento</span>
+                            <span class="ml-2"><i class="pi pi-plus-circle"></i> Detalhar</span>
                         </div>
                     </ng-template>
                     <ng-template pTemplate="content">
-                        <div class="tabela">  
+                        <div class="tabela" @swipeAnimationReverse>  
                             <p-treeTable [value]="orcados" [scrollable]="true" scrollHeight="600px" [tableStyle]="{'min-width':'60rem'}">
                                 <!-- Cabeçalho da Tabela -->
                                 <ng-template pTemplate="header">
@@ -173,7 +173,7 @@
                                 
                                 <!-- Linhas dinâmicas -->
                                 <tr>
-                                    <td>
+                                    <td colspan="2">
                                     <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
                                     {{ rowData.tipo || rowData.nome }} 
                                     </td>
@@ -184,7 +184,7 @@
                                 <!-- Detalhes expandidos -->
                                 <ng-template pTemplate="rowexpansion" let-rowNode let-rowData="rowData">
                                 <tr>
-                                    <td colspan="2">
+                                    <td >
                                     <div class="p-3">
                                         <p-treeTable [value]="rowData.centrosCusto" dataKey="nome">
                                         <ng-template pTemplate="header">
@@ -219,12 +219,18 @@
                             </p-treeTable> 
                         </div>
 
-                        <div class="tabela">  
+                        <div class="tabela"@swipeAnimation>  
                             <p-treeTable [value]="despesas" [scrollable]="true" scrollHeight="600px" [tableStyle]="{'min-width':'60rem'}">
                                 <!-- Cabeçalho da Tabela -->
                                 <ng-template pTemplate="header">
                                 
-                                    
+                                    <tr class="footer-row">
+                                        <th colspan="2" class="text-left font-bold pr-6">Depreciação Total</th>
+                                        <th></th>
+                                        <th></th>
+                                        <th class="text-left font-bold pr-6">{{ totalDepreciacao | currency:'BRL' }}</th>
+                                        <th></th>
+                                    </tr> 
     
                                 </ng-template>
                                 
@@ -233,7 +239,7 @@
                                 
                                   <!-- Linhas dinâmicas -->
                                   <tr>
-                                    <td>
+                                    <td colspan="2">
                                       <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
                                       {{ rowData.tipo || rowData.nome }}
                                     </td>
@@ -244,7 +250,7 @@
                                 <!-- Detalhes expandidos -->
                                 <ng-template pTemplate="rowexpansion" let-rowNode let-rowData="rowData">
                                   <tr>
-                                    <td colspan="2">
+                                    <td colspan="1">
                                       <div class="p-3">
                                         <p-treeTable [value]="rowData.centrosCusto" dataKey="nome">
                                           <ng-template pTemplate="header">
@@ -255,6 +261,7 @@
                                           </ng-template>
                                           <ng-template pTemplate="body" let-subRowNode let-subRowData="rowData">
                                             <tr>
+                                                <td></td>
                                               <td>
                                                 <p-treeTableToggler [rowNode]="subRowNode"></p-treeTableToggler>
                                                 {{ subRowData.nome }}

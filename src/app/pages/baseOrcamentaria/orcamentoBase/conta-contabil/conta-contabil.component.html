@@ -18,7 +18,7 @@
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizSintetica" >Raiz Sintética</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/contaContabil" >Conta Contabil</a>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/contaContabil" >Conta Contábil</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/grupoItens" >Grupos de Itens</a>
@@ -27,10 +27,10 @@
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/orcamentoBase" >Orçamento Base</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/baseOrcamentaria/dre/projecao"> Projeções</a>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/produto">Linha de Produtos</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/baseOrcamentaria/dre/produto">Linha de Produtos</a>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/projecao"> Projeções</a>
                 </li>
             </ul>
         </li >
@@ -56,7 +56,7 @@
 </div>
 
 <div class="container">
-    <div class="formWrap">
+    <div class="formWrap"@swipeAnimation>
         <form
             [formGroup]="registerForm"
             title="Cadastrar nova Conta Contábil"
@@ -289,7 +289,7 @@
         </div>
     </div>
 
-    <div class="tabela">
+    <div class="tabela"@swipeAnimationReverse>
         <p-table
             #dt1
             [value]="contasContabeis"

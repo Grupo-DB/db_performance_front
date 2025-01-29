@@ -29,6 +29,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { FloatLabelModule } from "primeng/floatlabel"
 import { ContaContabilService } from '../../../../services/baseOrcamentariaServices/orcamento/ContaContabil/conta-contabil.service';
 import { OrcamentoBaseService } from '../../../../services/baseOrcamentariaServices/orcamento/OrcamentoBase/orcamento-base.service';
+import { animate, keyframes, style, transition, trigger } from '@angular/animations';
 
 interface RegisterOrcamentoBaseForm{
   ccPai: FormControl;
@@ -103,11 +104,54 @@ export interface OrcamentoBase{
   providers: [
     MessageService,ConfirmationService,CurrencyPipe
   ],
+  animations:[
+      trigger('efeitoFade',[
+        transition(':enter',[
+          style({ opacity: 0 }),
+          animate('2s', style({ opacity:1 }))
+        ])
+      ]),
+      trigger('efeitoZoom', [
+        transition(':enter', [
+          style({ transform: 'scale(0)' }),
+          animate('2s', style({ transform: 'scale(1)' })),
+        ]),
+      ]),
+      trigger('bounceAnimation', [
+        transition(':enter', [
+          animate('4.5s ease-out', keyframes([
+            style({ transform: 'scale(0.5)', offset: 0 }),
+            style({ transform: 'scale(1.2)', offset: 0.5 }),
+            style({ transform: 'scale(1)', offset: 1 }),
+          ])),
+        ]),
+      ]),
+      trigger('swipeAnimation', [
+        transition(':enter', [
+          style({ transform: 'translateX(-100%)' }),
+          animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+        ]),
+        transition(':leave', [
+          style({ transform: 'translateX(0)' }),
+          animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+        ]),
+      ]),
+      trigger('swipeAnimationReverse', [
+        transition(':enter', [
+          style({ transform: 'translateX(100%)' }),
+          animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+        ]),
+        transition(':leave', [
+          style({ transform: 'translateX(0)' }),
+          animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+        ]),
+      ]),
+    ],
   templateUrl: './orcamento-base.component.html',
   styleUrl: './orcamento-base.component.scss'
 })
 export class OrcamentoBaseComponent implements OnInit{
-  ano!: string;
+  ano: any = 2025;
   ccsPai: CentroCustoPai[] = [];
   centrosCusto: CentroCusto [] = [];
   orcamentosBases: any[] = [];
@@ -119,6 +163,7 @@ export class OrcamentoBaseComponent implements OnInit{
   ccsDetalhes: any | undefined;
   raizSinteticaDetalhes: any;
   raizesAnaliticas: RaizAnalitica[]=[];
+  raizesFiltradas: RaizAnalitica[]=[];
   //
   filterValue: string | undefined = '';
   registerForm!: FormGroup <RegisterOrcamentoBaseForm>;
@@ -144,6 +189,7 @@ export class OrcamentoBaseComponent implements OnInit{
   gestor: any = null;
   porcentagemDissidio!: number;
   //
+  
   editForm!: FormGroup;
   editFormVisible: boolean = false;
   @ViewChild('RegisterOrcamentoBaseForm') RegisterOrcamentoBaseForm: any;
@@ -505,10 +551,11 @@ export class OrcamentoBaseComponent implements OnInit{
               this.raizSinteticaDetalhes = response[0];
               this.filterValue = this.raizSinteticaDetalhes.raiz_contabil;
 
-              
-
+          
               console.log('filterValue:', this.filterValue);
               console.log('Raiz Sintética Detalhes:', this.raizSinteticaDetalhes);
+
+              this.getRaizesFiltradas(this.filterValue);
               resolve(); // Resolve a promessa com sucesso
             } else {
               console.error('Nenhum detalhe encontrado para a Raiz Sintética');
@@ -528,13 +575,22 @@ export class OrcamentoBaseComponent implements OnInit{
     });
   }
 
-
+  getRaizesFiltradas(filterValue: any){
+    this.raizAnaliticaService.raizesFiltradas(filterValue).subscribe(
+      raizesFiltradas => {
+        this.raizesFiltradas = raizesFiltradas.map((raizFiltrada: { raiz_contabil: any; descricao: any; }) =>({
+          ...raizFiltrada,
+          label: `${raizFiltrada.raiz_contabil} - ${raizFiltrada.descricao}`
+        }))
+    }
+  )}
   
 
 
   onRaizAnaliticaSelecionada(raizAnalitica: RaizAnalitica){
     this.selectedRaizAnalitica = raizAnalitica;
     this.montarContaContabil();
+   
   }
 
   montarContaContabil() {
@@ -637,9 +693,7 @@ export class OrcamentoBaseComponent implements OnInit{
     }
   }
 
-  
-
-  customFilterFunction(event: KeyboardEvent, options: DropdownFilterOptions) {
+  customFilterFunction( options: DropdownFilterOptions) {
     if (options && options.filter) {
       options.filter(event);
     } else {

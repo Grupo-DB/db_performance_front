@@ -18,7 +18,7 @@
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizSintetica" >Raiz Sintética</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/contaContabil" >Conta Contabil</a>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/contaContabil" >Conta Contábil</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/grupoItens" >Grupos de Itens</a>
@@ -27,10 +27,10 @@
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/orcamentoBase" >Orçamento Base</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/baseOrcamentaria/dre/projecao"> Projeções</a>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/produto">Linha de Produtos</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/baseOrcamentaria/dre/produto">Linha de Produtos</a>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/projecao"> Projeções</a>
                 </li>
             </ul>
         </li >
@@ -62,8 +62,8 @@
             [formGroup]="registerForm"
 
         >
-            <div class="form">
-                <div class="row3">
+            <div class="form" >
+                <div class="row3"@swipeAnimationReverse>
                     <div class="coluna">
                         <div class="raiz">
                             <p-floatLabel>
@@ -107,7 +107,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row3">
+                <div class="row3"@swipeAnimationReverse>
                     <div class="coluna">
                         <div class="raizDetalhes" >
                             <div class="detalhes">
@@ -164,7 +164,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row3">        
+                <div class="row3"@swipeAnimation>        
                     <div class="coluna">   
                         <div class="raiz">
                             <p-floatLabel>
@@ -195,7 +195,7 @@
                                 <p-dropdown
                                     inputId="float-label" 
                                     [style]="{'width':'100%'}"
-                                    [options]="raizesAnaliticas" 
+                                    [options]="raizesFiltradas" 
                                     formControlName="raizAnalitica"
                                     optionLabel="label"
 
@@ -208,19 +208,20 @@
                                     <ng-template pTemplate="filter" let-options="options">
                                         <div class="flex gap-1">
                                             <div class="p-inputgroup" (click)="$event.stopPropagation()">
-                                                <span class="p-inputgroup-addon"><i class="pi pi-search" ></i></span>
+                                                <span class="p-inputgroup-addon"><i class="pi pi-search"></i></span>
                                                 <input 
                                                     type="text"
                                                     pInputText
                                                     placeholder="Filter"
                                                     [value]="filterValue"
-                                                    (keyup)="customFilterFunction($event, options)" />
+                                                    (click)="customFilterFunction(options)"
+                                                    (keyup)="customFilterFunction(options)" />
                                             </div>
                                             <button pButton icon="pi pi-times" (click)="resetFunction(options)"></button>
                                         </div>
                                     </ng-template>
                                 </p-dropdown>
-                                <label for="float-label">Selecione a Raíz Analítica</label>
+                                <label for="float-label">Selecione a Raiz Analítica</label>
                                 <input type="hidden" formControlName="contaContabilDesc" [(ngModel)]="contaContabilDesc">
                             </p-floatLabel>
                         </div> 
@@ -257,7 +258,7 @@
                         </div>   
                     </div>    
                 </div><!--endRow-->  
-                <div class="row3">
+                <div class="row3"@swipeAnimation>
                     <div class="colunaAno">
                         <div class="raizAno">
                             <p><label style="margin-left: 20px;" class="mb-2 block font-bold" for="ano">
@@ -265,6 +266,7 @@
                             </label></p>
                             <p-inputNumber 
                                 mode="decimal"
+                                [(ngModel)]="ano"
                                 formControlName="ano"
                                 [showButtons]="true" 
                                 inputId="ano" 
@@ -362,7 +364,7 @@
                 </div>  
             </div>
         </form>
-        <div class="botoes-form">
+        <div class="botoes-form"@efeitoFade>
             <p-toast></p-toast>
             <div class="btnsec" (click)="clearForm()" >
                 <p>Limpar</p>

@@ -21,8 +21,8 @@ import { LoginService } from '../../../../services/avaliacoesServices/login/logi
 import { ProjetadoService } from '../../../../services/baseOrcamentariaServices/projetado/projetado.service';
 import { InplaceModule } from 'primeng/inplace';
 import { TableRowCollapseEvent, TableRowExpandEvent } from 'primeng/table';
-import { TreeTable, TreeTableModule } from 'primeng/treetable';
-import { CentroCusto } from '../../orcamentoBase/centrocusto/centrocusto.component';
+import {  TreeTableModule } from 'primeng/treetable';
+import { animate, keyframes, style, transition, trigger } from '@angular/animations';
 
 export interface ResultadosArrayItem {
   label: string;
@@ -53,6 +53,49 @@ interface CentroCustoPai {
   providers: [
     MessageService,ConfirmationService,
   ],
+  animations: [
+    trigger('efeitoFade',[
+      transition(':enter',[
+        style({ opacity: 0 }),
+        animate('2s', style({ opacity:1 }))
+      ])
+    ]),
+    trigger('efeitoZoom', [
+      transition(':enter', [
+        style({ transform: 'scale(0)' }),
+        animate('2s', style({ transform: 'scale(1)' })),
+      ]),
+    ]),
+    trigger('bounceAnimation', [
+      transition(':enter', [
+        animate('4.5s ease-out', keyframes([
+          style({ transform: 'scale(0.5)', offset: 0 }),
+          style({ transform: 'scale(1.2)', offset: 0.5 }),
+          style({ transform: 'scale(1)', offset: 1 }),
+        ])),
+      ]),
+    ]),
+    trigger('swipeAnimation', [
+      transition(':enter', [
+        style({ transform: 'translateX(-100%)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+      ]),
+    ]),
+    trigger('swipeAnimationReverse', [
+      transition(':enter', [
+        style({ transform: 'translateX(100%)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+      ]),
+    ]),
+  ],
   templateUrl: './projetado.component.html',
   styleUrl: './projetado.component.scss'
 })
@@ -76,6 +119,7 @@ export class ProjetadoComponent implements OnInit {
   totalGeralDespesa: any;
   percentualTotalGeral: any;
   percentualDespesaGeral: any;
+  totalDepreciacao: any;
 
   @ViewChild('RegisterProjecaoForm') RegisterProjecaoForm: any;
   @ViewChild('dt1') dt1!: Table;
@@ -113,6 +157,7 @@ export class ProjetadoComponent implements OnInit {
       this.projetadoService.getCalculosdOrcado().subscribe(
         response => {
           this.totalGeral = response.total;
+          
           this.orcados = [{
             data: {
               tipo: 'Custo Total',
@@ -143,6 +188,7 @@ export class ProjetadoComponent implements OnInit {
       this.projetadoService.getCalculosdDespesa().subscribe(
         response => {
           this.totalGeralDespesa= response.total;
+          this.totalDepreciacao = response.depreciacao;
           this.despesas = [{
             data: {
               tipo: 'Despesa Total',

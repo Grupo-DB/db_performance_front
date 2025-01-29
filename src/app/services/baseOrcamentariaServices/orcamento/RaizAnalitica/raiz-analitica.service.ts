@@ -21,6 +21,10 @@ export class RaizAnaliticaService {
   getRaizesAnaliticas():Observable<any[]>{
     return this.httpClient.get<any[]>(this.apiUrl);
   }
+  raizesFiltradas(filterValue: any){
+    const url = `${this.apiUrl}${'byInicio'}/`;
+    return this.httpClient.post<any>(url,{filterValue: filterValue});
+  }
   registerRaizAnalitica(raizContabil:number,  gestor:string){
     return this.httpClient.post<any>(this.apiUrl,{raiz_contabil:raizContabil, gestor:gestor })
   }

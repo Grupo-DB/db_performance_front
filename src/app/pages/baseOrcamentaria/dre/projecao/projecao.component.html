@@ -18,7 +18,7 @@
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizSintetica" >Raiz Sintética</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/contaContabil" >Conta Contabil</a>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/contaContabil" >Conta Contábil</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/grupoItens" >Grupos de Itens</a>
@@ -27,14 +27,14 @@
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/orcamentoBase" >Orçamento Base</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/baseOrcamentaria/dre/projecao"> Projeções</a>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/produto">Linha de Produtos</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/baseOrcamentaria/dre/produto">Linha de Produtos</a>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/projecao"> Projeções</a>
                 </li>
             </ul>
         </li >
-        
+
         <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Acompanhamento "  style="font-size: 13px; ">
             <ul>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
@@ -44,8 +44,8 @@
                     <a routerLink="/welcome/baseOrcamentaria/dre/projetado"> DRE Projetado</a>
                 </li>
             </ul>
-           
-        </li>    
+
+        </li>
     </ul>
 </div>
 
@@ -57,119 +57,113 @@
 </div>
 
 <div class="container">
-    
-        <div class="tabela">
-            <p-table
-                [value]="linhas.controls"
-                
-            >
+
+        <div class="tabela"@swipeAnimation>
+            <p-table [value]="linhas.controls">
                 <ng-template pTemplate="header">
                     <tr>
-                        <th style="width:10%" type="text" field="nome" display="menu">Produto</th>
-                        <th style="width:10%" type="text" field="nome" display="menu">Custo Médio Variável</th>
-                        <th style="width:10%" type="text" field="nome" display="menu">Preço Médio</th>
-                        <th style="width:10%" type="text" field="nome" display="menu">Período</th>
-                        <th style="width:10%" type="text" field="nome" display="menu">Ano</th>
-                        <th style="width:10%" type="text" field="nome" display="menu">Quant. Carregada</th>
-                        <th>Ações</th>
+                        <th style="width:20%" field="nome" display="menu">Produto</th>
+                        <th style="width:10%" field="nome" display="menu">Custo Médio Variável</th>
+                        <th style="width:15%" field="nome" display="menu">Preço Médio</th>
+                        <th style="width:15%" field="nome" display="menu">Período</th>
+                        <th style="width:10%" field="nome" display="menu">Ano</th>
+                        <th style="width:10%" field="nome" display="menu">Quant. Carregada</th>
+                        <th style="width:10%">Ações</th> 
                     </tr>
                 </ng-template>
+
                 <ng-template pTemplate="body" let-linha let-index="rowIndex">
-    
-                  <tr [formGroup]="linha">
-                    <td>
+                    <tr [formGroup]="linha">
+                        <td>
                             <p-dropdown
-                                id="empresa"
-                                inputId="float-label" 
                                 [style]="{'width':'100%'}"
+                                id="empresa"
+                                inputId="float-label"
                                 [options]="produtos"
-                                [(ngModel)]="selectedProduto" 
+                                [(ngModel)]="selectedProduto"
                                 optionValue="id"
                                 formControlName="produto"
                                 optionLabel="nome"
-                                [filter]="true" 
+                                [filter]="true"
                                 filterBy="nome"
                                 [appendTo]="'body'"
-                                (onChange)="onProdutoSelecionado($event.value)"
-                            >
+                                (onChange)="onProdutoSelecionado($event.value)">
                             </p-dropdown>
-                           
-                    </td>
-                    
-                    <td>
-                        <p-inputNumber
-                            id="sal"
-                            formControlName="custo_medio_variavel" 
-                            inputId="currency-us" 
-                            mode="currency" 
-                            currency="BRL" 
-                            locale="pt-BR" 
-                        />  
-                    </td>
-                    <td>
-                        <p-inputNumber
-                            id="sal"
-                            formControlName="preco_medio_venda" 
-                            inputId="currency-us" 
-                            mode="currency" 
-                            currency="BRL" 
-                            locale="pt-BR" 
-                        /> 
-                    </td>
-                    <td>
-                        <p-dropdown
-                            [style]="{'width':'100%'}"
-                            [options]="meses"
-                            formControlName="periodo"
-                            optionLabel="value"
-                            optionValue="key"
-                            [appendTo]="'body'"
-                        >
+                        </td>
+
+                        <td>
+                            <p-inputNumber
+                                size="15"
+                                id="sal"
+                                formControlName="custo_medio_variavel"
+                                mode="currency"
+                                currency="BRL"
+                                locale="pt-BR" />
+                        </td>
+
+                        <td>
+                            <p-inputNumber
+                                size="15"
+                                id="sal"
+                                formControlName="preco_medio_venda"
+                                mode="currency"
+                                currency="BRL"
+                                locale="pt-BR" />
+                        </td>
+
+                        <td>
+                            <p-dropdown
+                                [style]="{'width':'100%'}"
+                                [options]="meses"
+                                formControlName="periodo"
+                                optionLabel="value"
+                                optionValue="key"
+                                [appendTo]="'body'">
                             </p-dropdown>
-                    </td>
-                    <td>
-                        <p-inputNumber 
-                            mode="decimal"
-                            formControlName="ano"
-                            [showButtons]="true" 
-                            inputId="ano" 
-                            [min]="2024" 
-                            [max]="2999"
-                            [useGrouping]="false" 
-                    />
-                    </td>
-                    <td>
-                        <p-inputNumber 
+                        </td>
+
+                        <td>
+                            <p-inputNumber
+                                size="5"
+                                mode="decimal"
+                                formControlName="ano"
+                                [showButtons]="true"
+                                inputId="ano"
+                                [min]="2024"
+                                [max]="2999"
+                                [useGrouping]="false" />
+                        </td>
+
+                        <td>
+                            <p-inputNumber
+                                size="15"
                                 mode="decimal"
                                 formControlName="quantidade_carregada"
-                                inputId="quantidade_carregada" 
-                                [useGrouping]="false" 
-                        />
-                    </td>
-                    
-                    <td>
-                        <p-button label="Remover" (onClick)="removeLinha(index)"  />
-                      
-                    </td>
-                  </tr>
-                </ng-template>  
-                <!-- </tbody> -->
-              </p-table>
-              
+                                inputId="quantidade_carregada"
+                                [useGrouping]="false" />
+                        </td> 
+
+                        <td>
+                            <p-button label="Remover" (onClick)="removeLinha(index)" />
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
         </div>
-        <div class="botoes-form">
+        <div class="botoes-form"@efeitoFade>
             <p-toast></p-toast>
             <div class="btnsec" (click)="addLinha()" >
                 <p>Adicionar Linha</p>
             </div>
             <div class="btnpri" (click)="onSubmit()">
-                <p>Salvar</p>            
+                <p>Salvar</p>
             </div>
         </div>
 
-<!-------------------------------------------------Tabela de Listagem----------------------------------------------------------------------->        
+<!-------------------------------------------------Tabela de Listagem----------------------------------------------------------------------->
 
-    <div class="tabela">
+    <div class="tabela"@swipeAnimationReverse>
         <p-table
             #dt1
             [value]="projecoes"
@@ -220,7 +214,7 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-projecao>
-                <tr>                      
+                <tr>
                     <td>{{ projecao.produto_detalhes.nome }}</td>
                     <td>{{ projecao.produto_detalhes.aliquota }}</td>
                     <td>{{ projecao.preco_medio_venda }}</td>
@@ -233,9 +227,9 @@
                         <div class="btnsec" (click)="abrirModalEdicao(projecao)">
                             <p>Editar</p>
                         </div>
-                        
+
                         <div class="btnpri" (click)="excluirLinha(projecao.id)">
-                            <p>Excluir</p>            
+                            <p>Excluir</p>
                         </div>
                     </td>
                 </tr>
@@ -252,16 +246,16 @@
 
 <!------------------------------------Modal de Edição-------------------------------------------------------------------->
 
-    <p-dialog 
+    <p-dialog
         [modal]="true"
-        [(visible)]="editFormVisible" 
-        [style]="{ width: '65rem' }" 
+        [(visible)]="editFormVisible"
+        [style]="{ width: '65rem' }"
         [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
     >
         <div class="titulo">
             <p-divider align="left" type="solid">
                 <b>Editar Projeção</b>
-            </p-divider> 
+            </p-divider>
         </div>
         <div class="container">
             <div class="formWrap">
@@ -280,7 +274,7 @@
                                     optionValue="id"
                                     formControlName="produto"
                                     optionLabel="nome"
-                                    [filter]="true" 
+                                    [filter]="true"
                                     filterBy="nome"
                                     [appendTo]="'body'"
                                 >
@@ -292,11 +286,11 @@
                                 <span class="p-float-label">
                                 <p-inputNumber
                                 [style]="{'width':'420px'}"
-                                    formControlName="preco_medio_venda" 
-                                    inputId="currency-us" 
-                                    mode="currency" 
-                                    currency="BRL" 
-                                    locale="pt-BR" 
+                                    formControlName="preco_medio_venda"
+                                    inputId="currency-us"
+                                    mode="currency"
+                                    currency="BRL"
+                                    locale="pt-BR"
                                 />
                                 <label for="me">Preco Médio Venda</label>
                                 </span>
@@ -305,23 +299,23 @@
                                 <span class="p-float-label">
                                         <p-inputNumber
                                         [style]="{'width':'420px'}"
-                                            formControlName="ano" 
+                                            formControlName="ano"
                                             useGrouping="false"
                                         />
                                     <label for="ano">Ano</label>
-                                </span>    
-                            </div> 
+                                </span>
+                            </div>
                         </div>
                         <div class="coluna">
                             <div class="raizEd">
                                 <span class="p-float-label">
                                 <p-inputNumber
                                 [style]="{'width':'420px'}"
-                                    formControlName="custo_medio_variavel" 
-                                    inputId="currency-us" 
-                                    mode="currency" 
-                                    currency="BRL" 
-                                    locale="pt-BR" 
+                                    formControlName="custo_medio_variavel"
+                                    inputId="currency-us"
+                                    mode="currency"
+                                    currency="BRL"
+                                    locale="pt-BR"
                                 />
                                 <label for="me">Custo Médio Variável</label>
                                 </span>
@@ -330,31 +324,31 @@
                                 <span class="p-float-label">
                                         <p-inputNumber
                                             [style]="{'width':'420px'}"
-                                            formControlName="periodo" 
+                                            formControlName="periodo"
                                             mode="decimal"
                                         />
                                     <label for="mes">Mês</label>
-                                </span>    
+                                </span>
                             </div>
                             <div class="raizEd">
                                 <span class="p-float-label">
                                         <p-inputNumber
                                             [style]="{'width':'420px'}"
-                                            formControlName="quantidade_carregada" 
+                                            formControlName="quantidade_carregada"
                                             useGrouping="false"
                                         />
                                     <label for="ano">Quantidade Carregada</label>
-                                </span>    
-                            </div>  
+                                </span>
+                            </div>
                         </div>
                     </div>
                     <div class="botoes-form">
                         <div class="btnsec" (click)="clearEditForm()">
                             <p>Limpar</p>
                         </div>
-                        
+
                         <div class="btnpri" (click)="saveEdit()">
-                            <p>Salvar</p>            
+                            <p>Salvar</p>
                         </div>
                     </div>
                 </form>
@@ -365,4 +359,3 @@
 
 </div>
 
-  
