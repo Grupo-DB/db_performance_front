@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
-import { DefaultLoginLayoutComponent } from '../../../components/default-login-layout/default-login-layout.component';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { PrimaryInputComponent } from '../../../components/primary-input/primary-input.component';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputGroupModule } from 'primeng/inputgroup';
@@ -11,14 +9,17 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [
-    ReactiveFormsModule,ButtonModule,ToastModule,
-    InputTextModule,InputGroupAddonModule,InputGroupModule,CommonModule, RouterOutlet, RouterLink,
+    ReactiveFormsModule,ButtonModule,ToastModule,FloatLabelModule,IconFieldModule,InputIconModule,
+    InputTextModule,InputGroupAddonModule,InputGroupModule,CommonModule, RouterLink,
   ],
   providers: [
     MessageService,

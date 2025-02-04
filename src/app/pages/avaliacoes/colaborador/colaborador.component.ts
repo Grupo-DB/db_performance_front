@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputGroupModule } from 'primeng/inputgroup';
@@ -9,15 +9,13 @@ import { InputMaskModule } from 'primeng/inputmask';
 import { InputTextModule } from 'primeng/inputtext';
 import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-import { FormLayoutComponent } from '../../../components/form-layout/form-layout.component';
-import { PrimaryInputComponent } from '../../../components/primary-input/primary-input.component';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { CalendarModule } from 'primeng/calendar';
 import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { CheckboxModule } from 'primeng/checkbox';
-import { CommonModule, DecimalPipe, formatDate } from '@angular/common';
+import { CommonModule, CurrencyPipe, DatePipe, formatDate } from '@angular/common';
 import { AmbienteService } from '../../../services/avaliacoesServices/ambientes/ambiente.service';
 import { TipoContratoService } from '../../../services/avaliacoesServices/tipocontratos/resgitertipocontrato.service';
 import { DialogModule } from 'primeng/dialog';
@@ -39,8 +37,12 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { BooleanToStatusPipe } from '../../../services/avaliacoesServices/situacao/boolean-to-status.pipe';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
-import { DatePipe, CurrencyPipe } from '@angular/common';
 import { FloatLabelModule } from 'primeng/floatlabel';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { trigger, transition, style, animate, keyframes } from '@angular/animations';
+import { SelectModule } from 'primeng/select';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
 interface RegisterColaboradorForm {
   empresa: FormControl;
@@ -142,13 +144,57 @@ interface TipoContrato{
   standalone: true,
   imports: [
     ReactiveFormsModule,FormsModule,NzUploadModule,CommonModule,DialogModule,InputNumberModule,InputSwitchModule,BooleanToStatusPipe,
-    FormLayoutComponent,InputMaskModule,CalendarModule,CheckboxModule,ConfirmDialogModule,DividerModule,
-    FloatLabelModule,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,
+    InputMaskModule,CalendarModule,CheckboxModule,ConfirmDialogModule,DividerModule,
+    FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,
+    IconFieldModule,InputIconModule,SelectModule,ToggleSwitchModule
   ],
   providers:[
     MessageService,SetorService,ColaboradorService,ColaboradorService,AmbienteService,TipoContratoService,
     RegisterCompanyService,FilialService,AreaService,CargoService,ConfirmationService,
     DatePipe, CurrencyPipe
+  ],
+  animations:[
+    trigger('efeitoFade',[
+            transition(':enter',[
+              style({ opacity: 0 }),
+              animate('2s', style({ opacity:1 }))
+            ])
+          ]),
+          trigger('efeitoZoom', [
+            transition(':enter', [
+              style({ transform: 'scale(0)' }),
+              animate('2s', style({ transform: 'scale(1)' })),
+            ]),
+          ]),
+          trigger('bounceAnimation', [
+            transition(':enter', [
+              animate('4.5s ease-out', keyframes([
+                style({ transform: 'scale(0.5)', offset: 0 }),
+                style({ transform: 'scale(1.2)', offset: 0.5 }),
+                style({ transform: 'scale(1)', offset: 1 }),
+              ])),
+            ]),
+          ]),
+          trigger('swipeAnimation', [
+            transition(':enter', [
+              style({ transform: 'translateX(-100%)' }),
+              animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+            ]),
+            transition(':leave', [
+              style({ transform: 'translateX(0)' }),
+              animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+            ]),
+          ]),
+          trigger('swipeAnimationReverse', [
+            transition(':enter', [
+              style({ transform: 'translateX(100%)' }),
+              animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+            ]),
+            transition(':leave', [
+              style({ transform: 'translateX(0)' }),
+              animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+            ]),
+          ]),
   ],
   templateUrl: './colaborador.component.html',
   styleUrl: './colaborador.component.scss'
@@ -741,13 +787,17 @@ formatarDatas(obj: any) {
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
       const value = obj[key];
-      if (typeof value === 'string' && value.includes('T')) {
+      if (typeof value === 'string' && this.isDate(value)) {
         obj[key] = this.datePipe.transform(value, 'dd/MM/yyyy');
       } else if (typeof value === 'object' && value !== null) {
         this.formatarDatas(value); // Formatar objetos aninhados recursivamente
       }
     }
   }
+}
+
+isDate(value: string): boolean {
+  return !isNaN(Date.parse(value));
 }
 
 saveEdit(){

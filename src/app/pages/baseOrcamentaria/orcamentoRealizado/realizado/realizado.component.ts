@@ -880,7 +880,7 @@ this.gruposChart = new Chart(ctx, {
           onComplete: () => {
             delayed = true;
           },
-          delay: (context) => {
+          delay: (context: { type: string; mode: string; dataIndex: number; datasetIndex: number; }) => {
             let delay = 0;
             if (context.type === 'data' && context.mode === 'default' && !delayed) {
               delay = context.dataIndex * 300 + context.datasetIndex * 100;
@@ -967,7 +967,7 @@ graficoBaseOrcamentos(tipoOrcadoMes: any): void {
           onComplete: () => {
             delayed = true;
           },
-          delay: (context) => {
+          delay: (context: { type: string; mode: string; dataIndex: number; datasetIndex: number; }) => {
             let delay = 0;
             if (context.type === 'data' && context.mode === 'default' && !delayed) {
               delay = context.dataIndex * 300 + context.datasetIndex * 100;
@@ -1071,7 +1071,7 @@ graficoOrcadoTipoCustoMensal(tipoOrcadoMes: any): void{
           onComplete: () => {
             delayed = true;
           },
-          delay: (context) => {
+          delay: (context: { type: string; mode: string; dataIndex: number; datasetIndex: number; }) => {
             let delay = 0;
             if (context.type === 'data' && context.mode === 'default' && !delayed) {
               delay = context.dataIndex * 300 + context.datasetIndex * 100;
@@ -1149,7 +1149,7 @@ graficoOrcadoGrupoContas(tipoOrcado: any): void{
           onComplete: () => {
             delayed = true;
           },
-          delay: (context) => {
+          delay: (context: { type: string; mode: string; dataIndex: number; datasetIndex: number; }) => {
             let delay = 0;
             if (context.type === 'data' && context.mode === 'default' && !delayed) {
               delay = context.dataIndex * 300 + context.datasetIndex * 100;
@@ -1227,7 +1227,7 @@ graficoOrcadoContasAnaliticas(tipoOrcadoMes: any): void{
           onComplete: () => {
             delayed = true;
           },
-          delay: (context) => {
+          delay: (context: { type: string; mode: string; dataIndex: number; datasetIndex: number; }) => {
             let delay = 0;
             if (context.type === 'data' && context.mode === 'default' && !delayed) {
               delay = context.dataIndex * 300 + context.datasetIndex * 100;
@@ -1542,7 +1542,7 @@ graficoRealizadoTiposCustos(tipoOrcadoMes: any): void {
           onComplete: () => {
             delayed = true;
           },
-          delay: (context) => {
+          delay: (context: { type: string; mode: string; dataIndex: number; datasetIndex: number; }) => {
             let delay = 0;
             if (context.type === 'data' && context.mode === 'default' && !delayed) {
               delay = context.dataIndex * 300 + context.datasetIndex * 100;
@@ -1644,7 +1644,7 @@ graficoRealizadoCentrosCustos(tipoOrcadoMes: any): void {
           onComplete: () => {
             delayed = true;
           },
-          delay: (context) => {
+          delay: (context: { type: string; mode: string; dataIndex: number; datasetIndex: number; }) => {
             let delay = 0;
             if (context.type === 'data' && context.mode === 'default' && !delayed) {
               delay = context.dataIndex * 300 + context.datasetIndex * 100;
@@ -1746,7 +1746,7 @@ graficoRealizadoGruposContabeis(tipoOrcadoMes: any): void {
           onComplete: () => {
             delayed = true;
           },
-          delay: (context) => {
+          delay: (context: { type: string; mode: string; dataIndex: number; datasetIndex: number; }) => {
             let delay = 0;
             if (context.type === 'data' && context.mode === 'default' && !delayed) {
               delay = context.dataIndex * 300 + context.datasetIndex * 100;
@@ -1848,7 +1848,7 @@ graficoRealizadoContasAnaliticas(tipoOrcadoMes: any): void {
           onComplete: () => {
             delayed = true;
           },
-          delay: (context) => {
+          delay: (context: { type: string; mode: string; dataIndex: number; datasetIndex: number; }) => {
             let delay = 0;
             if (context.type === 'data' && context.mode === 'default' && !delayed) {
               delay = context.dataIndex * 300 + context.datasetIndex * 100;

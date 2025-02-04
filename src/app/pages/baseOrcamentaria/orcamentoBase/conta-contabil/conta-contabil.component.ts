@@ -16,6 +16,7 @@ import { ToastModule } from 'primeng/toast';
 import { ContaContabilService } from '../../../../services/baseOrcamentariaServices/orcamento/ContaContabil/conta-contabil.service';
 import { LoginService } from '../../../../services/avaliacoesServices/login/login.service';
 import { animate, keyframes, style, transition, trigger } from '@angular/animations';
+import { ButtonModule } from 'primeng/button';
 
 interface RegisterContaContabilForm{
   nivel1Conta: FormControl;
@@ -54,7 +55,7 @@ export interface ContaContabil{
   imports: [
     CommonModule,RouterLink,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
     DropdownModule,FormsModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,
-    ConfirmDialogModule,ToastModule
+    ConfirmDialogModule,ToastModule,ButtonModule
   ],
   animations:[
     trigger('efeitoFade',[

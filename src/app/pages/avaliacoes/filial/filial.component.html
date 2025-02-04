@@ -4,113 +4,134 @@
             <b>Cadastro de Filiais</b>
         </p-divider> 
     </div>
-    <div class="form-geral">  
+    
         <form [formGroup]="registerfilialForm"
             title="Cadastrar nova Filial"
             primaryBtnText="Cadastrar"
             (submit)="submit()"
         >
         
-        <div class="form1">
-            <div class="emp">
-                <p><label for="empresa">Empresa</label></p>
-                <p-dropdown
-                    class="" 
-                    [style]="{'width':'91%'}"
-                    [options]="empresas" 
-                    formControlName="empresa"
-                    optionLabel="nome"
-                    placeholder="Selecione"
-                >
-                </p-dropdown>
-            </div>
-            <div class="nome">
-            <p-inputGroup>
-                <p-inputGroupAddon>
-                    <i class="pi pi-file-edit"></i>
-                </p-inputGroupAddon>
-                <span class="p-float-label">
-                    <input
-                        pInputText
-                        id="nome"
-                        formControlName="nome"
-                        type="text"
-                    />  
-                    <label for="nome">Digite o nome</label>
-                </span>          
-            </p-inputGroup>
-            </div>
-            <div class="teste">  
-                <span class="p-float-label">
-                    <p-inputMask id="cnpj_input" mask="99.999.999/9999-99" formControlName="cnpj" [style]="{'width':'91%'}" ></p-inputMask>
-                    <label style="margin-left: 60px;" for="cnpj_input">Informe o CNPJ</label>
-                </span>  
-            </div> 
+            <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation> 
+                <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
+                    <div class="form2 w-10 text-left">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                inputId="float-label"
+                                [style]="{'width':'100%'}"
+                                [options]="empresas"
+                                formControlName="empresa"
+                                optionLabel="nome"
+                            >
+                            </p-select>
+                            <label for="float-label" style="margin-left: 15px;">Selecione a Empresa</label>
+                        </p-floatLabel>
+                    </div>
+                    <div class="form2 w-10">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
+                                <input
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="nome"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Digite o nome</label>
+                        </p-floatlabel>
+                    </div>
+                    <div class="form2 w-10 text-left" >  
+                        <p-floatLabel variant="on">
+                            <p-inputmask
+                                variant="filled"  
+                                id="cnpj_input" 
+                                mask="99.999.999/9999-99" 
+                                formControlName="cnpj" 
+                                [style]="{'width':'100%'}">
+                            </p-inputmask>
+                            <label  for="cnpj_input">Informe o CNPJ</label>
+                        </p-floatLabel>
+                    </div>
+                </div>  
 
-        </div>    
-        <div class="form2">
-            <p-inputGroup>
-                <p-inputGroupAddon>
-                    <i class="pi pi-file-edit"></i>
-                </p-inputGroupAddon>
-                <span class="p-float-label">
-                    <input pInputText
-                    id="endereco"
-                    formControlName="endereco"
-                    type="text"
-                    />  
-                    <label for="endereco">Digite o Endereço</label>
-                </span>          
-            </p-inputGroup>
-            <p-inputGroup>
-                <p-inputGroupAddon>
-                    <i class="pi pi-file-edit"></i>
-                </p-inputGroupAddon>
-                <span class="p-float-label">
-                    <input pInputText
-                        id="cidade"
-                        formControlName="cidade"
-                        type="text"
-                    />  
-                    <label for="cidade">Digite a Cidade</label>
-                </span>          
-            </p-inputGroup>
-  
-            <p-inputGroup>
-                <p-inputGroupAddon>
-                    <i class="pi pi-file-edit"></i>
-                </p-inputGroupAddon>
-                <span class="p-float-label">
-                    <input pInputText
-                        id="estado"
-                        formControlName="estado"
-                        type="text"
-                    />  
-                    <label for="estado">Digite a sigla do Estado</label>
-                </span>          
-            </p-inputGroup>
-  
-            
-        </div>
-        <div class="form3">
-            <p-inputGroup>
-                <p-inputGroupAddon>
-                    <i class="pi pi-file-edit"></i>
-                </p-inputGroupAddon>
-                <span class="p-float-label">
-                    <input pInputText
-                        id="codigo"
-                        formControlName="codigo"
-                        type="text"
-                    />  
-                    <label for="codigo">Digite o código da filial</label>
-                </span>          
-            </p-inputGroup>
-        </div>    
-        </form>
+                <div class="fg2 flex flex-column w-12 align-items-center lg:w-6">
+                    <div class="form2 w-10 text-left"> 
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
+                                <input
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="endereco"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Digite o endereço</label>
+                        </p-floatlabel>
+                    </div> 
+                    <div class="form2 w-10 text-left"> 
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
+                                <input
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="cidade"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Digite a cidade</label>
+                        </p-floatlabel>
+                    </div>
+        
+                    <div class="form2 w-10 text-left lg:mb-3"> 
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
+                                <input
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="estado"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Digite a sigla do Estado</label>
+                        </p-floatlabel>
+                    </div>
+        
+                    
+                </div>
+                <div class="fg3 flex flex-column w-12 align-items-center lg:w-6">
+                    <div class="form2 w-10 text-left"> 
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
+                                <input
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="codigo"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Digite o código da filial</label>
+                        </p-floatlabel>
+                    </div>
+                </div>    
+        
     </div>    
-  
-    <div class="botoes-form">
+</form>
+    <div class="botoes-form m-5"@efeitoFade>
         <p-toast></p-toast>
         <div class="btnsec" (click)="clearForm()">
             <p>Limpar</p>
@@ -121,7 +142,7 @@
     
     </div>
     <hr>
-        <div class="tabela">
+        <div class="tabela"@swipeAnimationReverse>
             <p-table
                 #dt1
                 [value]="filiais"
@@ -132,17 +153,27 @@
                 currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
                 [rowsPerPageOptions]="[5, 10, 20]"
                 [globalFilterFields]="['nome', 'cnpj', 'empresaNome','endereco','cidade','estado','codigo']"
+                stripedRows
+                scrollable="true"
             >
                 <ng-template pTemplate="caption">
-                    <p-toast />
-                    <p-confirmDialog />
-                    <div class="flex">
-                        <span class="p-input-icon-left ml-auto">
-                            <i class="pi pi-search"></i>
-                            <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Digite o nome" />
-                        </span>
-                        <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
-                        <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+                    <div class="flex flex-row md: justify-content-end">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-search" />
+                                <input
+                                    variant="filled"
+                                    [(ngModel)] = "inputValue"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Palavra-Chave</label>
+                        </p-floatlabel>
+                        <button size="small" class="ml-2" pButton [rounded]="true" label="Pesquisar" severity="info"  (click)="filterTable()"></button>
+                        <button size="small" class="ml-2" pButton [rounded]="true" label="Limpar" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
                     </div>
                 </ng-template>    
                 <ng-template pTemplate="header">
@@ -181,7 +212,7 @@
                         <td>{{ filial.cidade }}</td>
                         <td>{{ filial.estado }}</td>
                         <td>{{ filial.codigo }}</td>
-                        <td class="td-acao">
+                        <td class="flex py-5">
                             <div class="btnsec" (click)="abrirModalEdicao(filial)">
                                 <p>Editar</p>
                             </div>
@@ -193,10 +224,10 @@
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="paginatorleft">
-                    <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+                    <p-button type="button"  styleClass="p-button-text"></p-button>
                 </ng-template>
                 <ng-template pTemplate="paginatorright">
-                    <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
+                    <p-button type="button"  styleClass="p-button-text"></p-button>
                 </ng-template>
             </p-table>
         </div>

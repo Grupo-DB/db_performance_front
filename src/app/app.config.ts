@@ -6,7 +6,7 @@ import { routes } from './app.routes';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideToastr } from 'ngx-toastr';
 import { provideAnimations } from '@angular/platform-browser/animations'
-
+import Lara from '@primeng/themes/lara';
 
 import { registerLocaleData } from '@angular/common';
 import pt from '@angular/common/locales/pt';
@@ -15,6 +15,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideNzIcons } from './icons-provider';
 import { en_US, provideNzI18n } from 'ng-zorro-antd/i18n';
 import en from '@angular/common/locales/en';
+import { providePrimeNG } from 'primeng/config';
 
 registerLocaleData(pt);
 
@@ -23,9 +24,18 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(withFetch(),withInterceptors([customInterceptor])),
     provideAnimations(),
+    provideAnimationsAsync(),
+        providePrimeNG({
+            theme: {
+                preset: Lara,
+                options: {
+                  darkModeSelector: '.my-app-dark',
+              }
+            }
+        }),
     HttpClientModule,
     provideToastr(),
      importProvidersFrom(FormsModule), provideAnimationsAsync(), provideHttpClient(), provideNzIcons(), provideNzI18n(en_US), importProvidersFrom(FormsModule), provideAnimationsAsync(), provideHttpClient(), provideAnimationsAsync(),
-    
+      
   ],
 };

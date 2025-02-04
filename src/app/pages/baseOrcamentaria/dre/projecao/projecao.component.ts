@@ -50,7 +50,7 @@ export interface Projecao{
   imports: [
     CommonModule,ReactiveFormsModule,RouterLink,FormsModule,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
     DropdownModule,InputTextModule,TableModule,DialogModule,ButtonModule,MessagesModule,
-    ConfirmDialogModule,ToastModule,FloatLabelModule,InputNumberModule
+    ConfirmDialogModule,ToastModule,FloatLabelModule,InputNumberModule,ButtonModule
   ],
   providers: [
     MessageService,ConfirmationService,

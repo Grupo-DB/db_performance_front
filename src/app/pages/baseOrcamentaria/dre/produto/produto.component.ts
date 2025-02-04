@@ -16,6 +16,7 @@ import { ToastModule } from 'primeng/toast';
 import { LoginService } from '../../../../services/avaliacoesServices/login/login.service';
 import { ProjecaoService } from '../../../../services/baseOrcamentariaServices/dre/projecao.service';
 import { animate, keyframes, style, transition, trigger } from '@angular/animations';
+import { ButtonModule } from 'primeng/button';
 
 interface RegisterProdutoForm{
   nome: FormControl;
@@ -33,7 +34,7 @@ export interface Produto{
   standalone: true,
   imports: [
     CommonModule,ReactiveFormsModule,RouterLink,FormsModule,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
-    DropdownModule,InputTextModule,TableModule,DialogModule,
+    DropdownModule,InputTextModule,TableModule,DialogModule,ButtonModule,
     ConfirmDialogModule,ToastModule
   ],
   providers: [

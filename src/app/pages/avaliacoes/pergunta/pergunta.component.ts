@@ -15,7 +15,6 @@ import { CommonModule } from '@angular/common';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { EditorModule } from 'primeng/editor';
-import { InputTextareaModule } from 'primeng/inputtextarea';
 import { DividerModule } from 'primeng/divider';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
@@ -39,8 +38,8 @@ export interface Pergunta{
   selector: 'app-pergunta',
   standalone: true,
   imports: [ 
-    NzIconModule,NzLayoutModule,NzMenuModule,TabMenuModule,InputTextareaModule,
-    ReactiveFormsModule,FormsModule,CommonModule,EditorModule,InputTextareaModule,
+    NzIconModule,NzLayoutModule,NzMenuModule,TabMenuModule,InputTextModule,
+    ReactiveFormsModule,FormsModule,CommonModule,EditorModule,InputTextModule,
     InputMaskModule,DialogModule,ConfirmDialogModule,DividerModule,
     RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],

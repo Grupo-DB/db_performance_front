@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -13,8 +13,6 @@ import { InputMaskModule } from 'primeng/inputmask';
 import { InputTextModule } from 'primeng/inputtext';
 import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-import { FormLayoutComponent } from '../../../components/form-layout/form-layout.component';
-import { PrimaryInputComponent } from '../../../components/primary-input/primary-input.component';
 import { RegisterCompanyService } from '../../../services/avaliacoesServices/companys/registercompany.service';
 import { GetFilialService } from '../../../services/avaliacoesServices/filiais/getfilial.service';
 import { FilialService } from '../../../services/avaliacoesServices/filiais/registerfilial.service';
@@ -49,8 +47,8 @@ export interface Ambiente{
   standalone: true,
   imports: [
     ReactiveFormsModule,FormsModule,CommonModule,DividerModule,
-    FormLayoutComponent,InputMaskModule,DialogModule,ConfirmDialogModule,
-    PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
+    InputMaskModule,DialogModule,ConfirmDialogModule,
+    TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
   providers:[
     FilialService,

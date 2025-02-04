@@ -1,8 +1,8 @@
-<div *ngIf="isLoading" class="loading-animation">
-  <!-- Coloque aqui a sua animação de carregamento -->
-  <img src="assets/imagens/db.gif" alt="Loading...">
+
+<div *ngIf="isLoading" class="loading-animation flex align-items-center justify-content-center">
+  <img src="assets/imagens/db.gif" alt="Loading..." class="w-6 md:w-4 lg:w-2">
 </div>
-<nz-layout *ngIf="!isLoading" class="app-layout">
+<nz-layout *ngIf="!isLoading" class="app-layout w-full h-screen">
     <nz-sider class="menu-sidebar"
       nzCollapsible
       nzWidth="256px"
@@ -77,15 +77,15 @@
     </nz-sider>
     <nz-layout>
       <nz-header>
-        <div class="app-header">
+        <div class=" app-header flex flex-row text-xs">
           <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
               <span class="trigger"
                  nz-icon
                  [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
               ></span>
           </span>   
-          <div class="inicio">
-            <div class="divnot">
+          <div class="inicio ">
+            <div class="divnot -ml-3">
               <p>Olá, <b>{{ colaborador.nome }}</b>.</p>
               <p style="margin-top: -55px;">
                 <a routerLink="inicial">
@@ -114,7 +114,7 @@
           <router-outlet></router-outlet>
         </div>
       </nz-content>  
-          <div class="rodape">
+          <div class="rodape flex flex-wrap text-center">
             <img src="../assets/imagens/logoazul.png" width="30px" >
             Desenvolvido por Dagoberto Barcellos S A - Tecnologia de Informação | Direitos de uso reservados ao Grupo Dagoberto Barcellos S A | Versão: 1.1.1
           </div>

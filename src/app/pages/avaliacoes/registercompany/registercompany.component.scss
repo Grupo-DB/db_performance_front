@@ -9,10 +9,63 @@
 }
 
 .form-geral{
-    
-    width: 70%;
-    
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    .fg1{
+        width: 100%;
+        margin-top: 10px;
+        //margin-bottom: 25px;
+        p{
+            margin-left: 20px;
+        }
+        .form1{
+           margin-top: 16px; 
+        }
+        .form2{
+            margin-top: 16px;
+        } 
+    }
+    .fg2{
+        //width: 100%;
+        margin-top: 10px;
+        margin-bottom: 25px;
+        p{
+            margin-left: 20px;
+        }
+        .form2{
+            margin-top: 16px;
+            
+        } 
+    }
 }
+
+.editGeral{
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    .fg1edit{
+        width: 50%;
+        margin-top: 10px;
+        .form2{
+            margin-top: 25px;
+        }
+    }
+    .fg2edit{
+        width: 50%;
+        margin-top: 10px;
+        .form2{
+            margin-top: 25px;
+        }
+    }
+}
+
+
+
 .titulo{
     justify-content: center;
     text-align: center;
@@ -20,51 +73,8 @@
         color:slategrey;
     }
 }
- form{
-    margin-top: 2%;
-    display: flex;
-    height: 6%;
-    
-        p-inputGroup{
-            padding: 15px;
-        }
-        p-dropdown{
-            padding: 15px;
-        }
-        p-inputMask{
-            padding: 15px;
-            width: 150px;
-        }
+
         
-        .form2{
-            width: 50%;
-            p-inputGroup{
-                padding: 15px;
-            }
-        }
-        .form1{
-            width: 50%;
-            .teste{
-                width: 100%;
-                margin-bottom: 15px;
-                margin-top: 15px;
-                label{
-                    margin-left: 5%;
-                }
-            }
-            p-inputGroup{
-                padding: 15px;
-               
-            }
-            
-            
-            p-inputMask{
-                margin-top: 0px;
-                margin-left: 1px;
-                width: 150px;
-            }
-        }
- }
  
  .botoes-form{
     width: 69%;
@@ -142,3 +152,8 @@
         padding: 16px;
     }
 }
+form{
+    margin-top: 2%;
+    display: flex;
+    height: 6%;
+ }

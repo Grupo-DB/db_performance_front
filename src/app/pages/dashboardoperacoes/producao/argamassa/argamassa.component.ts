@@ -8,7 +8,7 @@ import { HomeService } from '../../../../services/dashboardOperacoesServices/hom
 import { forkJoin } from 'rxjs';
 import { Chart } from 'chart.js';
 import { DialogModule } from 'primeng/dialog';
-import { MatFormField } from '@angular/material/form-field';
+
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
@@ -22,7 +22,7 @@ interface Produto {
   selector: 'app-argamassa',
   standalone: true,
   imports: [
-    DividerModule,CommonModule,RouterLink,InplaceModule,TableModule,DialogModule,MatFormField,MatSelectModule,FormsModule,DropdownModule,CalendarModule
+    DividerModule,CommonModule,RouterLink,InplaceModule,TableModule,DialogModule,MatSelectModule,FormsModule,DropdownModule,CalendarModule
   ],
   providers: [
     HomeService,DatePipe

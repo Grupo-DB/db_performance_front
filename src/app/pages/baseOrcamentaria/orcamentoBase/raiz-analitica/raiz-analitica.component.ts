@@ -13,10 +13,10 @@ import { Table, TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { DialogModule } from 'primeng/dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { MessagesModule } from 'primeng/messages';
 import { ToastModule } from 'primeng/toast';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { animate, keyframes, style, transition, trigger } from '@angular/animations';
+import { ButtonModule } from 'primeng/button';
 
 interface RegisterRaizAnaliticaForm{
   raiz_contabil: FormControl,
@@ -36,7 +36,7 @@ export interface RaizAnalitica {
   imports: [
     DividerModule,CommonModule,RouterLink,NzMenuModule,InputGroupModule,InputGroupAddonModule,
     DropdownModule,FormsModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,
-    ConfirmDialogModule,ToastModule
+    ConfirmDialogModule,ToastModule,ButtonModule
   ],
   providers:[
     MessageService,ConfirmationService,

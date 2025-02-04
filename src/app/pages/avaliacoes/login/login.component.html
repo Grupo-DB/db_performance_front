@@ -6,34 +6,34 @@
             <img  src="/assets/imagens/logotelalogin.png"/>
         </div>
         <form [formGroup]="loginForm">
-            <p-inputGroup>
-                <p-inputGroupAddon>
-                    <i class="pi pi-user"></i>
-                </p-inputGroupAddon>
-                <span class="p-float-label">
-                    <input pInputText
-                        id="email1"
+            <p-floatlabel variant="on">
+                <p-iconfield>
+                    <p-inputicon class="pi pi-user" />
+                    <input
+                        [style]="{'width':'100%'}"
+                        pInputText id="on_label"  
+                        autocomplete="off" 
                         formControlName="email"
-                        type="text"
-                    />  
-                    <label for="nome">Nome de usuário</label>
-                </span>          
-            </p-inputGroup>
-            <p-inputGroup>
-                <p-inputGroupAddon>
-                    <i class="pi pi-key"></i>
-                </p-inputGroupAddon>
-                <span class="p-float-label">
-                    <input 
-                        
-                        pInputText
-                        id="password"
+                        type="text"    
+                    />
+                </p-iconfield>
+                <label for="on_label">Nome de usuário</label>
+            </p-floatlabel>
+
+
+            <p-floatlabel variant="on">
+                <p-iconfield>
+                    <p-inputicon class="pi pi-key" />
+                    <input
+                        [style]="{'width':'100%'}"
+                        pInputText id="on_label"  
+                        autocomplete="off" 
                         formControlName="password"
-                        type="password"
-                    />  
-                    <label for="password">Senha</label>
-                </span>          
-            </p-inputGroup>
+                        type="password"    
+                    />
+                </p-iconfield>
+                <label for="on_label">Senha</label>
+            </p-floatlabel>
             
             <div class="botoes-form">
                 

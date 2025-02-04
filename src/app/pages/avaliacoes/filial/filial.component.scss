@@ -7,9 +7,49 @@
 }
 
 .form-geral{
-    
-    width: 80%;
-    
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    .fg1{
+        width: 100%;
+        //margin-top: 10px;
+        //margin-bottom: 25px;
+        p{
+            margin-left: 20px;
+        }
+        .form1{
+           margin-top: 16px; 
+        }
+        .form2{
+            margin-top: 16px;
+        } 
+    }
+    .fg2{
+        width: 100%;
+        //margin-top: 10px;
+        //margin-bottom: 25px;
+        p{
+            margin-left: 20px;
+        }
+        .form2{
+            margin-top: 16px;
+            
+        } 
+    }
+    .fg3{
+        width: 100%;
+        //margin-top: 10px;
+        margin-bottom: 25px;
+        p{
+            margin-left: 20px;
+        }
+        .form2{
+            margin-top: 16px;
+            
+        }
+    }
 }
 .titulo{
     justify-content: center;
@@ -18,73 +58,6 @@
         color:slategrey;
     }
 }
- form{
-    margin-top: 2%;
-    display: flex;
-    height: 6%;
-    
-        p-inputGroup{
-            padding: 15px;
-        }
-        p-dropdown{
-            padding: 15px;
-        }
-        p-inputMask{
-            padding: 15px;
-            width: 390px;
-        }    
-        .form3{
-            padding: 5px;
-            margin-left: 20px;
-            margin-top: -22px;
-            
-            p{
-                margin-left: 20px;
-            }    
-        }
-
-        .form1{
-            width: 40%;
-            .teste{
-                width: 100%;
-                margin-bottom: 15px;
-                margin-top: 15px;
-                label{
-                    margin-left: 5%;
-                }
-            }
-          
-        }
-
-        .nome{
-            p-inputGroup{
-                width: 99%;
-            }
-        }
-
-        .teste{
-            margin-bottom: 5%;
-            margin-top: 6%;
-            label{
-                margin-left: 5%;
-            }
-        }
-        .form2{
-            width: 40%;
-        }
-        .form3{
-            margin-top: -5px;
-            width: 35%;
-        }
-        .emp{
-            margin-top: -17px;
-            margin-bottom: 15px;
-            p{
-                margin-left: 20px;
-            }
-        }
- }
-
 
  .botoes-form{
     width: 78%;
@@ -127,6 +100,7 @@
 
 .td-acao{
     display: flex;
+    vertical-align: text-bottom;
     button{
         margin-left: 2px;
     }

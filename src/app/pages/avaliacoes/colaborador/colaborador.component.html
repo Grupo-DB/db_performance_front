@@ -1,400 +1,434 @@
 
 <div *ngIf="hasGroup(['Admin','RHGestor'])" class="container">
+
     <div class="titulo2">
         <p-divider align="left" type="solid">
             <b>Cadastro de Colaboradores</b>
-        </p-divider> 
-    </div>      
-    <div class="form-geral"> 
-        <form 
+        </p-divider>
+    </div>
+
+    <form
             [formGroup]="registercolaboradorForm"
             title="Cadastrar novo Colaborador"
             primaryBtnText="Cadastrar"
             (submit)="submit()"
             enctype="multipart/form-data"
-        >
-        
-            <div class="fg1">
-                <div class="form1">
-                    <p-inputGroup>
-                        <p-inputGroupAddon>
-                            <i class="pi pi-user-edit"></i>
-                        </p-inputGroupAddon>
-                        <span class="p-float-label">
-                            <input  pInputText
-                                id="nome"
+    >
+
+        <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation>
+
+
+            <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
+                <div class="form1 w-10 ">
+                    <p-floatlabel variant="on">
+                        <p-iconfield>
+                            <p-inputicon class="pi pi-user" />
+                            <input
+                                variant="filled"
+                                [style]="{'width':'100%'}"
+                                pInputText id="on_label"
+                                autocomplete="off"
                                 formControlName="nome"
                                 type="text"
                             />
-                            <label for="nome">Digite o nome</label>  
-                        </span>          
-                    </p-inputGroup>
-                </div>    
-                    
-                <div class="form2">
-                    <p-floatLabel>
-                        <p-dropdown 
-                            inputId="float-label" 
-                            [style]="{'width':'75%'}"
-                            [options]="empresas" 
-                            id="empresa"
+                        </p-iconfield>
+                        <label for="on_label">Digite o nome</label>
+                    </p-floatlabel>
+                </div>
+                <div class="form2  w-10 text-left">
+                    <p-floatLabel variant="on">
+                        <p-select
+                            variant="filled"
+                            inputId="float-label"
+                            [style]="{'width':'100%'}"
+                            [options]="empresas"
                             formControlName="empresa"
                             optionLabel="nome"
                             (onChange)="onEmpresaSelecionada($event.value)"
                         >
-                        </p-dropdown>
+                        </p-select>
                         <label for="float-label" style="margin-left: 15px;">Selecione a Empresa</label>
-                    </p-floatLabel>    
+                    </p-floatLabel>
                 </div>
-                <div class="filial">
-                    <p-floatLabel> 
-                        <p-dropdown
-                            inputId="float-label" 
-                            [style]="{'width':'75%'}"
-                            [options]="filiais" 
+                <div class="filial w-10 text-left">
+                    <p-floatLabel variant="on">
+                        <p-select
+                            variant="filled"
+                            inputId="float-label"
+                            [style]="{'width':'100%'}"
+                            [options]="filiais"
                             id="filial"
                             formControlName="filial"
                             optionLabel="nome"
                             [disabled]="true"
                             (onChange)="onFilialSelecionada($event.value)"
                         >
-                        </p-dropdown>
+                        </p-select>
                         <label for="float-label" style="margin-left: 15px;">Selecione a Filial</label>
                     </p-floatLabel>
                 </div>
-                <div class="form3">
-                    <p-floatLabel> 
-                        <p-dropdown 
-                            [style]="{'width':'75%'}"
+                <div class="form3 w-10 text-left">
+                    <p-floatLabel variant="on">
+                        <p-select
+                            variant="filled"
+                            [style]="{'width':'100%'}"
                             [options]="areas"
-                            id="area" 
+                            id="area"
                             formControlName="area"
                             optionLabel="nome"
-                            inputId="float-label" 
+                            inputId="float-label"
                             [disabled]="true"
                             (onChange)="onAreaSelecionada($event.value)"
                             >
-                        </p-dropdown>
+                        </p-select>
                         <label for="float-label" style="margin-left: 15px;">Selecione a Área</label>
-                    </p-floatLabel>    
+                    </p-floatLabel>
                 </div>
-                <div class="dvset">    
-                    <p-floatLabel>
-                        <p-dropdown 
-                            [style]="{'width':'75%'}"
+                <div class="dvset w-10 text-left">
+                    <p-floatLabel variant="on">
+                        <p-select
+                            variant="filled"
+                            [style]="{'width':'100%'}"
                             [options]="setores"
-                            id="setor" 
+                            id="setor"
                             formControlName="setor"
                             optionLabel="nome"
-                            inputId="float-label" 
+                            inputId="float-label"
                             [disabled]="true"
                             (onChange)="onSetorSelecionado($event.value)"
                             >
-                        </p-dropdown>
+                        </p-select>
                         <label for="float-label" style="margin-left: 15px;">Selecione o Ambiente</label>
-                    </p-floatLabel>    
+                    </p-floatLabel>
                 </div>
-                <div class="form4">
-                    <p-floatLabel>
-                        <p-dropdown 
-                            [style]="{'width':'75%'}"
+                <div class="form4 w-10 text-left">
+                    <p-floatLabel variant="on">
+                        <p-select
+                            variant="filled"
+                            [style]="{'width':'100%'}"
                             id="ambiente"
-                            [options]="ambientes" 
+                            [options]="ambientes"
                             formControlName="ambiente"
                             optionLabel="nome"
                             [disabled]="true"
-                            inputId="float-label" 
+                            inputId="float-label"
                             (onChange)="onAmbienteSelecionado($event.value)"
                         >
-                        </p-dropdown>
+                        </p-select>
                         <label for="float-label" style="margin-left: 15px;">Selecione o Setor</label>
-                    </p-floatLabel>    
+                    </p-floatLabel>
                 </div>
-                <div class="dvcarg">     
-                    <p-floatLabel>
-                        <p-dropdown
-                            [style]="{'width':'75%'}" 
+                <div class="dvcarg w-10 text-left">
+                    <p-floatLabel variant="on">
+                        <p-select
+                            variant="filled"
+                            [style]="{'width':'100%'}"
                             id="cargo"
-                            [options]="cargos" 
+                            [options]="cargos"
                             formControlName="cargo"
                             optionLabel="nome"
                             [disabled]="true"
-                            inputId="float-label" 
+                            inputId="float-label"
                             (onChange)="onCargoSelecionado($event.value)"
                         >
-                        </p-dropdown>
+                        </p-select>
                         <label for="float-label" style="margin-left: 15px;">Selecione o Cargo</label>
-                    </p-floatLabel>    
-                </div>
-                <div class="dvtc">    
-                    <p-floatLabel>
-                        <p-dropdown
-                            [style]="{'width':'75%'}"
-                            id="tipocontrato" 
-                            [options]="tipocontratos" 
-                            formControlName="tipocontrato"
-                            optionLabel="nome"
-                            inputId="float-label" 
-                        >
-                        </p-dropdown>
-                        <label for="float-label" style="margin-left: 15px;">Selecione o Tipo de Contrato</label>
-                    </p-floatLabel>    
-                </div>
-                <div class="dvraca">    
-                    <p-floatLabel>
-                        <p-dropdown
-                            [style]="{'width':'75%'}"
-                            id="raca" 
-                            [options]="racas" 
-                            formControlName="raca"
-                            optionLabel="nome"
-                            inputId="float-label" 
-                        >
-                        </p-dropdown>
-                        <label for="float-label" style="margin-left: 15px;">Selecione a Raça</label>
-                    </p-floatLabel>    
-                </div>
-                <div class="dvinst">    
-                    <p-floatLabel>
-                        <p-dropdown
-                            [style]="{'width':'75%'}"
-                            id="inst" 
-                            [options]="instrucoes" 
-                            formControlName="instrucao"
-                            optionLabel="nome"
-                            inputId="float-label" 
-                        >
-                        </p-dropdown>
-                        <label for="float-label" style="margin-left: 15px;">Selecione o Grau de Instrução</label>
-                    </p-floatLabel>    
-                </div>
-                <div class="sistemas">
-                    <span class="p-float-label">
-                        <input pInputText
-                            id="minerion_id"
-                            formControlName="minerion_id"
-                            type="text"
-                            [style]="{'width':'60%'}"
-                        />  
-                        <label for="minerion_id">Minerion ID</label>
-                    </span>
-                    <span class="p-float-label">
-                        <input pInputText
-                            id="dominio_id"
-                            formControlName="dominio_id"
-                            type="text"
-                            [style]="{'width':'60%'}"
-                        />  
-                        <label for="dominio_id">Dominio ID</label>
-                    </span>
-                    <span class="p-float-label">
-                        <input pInputText
-                            id="sgg_id"
-                            formControlName="sgg_id"
-                            type="text"
-                            [style]="{'width':'60%'}"
-                        />  
-                        <label for="sgg_id">SGG ID</label>
-                    </span>  
-                </div> 
-            </div>
-            <div class="fg2">
-                <div class="dvsal">
-                    <p-floatLabel>   
-                        <p-inputNumber
-                            [style]="{'width':'75%'}" 
-                            id="sal"
-                            formControlName="salario" 
-                            inputId="currency-us" 
-                            mode="currency" 
-                            currency="BRL" 
-                            locale="pt-BR"
-                            inputId="float-label"  
-                        />
-                        <label for="float-label" style="margin-left: 75px;">Informe o Salário</label>
-                    </p-floatLabel>      
-                </div>    
-                <div class="dvcat">    
-                    <p-floatLabel>
-                        <p-dropdown
-                            [style]="{'width':'75%'}"
-                            id="cat" 
-                            [options]="categorias" 
-                            formControlName="categoria"
-                            optionLabel="nome"
-                            inputId="float-label" 
-                        >
-                        </p-dropdown>
-                        <label for="float-label" style="margin-left: 5px;">Selecione a Categoria</label>
-                    </p-floatLabel>    
-                </div>       
-                <div class="form5">
-                    <p-floatLabel>
-                        <p-calendar
-                            [style]="{'width':'75%'}"
-                            id="da" 
-                            formControlName="data_admissao"
-                            dateFormat="dd/mm/yy"                  
-                            [showIcon]="true"
-                            inputId="float-label" 
-                        >
-                        </p-calendar>
-                        <label for="float-label" >Selecione a Data de Admissão</label>
                     </p-floatLabel>
                 </div>
-                <div class="dvgen">
-                    <p-floatLabel>
-                        <p-dropdown 
+                <div class="dvtc w-10 text-left">
+                    <p-floatLabel variant="on">
+                        <p-select
+                            variant="filled"
+                            [style]="{'width':'100%'}"
+                            id="tipocontrato"
+                            [options]="tipocontratos"
+                            formControlName="tipocontrato"
+                            optionLabel="nome"
+                            inputId="float-label"
+                        >
+                        </p-select>
+                        <label for="float-label" style="margin-left: 15px;">Selecione o Tipo de Contrato</label>
+                    </p-floatLabel>
+                </div>
+                <div class="dvraca w-10 text-left">
+                    <p-floatLabel variant="on">
+                        <p-select
+                            variant="filled"
+                            [style]="{'width':'100%'}"
+                            id="raca"
+                            [options]="racas"
+                            formControlName="raca"
+                            optionLabel="nome"
+                            inputId="float-label"
+                        >
+                        </p-select>
+                        <label for="float-label" style="margin-left: 15px;">Selecione a Raça</label>
+                    </p-floatLabel>
+                </div>
+                <div class="dvinst w-10 text-left">
+                    <p-floatLabel variant="on">
+                        <p-select
+                            variant="filled"
+                            [style]="{'width':'100%'}"
+                            id="inst"
+                            [options]="instrucoes"
+                            formControlName="instrucao"
+                            optionLabel="nome"
+                            inputId="float-label"
+                        >
+                        </p-select>
+                        <label for="float-label" style="margin-left: 15px;">Selecione o Grau de Instrução</label>
+                    </p-floatLabel>
+                </div>
+                <div class="sistemas w-10 text-left">
+                    <p-floatlabel variant="on">
+                        <p-iconfield>
+
+                            <input
+                                variant="filled"
+                                [style]="{'width':'100%'}"
+                                pInputText id="on_label"
+                                autocomplete="off"
+                                formControlName="minerion_id"
+                                type="text"
+                            />
+                        </p-iconfield>
+                        <label for="on_label">Minerion ID</label>
+                    </p-floatlabel>
+                    <p-floatlabel variant="on">
+                        <p-iconfield>
+
+                            <input
+                                variant="filled"
+                                [style]="{'width':'100%'}"
+                                pInputText id="on_label"
+                                autocomplete="off"
+                                formControlName="dominio_id"
+                                type="text"
+                            />
+                        </p-iconfield>
+                        <label for="on_label">Dominio ID</label>
+                    </p-floatlabel>
+                    <p-floatlabel variant="on">
+                        <p-iconfield>
+
+                            <input
+                                variant="filled"
+                                [style]="{'width':'100%'}"
+                                pInputText id="on_label"
+                                autocomplete="off"
+                                formControlName="sgg_id"
+                                type="text"
+                            />
+                        </p-iconfield>
+                        <label for="on_label">SGG ID</label>
+                    </p-floatlabel>
+                </div>
+            </div>
+
+            <div class="fg2 flex flex-column w-12 align-items-center lg:w-6">
+
+                <div class="dvsal w-10 text-left">
+                    <p-floatLabel variant="on" >
+                        <p-inputNumber
+                            variant="filled"
+                            inputId="on_label"
+                            formControlName="salario"
+                            inputId="currency-us"
+                            mode="currency"
+                            currency="BRL"
+                            locale="pt-BR"
+
+                        />
+                        <label for="on_label">Informe o Salário</label>
+                    </p-floatLabel>
+                </div>
+                <div class="dvcat w-10 text-left">
+                    <p-floatLabel variant="on">
+                        <p-select
+                            variant="filled"
+                            [style]="{'width':'100%'}"
+                            id="cat"
+                            [options]="categorias"
+                            formControlName="categoria"
+                            optionLabel="nome"
+                            inputId="float-label"
+                        >
+                        </p-select>
+                        <label for="float-label" style="margin-left: 5px;">Selecione a Categoria</label>
+                    </p-floatLabel>
+                </div>
+                <div class="form5 w-10 text-left">
+                    <p-floatLabel variant="on">
+                        <p-calendar
+                            variant="filled"
+                            [style]="{'width':'100%'}"
+                            id="da"
+                            formControlName="data_admissao"
+                            dateFormat="dd/mm/yy"
+                            [showIcon]="true"
+                            inputId="float-label"
+                        >
+                        </p-calendar>
+                        <label for="float-label" >Data de Admissão</label>
+                    </p-floatLabel>
+                </div>
+                <div class="dvgen w-10 text-left">
+                    <p-floatLabel variant="on">
+                        <p-select
+                            variant="filled"
                             id="gen"
-                            [style]="{'width':'75%'}"
-                            [options]="generos" 
+                            [style]="{'width':'100%'}"
+                            [options]="generos"
                             formControlName="genero"
                             optionLabel="nome"
-                            inputId="float-label"    
+                            inputId="float-label"
                         >
-                        </p-dropdown>
+                        </p-select>
                         <label for="float-label" >Selecione o Gênero</label>
-                    </p-floatLabel>    
+                    </p-floatLabel>
                 </div>
-                <div class="form6">                     
-                    <p-floatLabel>
-                        <p-dropdown
-                            [style]="{'width':'75%'}"
+                <div class="form6 w-10 text-left">
+                    <p-floatLabel variant="on">
+                        <p-select
+                            variant="filled"
+                            [style]="{'width':'100%'}"
                             id="es"
-                            [options]="estados_civis" 
+                            [options]="estados_civis"
                             formControlName="estado_civil"
                             optionLabel="nome"
-                            inputId="float-label"   
+                            inputId="float-label"
                         >
-                        </p-dropdown>
+                        </p-select>
                         <label for="float-label" style="margin-left: 5px;">Selecione o Estado Civil</label>
-                    </p-floatLabel>       
+                    </p-floatLabel>
                 </div>
-                <div class="form7"> 
-                    <p-floatLabel>       
+                <div class="form7 w-10 text-left">
+                    <p-floatLabel variant="on">
                         <p-calendar
-                            id="dc" 
-                            [style]="{'width':'75%'}"
+                            variant="filled"
+                            id="dc"
+                            [style]="{'width':'100%'}"
                             formControlName="data_nascimento"
                             dateFormat="dd/mm/yy"
                             [showIcon]="true"
                             inputId="float-label"
                         >
                         </p-calendar>
-                        <label for="float-label" style="margin-left: 5px;">Selecione a Data de Nascimento</label>
-                    </p-floatLabel>    
+                        <label for="float-label" style="margin-left: 5px;">Data de Nascimento</label>
+                    </p-floatLabel>
                 </div>
-                <div class="dvft">    
+                <div class="dvft w-10 text-justify">
                     <p><label for="foto">Carregar Foto</label></p>
-                    <input 
+                    <input
                         id="foto"
-                        type="file"  
+                        type="file"
                         formControlName="image"
                         class="form-control"
                         (change)="onFileChange($event,registercolaboradorForm)"
                     />
-                </div>    
-                   
-                <div class="dvemail">
-                    <p-inputGroup>
-                        <p-inputGroupAddon>
-                            <i class="pi pi-at"></i>
-                        </p-inputGroupAddon>
-                        <span class="p-float-label">
-                            <input pInputText
-                                id="email"
+                </div>
+
+                <div class="dvemail w-10 text-left">
+                    <p-floatlabel variant="on">
+                        <p-iconfield>
+                            <p-inputicon class="pi pi-at" />
+                            <input
+                                variant="filled"
+                                [style]="{'width':'100%'}"
+                                pInputText id="on_label"
+                                autocomplete="off"
                                 formControlName="email"
                                 type="text"
-                            />  
-                            <label for="email">Digite o email</label>
-                        </span>          
-                    </p-inputGroup>
+                            />
+                        </p-iconfield>
+                        <label for="on_label">Digite o email</label>
+                    </p-floatlabel>
                 </div>
-                <div class="dvcb">
+                <div class="dvcb w-10 text-left">
                     <div class="titclas">
                         <p><strong>Classificação do Colaborador</strong></p>
-                    </div> 
-                        <div class="btns">
+                    </div>
+                        <div class="btns flex flex-column align-items-start  lg:flex-row ">
                             <p><label  for="sit" >Avaliador </label></p>
-                            <p-inputSwitch                           
+                            <p-toggleswitch
                                 id="sit"
                                 formControlName="tornar_avaliador"
                             >
-                            </p-inputSwitch>
+                            </p-toggleswitch>
                             <p><label for="sit"[style]="{'margin-left':'20px'}">Avaliado </label></p>
-                            <p-inputSwitch 
+                            <p-toggleswitch
                                 id="sit"
                                 formControlName="tornar_avaliado"
                             >
-                            </p-inputSwitch>
+                            </p-toggleswitch>
                             <p><label for="sit"[style]="{'margin-left':'30px'}">Situação </label></p>
-                                <p-inputSwitch 
+                                <p-toggleswitch
                                     id="sit"
                                     formControlName="situacao"
                                 >
-                                </p-inputSwitch>
-                            <p><label for="sit"[style]="{'margin-left':'30px'}">Gestor de Orçamento </label></p>
-                                <p-inputSwitch 
+                                </p-toggleswitch>
+                            <p><label for="sit"[style]="{'margin-left':'20px'}">Gestor de Orçamento</label></p>
+                                <p-toggleswitch
                                     id="sit"
                                     formControlName="tornar_gestor"
                                 >
-                                </p-inputSwitch>    
-                        </div>
+                                </p-toggleswitch>
+                        </div> 
                 </div>
-                <div class="tituser">
+                <div class="tituser w-10 text-left">
                     <p><strong>Criar Usuário</strong></p>
                 </div>
-                <div class="dvus">
-                    
-                    <p-inputGroup>
-                            <p-inputGroupAddon>
-                                <i class="pi pi-user"></i>
-                            </p-inputGroupAddon>
-                            <span class="p-float-label">
-                                <input 
-                                    
-                                    pInputText
-                                    id="username"
-                                    formControlName="username"
-                                    type="text"
-                                />  
-                                <label for="nome">Digite o nome de usuário</label>
-                            </span>          
-                    </p-inputGroup>
-                    <p-inputGroup>
-                            <p-inputGroupAddon>
-                                <i class="pi pi-key"></i>
-                            </p-inputGroupAddon>
-                            <span class="p-float-label">
-                                <input pInputText
-                                    id="password"
-                                    formControlName="password"
-                                    type="password"
-                                    placeholder="Digite a senha"
-                                /> 
-                                <label for="senha">Digite a Senha</label> 
-                            </span>    
-                                      
-                    </p-inputGroup>
-                </div>    
-                            
+                <div class="dvus w-10 text-left">
+                    <p-floatlabel variant="on">
+                        <p-iconfield>
+                            <p-inputicon class="pi pi-user" />
+                            <input
+                                variant="filled"
+                                [style]="{'width':'100%'}"
+                                pInputText id="on_label"
+                                autocomplete="off"
+                                formControlName="username"
+                                type="text"
+                            />
+                        </p-iconfield>
+                        <label for="on_label">Digite o nome de usuário</label>
+                    </p-floatlabel>
+                    <br>
+                    <p-floatlabel variant="on">
+                        <p-iconfield>
+                            <p-inputicon class="pi pi-key" />
+                            <input
+                                variant="filled"
+                                [style]="{'width':'100%'}"
+                                pInputText id="on_label"
+                                autocomplete="off"
+                                formControlName="password"
+                                type="text"
+                            />
+                        </p-iconfield>
+                        <label for="on_label">Digite a senha</label>
+                    </p-floatlabel>
+
+                </div>
+
             </div>
-           
-                                       
-        </form>
-    </div>    
-  
-    <div class="botoes-form">
+        </div>
+
+    </form>
+
+
+    <div class="botoes-form m-5 "@efeitoFade>
         <p-toast></p-toast>
             <div class="btnsec" (click)="clearForm()">
                 <p>Limpar</p>
             </div>
             <div class="btnpri" (click)="submit()">
-                 <p>Cadastrar</p>            
+                 <p>Cadastrar</p>
             </div>
     </div>
-    
-        <div class="tabela">
+
+        <div class="tabela"@swipeAnimationReverse>
             <p-toast/>
             <p-confirmDialog />
             <p-table
@@ -407,17 +441,29 @@
                 currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
                 [rowsPerPageOptions]="[5, 10, 20]"
                 [globalFilterFields]="['nome', 'empresaNome','filialNome','areaNome','setorNome','ambienteNome', 'cargoNome','situacao']"
+                stripedRows
+                scrollable="true"
             >
                 <ng-template pTemplate="caption">
-                    <div class="flex">
-                        <span class="p-input-icon-left ml-auto">
-                            <i class="pi pi-search"></i>
-                            <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Palavra-Chave" />
-                        </span>
-                        <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
-                        <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+                    <div class="flex flex-row md: justify-content-end">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-search" />
+                                <input
+                                    variant="filled"
+                                    [(ngModel)] = "inputValue"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Palavra-Chave</label>
+                        </p-floatlabel>
+                        <button size="small" class="ml-2" pButton [rounded]="true" label="Pesquisar" severity="info"  (click)="filterTable()"></button>
+                        <button size="small" class="ml-2" pButton [rounded]="true" label="Limpar" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
                     </div>
-                </ng-template>    
+                </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
                         <th style="width:25%" type="text" field="nome" display="menu">
@@ -461,7 +507,7 @@
                         <td>{{ colaborador.cargo_detalhes.nome }}</td>
                         <td>{{ colaborador.situacao | booleanToStatus }}</td>
                         <td><img [src]="colaborador.image"  width="80" class="shadow-4" /></td>
-                        <td class="td-acao">
+                        <td class="flex py-5">
                             <div class="btnsect" style="margin-right: 5px;background-color: #97a3c2; color: white;" (click)="visualizarColaboradorDetalhes(colaborador.id)">
                                 <p>Visualizar</p>
                             </div>
@@ -469,457 +515,499 @@
                                 <p>Editar</p>
                             </div>
                             <div class="btnprit" (click)="excluirColaborador(colaborador.id)">
-                                <p>Excluir</p>            
+                                <p>Excluir</p>
                            </div>
                         </td>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="paginatorleft">
-                    <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+                    <p-button type="button"  styleClass="p-button-text"></p-button>
                 </ng-template>
                 <ng-template pTemplate="paginatorright">
-                    <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
+                    <p-button type="button"  styleClass="p-button-text"></p-button>
                 </ng-template>
             </p-table>
-        </div>        
-        <p-dialog 
+        </div>
+        <p-dialog
             [modal]="true"
-            [(visible)]="editFormVisible" 
-            [style]="{ width: '90rem' }" 
-            [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+            [(visible)]="editFormVisible"
+            [style]="{ width: '90rem' }"
         >
-        <div>   
+        <div>
             <p-divider align="left" type="solid">
                 <b>Editar Colaborador</b>
             </p-divider>
-        </div>  
-        <div class="editgeral">
-            <form [formGroup]="editForm">
-            <div class="fg1edit">
-              <div class="form1edit">
-                <p-inputGroup>
-                    <p-inputGroupAddon>
-                        <i class="pi pi-user-edit"></i>
-                    </p-inputGroupAddon>
-                    <span class="p-float-label">
-                        <input  pInputText
-                            id="nome"
-                            formControlName="nome"
-                            type="text"
-                        />
-                        <label for="nome">Digite o nome</label>  
-                    </span>          
-                </p-inputGroup>
-                </div>    
-                    
-                <div class="form2edit">
-                    <p-floatLabel>
-                        <p-dropdown 
-                            inputId="float-label" 
-                            [style]="{'width':'75%'}"
-                            [options]="empresas" 
-                            id="empresa"
-                            formControlName="empresa"
-                            optionLabel="nome"
-                            optionValue="id" 
-                            (onChange)="onEmpresaSelecionada($event.value)"
-                        >
-                        </p-dropdown>
-                        <label for="float-label" style="margin-left: 15px;">Selecione a Empresa</label>
-                    </p-floatLabel>  
-                </div>
-                <div class="filialed">
-                    <p-floatLabel> 
-                        <p-dropdown
-                            inputId="float-label" 
-                            [style]="{'width':'75%'}"
-                            [options]="filiais" 
-                            id="filial"
-                            optionValue="id" 
-                            formControlName="filial"
-                            optionLabel="nome"
-                            [disabled]="true"
-                            (onChange)="onFilialSelecionada($event.value)"
-                        >
-                        </p-dropdown>
-                        <label for="float-label" style="margin-left: 15px;">Selecione a Filial</label>
-                    </p-floatLabel>
-                </div>
-                <div class="form3ed">
-                    <p-floatLabel> 
-                        <p-dropdown 
-                            [style]="{'width':'75%'}"
-                            [options]="areas"
-                            id="area"
-                            optionValue="id"  
-                            formControlName="area"
-                            optionLabel="nome"
-                            inputId="float-label" 
-                            [disabled]="true"
-                            (onChange)="onAreaSelecionada($event.value)"
-                            >
-                        </p-dropdown>
-                        <label for="float-label" style="margin-left: 15px;">Selecione a Área</label>
-                    </p-floatLabel> 
-                </div>
-                <div class="dvseted">    
-                    <p-floatLabel>
-                        <p-dropdown 
-                            [style]="{'width':'75%'}"
-                            [options]="setores"
-                            id="setor" 
-                            optionValue="id" 
-                            formControlName="setor"
-                            optionLabel="nome"
-                            inputId="float-label" 
-                            [disabled]="true"
-                            (onChange)="onSetorSelecionado($event.value)"
-                            >
-                        </p-dropdown>
-                        <label for="float-label" style="margin-left: 15px;">Selecione o Ambiente</label>
-                    </p-floatLabel> 
-                </div>
-                <div class="form4ed">
-                    <p-floatLabel>
-                        <p-dropdown 
-                            [style]="{'width':'75%'}"
-                            id="ambiente"
-                            [options]="ambientes" 
-                            optionValue="id" 
-                            formControlName="ambiente"
-                            optionLabel="nome"
-                            [disabled]="true"
-                            inputId="float-label" 
-                            (onChange)="onAmbienteSelecionado($event.value)"
-                        >
-                        </p-dropdown>
-                        <label for="float-label" style="margin-left: 15px;">Selecione o Setor</label>
-                    </p-floatLabel> 
-                </div>
-                <div class="dvcarged">     
-                    <p-floatLabel>
-                        <p-dropdown
-                            [style]="{'width':'75%'}" 
-                            id="cargo"
-                            [options]="cargos" 
-                            optionValue="id" 
-                            formControlName="cargo"
-                            optionLabel="nome"
-                            [disabled]="true"
-                            inputId="float-label" 
-                            (onChange)="onCargoSelecionado($event.value)"
-                        >
-                        </p-dropdown>
-                        <label for="float-label" style="margin-left: 15px;">Selecione o Cargo</label>
-                    </p-floatLabel> 
-                </div>
-                <div class="dvtced">    
-                    <p-floatLabel>
-                        <p-dropdown
-                            [style]="{'width':'75%'}"
-                            id="tipocontrato" 
-                            [options]="tipocontratos" 
-                            optionValue="nome" 
-                            formControlName="tipocontrato"
-                            optionLabel="nome"
-                            inputId="float-label" 
-                        >
-                        </p-dropdown>
-                        <label for="float-label" style="margin-left: 15px;">Selecione o Tipo de Contrato</label>
-                    </p-floatLabel> 
-                </div>
-                <div class="dvracaed">    
-                    <p-floatLabel>
-                        <p-dropdown
-                            [style]="{'width':'75%'}"
-                            id="raca" 
-                            [options]="racas" 
-                            formControlName="raca"
-                            optionValue="nome" 
-                            optionLabel="nome"
-                            inputId="float-label" 
-                        >
-                        </p-dropdown>
-                        <label for="float-label" style="margin-left: 15px;">Selecione a Raça</label>
-                    </p-floatLabel> 
-                </div>
-                <div class="dvinsted">    
-                    <p-floatLabel>
-                        <p-dropdown
-                            [style]="{'width':'75%'}"
-                            id="inst" 
-                            [options]="instrucoes" 
-                            formControlName="instrucao"
-                            optionLabel="nome"
-                            optionValue="nome" 
-                            inputId="float-label" 
-                        >
-                        </p-dropdown>
-                        <label for="float-label" style="margin-left: 15px;">Selecione o Grau de Instrução</label>
-                    </p-floatLabel>  
-                </div>
-                <div class="form5ed">
-                    <p-floatLabel>
-                        <p-calendar
-                            [style]="{'width':'75%'}"
-                            id="da" 
-                            formControlName="data_admissao"
-                            dateFormat="dd/mm/yy"                  
-                            [showIcon]="true"
-                            inputId="float-label" 
-                        >
-                        </p-calendar>
-                        <label for="float-label" >Selecione a Data de Admissão</label>
-                    </p-floatLabel>                  
-                </div>
-                <div class="sistemasEd">
-                    <span class="p-float-label" style="margin-left: 15px;">
-                        <input pInputText
-                            id="minerion_id"
-                            formControlName="minerion_id"
-                            type="text"
-                            [style]="{'width':'50%'}"
-                        />  
-                        <label for="minerion_id">Minerion ID</label>
-                    </span>
-                    <span class="p-float-label" style="margin-left: -60px;">
-                        <input pInputText
-                            id="dominio_id"
-                            formControlName="dominio_id"
-                            type="text"
-                            [style]="{'width':'50%'}"
-                        />  
-                        <label for="dominio_id">Dominio ID</label>
-                    </span>
-                    <span class="p-float-label" style="margin-left: -60px;">
-                        <input pInputText
-                            id="sgg_id"
-                            formControlName="sgg_id"
-                            type="text"
-                            [style]="{'width':'50%'}"
-                        />  
-                        <label for="sgg_id">SGG ID</label>
-                    </span>
-                    <span class="p-float-label" style="margin-left: -60px;">
-                        <input pInputText
-                            id="user"
-                            formControlName="user"
-                            type="text"
-                            [style]="{'width':'50%'}"
-                            readonly
-                        />  
-                        <label for="User">User ID</label>
-                    </span> 
-                </div> 
-            </div>
-                <div class="fg2edit">
-                    <div class="dvsaled">
-                        <p-floatLabel>   
-                            <p-inputNumber
-                                [style]="{'width':'75%'}" 
-                                id="sal"
-                                formControlName="salario" 
-                                inputId="currency-us" 
-                                mode="currency" 
-                                currency="BRL" 
-                                locale="pt-BR"
-                                inputId="float-label"  
-                            />
-                            <label for="float-label" style="margin-left: 75px;">Informe o Salário</label>
-                        </p-floatLabel>  
+        </div>
+        <form [formGroup]="editForm">
+            <div class="editgeral flex flex-column lg:flex-row">
+                <div class="fg1edit flex flex-column w-12 align-items-center lg:w-6">
+                    <div class="form1edit w-10">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-user" />
+                                <input
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="nome"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Digite o nome</label>
+                        </p-floatlabel>
                     </div>
-                    <div class="dvcated">    
-                        <p-floatLabel>
-                            <p-dropdown
-                                [style]="{'width':'75%'}"
-                                id="cat" 
-                                [options]="categorias" 
-                                formControlName="categoria"
-                                optionLabel="nome"
-                                inputId="float-label" 
-                            >
-                            </p-dropdown>
-                            <label for="float-label" style="margin-left: 5px;">Selecione a Categoria</label>
-                        </p-floatLabel> 
-                    </div>      
-                     <div class="dvgened">
-                        <p-floatLabel>
-                            <p-dropdown 
-                                id="gen"
-                                [style]="{'width':'75%'}"
-                                [options]="generos" 
-                                formControlName="genero"
-                                optionLabel="nome"
-                                inputId="float-label"    
-                            >
-                            </p-dropdown>
-                            <label for="float-label" >Selecione o Gênero</label>
-                        </p-floatLabel> 
-                     </div>
-                     <div class="form6ed">                     
-                        <p-floatLabel>
-                            <p-dropdown
-                                [style]="{'width':'75%'}"
-                                id="es"
-                                [options]="estados_civis" 
-                                formControlName="estado_civil"
-                                optionLabel="nome"
-                                inputId="float-label"   
-                            >
-                            </p-dropdown>
-                            <label for="float-label" style="margin-left: 5px;">Selecione o Estado Civil</label>
-                        </p-floatLabel>  
-                     </div>
-                     <div class="form7ed"> 
-                        <p-floatLabel>       
-                            <p-calendar
-                                id="dc" 
-                                [style]="{'width':'75%'}"
-                                formControlName="data_nascimento"
-                                dateFormat="dd/mm/yy"
-                                [showIcon]="true"
+
+                    <div class="form2edit w-10 text-left">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
                                 inputId="float-label"
+                                [style]="{'width':'100%'}"
+                                [options]="empresas"
+                                formControlName="empresa"
+                                optionLabel="nome"
+                                optionValue="id"
+                                (onChange)="onEmpresaSelecionada($event.value)"
                             >
-                            </p-calendar>
-                            <label for="float-label" style="margin-left: 5px;">Selecione a Data de Nascimento</label>
-                        </p-floatLabel> 
-                     </div>
-                     <div class="form8ed">
-                        <p-floatLabel>
-                            <p-calendar 
-                                [style]="{'width':'75%'}"
-                                formControlName="data_troca_setor"
+                            </p-select>
+                            <label for="float-label" style="margin-left: 15px;">Selecione a Empresa</label>
+                        </p-floatLabel>
+                    </div>
+                    <div class="filialed w-10 text-left">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                inputId="float-label"
+                                [style]="{'width':'100%'}"
+                                [options]="filiais"
+                                id="filial"
+                                formControlName="filial"
+                                optionValue="id"
+                                optionLabel="nome"
                                 [disabled]="true"
-                                dateFormat="dd/mm/yy"
-                                [showIcon]="true"
-                                inputId="float-label"
+                                (onChange)="onFilialSelecionada($event.value)"
                             >
-                            </p-calendar>
-                            <label for="float-label" style="margin-left: 5px;">Selecione a Data de Troca de Setor</label>
-                        </p-floatLabel>     
+                            </p-select>
+                            <label for="float-label" style="margin-left: 15px;">Selecione a Filial</label>
+                        </p-floatLabel>
                     </div>
-                    <div class="form9ed">
-                        <p-floatLabel>
+                    <div class="form3ed w-10 text-left">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                [style]="{'width':'100%'}"
+                                [options]="areas"
+                                id="area"
+                                formControlName="area"
+                                optionLabel="nome"
+                                inputId="float-label"
+                                optionValue="id"
+                                [disabled]="true"
+                                (onChange)="onAreaSelecionada($event.value)"
+                                >
+                            </p-select>
+                            <label for="float-label" style="margin-left: 15px;">Selecione a Área</label>
+                        </p-floatLabel>
+                    </div>
+                    <div class="dvseted w-10 text-left">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                [style]="{'width':'100%'}"
+                                [options]="setores"
+                                id="setor"
+                                formControlName="setor"
+                                optionValue="id"
+                                optionLabel="nome"
+                                inputId="float-label"
+                                [disabled]="true"
+                                (onChange)="onSetorSelecionado($event.value)"
+                                >
+                            </p-select>
+                            <label for="float-label" style="margin-left: 15px;">Selecione o Ambiente</label>
+                        </p-floatLabel>
+                    </div>
+                    <div class="form4ed  w-10 text-left">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                [style]="{'width':'100%'}"
+                                id="ambiente"
+                                [options]="ambientes"
+                                formControlName="ambiente"
+                                optionLabel="nome"
+                                optionValue="id"
+                                [disabled]="true"
+                                inputId="float-label"
+                                (onChange)="onAmbienteSelecionado($event.value)"
+                            >
+                            </p-select>
+                            <label for="float-label" style="margin-left: 15px;">Selecione o Setor</label>
+                        </p-floatLabel>
+                    </div>
+                    <div class="dvcarged w-10 text-left">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                [style]="{'width':'100%'}"
+                                id="cargo"
+                                [options]="cargos"
+                                formControlName="cargo"
+                                optionLabel="nome"
+                                [disabled]="true"
+                                optionValue="id"
+                                inputId="float-label"
+                                (onChange)="onCargoSelecionado($event.value)"
+                            >
+                            </p-select>
+                            <label for="float-label" style="margin-left: 15px;">Selecione o Cargo</label>
+                        </p-floatLabel>
+                    </div>
+                    <div class="dvtced w-10 text-left">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                [style]="{'width':'100%'}"
+                                id="tipocontrato"
+                                [options]="tipocontratos"
+                                formControlName="tipocontrato"
+                                optionLabel="nome"
+                                optionValue="nome"
+                                inputId="float-label"
+                            >
+                            </p-select>
+                            <label for="float-label" style="margin-left: 15px;">Selecione o Tipo de Contrato</label>
+                        </p-floatLabel>
+                    </div>
+                    <div class="dvracaed w-10 text-left">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                [style]="{'width':'100%'}"
+                                id="raca"
+                                [options]="racas"
+                                formControlName="raca"
+                                optionLabel="nome"
+                                optionValue="nome"
+                                inputId="float-label"
+                            >
+                            </p-select>
+                            <label for="float-label" style="margin-left: 15px;">Selecione a Raça</label>
+                        </p-floatLabel>
+                    </div>
+                    <div class="dvinsted w-10 text-left">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                [style]="{'width':'100%'}"
+                                id="inst"
+                                [options]="instrucoes"
+                                formControlName="instrucao"
+                                optionLabel="nome"
+                                optionValue="nome"
+                                inputId="float-label"
+                            >
+                            </p-select>
+                            <label for="float-label" style="margin-left: 15px;">Selecione o Grau de Instrução</label>
+                        </p-floatLabel>
+                    </div>
+                    <div class="form5ed w-10 text-left">
+                        <p-floatLabel variant="on">
                             <p-calendar
-                                [style]="{'width':'75%'}"
-                                formControlName="data_troca_cargo"
+                                variant="filled"
+                                [style]="{'width':'100%'}"
+                                id="da"
+                                formControlName="data_admissao"
                                 dateFormat="dd/mm/yy"
                                 [showIcon]="true"
                                 inputId="float-label"
                             >
                             </p-calendar>
-                            <label for="float-label" style="margin-left: 5px;">Selecione a Data de Troca de Cargo</label>
-                        </p-floatLabel>    
-                    </div>    
-                    <div class="form10ed">    
-                        <p-floatLabel>
-                                <p-calendar 
-                                    [style]="{'width':'75%'}"
-                                    formControlName="data_demissao"
+                            <label for="float-label" >Data de Admissão</label>
+                        </p-floatLabel>
+                    </div>
+                    <div class="sistemasEd flex flex-wrap w-10 text-left justify-content-center">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <input
+                                    class="mt-2"
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="minerion_id"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Minerion ID</label>
+                        </p-floatlabel>
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+    
+                                <input
+                                    class="mt-2"
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="dominio_id"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Dominio ID</label>
+                        </p-floatlabel>
+                    </div>
+                    <div class="sistemasEd flex flex-wrap w-12 text-left justify-content-center">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <input
+                                    class="mt-2"
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="sgg_id"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">SGG ID</label>
+                        </p-floatlabel>
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <input
+                                    class="mt-2"
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="user_id"
+                                    type="text"
+                                />
+                            </p-iconfield>    
+                            <label for="on_label">User ID</label>
+                        </p-floatlabel>
+                    </div>
+                </div>
+                    <div class="fg2edit flex flex-column w-12 align-items-center lg:w-6">
+                        <div class="dvsaled w-10 text-left">
+                            <p-floatLabel variant="on" >
+                                <p-inputNumber
+                                    variant="filled"
+                                    inputId="on_label"
+                                    formControlName="salario"
+                                    inputId="currency-us"
+                                    mode="currency"
+                                    currency="BRL"
+                                    locale="pt-BR"
+        
+                                />
+                                <label for="on_label">Informe o Salário</label>
+                            </p-floatLabel>
+                        </div>
+                        <div class="dvcated w-10 text-left">
+                            <p-floatLabel variant="on">
+                                <p-select
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    id="cat"
+                                    [options]="categorias"
+                                    formControlName="categoria"
+                                    optionLabel="nome"
+                                    inputId="float-label"
+                                    optionValue="nome"
+                                >
+                                </p-select>
+                                <label for="float-label" style="margin-left: 5px;">Selecione a Categoria</label>
+                            </p-floatLabel>
+                        </div>
+                        <div class="dvgened w-10 text-left">
+                            <p-floatLabel variant="on">
+                                <p-select
+                                    variant="filled"
+                                    id="gen"
+                                    [style]="{'width':'100%'}"
+                                    [options]="generos"
+                                    formControlName="genero"
+                                    optionLabel="nome"
+                                    optionValue="nome"
+                                    inputId="float-label"
+                                >
+                                </p-select>
+                                <label for="float-label" >Selecione o Gênero</label>
+                            </p-floatLabel>
+                        </div>
+                        <div class="form6ed w-10 text-left">
+                            <p-floatLabel variant="on">
+                                <p-select
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    id="es"
+                                    [options]="estados_civis"
+                                    formControlName="estado_civil"
+                                    optionLabel="nome"
+                                    optionValue="nome"
+                                    inputId="float-label"
+                                >
+                                </p-select>
+                                <label for="float-label" style="margin-left: 5px;">Selecione o Estado Civil</label>
+                            </p-floatLabel>
+                        </div>
+                        <div class="form7ed w-10 text-left">
+                            <p-floatLabel variant="on">
+                                <p-calendar
+                                    variant="filled"
+                                    id="dc"
+                                    [style]="{'width':'100%'}"
+                                    formControlName="data_nascimento"
                                     dateFormat="dd/mm/yy"
                                     [showIcon]="true"
                                     inputId="float-label"
                                 >
                                 </p-calendar>
-                                <label for="float-label" style="margin-left: 5px;">Selecione a Data de Demissão</label>
-                            </p-floatLabel>    
-                    </div>   
-                    <div class="dvemailed">
-                        <p-inputGroup>
-                            <p-inputGroupAddon>
-                                <i class="pi pi-at"></i>
-                            </p-inputGroupAddon>
-                            <span class="p-float-label">
-                                <input pInputText
-                                    id="email"
-                                    formControlName="email"
-                                    type="text"
-                                />  
-                                <label for="email">Digite o email</label>
-                            </span>          
-                        </p-inputGroup>
-                    </div> 
-                    <div class="dvcbed">
-                        <div class="titclas">
-                            <p><strong>Classificação do Colaborador</strong></p>
-                        </div> 
-                            <div class="btns">
-                                <p><label  for="sit" >Avaliador </label></p>
-                                <p-inputSwitch                           
-                                    id="sit"
-                                    formControlName="tornar_avaliador"
+                                <label for="float-label" style="margin-left: 5px;">Data de Nascimento</label>
+                            </p-floatLabel>
+                        </div>
+                        <div class="form8ed w-10 text-left">
+                            <p-floatLabel variant="on">
+                                <p-calendar
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    formControlName="data_troca_setor"
+                                    [disabled]="true"
+                                    dateFormat="dd/mm/yy"
+                                    [showIcon]="true"
+                                    inputId="float-label"
                                 >
-                                </p-inputSwitch>
-                                <p><label for="sit"[style]="{'margin-left':'20px'}">Avaliado </label></p>
-                                <p-inputSwitch 
-                                    id="sit"
-                                    formControlName="tornar_avaliado"
+                                </p-calendar>
+                                <label for="float-label" style="margin-left: 5px;">Data Troca de Setor</label>
+                            </p-floatLabel>
+                        </div>
+                        <div class="form9ed w-10 text-left">
+                            <p-floatLabel variant="on">
+                                <p-calendar
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    formControlName="data_troca_cargo"
+                                    dateFormat="dd/mm/yy"
+                                    [showIcon]="true"
+                                    inputId="float-label"
                                 >
-                                </p-inputSwitch>
-                                <p><label for="sit"[style]="{'margin-left':'30px'}">Situação </label></p>
-                                    <p-inputSwitch 
+                                </p-calendar>
+                                <label for="float-label" style="margin-left: 5px;">Data de Troca de Cargo</label>
+                            </p-floatLabel>
+                        </div>
+                        <div class="form10ed w-10 text-left">
+                            <p-floatLabel variant="on">
+                                    <p-calendar
+                                        variant="filled"
+                                        [style]="{'width':'100%'}"
+                                        formControlName="data_demissao"
+                                        dateFormat="dd/mm/yy"
+                                        [showIcon]="true"
+                                        inputId="float-label"
+                                    >
+                                    </p-calendar>
+                                    <label for="float-label" style="margin-left: 5px;">Data de Demissão</label>
+                                </p-floatLabel>
+                        </div>
+                        <div class="dvemailed w-10 text-left">
+                            <p-floatlabel variant="on">
+                                <p-iconfield>
+                                    <p-inputicon class="pi pi-at" />
+                                    <input
+                                        variant="filled"
+                                        [style]="{'width':'100%'}"
+                                        pInputText id="on_label"
+                                        autocomplete="off"
+                                        formControlName="email"
+                                        type="text"
+                                    />
+                                </p-iconfield>
+                                <label for="on_label">Digite o email</label>
+                            </p-floatlabel>
+                        </div>
+                        <div class="dvcbed w-10 text-left">
+                            <div class="titclas">
+                                <p><strong>Classificação do Colaborador</strong></p>
+                            </div>
+                                <div class="btns flex flex-column align-items-start md:flex-row">
+                                    <p><label  for="sit" >Avaliador </label></p>
+                                    <p-inputSwitch
                                         id="sit"
-                                        formControlName="situacao"
+                                        formControlName="tornar_avaliador"
                                     >
                                     </p-inputSwitch>
-                                <p><label for="sit"[style]="{'margin-left':'30px'}">Gestor de Orçamento </label></p>
-                                    <p-inputSwitch 
+                                    <p><label for="sit"[style]="{'margin-left':'20px'}">Avaliado </label></p>
+                                    <p-inputSwitch
                                         id="sit"
-                                        formControlName="tornar_gestor"
+                                        formControlName="tornar_avaliado"
                                     >
-                                    </p-inputSwitch>    
-                            </div>
-                        
+                                    </p-inputSwitch>
+                                    <p><label for="sit"[style]="{'margin-left':'30px'}">Situação </label></p>
+                                        <p-inputSwitch
+                                            id="sit"
+                                            formControlName="situacao"
+                                        >
+                                        </p-inputSwitch>
+                                    <p><label for="sit"[style]="{'margin-left':'30px'}">Gestor de Orçamento </label></p>
+                                        <p-inputSwitch
+                                            id="sit"
+                                            formControlName="tornar_gestor"
+                                        >
+                                        </p-inputSwitch>
+                                </div>
+
+                        </div>
+                        <div class="tituseredit w-10 text-left">
+                            <p><strong>Editar Usuário</strong></p>
+                        </div>
+
+
+                        <div class="dvusedit w-10 text-left">
+                            <p-floatlabel variant="on">
+                                <p-iconfield>
+                                    <p-inputicon class="pi pi-user" />
+                                    <input
+                                        variant="filled"
+                                        [style]="{'width':'100%'}"
+                                        pInputText id="on_label"
+                                        autocomplete="off"
+                                        formControlName="username"
+                                        type="text"
+                                    />
+                                </p-iconfield>
+                                <label for="on_label">Digite o nome de usuário</label>
+                            </p-floatlabel>
+
+                            <p-floatlabel variant="on">
+                                <p-iconfield>
+                                    <p-inputicon class="pi pi-user" />
+                                    <input
+                                        variant="filled"
+                                        class="mt-2"
+                                        [style]="{'width':'100%'}"
+                                        pInputText id="on_label"
+                                        autocomplete="off"
+                                        formControlName="password"
+                                        type="text"
+                                    />
+                                </p-iconfield>
+                                <label for="on_label">Digite a senha</label>
+                            </p-floatlabel>
+                        </div>
+                        <div class="botoes-formedit ml-5">
+                                <div class="btnsecedit" (click)="cleareditForm()">
+                                    <p>Limpar</p>
+                                </div>
+                                <div class="btnpriedit" (click)="saveEdit()">
+                                    <p>Editar</p>
+                                </div>
+                        </div>
                     </div>
-                    <div class="tituseredit">
-                        <p><strong>Editar Usuário</strong></p>
-                    </div>
-                
-                   
-                    <div class="dvusedit">
-                        <p-inputGroup>
-                            <p-inputGroupAddon>
-                                <i class="pi pi-user"></i>
-                            </p-inputGroupAddon>
-                            <span class="p-float-label">
-                                <input 
-                                    
-                                    pInputText
-                                    id="username"
-                                    formControlName="username"
-                                    type="text"
-                                />  
-                                <label for="nome">Digite o nome de usuário</label>
-                            </span>          
-                    </p-inputGroup>
-                    <p-inputGroup>
-                            <p-inputGroupAddon>
-                                <i class="pi pi-key"></i>
-                            </p-inputGroupAddon>
-                            <span class="p-float-label">
-                                <input pInputText
-                                    id="password"
-                                    formControlName="password"
-                                    type="password"
-                                    placeholder="Digite a senha"
-                                /> 
-                                <label for="senha">Digite a Senha</label> 
-                            </span>    
-                                      
-                    </p-inputGroup>
-                    </div>    
-                    <div class="botoes-formedit">
-                            <div class="btnsecedit" (click)="cleareditForm()">
-                                <p>Limpar</p>
-                            </div>
-                            <div class="btnpriedit" (click)="saveEdit()">
-                                 <p>Editar</p>            
-                            </div>
-                    </div>              
-                </div>    
-            </form>
-        </div>    
-            <form 
+            </div>
+        </form>
+            <form
             [formGroup]="imgForm"
             title="Cadastrar novo Colaborador"
             primaryBtnText="Cadastrar"
@@ -927,22 +1015,22 @@
             enctype="multipart/form-data"
         >
             <div class="editImg">
-                <input 
+                <input
                 id="foto"
-                type="file"  
+                type="file"
                 formControlName="image"
                 class="form-control"
                 (change)="onFileChange($event,imgForm)">
-            
+
             <button type="submit">Atualizar Imagem</button>
         </div>
-          </form>  
-           
+          </form>
+
         </p-dialog>
-        <p-dialog 
+        <p-dialog
             [modal]="true"
-            [(visible)]="detalhaColaboradorVisible" 
-            [style]="{ width: '70rem' }" 
+            [(visible)]="detalhaColaboradorVisible"
+            [style]="{ width: '70rem' }"
             [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
         >
         <p-divider align="left" type="solid">
@@ -967,7 +1055,7 @@
                     <p>Categoria: <strong>{{ colaboradorDetalhes.categoria }}</strong></p>
                     <p>Empresa: <strong>{{ colaboradorDetalhes.empresa_detalhes.nome }}</strong><p>
                     <p>Filial: <strong>{{ colaboradorDetalhes.filial_detalhes.nome }}</strong></p>
-                    <p>Área: <strong>{{ colaboradorDetalhes.area_detalhes.nome }} </strong></p>    
+                    <p>Área: <strong>{{ colaboradorDetalhes.area_detalhes.nome }} </strong></p>
                     <p>Setor: <strong>{{ colaboradorDetalhes.setor_detalhes.nome }}</strong></p>
                     <p>Ambiente: <strong>{{ colaboradorDetalhes.ambiente_detalhes.nome }}</strong></p>
                     <p>Cargo: <strong>{{ colaboradorDetalhes.cargo_detalhes.nome }}</strong></p>
@@ -975,11 +1063,27 @@
                     <p>Domínio ID: <strong>{{ colaboradorDetalhes.dominio_id }}</strong></p>
                     <p>Minerion ID: <strong>{{ colaboradorDetalhes.minerion_id }}</strong></p>
                     <p>SGG ID: <strong>{{ colaboradorDetalhes.sgg_id }}</strong></p>
-                </div>            
-                <div class="dvimg">  
+                </div>
+                <div class="dvimg">
                     <img [src]="colaboradorDetalhes.image"  width="80" class="shadow-4" />
                 </div>
-            </div>    
-        </p-dialog>    
-        
-  </div><!--end container-->
+            </div>
+        </p-dialog>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

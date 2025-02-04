@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputGroupModule } from 'primeng/inputgroup';
@@ -9,8 +9,6 @@ import { InputMaskModule } from 'primeng/inputmask';
 import { InputTextModule } from 'primeng/inputtext';
 import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-import { FormLayoutComponent } from '../../../components/form-layout/form-layout.component';
-import { PrimaryInputComponent } from '../../../components/primary-input/primary-input.component';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { GetAreaService } from '../../../services/avaliacoesServices/areas/getarea.service';
 import { GetCompanyService } from '../../../services/avaliacoesServices/companys/getcompany.service';
@@ -56,8 +54,8 @@ export interface Cargo{
   standalone: true,
   imports: [
     ReactiveFormsModule,FormsModule,DividerModule,CommonModule,
-    FormLayoutComponent,InputMaskModule,DialogModule,ConfirmDialogModule,
-    PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
+    InputMaskModule,DialogModule,ConfirmDialogModule,
+    TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
   providers:[
     MessageService,GetSetorService,CargoService,ConfirmationService,

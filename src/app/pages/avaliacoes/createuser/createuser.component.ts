@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule,Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { CreateuserService } from '../../../services/avaliacoesServices/users/createuser.service';
 import { passwordValidator } from './passwordValidator';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
@@ -38,7 +38,7 @@ export interface User{
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
+    TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
   providers: [
     CreateuserService,

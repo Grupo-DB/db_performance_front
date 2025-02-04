@@ -9,17 +9,13 @@ import { InputMaskModule } from 'primeng/inputmask';
 import { InputTextModule } from 'primeng/inputtext';
 import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-import { FormLayoutComponent } from '../../../components/form-layout/form-layout.component';
-import { PrimaryInputComponent } from '../../../components/primary-input/primary-input.component';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { GetPerguntaService } from '../../../services/avaliacoesServices/perguntas/getpergunta.service';
 import { GetFormularioService } from '../../../services/avaliacoesServices/formularios/getformulario.service';
 import { FormularioService } from '../../../services/avaliacoesServices/formularios/registerformulario.service';
 import { CommonModule } from '@angular/common';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { PerguntaService } from '../../../services/avaliacoesServices/perguntas/registerpergunta.service';
-//import { Pergunta } from '../pergunta/pergunta.component';
 import { PickListModule } from 'primeng/picklist';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
@@ -51,8 +47,8 @@ export interface Pergunta {
   imports: [
     TabMenuModule,NzIconModule,NzMenuModule,NzLayoutModule,DividerModule,
     ReactiveFormsModule,FormsModule,CommonModule,PickListModule,
-    FormLayoutComponent,InputMaskModule,DialogModule,ConfirmDialogModule,
-    PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
+    InputMaskModule,DialogModule,ConfirmDialogModule,
+    RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
   providers:[
     MessageService,FormularioService,ConfirmationService

@@ -11,8 +11,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PickListModule } from 'primeng/picklist';
 import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-import { FormLayoutComponent } from '../../../components/form-layout/form-layout.component';
-import { PrimaryInputComponent } from '../../../components/primary-input/primary-input.component';
 import { Avaliado } from '../avaliado/avaliado.component';
 import { Avaliador } from '../avaliador/avaliador.component';
 import { AvaliadorService } from '../../../services/avaliacoesServices/avaliadores/registeravaliador.service';
@@ -36,8 +34,8 @@ interface RegisterAssociacaoForm{
   imports: [
     TabMenuModule,NzIconModule,NzLayoutModule,NzMenuModule,
     ReactiveFormsModule,FormsModule,PickListModule,CommonModule,
-    FormLayoutComponent,InputMaskModule,DividerModule,
-    PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
+    InputMaskModule,DividerModule,
+    RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
   providers:[
     MessageService,

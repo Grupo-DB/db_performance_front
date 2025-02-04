@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { FormControl, ReactiveFormsModule, FormsModule, FormGroup, Validators, FormBuilder, AbstractControl, FormArray, ValidatorFn, ValidationErrors } from '@angular/forms';
-import { RouterOutlet, RouterLink, Router } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ReactiveFormsModule, FormsModule, FormGroup, Validators, FormBuilder, AbstractControl, FormArray } from '@angular/forms';
+import { RouterLink, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
@@ -10,10 +10,8 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputMaskModule } from 'primeng/inputmask';
 import { InputTextModule } from 'primeng/inputtext';
 import { StepperModule } from 'primeng/stepper';
-import { Table, TableModule } from 'primeng/table';
+import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-import { FormLayoutComponent } from '../../../components/form-layout/form-layout.component';
-import { PrimaryInputComponent } from '../../../components/primary-input/primary-input.component';
 import { GetAreaService } from '../../../services/avaliacoesServices/areas/getarea.service';
 import { GetCargoService } from '../../../services/avaliacoesServices/cargos/getcargo.service';
 import { GetCompanyService } from '../../../services/avaliacoesServices/companys/getcompany.service';
@@ -21,10 +19,8 @@ import { GetFilialService } from '../../../services/avaliacoesServices/filiais/g
 import { GetSetorService } from '../../../services/avaliacoesServices/setores/get-setor.service';
 import { AvaliacaoService } from '../../../services/avaliacoesServices/avaliacoes/getavaliacao.service';
 import { RegisterAvaliacaoService } from '../../../services/avaliacoesServices/avaliacoes/registeravaliacao.service.spec';
-import { MatRadioChange } from '@angular/material/radio';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { GetFormularioService } from '../../../services/avaliacoesServices/formularios/getformulario.service';
-import { GetTipoAvaliacaoService } from '../../../services/avaliacoesServices/tipoavaliacoes/gettipoavaliacao.service';
 import { PerguntasService } from '../../../services/avaliacoesServices/avaliacoes/perguntas.service';
 import { StepsModule } from 'primeng/steps';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
@@ -32,22 +28,20 @@ import { ChangeDetectorRef } from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import {AsyncPipe} from '@angular/common';
-import {StepperOrientation, MatStepperModule} from '@angular/material/stepper';
+import {MatStepperModule} from '@angular/material/stepper';
 import {MatSelectModule} from '@angular/material/select';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import {MatRadioModule} from '@angular/material/radio';
-import { Calendar, CalendarModule } from 'primeng/calendar';
+import { CalendarModule } from 'primeng/calendar';
 import { AvaliadoService } from '../../../services/avaliacoesServices/avaliados/avaliado.service';
 import { TipoContratoService } from '../../../services/avaliacoesServices/tipocontratos/resgitertipocontrato.service';
 import { ColaboradorService } from '../../../services/avaliacoesServices/colaboradores/registercolaborador.service';
 import { AvaliadorService } from '../../../services/avaliacoesServices/avaliadores/registeravaliador.service';
 import { Colaborador } from '../colaborador/colaborador.component';
 import { Avaliado } from '../avaliado/avaliado.component';
-import { justificativaValidator } from './justificativaValidator';
 import { TipoAvaliacaoService } from '../../../services/avaliacoesServices/tipoavaliacoes/registertipoavaliacao.service';
 import { DividerModule } from 'primeng/divider';
-import { async, catchError, of } from 'rxjs';
+import { catchError, of } from 'rxjs';
 import { Ambiente } from '../ambiente/ambiente.component';
 import { Area } from '../area/area.component';
 import { Filial } from '../filial/filial.component';
@@ -61,7 +55,6 @@ import { AreaService } from '../../../services/avaliacoesServices/areas/register
 import { CargoService } from '../../../services/avaliacoesServices/cargos/registercargo.service';
 import { FilialService } from '../../../services/avaliacoesServices/filiais/registerfilial.service';
 import { SetorService } from '../../../services/avaliacoesServices/setores/registersetor.service';
-import { InputTextareaModule } from 'primeng/inputtextarea';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FormularioService } from '../../../services/avaliacoesServices/formularios/registerformulario.service';
 import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
@@ -120,9 +113,9 @@ interface Tipo{
   selector: 'app-novaliacao',
   standalone: true,
   imports: [
-    ReactiveFormsModule,FormsModule,StepperModule, RouterOutlet,CommonModule,MatStepperModule,MatFormFieldModule,CalendarModule,MatRadioModule,DividerModule,
-    FormLayoutComponent,InputMaskModule,StepsModule,NzStepsModule,MatInputModule,MatButtonModule,AsyncPipe,MatSelectModule,RadioButtonModule,InputTextareaModule,
-    PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,SafeHtmlPipe,
+    ReactiveFormsModule,FormsModule,StepperModule,CommonModule,MatStepperModule,MatFormFieldModule,CalendarModule,MatRadioModule,DividerModule,
+    InputMaskModule,StepsModule,NzStepsModule,MatInputModule,MatButtonModule,MatSelectModule,RadioButtonModule,InputTextModule,
+    RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,SafeHtmlPipe,
     NzMenuModule,TabMenuModule,
   ],
   providers: [

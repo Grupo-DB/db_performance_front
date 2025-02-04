@@ -21,6 +21,7 @@ import { CentrocustopaiService } from '../../../../services/baseOrcamentariaServ
 import { Colaborador } from '../../../avaliacoes/colaborador/colaborador.component';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { animate, keyframes, style, transition, trigger } from '@angular/animations';
+import { ButtonModule } from 'primeng/button';
 
 interface RegisterCentroCustoForm{
   codigo: FormControl;
@@ -44,7 +45,7 @@ export interface CentroCusto{
   imports: [
     CommonModule,RouterLink,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
     DropdownModule,FormsModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,
-    ConfirmDialogModule,ToastModule,FloatLabelModule
+    ConfirmDialogModule,ToastModule,FloatLabelModule,ButtonModule
   ],
   providers: [
     MessageService,ConfirmationService

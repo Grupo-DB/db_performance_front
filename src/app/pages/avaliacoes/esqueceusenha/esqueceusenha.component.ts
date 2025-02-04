@@ -1,13 +1,10 @@
 import { Component } from '@angular/core';
-import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, FormsModule, Validators,ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-import { PrimaryInputComponent } from '../../../components/primary-input/primary-input.component';
-import { passwordValidator } from '../createuser/passwordValidator';
 import { ToastrService } from 'ngx-toastr';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
@@ -15,13 +12,10 @@ import { HttpClient } from '@angular/common/http';
 
 
 
-
-
-
 @Component({
   selector: 'app-esqueceusenha',
   standalone: true,
-  imports: [CommonModule,ToastModule,ReactiveFormsModule,FormsModule,InputTextModule,InputGroupAddonModule,InputGroupModule,PrimaryInputComponent],
+  imports: [CommonModule,ToastModule,ReactiveFormsModule,FormsModule,InputTextModule,InputGroupAddonModule,InputGroupModule ],
   providers: [MessageService,ToastrService],
   templateUrl: './esqueceusenha.component.html',
   styleUrl: './esqueceusenha.component.scss'

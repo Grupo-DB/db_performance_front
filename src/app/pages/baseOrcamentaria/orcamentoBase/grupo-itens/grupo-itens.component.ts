@@ -17,6 +17,7 @@ import { GrupoItensService } from '../../../../services/baseOrcamentariaServices
 import { LoginService } from '../../../../services/avaliacoesServices/login/login.service';
 import { RaizAnaliticaService } from '../../../../services/baseOrcamentariaServices/orcamento/RaizAnalitica/raiz-analitica.service';
 import { animate, keyframes, style, transition, trigger } from '@angular/animations';
+import { ButtonModule } from 'primeng/button';
 
 interface RegisterGrupoItensForm{
   codigo: FormControl;
@@ -51,7 +52,7 @@ export interface GrupoItens{
   imports: [
     CommonModule,RouterLink,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
     DropdownModule,FormsModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,
-    ConfirmDialogModule,ToastModule
+    ConfirmDialogModule,ToastModule,ButtonModule
   ],
   providers: [
     MessageService,ConfirmationService

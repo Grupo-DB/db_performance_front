@@ -1,11 +1,9 @@
 @import "primeicons/primeicons.css";
 
 .container{
-    width: 100%;
+    display: flex;
+    flex-flow: column wrap;
 }
-// .uppercase-text {
-//     text-transform: uppercase;
-//   }
 
 .form-geral{
     width: 90%;
@@ -16,12 +14,14 @@
         .fg1{
             width: 100%;
             margin-top: 45px;
+            
             p{
                 margin-left: 20px;
             }
             .form1{
                 margin-top: 16px;
-                margin-left: 20px;
+               // margin-left: 20px;
+                
                 p{
                     margin-left: auto;
                 }
@@ -31,48 +31,46 @@
             }
             .form2{
                 margin-top: 35px;
-                margin-left: 20px;
+              //  margin-left: 20px;
             }
             .filial{
                 margin-top: 35px;
-                margin-left: 20px;
+               // margin-left: 20px;
             }
             .form3{
                 margin-top: 35px;
-                margin-left: 20px;
+               // margin-left: 20px;
             }
             .dvset{
                 margin-top: 35px;
-                margin-left: 20px;
+               // margin-left: 20px;
             }
             .form4{
                 margin-top: 35px;
-                margin-left: 20px;
+                
             }
             .dvcarg{
                 margin-top: 35px;
-                margin-left: 20px;
+                //margin-left: 20px;
             }
             .dvtc{
                 margin-top: 35px;
-                margin-left: 20px;
+                //margin-left: 20px;
             }
             .dvraca{
                 margin-top: 35px;
-                margin-left: 20px;
+                //margin-left: 20px;
             }
             .dvinst{
                 margin-top: 35px;
-                margin-left: 20px;
+                //margin-left: 20px;
             }
             .sistemas{
                 display: flex;
-                margin-top: 35px;
-                margin-left: 20px;
-                margin-bottom: 20px;
-                span{
-                    margin: 2px;
-                }
+               
+               
+                margin-top: 3%;
+                
             }
         }
         .fg2{
@@ -154,8 +152,7 @@
                 }
             }
         }
-        
-    
+           
 }
 .colaboradorDetalhes{
     display: flex;
@@ -182,32 +179,6 @@
     margin-top: 2%;
     display: flex;
     height: 6%;
-
-        
-
-        // p-calendar{
-        //     padding: 5%;
-        // }
-    
-        // p-inputGroup{
-        //     padding: 2px;
-        // }
-        // p-dropdown{
-        //     padding: 15px;
-        // }
-        // p-inputMask{
-        //     padding: 15px;
-        //     width: 150px;
-        // }    
-        
-
-        .teste{
-            margin-bottom: 5%;
-            margin-top: 6%;
-            label{
-                margin-left: 5%;
-            }
-        }
  }
  
  .botoes-form{
@@ -415,7 +386,7 @@
             margin-left: 15px;
             margin-bottom: 10px;
             p-inputgroup{
-                width: 75%;
+                width: 100%;
             }
         }
         
@@ -436,7 +407,7 @@
 }
 .sistemasEd{
     display: flex;
-    margin-top: 35px;
+    margin-top: 15px;
     
 }
 .botoes-formedit{

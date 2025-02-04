@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule,FormGroup, FormsModule, Validators, FormBuilder } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -19,6 +19,11 @@ import { DialogModule } from 'primeng/dialog';
 import { CommonModule } from '@angular/common';
 import { DividerModule } from 'primeng/divider';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { SelectModule } from 'primeng/select';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 
 interface RegisterFilialForm{
   empresa: FormControl,
@@ -49,13 +54,57 @@ export interface Filial {
     imports: [
         ReactiveFormsModule,FormsModule,CommonModule,DividerModule,
         InputMaskModule,DialogModule,ConfirmDialogModule,
-        RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
+        IconFieldModule,InputIconModule,SelectModule,FloatLabelModule,
+        TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
     ],
     providers:[
       FilialService,
       MessageService,ConfirmationService,
       RegisterCompanyService,GetFilialService
-    ]
+    ],
+    animations:[
+            trigger('efeitoFade',[
+                    transition(':enter',[
+                      style({ opacity: 0 }),
+                      animate('2s', style({ opacity:1 }))
+                    ])
+                  ]),
+                  trigger('efeitoZoom', [
+                    transition(':enter', [
+                      style({ transform: 'scale(0)' }),
+                      animate('2s', style({ transform: 'scale(1)' })),
+                    ]),
+                  ]),
+                  trigger('bounceAnimation', [
+                    transition(':enter', [
+                      animate('4.5s ease-out', keyframes([
+                        style({ transform: 'scale(0.5)', offset: 0 }),
+                        style({ transform: 'scale(1.2)', offset: 0.5 }),
+                        style({ transform: 'scale(1)', offset: 1 }),
+                      ])),
+                    ]),
+                  ]),
+                  trigger('swipeAnimation', [
+                    transition(':enter', [
+                      style({ transform: 'translateX(-100%)' }),
+                      animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+                    ]),
+                    transition(':leave', [
+                      style({ transform: 'translateX(0)' }),
+                      animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+                    ]),
+                  ]),
+                  trigger('swipeAnimationReverse', [
+                    transition(':enter', [
+                      style({ transform: 'translateX(100%)' }),
+                      animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+                    ]),
+                    transition(':leave', [
+                      style({ transform: 'translateX(0)' }),
+                      animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+                    ]),
+                  ]),
+          ],
 })
 export class FilialComponent implements OnInit {
   filiais: any[] = [];

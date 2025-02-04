@@ -9,7 +9,7 @@
 }
 
 .app-layout {
-  height: 100vh;
+  min-height: 100vh;
   background-color: #f2f1f0;
 }
 
@@ -169,26 +169,19 @@ nz-sider {
 
 @media screen and (max-width: 760px) {
   .app-header {
-    flex-direction: column;
-    height: auto;
+    height: 64px;
     align-items: center;
-    background-color: chartreuse;
   }
   .app-header .header-trigger {
     display: none;
   }
-  .app-header .inicio{
-    position: absolute;
-    align-self: center;
-  }
+  .app-header .inicio
   .app-header .inicio .divnot{
     font-size: 12px;
     
   }
   .app-header .top{
-    position: absolute;
-    align-self: initial;
-    //font-size: 8px;
+    display: none;
   }
   .app-header .final{
     margin-top: 10vh;
@@ -197,6 +190,10 @@ nz-sider {
     position: relative;
   }
   .app-header .final .empresa{
-    font-size: 12px;
+   display: none;
 }
+  .app-header .final .btn{
+    margin-top: -50px;
+    margin-left: 400px;
+  }
 } 

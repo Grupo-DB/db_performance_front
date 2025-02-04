@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputGroupModule } from 'primeng/inputgroup';
@@ -9,26 +9,19 @@ import { InputMaskModule } from 'primeng/inputmask';
 import { InputTextModule } from 'primeng/inputtext';
 import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-import { FormLayoutComponent } from '../../../components/form-layout/form-layout.component';
-import { PrimaryInputComponent } from '../../../components/primary-input/primary-input.component';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { AreaService } from '../../../services/avaliacoesServices/areas/registerarea.service';
 import { GetCompanyService } from '../../../services/avaliacoesServices/companys/getcompany.service';
 import { GetFilialService } from '../../../services/avaliacoesServices/filiais/getfilial.service';
 import { GetAvaliadorService } from '../../../services/avaliacoesServices/avaliadores/getavaliador.service';
-
 import { GetColaboradorService } from '../../../services/avaliacoesServices/colaboradores/get-colaborador.service';
-import { UserService } from '../../../services/avaliacoesServices/users/user.service';
-import { GetFormularioService } from '../../../services/avaliacoesServices/formularios/getformulario.service';
 import { AvaliadoService } from '../../../services/avaliacoesServices/avaliados/avaliado.service';
 import { CommonModule } from '@angular/common';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { Colaborador } from '../colaborador/colaborador.component';
 import { Formulario } from '../formulario/formulario.component';
-import { Avaliador } from '../../avaliacoes/avaliador/avaliador.component';
 import { FormularioService } from '../../../services/avaliacoesServices/formularios/registerformulario.service';
-
 
 interface RegisterAvaliadoForm{
   colaborador: FormControl,
@@ -48,8 +41,8 @@ export interface Avaliado{
   standalone: true,
   imports: [
     ReactiveFormsModule,FormsModule,CommonModule,
-    FormLayoutComponent,InputMaskModule,DialogModule,ConfirmDialogModule,
-    PrimaryInputComponent,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
+    InputMaskModule,DialogModule,ConfirmDialogModule,
+    TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
   providers:[
     MessageService,AreaService,ConfirmationService,
