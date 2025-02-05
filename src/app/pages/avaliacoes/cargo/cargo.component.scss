@@ -3,63 +3,54 @@
 .container{
     display: flex;
     flex-flow: column wrap;
-    align-items: center;
 }
 
 .form-geral{
-    width: 100%;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
     .fg1{
-        width: 50%;
+        width: 100%;
+        //margin-top: 10px;
+        //margin-bottom: 25px;
         p{
             margin-left: 20px;
         }
         .form1{
-            margin-left: 28px;
-            p{
-                margin-left: auto;
-            }
-            p-inputGroup{
-                width: 79%;
-            }
+           margin-top: 16px; 
         }
         .form2{
-            padding: 5px;
-            margin-left: 20px;
-            
-            p{
-                margin-left: 20px;
-            }
-        }
-        .filial{
-            padding: 5px;
-            margin-left: 20px;
-            p{
-                margin-left: 20px;
-            }   
-        }
+            margin-top: 16px;
+        } 
     }
     .fg2{
-        margin-top: -30px;
-        width: 50%;
-        .form3{
-            p{
-                margin-left: 20px;
-            } 
+        width: 100%;
+        //margin-top: 10px;
+        //margin-bottom: 25px;
+        p{
+            margin-left: 20px;
         }
-        .dvset{
-            margin-top: -10px;
-            p{
-                margin-left: 20px;
-            }
+        .form2{
+            margin-top: 16px;
+            
+        } 
+    }
+    .fg3{
+        width: 100%;
+        //margin-top: 10px;
+        margin-bottom: 25px;
+        p{
+            margin-left: 20px;
         }
-        .form4{
-            margin-top: 10px;
-            p{
-                margin-left: 20px;
-            }
+        .form2{
+            margin-top: 16px;
+            
         }
     }
 }
+
 .titulo{
     justify-content: center;
     text-align: center;
@@ -67,35 +58,8 @@
         color:slategrey;
     }
 }
- form{
-    margin-top: 2%;
-    display: flex;
-    height: 6%;
-    
-        p-inputGroup{
-            padding: 15px;
-        }
-        p-dropdown{
-            padding: 15px;
-        }
-        p-inputMask{
-            padding: 15px;
-            width: 150px;
-        }    
-        .form3{
-            margin-top: 2%;
-            margin-bottom: 5%;
-        }
-
-        .teste{
-            margin-bottom: 5%;
-            margin-top: 6%;
-            label{
-                margin-left: 5%;
-            }
-        }
- }
  
+
  .botoes-form{
     width: 77%;
     margin-bottom: 2%;
@@ -168,45 +132,7 @@
         margin-left: 2px;
     }
 }
-.editgeral{
-    width: 100%;
-    .fg1edit{
-        width: 50%;
-        p{
-            margin-left: 20px;
-        }
-        .form1edit{
-            margin-left: 5px;
-            width: 103%;            
-            p-inputGroup{
-                width: 77%;
-            }
-        }
-        .form2edit{
-            margin-top: 1px;
-            
-        }
-        .filialed{
-            margin-top: 10px;
-        }
-    }
-    .fg2edit{
-        width: 50%;
-        p{
-            margin-left: 20px;
-        }
-        .form3ed{
-            margin-top: -15px;
-        }
-        .dvseted{
-            margin-top: 10px;
-        }
-        .form4ed{
-            margin-top: 12px;
-        }
-    }
 
-}
 
 .botoes-formedit{
     display: flex;
@@ -240,6 +166,34 @@
             margin-left: 2px;
         }
     }
+}
 
-
+.editGeral{
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    .fg1edit{
+        width: 50%;
+        margin-top: 10px;
+        .form2{
+            margin-top: 25px;
+        }
+    }
+    .fg2edit{
+        width: 50%;
+        margin-top: 10px;
+        .form2{
+            margin-top: 25px;
+        }
+    }
+    .fg3edit{
+        width: 50%;
+        margin-top: 10px;
+        .form2{
+            margin-top: 25px;
+            margin-bottom: 20px;;
+        }
+    }
 }

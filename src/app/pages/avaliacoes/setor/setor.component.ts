@@ -23,6 +23,11 @@ import { Empresa } from '../registercompany/registercompany.component';
 import { AreaService } from '../../../services/avaliacoesServices/areas/registerarea.service';
 import { DividerModule } from 'primeng/divider';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { SelectModule } from 'primeng/select';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 
 interface RegisterSetorForm{
   empresa: FormControl,
@@ -42,8 +47,8 @@ export interface Setor {
   selector: 'app-setor',
   standalone: true,
   imports: [
-    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,
-    InputMaskModule,DialogModule,ConfirmDialogModule,
+    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,FloatLabelModule,
+    InputMaskModule,DialogModule,ConfirmDialogModule,IconFieldModule,InputIconModule,SelectModule,
     TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
   providers:[
@@ -51,6 +56,49 @@ export interface Setor {
       MessageService,ConfirmationService,
       RegisterCompanyService,GetFilialService
   ],
+  animations:[
+                trigger('efeitoFade',[
+                        transition(':enter',[
+                          style({ opacity: 0 }),
+                          animate('2s', style({ opacity:1 }))
+                        ])
+                      ]),
+                      trigger('efeitoZoom', [
+                        transition(':enter', [
+                          style({ transform: 'scale(0)' }),
+                          animate('2s', style({ transform: 'scale(1)' })),
+                        ]),
+                      ]),
+                      trigger('bounceAnimation', [
+                        transition(':enter', [
+                          animate('4.5s ease-out', keyframes([
+                            style({ transform: 'scale(0.5)', offset: 0 }),
+                            style({ transform: 'scale(1.2)', offset: 0.5 }),
+                            style({ transform: 'scale(1)', offset: 1 }),
+                          ])),
+                        ]),
+                      ]),
+                      trigger('swipeAnimation', [
+                        transition(':enter', [
+                          style({ transform: 'translateX(-100%)' }),
+                          animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+                        ]),
+                        transition(':leave', [
+                          style({ transform: 'translateX(0)' }),
+                          animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+                        ]),
+                      ]),
+                      trigger('swipeAnimationReverse', [
+                        transition(':enter', [
+                          style({ transform: 'translateX(100%)' }),
+                          animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+                        ]),
+                        transition(':leave', [
+                          style({ transform: 'translateX(0)' }),
+                          animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+                        ]),
+                      ]),
+              ],
   templateUrl: './setor.component.html',
   styleUrl: './setor.component.scss'
 })
@@ -281,7 +329,7 @@ saveEdit() {
   
   this.setorService.editSetor(setorId, dadosAtualizados).subscribe({
     next: () => {
-      this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Setor atualizado com sucesso!' });
+      this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Ambiente atualizado com sucesso!' });
       setTimeout(() => {
        window.location.reload(); // Atualiza a página após a exclusão
       }, 1000); // Tempo em milissegundos (1 segundo de atraso)
@@ -305,7 +353,7 @@ saveEdit() {
 
 excluirSetor(id: number) {
   this.confirmationService.confirm({
-    message: 'Tem certeza que deseja excluir este setor?',
+    message: 'Tem certeza que deseja excluir este ambiente?',
     header: 'Confirmação',
     icon: 'pi pi-exclamation-triangle',
     acceptIcon: 'pi pi-check',
@@ -317,7 +365,7 @@ excluirSetor(id: number) {
     accept: () => {
       this.setorService.deleteSetor(id).subscribe({
         next: () => {
-          this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Setor excluído com sucesso!!', life: 1000 });
+          this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Ambiente excluído com sucesso!!', life: 1000 });
           setTimeout(() => {
             window.location.reload(); // Atualiza a página após a exclusão
           }, 1000); // Tempo em milissegundos (1 segundo de atraso)
@@ -346,7 +394,7 @@ submit(){
     areaId
   ).subscribe({
     next: () => {
-      this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Setor registrado com sucesso!' });
+      this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Ambiente registrado com sucesso!' });
       setTimeout(() => {
         window.location.reload(); // Atualiza a página após o registro
       }, 1000); // Tempo em milissegundos (1 segundo de atraso)

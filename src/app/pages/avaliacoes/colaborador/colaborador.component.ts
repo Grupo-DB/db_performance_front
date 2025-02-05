@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { DropdownModule } from 'primeng/dropdown';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputMaskModule } from 'primeng/inputmask';
@@ -145,7 +144,7 @@ interface TipoContrato{
   imports: [
     ReactiveFormsModule,FormsModule,NzUploadModule,CommonModule,DialogModule,InputNumberModule,InputSwitchModule,BooleanToStatusPipe,
     InputMaskModule,CalendarModule,CheckboxModule,ConfirmDialogModule,DividerModule,
-    FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,
+    FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,ToastModule,
     IconFieldModule,InputIconModule,SelectModule,ToggleSwitchModule
   ],
   providers:[

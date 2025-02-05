@@ -5,7 +5,8 @@
         </p-divider> 
     </div>
     
-        <form [formGroup]="registerfilialForm"
+        <form 
+            [formGroup]="registerfilialForm"
             title="Cadastrar nova Filial"
             primaryBtnText="Cadastrar"
             (submit)="submit()"
@@ -143,6 +144,8 @@
     </div>
     <hr>
         <div class="tabela"@swipeAnimationReverse>
+            <p-toast/>
+            <p-confirmDialog />
             <p-table
                 #dt1
                 [value]="filiais"
@@ -200,7 +203,7 @@
                         <th style="width:25%" type="text" field="codigo" display="menu">
                             Codigo
                         </th>
-                        <th style="width: 25%;text-align: center;">Ações</th>
+                        <th style="width:25%; text-align: center;">Ações</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-filial>
@@ -232,112 +235,137 @@
             </p-table>
         </div>
         <p-dialog 
-            
             [modal]="true"
             [(visible)]="editFormVisible" 
             [style]="{ width: '65rem' }" 
-            [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
         >
-        <div class="titulo">
-            <p-divider align="left" type="solid">
-                <b>Editar Filial</b>
-            </p-divider> 
-        </div>
+            <div class="titulo">
+                <p-divider align="left" type="solid">
+                    <b>Editar Filial</b>
+                </p-divider> 
+            </div>
             <form [formGroup]="editForm" (Submit)="submit()">
-                <div class="form1">
-                    <p-inputGroup>
-                        <p-inputGroupAddon>
-                            <i class="pi pi-file-edit"></i>
-                        </p-inputGroupAddon>
-                        <span class="p-float-label">
-                            <input pInputText
-                                id="nome"
-                                formControlName="nome"
-                                type="text"
-                            />  
-                            <label for="nome">Digite o nome</label>
-                        </span>          
-                    </p-inputGroup>
+                <div class="editGeral flex flex-column lg:flex-row">
+                    <div class="fg1edit flex flex-column w-12 align-items-center lg:w-6"> 
+                        <div class="form2 w-10 text-left">
+                            <p-floatLabel variant="on">
+                                <p-select
+                                    variant="filled"
+                                    inputId="float-label"
+                                    [style]="{'width':'100%'}"
+                                    [options]="empresas"
+                                    formControlName="empresa"
+                                    optionLabel="nome"
+                                >
+                                </p-select>
+                                <label for="float-label" style="margin-left: 15px;">Selecione a Empresa</label>
+                            </p-floatLabel>
+                        </div>
+
+                        <div class="form2 w-10">
+                            <p-floatlabel variant="on">
+                                <p-iconfield>
+                                    <p-inputicon class="pi pi-file-edit" />
+                                    <input
+                                        variant="filled"
+                                        [style]="{'width':'100%'}"
+                                        pInputText id="on_label"
+                                        autocomplete="off"
+                                        formControlName="nome"
+                                        type="text"
+                                    />
+                                </p-iconfield>
+                                <label for="on_label">Digite o nome</label>
+                            </p-floatlabel>
+                        </div>
+                        <div class="form2 w-10 text-left" >  
+                            <p-floatLabel variant="on">
+                                <p-inputmask
+                                    variant="filled"  
+                                    id="cnpj_input" 
+                                    mask="99.999.999/9999-99" 
+                                    formControlName="cnpj" 
+                                    [style]="{'width':'100%'}">
+                                </p-inputmask>
+                                <label  for="cnpj_input">Informe o CNPJ</label>
+                            </p-floatLabel>
+                        </div>
+                    </div>
                     
-                    <div class="teste">  
-                        <span class="p-float-label">
-                            <p-inputMask id="cnpj_input" mask="99.999.999/9999-99" formControlName="cnpj" ></p-inputMask>
-                            <label style="margin-left: 60px;" for="cnpj_input">Informe o CNPJ</label>
-                        </span>  
-                    </div> 
-        
-                    <p-inputGroup>
-                      <p-inputGroupAddon>
-                          <i class="pi pi-file-edit"></i>
-                      </p-inputGroupAddon>
-                      <span class="p-float-label">
-                          <input pInputText
-                          id="endereco"
-                          formControlName="endereco"
-                          type="text"
-                          />  
-                          <label for="endereco">Digite o Endereço</label>
-                      </span>          
-                  </p-inputGroup>
-                </div>    
-                <div class="form2ed">
-                    <p-inputGroup>
-                        <p-inputGroupAddon>
-                            <i class="pi pi-file-edit"></i>
-                        </p-inputGroupAddon>
-                        <span class="p-float-label">
-                            <input pInputText
-                                id="cidade"
-                                formControlName="cidade"
-                                type="text"
-                            />  
-                            <label for="cidade">Digite a Cidade</label>
-                        </span>          
-                    </p-inputGroup>
-          
-                    <p-inputGroup>
-                        <p-inputGroupAddon>
-                            <i class="pi pi-file-edit"></i>
-                        </p-inputGroupAddon>
-                        <span class="p-float-label">
-                            <input pInputText
-                                id="estado"
-                                formControlName="estado"
-                                type="text"
-                            />  
-                            <label for="estado">Digite a sigla do Estado</label>
-                        </span>          
-                    </p-inputGroup>
-          
-                    <p-inputGroup>
-                        <p-inputGroupAddon>
-                            <i class="pi pi-file-edit"></i>
-                        </p-inputGroupAddon>
-                        <span class="p-float-label">
-                            <input pInputText
-                                id="codigo"
-                                formControlName="codigo"
-                                type="text"
-                            />  
-                            <label for="codigo">Digite o cód da filial</label>
-                        </span>          
-                    </p-inputGroup>
-                </div>
-                <div class="form3">
-                    <p><label for="empresa">Empresa</label></p>
-                    <p-dropdown 
-                        [style]="{'width':'95%'}"
-                        [options]="empresas" 
-                        formControlName="empresa"
-                        optionLabel="nome"
-                        placeholder="Selecione"
-                    >
-                    </p-dropdown>
-                
-                   
-                </div>  
+                    <div class="fg2edit flex flex-column w-12 align-items-center lg:w-6">
+                        <div class="form2 w-10 text-left"> 
+                            <p-floatlabel variant="on">
+                                <p-iconfield>
+                                    <p-inputicon class="pi pi-file-edit" />
+                                    <input
+                                        variant="filled"
+                                        [style]="{'width':'100%'}"
+                                        pInputText id="on_label"
+                                        autocomplete="off"
+                                        formControlName="endereco"
+                                        type="text"
+                                    />
+                                </p-iconfield>
+                                <label for="on_label">Digite o endereço</label>
+                            </p-floatlabel>
+                        </div> 
+                        <div class="form2 w-10 text-left"> 
+                            <p-floatlabel variant="on">
+                                <p-iconfield>
+                                    <p-inputicon class="pi pi-file-edit" />
+                                    <input
+                                        variant="filled"
+                                        [style]="{'width':'100%'}"
+                                        pInputText id="on_label"
+                                        autocomplete="off"
+                                        formControlName="cidade"
+                                        type="text"
+                                    />
+                                </p-iconfield>
+                                <label for="on_label">Digite a cidade</label>
+                            </p-floatlabel>
+                        </div>
+
+                        <div class="form2 w-10 text-left lg:mb-3"> 
+                            <p-floatlabel variant="on">
+                                <p-iconfield>
+                                    <p-inputicon class="pi pi-file-edit" />
+                                    <input
+                                        variant="filled"
+                                        [style]="{'width':'100%'}"
+                                        pInputText id="on_label"
+                                        autocomplete="off"
+                                        formControlName="estado"
+                                        type="text"
+                                    />
+                                </p-iconfield>
+                                <label for="on_label">Digite a sigla do Estado</label>
+                            </p-floatlabel>
+                        </div>
+                    </div>
+                    <div class="fg3edit flex flex-column w-12 align-items-center lg:w-6">
+                        <div class="form2 w-10 text-left"> 
+                            <p-floatlabel variant="on">
+                                <p-iconfield>
+                                    <p-inputicon class="pi pi-file-edit" />
+                                    <input
+                                        variant="filled"
+                                        [style]="{'width':'100%'}"
+                                        pInputText id="on_label"
+                                        autocomplete="off"
+                                        formControlName="codigo"
+                                        type="text"
+                                        
+                                    />
+                                </p-iconfield>
+                                <label for="on_label">Digite o código da filial</label>
+                            </p-floatlabel>
+                        </div>
+                    </div>    
+                </div>            
             </form> 
-            <div class="botoes-formed">
+
+            <div class="botoes-formed mt-5 -ml-8">
                 <div class="btnsec" (click)="cleareditForm()">
                     <p>Limpar</p>
                 </div>

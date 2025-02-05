@@ -213,11 +213,9 @@
         </div>
       
     <p-dialog 
-        
         [modal]="true"
         [(visible)]="editFormVisible" 
         [style]="{ width: '50rem' }" 
-        
     >  
         <div class="titulo">
             <p-divider align="left" type="solid">
@@ -309,7 +307,7 @@
                         </p-floatlabel>
                     </div>
     
-                    <div class="form2 w-10 text-left"> 
+                    <div class="form2 w-10 text-left mb-5"> 
                         <p-floatlabel variant="on">
                             <p-iconfield>
                                 <p-inputicon class="pi pi-file-edit" />
@@ -325,22 +323,21 @@
                             <label for="on_label">Digite o código da empresa</label>
                         </p-floatlabel>
                     </div>
-                    <div class="botoes-formed -ml-8">
-                    
-                        <div class="btnsec" (click)="cleareditForm()">
-                            <p>Limpar</p>
-                        </div>
-                        
-                         <div class="btnpri" (click)="saveEdit()">
-                            <p>Salvar</p>            
-                        </div>
-                        
-                    </div>
                 </div>        
                 
-            </div>    
+            </div> 
           </form>
-        
+          <div class="botoes-formed -ml-8">
+                    
+            <div class="btnsec" (click)="cleareditForm()">
+                <p>Limpar</p>
+            </div>
+            
+             <div class="btnpri" (click)="saveEdit()">
+                <p>Salvar</p>            
+            </div>
+            
+        </div>
       </p-dialog>
     
 

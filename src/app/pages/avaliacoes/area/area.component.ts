@@ -20,6 +20,11 @@ import { AreaService } from '../../../services/avaliacoesServices/areas/register
 import { Empresa } from '../registercompany/registercompany.component';
 import { DividerModule } from 'primeng/divider';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
+import { trigger, transition, style, animate, keyframes } from '@angular/animations';
+import { SelectModule } from 'primeng/select';
+import { InputIconModule } from 'primeng/inputicon';
+import { IconFieldModule } from 'primeng/iconfield';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 interface RegisterAreaForm{
   empresa: FormControl,
@@ -40,14 +45,57 @@ export interface Area {
   templateUrl: './area.component.html',
   styleUrl: './area.component.scss',
   imports: [
-    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,
-    InputMaskModule,DialogModule,ConfirmDialogModule,
+    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,
+    InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,FloatLabelModule,
     TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
   providers:[
     MessageService,AreaService,ConfirmationService,
     FilialService,RegisterCompanyService,
-  ]
+  ],
+  animations:[
+              trigger('efeitoFade',[
+                      transition(':enter',[
+                        style({ opacity: 0 }),
+                        animate('2s', style({ opacity:1 }))
+                      ])
+                    ]),
+                    trigger('efeitoZoom', [
+                      transition(':enter', [
+                        style({ transform: 'scale(0)' }),
+                        animate('2s', style({ transform: 'scale(1)' })),
+                      ]),
+                    ]),
+                    trigger('bounceAnimation', [
+                      transition(':enter', [
+                        animate('4.5s ease-out', keyframes([
+                          style({ transform: 'scale(0.5)', offset: 0 }),
+                          style({ transform: 'scale(1.2)', offset: 0.5 }),
+                          style({ transform: 'scale(1)', offset: 1 }),
+                        ])),
+                      ]),
+                    ]),
+                    trigger('swipeAnimation', [
+                      transition(':enter', [
+                        style({ transform: 'translateX(-100%)' }),
+                        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+                      ]),
+                      transition(':leave', [
+                        style({ transform: 'translateX(0)' }),
+                        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+                      ]),
+                    ]),
+                    trigger('swipeAnimationReverse', [
+                      transition(':enter', [
+                        style({ transform: 'translateX(100%)' }),
+                        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+                      ]),
+                      transition(':leave', [
+                        style({ transform: 'translateX(0)' }),
+                        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+                      ]),
+                    ]),
+            ],
 })
 
 export class AreaComponent implements OnInit {

@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { DropdownModule } from 'primeng/dropdown';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputTextModule } from 'primeng/inputtext';
@@ -55,7 +54,7 @@ export interface Filial {
         ReactiveFormsModule,FormsModule,CommonModule,DividerModule,
         InputMaskModule,DialogModule,ConfirmDialogModule,
         IconFieldModule,InputIconModule,SelectModule,FloatLabelModule,
-        TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
+        TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,ToastModule
     ],
     providers:[
       FilialService,
@@ -255,8 +254,8 @@ saveEdit() {
   }
   });
 }
-
 excluirFilial(id: number) {
+  console.log('Excluir filial chamada com id:', id); // Adicione este log
   this.confirmationService.confirm({
     message: 'Tem certeza que deseja excluir esta filial?',
     header: 'Confirmação',
@@ -268,6 +267,7 @@ excluirFilial(id: number) {
     acceptButtonStyleClass: 'p-button-info',
     rejectButtonStyleClass: 'p-button-secondary',
     accept: () => {
+      console.log('Confirmação aceita'); // Adicione este log
       this.filialService.deleteFilial(id).subscribe({
         next: () => {
           this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Filial excluída com sucesso!!', life: 1000 });
@@ -287,8 +287,6 @@ excluirFilial(id: number) {
     }
   });
 }
-
-  
   submit(){
     const empresaId = this.registerfilialForm.value.empresa.id;
     this.filialService.registerfilial(

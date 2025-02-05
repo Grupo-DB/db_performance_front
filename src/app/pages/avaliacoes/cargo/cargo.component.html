@@ -1,115 +1,124 @@
 <div *ngIf="hasGroup(['Admin','RHGestor'])" class="container">
-    
-    <div class="form-geral">
-        <div class="titulo">
-            <p-divider align="left" type="solid">
-                <b>Cadastro de Cargos</b>
-            </p-divider> 
-        </div>     
+    <div class="titulo">
+        <p-divider align="left" type="solid">
+            <b>Cadastro de Cargos</b>
+        </p-divider> 
+    </div>     
         <form 
             [formGroup]="registercargoForm"
             title="Cadastrar novo Cargo"
             primaryBtnText="Cadastrar"
             (submit)="submit()"
         >
-        <div class="fg1">
-            <div class="form1">
-                <p-inputGroup>
-                    <p-inputGroupAddon>
-                        <i class="pi pi-file-edit"></i>
-                    </p-inputGroupAddon>
-                    <span class="p-float-label">
-                        <input pInputText
-                            id="nome"
-                            formControlName="nome"
-                            type="text"
-                        />  
-                        <label for="nome">Digite o nome</label>
-                    </span>          
-                </p-inputGroup>
+            <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation>
+                <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
+                    <div class="form2 w-10">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
+                                <input
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="nome"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Digite o nome</label>
+                        </p-floatlabel>
+                    </div>
+                    <div class="form2 w-10 text-left">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                inputId="float-label"
+                                [style]="{'width':'100%'}"
+                                [options]="empresas"
+                                formControlName="empresa"
+                                optionLabel="nome"
+                                (ngModelChange)="onEmpresaSelecionada($event)"
+                            >
+                            </p-select>
+                            <label for="float-label" style="margin-left: 15px;">Selecione a Empresa</label>
+                        </p-floatLabel>
+                    </div>
+                    <div class="form2 w-10 text-left mb-3">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                inputId="float-label"
+                                [style]="{'width':'100%'}"
+                                [options]="filiais"
+                                formControlName="filial"
+                                optionLabel="nome"
+                                (ngModelChange)="onFilialSelecionada($event)"
+                            >
+                            </p-select>
+                            <label for="float-label" style="margin-left: 15px;">Selecione a Filial</label>
+                        </p-floatLabel>
+                    </div>
+                </div>    
+                <div class="fg2 flex flex-column w-12 align-items-center lg:w-6">
+                    <div class="form2 w-10 text-left">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                inputId="float-label"
+                                [style]="{'width':'100%'}"
+                                [options]="areas"
+                                formControlName="area"
+                                optionLabel="nome"
+                                (ngModelChange)="onAreaSelecionada($event)"
+                            >
+                            </p-select>
+                            <label for="float-label" style="margin-left: 15px;">Selecione a Área</label>
+                        </p-floatLabel>
+                    </div>
+                    <div class="form2 w-10 text-left ">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                inputId="float-label"
+                                [style]="{'width':'100%'}"
+                                [options]="setores"
+                                formControlName="setor"
+                                optionLabel="nome"
+                                (ngModelChange)="onSetorSelecionado($event)"
+                            >
+                            </p-select>
+                            <label for="float-label" style="margin-left: 15px;">Selecione o Ambiente</label>
+                        </p-floatLabel>
+                    </div>
+                    <div class="form2 w-10 text-left mb-3">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                inputId="float-label"
+                                [style]="{'width':'100%'}"
+                                [options]="ambientes"
+                                formControlName="ambiente"
+                                optionLabel="nome"
+                            >
+                            </p-select>
+                            <label for="float-label" style="margin-left: 15px;">Selecione o Setor</label>
+                        </p-floatLabel>
+                    </div>
+                </div>          
             </div>    
-            <div class="form2">
-                <p><label for="empresa">Empresa</label></p>
-                    <p-dropdown 
-                        [style]="{'width':'75%'}"
-                        [options]="empresas" 
-                        id="empresa"
-                        formControlName="empresa"
-                        optionLabel="nome"
-                        placeholder="Selecione"
-                        (onChange)="onEmpresaSelecionada($event.value)"
-                    >
-                    </p-dropdown>
-            </div>
-            <div class="filial">
-                <p><label for="filial">Filial</label></p>    
-                <p-dropdown
-                    [style]="{'width':'75%'}"
-                    [options]="filiais" 
-                    id="filial"
-                    formControlName="filial"
-                    optionLabel="nome"
-                    placeholder="Selecione "
-                    (onChange)="onFilialSelecionada($event.value)"
-                >
-                </p-dropdown>
-            </div> 
-        </div>
-        <div class="fg2">    
-            <div class="form3">
-                <p><label for="area">Área</label></p>    
-                <p-dropdown 
-                    [style]="{'width':'75%'}"
-                    [options]="areas"
-                    id="area" 
-                    formControlName="area"
-                    optionLabel="nome"
-                    placeholder="Selecione"
-                    (onChange)="onAreaSelecionada($event.value)"
-                    >
-                </p-dropdown>
-            </div>
-            <div class="dvset">    
-                <p><label for="setor">Ambiente</label></p>
-                <p-dropdown 
-                    [style]="{'width':'75%'}"
-                    [options]="setores"
-                    id="setor" 
-                    formControlName="setor"
-                    optionLabel="nome"
-                    placeholder="Selecione "
-                    (onChange)="onSetorSelecionado($event.value)"
-                    >
-                </p-dropdown>
-            </div>
-            <div class="form4">
-                <p><label for="ambiente">Setor</label></p> 
-                <p-dropdown 
-                    [style]="{'width':'75%'}"
-                    id="ambiente"
-                    [options]="ambientes" 
-                    formControlName="ambiente"
-                    optionLabel="nome"
-                    placeholder="Selecione"
-                >
-                </p-dropdown>
-            </div>
-        </div>       
         </form>
-    </div>    
-  
-    <div class="botoes-form">
-        <p-toast></p-toast>
-        <div class="btnsec" (click)="clearForm()">
-            <p>Limpar</p>
+        <div class="botoes-form m-5"@efeitoFade>
+            <p-toast></p-toast>
+            <div class="btnsec" (click)="clearForm()">
+                <p>Limpar</p>
+            </div>
+            <div class="btnpri" (click)="submit()">
+                <p>Cadastrar</p>            
+            </div>
+            
         </div>
-        <div class="btnpri" (click)="submit()">
-             <p>Cadastrar</p>            
-        </div>
-        
-    </div>
     <hr>
-        <div class="tabela">
+        <div class="tabela"@swipeAnimationReverse>
             <p-toast />
             <p-confirmDialog />
             <p-table
@@ -122,17 +131,29 @@
                 currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
                 [rowsPerPageOptions]="[5, 10, 20]"
                 [globalFilterFields]="['nome', 'empresaNome', 'filialNome','areaNome','setorNome','ambienteNome']"
+                stripedRows
+                scrollable="true"
             >
                 <ng-template pTemplate="caption">
-                    <div class="flex">
-                        <span class="p-input-icon-left ml-auto">
-                            <i class="pi pi-search"></i>
-                            <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Digite o nome" />
-                        </span>
-                        <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
-                        <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+                    <div class="flex flex-row md: justify-content-end">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-search" />
+                                <input
+                                    variant="filled"
+                                    [(ngModel)] = "inputValue"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Palavra-Chave</label>
+                        </p-floatlabel>
+                        <button size="small" class="ml-2" pButton [rounded]="true" label="Pesquisar" severity="info"  (click)="filterTable()"></button>
+                        <button size="small" class="ml-2" pButton [rounded]="true" label="Limpar" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
                     </div>
-                </ng-template>    
+                </ng-template>     
                 <ng-template pTemplate="header">
                     <tr>
                         <th style="width:25%" type="text" field="nome" display="menu">
@@ -164,7 +185,7 @@
                         <td>{{ getNomeArea(cargo.area) }}</td>
                         <td>{{ getNomeSetor(cargo.setor) }}</td>
                         <td>{{ getNomeAmbiente(cargo.ambiente) }}</td>
-                        <td class="td-acao">
+                        <td class="flex py-6">
                             <div class="btnsec" (click)="abrirModalEdicao(cargo)">
                                 <p>Editar</p>
                             </div>
@@ -175,120 +196,138 @@
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="paginatorleft">
-                    <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+                    <p-button type="button"  styleClass="p-button-text"></p-button>
                 </ng-template>
                 <ng-template pTemplate="paginatorright">
-                    <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
+                    <p-button type="button"  styleClass="p-button-text"></p-button>
                 </ng-template>
             </p-table>
         </div>        
         <p-dialog 
             [modal]="true"
             [(visible)]="editFormVisible" 
-            [style]="{ width: '70rem', height:'50rem' }" 
-            [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+            [style]="{ width: '70rem' }" 
+            
         >
         <p-divider align="left" type="solid">
             <b>Editar Cargo</b>
         </p-divider>
-        <div class="editgeral">
-            <form [formGroup]="editForm" >
-            <div class="fg1edit">    
-                <div class="form1edit">
-                    <p-inputGroup>
-                        <p-inputGroupAddon>
-                            <i class="pi pi-file-edit"></i>
-                        </p-inputGroupAddon>
-                        <span class="p-float-label">
-                            <input  pInputText
-                                id="nome"
-                                formControlName="nome"
-                                type="text"
-                            />
-                            <label for="nome">Digite o nome</label>  
-                        </span>          
-                    </p-inputGroup>
-                </div>
-                    
-                <div class="form2edit">
-                    <p><label for="empresa">Empresa</label></p>
-                    <p-dropdown 
-                        [style]="{'width':'75%'}"
-                        [options]="empresas" 
-                        id="empresa"
-                        formControlName="empresa"
-                        optionLabel="nome"
-                        placeholder="Selecione"
-                        (onChange)="onEmpresaSelecionada($event.value)"
-                    >
-                    </p-dropdown>
-                </div>
 
-                <div class="filialed">
-                    <p><label for="filial">Filial</label></p>    
-                    <p-dropdown
-                        [style]="{'width':'75%'}"
-                        [options]="filiais" 
-                        id="filial"
-                        formControlName="filial"
-                        optionLabel="nome"
-                        placeholder="Selecione "
-                        (onChange)="onFilialSelecionada($event.value)"
-                    >
-                    </p-dropdown>
+        <form 
+            [formGroup]="editForm"
+            title="Editar Cargo" 
+        >
+
+            <div class="editGeral flex flex-column lg:flex-row">
+                <div class="fg1edit flex flex-column w-12 align-items-center lg:w-6">    
+                    <div class="form2 w-10">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
+                                <input
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="nome"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Digite o nome</label>
+                        </p-floatlabel>
+                    </div>
+
+                    <div class="form2 w-10 text-left">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                inputId="float-label"
+                                [style]="{'width':'100%'}"
+                                [options]="empresas"
+                                formControlName="empresa"
+                                optionLabel="nome"
+                                (ngModelChange)="onEmpresaSelecionada($event)"
+                            >
+                            </p-select>
+                            <label for="float-label" style="margin-left: 15px;">Selecione a Empresa</label>
+                        </p-floatLabel>
+                    </div>
+                    
+                    <div class="form2 w-10 text-left mb-3">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                inputId="float-label"
+                                [style]="{'width':'100%'}"
+                                [options]="filiais"
+                                formControlName="filial"
+                                optionLabel="nome"
+                                (ngModelChange)="onFilialSelecionada($event)"
+                            >
+                            </p-select>
+                            <label for="float-label" style="margin-left: 15px;">Selecione a Filial</label>
+                        </p-floatLabel>
+                    </div>
+
                 </div>
-            </div>      
-            <div class="fg2edit">                    
-                <div class="form3ed">
-                    <p><label for="area">Área</label></p>    
-                    <p-dropdown 
-                        [style]="{'width':'75%'}"
-                        [options]="areas"
-                        id="area" 
-                        formControlName="area"
-                        optionLabel="nome"
-                        placeholder="Selecione"
-                        (onChange)="onAreaSelecionada($event.value)"
-                        >
-                    </p-dropdown>
-                </div>
-                <div class="dvseted">    
-                    <p><label for="setor">Ambiente</label></p>
-                    <p-dropdown 
-                        [style]="{'width':'75%'}"
-                        [options]="setores"
-                        id="setor" 
-                        formControlName="setor"
-                        optionLabel="nome"
-                        placeholder="Selecione o Setor"
-                        (onChange)="onSetorSelecionado($event.value)"
-                        >
-                    </p-dropdown>
-                </div>
-                <div class="form4ed">
-                    <p><label for="ambiente">Setor</label></p> 
-                    <p-dropdown 
-                        [style]="{'width':'75%'}"
-                        id="ambiente"
-                        [options]="ambientes" 
-                        formControlName="ambiente"
-                        optionLabel="nome"
-                        placeholder="Selecione"
-                    >
-                    </p-dropdown>
-                </div>
-            </div>        
-            
-            </form>
+                <div class="fg2edit flex flex-column w-12 align-items-center lg:w-6">    
+                    <div class="form2 w-10 text-left">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                inputId="float-label"
+                                [style]="{'width':'100%'}"
+                                [options]="areas"
+                                formControlName="area"
+                                optionLabel="nome"
+                                (ngModelChange)="onAreaSelecionada($event)"
+                            >
+                            </p-select>
+                            <label for="float-label" style="margin-left: 15px;">Selecione a Área</label>
+                        </p-floatLabel>
+                    </div>
+                    
+                    <div class="form2 w-10 text-left mb-3">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                inputId="float-label"
+                                [style]="{'width':'100%'}"
+                                [options]="setores"
+                                formControlName="setor"
+                                optionLabel="nome"
+                            >
+                            </p-select>
+                            <label for="float-label" style="margin-left: 15px;">Selecione o Ambiente</label>
+                        </p-floatLabel>
+                    </div>
+
+                    <div class="form2 w-10 text-left mb-3">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                inputId="float-label"
+                                [style]="{'width':'100%'}"
+                                [options]="ambientes"
+                                formControlName="ambiente"
+                                optionLabel="nome"
+                            >
+                            </p-select>
+                            <label for="float-label" style="margin-left: 15px;">Selecione o Setor</label>
+                        </p-floatLabel>
+                    </div>
+                </div>        
           </div>
-          <div class="botoes-formedit">
+        </form>  
+        <div class="botoes-formedit">
             <div class="btnsecedit" (click)="clearForm()">
                 <p>Limpar</p>
             </div>
             <div class="btnpriedit" (click)="saveEdit()">
                  <p>Editar</p>            
             </div>
-        </div>     
-        </p-dialog>        
-  </div><!--end container-->
+        </div>
+             
+    </p-dialog>        
+</div><!--end container-->
 

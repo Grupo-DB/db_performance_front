@@ -25,6 +25,11 @@ import { Setor } from '../setor/setor.component';
 import { AmbienteService } from '../../../services/avaliacoesServices/ambientes/ambiente.service';
 import { DividerModule } from 'primeng/divider';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
+import { trigger, transition, style, animate, keyframes } from '@angular/animations';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { SelectModule } from 'primeng/select';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 interface RegisterAmbienteForm{
   empresa: FormControl,
@@ -47,7 +52,7 @@ export interface Ambiente{
   standalone: true,
   imports: [
     ReactiveFormsModule,FormsModule,CommonModule,DividerModule,
-    InputMaskModule,DialogModule,ConfirmDialogModule,
+    InputMaskModule,DialogModule,ConfirmDialogModule,IconFieldModule,InputIconModule,SelectModule,FloatLabelModule,
     TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
   providers:[
@@ -55,6 +60,49 @@ export interface Ambiente{
       MessageService,ConfirmationService,
       RegisterCompanyService,GetFilialService
   ],
+  animations:[
+              trigger('efeitoFade',[
+                      transition(':enter',[
+                        style({ opacity: 0 }),
+                        animate('2s', style({ opacity:1 }))
+                      ])
+                    ]),
+                    trigger('efeitoZoom', [
+                      transition(':enter', [
+                        style({ transform: 'scale(0)' }),
+                        animate('2s', style({ transform: 'scale(1)' })),
+                      ]),
+                    ]),
+                    trigger('bounceAnimation', [
+                      transition(':enter', [
+                        animate('4.5s ease-out', keyframes([
+                          style({ transform: 'scale(0.5)', offset: 0 }),
+                          style({ transform: 'scale(1.2)', offset: 0.5 }),
+                          style({ transform: 'scale(1)', offset: 1 }),
+                        ])),
+                      ]),
+                    ]),
+                    trigger('swipeAnimation', [
+                      transition(':enter', [
+                        style({ transform: 'translateX(-100%)' }),
+                        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+                      ]),
+                      transition(':leave', [
+                        style({ transform: 'translateX(0)' }),
+                        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+                      ]),
+                    ]),
+                    trigger('swipeAnimationReverse', [
+                      transition(':enter', [
+                        style({ transform: 'translateX(100%)' }),
+                        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+                      ]),
+                      transition(':leave', [
+                        style({ transform: 'translateX(0)' }),
+                        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+                      ]),
+                    ]),
+            ],
   templateUrl: './ambiente.component.html',
   styleUrl: './ambiente.component.scss'
 })
@@ -337,7 +385,7 @@ export class AmbienteComponent implements OnInit {
     
     this.ambienteService.editAmbiente(ambienteId, dadosAtualizados).subscribe({
       next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Ambiente atualizado com sucesso!' });
+        this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Setor atualizado com sucesso!' });
         setTimeout(() => {
          window.location.reload(); // Atualiza a página após a exclusão
         }, 1000); // Tempo em milissegundos (1 segundo de atraso)
@@ -360,7 +408,7 @@ export class AmbienteComponent implements OnInit {
   }
   excluirAmbiente(id: number) {
     this.confirmationService.confirm({
-      message: 'Tem certeza que deseja excluir este Ambiente?',
+      message: 'Tem certeza que deseja excluir este Setor?',
       header: 'Confirmação',
       icon: 'pi pi-exclamation-triangle',
       acceptIcon: 'pi pi-check',
@@ -402,7 +450,7 @@ export class AmbienteComponent implements OnInit {
       setorId,
           ).subscribe({
       next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Ambiente registrado com sucesso!' });
+        this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Setor registrado com sucesso!' });
         setTimeout(() => {
           window.location.reload(); // Atualiza a página após o registro
         }, 1000); // Tempo em milissegundos (1 segundo de atraso)
