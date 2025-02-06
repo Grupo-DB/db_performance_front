@@ -21,6 +21,11 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { CommonModule } from '@angular/common';
+import { trigger, transition, style, animate, keyframes } from '@angular/animations';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { SelectModule } from 'primeng/select';
 
 interface RegisterTipoAvaliacaoForm{
   nome: FormControl,
@@ -37,12 +42,55 @@ export interface TipoAvaliacao{
   standalone: true,
   imports: [ 
     ReactiveFormsModule,FormsModule,TabMenuModule,DividerModule,NzIconModule,NzLayoutModule,NzMenuModule,
-    InputMaskModule,DialogModule,ConfirmDialogModule,CommonModule,
+    InputMaskModule,DialogModule,ConfirmDialogModule,CommonModule,IconFieldModule,InputIconModule,SelectModule,FloatLabelModule,
     RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
   providers: [
     MessageService,ConfirmationService,FormularioService
   ],
+  animations:[
+                  trigger('efeitoFade',[
+                          transition(':enter',[
+                            style({ opacity: 0 }),
+                            animate('2s', style({ opacity:1 }))
+                          ])
+                        ]),
+                        trigger('efeitoZoom', [
+                          transition(':enter', [
+                            style({ transform: 'scale(0)' }),
+                            animate('2s', style({ transform: 'scale(1)' })),
+                          ]),
+                        ]),
+                        trigger('bounceAnimation', [
+                          transition(':enter', [
+                            animate('4.5s ease-out', keyframes([
+                              style({ transform: 'scale(0.5)', offset: 0 }),
+                              style({ transform: 'scale(1.2)', offset: 0.5 }),
+                              style({ transform: 'scale(1)', offset: 1 }),
+                            ])),
+                          ]),
+                        ]),
+                        trigger('swipeAnimation', [
+                          transition(':enter', [
+                            style({ transform: 'translateX(-100%)' }),
+                            animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+                          ]),
+                          transition(':leave', [
+                            style({ transform: 'translateX(0)' }),
+                            animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+                          ]),
+                        ]),
+                        trigger('swipeAnimationReverse', [
+                          transition(':enter', [
+                            style({ transform: 'translateX(100%)' }),
+                            animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+                          ]),
+                          transition(':leave', [
+                            style({ transform: 'translateX(0)' }),
+                            animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+                          ]),
+                        ]),
+                ],
   templateUrl: './tipoavaliacao.component.html',
   styleUrl: './tipoavaliacao.component.scss'
 })

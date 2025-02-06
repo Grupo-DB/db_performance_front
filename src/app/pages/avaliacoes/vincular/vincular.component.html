@@ -1,31 +1,31 @@
-<div *ngIf="hasGroup(['Admin','RHGestor'])" class="menu">
-    <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+<div class="menu w-full">
+    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 45px;box-shadow: 2px 0 6px ; ">
         <li nz-menu-item nzMatchRouter="#">
             <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
         </li>
-        <li nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
             <ul>
-                <li nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="../tipoavaliacao" >Tipos de Avaliações</a>
                 </li>
-                <li nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="../pergunta" >Perguntas</a>
                 </li>
-                <li nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="../formulario" >Formulários</a>
                 </li>
             </ul>
         </li>    
         
-        <li nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
             <ul>
-                <li nz-menu-item   nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
                     <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
                 </li>
-                <li nz-menu-item   nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
                     <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados a um Formulário</a>
                 </li>
-                <li nz-menu-item   nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
                     <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
                 </li>
             </ul>    
@@ -35,10 +35,10 @@
         <li nz-menu-item nzMatchRouter="">
             <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
         </li>
-        <li nz-menu-item nzMatchRouter=""*ngIf="hasGroup(['RHAvaliacao'])">
+        <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['RHAvaliacao'])">
             <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
         </li>
-        <li nz-menu-item nzMatchRouter="">
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item nzMatchRouter="">
             <a style="font-size: 13px;" routerLink="../relatorios" >Relatórios</a>
         </li>
         
@@ -46,57 +46,69 @@
 </div>
 
 
-
-<form [formGroup]="registerassociacaoForm"
-title="Montar novo Formulario"
-primaryBtnText="Cadastrar"
-(submit)="submit()"
-
-
->
-<div *ngIf="hasGroup(['Admin','RHGestor'])" class="form1">
+<div *ngIf="hasGroup(['Admin','RHGestor'])" class="container">
     <div class="titulo">
         <p-divider align="left" type="solid">
             <b>Associar Avaliados a um Formulário</b>
         </p-divider>
-    </div>    
-    <div class="form3">
-        <p-dropdown 
-        [options]="formularios" 
-        formControlName="formulario"
-        optionLabel="nome"
-        placeholder="Selecione o Formulário"
-        >
-        </p-dropdown>
-        
     </div>
-</div>   
-<div *ngIf="hasGroup(['Admin','RHGestor'])" class="card">
-    <p-pickList [source]="avaliados" [target]="targetAvaliados" sourceHeader="Avaliados" targetHeader="Selecionados" [dragdrop]="true" [responsive]="true" [sourceStyle]="{ height: '20rem' }"
-        [targetStyle]="{ height: '20rem' }" filterBy="nome" sourceFilterPlaceholder="Pesquisa por nome" targetFilterPlaceholder="Pesquisa por nome" breakpoint="1024px"formControlName="pergunta">
-        <ng-template let-avaliado pTemplate="item">
-            <div class="flex flex-wrap p-2 align-items-center gap-3">
-                
-                <div class="flex-1 flex flex-column gap-2">
-                    <span class="font-bold">{{ avaliado.nome }}</span>
-                    <div class="flex align-products-center gap-2">
-                       
-                        
-                    </div>
-                </div>
-                
-            </div>
-        </ng-template>
-    </p-pickList>
-</div>
+    
+        <form 
+            [formGroup]="registerassociacaoForm"
+            title="Montar novo Formulario"
+            primaryBtnText="Cadastrar"
+            (submit)="submit()"
+        >
 
-         
-</form>
-<div *ngIf="hasGroup(['Admin','RHGestor'])" class="botoes-form">
-    <p-toast></p-toast>
-    <div class="botoes-form">
-        <p-toast></p-toast>
-        <div class="botoes-form">
+            <div class="form-geral flex flex-column"@swipeAnimation>
+                <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
+                    <div class="form2 w-10 mt-5">
+                        <p-floatlabel variant="on">
+                            <p-select 
+                                variant="filled"
+                                [style]="{'width':'100%'}"
+                                [options]="formularios" 
+                                formControlName="formulario"
+                                optionLabel="nome"
+                            >
+                            </p-select>
+                            <label for="nome">Formulário</label>
+                        </p-floatlabel>
+                    </div>
+                </div> 
+
+            
+                <div class="flex  w-10  md:w-11 justify-content-center m-4 lg:md:w-11 justify-content-center m-4">
+                    <p-pickList 
+                        [source]="avaliados" 
+                        [target]="targetAvaliados" 
+                        sourceHeader="Avaliados" 
+                        targetHeader="Selecionados" 
+                        [dragdrop]="true" 
+                        [responsive]="true" 
+                        [sourceStyle]="{ height: '20rem' }"
+                        [targetStyle]="{ height: '20rem' }" 
+                        filterBy="nome" 
+                        sourceFilterPlaceholder="Pesquisa por nome" 
+                        targetFilterPlaceholder="Pesquisa por nome" 
+                        breakpoint="412px"
+                        formControlName="pergunta"
+                    >
+                        <ng-template let-avaliado pTemplate="item">
+                            <div class="flex flex-wrap p-2 align-items-center gap-3">
+                                <div class="flex-1 flex flex-column gap-2">
+                                    <span class="font-bold">{{ avaliado.nome }}</span>
+                                    <div class="flex align-products-center gap-2">
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-pickList>
+                </div>
+            </div>         
+        </form>
+
+        <div class="flex m-5 justify-content-center"@efeitoFade>
             <p-toast></p-toast>
             <div class="btnsec" (click)="clearForm()">
                 <p>Limpar</p>
@@ -104,143 +116,63 @@ primaryBtnText="Cadastrar"
             <div class="btnpri" (click)="submit()">
                 <p>Salvar</p>            
             </div>
-        </div>   
-        
-    </div>
-    
-</div>
+        </div> 
 
-<div *ngIf="hasGroup(['Admin','RHGestor'])" class="tabela">
-    <p-toast />
-    
-    <!-- <p-table
-        #dt1
-        [value]="formularios"
-        [paginator]="true"
-        [rows]="1"
-        [showCurrentPageReport]="true"
-        [tableStyle]="{ 'min-width': '50rem' }"
-        currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
-        [rowsPerPageOptions]="[1, 5, 10]"
-        [globalFilterFields]="['nome','avaliados']"
+        <div *ngIf="hasGroup(['Admin','RHGestor'])" class="tabela"@swipeAnimationReverse>
+            <p-toast />
+            <p-table 
+                #dt1
+                [value]="formularios" 
+                [tableStyle]="{'min-width': '70rem'}" 
+                rowGroupMode="subheader" 
+                groupRowsBy="nome" 
+                dataKey="nome"
+                sortMode="single"
+                sortField="nome"
+                [globalFilterFields]="['avaliado.nome']"
+                stripedRows
+                scrollable="true"
     >
-        <ng-template pTemplate="caption">
-            <div class="flext">
-                <span class="p-input-icon-left ml-auto">
-                    <i class="pi pi-search"></i>
-                    <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Digite o nome do formulário" />
-                </span>
-                <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
-                <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
-            </div>
-        </ng-template>    
+
         <ng-template pTemplate="header">
             <tr>
-                <th style="width:25%" type="text" field="nome" display="menu">
-                    Nome
-                </th>
-                <th style="width:25%" type="text" field="avaliados" display="menu">
-                    Avaliados
-                </th>
-              
+                <th style="width:33%">Nome do Formulário</th>
+                <th style="width:33%">Avaliados</th>
+                <th style="width:33%">Remover</th>
             </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-formulario>
+        <ng-template pTemplate="groupheader" let-formulario let-rowIndex="rowIndex" let-expanded="expanded">
             <tr>
-                <td>{{ formulario.nome }}</td>
-                <td>
-                    <div class="avaliados" *ngFor="let avaliado of formulario.avaliados">
-                    <div class="avaliado">    
-                      {{ avaliado.nome }}
-                    </div>    
-                    <div class="btnprit" (click)="removeAvaliado(formulario, avaliado)">
-                        <p>-</p>            
-                    </div>
-                      
-                    </div>
-                    
+                <td colspan="3">
+                    <button 
+                        type="button" 
+                        pButton 
+                        pRipple 
+                        [pRowToggler]="formulario" 
+                        class="p-button-text p-button-rounded p-button-plain mr-2" 
+                        [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+                    >
+                    </button>
+                    <span class="font-bold ml-2">{{formulario.nome}}</span>
                 </td>
             </tr>
         </ng-template>
-        <ng-template pTemplate="paginatorleft">
-            <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
-        </ng-template>
-        <ng-template pTemplate="paginatorright">
-            <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
-        </ng-template>
-    </p-table> -->
 
-   
-    <p-table 
-    #dt1
-    [value]="filteredAvaliados.length ? filteredAvaliados : formularios" 
-    [tableStyle]="{'min-width': '70rem'}" 
-    rowGroupMode="subheader" 
-    groupRowsBy="nome" 
-    dataKey="nome"
-    sortMode="single"
-    sortField="nome"
-    [globalFilterFields]="['nome']"
->
-    <ng-template pTemplate="header">
-        <tr>
-            <th style="width:33%">Nome do Formulário</th>
-            <th style="width:33%">Avaliados</th>
-            <th style="width:33%">Remover</th>
-        </tr>
-    </ng-template>
-    <ng-template pTemplate="caption">
-        <div class="flext">
-            <span class="p-input-icon-left ml-auto">
-                <i class="pi pi-search"></i>
-                <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Digite o nome do avaliado" />
-            </span>
-            <button pButton label="Pesquisar" severity="info" (click)="filterTable()"></button>
-            <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+        <ng-template pTemplate="expandedrow" let-formulario>
+            <tr *ngFor="let avaliado of formulario.avaliados">
+                <td></td>
+                <td>
+                    <div class="avaliado">
+                        {{ avaliado.nome }}
+                    </div>
+                </td>
+                <td>
+                    <div class="btnprit" (click)="removeAvaliado(formulario, avaliado)">
+                        <p>-</p>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
         </div>
-    </ng-template>
-    <ng-template pTemplate="groupheader" let-formulario let-rowIndex="rowIndex" let-expanded="expanded">
-        <tr>
-            <td colspan="5">
-                <span class="font-bold ml-2">{{formulario.nome}}</span>
-                <button 
-                    type="button" 
-                    pButton 
-                    pRipple 
-                    [pRowToggler]="formulario" 
-                    class="p-button-text p-button-rounded p-button-plain mr-2" 
-                    [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
-                >
-                <i class="pi pi-chevron-right"></i>
-                </button>
-            </td>
-        </tr>
-    </ng-template>
-    
-    <ng-template pTemplate="rowexpansion" let-formulario>
-        <tr *ngFor="let avaliado of formulario.avaliados">
-            <td></td>
-            <td>
-                <div class="avaliado">
-                    {{ avaliado.nome }}
-                </div>
-                
-            </td>
-            <td>
-                <p-toast />
-                <div class="btnprit" (click)="removeAvaliado(formulario, avaliado)">
-                    <p>-</p>
-                </div>
-            </td>
-        </tr>
-    </ng-template>
-</p-table>
-
-
-   
-    
-
-
-
-
-</div> 
+</div>

@@ -31,6 +31,9 @@ import { Subscription } from 'rxjs';
 import { AvaliadoService } from '../../../services/avaliacoesServices/avaliados/avaliado.service';
 import { Avaliado } from '../avaliado/avaliado.component';
 import { AvaliacaoService } from '../../../services/avaliacoesServices/avaliacoes/getavaliacao.service';
+import { DatePickerModule } from 'primeng/datepicker';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { SelectModule } from 'primeng/select';
 
 interface Cargo {
   id: any;
@@ -48,11 +51,12 @@ interface Area {
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-    RouterLink,TabMenuModule,FormsModule,ReactiveFormsModule,
+    RouterLink,TabMenuModule,FormsModule,ReactiveFormsModule,DatePickerModule,FloatLabelModule,
     DropdownModule,MatFormFieldModule,MatSelectModule,CardModule,DividerModule,CalendarModule,
-    CommonModule, NzIconModule,NzUploadModule, NzLayoutModule, NzMenuModule,RouterLink,
+    CommonModule, NzIconModule,NzUploadModule, NzLayoutModule, NzMenuModule,RouterLink,SelectModule,
     CardModule,MultiSelectModule,ChartModule,KnobModule,NzProgressModule,MultiSelectModule
   ],
+  
 
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'

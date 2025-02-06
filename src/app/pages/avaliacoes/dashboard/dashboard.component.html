@@ -1,5 +1,5 @@
-<div class="menu">
-    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+<div class="menu w-full">
+    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 45px;box-shadow: 2px 0 6px ; ">
         <li nz-menu-item nzMatchRouter="#">
             <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
         </li>
@@ -53,15 +53,10 @@
 </div>
 
 <div *ngIf="hasGroup(['Admin','RHGestor'])" class="flex flex-column w-full align-items-center lg:flex-row w-full justify-content-around">
-    <div class="flex">
-      <!-- <mat-form-field>
-        <mat-label>Selecione a Filial</mat-label>
-        <mat-select [(ngModel)]="selectedFiliais" multiple  (ngModelChange)="onFilialSelecionada($event.value)">
-          <mat-option *ngFor="let filial of filiais" [value]="filial.id">{{ filial.nome }}</mat-option>
-        </mat-select>
-      </mat-form-field> -->
-
+    <div class="flex w-10 m-3 lg:w-3">
       <p-multi-select
+        [style]="{'width': '100%'}"
+        variant="filled"
         [options]="filiais"
         [(ngModel)]="selectedFiliais"
         optionLabel="nome"
@@ -71,7 +66,7 @@
       </p-multi-select>
 
     </div>
-    <div class="area">  
+    <div class="flex w-10 m-3 lg:w-3">  
       <!-- <mat-form-field>
         <mat-label>Selecione a Área</mat-label>
         <mat-select [(ngModel)]="selectedAreas" multiple (selectionChange)="onAreaSelecionada($event.value)">
@@ -80,6 +75,8 @@
       </mat-form-field> -->
 
       <p-multi-select
+        [style]="{'width': '100%'}"
+        variant="filled"
         [options]="areas"
         [(ngModel)]="selectedAreas"
         optionLabel="nome"
@@ -89,7 +86,7 @@
       </p-multi-select>
 
     </div>   
-    <div class="setor">  
+    <div class="flex w-10 m-3 lg:w-3">  
       <!-- <mat-form-field>
         <mat-label>Selecione o Ambiente</mat-label>
         <mat-select [(ngModel)]="selectedSetores" multiple (selectionChange)="onSetorSelecionado($event.value)">
@@ -98,6 +95,8 @@
       </mat-form-field> -->
 
       <p-multi-select
+        variant="filled"
+        [style]="{'width': '100%'}"
         [options]="setores"
         [(ngModel)]="selectedSetores"
         optionLabel="nome"
@@ -106,7 +105,7 @@
         (onChange)="onSetorSelecionado($event.value)"></p-multi-select>
 
     </div>
-    <div class="ambientes">
+    <div class="flex w-10 m-3 lg:w-3">  
       <!-- <mat-form-field>
         <mat-label>Selecione o Setor</mat-label>
         <mat-select [(ngModel)]="selectedAmbientes" multiple (selectionChange)="onAmbienteSelecionado($event.value)">
@@ -115,6 +114,8 @@
       </mat-form-field> -->
 
       <p-multi-select
+        variant="filled"
+        [style]="{'width': '100%'}"
         [options]="ambientes"
         [(ngModel)]="selectedAmbientes"
         optionLabel="nome"
@@ -123,7 +124,7 @@
         (onChange)="onAmbienteSelecionado($event.value)"></p-multi-select>
 
     </div>
-    <div class="cargos">
+    <div class="flex w-10 m-3 lg:w-3">
       <!-- <mat-form-field>
         <mat-label>Selecione o Cargo</mat-label>
         <mat-select [(ngModel)]="selectedCargos" multiple (selectionChange)="applyFilters()">
@@ -132,6 +133,8 @@
       </mat-form-field> -->
 
       <p-multi-select
+        variant="filled"
+        [style]="{'width': '100%'}"
         [options]="cargos"
         [(ngModel)]="selectedCargos"
         optionLabel="nome"
@@ -206,7 +209,7 @@
     </div>
       
   </div>
-  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="graficos2">
+  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="graficos2 flex flex-wrap w-full">
     <div *ngIf="hasGroup(['Admin','RHGestor'])" class="chart-container">
       <canvas id="salarioRacaChart"></canvas>
     </div>
@@ -242,28 +245,31 @@
     lg:flex-row w-full justify-content-end"
 >
   <div *ngIf="hasGroup(['Admin','RHGestor'])" class="flex w-10 mt-3 lg:w-3">
-     <p-calendar
-         [style]="{'width':'100%'}"
-         id="da" 
-        [(ngModel)] = "data_inicio"
-         dateFormat="dd/mm/yy"                  
-         [showIcon]="true"
-         placeholder="SELECIONE"
-         (ngModelChange)="applyFilters()"
-     >
-     </p-calendar>
+    <p-floatlabel variant="on">
+      <p-datepicker
+          [style]="{'width':'100%'}"
+          id="da" 
+          [(ngModel)] = "data_inicio"
+          dateFormat="dd/mm/yy"                  
+          [showIcon]="true"
+          (ngModelChange)="applyFilters()"
+      />
+      <label for="da">Data de Inicio</label>
+    </p-floatlabel>  
+     
   </div>
   <div *ngIf="hasGroup(['Admin','RHGestor'])" class="flex w-10 mt-3 lg:w-3">
-   <p-calendar
-       [style]="{'width':'100%'}"
-       id="da" 
-      [(ngModel)] = "data_fim"
-       dateFormat="dd/mm/yy"                  
-       [showIcon]="true"
-       placeholder="SELECIONE"
-       (ngModelChange)="applyFilters()"
-   >
-   </p-calendar>
+    <p-floatlabel variant="on">
+      <p-datepicker
+          [style]="{'width':'100%'}"
+          id="da" 
+          [(ngModel)] = "data_fim"
+          dateFormat="dd/mm/yy"                  
+          [showIcon]="true"
+          (ngModelChange)="applyFilters()"
+      />
+      <label for="da">Data do Fim</label>
+    </p-floatlabel>
   </div>   
 </div>
 
@@ -551,44 +557,52 @@
         lg:flex-row justify-content-around w-full"
 >
   <div 
-    class="cards flex flex-column align-items-center 
+    class="cards flex flex-column  align-items-center 
           lg:flex-row w-full justify-content-around"
   >
 
-    <div class="flex flex-column w-12 align-items-center lg:w-3">
-      <mat-form-field>
-        <mat-label>Selecione o avaliado</mat-label>
-        <mat-select [(ngModel)]="avaliadoSelecionadoId"  multiple (ngModelChange)="onAvaliadoSelecionado($event.value)">
-          <mat-option *ngFor="let avaliado of avaliados" [value]="avaliado.id">{{ avaliado.nome }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
+      <div class=" w-10 m-3 lg:w-3 ">
+          <p-float-label variant="on">
+              <p-multiselect
+                variant="filled"
+                [style]="{'width': '100%'}"
+                [options]="avaliados"
+                [(ngModel)]="avaliadoSelecionadoId"
+                optionLabel="nome"
+                optionValue="id"
+                (ngModelChange)="onAvaliadoSelecionado($event.value)"
+              >
+              </p-multiselect>
+              <label>Selecione o avaliado</label>
+          </p-float-label>
+      </div>
+        <p-card  
+          *ngIf="hasGroup(['Admin','RHGestor'])"
+          class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+          header="{{ totalAvaliacoesAvaliado }}">
+          <p class="m-0">
+            Avaliações
+            <p-divider></p-divider>
+          </p>
+        </p-card>
 
-    <p-card  
-      *ngIf="hasGroup(['Admin','RHGestor'])"
-      class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
-      header="{{ totalAvaliacoesAvaliado }}">
-      <p class="m-0">
-        Avaliações
-        <p-divider></p-divider>
-      </p>
-    </p-card>
+        <p-card
+          *ngIf="hasGroup(['Admin','RHGestor'])" 
+          class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+          header=" {{ mediaNotaAvaliado}}">
+          <p class="m-0">
+            Nota Média
+            <p-divider></p-divider>
+          </p>
+        </p-card>
 
-    <p-card
-      *ngIf="hasGroup(['Admin','RHGestor'])" 
-      class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
-      header=" {{ mediaNotaAvaliado}}">
-      <p class="m-0">
-        Nota Média
-        <p-divider></p-divider>
-      </p>
-    </p-card>
-
-    <div class="chartRadarAvaliadores md:w-10 lg:w-6">
-      <canvas id="notaAvaliadosChart"></canvas>
-    </div>
-  </div> 
+        <div class="chartRadarAvaliadores md:w-10 lg:w-6">
+          <canvas id="notaAvaliadosChart"></canvas>
+        </div>
+   
+  </div>
 </div>
+
 
 <div class="titulo">
   <p-divider align="left" type="solid">
@@ -609,13 +623,20 @@
             lg:flex-row w-full justify-content-around"
     >
 
-      <div class="flex flex-column w-12 align-items-center lg:w-3">
-        <mat-form-field>
-          <mat-label>Selecione o avaliado</mat-label>
-          <mat-select [(ngModel)]="avaliadoSelecionadoId2"  multiple (ngModelChange)="onAvaliadoSelecionado2($event.value)">
-            <mat-option *ngFor="let avaliado of avaliados" [value]="avaliado.id">{{ avaliado.nome }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+      <div class="w-10 m-3 lg:w-3">
+        <p-float-label variant="on">
+          <p-multiselect
+            variant="filled"
+            [style]="{'width': '100%'}"
+            [options]="avaliados"
+            [(ngModel)]="avaliadoSelecionadoId2"
+            optionLabel="nome"
+            optionValue="id"
+            (ngModelChange)="onAvaliadoSelecionado2($event.value)"
+          >
+          </p-multiselect>
+          <label>Selecione o avaliado</label>
+        </p-float-label>
       </div>
         <p-card 
           *ngIf="hasGroup(['Admin','RHGestor'])"

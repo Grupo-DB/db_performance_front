@@ -1,70 +1,66 @@
+<div class="menu w-full">
+  <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 45px;box-shadow: 2px 0 6px ; ">
+      <li nz-menu-item nzMatchRouter="#">
+          <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
+      </li>
+      <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+          <ul>
+              <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                  <a routerLink="../tipoavaliacao" >Tipos de Avaliações</a>
+              </li>
+              <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                  <a routerLink="../pergunta" >Perguntas</a>
+              </li>
+              <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                  <a routerLink="../formulario" >Formulários</a>
+              </li>
+          </ul>
+      </li>    
+      
+      <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
+          <ul>
+              <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+                  <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
+              </li>
+              <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+                  <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados a um Formulário</a>
+              </li>
+              <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+                  <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
+              </li>
+          </ul>    
+      </li>
+
+      
+      <li nz-menu-item nzMatchRouter="">
+          <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
+      </li>
+      <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['RHAvaliacao'])">
+          <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
+      </li>
+      <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item nzMatchRouter="">
+          <a style="font-size: 13px;" routerLink="../relatorios" >Relatórios</a>
+      </li>
+      
+  </ul>
+</div>
+
 <div class="container">
-  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="menu">
-    <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
-        <li nz-menu-item nzMatchRouter="#">
-            <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
-        </li>
-        <li nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
-            <ul>
-                <li nz-menu-item  nzMatchRouter>
-                    <a routerLink="../tipoavaliacao" >Tipos de Avaliações</a>
-                </li>
-                <li nz-menu-item  nzMatchRouter>
-                    <a routerLink="../pergunta" >Perguntas</a>
-                </li>
-                <li nz-menu-item  nzMatchRouter>
-                    <a routerLink="../formulario" >Formulários</a>
-                </li>
-            </ul>
-        </li>    
-        
-        <li nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
-            <ul>
-                <li nz-menu-item   nzMatchRouter>
-                    <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
-                </li>
-                <li nz-menu-item   nzMatchRouter>
-                    <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados a um Formulário</a>
-                </li>
-                <li nz-menu-item   nzMatchRouter>
-                    <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
-                </li>
-            </ul>    
-        </li>
-
-        
-        <li nz-menu-item nzMatchRouter="">
-            <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
-        </li>
-        <li nz-menu-item nzMatchRouter=""*ngIf="hasGroup(['RHAvaliacao'])">
-            <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
-        </li>
-        <li nz-menu-item nzMatchRouter="">
-            <a style="font-size: 13px;" routerLink="../relatorios" >Relatórios</a>
-        </li>
-        
-    </ul>
-  </div>
-  
-
   <p-divider align="left" type="solid">
     <b>Nova Avaliação</b> 
   </p-divider><br> 
   <p style="margin-left: 22px;">Periodo: <strong>{{ trimestre }}</strong></p>
   <br>
-  <div class="tc">
-    <div class="titles">
-      <div class="t1">
-        <p><b>Identificação do Avaliador:</b></p>
-      </div>
-    </div>  
-    <div class="qw">
-      <p><b>Identificação do Avaliado:</b></p>
-    </div>
-  </div>    
-  <div class="infos">
-      <div class="avaliador">
-          <div class="av1">
+
+  <div class="flex flex-column md:flex-row w-full  lg:flex-row w-full ">
+   
+    <div class="flex flex-column md:flex-row align-items-center w-full">
+      <div class="w-6 ml-2">
+        <div class=" mt-3">
+          <p><b>Identificação do Avaliador:</b></p>
+        </div>
+        <div class="flex flex-row ">
+          <div class=" w-2">
             Nome: <br>
             Empresa: <br>
             Filial: <br>
@@ -73,7 +69,7 @@
             Setor: <br> 
             Cargo: <br>
           </div>
-          <div class="av2">
+          <div class="w-10 ml-4">
             <strong>{{ avaliador.nome }}</strong><br>
             <strong> {{ getNomeEmpresa(avaliador.empresa) }}</strong><br>
             <strong> {{ getNomeFilial(avaliador.filial) }}</strong><br>
@@ -81,34 +77,41 @@
             <strong> {{ getNomeSetor(avaliador.setor) }}</strong><br>
             <strong> {{ getNomeAmbiente(avaliador.ambiente) }}</strong><br>
             <strong> {{ getNomeCargo(avaliador.cargo) }}</strong><br>
-          </div>  
-      </div>      
-      <div class="avaliado" *ngIf="avaliadoDetalhes">  
-            <div class="ava1">      
-              Nome: <br>
-              Empresa:<br>
-              Filial: <br>
-              Área:<br>
-              Ambiente:<br>
-              Setor:<br>
-              Cargo:<br>
-            </div>
-            <div class="ava2">
-              <strong>{{ avaliadoDetalhes.nome }} </strong><br>
-              <strong>{{ formularioDetalhes.nome }} </strong><br>
-              <strong> {{ getNomeEmpresa(avaliadoDetalhes.empresa) }}</strong><br>
-              <strong> {{ getNomeFilial(avaliadoDetalhes.filial) }}</strong><br>
-              <strong> {{ getNomeArea(avaliadoDetalhes.area) }}</strong><br>
-              <strong> {{ getNomeSetor(avaliadoDetalhes.setor) }}</strong><br>
-              <strong> {{ getNomeAmbiente(avaliadoDetalhes.ambiente) }}</strong><br>
-              <strong> {{ getNomeCargo(avaliadoDetalhes.cargo) }}</strong><br>
-            </div>  
-            
-            <div class="dvimg">  
-              <img [src]="avaliadoDetalhes.image"  width="80" class="shadow-4" />
-            </div>  
+          </div> 
+        </div>        
       </div>
-  </div>  
+
+          <div class="w-6 ml-2">
+            <div class=" mt-3">
+                <p><b>Identificação do Avaliado:</b></p>
+            </div> 
+            <div class="flex flex-row " *ngIf="avaliadoDetalhes">  
+                    <div class="w-2">      
+                      Nome: <br>
+                      Empresa:<br>
+                      Filial: <br>
+                      Área:<br>
+                      Ambiente:<br>
+                      Setor:<br>
+                      Cargo:<br>
+                    </div>
+                    <div class="w-10 ml-4">
+                      <strong>{{ avaliadoDetalhes.nome }} </strong><br>
+                      <strong> {{ getNomeEmpresa(avaliadoDetalhes.empresa) }}</strong><br>
+                      <strong> {{ getNomeFilial(avaliadoDetalhes.filial) }}</strong><br>
+                      <strong> {{ getNomeArea(avaliadoDetalhes.area) }}</strong><br>
+                      <strong> {{ getNomeSetor(avaliadoDetalhes.setor) }}</strong><br>
+                      <strong> {{ getNomeAmbiente(avaliadoDetalhes.ambiente) }}</strong><br>
+                      <strong> {{ getNomeCargo(avaliadoDetalhes.cargo) }}</strong><br>
+                    </div>  
+              </div>
+            </div>
+    </div>
+        
+  </div>           
+      <!-- <div class="dvimg mt-5">  
+        <img [src]="avaliadoDetalhes.image"  width="80" class="shadow-4" />
+      </div>   -->
 
 <p-divider></p-divider>
 
@@ -146,8 +149,8 @@
           errorMessage="A resposta é obrigatória."
         >
           <ng-template matStepLabel>{{ pergunta.texto }}</ng-template>
-          <div class="rg">
-            <div class="rb">
+          <div class="flex flex-column mt-2 md:flex-row mt-0 ">
+            <div class="">
               <mat-radio-group
                 style="flex-direction: column; display: flex;"
                 aria-labelledby="example-radio-group-label"
@@ -160,14 +163,14 @@
                 </mat-radio-button>
               </mat-radio-group>
             </div>
-            <div class="pl">
+            <div class="flex flex-column mt-1 mt-4 md:ml-8 ">
               <p [innerHTML]="pergunta.legenda | safeHtml"></p>
             </div>
           </div>
           <div>
             <textarea
               rows="2"
-              cols="60"
+              cols="35"
               pInputTextarea
               formControlName="justificativa"
             ></textarea>
@@ -198,7 +201,7 @@
     </mat-horizontal-stepper>
     </form>
   </div>
-</div>    
+
 
 
 

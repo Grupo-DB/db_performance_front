@@ -1,44 +1,44 @@
-<div *ngIf="hasGroup(['Admin','RHGestor'])" class="menu">
-    <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+<div class="menu w-full">
+    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 45px;box-shadow: 2px 0 6px ; ">
         <li nz-menu-item nzMatchRouter="#">
             <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
         </li>
-        <li nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
             <ul>
-                <li nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="../tipoavaliacao" >Tipos de Avaliações</a>
                 </li>
-                <li nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="../pergunta" >Perguntas</a>
                 </li>
-                <li nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="../formulario" >Formulários</a>
                 </li>
             </ul>
         </li>    
         
-        <li nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
             <ul>
-                <li nz-menu-item   nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
                     <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
                 </li>
-                <li nz-menu-item   nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
                     <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados a um Formulário</a>
                 </li>
-                <li nz-menu-item   nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
                     <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
                 </li>
             </ul>    
         </li>
 
         
-        <li nz-menu-item nzMatchRouter="" >
+        <li nz-menu-item nzMatchRouter="">
             <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
         </li>
         <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['RHAvaliacao'])">
             <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
         </li>
-        <li nz-menu-item nzMatchRouter="">
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item nzMatchRouter="">
             <a style="font-size: 13px;" routerLink="../relatorios" >Relatórios</a>
         </li>
         
@@ -47,54 +47,59 @@
 
 
 <div *ngIf="hasGroup(['Admin','RHGestor'])" class="container">
-
-
-    <div class="form-geral">
         <p-divider align="left" type="solid">
             <b>Cadastro de Perguntas</b>
         </p-divider>     
-        <form [formGroup]="registerperguntaForm"
-        title="Cadastrar Nova Pergunta"
-        primaryBtnText="Cadastrar"
-        (submit)="submit()"
+        <form 
+            [formGroup]="registerperguntaForm"
+            title="Cadastrar Nova Pergunta"
+            primaryBtnText="Cadastrar"
+            (submit)="submit()"
         >
-        <div class="form1">
-            <p-inputGroup>
-                <p-inputGroupAddon>
-                    <i class="pi pi-file-edit"></i>
-                </p-inputGroupAddon>
-                <span class="p-float-label">
-                    <input pInputText
-                        id="texto"
-                        formControlName="texto"
-                        type="text"
-                    />  
-                    <label for="texto">Digite a Pergunta</label>
-                </span>          
-            </p-inputGroup>
-            
-                <div class="lg">
-                    <p><strong>Legenda</strong></p>
-                    <p-editor 
-                        formControlName="legenda" 
-                        [style]="{ height: '120px' }" 
-                    />
-                </div>    
-        </div>            
+            <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation>
+                <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
+                        <div class="form2 w-10">
+                            <p-floatlabel variant="on">
+                                <p-iconfield>
+                                    <p-inputicon class="pi pi-file-edit" />
+                                    <input
+                                        variant="filled"
+                                        [style]="{'width':'100%'}"
+                                        pInputText id="on_label"
+                                        autocomplete="off"
+                                        formControlName="texto"
+                                        type="text"
+                                    />
+                                </p-iconfield>
+                                <label for="on_label">Digite a pergunta</label>
+                            </p-floatlabel>
+                        </div>
+                    
+                        <div class="form2 w-10 mb-3">
+                            <p class="w-3 ml-0"><strong>Legenda</strong></p>
+                            <p-editor 
+                                formControlName="legenda" 
+                                [style]="{ height: '120px' }" 
+                            />
+                        </div>    
+                </div>
+            </div>            
         </form>
-    </div>    
+
+        <div class="flex ml-5 mb-5 mt-2 md:justify-content-center mt-3 lg:justify-content-center lg:mt-0"@efeitoFade>
+            <p-toast></p-toast>
+            <div class="btnsec" (click)="clearForm()">
+                <p>Limpar</p>
+            </div>
+            <div class="btnpri" (click)="submit()">
+                <p>Salvar</p>            
+            </div>
+        </div>
+ 
    
-    <div class="botoes-form">
-        <p-toast></p-toast>
-        <div class="btnsec" (click)="clearForm()">
-            <p>Limpar</p>
-        </div>
-        <div class="btnpri" (click)="submit()">
-            <p>Salvar</p>            
-        </div>
-    </div>
     
-        <div *ngIf="hasGroup(['Admin','RHGestor'])" class="tabela">
+    
+        <div *ngIf="hasGroup(['Admin','RHGestor'])" class="tabela"@swipeAnimationReverse>
             <p-toast />
             <p-confirmDialog />
             <p-table
@@ -107,29 +112,41 @@
                 currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
                 [rowsPerPageOptions]="[5, 10, 20]"
                 [globalFilterFields]="['texto','legenda']"
+                stripedRows
+                scrollable="true"
             >
                 <ng-template pTemplate="caption">
-                    <div class="flex">
-                        <span class="p-input-icon-left ml-auto">
-                            <i class="pi pi-search"></i>
-                            <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Digite a pergunta" />
-                        </span>
-                        <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
-                        <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+                    <div class="flex flex-row md: justify-content-end">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-search" />
+                                <input
+                                    variant="filled"
+                                    [(ngModel)] = "inputValue"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Palavra-Chave</label>
+                        </p-floatlabel>
+                        <button size="small" class="ml-2" pButton [rounded]="true" label="Pesquisar" severity="info"  (click)="filterTable()"></button>
+                        <button size="small" class="ml-2" pButton [rounded]="true" label="Limpar" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
                     </div>
-                </ng-template>    
+                </ng-template>     
                 <ng-template pTemplate="header">
                     <tr>
-                        <th style="width:25%" type="text" field="texto" display="menu">
+                        <th style="width:75%" type="text" field="texto" display="menu">
                             Pergunta
                         </th>
-                        <th style="width: 25%;">Ações</th>
+                        <th style="width: 25%; text-align: center;">Ações</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-pergunta>
                     <tr>
                         <td>{{ pergunta.texto }}</td>
-                        <td class="td-acao">
+                        <td class="flex py-5 ">
                             <div class="btnsec" (click)="abrirModalEdicao(pergunta)">
                                 <p>Editar</p>
                             </div>
@@ -140,10 +157,10 @@
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="paginatorleft">
-                    <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+                    <p-button type="button" styleClass="p-button-text"></p-button>
                 </ng-template>
                 <ng-template pTemplate="paginatorright">
-                    <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
+                    <p-button type="button"  styleClass="p-button-text"></p-button>
                 </ng-template>
             </p-table>
         </div>  
@@ -151,8 +168,7 @@
         <p-dialog 
             [modal]="true"
             [(visible)]="editFormVisible" 
-            [style]="{ width: '60rem', height:'50rem' }" 
-            [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+            [style]="{ width: '70rem',}" 
         >
             <div>
                 <p-divider align="left" type="solid">
@@ -161,47 +177,48 @@
             </div>
             <form 
                 [formGroup]="editForm"
-                title="Editar Pergunta"
-                primaryBtnText="Cadastrar"     
+                title="Editar Pergunta"    
             >  
-                <div class="geraled">
-                    <div class="form1ed">
-                        <p-inputGroup>
-                            <p-inputGroupAddon>
-                                <i class="pi pi-file-edit"></i>
-                            </p-inputGroupAddon>
-                            <span class="p-float-label">
-                                <input pInputText
-                                    id="texto"
-                                    formControlName="texto"
-                                    type="text"
-                                />  
-                                <label for="texto">Digite a Pergunta</label>
-                            </span>          
-                        </p-inputGroup>        
+                <div class="editGeral flex flex-column lg:flex-row">
+                    <div class="fg1edit flex flex-column w-12 align-items-center lg:w-6">
+                        <div class="form2 w-10">
+                            <p-floatlabel variant="on">
+                                <p-iconfield>
+                                    <p-inputicon class="pi pi-file-edit" />
+                                    <input
+                                        variant="filled"
+                                        [style]="{'width':'100%'}"
+                                        pInputText id="on_label"
+                                        autocomplete="off"
+                                        formControlName="texto"
+                                        type="text"
+                                    />
+                                </p-iconfield>
+                                <label for="on_label">Digite a pergunta</label>
+                            </p-floatlabel>
+                        </div>        
+                        <div class="form2 flex flex-column w-10 mb-3">
+                            <p class="w-3 ml-5  mt-2"><strong>Legenda</strong></p>
+                            <textarea
+                                rows="10"
+                                cols="40"
+                                pInputTextarea
+                                formControlName="legenda"   
+                            ></textarea>    
+                        </div>
+                    </div>     
+                </div> 
+                <div class="flex mt-3 justify-content-center"@efeitoFade>
+                    <div class="btnsec" (click)="cleareditForm()">
+                        <p>Limpar</p>
                     </div>
-                    <div class="lged">
-                        <p><strong>Legenda</strong></p>
-                        <textarea
-                            rows="10"
-                            cols="60"
-                            pInputTextarea
-                            formControlName="legenda"   
-                        ></textarea>    
-                    </div> 
-                    <div class="botoes-formed">
-                        <p-toast></p-toast>
-                        <div class="btnsec" (click)="cleareditForm()">
-                            <p>Limpar</p>
-                        </div>
-                        <div class="btnpri" (click)="saveEdit()">
-                            <p>Salvar</p>            
-                        </div>
-                    </div> 
+                    <div class="btnpri" (click)="saveEdit()">
+                        <p>Salvar</p>            
+                    </div>
                 </div>  
             </form>
         </p-dialog> 
-  </div><!--end container-->
+</div>
 
 
   

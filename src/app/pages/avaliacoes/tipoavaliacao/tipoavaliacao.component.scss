@@ -23,34 +23,51 @@
         color:slategrey;
     }
 }
- form{
-    margin-top: 2%;
-    display: flex;
-    height: 6%;
-    
-        p-inputGroup{
-            padding: 15px;
+.form-geral{
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    .fg1{
+        width: 100%;
+        //margin-top: 10px;
+        //margin-bottom: 25px;
+        p{
+            margin-left: 20px;
         }
-        p-dropdown{
-            padding: 15px;
+        .form1{
+           margin-top: 16px; 
         }
-        p-inputMask{
-            padding: 15px;
-            width: 150px;
-        }    
-        .form3{
-            margin-top: 2%;
-            margin-bottom: 5%;
+        .form2{
+            margin-top: 16px;
+        } 
+    }
+    .fg2{
+        width: 100%;
+        //margin-top: 10px;
+        //margin-bottom: 25px;
+        p{
+            margin-left: 20px;
         }
-
-        .teste{
-            margin-bottom: 5%;
-            margin-top: 6%;
-            label{
-                margin-left: 5%;
-            }
+        .form2{
+            margin-top: 16px;
+            
+        } 
+    }
+    .fg3{
+        width: 100%;
+        //margin-top: 10px;
+        margin-bottom: 25px;
+        p{
+            margin-left: 20px;
         }
- }
+        .form2{
+            margin-top: 16px;
+            
+        }
+    }
+}
  
  .botoes-form{
     width: 37%;
@@ -132,14 +149,34 @@
      
      width: 100%;
  }
-
- .fg1ed{
-    width: 80%;
-    justify-content: center;
- }
-
- .form1ed{
-    margin-left: 100px;
+ .editGeral{
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    .fg1edit{
+        width: 50%;
+        margin-top: 10px;
+        .form2{
+            margin-top: 25px;
+        }
+    }
+    .fg2edit{
+        width: 50%;
+        margin-top: 10px;
+        .form2{
+            margin-top: 25px;
+        }
+    }
+    .fg3edit{
+        width: 50%;
+        margin-top: 10px;
+        .form2{
+            margin-top: 25px;
+            margin-bottom: 20px;;
+        }
+    }
 }
 
  .botoes-formed{

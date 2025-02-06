@@ -1,17 +1,17 @@
-<div class="menu">
-    <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+<div class="menu w-full">
+    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 45px;box-shadow: 2px 0 6px ; ">
         <li nz-menu-item nzMatchRouter="#">
             <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
         </li>
         <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
             <ul>
-                <li nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="../tipoavaliacao" >Tipos de Avaliações</a>
                 </li>
-                <li nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="../pergunta" >Perguntas</a>
                 </li>
-                <li nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="../formulario" >Formulários</a>
                 </li>
             </ul>
@@ -19,20 +19,20 @@
         
         <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
             <ul>
-                <li nz-menu-item   nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
                     <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
                 </li>
-                <li nz-menu-item   nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
                     <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados a um Formulário</a>
                 </li>
-                <li nz-menu-item   nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
                     <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
                 </li>
             </ul>    
         </li>
 
         
-        <li nz-menu-item nzMatchRouter="" >
+        <li nz-menu-item nzMatchRouter="">
             <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
         </li>
         <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['RHAvaliacao'])">
@@ -51,47 +51,51 @@
         </p-divider> 
     </div>
 
-    <div *ngIf="hasGroup(['Admin','RHGestor'])" class="calendarios">
-        <div class="form5">
-          <p><label for="da">Data de Inicio</label></p>
-           <p-calendar
-               [style]="{'width':'76%','margin-left':'-2px'}"
-               id="da" 
-              [(ngModel)] = "dataInicio"
-               dateFormat="yy-mm-dd"                  
-               [showIcon]="true"
-               placeholder="SELECIONE"   
-           >
-           </p-calendar>
-           
-       </div>
-      
-       <div class="form5">
-        <p><label for="da">Data do Fim</label></p>
-         <p-calendar
-             [style]="{'width':'76%','margin-left':'-2px'}"
-             id="da" 
-            [(ngModel)] = "dataFim"
-             dateFormat="yy-mm-dd"                  
-             [showIcon]="true"
-             placeholder="SELECIONE"
-             (ngModelChange)="salvarPeriodo()"
-             
-         >
-         </p-calendar>
-        </div>   
-      </div>
+    <div 
+        *ngIf="hasGroup(['Admin','RHGestor'])"
+        class=
+            "flex flex-column w-full align-items-center
+            md:flex-row w-full align-items-center 
+            lg:flex-row w-full justify-content-end"@swipeAnimation
+    >
+        <div *ngIf="hasGroup(['Admin','RHGestor'])" class="flex w-10 mt-3 lg:w-3">
+            <p-floatlabel variant="on">
+                <p-datepicker
+                    [style]="{'width':'100%'}"
+                    id="da" 
+                    [(ngModel)] = "dataInicio"
+                    dateFormat="yy-mm-dd"                  
+                    [showIcon]="true"   
+                >
+                </p-datepicker>
+                <label for="da">Data de Início</label>
+            </p-floatlabel>
+        </div>
+        <div *ngIf="hasGroup(['Admin','RHGestor'])" class="flex w-10 mt-3 lg:w-3">    
+            <p-floatlabel variant="on">
+                <p-datepicker
+                    [style]="{'width':'100%'}"
+                    id="da" 
+                    [(ngModel)] = "dataFim"
+                    dateFormat="yy-mm-dd"                  
+                    [showIcon]="true"   
+                >
+                </p-datepicker>
+                <label for="da">Data do Fim</label>
+            </p-floatlabel>    
+        </div> 
+    </div>
     
-    <div class="buttons" >
+    <div class="buttons flex flex-wrap mt-6 md:flex-row justify-content-around"@swipeAnimationReverse >
         
             <div [class.disabled]="!periodoPermitido" class="divAvaliacao"  routerLink="../novaliacao">
-                <p> + NOVA AVALIAÇÃO </p>
+                <p> +AVALIAÇÃO </p>
             </div>  
             <ng-template #disabledLink>
                 <div class="divAvaliacao disabled">
                   <p> + NOVA AVALIAÇÃO </p>
                 </div>
-              </ng-template>
+            </ng-template>
         
             <div *ngIf="hasGroup(['Admin','RHGestor'])" class="divFeedbacks" routerLink="../feedback">
                 <p> FEEDBACKS </p>
