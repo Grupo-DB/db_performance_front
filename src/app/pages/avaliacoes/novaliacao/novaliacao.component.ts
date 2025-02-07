@@ -62,6 +62,8 @@ import { Subscription } from 'rxjs';
 import { SafeHtmlPipe } from './safeHtml';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { TabMenuModule } from 'primeng/tabmenu';
+import { SelectModule } from 'primeng/select';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 // Custom validator function
 function respostaJustificativaValidator(control: AbstractControl): { [key: string]: any } | null {
@@ -116,7 +118,7 @@ interface Tipo{
     ReactiveFormsModule,FormsModule,StepperModule,CommonModule,MatStepperModule,MatFormFieldModule,CalendarModule,MatRadioModule,DividerModule,
     InputMaskModule,StepsModule,NzStepsModule,MatInputModule,MatButtonModule,MatSelectModule,RadioButtonModule,InputTextModule,
     RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,SafeHtmlPipe,
-    NzMenuModule,TabMenuModule,
+    NzMenuModule,TabMenuModule,SelectModule,FloatLabelModule
   ],
   providers: [
     {

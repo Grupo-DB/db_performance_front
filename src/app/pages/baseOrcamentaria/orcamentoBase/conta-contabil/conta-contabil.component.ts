@@ -17,6 +17,10 @@ import { ContaContabilService } from '../../../../services/baseOrcamentariaServi
 import { LoginService } from '../../../../services/avaliacoesServices/login/login.service';
 import { animate, keyframes, style, transition, trigger } from '@angular/animations';
 import { ButtonModule } from 'primeng/button';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { SelectModule } from 'primeng/select';
 
 interface RegisterContaContabilForm{
   nivel1Conta: FormControl;
@@ -53,9 +57,10 @@ export interface ContaContabil{
   selector: 'app-conta-contabil',
   standalone: true,
   imports: [
-    CommonModule,RouterLink,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
+    CommonModule,RouterLink,DividerModule,NzMenuModule,InputGroupModule,
+    InputGroupAddonModule,IconFieldModule,InputIconModule,
     DropdownModule,FormsModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,
-    ConfirmDialogModule,ToastModule,ButtonModule
+    ConfirmDialogModule,ToastModule,ButtonModule,FloatLabelModule,SelectModule,
   ],
   animations:[
     trigger('efeitoFade',[

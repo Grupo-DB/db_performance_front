@@ -19,6 +19,10 @@ import { RaizSinteticaService } from '../../../../services/baseOrcamentariaServi
 import { CentrocustoService } from '../../../../services/baseOrcamentariaServices/orcamento/CentroCusto/centrocusto.service';
 import { animate, keyframes, style, transition, trigger } from '@angular/animations';
 import { ButtonModule } from 'primeng/button';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { SelectModule } from 'primeng/select';
 
 interface RegisterRaizSinteticaForm{
   raiz_contabil: FormControl;
@@ -42,7 +46,7 @@ export interface RaizSintetica{
   imports: [
     CommonModule,RouterLink,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
     DropdownModule,FormsModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,
-    ConfirmDialogModule,ToastModule,ButtonModule
+    ConfirmDialogModule,ToastModule,ButtonModule,IconFieldModule,InputIconModule,FloatLabelModule,SelectModule
   ],
   providers:[
     MessageService,ConfirmationService

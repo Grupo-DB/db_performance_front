@@ -1,7 +1,6 @@
-<div class="container">
 
-    <div class="menu">
-        <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+<div class="menu w-full">
+    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 45px;box-shadow: 2px 0 6px ; ">
             <li nz-menu-item nzMatchRouter="#">
                 <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
             </li>
@@ -32,7 +31,7 @@
                     </li>
                 </ul>    
             </li>
-    
+      
             
             <li nz-menu-item nzMatchRouter="">
                 <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
@@ -45,8 +44,9 @@
             </li>
             
         </ul>
-    </div>
-
+      </div>
+      
+<div class="container">
     <div class="titulo">
         <p-divider align="left" type="solid">
             <b>Histórico de Avaliações</b>
@@ -63,6 +63,8 @@
                 [paginator]="true"
                 [globalFilterFields]="['avaliadoNome','avaliadorNome']"
                 [tableStyle]="{ 'min-width': '75rem' }"
+                stripedRows
+                scrollable="true"
             >
             <ng-template pTemplate="header">
                 <tr>

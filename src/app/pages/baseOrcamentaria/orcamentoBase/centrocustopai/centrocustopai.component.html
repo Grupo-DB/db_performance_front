@@ -1,5 +1,5 @@
 <div class="menu">
-    <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
         <li nz-menu-item nzMatchRouter="#">
             <a style="font-size: 13px;" routerLink="homeOrcamento">Início</a>
         </li>
@@ -49,14 +49,14 @@
     </ul>
 </div>
 
-<div class="titulo">
-    <p-divider align="left" type="solid">
-        <b>Cadastro de Centro de Custo Pai</b>
-    </p-divider>
-</div>
-
 <div class="container">
-    <div class="formWrap"@swipeAnimation>
+
+        <div class="titulo">
+            <p-divider align="left" type="solid">
+                <b>Cadastro de Centro de Custo Pai</b>
+            </p-divider>
+        </div>
+   
         <form 
             [formGroup]="registercentrocustopaiForm"
             title="Cadastrar novo Centro de Custo Pai"
@@ -64,45 +64,48 @@
             (submit)="submit()"
             enctype="multipart/form-data"
         >
-            <div class="form">
-                <div class="coluna">
-                    <div class="raiz">
-                        <p-inputGroup >
-                            <p-inputGroupAddon>
-                                <i class="pi pi-file-edit"></i>
-                            </p-inputGroupAddon>
-                            <span class="p-float-label">
+        
+            <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation>
+                <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
+                    <div class="form2 w-10">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
                                 <input
-                                    [style]="{'width':'100%','font-size':'16px'}"
-                                    pInputText
-                                    id="nome"
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
                                     formControlName="nome"
                                     type="text"
-                                />  
-                                <label for="raiz_contabil">Informe o nome</label>
-                            </span>          
-                        </p-inputGroup>
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Informe o nome</label>
+                        </p-floatlabel>
                     </div>
-                    <div class="raiz">
-                        <p-floatLabel>
-                            <p-dropdown
-                                id="empresa"
-                                inputId="float-label" 
+                    <div class="form2 w-10 text-left">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                id="filial"
                                 [style]="{'width':'100%'}"
+                                inputId="float-label" 
                                 [options]="empresas" 
                                 formControlName="empresa"
                                 optionLabel="nome"
+                                [disabled]="true"
                                 (onChange)="onEmpresaSelecionada($event.value)"
                                 [filter]="true" 
                                 filterBy="nome"
                             >
-                            </p-dropdown>
+                            </p-select>
                             <label for="float-label">Selecione a Empresa</label>
                         </p-floatLabel>
                     </div>
-                    <div class="raiz">
-                        <p-floatLabel>
-                            <p-dropdown
+                    <div class="form2 w-10 text-left">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
                                 id="filial"
                                 [style]="{'width':'100%'}"
                                 inputId="float-label" 
@@ -114,16 +117,17 @@
                                 [filter]="true" 
                                 filterBy="nome"
                             >
-                            </p-dropdown>
+                            </p-select>
                             <label for="float-label">Selecione a Filial</label>
                         </p-floatLabel>
                     </div>
                 </div>
 
-                <div class="coluna">
-                    <div class="raiz">
-                        <p-floatLabel>
-                            <p-dropdown
+                <div class="fg2 flex flex-column w-12 align-items-center lg:w-6">
+                    <div class="form2 w-10 text-left">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
                                 id="area" 
                                 inputId="float-label" 
                                 [style]="{'width':'100%'}"
@@ -135,13 +139,14 @@
                                 [filter]="true" 
                                 filterBy="nome"
                                 >
-                            </p-dropdown>
+                            </p-select>
                             <label for="float-label">Selecione a Area</label>
                         </p-floatLabel>
                     </div>
-                    <div class="raiz">
-                        <p-floatLabel>
-                            <p-dropdown
+                    <div class="form2 w-10 text-left">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
                                 id="setor" 
                                 inputId="float-label" 
                                 [style]="{'width':'100%'}"
@@ -153,33 +158,34 @@
                                 [filter]="true" 
                                 filterBy="nome"
                             >
-                            </p-dropdown>
+                            </p-select>
                             <label for="float-label">Selecione o Ambiente</label>
                         </p-floatLabel>
                     </div>
-                    <div class="raiz">
-                        <p-floatLabel>
-                            <p-dropdown
+                    <div class="form2 w-10 mb-3 text-left">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
                                 id="ambiente"
                                 inputId="float-label"  
                                 [style]="{'width':'100%'}"
                                 [options]="ambientes" 
                                 formControlName="ambiente"
                                 optionLabel="nome"
-                                placeholder="Selecione o Setor"
                                 [disabled]="true"
                                 [filter]="true" 
                                 filterBy="nome"
                             >
-                            </p-dropdown>
+                            </p-select>
                             <label for="float-label">Selecione o Setor</label>
                         </p-floatLabel>
                     </div>      
                 </div>
-
             </div>
         </form>
-        <div class="botoes-form">
+    </div>
+       
+        <div class="flex justify-content-center mb-5 mt-5"@efeitoFade>
             <p-toast></p-toast>
             <div class="btnsec" (click)="clearForm()">
                 <p>Limpar</p>
@@ -189,10 +195,12 @@
             </div>
         
         </div>
-    </div><!--endForm-->
+    
 
 
     <div class="tabela"@swipeAnimationReverse>
+        <p-toast />
+        <p-confirmDialog />
         <p-table
             #dt1
             [value]="centrosCustoPai"
@@ -203,17 +211,27 @@
             currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
             [rowsPerPageOptions]="[5, 10, 20]"
             [globalFilterFields]="['id', 'nome','empresa','filial','area','ambiente','setor']"
+            scrollable="true"
+            stripedRows
         >
             <ng-template pTemplate="caption">
-                <p-toast />
-                <p-confirmDialog />
-                <div class="flex">
-                    <span class="p-input-icon-left ml-auto">
-                        <i class="pi pi-search"></i>
-                        <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Digite o nome" />
-                    </span>
-                    <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
-                    <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+                <div class="flex flex-row md: justify-content-end">
+                    <p-floatlabel variant="on">
+                        <p-iconfield>
+                            <p-inputicon class="pi pi-search" />
+                            <input
+                                variant="filled"
+                                [(ngModel)] = "inputValue"
+                                [style]="{'width':'100%'}"
+                                pInputText id="on_label"
+                                autocomplete="off"
+                                type="text"
+                            />
+                        </p-iconfield>
+                        <label for="on_label">Nome</label>
+                    </p-floatlabel>
+                    <button size="small" class="ml-2" pButton [rounded]="true" label="Pesquisar" severity="info"  (click)="filterTable()"></button>
+                    <button size="small" class="ml-2" pButton [rounded]="true" label="Limpar" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
                 </div>
             </ng-template>    
             <ng-template pTemplate="header">
@@ -248,7 +266,7 @@
                     <td>{{ centroCustoPai.area_detalhes.nome }}</td>
                     <td>{{ centroCustoPai.setor_detalhes.nome }}</td>
                     <td>{{ centroCustoPai.ambiente_detalhes.nome }}</td>
-                    <td class="td-acao">
+                    <td class="flex py-6">
                         <div class="btnsec" (click)="abirModalEdicao(centroCustoPai)">
                             <p>Editar</p>
                         </div>
@@ -260,10 +278,10 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="paginatorleft">
-                <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+                <p-button type="button"  styleClass="p-button-text"></p-button>
             </ng-template>
             <ng-template pTemplate="paginatorright">
-                <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
+                <p-button type="button"  styleClass="p-button-text"></p-button>
             </ng-template>
         </p-table>
     </div>
@@ -272,152 +290,153 @@
                 [modal]="true"
                 [(visible)]="editFormVisible" 
                 [style]="{ width: '65rem' }" 
-                [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
             >
                 <div class="titulo">
                     <p-divider align="left" type="solid">
                         <b>Editar Centro de Custo Pai</b>
                     </p-divider> 
                 </div>
-                <div class="container">
-                    <div class="formWrap">
-                        <form 
-                            [formGroup]="editForm"
-                            title="Editar Centro de Custo Pai"      
-                        >
-                        <div class="form">
-                            <div class="coluna">
-                                <div class="raizEd">
-                                    <p-inputGroup >
-                                        <p-inputGroupAddon>
-                                            <i class="pi pi-file-edit"></i>
-                                        </p-inputGroupAddon>
-                                        <span class="p-float-label">
-                                            <input
-                                                [style]="{'width':'100%'}"
-                                                pInputText
-                                                id="nome"
-                                                formControlName="nome"
-                                                type="text"
-                                            />  
-                                            <label for="raiz_contabil">Informe o nome</label>
-                                        </span>          
-                                    </p-inputGroup>
-                                </div>
-                                <div class="raizEd">
-                                    <p-floatLabel>
-                                        <p-dropdown
-                                            id="empresa"
-                                            inputId="float-label" 
+
+                <form 
+                    [formGroup]="editForm"
+                    title="Editar Centro de Custo Pai"      
+                >
+
+                    <div class="editGeral flex flex-column lg:flex-row">
+                        <div class="fg1edit flex flex-column w-12 align-items-center lg:w-6">
+                            <div class="form2 w-10">
+                                <p-floatlabel variant="on">
+                                    <p-iconfield>
+                                        <p-inputicon class="pi pi-file-edit" />
+                                        <input
+                                            variant="filled"
                                             [style]="{'width':'100%'}"
-                                            [options]="empresas" 
-                                            formControlName="empresa"
-                                            optionValue="id"
-                                            optionLabel="nome"
-                                            (onChange)="onEmpresaSelecionada($event.value)"
-                                            [filter]="true" 
-                                            filterBy="nome"
-                                        >
-                                        </p-dropdown>
-                                        <label for="float-label">Selecione a Empresa</label>
-                                    </p-floatLabel>
-                                </div>
-                                <div class="raizEd">
-                                    <p-floatLabel>
-                                        <p-dropdown
-                                            id="filial"
-                                            inputId="float-label"
-                                            [style]="{'width':'100%'}"
-                                            [options]="filiais" 
-                                            formControlName="filial"
-                                            optionValue="id"
-                                            optionLabel="nome"
-                                            [disabled]="true"
-                                            (onChange)="onFilialSelecionada($event.value)"
-                                            [filter]="true" 
-                                            filterBy="nome"
-                                        >
-                                        </p-dropdown>
-                                        <label for="float-label">Selecione a Filial</label>
-                                    </p-floatLabel>
-                                </div>
+                                            pInputText id="on_label"
+                                            autocomplete="off"
+                                            formControlName="nome"
+                                            type="text"
+                                        />
+                                    </p-iconfield>
+                                    <label for="on_label">Informe o nome</label>
+                                </p-floatlabel>
                             </div>
-            
-                            <div class="coluna">
-                                <div class="raizEd">
-                                    <p-floatLabel>
-                                        <p-dropdown
-                                            id="area"
-                                            inputId="float-label" 
-                                            [style]="{'width':'100%'}"
-                                            [options]="areas" 
-                                            formControlName="area"
-                                            optionValue="id"
-                                            optionLabel="nome"                                           placeholder="Selecione a Area"
-                                            [disabled]="true"
-                                            (onChange)="onAreaSelecionada($event.value)"
-                                            [filter]="true" 
-                                            filterBy="nome"
-                                        >
-                                        </p-dropdown>
-                                        <label for="float-label">Selecione a Area</label>
-                                    </p-floatLabel>
-                                </div>
-                                <div class="raizEd">
-                                    <p-floatLabel>
-                                        <p-dropdown
-                                            id="ambiente"
-                                            inputId="float-label" 
-                                            [style]="{'width':'100%'}"
-                                            [options]="setores" 
-                                            formControlName="setor"
-                                            optionValue="id"
-                                            optionLabel="nome"                                            placeholder="Selecione o Ambiente"
-                                            [disabled]="true"
-                                            (onChange)="onSetorSelecionado($event.value)"
-                                            [filter]="true" 
-                                            filterBy="nome"
-                                        >
-                                        </p-dropdown>
-                                        <label for="float-label">Selecione o Ambiente</label>
-                                    </p-floatLabel>
-                                </div>
-                                <div class="raizEd">
-                                    <p-floatLabel>
-                                        <p-dropdown
-                                            id="setor"
-                                            inputId="float-label" 
-                                            [style]="{'width':'100%'}"
-                                            [options]="ambientes" 
-                                            formControlName="ambiente"
-                                            optionValue="id"
-                                            optionLabel="nome"                                            placeholder="Selecione o Setor"
-                                            [disabled]="true"
-                                            [filter]="true" 
-                                            filterBy="nome"
-                                        >
-                                        </p-dropdown>
-                                        <label for="float-label">Selecione o Setor</label>
-                                    </p-floatLabel>
-                                </div>      
-                            </div>
-            
+                            <div class="form2 w-10 text-left">
+                                <p-floatLabel variant="on">
+                                    <p-select
+                                        variant="filled"
+                                        id="empresa"
+                                        inputId="float-label" 
+                                        [style]="{'width':'100%'}"
+                                        [options]="empresas" 
+                                        formControlName="empresa"
+                                        optionValue="id"
+                                        optionLabel="nome"
+                                        (onChange)="onEmpresaSelecionada($event.value)"
+                                        [filter]="true" 
+                                        filterBy="nome"
+                                    >
+                                    </p-select>
+                                    <label for="float-label">Selecione a Empresa</label>
+                                </p-floatLabel>
+                            </div>        
+                            <div class="form2 w-10 text-left">
+                                <p-floatLabel variant="on">
+                                    <p-select
+                                        variant="filled"
+                                        id="filial"
+                                        inputId="float-label"
+                                        [style]="{'width':'100%'}"
+                                        [options]="filiais" 
+                                        formControlName="filial"
+                                        optionValue="id"
+                                        optionLabel="nome"
+                                        [disabled]="true"
+                                        (onChange)="onFilialSelecionada($event.value)"
+                                        [filter]="true" 
+                                        filterBy="nome"
+                                    >
+                                    </p-select>
+                                    <label for="float-label">Selecione a Filial</label>
+                                </p-floatLabel>
+                            </div>        
                         </div>
-    
-                            <div class="botoes-form">
-                                <div class="btnsec" (click)="clearEditForm()">
-                                    <p>Limpar</p>
-                                </div>
-                                
-                                <div class="btnpri" (click)="saveEdit()">
-                                    <p>Salvar</p>            
-                                </div>
+                        <div class="fg2edit flex flex-column w-12 align-items-center lg:w-6">
+                            <div class="form2 w-10 text-left">
+                                <p-floatLabel variant="on">
+                                    <p-select
+                                        appendTo="body"
+                                        variant="filled"
+                                        id="area"
+                                        inputId="float-label" 
+                                        [style]="{'width':'100%'}"
+                                        [options]="areas" 
+                                        formControlName="area"
+                                        optionValue="id"
+                                        optionLabel="nome"                                           placeholder="Selecione a Area"
+                                        [disabled]="true"
+                                        (onChange)="onAreaSelecionada($event.value)"
+                                        [filter]="true" 
+                                        filterBy="nome"
+                                    >
+                                    </p-select>
+                                    <label for="float-label">Selecione a Area</label>
+                                </p-floatLabel>
                             </div>
-    
-                        </form>
-                    </div>    
-                </div>
+                            <div class="form2 w-10 text-left">
+                                <p-floatLabel variant="on">
+                                    <p-select
+                                        appendTo="body"
+                                        variant="filled"
+                                        id="ambiente"
+                                        inputId="float-label" 
+                                        [style]="{'width':'100%'}"
+                                        [options]="setores" 
+                                        formControlName="setor"
+                                        optionValue="id"
+                                        optionLabel="nome"                                            placeholder="Selecione o Ambiente"
+                                        [disabled]="true"
+                                        (onChange)="onSetorSelecionado($event.value)"
+                                        [filter]="true" 
+                                        filterBy="nome"
+                                    >
+                                    </p-select>
+                                    <label for="float-label">Selecione o Ambiente</label>
+                                </p-floatLabel>
+                            </div>    
+                            <div class="form2 w-10 text-left mb-3">
+                                <p-floatLabel variant="on">
+                                    <p-select
+                                        appendTo="body"
+                                        variant="filled"
+                                        id="setor"
+                                        inputId="float-label" 
+                                        [style]="{'width':'100%'}"
+                                        [options]="ambientes" 
+                                        formControlName="ambiente"
+                                        optionValue="id"
+                                        optionLabel="nome"                                            placeholder="Selecione o Setor"
+                                        [disabled]="true"
+                                        [filter]="true" 
+                                        filterBy="nome"
+                                    >
+                                    </p-select>
+                                    <label for="float-label">Selecione o Setor</label>
+                                </p-floatLabel>
+                            </div>         
+                        </div>
+                    </div>
+                </form>
+                <div class="flex justify-content-center mb-5 mt-5">
+                    <div class="btnsec" (click)="clearEditForm()">
+                        <p>Limpar</p>
+                    </div>
+                    
+                    <div class="btnpri" (click)="saveEdit()">
+                        <p>Salvar</p>            
+                    </div>
+                </div>                
+        
             </p-dialog>
 
 
-</div>            
+       

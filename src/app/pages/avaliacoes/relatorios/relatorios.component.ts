@@ -42,6 +42,9 @@ import { Filial } from '../filial/filial.component';
 import { Empresa } from '../registercompany/registercompany.component';
 import { RegisterCompanyService } from '../../../services/avaliacoesServices/companys/registercompany.service';
 import { Avaliacao } from '../../avaliacoes/novaliacao/novaliacao.component';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { SelectModule } from 'primeng/select';
+import { DatePickerModule } from 'primeng/datepicker';
 
 
 interface ExtendedAvaliado extends Avaliado {
@@ -65,6 +68,7 @@ interface ExtendedAvaliado extends Avaliado {
   imports: [
     RouterLink,TabMenuModule,FormsModule,ReactiveFormsModule,DropdownModule,MatFormFieldModule,MatSelectModule,CardModule,DividerModule,CalendarModule,
     CommonModule,NzIconModule,NzUploadModule, NzLayoutModule, NzMenuModule,RouterLink,CardModule,MultiSelectModule,ChartModule,KnobModule,NzProgressModule,
+    FloatLabelModule,SelectModule,MultiSelectModule,DatePickerModule
     
   ],
   templateUrl: './relatorios.component.html',

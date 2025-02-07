@@ -5,36 +5,51 @@
 .titulo{
     margin-top: 4%;
 }
-.formWrap{
-    display: flex;
-    flex-direction: column;
+.form-geral{
     width: 90%;
     margin-left: auto;
     margin-right: auto;
     border-radius: 8px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-
-    .form{
-        margin-top: 2%;
-        height: 50%;
-        width: 95%;
-        display: flex;
-        margin-left: auto;
-        margin-right: auto;
-        .coluna{
-            display: flex;
-            flex-direction: column;
-            width: 50%;
-            justify-content: center;
+    .fg1{
+        width: 100%;
+        //margin-top: 10px;
+        //margin-bottom: 25px;
+        p{
+            margin-left: 20px;
+        }
+        .form1{
+           margin-top: 16px; 
+        }
+        .form2{
+            margin-top: 16px;
+        } 
+    }
+    .fg2{
+        width: 100%;
+        //margin-top: 10px;
+        //margin-bottom: 25px;
+        p{
+            margin-left: 20px;
+        }
+        .form2{
+            margin-top: 16px;
             
-            .raiz{
-                width: 99%;
-                margin-top: 5%;
-               
-            }
+        } 
+    }
+    .fg3{
+        width: 100%;
+        //margin-top: 10px;
+        margin-bottom: 25px;
+        p{
+            margin-left: 20px;
+        }
+        .form2{
+            margin-top: 16px;
+            
         }
     }
-}    
+}       
 .botoes-form{
     display: flex;
     width: 75%;
@@ -91,7 +106,6 @@
 .tabela{
     border-radius: 10px;
     margin: auto;
-    margin-top: 10%;
     width: 99%;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 }
@@ -100,5 +114,34 @@
     display: flex;
     button{
         margin-left: 2px;
+    }
+}
+.editGeral{
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    .fg1edit{
+        width: 50%;
+        margin-top: 10px;
+        .form2{
+            margin-top: 25px;
+        }
+    }
+    .fg2edit{
+        width: 50%;
+        margin-top: 10px;
+        .form2{
+            margin-top: 25px;
+        }
+    }
+    .fg3edit{
+        width: 50%;
+        margin-top: 10px;
+        .form2{
+            margin-top: 25px;
+            margin-bottom: 20px;;
+        }
     }
 }

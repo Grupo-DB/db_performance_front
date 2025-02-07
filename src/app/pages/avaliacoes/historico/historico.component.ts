@@ -63,6 +63,9 @@ import { DialogModule } from 'primeng/dialog';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { TabMenuModule } from 'primeng/tabmenu';
+import { Select, SelectModule } from 'primeng/select';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { DatePickerModule } from 'primeng/datepicker';
 
 
 @Component({
@@ -72,7 +75,7 @@ import { TabMenuModule } from 'primeng/tabmenu';
     ReactiveFormsModule,FormsModule,StepperModule,CommonModule,MatStepperModule,MatFormFieldModule,CalendarModule,MatRadioModule,DividerModule,DialogModule,
     InputMaskModule,StepsModule,NzStepsModule,MatInputModule,MatButtonModule,MatSelectModule,RadioButtonModule,InputTextModule,MultiSelectModule,
     RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,IconFieldModule,InputIconModule,
-    NzMenuModule,TabMenuModule,
+    NzMenuModule,TabMenuModule,SelectModule,FloatLabelModule,DatePickerModule,MultiSelectModule
   ],
   providers:[
     MessageService,GetSetorService,TipoContratoService,PerguntasService,TipoAvaliacaoService,

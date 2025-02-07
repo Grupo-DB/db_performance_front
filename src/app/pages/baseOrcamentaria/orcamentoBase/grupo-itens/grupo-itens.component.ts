@@ -18,6 +18,10 @@ import { LoginService } from '../../../../services/avaliacoesServices/login/logi
 import { RaizAnaliticaService } from '../../../../services/baseOrcamentariaServices/orcamento/RaizAnalitica/raiz-analitica.service';
 import { animate, keyframes, style, transition, trigger } from '@angular/animations';
 import { ButtonModule } from 'primeng/button';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { SelectModule } from 'primeng/select';
 
 interface RegisterGrupoItensForm{
   codigo: FormControl;
@@ -52,7 +56,7 @@ export interface GrupoItens{
   imports: [
     CommonModule,RouterLink,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
     DropdownModule,FormsModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,
-    ConfirmDialogModule,ToastModule,ButtonModule
+    ConfirmDialogModule,ToastModule,ButtonModule,FloatLabelModule,SelectModule,IconFieldModule,InputIconModule
   ],
   providers: [
     MessageService,ConfirmationService

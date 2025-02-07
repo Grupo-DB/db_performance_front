@@ -22,6 +22,9 @@ import { Colaborador } from '../../../avaliacoes/colaborador/colaborador.compone
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { animate, keyframes, style, transition, trigger } from '@angular/animations';
 import { ButtonModule } from 'primeng/button';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { SelectModule } from 'primeng/select';
 
 interface RegisterCentroCustoForm{
   codigo: FormControl;
@@ -44,7 +47,8 @@ export interface CentroCusto{
   standalone: true,
   imports: [
     CommonModule,RouterLink,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
-    DropdownModule,FormsModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,
+    DropdownModule,FormsModule,ReactiveFormsModule,IconFieldModule,InputIconModule, 
+    InputTextModule,TableModule,DialogModule,SelectModule,
     ConfirmDialogModule,ToastModule,FloatLabelModule,ButtonModule
   ],
   providers: [

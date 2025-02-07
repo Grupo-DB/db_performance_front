@@ -28,6 +28,9 @@ import { Setor } from '../../../avaliacoes/setor/setor.component';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { animate, keyframes, style, transition, trigger } from '@angular/animations';
 import { ButtonModule } from 'primeng/button';
+import { SelectModule } from 'primeng/select';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 
 interface RegisterCentroCustoPaiForm {
   nome: FormControl,
@@ -58,7 +61,8 @@ export interface CentroCustoPai {
   imports: [
     CommonModule,RouterLink,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
     DropdownModule,FormsModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,
-    ConfirmDialogModule,ToastModule, FloatLabelModule,ButtonModule
+    ConfirmDialogModule,ToastModule,IconFieldModule,InputIconModule, 
+    FloatLabelModule,ButtonModule,FloatLabelModule,SelectModule
   ],
   providers: [
     MessageService,ConfirmationService

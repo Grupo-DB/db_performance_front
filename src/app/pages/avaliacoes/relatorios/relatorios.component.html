@@ -1,48 +1,50 @@
 <div class="menu">
-  <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
-      <li nz-menu-item nzMatchRouter="#">
-          <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
-      </li>
-      <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
-          <ul>
-              <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                  <a routerLink="../tipoavaliacao" >Tipos de Avaliações</a>
-              </li>
-              <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                  <a routerLink="../pergunta" >Perguntas</a>
-              </li>
-              <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                  <a routerLink="../formulario" >Formulários</a>
-              </li>
-          </ul>
-      </li>    
-      
-      <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
-          <ul>
-              <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
-                  <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
-              </li>
-              <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
-                  <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados a um Formulário</a>
-              </li>
-              <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
-                  <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
-              </li>
-          </ul>    
-      </li>
-
-      
-      <li nz-menu-item nzMatchRouter="">
-          <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
-      </li>
-      <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['RHAvaliacao'])">
-          <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
-      </li>
-      <li nz-menu-item nzMatchRouter="">
-          <a style="font-size: 13px;" routerLink="../relatorios" >Relatórios</a>
-      </li>
-      
-  </ul>
+  <div class="menu w-full">
+    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 45px;box-shadow: 2px 0 6px ; ">
+        <li nz-menu-item nzMatchRouter="#">
+            <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
+        </li>
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="../tipoavaliacao" >Tipos de Avaliações</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="../pergunta" >Perguntas</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="../formulario" >Formulários</a>
+                </li>
+            </ul>
+        </li>    
+        
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+                    <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+                    <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados a um Formulário</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+                    <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
+                </li>
+            </ul>    
+        </li>
+  
+        
+        <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
+        </li>
+        <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['RHAvaliacao'])">
+            <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
+        </li>
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../relatorios" >Relatórios</a>
+        </li>
+        
+    </ul>
+  </div>
 </div>
   
 <div class="titulo">
@@ -52,27 +54,46 @@
 </div>
 
 
-<div class="filtros">
-    <div class="filial">
-        <mat-form-field style="width: 280px;">
+<div *ngIf="hasGroup(['Admin','RHGestor'])" class="flex flex-column w-full align-items-center lg:flex-row w-full justify-content-around">
+  <div class="w-10 m-3 lg:w-4">
+        <!-- <mat-form-field style="width: 280px;">
           <mat-label >Selecione o avaliador</mat-label>
           <mat-select [(ngModel)]="avaliadorSelecionadoId2" multiple  (ngModelChange)="onAvaliadorSelecionado($event.value)">
             <mat-option  *ngFor="let avaliador of avaliadores" [value]="avaliador.id">{{ avaliador.nome }}</mat-option>
           </mat-select>
-        </mat-form-field>
-    </div>
-    <div class="filial">
-      <mat-form-field style="width: 280px;">
-        <mat-label >Selecione o Tipo</mat-label>
-        <mat-select [(ngModel)]="tipoSelecionado2" multiple  (ngModelChange)="onAvaliadorSelecionado($event.value)">
-          <mat-option  *ngFor="let tipo of tipos"[value]="tipo" >{{ tipo }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-    <div *ngIf="hasGroup(['Admin','RHGestor'])" class="calendarios">
+        </mat-form-field> -->
+        <p-floatlabel variant="on">
+          <p-multiselect
+            variant="filled"
+            [style]="{'width': '100%'}"
+            [options]="avaliadores"
+            [(ngModel)]="avaliadorSelecionadoId2"
+            optionLabel="nome"
+            [filter]="true"
+            filterBy="nome"
+            optionValue="id"
+            (onChange)="onAvaliadorSelecionado($event.value)"
+          ></p-multiselect>
+          <label for="avaliador">Selecione o(s) Avaliador(es)</label>
+        </p-floatlabel>
+  </div>
+  <div class="w-10 m-3 lg:w-4">
+      <p-floatlabel variant="on">
+        <p-select
+          variant="filled"
+          [style]="{'width': '100%'}"
+          [options]="tipos"
+          [(ngModel)]="tipoSelecionado2"
+          
+          (ngModelChange)="onAvaliadorSelecionado($event.value)"
+        ></p-select>
+        <label for="tipo">Selecione o Tipo de Avaliação</label>
+      </p-floatlabel>
+  </div>
+    <!-- <div *ngIf="hasGroup(['Admin','RHGestor'])" class="calendarios">
       <div class="form5">
         <p><label for="da">Data de Inicio</label></p>
-         <p-calendar
+         <p-datepicker
              [style]="{'width':'76%','margin-left':'-2px'}"
              id="da" 
             [(ngModel)] = "data_inicio"
@@ -81,7 +102,7 @@
              placeholder="SELECIONE"
              (ngModelChange)="applyFilters()"
          >
-         </p-calendar>
+         </p-datepicker>
          
      </div>
     
@@ -98,58 +119,150 @@
        >
        </p-calendar>
       </div>   
-    </div>
-</div>
-<div class="avaliacoesAvaliadores">
-  <div class="avTotais">
-    <p-card class="cardAvTot" header="{{ totalAvaliacoesAvaliador }}">
-      <p class="m-0">
-         Avaliações
-         <p-divider></p-divider>
-      </p>
-    </p-card>
-    <p-card class="cardAvTot" header=" {{ mediaNotaAvaliador}}">
-      <p class="m-0">
-        Nota Média
-        <p-divider></p-divider>
-      </p>
-    </p-card>
-    <div class="chartRadarAvaliadores">
+    </div> -->
+    <div class="flex flex-column w-full align-items-center md:flex-row lg:justify-content-end">
+      <div *ngIf="hasGroup(['Admin','RHGestor'])" class="flex w-10 m-3 md:w-6 lg:w-4">
+        <p-floatlabel variant="on">
+          <p-datepicker
+              [style]="{'width':'100%'}"
+              id="da" 
+              [(ngModel)] = "data_inicio"
+              dateFormat="dd/mm/yy"                  
+              [showIcon]="true"
+              (ngModelChange)="applyFilters()"
+          />
+          <label for="da">Data de Inicio</label>
+        </p-floatlabel>  
+        
+      </div>
+      <div *ngIf="hasGroup(['Admin','RHGestor'])" class="flex w-10 m-3 md:w-6 lg:w-4">
+        <p-floatlabel variant="on">
+          <p-datepicker
+              [style]="{'width':'100%'}"
+              id="da" 
+              [(ngModel)] = "data_fim"
+              dateFormat="dd/mm/yy"                  
+              [showIcon]="true"
+              (ngModelChange)="applyFilters()"
+          />
+          <label for="da">Data do Fim</label>
+        </p-floatlabel>
+      </div>
+    </div>     
+  </div>
+
+
+
+  <div 
+      *ngIf="hasGroup(['Admin','RHGestor'])" 
+      class="flex flex-column w-full 
+        md:flex-row w-full   
+        lg:flex-row w-full justify-content-center"
+  >
+    <div 
+      class="cards flex flex-column align-items-center 
+          md:flex-row w-full justify-content-around"
+    >
+      <p-card 
+        *ngIf="hasGroup(['Admin','RHGestor'])" 
+        class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+        header="{{ totalAvaliacoesAvaliador }}">
+        <p class="m-0">
+          Avaliações
+          <p-divider></p-divider>
+        </p>
+      </p-card>
+
+      <p-card 
+        *ngIf="hasGroup(['Admin','RHGestor'])" 
+        class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+        header=" {{ mediaNotaAvaliador}}">
+          <p class="m-0">
+            Nota Média
+            <p-divider></p-divider>
+          </p>
+      </p-card>
+    <div class="chartRadarAvaliadores md:w-10 lg:w-6">
       <canvas id="notaAvaliadoresChart"></canvas>
     </div>
   </div>  
 </div>
+
+
 <div class="titulo">
   <p-divider align="left" type="solid">
       <b>Comparativo entre Avaliadores</b>
   </p-divider> 
-  </div>
-<div class="filtros4">
-  <div class="filial">
-    <mat-form-field style="width: 400px;">
+</div>
+
+
+<div class="flex flex-column w-full align-items-center lg:flex-row w-full justify-content-around">
+  <div class="w-10 m-3 lg:w-4">
+    <!-- <mat-form-field style="width: 400px;">
       <mat-label >Selecione os avaliadores</mat-label>
       <mat-select [(ngModel)]="avaliadorSelecionadoId" multiple  (ngModelChange)="onAvaliadorSelecionado2($event.value)">
         <mat-option  *ngFor="let avaliador of avaliadores" [value]="avaliador.id">{{ avaliador.nome }}</mat-option>
       </mat-select>
-    </mat-form-field>
+    </mat-form-field> -->
+    <p-floatlabel variant="on">
+      <p-multiselect
+        variant="filled"
+        [style]="{'width': '100%'}"
+        [options]="avaliadores"
+        [(ngModel)]="avaliadorSelecionadoId"
+        optionLabel="nome"
+        [filter]="true"
+        filterBy="nome"
+        optionValue="id"
+        (onChange)="onAvaliadorSelecionado2($event.value)"
+      ></p-multiselect>
+      <label for="avaliador">Selecione o(s) Avaliador(es)</label>
+    </p-floatlabel>
   </div>
-  <div class="filial">
-    <mat-form-field style="width: 400px;">
+  <div class="w-10 m-3 lg:w-4">
+    <!-- <mat-form-field style="width: 400px;">
       <mat-label >Selecione o Periodo</mat-label>
       <mat-select [(ngModel)]="periodoSelecionado" multiple  (ngModelChange)="onAvaliadorSelecionado2($event.value)">
         <mat-option  *ngFor="let periodo of periodos"[value]="periodo" >{{ periodo }}</mat-option>
       </mat-select>
-    </mat-form-field>
+    </mat-form-field> -->
+    <p-floatlabel variant="on">
+      <p-multiselect
+        variant="filled"
+        [style]="{'width': '100%'}"
+        [options]="periodos"
+        [(ngModel)]="periodoSelecionado"
+        [filter]="true"
+        filterBy="nome"
+        (onChange)="onAvaliadorSelecionado2($event.value)"
+      ></p-multiselect>
+      <label for="periodo">Selecione o Periodo</label>
+    </p-floatlabel>
   </div>
-  <div class="filial">
-    <mat-form-field style="width: 400px;">
+  
+  <div class="w-10 m-3 lg:w-4">
+    <!-- <mat-form-field style="width: 400px;">
       <mat-label >Selecione o Tipo</mat-label>
       <mat-select [(ngModel)]="tipoSelecionado" multiple  (ngModelChange)="onAvaliadorSelecionado2($event.value)">
         <mat-option  *ngFor="let tipo of tipos"[value]="tipo" >{{ tipo }}</mat-option>
       </mat-select>
-    </mat-form-field>
+    </mat-form-field> -->
+
+    <p-floatlabel variant="on">
+      <p-multiselect
+        variant="filled"
+        [style]="{'width': '100%'}"
+        [options]="tipos"
+        [(ngModel)]="tipoSelecionado"
+        [filter]="true"
+        filterBy="nome"
+        (onChange)="onAvaliadorSelecionado2($event.value)"
+      ></p-multiselect>
+      <label for="tipo">Selecione o Tipo</label>
+    </p-floatlabel>
   </div>
 </div>  
+
 <div class="chartRadarAvaliadores3">
   <canvas id="mediaNotaPeriodoAvaliadorChart"></canvas>
 </div>
@@ -160,73 +273,123 @@
   </p-divider> 
 </div>
 
-<div class="filtros">
-  <div class="avaliado">
-    <mat-form-field style="width: 280px;">
+<div *ngIf="hasGroup(['Admin','RHGestor'])" class="flex flex-column w-full align-items-center lg:flex-row w-full justify-content-around">
+  <div class="w-10 m-3 lg:w-4">
+    <!-- <mat-form-field style="width: 280px;">
       <mat-label>Selecione o avaliado</mat-label>
       <mat-select [(ngModel)]="avaliadoSelecionadoId"  multiple (ngModelChange)="onAvaliadoSelecionado($event.value)">
         <mat-option *ngFor="let avaliado of avaliados" [value]="avaliado.id">{{ avaliado.nome }}</mat-option>
       </mat-select>
-    </mat-form-field>
+    </mat-form-field> -->
+
+    <p-floatlabel variant="on">
+      <p-multiselect
+        variant="filled"
+        [style]="{'width': '100%'}"
+        [options]="avaliados"
+        [(ngModel)]="avaliadoSelecionadoId"
+        optionLabel="nome"
+        [filter]="true"
+        filterBy="nome"
+        optionValue="id"
+        (onChange)="onAvaliadoSelecionado($event.value)"
+      ></p-multiselect>
+      <label for="avaliado">Selecione o Avaliado</label>
+    </p-floatlabel>
   </div>
-  <div class="filial">
-    <mat-form-field style="width: 280px;">
+
+  <div class="w-10 m-3 lg:w-4">
+    <!-- <mat-form-field style="width: 280px;">
       <mat-label >Selecione o Tipo</mat-label>
       <mat-select [(ngModel)]="tipoSelecionado2" multiple  (ngModelChange)="onAvaliadoSelecionado($event.value)">
         <mat-option  *ngFor="let tipo of tipos"[value]="tipo" >{{ tipo }}</mat-option>
       </mat-select>
-    </mat-form-field>
+    </mat-form-field> -->
+
+    <p-floatlabel variant="on">
+      <p-multiselect
+        variant="filled"
+        [style]="{'width': '100%'}"
+        [options]="tipos"
+        [(ngModel)]="tipoSelecionado2"
+        [filter]="true"
+        filterBy="nome"
+        (onChange)="onAvaliadoSelecionado($event.value)"
+      ></p-multiselect>
+      <label for="tipo">Selecione o Tipo</label>
+    </p-floatlabel>
+
   </div>
-  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="calendarios">
-    <div class="form5">
-      <p><label for="da">Data de Inicio</label></p>
-       <p-calendar
-           [style]="{'width':'76%','margin-left':'-2px'}"
-           id="da" 
-          [(ngModel)] = "data_inicio"
-           dateFormat="dd/mm/yy"                  
-           [showIcon]="true"
-           placeholder="SELECIONE"
-           (ngModelChange)="onAvaliadoSelecionado($event.value)"
-       >
-       </p-calendar>
-       
-   </div>
-  
-   <div *ngIf="hasGroup(['Admin','RHGestor'])" class="form5">
-    <p><label for="da">Data do Fim</label></p>
-     <p-calendar
-         [style]="{'width':'76%','margin-left':'-2px'}"
-         id="da" 
-        [(ngModel)] = "data_fim"
-         dateFormat="dd/mm/yy"                  
-         [showIcon]="true"
-         placeholder="SELECIONE"
-         (ngModelChange)="onAvaliadoSelecionado($event.value)"
-     >
-     </p-calendar>
-    </div>   
+
+  <div class="flex flex-column w-full align-items-center md:flex-row lg:justify-content-end">
+    <div *ngIf="hasGroup(['Admin','RHGestor'])" class="flex w-10 m-3 md:w-6 lg:w-4">
+      <p-floatlabel variant="on">
+        <p-datepicker
+            [style]="{'width':'100%'}"
+            id="da" 
+            [(ngModel)] = "data_inicio"
+            dateFormat="dd/mm/yy"                  
+            [showIcon]="true"
+            (ngModelChange)="applyFilters()"
+        />
+        <label for="da">Data de Inicio</label>
+      </p-floatlabel>  
+      
+    </div>
+    <div *ngIf="hasGroup(['Admin','RHGestor'])" class="flex w-10 m-3 md:w-6 lg:w-4">
+      <p-floatlabel variant="on">
+        <p-datepicker
+            [style]="{'width':'100%'}"
+            id="da" 
+            [(ngModel)] = "data_fim"
+            dateFormat="dd/mm/yy"                  
+            [showIcon]="true"
+            (ngModelChange)="applyFilters()"
+        />
+        <label for="da">Data do Fim</label>
+      </p-floatlabel>
+    </div>
   </div>
+
 </div>
-<div class="avaliacoesAvaliadores">
-  <div class="avTotais">
-    <p-card class="cardAvTot" header="{{ totalAvaliacoesAvaliado }}">
-      <p class="m-0">
-         Avaliações
-         <p-divider></p-divider>
-      </p>
-    </p-card>
-    <p-card class="cardAvTot" header=" {{ mediaNotaAvaliado}}">
+
+  <div 
+    *ngIf="hasGroup(['Admin','RHGestor'])" 
+    class="flex flex-column w-full 
+          md:flex-row w-full   
+          lg:flex-row w-full justify-content-center"
+  >
+    <div 
+        class="cards flex flex-column align-items-center 
+              md:flex-row w-full justify-content-around"
+    >
+      <p-card   
+        *ngIf="hasGroup(['Admin','RHGestor'])" 
+        class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6"
+        header="{{ totalAvaliacoesAvaliado }}">
+        <p class="m-0">
+          Avaliações
+          <p-divider></p-divider>
+        </p>
+      </p-card>
+
+    <p-card 
+      *ngIf="hasGroup(['Admin','RHGestor'])" 
+      class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+      header=" {{ mediaNotaAvaliado}}">
       <p class="m-0">
         Nota Média
         <p-divider></p-divider>
       </p>
     </p-card>
+
     <div class="chartRadarAvaliadores">
       <canvas id="notaAvaliadosChart"></canvas>
     </div>
+
   </div> 
-</div>   
+</div>
+
 <div class="chartRadarAvaliadores2">
   <canvas id="mediaNotaPeriodoAvaliadoChart"></canvas>
 </div>
@@ -236,17 +399,32 @@
       <b>Evolução da Média Geral por Avaliado</b>
   </p-divider> 
 </div>
-<div class="filtros">
-  <div class="avaliado">
-    <mat-form-field style="width: 400px;">
+
+<div class="flex flex-column w-full align-items-center lg:flex-row w-full justify-content-around">
+  <div class="w-10 m-3 lg:w-4">
+    <!-- <mat-form-field style="width: 400px;">
       <mat-label>Selecione o avaliado</mat-label>
       <mat-select [(ngModel)]="avaliadoSelecionadoId"   (ngModelChange)="applyFiltersHistorico()">
         <mat-option *ngFor="let avaliado of avaliados" [value]="avaliado.id">{{ avaliado.nome }}</mat-option>
       </mat-select>
-    </mat-form-field>
+    </mat-form-field> -->
+    <p-floatlabel variant="on">
+      <p-select
+        variant="filled"
+        [style]="{'width': '100%'}"
+        [options]="avaliados"
+        optionLabel="nome"
+        optionValue="id"
+        [(ngModel)]="avaliadoSelecionadoId"
+        (ngModelChange)="applyFiltersHistorico()"
+      ></p-select>
+      <label for="avaliado">Selecione o Avaliado</label>
+    </p-floatlabel>
   </div>
-</div>  
-<div class="chartRadarAvaliadores2">
+</div> 
+
+
+<div class="chartRadarAvaliadores2 ml-1">
   <canvas id="mediaNotaGeralPeriodoAvaliadoChart"></canvas>
 </div>
 
@@ -256,80 +434,186 @@
   </p-divider> 
 </div>
 
-<div *ngIf="hasGroup(['Admin','RHGestor'])" class="filtrosPdf">
-  <div class="pdf1">
-    <div class="empresa">
-      <mat-form-field>
+<div class="flex flex-column w-full align-items-center lg:flex-row w-full justify-content-around">
+  <div class="w-10 m-3 lg:w-4">
+      <!-- <mat-form-field>
         <mat-label>Selecione a Empresa</mat-label>
         <mat-select [(ngModel)]="selectedEmpresas" multiple  (ngModelChange)="onEmpresaSelecionada($event.value)">
           <mat-option *ngFor="let empresa of empresas" [value]="empresa.id">{{ empresa.nome }}</mat-option>
         </mat-select>
-      </mat-form-field>
-    </div>
-    <div class="filial">
-      <mat-form-field>
+      </mat-form-field> -->
+
+      <p-floatlabel variant="on">
+        <p-multiselect
+          variant="filled"
+          [style]="{'width': '100%'}"
+          [options]="empresas"
+          [(ngModel)]="selectedEmpresas"
+          [filter]="true"
+          filterBy="nome"
+          optionLabel="nome"
+          optionValue="id"
+          (onChange)="onEmpresaSelecionada($event.value)"
+        ></p-multiselect>
+        <label for="empresa">Selecione a Empresa</label>
+      </p-floatlabel>
+
+  </div>
+  <div class="w-10 m-3 lg:w-4">
+      <!-- <mat-form-field>
         <mat-label>Selecione a Filial</mat-label>
         <mat-select [(ngModel)]="selectedFiliais" multiple  (ngModelChange)="onFilialSelecionada($event.value)">
           <mat-option *ngFor="let filial of filiais" [value]="filial.id">{{ filial.nome }}</mat-option>
         </mat-select>
-      </mat-form-field>
-    </div>
-    <div class="area">  
-      <mat-form-field>
+      </mat-form-field> -->
+
+      <p-floatlabel variant="on">
+        <p-multiselect
+          variant="filled"
+          [style]="{'width': '100%'}"
+          [options]="filiais"
+          [(ngModel)]="selectedFiliais"
+          [filter]="true"
+          filterBy="nome"
+          optionLabel="nome"
+          optionValue="id"
+          (onChange)="onFilialSelecionada($event.value)"
+        ></p-multiselect>
+        <label for="filial">Selecione a Filial</label>
+      </p-floatlabel>
+  </div>
+    <div class="w-10 m-3 lg:w-4">  
+      <!-- <mat-form-field>
         <mat-label>Selecione a Área</mat-label>
         <mat-select [(ngModel)]="selectedAreas" multiple (selectionChange)="onAreaSelecionada($event.value)">
           <mat-option *ngFor="let area of areas" [value]="area.id">{{ area.nome }}</mat-option>
         </mat-select>
-      </mat-form-field>
+      </mat-form-field> -->
+
+      <p-floatlabel variant="on">
+        <p-multiselect
+          variant="filled"
+          [style]="{'width': '100%'}"
+          [options]="areas"
+          [(ngModel)]="selectedAreas"
+          [filter]="true"
+          filterBy="nome"
+          optionLabel="nome"
+          optionValue="id"
+          (onChange)="onAreaSelecionada($event.value)"
+        ></p-multiselect>
+        <label for="area">Selecione a Área</label>
+      </p-floatlabel> 
     </div>
   </div>
-  <div class="pdf2">     
-    <div class="setor">  
-      <mat-form-field>
+  <div class="flex flex-column w-full align-items-center lg:flex-row w-full justify-content-around">
+    <div class="w-10 m-3 lg:w-4"> 
+      <!-- <mat-form-field>
         <mat-label>Selecione o Ambiente</mat-label>
         <mat-select [(ngModel)]="selectedSetores" multiple (selectionChange)="onSetorSelecionado($event.value)">
           <mat-option *ngFor="let setor of setores" [value]="setor.id">{{ setor.nome }}</mat-option>
         </mat-select>
-      </mat-form-field>
+      </mat-form-field> -->
+
+      <p-floatlabel variant="on">
+        <p-multiselect
+          variant="filled"
+          [style]="{'width': '100%'}"
+          [options]="setores"
+          [(ngModel)]="selectedSetores"
+          [filter]="true"
+          filterBy="nome"
+          optionLabel="nome"
+          optionValue="id"
+          (onChange)="onSetorSelecionado($event.value)"
+        ></p-multiselect>
+        <label for="setor">Selecione o Setor</label>
+      </p-floatlabel>
     </div>
-    <div class="ambientes">
-      <mat-form-field>
+    <div class="w-10 m-3 lg:w-4">
+      <!-- <mat-form-field>
         <mat-label>Selecione o Setor</mat-label>
         <mat-select [(ngModel)]="selectedAmbientes" multiple (selectionChange)="onAmbienteSelecionado($event.value)">
           <mat-option *ngFor="let ambiente of ambientes" [value]="ambiente.id">{{ ambiente.nome }}</mat-option>
         </mat-select>
-      </mat-form-field>
+      </mat-form-field> -->
+
+      <p-floatlabel variant="on">
+        <p-multiselect
+          variant="filled"
+          [style]="{'width': '100%'}"
+          [options]="ambientes"
+          [(ngModel)]="selectedAmbientes"
+          [filter]="true"
+          filterBy="nome"
+          optionLabel="nome"
+          optionValue="id"
+          (onChange)="onAmbienteSelecionado($event.value)"
+        ></p-multiselect>
+        <label for="ambiente">Selecione o Ambiente</label>
+      </p-floatlabel>
     </div>
-    <div class="cargos">
-      <mat-form-field>
+    <div class="w-10 m-3 lg:w-4">
+      <!-- <mat-form-field>
         <mat-label>Selecione o Cargo</mat-label>
         <mat-select [(ngModel)]="selectedCargos" multiple (selectionChange)="applyFilters()">
           <mat-option *ngFor="let cargo of cargos" [value]="cargo.id">{{ cargo.nome }}</mat-option>
         </mat-select>
-      </mat-form-field>
+      </mat-form-field> -->
+
+      <p-floatlabel variant="on">
+        <p-multiselect
+          variant="filled"
+          [style]="{'width': '100%'}"
+          [options]="cargos"
+          [(ngModel)]="selectedCargos"
+          [filter]="true"
+          filterBy="nome"
+          optionLabel="nome"
+          optionValue="id"
+          (onChange)="applyFilters()"
+        ></p-multiselect>
+        <label for="cargo">Selecione o Cargo</label>
+      </p-floatlabel>
     </div>
   </div>
-  <div class="pdf3">
-    <div class="btnsec" (click)="generateFilteredPDF()">
+  <div class="flex flex-column w-full align-items-center lg:flex-row w-full justify-content-around">
+    <div class="btnsec w-10 md:mt-5 w-6" (click)="generateFilteredPDF()">
       <p>Lista de Avaliados Filtrados</p>
     </div>
-    <div class="btnsec" (click)="downloadPdf()">
+    <br>
+    <div class="btnsec w-10 md:mt-5 w-6" (click)="downloadPdf()">
       <p style="vertical-align: middle;">Baixar Lista de Avaliadores</p>
     </div>
   </div>
-  <div class="pdf4">
-    <div class="avaliado">
-      <mat-form-field style="width: 400px;">
+  <div class="flex flex-column w-full align-items-center lg: w-full justify-content-around">
+    <div class="w-10 m-3 lg:w-4 mt-5">
+      <!-- <mat-form-field style="width: 400px;">
         <mat-label>Selecione o avaliado</mat-label>
         <mat-select [(ngModel)]="avaliadoSelecionadoId"   (ngModelChange)="applyFiltersHistorico()">
           <mat-option *ngFor="let avaliado of avaliados" [value]="avaliado.id">{{ avaliado.nome }}</mat-option>
         </mat-select>
-      </mat-form-field>
+      </mat-form-field> -->
+
+      <p-floatlabel variant="on">
+        <p-select
+          variant="filled"
+          [style]="{'width': '100%'}"
+          [options]="avaliados"
+          optionLabel="nome"
+          optionValue="id"
+          [filter]="true"
+          filterBy="nome" 
+          [(ngModel)]="avaliadoSelecionadoId"
+          (ngModelChange)="applyFiltersHistorico()"
+        ></p-select>
+        <label for="avaliado">Selecione o Avaliado</label>
+      </p-floatlabel>
     </div>
-    <div class="btnsecav" (click)="gerarRelatorioPDF()">
+    <div class="btnsecav mb-5 w-10 md:w-10" (click)="gerarRelatorioPDF()">
       <p style="vertical-align: middle;">Histórico do Colaborador </p>
     </div>
   </div>    
-</div>
+
 
 

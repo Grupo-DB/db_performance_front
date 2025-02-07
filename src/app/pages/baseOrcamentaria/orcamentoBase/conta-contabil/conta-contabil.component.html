@@ -1,5 +1,5 @@
 <div class="menu">
-    <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
         <li nz-menu-item nzMatchRouter="#">
             <a style="font-size: 13px;" routerLink="homeOrcamento">Início</a>
         </li>
@@ -49,235 +49,222 @@
     </ul>
 </div>
 
-<div class="titulo">
-    <p-divider align="left" type="solid">
-        <b>Cadastro de Conta Contábil</b>
-    </p-divider>
-</div>
-
 <div class="container">
-    <div class="formWrap"@swipeAnimation>
+
+    <div class="titulo">
+        <p-divider align="left" type="solid">
+            <b>Cadastro de Conta Contábil</b>
+        </p-divider>
+    </div>
         <form
             [formGroup]="registerForm"
             title="Cadastrar nova Conta Contábil"
             primaryBtnText="Cadastrar"
             (submit)="submit()"  
         >
-            <div class="form">
-                <div class="coluna">
-                    <div class="raiz">
-                        <p-inputGroup >
-                            <p-inputGroupAddon>
-                                <i class="pi pi-file-edit"></i>
-                            </p-inputGroupAddon>
-                            <span class="p-float-label">
+        <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation>
+            <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
+                    <div class="form2 w-10">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
                                 <input
+                                    variant="filled"
                                     [style]="{'width':'100%'}"
-                                    pInputText
-                                    id="nivel1Conta"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
                                     formControlName="nivel1Conta"
                                     type="text"
-                                />  
-                                <label for="nivel1Conta">Informe a Conta Nível 1</label>
-                            </span>          
-                        </p-inputGroup>
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Informe a Conta Nível 1</label>
+                        </p-floatlabel>
                     </div>
-                    <div class="raiz">
-                        <p-inputGroup >
-                            <p-inputGroupAddon>
-                                <i class="pi pi-file-edit"></i>
-                            </p-inputGroupAddon>
-                            <span class="p-float-label">
+                    <div class="form2 w-10">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
                                 <input
+                                    variant="filled"
                                     [style]="{'width':'100%'}"
-                                    pInputText
-                                    id="nivel2Conta"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
                                     formControlName="nivel2Conta"
                                     type="text"
-                                />  
-                                <label for="nivel2Conta">Informe a Conta Nível 2</label>
-                            </span>          
-                        </p-inputGroup>
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Informe a Conta Nível 2</label>
+                        </p-floatlabel>
                     </div>
-                    <div class="raiz">
-                        <p-inputGroup >
-                            <p-inputGroupAddon>
-                                <i class="pi pi-file-edit"></i>
-                            </p-inputGroupAddon>
-                            <span class="p-float-label">
+                    <div class="form2 w-10">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
                                 <input
+                                    variant="filled"
                                     [style]="{'width':'100%'}"
-                                    pInputText
-                                    id="nivel3Conta"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
                                     formControlName="nivel3Conta"
                                     type="text"
-                                />  
-                                <label for="nivel3Conta">Informe a Conta Nível 3</label>
-                            </span>          
-                        </p-inputGroup>
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Informe a Conta Nível 3</label>
+                        </p-floatlabel>
                     </div>
-                    <div class="raiz">
-                        <p-inputGroup >
-                            <p-inputGroupAddon>
-                                <i class="pi pi-file-edit"></i>
-                            </p-inputGroupAddon>
-                            <span class="p-float-label">
+                    <div class="form2 w-10">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
                                 <input
+                                    variant="filled"
                                     [style]="{'width':'100%'}"
-                                    pInputText
-                                    id="nivel4Conta"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
                                     formControlName="nivel4Conta"
                                     type="text"
-                                />  
-                                <label for="nivel4Conta">Informe a Conta Nível 4</label>
-                            </span>          
-                        </p-inputGroup>
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Informe a Conta Nível 4</label>
+                        </p-floatlabel>
                     </div>
-                    <div class="raiz">
-                        <p-inputGroup >
-                            <p-inputGroupAddon>
-                                <i class="pi pi-file-edit"></i>
-                            </p-inputGroupAddon>
-                            <span class="p-float-label">
+                    <div class="form2 w-10">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
                                 <input
+                                    variant="filled"
                                     [style]="{'width':'100%'}"
-                                    pInputText
-                                    id="nivel5Conta"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
                                     formControlName="nivel5Conta"
                                     type="text"
-                                />  
-                                <label for="nivel5Conta">Informe a Conta Nível 5</label>
-                            </span>          
-                        </p-inputGroup>
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Informe a Conta Nível 5</label>
+                        </p-floatlabel>
                     </div>
-                    <div class="raiz">
-                        <p-inputGroup >
-                            <p-inputGroupAddon>
-                                <i class="pi pi-file-edit"></i>
-                            </p-inputGroupAddon>
-                            <span class="p-float-label">
+                    <div class="form2 w-10">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
                                 <input
+                                    variant="filled"
                                     [style]="{'width':'100%'}"
-                                    pInputText
-                                    id="nivelAnaliticoConta"
-                                    formControlName="nivelAnaliticoConta"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="nivel6Conta"
                                     type="text"
-                                />  
-                                <label for="nivelAnaliticoConta">Informe a Conta Nível Analítico</label>
-                            </span>          
-                        </p-inputGroup>
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Informe a Conta Nível 6</label>
+                        </p-floatlabel>
                     </div>
                 </div><!--endColuna-->
 
 <!---------------------------------------COLUNA 2-----------------==============-->                
 
-                <div class="coluna">
-                    <div class="raiz">
-                        <p-inputGroup >
-                            <p-inputGroupAddon>
-                                <i class="pi pi-file-edit"></i>
-                            </p-inputGroupAddon>
-                            <span class="p-float-label">
+                <div class="fg2 flex flex-column w-12 align-items-center lg:w-6">
+                    <div class="form2 w-10 text-left">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
                                 <input
+                                    variant="filled"
                                     [style]="{'width':'100%'}"
-                                    pInputText
-                                    id="nivel1Nome"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
                                     formControlName="nivel1Nome"
                                     type="text"
-                                />  
-                                <label for="nivel1Nome">Informe o nome Nível 1</label>
-                            </span>          
-                        </p-inputGroup>
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Informe o nome Nível 1</label>
+                        </p-floatlabel>
                     </div>
-                    <div class="raiz">
-                        <p-inputGroup >
-                            <p-inputGroupAddon>
-                                <i class="pi pi-file-edit"></i>
-                            </p-inputGroupAddon>
-                            <span class="p-float-label">
+                    <div class="form2 w-10 text-left">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
                                 <input
+                                    variant="filled"
                                     [style]="{'width':'100%'}"
-                                    pInputText
-                                    id="nivel2Nome"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
                                     formControlName="nivel2Nome"
                                     type="text"
-                                />  
-                                <label for="nivel2Nome">Informe o nome Nível 2</label>
-                            </span>          
-                        </p-inputGroup>
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Informe o nome Nível 2</label>
+                        </p-floatlabel>
                     </div>
-                    <div class="raiz">
-                        <p-inputGroup >
-                            <p-inputGroupAddon>
-                                <i class="pi pi-file-edit"></i>
-                            </p-inputGroupAddon>
-                            <span class="p-float-label">
+                    <div class="form2 w-10 text-left">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
                                 <input
+                                    variant="filled"
                                     [style]="{'width':'100%'}"
-                                    pInputText
-                                    id="nivel3Nome"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
                                     formControlName="nivel3Nome"
                                     type="text"
-                                />  
-                                <label for="nivel3Nome">Informe o nome Nível 3</label>
-                            </span>          
-                        </p-inputGroup>
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Informe o nome Nível 3</label>
+                        </p-floatlabel>
                     </div>
-                    <div class="raiz">
-                        <p-inputGroup >
-                            <p-inputGroupAddon>
-                                <i class="pi pi-file-edit"></i>
-                            </p-inputGroupAddon>
-                            <span class="p-float-label">
+                    <div class="form2 w-10 text-left">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
                                 <input
+                                    variant="filled"
                                     [style]="{'width':'100%'}"
-                                    pInputText
-                                    id="nivel4Nome"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
                                     formControlName="nivel4Nome"
                                     type="text"
-                                />  
-                                <label for="nivel4Nome">Informe o nome Nível 4</label>
-                            </span>          
-                        </p-inputGroup>
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Informe o nome Nível 4</label>
+                        </p-floatlabel>
                     </div>
-                    <div class="raiz">
-                        <p-inputGroup >
-                            <p-inputGroupAddon>
-                                <i class="pi pi-file-edit"></i>
-                            </p-inputGroupAddon>
-                            <span class="p-float-label">
+                    <div class="form2 w-10 text-left">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
                                 <input
+                                    variant="filled"
                                     [style]="{'width':'100%'}"
-                                    pInputText
-                                    id="nivel5Nome"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
                                     formControlName="nivel5Nome"
                                     type="text"
-                                />  
-                                <label for="nivel5Nome">Informe o nome Nível 5</label>
-                            </span>          
-                        </p-inputGroup>
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Informe o nome Nível 5</label>
+                        </p-floatlabel>
                     </div>
-                    <div class="raiz">
-                        <p-inputGroup >
-                            <p-inputGroupAddon>
-                                <i class="pi pi-file-edit"></i>
-                            </p-inputGroupAddon>
-                            <span class="p-float-label">
+                    <div class="form2 w-10 mb-3 text-left">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
                                 <input
+                                    variant="filled"
                                     [style]="{'width':'100%'}"
-                                    pInputText
-                                    id="nivelAnaliticoNome"
-                                    formControlName="nivelAnaliticoNome"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="nivelAnaliticoConta"
                                     type="text"
-                                />  
-                                <label for="nivelAnaliticoNome">Informe o nome Nível Analítico</label>
-                            </span>          
-                        </p-inputGroup>
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Informe o nome Nível Analítico</label>
+                        </p-floatlabel>
                     </div>
                 </div>
             </div>
         </form>
-        <div class="botoes-form">
+        <div class="flex justify-content-center mb-5 mt-5"@efeitoFade>
             <p-toast></p-toast>
             <div class="btnsec" (click)="clearForm()">
                 <p>Limpar</p>
@@ -290,6 +277,8 @@
     </div>
 
     <div class="tabela"@swipeAnimationReverse>
+        <p-toast />
+        <p-confirmDialog />
         <p-table
             #dt1
             [value]="contasContabeis"
@@ -300,19 +289,29 @@
             currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
             [rowsPerPageOptions]="[5, 10, 20]"
             [globalFilterFields]="['nome','codigo','ccPaiNome','gestorNome']"
+            stripedRows
+            scrollable="true"
         >
             <ng-template pTemplate="caption">
-                <p-toast />
-                <p-confirmDialog />
-                <div class="flex">
-                    <span class="p-input-icon-left ml-auto">
-                        <i class="pi pi-search"></i>
-                        <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Digite o nome" />
-                    </span>
-                    <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
-                    <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+                <div class="flex flex-row md: justify-content-end">
+                    <p-floatlabel variant="on">
+                        <p-iconfield>
+                            <p-inputicon class="pi pi-search" />
+                            <input
+                                variant="filled"
+                                [(ngModel)] = "inputValue"
+                                [style]="{'width':'100%'}"
+                                pInputText id="on_label"
+                                autocomplete="off"
+                                type="text"
+                            />
+                        </p-iconfield>
+                        <label for="on_label">Nome</label>
+                    </p-floatlabel>
+                    <button size="small" class="ml-2" pButton [rounded]="true" label="Pesquisar" severity="info"  (click)="filterTable()"></button>
+                    <button size="small" class="ml-2" pButton [rounded]="true" label="Limpar" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
                 </div>
-            </ng-template>
+            </ng-template>   
             <ng-template pTemplate="header">
                 <tr>
                     <th style="width:50%" type="text" field="ccPaiNome" display="menu">
@@ -341,10 +340,10 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="paginatorleft">
-                <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+                <p-button type="button"  styleClass="p-button-text"></p-button>
             </ng-template>
             <ng-template pTemplate="paginatorright">
-                <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
+                <p-button type="button" styleClass="p-button-text"></p-button>
             </ng-template> 
         </p-table>
     </div>
@@ -353,233 +352,220 @@
         [modal]="true"
         [(visible)]="editFormVisible" 
         [style]="{ width: '65rem' }" 
-        [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
     >
         <div class="titulo">
             <p-divider align="left" type="solid">
                 <b>Editar Conta Contabil</b>
             </p-divider> 
         </div>
-        <div class="container">
-            <div class="formWrap">
+
                 <form 
                     [formGroup]="editForm"
                     title="Editar Conta Contabil"      
                 >
-                    <div class="form">
-                        <div class="coluna">
-                            <div class="raiz">
-                                <p-inputGroup >
-                                    <p-inputGroupAddon>
-                                        <i class="pi pi-file-edit"></i>
-                                    </p-inputGroupAddon>
-                                    <span class="p-float-label">
-                                        <input
-                                            [style]="{'width':'100%'}"
-                                            pInputText
-                                            id="nivel_1_conta"
-                                            formControlName="nivel_1_conta"
-                                            type="text"
-                                        />  
-                                        <label for="nivel_1_conta">Informe a Conta Nível 1</label>
-                                    </span>          
-                                </p-inputGroup>
-                            </div>
-                            <div class="raiz">
-                                <p-inputGroup >
-                                    <p-inputGroupAddon>
-                                        <i class="pi pi-file-edit"></i>
-                                    </p-inputGroupAddon>
-                                    <span class="p-float-label">
-                                        <input
-                                            [style]="{'width':'100%'}"
-                                            pInputText
-                                            id="nivel_2_conta"
-                                            formControlName="nivel_2_conta"
-                                            type="text"
-                                        />  
-                                        <label for="nivel_2_conta">Informe a Conta Nível 2</label>
-                                    </span>          
-                                </p-inputGroup>
-                            </div>
-                            <div class="raiz">
-                                <p-inputGroup >
-                                    <p-inputGroupAddon>
-                                        <i class="pi pi-file-edit"></i>
-                                    </p-inputGroupAddon>
-                                    <span class="p-float-label">
-                                        <input
-                                            [style]="{'width':'100%'}"
-                                            pInputText
-                                            id="nivel_3_conta"
-                                            formControlName="nivel_3_conta"
-                                            type="text"
-                                        />  
-                                        <label for="nivel_3_conta">Informe a Conta Nível 3</label>
-                                    </span>          
-                                </p-inputGroup>
-                            </div>
-                            <div class="raiz">
-                                <p-inputGroup >
-                                    <p-inputGroupAddon>
-                                        <i class="pi pi-file-edit"></i>
-                                    </p-inputGroupAddon>
-                                    <span class="p-float-label">
-                                        <input
-                                            [style]="{'width':'100%'}"
-                                            pInputText
-                                            id="nivel_4_conta"
-                                            formControlName="nivel_4_conta"
-                                            type="text"
-                                        />  
-                                        <label for="nivel_4_conta">Informe a Conta Nível 4</label>
-                                    </span>          
-                                </p-inputGroup>
-                            </div>
-                            <div class="raiz">
-                                <p-inputGroup >
-                                    <p-inputGroupAddon>
-                                        <i class="pi pi-file-edit"></i>
-                                    </p-inputGroupAddon>
-                                    <span class="p-float-label">
-                                        <input
-                                            [style]="{'width':'100%'}"
-                                            pInputText
-                                            id="nivel_5_conta"
-                                            formControlName="nivel_5_conta"
-                                            type="text"
-                                        />  
-                                        <label for="nivel_5_conta">Informe a Conta Nível 5</label>
-                                    </span>          
-                                </p-inputGroup>
-                            </div>
-                            <div class="raiz">
-                                <p-inputGroup >
-                                    <p-inputGroupAddon>
-                                        <i class="pi pi-file-edit"></i>
-                                    </p-inputGroupAddon>
-                                    <span class="p-float-label">
-                                        <input
-                                            [style]="{'width':'100%'}"
-                                            pInputText
-                                            id="nivel_analitico_conta"
-                                            formControlName="nivel_analitico_conta"
-                                            type="text"
-                                        />  
-                                        <label for="nivel_analitico_conta">Informe a Conta Nível Analítico</label>
-                                    </span>          
-                                </p-inputGroup>
-                            </div>
-                        </div><!--endColuna-->
+                <div class="editGeral flex flex-column lg:flex-row">
+                    <div class="fg1edit flex flex-column w-12 align-items-center lg:w-6">
+                        <div class="form2 w-10">
+                            <p-floatlabel variant="on">
+                                <p-iconfield>
+                                    <p-inputicon class="pi pi-file-edit" />
+                                    <input
+                                        variant="filled"
+                                        [style]="{'width':'100%'}"
+                                        pInputText id="on_label"
+                                        autocomplete="off"
+                                        formControlName="nivel_1_conta"
+                                        type="text"
+                                    />
+                                </p-iconfield>
+                                <label for="on_label">Informe a Conta Nível 1</label>
+                            </p-floatlabel>
+                        </div>
+                        <div class="form2 w-10">
+                            <p-floatlabel variant="on">
+                                <p-iconfield>
+                                    <p-inputicon class="pi pi-file-edit" />
+                                    <input
+                                        variant="filled"
+                                        [style]="{'width':'100%'}"
+                                        pInputText id="on_label"
+                                        autocomplete="off"
+                                        formControlName="nivel_2_conta"
+                                        type="text"
+                                    />
+                                </p-iconfield>
+                                <label for="on_label">Informe a Conta Nível 2</label>
+                            </p-floatlabel>
+                        </div>
+                        <div class="form2 w-10">
+                            <p-floatlabel variant="on">
+                                <p-iconfield>
+                                    <p-inputicon class="pi pi-file-edit" />
+                                    <input
+                                        variant="filled"
+                                        [style]="{'width':'100%'}"
+                                        pInputText id="on_label"
+                                        autocomplete="off"
+                                        formControlName="nivel_3_conta"
+                                        type="text"
+                                    />
+                                </p-iconfield>
+                                <label for="on_label">Informe a Conta Nível 3</label>
+                            </p-floatlabel>
+                        </div>
+                        <div class="form2 w-10">
+                            <p-floatlabel variant="on">
+                                <p-iconfield>
+                                    <p-inputicon class="pi pi-file-edit" />
+                                    <input
+                                        variant="filled"
+                                        [style]="{'width':'100%'}"
+                                        pInputText id="on_label"
+                                        autocomplete="off"
+                                        formControlName="nivel_4_conta"
+                                        type="text"
+                                    />
+                                </p-iconfield>
+                                <label for="on_label">Informe a Conta Nível 4</label>
+                            </p-floatlabel>
+                        </div>
+                        <div class="form2 w-10">
+                            <p-floatlabel variant="on">
+                                <p-iconfield>
+                                    <p-inputicon class="pi pi-file-edit" />
+                                    <input
+                                        variant="filled"
+                                        [style]="{'width':'100%'}"
+                                        pInputText id="on_label"
+                                        autocomplete="off"
+                                        formControlName="nivel_5_conta"
+                                        type="text"
+                                    />
+                                </p-iconfield>
+                                <label for="on_label">Informe a Conta Nível 5</label>
+                            </p-floatlabel>
+                        </div>
+                        <div class="form2 w-10">
+                            <p-floatlabel variant="on">
+                                <p-iconfield>
+                                    <p-inputicon class="pi pi-file-edit" />
+                                    <input
+                                        variant="filled"
+                                        [style]="{'width':'100%'}"
+                                        pInputText 
+                                        autocomplete="off"
+                                        formControlName="nivel_analitico_conta"
+                                        type="text"
+                                        id="on_label"
+                                    />
+                                </p-iconfield>
+                                <label for="on_label">Informe a Conta Nível Analítico</label>
+                            </p-floatlabel>
+                        </div>
+                    </div><!--endColuna-->
         
         <!---------------------------------------COLUNA 2-----------------==============-->                
         
-                        <div class="coluna">
-                            <div class="raiz">
-                                <p-inputGroup >
-                                    <p-inputGroupAddon>
-                                        <i class="pi pi-file-edit"></i>
-                                    </p-inputGroupAddon>
-                                    <span class="p-float-label">
-                                        <input
-                                            [style]="{'width':'100%'}"
-                                            pInputText
-                                            id="nivel_1_nome"
-                                            formControlName="nivel_1_nome"
-                                            type="text"
-                                        />  
-                                        <label for="nivel_1_nome">Informe o nome Nível 1</label>
-                                    </span>          
-                                </p-inputGroup>
-                            </div>
-                            <div class="raiz">
-                                <p-inputGroup >
-                                    <p-inputGroupAddon>
-                                        <i class="pi pi-file-edit"></i>
-                                    </p-inputGroupAddon>
-                                    <span class="p-float-label">
-                                        <input
-                                            [style]="{'width':'100%'}"
-                                            pInputText
-                                            id="nivel_2_nome"
-                                            formControlName="nivel_2_nome"
-                                            type="text"
-                                        />  
-                                        <label for="nivel_2_nome">Informe o nome Nível 2</label>
-                                    </span>          
-                                </p-inputGroup>
-                            </div>
-                            <div class="raiz">
-                                <p-inputGroup >
-                                    <p-inputGroupAddon>
-                                        <i class="pi pi-file-edit"></i>
-                                    </p-inputGroupAddon>
-                                    <span class="p-float-label">
-                                        <input
-                                            [style]="{'width':'100%'}"
-                                            pInputText
-                                            id="nivel_3_nome"
-                                            formControlName="nivel_3_nome"
-                                            type="text"
-                                        />  
-                                        <label for="nivel_3_nome">Informe o nome Nível 3</label>
-                                    </span>          
-                                </p-inputGroup>
-                            </div>
-                            <div class="raiz">
-                                <p-inputGroup >
-                                    <p-inputGroupAddon>
-                                        <i class="pi pi-file-edit"></i>
-                                    </p-inputGroupAddon>
-                                    <span class="p-float-label">
-                                        <input
-                                            [style]="{'width':'100%'}"
-                                            pInputText
-                                            id="nivel_4_nome"
-                                            formControlName="nivel_4_nome"
-                                            type="text"
-                                        />  
-                                        <label for="nivel_4_nome">Informe o nome Nível 4</label>
-                                    </span>          
-                                </p-inputGroup>
-                            </div>
-                            <div class="raiz">
-                                <p-inputGroup >
-                                    <p-inputGroupAddon>
-                                        <i class="pi pi-file-edit"></i>
-                                    </p-inputGroupAddon>
-                                    <span class="p-float-label">
-                                        <input
-                                            [style]="{'width':'100%'}"
-                                            pInputText
-                                            id="nivel_5_nome"
-                                            formControlName="nivel_5_nome"
-                                            type="text"
-                                        />  
-                                        <label for="nivel_5_nome">Informe o nome Nível 5</label>
-                                    </span>          
-                                </p-inputGroup>
-                            </div>
-                            <div class="raiz">
-                                <p-inputGroup >
-                                    <p-inputGroupAddon>
-                                        <i class="pi pi-file-edit"></i>
-                                    </p-inputGroupAddon>
-                                    <span class="p-float-label">
-                                        <input
-                                            [style]="{'width':'100%'}"
-                                            pInputText
-                                            id="nivel_analitico_nome"
-                                            formControlName="nivel_analitico_nome"
-                                            type="text"
-                                        />  
-                                        <label for="nivel_analitico_nome">Informe o nome Nível Analítico</label>
-                                    </span>          
-                                </p-inputGroup>
-                            </div>
+                <div class="fg2edit flex flex-column w-12 align-items-center lg:w-6">
+                    <div class="form2 w-10 text-left">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
+                                <input
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="nivel_1_nome"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Informe o nome Nível 1</label>
+                        </p-floatlabel>
+                    </div>    
+                    <div class="form2 w-10 text-left">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
+                                <input
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="nivel_2_nome"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Informe o nome Nível 2</label>
+                        </p-floatlabel>
+                    </div>
+                    <div class="form2 w-10 text-left">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
+                                <input
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="nivel_3_nome"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Informe o nome Nível 3</label>
+                        </p-floatlabel>
+                    </div>
+                    <div class="form2 w-10 text-left">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
+                                <input
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="nivel_4_nome"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Informe o nome Nível 4</label>
+                        </p-floatlabel>
+                    </div>
+                    <div class="form2 w-10 text-left">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
+                                <input
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="nivel_5_nome"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Informe o nome Nível 5</label>
+                        </p-floatlabel>
+                    </div>
+                    <div class="form2 w-10 text-left mb-3">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
+                                <input
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="nivel_analitico_nome"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Informe o nome Nível Analtico</label>
+                        </p-floatlabel>
+                    </div>
                         </div>
                     </div>
-                    <div class="botoes-form">
+                    <div class="flex justify-content-center mb-5 mt-5">
                         <div class="btnsec" (click)="clearEditForm()">
                             <p>Limpar</p>
                         </div>
@@ -589,8 +575,7 @@
                         </div>
                     </div>
                 </form>
-            </div>
-        </div>
+           
     </p-dialog>
 
-</div>
+
