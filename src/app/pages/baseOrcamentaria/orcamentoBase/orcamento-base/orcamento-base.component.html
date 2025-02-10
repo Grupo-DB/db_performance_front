@@ -1,5 +1,5 @@
 <div class="menu">
-    <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
         <li nz-menu-item nzMatchRouter="#">
             <a style="font-size: 13px;" routerLink="homeOrcamento">Início</a>
         </li>
@@ -49,25 +49,25 @@
     </ul>
 </div>
 
-
-<div class="titulo">
-    <p-divider align="left" type="solid">
-        <b>Cadastro de Orçamento Base</b>
-    </p-divider>
-</div>
-
 <div class="container">
-    <div class="formWrap">
+
+    <div class="titulo">
+        <p-divider align="left" type="solid">
+            <b>Cadastro de Orçamento Base</b>
+        </p-divider>
+    </div>
+
         <form
             [formGroup]="registerForm"
-
+            title="Cadastrar novo Orçamento Base"
         >
-            <div class="form" >
-                <div class="row3"@swipeAnimationReverse>
-                    <div class="coluna">
-                        <div class="raiz">
-                            <p-floatLabel>
-                                <p-dropdown
+        
+            <div class="form-geral flex flex-column "@swipeAnimation>
+                <div class="fg1 flex flex-column w-12 align-items-center  lg:flex-row justify-content-around">
+                        <div class="form2 w-10 lg:w-5 text-left">
+                            <p-floatLabel variant="on">
+                                <p-select
+                                    variant="filled" 
                                     inputId="float-label" 
                                     [style]="{'width':'100%'}"
                                     [options]="ccsPai" 
@@ -80,15 +80,17 @@
                                     filterBy="label"
                                     [showClear]="true"  
                                 >
-                                </p-dropdown>
+                                </p-select>
                                 <label for="float-label">Selecione o Centro de Custo Pai</label>
                             </p-floatLabel>
                         </div>
-                    </div>
-                    <div class="coluna">
-                        <div class="raiz">
-                            <p-floatLabel>
-                                <p-dropdown
+                    
+                    
+                        <div class="form2 w-10 lg:w-5 text-left">
+                            <p-floatLabel variant="on">
+                                <p-select
+                                
+                                    variant="filled"
                                     inputId="float-label" 
                                     [style]="{'width':'100%'}"
                                     [options]="centrosCusto" 
@@ -101,26 +103,24 @@
                                     filterBy="nome"
                                     [showClear]="true"                             
                                 >
-                                </p-dropdown>
+                                </p-select>
                                 <label for="float-label">Selecione o Centro de Custo</label>  
                             </p-floatLabel>  
                         </div>
-                    </div>
-                </div>
-                <div class="row3"@swipeAnimationReverse>
-                    <div class="coluna">
-                        <div class="raizDetalhes" >
-                            <div class="detalhes">
+                </div>    
+                <div class="fg2 -mt-2 flex flex-column w-12 align-items-center  lg:flex-row justify-content-around">
+                    <div class="form2 w-10 text-xs flex justify-content-around lg:text-sm align-items-center">
+                    
+                            <div class="text-left w-2 lg:w-3 text-right">
                                 Nome:  <br>
                                 Empresa:<br>
                                 Filial: <br>
                                 Área:<br>
                                 Setor:<br>
                                 Ambiente:<br>
-                                
                             </div>    
                         
-                            <div class="detalhes" *ngIf="ccsPaiDetalhes">
+                            <div class="text-left w-8 lg:w-8" *ngIf="ccsPaiDetalhes">
                                 <strong>{{ ccsPaiDetalhes.nome }}</strong><br>
                                 <strong>{{ ccsPaiDetalhes.empresa_detalhes.nome }}</strong><br>
                                 <input type="hidden" formControlName="empresa" [(ngModel)]="ccsPaiDetalhes.empresa_detalhes.nome">
@@ -133,16 +133,16 @@
                                 <strong>{{ ccsPaiDetalhes.ambiente_detalhes.nome }}</strong><br>
                                 <input type="hidden" formControlName="ambiente" [(ngModel)]="ccsPaiDetalhes.ambiente_detalhes.nome">
                             </div>
-                        </div>
+                        
                     </div>
-                    <div class="coluna">
-                        <div class="raizDetalhesDir" >
-                            <div class="detalhes">
+                    <div class="fg2 mt-0 flex flex-column w-12 align-items-center  lg:justify-content-around">
+                        <div class="form2 w-10 text-xs flex justify-content-around lg:text-sm justify-content-around align-items-center" >
+                            <div class="text-left w-2 lg:w-3 text-right">
                                 Codigo:  <br>
                                 Nome:<br>
                                 Gestor: <br>
                             </div>    
-                            <div class="detalhes" *ngIf="ccsDetalhes">
+                            <div class="text-left w-8 lg:w-8" *ngIf="ccsDetalhes">
                                 <strong>{{ ccsDetalhes.codigo }}</strong><br>
                                 <strong>{{ ccsDetalhes.nome }}</strong><br>
                                 <input type="hidden" formControlName="gestor" [(ngModel)]="ccsDetalhes.gestor_detalhes.nome ">
@@ -150,12 +150,12 @@
                                
                             </div>
                         </div>
-                        <div class="raizSinteticaDetalhes"> 
-                            <div class="detalhes">
+                        <div class="form2 w-10 mb-5 text-xs flex justify-content-start lg:justify-content-around align-items-center"> 
+                            <div class="text-right w-2 md:w-4 lg:w-4 text-right">
                                 Raiz Sintetica: <br>
                                 Raiz Sintetica Descrição:
                             </div> 
-                            <div class="detalhes" *ngIf="raizSinteticaDetalhes">
+                            <div class="text-center w-8 md:text-left ml-1 lg:w-7" *ngIf="raizSinteticaDetalhes">
                                 <strong>{{ raizSinteticaDetalhes.raiz_contabil }}</strong><br>
                                 <input type="hidden" formControlName="raizSintetica" [(ngModel)]="raizSinteticaDetalhes.raiz_contabil">
                                 <strong>{{ raizSinteticaDetalhes.descricao }}</strong>
@@ -164,72 +164,101 @@
                         </div>
                     </div>
                 </div>
-                <div class="row3"@swipeAnimation>        
-                    <div class="coluna">   
-                        <div class="raiz">
-                            <p-floatLabel>
-                                <p-dropdown
-                                    [style]="{'width':'100%'}"
-                                    [options]="baseOrcamentos"
-                                    formControlName="baseOrcamento"
-                                    optionLabel="value"
-                                    optionValue="value"
-                                    inputId="float-label"
-                                >
-                                </p-dropdown>
-                                <label for="float-label">Selecione a Base de Orçamento</label>
-                            </p-floatLabel>    
-                        </div>
-                        <div class="raiz" style="margin-left: 20px;">
+        
+                <div class="fg2 flex flex-column w-12 align-items-center  lg:flex-row justify-content-around">      
+                    <div class="form2 w-10 lg:w-5 text-left">   
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                [style]="{'width':'100%'}"
+                                [options]="baseOrcamentos"
+                                formControlName="baseOrcamento"
+                                optionLabel="value"
+                                optionValue="value"
+                                inputId="float-label"
+                            >
+                            </p-select>
+                            <label for="float-label">Selecione a Base de Orçamento</label>
+                        </p-floatLabel>   
+                    </div>
+                    <div class="form2 w-10 lg:w-5 text-left">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                inputId="float-label" 
+                                [style]="{'width':'100%'}"
+                                [options]="raizesFiltradas" 
+                                formControlName="raizAnalitica"
+                                optionLabel="label"
+                                [(ngModel)]="selectedRaizAnalitica"
+                                (onChange)="onRaizAnaliticaSelecionada($event.value)"
+                                [filter]="true" 
+                                filterBy="raiz_contabil"
+                                [showClear]="true" 
+                            >
+                                <ng-template pTemplate="filter" let-options="options">
+                                    <div class="flex gap-1">
+                                        <div class="p-inputgroup" (click)="$event.stopPropagation()">
+                                            <p-iconfield>
+                                                <p-inputicon styleClass="pi pi-search" />
+                                            <input
+                                                variant="filled"
+                                                [style]="{'width':'100%'}"
+                                                type="text"
+                                                pInputText
+                                                placeholder="Filter"
+                                                [value]="filterValue"
+                                                (click)="customFilterFunction(options)"
+                                                (keyup)="customFilterFunction(options)" />
+                                            </p-iconfield>
+                                        </div>
+                                        <button pButton icon="pi pi-times" (click)="resetFunction(options)"></button>
+                                    </div>
+                                </ng-template>
+                            </p-select>
+                            <label for="float-label">Selecione a Raiz Analítica</label>
+                            <input type="hidden" formControlName="contaContabilDesc" [(ngModel)]="contaContabilDesc">
+                        </p-floatLabel>    
+                    </div>
+                </div>
+                <div class="flex flex-column lg:flex-row justify-content-around">
+                    <div class="fg2 flex flex-column w-6 align-items-center">
+                        <div class="form2 w-10 text-left">
                             <p><label for="sit">Suplementação </label></p>
-                                <p-inputSwitch 
+                                <p-toggleswitch 
                                     id="sit"
                                     formControlName="suplementacao"
                                 >
-                                </p-inputSwitch>
+                                </p-toggleswitch>
                         </div>
-                    </div>
-                    <div class="coluna">
-                        <div class="raiz">
-                            <p-floatLabel>
-                                <p-dropdown
-                                    inputId="float-label" 
-                                    [style]="{'width':'100%'}"
-                                    [options]="raizesFiltradas" 
-                                    formControlName="raizAnalitica"
-                                    optionLabel="label"
+                    
+                        <div class="form2 w-10 text-left">
+                            <p-floatLabel variant="on">
+                                <p-inputNumber 
+                                    variant="filled"
+                                    mode="decimal"
+                                    [(ngModel)]="ano"
+                                    formControlName="ano"
+                                    [showButtons]="true" 
+                                    inputId="ano" 
+                                    [min]="2024" 
+                                    [max]="2999"
+                                    [useGrouping]="false" 
+                                />
+                                <label for="ano">Ano</label>
+                            </p-floatLabel>    
+                        </div>
 
-                                    [(ngModel)]="selectedRaizAnalitica"
-                                    (onChange)="onRaizAnaliticaSelecionada($event.value)"
-                                    [filter]="true" 
-                                    filterBy="raiz_contabil"
-                                    [showClear]="true" 
-                                >
-                                    <ng-template pTemplate="filter" let-options="options">
-                                        <div class="flex gap-1">
-                                            <div class="p-inputgroup" (click)="$event.stopPropagation()">
-                                                <span class="p-inputgroup-addon"><i class="pi pi-search"></i></span>
-                                                <input 
-                                                    type="text"
-                                                    pInputText
-                                                    placeholder="Filter"
-                                                    [value]="filterValue"
-                                                    (click)="customFilterFunction(options)"
-                                                    (keyup)="customFilterFunction(options)" />
-                                            </div>
-                                            <button pButton icon="pi pi-times" (click)="resetFunction(options)"></button>
-                                        </div>
-                                    </ng-template>
-                                </p-dropdown>
-                                <label for="float-label">Selecione a Raiz Analítica</label>
-                                <input type="hidden" formControlName="contaContabilDesc" [(ngModel)]="contaContabilDesc">
-                            </p-floatLabel>
-                        </div> 
-                        <div class="raizDetalhesCc">
-                            <div class="detalhes">
+                    
+                    
+                    </div><!--endRow-->  
+
+                    <div class="fg2 mt-3 flex-column w-8 md:w-10 lg:w-6">
+                        <div class="md:flex flex-row w-full lg:flex flex-row text-0 w-full">
+                            <div class="w-8 md:w-4">
                                 Conta Contábil:
                             </div>
-                            <div class="detalhes">
+                            <div class="w-full  md:w-8 ml-3 text-left">
                                 <strong>{{ contaContabil }}</strong>
                                 <input type="hidden" formControlName="contaContabil" [(ngModel)]="contaContabil">
                                 <input type="hidden" formControlName="raizAnaliticaDesc" [(ngModel)]="raizAnaliticaDesc">
@@ -237,63 +266,48 @@
                             </div>
                         </div>
                         <input type="hidden" formControlName="raizContGrupoDesc" [(ngModel)]="rcGrupoDesc">
-                        <div class="raizDetalhesCc">
-                            <div class="detalhes">
-                                Raiz Contabil Grupo:
+                            <div class="mt-3 w-full md:flex flex-row lg:flex flex-row">
+                                <div class="w-10 md:w-4 lg:w-4">
+                                    Raiz Contabil Grupo:
+                                </div>
+                                <div class="w-full text-xs md:w-6 ml-3 text-left">
+                                    <strong>{{ rcGrupoDesc }}</strong>
+                                    <input type="hidden" formControlName="raizContGrupoDesc" [(ngModel)]="rcGrupoDesc">
+                                </div>
                             </div>
-                            <div class="detalhes">
-                                <strong>{{ rcGrupoDesc }}</strong>
-                                <input type="hidden" formControlName="raizContGrupoDesc" [(ngModel)]="rcGrupoDesc">
+                            <div class=" mt-3 w-full md:flex flex-row">
+                                <div class="w-6 md:w-4">
+                                    Id Base:
+                                </div>
+                                <div class="w-full md:w-8 ml-3 text-left">
+                                    <strong>{{ idBase }}</strong>
+                                    <input type="hidden" formControlName="idBase" [(ngModel)]="idBase">
+                                    <input type="hidden" formControlName="tipoCusto" [(ngModel)]="tipoCusto">
+                                </div>
                             </div>
-                        </div>
-                        <div class="raizDetalhesCc">
-                            <div class="detalhes">
-                                Id Base:
-                            </div>
-                            <div class="detalhes">
-                                <strong>{{ idBase }}</strong>
-                                <input type="hidden" formControlName="idBase" [(ngModel)]="idBase">
-                                <input type="hidden" formControlName="tipoCusto" [(ngModel)]="tipoCusto">
-                            </div>
-                        </div>   
-                    </div>    
-                </div><!--endRow-->  
-                <div class="row3"@swipeAnimation>
-                    <div class="colunaAno">
-                        <div class="raizAno">
-                            <p><label style="margin-left: 20px;" class="mb-2 block font-bold" for="ano">
-                                Ano
-                            </label></p>
-                            <p-inputNumber 
-                                mode="decimal"
-                                [(ngModel)]="ano"
-                                formControlName="ano"
-                                [showButtons]="true" 
-                                inputId="ano" 
-                                [min]="2024" 
-                                [max]="2999"
-                                [useGrouping]="false" 
-                            />
-                        </div>
-                    
-                    
-                        <div class="raizAno">
-                            <p><label style="margin-left: 20px;" for="sal">Valor</label></p>    
-                            <p-inputNumber
-                                [style]="{'width':'100%'}" 
-                                id="sal"
-                                formControlName="valor" 
-                                inputId="currency-us" 
-                                mode="currency" 
-                                currency="BRL" 
-                                locale="pt-BR" 
-                            />  
-                        </div>
                     </div>
-                    <div class="coluna">
-                        <div class="raiz" style="margin-top: 30px;">
-                            <p-floatLabel>
-                                <p-dropdown
+                </div>    
+
+                <div class="fg2 mb-5 flex flex-column w-12 align-items-center  lg:flex-row justify-content-around">
+                    <div class="form2 w-10 lg:w-5 text-left">
+                        <p-floatLabel variant="on" >
+                            <p-inputNumber
+                                variant="filled"
+                                inputId="on_label"
+                                formControlName="valor"
+                                inputId="currency-us"
+                                mode="currency"
+                                currency="BRL"
+                                locale="pt-BR"
+                                [style]="{'width':'100%'}"
+                            />
+                            <label for="on_label">Valor</label>
+                        </p-floatLabel>
+                    </div>
+                    <div class="form2 w-10 lg:w-5 text-left">
+                      
+                            <p-floatLabel variant="on"> 
+                                <p-select
                                     inputId="float-label"
                                     [style]="{'width':'100%'}"
                                     [options]="recorrencias" 
@@ -301,69 +315,74 @@
                                     optionLabel="value"
                                     optionValue="key"
                                 >
-                                </p-dropdown>
+                                </p-select>
                                 <label for="float-label">Selecione a Periodicidade</label>
                             </p-floatLabel> 
-                        </div>
-                    </div>
-                    
-                </div> <!--endRow>-->
-                <div class="row3">
-                    <div class="coluna">
                         
                     </div>
-                    
+                </div>   
+                <div class="fg2 mb-5 flex flex-column w-12 align-items-center  lg:flex-row justify-content-around">
+                    <div class="form2 w-10 lg:w-5 text-left">
+                        <div class="raiz" *ngIf="registerForm.get('periodicidade')?.value === 'mensal'">
+                            <p-floatLabel variant="on">
+                                <p-select
+                                    variant="filled"
+                                    inputId="float-label"
+                                    [style]="{'width':'100%'}"
+                                    [options]="mensalTipos"
+                                    formControlName="mensalTipo"
+                                    optionLabel="value"
+                                    optionValue="key"
+                                >
+                                </p-select>
+                                <label for="float-label">Selecione o Tipo de Ocorrência</label>
+                            </p-floatLabel>    
+                        </div>    
                 </div>
-                <div class="row3">    
-                    <div class="coluna">
-                            <div class="raiz" *ngIf="registerForm.get('periodicidade')?.value === 'mensal'">
-                                <p-floatLabel>
-                                    <p-dropdown
-                                    inputId="float-label"
-                                        [style]="{'width':'100%'}"
-                                        [options]="mensalTipos"
-                                        formControlName="mensalTipo"
-                                        optionLabel="value"
-                                        optionValue="key"
-                                    >
-                                    </p-dropdown>
-                                    <label for="float-label">Selecione o Tipo de Ocorrência</label>
-                                </p-floatLabel>    
-                            </div>    
+                <div class="form2 w-10 lg:w-5 text-left">
+                    <div class="raiz" *ngIf="registerForm.get('mensalTipo')?.value === 'especifico'">
+                        <p-floatLabel variant="on">
+                            <p-select
+                                variant="filled"
+                                inputId="float-label"
+                                [style]="{'width':'100%'}"
+                                [options]="meses"
+                                formControlName="mesEspecifico"
+                                optionLabel="value"
+                                optionValue="key"
+                            >
+                            </p-select>
+                            <label for="float-label">Selecione o Mês</label>
+                        </p-floatLabel>    
                     </div>
-                    <div class="coluna">
-                        <div class="raiz" *ngIf="registerForm.get('mensalTipo')?.value === 'especifico'">
-                            <p-floatLabel>
-                                <p-dropdown
-                                    inputId="float-label"
-                                    [style]="{'width':'100%'}"
-                                    [options]="meses"
-                                    formControlName="mesEspecifico"
-                                    optionLabel="value"
-                                    optionValue="key"
-                                >
-                                </p-dropdown>
-                                <label for="float-label">Selecione o Mês</label>
-                            </p-floatLabel>    
-                        </div>
-                        <div class="raiz" *ngIf="registerForm.get('mensalTipo')?.value === 'recorrente'">
-                            <p-floatLabel>    
-                                <p-multiSelect
-                                    [style]="{'width':'100%'}"
-                                    [options]="meses"
-                                    formControlName="mesesRecorrentes"
-                                    optionLabel="value"
-                                    optionValue="key"
-                                    inputId="float-label"
-                                >
-                                </p-multiSelect>
-                                <label for="float-label">Selecione os Meses</label>
-                            </p-floatLabel>    
-                        </div>
+                    <div class="raiz" *ngIf="registerForm.get('mensalTipo')?.value === 'recorrente'">
+                        <p-floatLabel variant="on">    
+                            <p-multiSelect
+                                variant="filled"
+                                [style]="{'width':'100%'}"
+                                [options]="meses"
+                                formControlName="mesesRecorrentes"
+                                optionLabel="value"
+                                optionValue="key"
+                                inputId="float-label"
+                            >
+                            </p-multiSelect>
+                            <label for="float-label">Selecione os Meses</label>
+                        </p-floatLabel>    
                     </div>
-                </div>  
-            </div>
+
+
+
+                </div>
+                </div> <!--endRow>-->
+                
+                 
+                    
+        </div>
+                
+             
         </form>
+        
         <div class="botoes-form"@efeitoFade>
             <p-toast></p-toast>
             <div class="btnsec" (click)="clearForm()" >
@@ -376,12 +395,12 @@
 
         
 
-    </div>   
-    <!-- <pre>{{ registerForm.value | json }}</pre> -->
-</div>
 
 
-<div class="tabela">
+
+<div class="tabela"@swipeAnimationReverse>
+    <p-toast />
+    <p-confirmDialog />
     <p-table
         #dt1
         [value]="orcamentosBases"
@@ -394,26 +413,40 @@
         [rowsPerPageOptions]="[20, 40, 60]"
         [globalFilterFields]="['id','ano','raiz_analitica_desc','raiz_contabil_grupo_desc','mes_especifico']"
         sortMode="multiple"
+        scrollable="true"
+        stripedRows
     >
-        <ng-template pTemplate="caption">
-            <p-toast />
-            <p-confirmDialog />
-            <div class="flex">
-                <span class="p-input-icon-left ml-auto">
-                    <i class="pi pi-search"></i>
-                    <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Palavra-Chave" />
-                </span>
-                <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
-                <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
-                <span class="p-input-icon-left ml-auto">
-                    <input
-                        [(ngModel)]="porcentagemDissidio"
-                        pInputText
-                        placeholder="informe o Percentual"
-                        prefix="%"  
-                    />
-                </span>
-                <button pButton label="Aplicar Dissídio" severity="info" icon="pi pi-filter-slash" (click)="calcularDissidio(porcentagemDissidio)"></button>
+        <ng-template pTemplate="caption" >
+            <div class="flex flex-row md: justify-content-end">
+                <p-floatlabel variant="on">
+                    <p-iconfield>
+                        <p-inputicon class="pi pi-search" />
+                        <input
+                            variant="filled"
+                            [(ngModel)] = "inputValue"
+                            [style]="{'width':'100%'}"
+                            pInputText id="on_label"
+                            autocomplete="off"
+                            type="text"
+                        />
+                    </p-iconfield>
+                    <label for="on_label">Palavra-Chave</label>
+                </p-floatlabel>
+                <button size="small" class="ml-2" pButton [rounded]="true" label="Pesquisar" severity="info"  (click)="filterTable()"></button>
+                <button size="small" class="ml-2" pButton [rounded]="true" label="Limpar" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+                <p-floatlabel variant="on">
+                    <p-iconfield>
+                        <input
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                            [(ngModel)]="porcentagemDissidio"
+                            pInputText
+                            prefix="%"  
+                        />
+                    </p-iconfield>
+                    <label for="on_label">% Dissídio</label>    
+                </p-floatlabel>
+                <button size="small" pButton label="Aplicar Dissídio" severity="info" icon="pi pi-filter-slash" (click)="calcularDissidio(porcentagemDissidio)"></button>
             </div>
         </ng-template>
         <ng-template pTemplate="header">
@@ -560,78 +593,67 @@
     <p-dialog 
         [modal]="true"
         [(visible)]="editFormVisible" 
-        [style]="{ width: '90%', height:'90%'}" 
-        [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+        [style]="{ width: '90%', height:'90%'}"
     >
         <div class="titulo">
             <p-divider align="left" type="solid">
                 <b>Editar Orçamento Base</b>
             </p-divider> 
         </div>
-        <div class="container">
-            <div class="formWrap">
+
                 <form
                     [formGroup]="editForm"
                     title="Editar Conta Contabil"
                 >
-                    <div class="form">
-                        <div class="row3">
-                            <div class="coluna">
-                                <div class="raiz">
-                                    <p-inputGroup >
-                                        <p-inputGroupAddon>
-                                            <i class="pi pi-file-edit"></i>
-                                        </p-inputGroupAddon>
-                                        <span class="p-float-label">
-                                            <input
-                                                [style]="{'width':'100%'}"
-                                                pInputText
-                                                id="me"
-                                                formControlName="valor"
-                                                type="text"
-                                            />  
-                                            <label for="me">Valor</label>
-                                        </span>          
-                                    </p-inputGroup>
-                                </div>
+                    <div class="editgeral flex flex-column lg:flex-row">
+                        <div class="fg1edit flex flex-column w-12 align-items-center lg:w-6">
+                            <div class="form1edit w-10">
+                                <p-floatlabel variant="on">
+                                    <p-iconfield>
+                                        <p-inputicon class="pi pi-dollar" />
+                                        <input
+                                            variant="filled"
+                                            [style]="{'width':'100%'}"
+                                            pInputText id="on_label"
+                                            autocomplete="off"
+                                            formControlName="valor"
+                                            type="text"
+                                        />
+                                    </p-iconfield>
+                                    <label for="on_label">Valor</label>
+                                </p-floatlabel>
                             </div>
-                            <div class="coluna">
-                                <div class="raiz">
-                                    <p-inputGroup >
-                                        <p-inputGroupAddon>
-                                            <i class="pi pi-file-edit"></i>
-                                        </p-inputGroupAddon>
-                                        <span class="p-float-label">
-                                            <input
-                                                [style]="{'width':'100%'}"
-                                                pInputText
-                                                id="me"
-                                                formControlName="valor_ajustado"
-                                                type="text"
-                                            />  
-                                            <label for="me">Valor Previsto</label>
-                                        </span>          
-                                    </p-inputGroup>
-                                </div>
+                            <div class="form1edit mt-3 w-10">
+                                <p-floatlabel variant="on">
+                                    <p-iconfield>
+                                        <p-inputicon class="pi pi-dollar" />
+                                        <input
+                                            variant="filled"
+                                            [style]="{'width':'100%'}"
+                                            pInputText id="on_label"
+                                            autocomplete="off"
+                                            formControlName="valor_ajustado"
+                                            type="text"
+                                        />
+                                    </p-iconfield>
+                                    <label for="on_label">Valor Previsto</label>
+                                </p-floatlabel>
                             </div>
-                            <div class="coluna">
-                                <div class="raiz">
-                                    <p-inputGroup >
-                                        <p-inputGroupAddon>
-                                            <i class="pi pi-file-edit"></i>
-                                        </p-inputGroupAddon>
-                                        <span class="p-float-label">
-                                            <input
-                                                [style]="{'width':'100%'}"
-                                                pInputText
-                                                id="me"
-                                                formControlName="valor_real"
-                                                type="text"
-                                            />  
-                                            <label for="me">Valor Real</label>
-                                        </span>          
-                                    </p-inputGroup>
-                                </div>
+                            <div class="form1edit mt-3 w-10">
+                                <p-floatlabel variant="on">
+                                    <p-iconfield>
+                                        <p-inputicon class="pi pi-dollar" />
+                                        <input
+                                            variant="filled"
+                                            [style]="{'width':'100%'}"
+                                            pInputText id="on_label"
+                                            autocomplete="off"
+                                            formControlName="valor_real"
+                                            type="text"
+                                        />
+                                    </p-iconfield>
+                                    <label for="on_label">Valor Real</label>
+                                </p-floatlabel>
                             </div>
                         </div><!--endRow-->
                     </div><!--endForm-->
@@ -645,8 +667,6 @@
                         </div>
                     </div>
                 </form>
-            </div>
-        </div>
     </p-dialog>    
 
 

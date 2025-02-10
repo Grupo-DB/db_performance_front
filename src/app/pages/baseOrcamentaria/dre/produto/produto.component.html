@@ -1,6 +1,5 @@
-
 <div class="menu">
-    <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
         <li nz-menu-item nzMatchRouter="#">
             <a style="font-size: 13px;" routerLink="homeOrcamento">Início</a>
         </li>
@@ -50,15 +49,14 @@
     </ul>
 </div>
 
-
-<div class="titulo">
-    <p-divider align="left" type="solid">
-        <b>Cadastro de Produtos</b>
-    </p-divider>
-</div>
-
 <div class="container">
-    <div class="formWrap"@swipeAnimationReverse>
+
+    <div class="titulo">
+        <p-divider align="left" type="solid">
+            <b>Cadastro de Produtos</b>
+        </p-divider>
+    </div>
+
         <form 
             [formGroup]="registerForm"
             title="Cadastrar novo Produto"
@@ -66,48 +64,46 @@
             (submit)="submit()"
             enctype="multipart/form-data"
         >
-            <div class="form">
-                <div class="coluna">
-                    <div class="raiz">
-                        <p-inputGroup >
-                            <p-inputGroupAddon>
-                                <i class="pi pi-file-edit"></i>
-                            </p-inputGroupAddon>
-                            <span class="p-float-label">
+            <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation>
+                <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
+                    <div class="form2 w-10">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
                                 <input
+                                    variant="filled"
                                     [style]="{'width':'100%'}"
-                                    pInputText
-                                    id="nome"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
                                     formControlName="nome"
                                     type="text"
-                                />  
-                                <label for="raiz_contabil">Informe o nome</label>
-                            </span>          
-                        </p-inputGroup>
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Informe o nome</label>
+                        </p-floatlabel>
                     </div>
                 </div>
-                <div class="coluna">
-                    <div class="raiz">
-                        <p-inputGroup >
-                            <p-inputGroupAddon>
-                                <i class="pi pi-file-edit"></i>
-                            </p-inputGroupAddon>
-                            <span class="p-float-label">
+                <div class="fg1 mb-3 flex flex-column w-12 align-items-center lg:w-6">
+                    <div class="form2 w-10">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
                                 <input
+                                    variant="filled"
                                     [style]="{'width':'100%'}"
-                                    pInputText
-                                    id="aliquota"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
                                     formControlName="aliquota"
                                     type="text"
-                                />  
-                                <label for="raiz_contabil">Informe à Aliquota</label>
-                            </span>          
-                        </p-inputGroup>
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Informe à aliquota</label>
+                        </p-floatlabel>
                     </div>
                 </div>
             </div>
         </form>
-        <div class="botoes-form">
+        <div class="botoes-form"@efeitoFade>
             <p-toast></p-toast>
             <div class="btnsec" (click)="clearForm()">
                 <p>Limpar</p>
@@ -120,29 +116,41 @@
     </div><!--endForm-->
 
     <div class="tabela"@swipeAnimation>
+        <p-toast />
+        <p-confirmDialog />
         <p-table
-        #dt1
-        [value]="produtos"
-        [paginator]="true"
-        [rows]="5"
-        [showCurrentPageReport]="true"
-        [tableStyle]="{ 'min-width': '50rem' }"
-        currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
-        [rowsPerPageOptions]="[5, 10, 20]"
-        [globalFilterFields]="['id', 'nome','aliquota']"
+            #dt1
+            [value]="produtos"
+            [paginator]="true"
+            [rows]="5"
+            [showCurrentPageReport]="true"
+            [tableStyle]="{ 'min-width': '50rem' }"
+            currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
+            [rowsPerPageOptions]="[5, 10, 20]"
+            [globalFilterFields]="['id', 'nome','aliquota']"
+            stripedRows
+            scrollable="true"
         >
-            <ng-template pTemplate="caption">
-                <p-toast />
-                <p-confirmDialog />
-                <div class="flex">
-                    <span class="p-input-icon-left ml-auto">
-                        <i class="pi pi-search"></i>
-                        <input pInputText type="text" [(ngModel)]="inputValue" placeholder="Digite o nome" />
-                    </span>
-                    <button pButton label="Pesquisar" severity="info"  (click)="filterTable()"></button>
-                    <button pButton label="Limpar Pesquisa" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
-                </div>
-            </ng-template>
+        <ng-template pTemplate="caption">
+            <div class="flex flex-row md: justify-content-end">
+                <p-floatlabel variant="on">
+                    <p-iconfield>
+                        <p-inputicon class="pi pi-search" />
+                        <input
+                            variant="filled"
+                            [(ngModel)] = "inputValue"
+                            [style]="{'width':'100%'}"
+                            pInputText id="on_label"
+                            autocomplete="off"
+                            type="text"
+                        />
+                    </p-iconfield>
+                    <label for="on_label">Nome</label>
+                </p-floatlabel>
+                <button size="small" class="ml-2" pButton [rounded]="true" label="Pesquisar" severity="info"  (click)="filterTable()"></button>
+                <button size="small" class="ml-2" pButton [rounded]="true" label="Limpar" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+            </div>
+        </ng-template> 
             <ng-template pTemplate="header">
                 <tr>
                     <th style="width:50%" type="text" field="nome" display="menu">
@@ -170,10 +178,10 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="paginatorleft">
-                <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+                <p-button type="button" styleClass="p-button-text"></p-button>
             </ng-template>
             <ng-template pTemplate="paginatorright">
-                <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
+                <p-button type="button"  styleClass="p-button-text"></p-button>
             </ng-template>  
         </p-table>
     </div>
@@ -182,72 +190,65 @@
         [modal]="true"
         [(visible)]="editFormVisible" 
         [style]="{ width: '65rem' }" 
-        [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+        
     >
         <div class="titulo">
             <p-divider align="left" type="solid">
                 <b>Editar Produto</b>
             </p-divider> 
         </div>
-        <div class="container">
-            <div class="formWrap">
                 <form 
                     [formGroup]="editForm"
                     title="Editar Produto"      
                 >
-                    <div class="form">
-                        <div class="coluna">
-                            <div class="raiz">
-                                <p-inputGroup >
-                                    <p-inputGroupAddon>
-                                        <i class="pi pi-file-edit"></i>
-                                    </p-inputGroupAddon>
-                                    <span class="p-float-label">
+                <div class="editGeral flex flex-column lg:flex-row">
+                    <div class="fg1edit flex flex-column w-12 align-items-center lg:w-6">
+                            <div class="form2 w-10">
+                                <p-floatlabel variant="on">
+                                    <p-iconfield>
+                                        <p-inputicon class="pi pi-file-edit" />
                                         <input
+                                            variant="filled"
                                             [style]="{'width':'100%'}"
-                                            pInputText
-                                            id="nome"
+                                            pInputText id="on_label"
+                                            autocomplete="off"
                                             formControlName="nome"
                                             type="text"
-                                        />  
-                                        <label for="raiz_contabil">Informe o nome</label>
-                                    </span>          
-                                </p-inputGroup>
+                                        />
+                                    </p-iconfield>
+                                    <label for="on_label">Informe o nome</label>
+                                </p-floatlabel>
                             </div>
                         </div>
-                        <div class="coluna">
-                            <div class="raiz">
-                                <p-inputGroup >
-                                    <p-inputGroupAddon>
-                                        <i class="pi pi-file-edit"></i>
-                                    </p-inputGroupAddon>
-                                    <span class="p-float-label">
+                        <div class="fg1edit mb-3 flex flex-column w-12 align-items-center lg:w-6">
+                            <div class="form2 w-10">
+                                <p-floatlabel variant="on">
+                                    <p-iconfield>
+                                        <p-inputicon class="pi pi-file-edit" />
                                         <input
+                                            variant="filled"
                                             [style]="{'width':'100%'}"
-                                            pInputText
-                                            id="aliquota"
+                                            pInputText id="on_label"
+                                            autocomplete="off"
                                             formControlName="aliquota"
                                             type="text"
-                                        />  
-                                        <label for="raiz_contabil">Informe à Aliquota</label>
-                                    </span>          
-                                </p-inputGroup>
+                                        />
+                                    </p-iconfield>
+                                    <label for="on_label">Informe à aliquota</label>
+                                </p-floatlabel>
                             </div>
                         </div>
                     </div>
-
-                    <div class="botoes-form">
-                        <div class="btnsec" (click)="clearEditForm()">
-                            <p>Limpar</p>
-                        </div>
-                        
-                        <div class="btnpri" (click)="saveEdit()">
-                            <p>Salvar</p>            
-                        </div>
-                    </div>
-
                 </form>
-            </div>
-        </div>
+                <div class="botoes-form">
+                    <div class="btnsec" (click)="clearEditForm()">
+                        <p>Limpar</p>
+                    </div>
+                    
+                    <div class="btnpri" (click)="saveEdit()">
+                        <p>Salvar</p>            
+                    </div>
+                </div>
+
+            
     </p-dialog>
-</div>

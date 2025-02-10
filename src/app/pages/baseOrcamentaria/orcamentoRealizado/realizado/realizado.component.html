@@ -1,5 +1,5 @@
 <div class="menu">
-    <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
         <li nz-menu-item nzMatchRouter="#">
             <a style="font-size: 13px;" routerLink="homeOrcamento">Início</a>
         </li>
@@ -56,136 +56,128 @@
 </div>
 
 <div class="container">
-    <div class="formWrap">
-        <div class="form">
-            <div class="colunaEsq"@efeitoFade>
-                <div class="coluna2">
-                    <div class="coluna3">
-                        <div class="coluna3Wrap">
-                            <div class="raiz">
-                                <p-floatLabel> 
-                                    <p-multiSelect
-                                        id="ccPai" 
-                                        [style]="{'width':'400px'}"
-                                        [options]="ccsPai" 
-                                        [(ngModel)]="selectedCcPai"
-                                        optionValue="id"
-                                        optionLabel="nome"
-                                        [filter]="true" 
-                                        filterBy="nome"
-                                        inputId="float-label" 
-                                        (onChange)="onCcPaiSelecionado($event.value)"
-                                    >
-                                    </p-multiSelect>
-                                    <label for="float-label">Selecione o Centro de Custo Pai</label>
-                                </p-floatLabel>
-                            </div>
-                            <div class="raiz">
-                                <p-floatLabel> 
-                                    <p-multiSelect
-                                        id="ccPai" 
-                                        [style]="{'width':'400px'}"
-                                        [options]="filiaisSga" 
-                                        [(ngModel)]="selectedsFiliais"
-                                        optionValue="cod"
-                                        optionLabel="nome"
-                                        [filter]="true" 
-                                        filterBy="nome"
-                                        inputId="float-label" 
-                                        (onChange)="onFiliaisInformada($event.value)"
-                                    >
-                                    </p-multiSelect>
-                                    <label for="float-label">Selecione as Filiais</label>
-                                </p-floatLabel>
-                            </div>
-                        </div>    
-                    </div>
-                    <div class="coluna3" *ngIf="selectedCcPai.length <= 1">    
-                        <div class="detalhe">
-                            Gestor:<br>
-                            Empresa:<br>
-                            Filial:<br>
-                            Área:<br>
-                            Ambiente:<br>
-                            Setor:<br>
-                        </div>
-                        <div class="detalhe1" *ngIf="detalhes">
-                            <strong>{{ detalhes.gestor_detalhes.nome }}</strong><br>
-                            <strong>{{ detalhes.cc_pai_detalhes.empresa_detalhes.nome }}</strong><br>
-                            <strong>{{ detalhes.cc_pai_detalhes.filial_detalhes.nome }}</strong><br>
-                            <strong>{{ detalhes.cc_pai_detalhes.area_detalhes.nome }}</strong><br>
-                            <strong>{{ detalhes.cc_pai_detalhes.setor_detalhes.nome }}</strong><br>
-                            <strong>{{ detalhes.cc_pai_detalhes.ambiente_detalhes.nome }}</strong><br>
-                        </div>
-                    </div>  
-                </div>
-                <div class="coluna">
-                    <div class="raiz">
-                        
-                    </div>
-                </div>    
-                    <div class="row3">
-                        <div class="raizAno2">
-                            <p><label style="margin-left: 5px;" class="mb-2 block " for="ano">
-                               Ano Vigente
-                            </label></p>
-                            <p-inputNumber 
-                                mode="decimal"
-                                [style]="{'width':'400px'}"
-                                [(ngModel)]="selectedAno"
-                                [showButtons]="true" 
-                                [min]="2024" 
-                                [max]="2999"
-                                [useGrouping]="false" 
-                                (ngModelChange)="onAnoInformado($event)"
-                            />
-                        </div>     
-                    </div>
-                    <div *ngIf="isLoading" class="loading-animation">
-                        <!-- Coloque aqui a sua animação de carregamento -->
-                        <img src="assets/imagens/animation.gif" alt="Loading...">
-                    </div>
-                    <div  class="row3">
-                        
-                            <div class="grafico3">
-                                <canvas id="graficoTotalChart"></canvas>
-                            </div>
-                    </div>
-                    <div class="row3">
-                        <div class="grafico2">
-                            <canvas id="graficoBaseChart"></canvas>
-                        </div>
-                        <div class="grafico2">
-                            <canvas id="gruposContasRealizadosChart"></canvas>
-                        </div>  
-                    </div>
-                   
+    <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation>
+        <div class="fg1 flex flex-column w-12 align-items-center lg:w-6"> 
+            <div class="form2 w-10">
+                <p-floatlabel variant="on"> 
+                    <p-multiSelect
+                        variant="filled"
+                        id="ccPai" 
+                        [style]="{'width':'100%'}"
+                        [options]="ccsPai" 
+                        [(ngModel)]="selectedCcPai"
+                        optionValue="id"
+                        optionLabel="nome"
+                        [filter]="true" 
+                        filterBy="nome"
+                        inputId="float-label" 
+                        (onChange)="onCcPaiSelecionado($event.value)"
+                    >
+                    </p-multiSelect>
+                    <label for="float-label">Selecione o Centro de Custo Pai</label>
+                </p-floatlabel>
             </div>
-            <div class="colunaDir"@slideAnimation>
-                <div class="titulo">
-                    <p-divider align="left" type="solid">
-                       <h3> <b>ORÇADO</b></h3>
-                    </p-divider>
-                </div>
-                    <p-meterGroup [value]="resultadosTotais" labelPosition="start">
-                        <ng-template pTemplate="label">
-                            <div class="flex flex-wrap gap-1">
-                                <ng-container *ngFor="let meterItem of resultadosTotais; let index = index">
-                                    <p-card class="w-14rem flex-grow-1 shadow-2  hover:shadow-6"@slideAnimation> 
-                                        <div class="flex justify-content-between gap-1">
-                                            <div class="flex flex-column gap-1">
-                                                <span class="text-secondary text-md" style="white-space: nowrap; margin-left: -10px; text-align: start;">{{ meterItem.label | uppercase }}</span>
-                                                <span class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start;">R$ {{ meterItem.value }}</span>
-                                            </div>
-                                            <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                <i style="font-size: 1rem" [class]="meterItem.icon"></i>
-                                            </span>
-                                        </div>
-                                    </p-card>
-                                </ng-container>
-                            </div>
-                        </ng-template>
-                    </p-meterGroup>
+            <div class="form2 w-10">
+                <p-floatlabel variant="on"> 
+                    <p-multiSelect
+                        variant="filled"
+                        id="ccPai" 
+                        [style]="{'width':'100%'}"
+                        [options]="filiaisSga" 
+                        [(ngModel)]="selectedsFiliais"
+                        optionValue="cod"
+                        optionLabel="nome"
+                        [filter]="true" 
+                        filterBy="nome"
+                        inputId="float-label" 
+                        (onChange)="onFiliaisInformada($event.value)"
+                    >
+                    </p-multiSelect>
+                    <label for="float-label">Selecione as Filiais</label>
+                </p-floatlabel>
+            </div>
+            <div class="form2 w-10 text-left">
+                <p-floatlabel variant="on">
+                    <p-inputnumber
+                        fluid="true" 
+                        variant="filled"
+                        mode="decimal"
+                        [(ngModel)]="selectedAno"
+                        [showButtons]="true" 
+                        [min]="2024" 
+                        [max]="2999"
+                        [useGrouping]="false" 
+                        (ngModelChange)="onAnoInformado($event)"
+                    />
+                    <label>Ano Vigente</label>
+                </p-floatlabel>
+            </div>     
+            
+        </div>                        
+         
+        <div class="text-xs flex flex-row" *ngIf="selectedCcPai.length <= 1">    
+            <div class="w-2 m-4 text-left">
+                Gestor:<br>
+                Empresa:<br>
+                Filial:<br>
+                Área:<br>
+                Ambiente:<br>
+                Setor:<br>
+            </div>
+            <div class="w-10 ml-0 m-4 text-left" *ngIf="detalhes">
+                <strong>{{ detalhes.gestor_detalhes.nome }}</strong><br>
+                <strong>{{ detalhes.cc_pai_detalhes.empresa_detalhes.nome }}</strong><br>
+                <strong>{{ detalhes.cc_pai_detalhes.filial_detalhes.nome }}</strong><br>
+                <strong>{{ detalhes.cc_pai_detalhes.area_detalhes.nome }}</strong><br>
+                <strong>{{ detalhes.cc_pai_detalhes.setor_detalhes.nome }}</strong><br>
+                <strong>{{ detalhes.cc_pai_detalhes.ambiente_detalhes.nome }}</strong><br>
+            </div>
+        </div>  
+                    
+        <div *ngIf="isLoading" class="loading-animation">
+            <!-- Coloque aqui a sua animação de carregamento -->
+            <img src="assets/imagens/animation.gif" alt="Loading...">
+        </div>        
+                
+        <div  class="flex flex-wrap">           
+            <div class="grafico1 w-full">
+                <canvas id="graficoTotalChart"></canvas>
+            </div>
+        
+            <div class="w-full">
+                <canvas id="graficoBaseChart"></canvas>
+            </div>
+            <div class="w-full">
+                <canvas id="gruposContasRealizadosChart"></canvas>
+            </div>  
+        </div>            
+                    
+        <div class="fg1 flex flex-column w-12 align-items-center lg:w-6"@slideAnimation>
+            <div class="titulo">
+                <p-divider align="left" type="solid">
+                   <h3> <b>ORÇADO</b></h3>
+                </p-divider>
+            </div>    
+            
+            <p-metergroup [value]="resultadosTotais" labelPosition="start">
+                <ng-template #label>
+                    <div class="flex flex-wrap gap-3 ml-5">
+                        <ng-container *ngFor="let meterItem of resultadosTotais; let index = index">
+                            <p-card class="w-14rem w-12 shadow-2  hover:shadow-6"@slideAnimation> 
+                                <div class="flex justify-content-between gap-1">
+                                    <div class="flex flex-column gap-1">
+                                        <span class="text-secondary text-md" style="white-space: nowrap; margin-left: -10px; text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                        <span class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start;">R$ {{ meterItem.value }}</span>
+                                    </div>
+                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                        <i style="font-size: 1rem" [class]="meterItem.icon"></i>
+                                    </span>
+                                </div>
+                            </p-card>
+                        </ng-container>
+                    </div>
+                </ng-template>
+            </p-metergroup>
                 
                 <div class="row4">
                     <div class="wrapInplacePrincipal">
@@ -206,11 +198,11 @@
                                             </div>
                                         </ng-template>
                                             <p-meterGroup [value]="resultadosMensais" labelPosition="start">
-                                                <ng-template pTemplate="label">
+                                                <ng-template #label>
                                                     <div style="max-height: 500px; overflow-y: auto; margin-top: 20px;">
                                                         <div class="flex flex-wrap gap-3 ml-2 ">
                                                             <ng-container *ngFor="let meterItem of resultadosMensais; let index = index">
-                                                                <p-card class="w-5 shadow-2 border-round-md hover:shadow-6 " @slideAnimation >
+                                                                <p-card class="w-14rem shadow-2 border-round-md hover:shadow-6 " @slideAnimation >
                                                                     <div class="flex justify-content-between gap-2">
                                                                         <div class="flex flex-column gap-3">
                                                                             <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label | uppercase }}</span>
@@ -236,7 +228,7 @@
                                         </ng-template>
                                         <div class="w-full">
                                             <p-meterGroup [value]="tiposMensais" labelPosition="start">
-                                                <ng-template pTemplate="label">
+                                                <ng-template #label>
                                                     <div class="w-full" style="max-height: 500px; overflow-y: auto;">
                                                         <div class="flex flex-wrap gap-3 ml-2">
                                                             <ng-container *ngFor="let meterItem of tiposMensais; let index = index">
@@ -266,7 +258,7 @@
                                             </div>
                                         </ng-template>
                                         <p-meterGroup [value]="contasMensais" labelPosition="start">
-                                            <ng-template pTemplate="label">
+                                            <ng-template #label>
                                                 <div class="w-full" style="max-height: 500px; overflow-y: auto;">
                                                     <div class="flex flex-wrap gap-3 ml-2">
                                                         <ng-container *ngFor="let meterItem of contasMensais; let index = index">
@@ -295,7 +287,7 @@
                                             </div>
                                         </ng-template>
                                         <p-meterGroup [value]="raizMensais" labelPosition="start">
-                                            <ng-template pTemplate="label">
+                                            <ng-template #label>
                                                 <div class="w-full" style="max-height: 500px; overflow-y: auto;">
                                                     <div class="flex flex-wrap gap-1 ml-2">
                                                         <ng-container *ngFor="let meterItem of raizMensais; let index = index">
@@ -340,7 +332,7 @@
                                             </div>
                                         </ng-template>
                                         <p-meterGroup [value]="tiposAnuais" labelPosition="start">
-                                            <ng-template pTemplate="label">
+                                            <ng-template #label>
                                                 <div class="w-full" style="max-height: 500px; overflow-y: auto;">
                                                     <div class="flex flex-wrap gap-3 ml-2">
                                                         <ng-container *ngFor="let meterItem of tiposAnuais; let index = index">
@@ -368,7 +360,7 @@
                                             </div>
                                         </ng-template>
                                         <p-meterGroup [value]="contasAnuais" labelPosition="start">
-                                            <ng-template pTemplate="label">
+                                            <ng-template #label>
                                                 <div class="w-full" style="max-height: 500px; overflow-y: auto;">
                                                     <div class="flex flex-wrap gap-3 ml-2">
                                                         <ng-container *ngFor="let meterItem of contasAnuais; let index = index">
@@ -396,7 +388,7 @@
                                             </div>
                                         </ng-template>
                                         <p-meterGroup [value]="raizAnuais" labelPosition="start">
-                                            <ng-template pTemplate="label">
+                                            <ng-template #label>
                                                 <div class="w-full" style="max-height: 500px; overflow-y: auto;">
                                                     <div class="flex flex-wrap gap-3 ml-2">
                                                         <ng-container *ngFor="let meterItem of raizAnuais; let index = index">
@@ -429,7 +421,7 @@
                 </div>
 
                 <p-meterGroup [value]="resultadosTotaisRealizado" labelPosition="start">
-                    <ng-template pTemplate="label">
+                    <ng-template #label>
                         <div class="flex flex-wrap gap-1 m-2">
                             <ng-container *ngFor="let meterItem of resultadosTotaisRealizado; let index = index">
                                 <p-card class="w-10 shadow-2 border-round-md hover:shadow-6 border-0.4" @slideAnimation> 
@@ -467,7 +459,7 @@
                                         </div>
                                     </ng-template>
                                     <p-meterGroup [value]="tiposCusto" labelPosition="start">
-                                        <ng-template pTemplate="label">
+                                        <ng-template #label>
                                             <div style="max-height: 500px; overflow-y: auto;">
                                                 <div class="flex flex-wrap gap-5 ml-2">
                                                     <ng-container *ngFor="let meterItem of tiposCusto; let index = index">
@@ -496,7 +488,7 @@
                                         </div>
                                     </ng-template>
                                     <p-meterGroup [value]="ccs" labelPosition="start">
-                                        <ng-template pTemplate="label">
+                                        <ng-template #label>
                                             <div style="max-height: 500px; overflow-y: auto;">
                                                 <div class="flex flex-wrap gap-5 ml-2">
                                                     <ng-container *ngFor="let meterItem of ccs; let index = index">
@@ -525,7 +517,7 @@
                                         </div>
                                     </ng-template>
                                     <p-meterGroup [value]="gruposContabeis" labelPosition="start">
-                                        <ng-template pTemplate="label">
+                                        <ng-template #label>
                                             <div style="max-height: 500px; overflow-y: auto;">
                                                 <div class="flex flex-wrap gap-5 ml-2">
                                                     <ng-container *ngFor="let meterItem of gruposContabeis; let index = index">
@@ -554,7 +546,7 @@
                                         </div>
                                     </ng-template>
                                     <p-meterGroup [value]="contasCompletas" labelPosition="start">
-                                        <ng-template pTemplate="label">
+                                        <ng-template #label>
                                             <div style="max-height: 500px; overflow-y: auto;">
                                                 <div class="flex flex-wrap gap-5 ml-2">
                                                     <ng-container *ngFor="let meterItem of contasCompletas; let index = index">
@@ -586,7 +578,7 @@
             </div>
         </div>
     </div>
-</div>
+
 
 
 <!----------------SIDEBAR_______________________________-->

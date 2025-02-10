@@ -17,6 +17,10 @@ import { LoginService } from '../../../../services/avaliacoesServices/login/logi
 import { ProjecaoService } from '../../../../services/baseOrcamentariaServices/dre/projecao.service';
 import { animate, keyframes, style, transition, trigger } from '@angular/animations';
 import { ButtonModule } from 'primeng/button';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { SelectModule } from 'primeng/select';
 
 interface RegisterProdutoForm{
   nome: FormControl;
@@ -35,7 +39,7 @@ export interface Produto{
   imports: [
     CommonModule,ReactiveFormsModule,RouterLink,FormsModule,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
     DropdownModule,InputTextModule,TableModule,DialogModule,ButtonModule,
-    ConfirmDialogModule,ToastModule
+    ConfirmDialogModule,ToastModule,FloatLabelModule,SelectModule,IconFieldModule,InputIconModule
   ],
   providers: [
     MessageService,ConfirmationService,

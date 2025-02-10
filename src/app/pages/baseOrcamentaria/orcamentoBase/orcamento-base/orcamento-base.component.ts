@@ -30,6 +30,11 @@ import { FloatLabelModule } from "primeng/floatlabel"
 import { ContaContabilService } from '../../../../services/baseOrcamentariaServices/orcamento/ContaContabil/conta-contabil.service';
 import { OrcamentoBaseService } from '../../../../services/baseOrcamentariaServices/orcamento/OrcamentoBase/orcamento-base.service';
 import { animate, keyframes, style, transition, trigger } from '@angular/animations';
+import { SelectModule } from 'primeng/select';
+import { InputIconModule } from 'primeng/inputicon';
+import { IconFieldModule } from 'primeng/iconfield';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { ButtonModule } from 'primeng/button';
 
 interface RegisterOrcamentoBaseForm{
   ccPai: FormControl;
@@ -97,8 +102,10 @@ export interface OrcamentoBase{
   selector: 'app-orcamento-base',
   standalone: true,
   imports: [
-    CommonModule,RouterLink,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,MatFormFieldModule,MatSelectModule,
-    DropdownModule,FormsModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,
+    CommonModule,RouterLink,DividerModule,NzMenuModule,InputIconModule,IconFieldModule,
+    InputGroupModule,InputGroupAddonModule,MatFormFieldModule,MatSelectModule,
+    DropdownModule,FormsModule,FloatLabelModule,SelectModule,MultiSelectModule,ButtonModule,
+    ReactiveFormsModule,InputTextModule,TableModule,DialogModule,ToggleSwitchModule,
     ConfirmDialogModule,ToastModule,MultiSelectModule,InputSwitchModule,InputNumberModule,FloatLabelModule
   ],
   providers: [

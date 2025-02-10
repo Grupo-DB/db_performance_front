@@ -21,6 +21,9 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
 import { MessagesModule } from 'primeng/messages';
 import { animate, keyframes, style, transition, trigger } from '@angular/animations';
+import { Select, SelectModule } from 'primeng/select';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 
 interface RegisterProjecaoForm{
   produto: FormControl;
@@ -49,7 +52,8 @@ export interface Projecao{
   standalone: true,
   imports: [
     CommonModule,ReactiveFormsModule,RouterLink,FormsModule,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
-    DropdownModule,InputTextModule,TableModule,DialogModule,ButtonModule,MessagesModule,
+    DropdownModule,InputTextModule,TableModule,FloatLabelModule,
+    DialogModule,ButtonModule,MessagesModule,SelectModule,IconFieldModule,InputIconModule,
     ConfirmDialogModule,ToastModule,FloatLabelModule,InputNumberModule,ButtonModule
   ],
   providers: [
@@ -204,20 +208,18 @@ export class ProjecaoComponent implements OnInit {
       this.dt1.filterGlobal(this.inputValue, 'contains');
     }
     
-  abrirModalEdicao(projecao: Projecao){
-    this.editFormVisible = true;
-    this.editForm.patchValue({
-      id: projecao.id,
-      produto: projecao.produto_detalhes.id,
-      preco_medio_venda: projecao.preco_medio_venda,
-      custo_medio_variavel: projecao.custo_medio_variavel,
-      periodo: projecao.periodo,
-      ano: projecao.ano,
-      quantidade_carregada: projecao.quantidade_carregada,
-      
-    })
-  }  
-
+    abrirModalEdicao(projecao: Projecao) {
+      this.editFormVisible = true;
+      this.editForm.patchValue({
+          id: projecao.id,
+          produto: projecao.produto_detalhes.id,
+          preco_medio_venda: parseFloat(projecao.preco_medio_venda.toString()),
+          custo_medio_variavel: parseFloat(projecao.custo_medio_variavel.toString()),
+          periodo: projecao.periodo,
+          ano: parseInt(projecao.ano.toString(), 10),
+          quantidade_carregada: parseFloat(projecao.quantidade_carregada.toString())
+      });
+  }
   saveEdit(){
     const projecaoId = this.editForm.value.id;
     const produtoId = this.editForm.value.produto;
@@ -312,9 +314,6 @@ export class ProjecaoComponent implements OnInit {
 
  
   
-   
-  
-
   
 
   removeLinha(index: number): void {
