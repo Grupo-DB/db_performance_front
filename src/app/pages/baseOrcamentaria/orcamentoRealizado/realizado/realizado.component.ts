@@ -29,6 +29,7 @@ import { LoginService } from '../../../../services/avaliacoesServices/login/logi
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { RouterLink } from '@angular/router';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { DrawerModule } from 'primeng/drawer';
 
 export interface ResultadosTotaisArrayItem {
   label: string;
@@ -134,7 +135,7 @@ export interface FilialSga{
   selector: 'app-realizado',
   standalone: true,
   imports: [
-    DropdownModule,FloatLabelModule,DividerModule,CommonModule,FormsModule,InputNumberModule,
+    DropdownModule,FloatLabelModule,DividerModule,CommonModule,FormsModule,InputNumberModule,DrawerModule,
     MeterGroupModule,CardModule,ButtonModule,InplaceModule,DialogModule,TableModule,ChartModule,
     SidebarModule,TabViewModule,MultiSelectModule,KnobModule,NzProgressModule,NzMenuModule,RouterLink
   ],

@@ -6,7 +6,7 @@ import { routes } from './app.routes';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideToastr } from 'ngx-toastr';
 import { provideAnimations } from '@angular/platform-browser/animations'
-import Lara from '@primeng/themes/lara';
+import Material from '@primeng/themes/material';
 
 import { registerLocaleData } from '@angular/common';
 import pt from '@angular/common/locales/pt';
@@ -27,7 +27,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
         providePrimeNG({
             theme: {
-                preset: Lara,
+                preset: Material,
                 options: {
                   darkModeSelector: '.my-app-dark',
               }

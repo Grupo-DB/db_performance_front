@@ -1,5 +1,5 @@
 <div class="container">
-    <div class="formulario">
+    <div class="formulario m-3 mt-8">
         <div class="lgimg">
             <img  src="/assets/imagens/logotelalogin.png"/>
         </div>
@@ -8,12 +8,11 @@
         </div>
         <form [formGroup]="forgotPasswordForm">
             <div class="f1">
-                <p-inputGroup>
-                    <p-inputGroupAddon>
-                        <i class="pi pi-at"></i>
-                    </p-inputGroupAddon>
-                    <span class="p-float-label">
+                <p-floatlabel variant="on">
+                    <p-iconfield>
+                        <p-inputicon class="pi pi-at"/>
                         <input
+                            [style]="{'width':'100%'}"
                             pInputText
                             type="email"
                             id="newPassword"
@@ -21,9 +20,9 @@
                             name="newPassword"
                             required
                         />
-                        <label for="newPassword">Email</label>
-                    </span>                
-                </p-inputGroup>
+                        <label for="newPassword">Informe o Email</label>
+                    </p-iconfield>                
+                </p-floatlabel>
             </div>
             <div class="botoes-form">
                 <p-toast></p-toast>

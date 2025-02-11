@@ -1,5 +1,5 @@
 <div class="menu">
-    <ul nz-menu nzMode="horizontal" style="background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
         <li nz-menu-item nzMatchRouter="#">
             <a style="font-size: 13px;" routerLink="homeOrcamento">Início</a>
         </li>
@@ -70,6 +70,8 @@
                     [rowsPerPageOptions]="[20, 40, 60]"
                     [globalFilterFields]="['id','ano','raiz_analitica_desc','raiz_contabil_grupo_desc','mes_especifico']"
                     sortMode="multiple"
+                    scrollable="true"
+                    stripedRows
                 >
                    
                     <ng-template pTemplate="header">
@@ -219,7 +221,7 @@
                             </p-treeTable> 
                         </div>
 
-                        <div class="tabela"@swipeAnimation>  
+                        <div class="tabela mt-5"@swipeAnimation>  
                             <p-treeTable [value]="despesas" [scrollable]="true" scrollHeight="600px" [tableStyle]="{'min-width':'60rem'}">
                                 <!-- Cabeçalho da Tabela -->
                                 <ng-template pTemplate="header">

@@ -7,17 +7,17 @@ import { Avaliacao } from '../../../pages/avaliacoes/novaliacao/novaliacao.compo
   providedIn: 'root'
 })
 export class AvaliacaoService {
-  private apiUrl = 'http://localhost:8000/management/avaliacoes/';
-  private apiUrlfb = 'http://localhost:8000/management/';
-  private filterUrl = 'http://localhost:8000/datacalc/filtrar-avaliacoes/';
-  private filterLogadoUrl = 'http://localhost:8000/datacalc/filtrar-avaliacoes-logado/';
-  private filterAvaliadosUrl = 'http://localhost:8000/datacalc/filtrar-avaliados/';
-  private filterAvaliacoesPeriodoUrl = 'http://localhost:8000/datacalc/filtrar-avaliacoes-periodo/';
-  private filterAvaliacoesAvaliadorPeriodoUrl = 'http://localhost:8000/datacalc/filtrar-avaliacoes-avaliador-periodo/';
-  private apiAvUrl = 'http://localhost:8000/management/avaliacoes/minhas_avaliacoes/';
-  private periodoUrl = 'http://localhost:8000/datacalc/get-periodos/';
-  private tipoUrl = 'http://localhost:8000/datacalc/get-tipos/';
-  private historicoUrl = 'http://localhost:8000/datacalc/filtrar-historico/';  
+  private apiUrl = 'http://172.50.10.79:8008/management/avaliacoes/';
+  private apiUrlfb = 'http://172.50.10.79:8008/management/';
+  private filterUrl = 'http://172.50.10.79:8008/datacalc/filtrar-avaliacoes/';
+  private filterLogadoUrl = 'http://172.50.10.79:8008/datacalc/filtrar-avaliacoes-logado/';
+  private filterAvaliadosUrl = 'http://172.50.10.79:8008/datacalc/filtrar-avaliados/';
+  private filterAvaliacoesPeriodoUrl = 'http://172.50.10.79:8008/datacalc/filtrar-avaliacoes-periodo/';
+  private filterAvaliacoesAvaliadorPeriodoUrl = 'http://172.50.10.79:8008/datacalc/filtrar-avaliacoes-avaliador-periodo/';
+  private apiAvUrl = 'http://172.50.10.79:8008/management/avaliacoes/minhas_avaliacoes/';
+  private periodoUrl = 'http://172.50.10.79:8008/datacalc/get-periodos/';
+  private tipoUrl = 'http://172.50.10.79:8008/datacalc/get-tipos/';
+  private historicoUrl = 'http://172.50.10.79:8008/datacalc/filtrar-historico/';  
 
   constructor(private http: HttpClient) { }
 
