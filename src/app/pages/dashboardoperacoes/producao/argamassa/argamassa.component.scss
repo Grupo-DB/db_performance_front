@@ -149,22 +149,22 @@
     margin-bottom: 10px;
     //background-color: antiquewhite;
 }
-tr {
-    background-color:#f2f1f0;
-    font-size: 16px;
-    height: 8px;
-    color: #333;
-    border-radius: 8px;
-    width: 100%;
-  }
-  td{
-    border-radius: 8px;
-  }
-  th{
-    height: 2px;
-    background-color: #2d53da;
-    color: #eee;
-  }
+// tr {
+//     background-color:#f2f1f0;
+//     font-size: 16px;
+//     height: 8px;
+//     color: #333;
+//     border-radius: 8px;
+//     width: 100%;
+//   }
+//   td{
+//     border-radius: 8px;
+//   }
+//   th{
+//     height: 2px;
+//     background-color: #2d53da;
+//     color: #eee;
+//   }
   .filial{
     background-color: #1890FF;
   }
@@ -223,14 +223,7 @@ tr {
     background-color: #71AAE0; /* Cor quando o botão for clicado */
     color: white;
   }
-  .containerModal{
-    display: flex;
-    justify-content: end;
-    width: 100%;
-    height: 80%;
-    margin: 20px auto;
-    margin-right: 10px;
-}
+ 
 .containerModalAcumulado{
     display: flex;
     justify-content: center;
@@ -243,7 +236,7 @@ tr {
     display: flex;
     flex-direction: column;
     justify-self: flex-end;
-    height: 100%;
+    
     width: 20%;
     margin-left: 5px;
     border-radius: 8px;
@@ -382,7 +375,7 @@ tr {
     height: 80%;
     width: 80%;
     border-radius: 8px;
-    
+    background-color: brown;
 }
 .btnCalcProd{
     cursor: pointer;
@@ -421,15 +414,16 @@ tr {
 .rowWrap{
     display: flex;
     flex-direction: column;
-    height: 10%;
+    //height: 60%;
     border-radius: 8px;
     background-color: #e2e7f3;
-    margin: 5px;
+    //margin: 5px;
     }
 .esquerda .rowEsq{
     display: flex;
     height: 13%;
-    margin: 5px;    
+    margin: 5px;  
+    background-color: blueviolet;  
     }
  
     .coluna2{
@@ -500,7 +494,7 @@ tr {
         }        
 
         .containerInterno .direita{
-            height: 100%;
+            //height: 100%;
             width: 20%;
             border-radius: 8px;
             display: flex;
@@ -512,7 +506,7 @@ tr {
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 600px;
+            //height: 600px;
             border-radius: 8px;
             background-color: #e2e7f3;
             

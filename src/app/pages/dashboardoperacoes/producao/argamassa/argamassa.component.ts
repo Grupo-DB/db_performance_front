@@ -14,6 +14,8 @@ import { FormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { SelectModule } from 'primeng/select';
+import { DatePickerModule } from 'primeng/datepicker';
 interface Produto {
   nome: string;
   cod: number;
@@ -22,7 +24,8 @@ interface Produto {
   selector: 'app-argamassa',
   standalone: true,
   imports: [
-    DividerModule,CommonModule,RouterLink,InplaceModule,TableModule,DialogModule,MatSelectModule,FormsModule,DropdownModule,CalendarModule
+    DividerModule,CommonModule,RouterLink,DatePickerModule,
+    InplaceModule,TableModule,DialogModule,MatSelectModule,FormsModule,DropdownModule,CalendarModule,SelectModule
   ],
   providers: [
     HomeService,DatePipe

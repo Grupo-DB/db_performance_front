@@ -26,11 +26,11 @@
         <p>No ano</p>
       </div>
   </div>
-  <div class="titulo">
+  <div class="titulo mt-3">
     <i class="pi pi-plus-circle"></i><span> <b> Mineração</b></span><br>
   </div>
-  <div class="rowMineracao"@slideAnimation>
-    <div class="card">
+  <div class="rowMineracao flex-wrap justify-content-center lg:justify-content-start"@slideAnimation>
+    <div class="card mt-3">
       <div class="valor">
         <p></p>
       </div>
@@ -38,7 +38,7 @@
         <p>Tn Desmontada</p>
       </div>
     </div>
-    <div class="card">
+    <div class="card mt-3">
       <div class="valor">
         <p></p>
       </div>
@@ -46,7 +46,7 @@
         <p>Tn para Britador</p>
       </div>
     </div>
-    <div class="card">
+    <div class="card mt-3">
       <div class="valor">
         <p></p>
       </div>
@@ -62,8 +62,8 @@
    <div *ngIf="loading" class="loading-indicator">
       <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
     </div> 
-  <div class="rowProducao"@slideAnimation *ngIf="!loading">
-    <div class="card">
+  <div class="rowProducao flex-wrap justify-content-center lg:justify-content-start"@slideAnimation *ngIf="!loading">
+    <div class="card mt-3">
       <div class="valor">
         <p>{{ volumeBritado }}</p>
       </div>
@@ -71,7 +71,7 @@
         <p>Tn Volume Britado</p>
       </div>
     </div>
-    <div class="card">
+    <div class="card mt-3">
       <div class="valor">
         <p>{{ producaoBritador }}</p>
       </div>
@@ -79,7 +79,7 @@
         <p>Tn Produção Britador</p>
       </div>
     </div>
-    <div class="card">
+    <div class="card mt-3">
       <div class="valor">
         <p>{{ tnCalcario }}</p>
       </div>
@@ -87,7 +87,7 @@
         <p>Tn Calcario</p>
       </div>
     </div>
-    <div class="card">
+    <div class="card mt-3">
       <div class="valor">
         <p>{{ tnFertilizante }}</p>
       </div>
@@ -95,7 +95,7 @@
         <p>Tn Fertilizante</p>
       </div>
     </div>
-    <div class="card">
+    <div class="card mt-3">
       <div class="valor">
         <p>{{ tnCal }}</p>
       </div>
@@ -103,7 +103,7 @@
         <p>Tn Cal</p>
       </div>
     </div>
-    <div class="card">
+    <div class="card mt-3">
       <div class="valor">
         <p>{{ tnArgamassa }}</p>
       </div>
@@ -115,8 +115,8 @@
   <div class="titulo">
     <i class="pi pi-plus-circle"></i><span> <b> Manutenção</b></span><br>
   </div>
-  <div class="rowManutencao"@slideAnimation>
-    <div class="card">
+  <div class="rowManutencao flex-wrap justify-content-center lg:justify-content-start"@slideAnimation>
+    <div class="card mt-3">
       <div class="valor">
         <p></p>
       </div>
@@ -124,7 +124,7 @@
         <p>Total de Ordens de Serviço</p>
       </div>
     </div>
-    <div class="card">
+    <div class="card mt-3">
       <div class="valor">
         <p></p>
       </div>
@@ -132,7 +132,7 @@
         <p>OS Pendentes</p>
       </div>
     </div>
-    <div class="card">
+    <div class="card mt-3">
       <div class="valor">
         <p></p>
       </div>
@@ -140,7 +140,7 @@
         <p>OS Corretivas Pendentes</p>
       </div>
     </div>
-    <div class="card">
+    <div class="card mt-3 mb-5 lg:mb-0">
       <div class="valor">
         <p></p>
       </div>

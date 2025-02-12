@@ -5,13 +5,13 @@
         </p-divider>
     </div>
     <div class="row1"@efeitoFade>
-        <div class="carregamentos">
+        <div class="carregamentos w-12 lg:w-6">
             <div class="tituloCarregamento">
                 <span> <b> Carregamento geral</b></span><br>
             </div>
-                <div class="carregamentoWrap">
+                <div class="carregamentoWrap flex flex-column gap-1 align-items-center lg:flex-row">
 
-                    <div class="cardCarregmento">
+                    <div class="cardCarregmento w-10 lg:w-3">
                         <div class="valorCarregamento">
                             <p>{{ carregamentoGeralDia }}</p>
                         </div>
@@ -19,7 +19,7 @@
                             <p>Último dia</p>
                         </div>
                     </div>
-                    <div class="cardCarregmento">
+                    <div class="cardCarregmento w-10 lg:w-3">
                         <div class="valorCarregamento">
                             <p>{{ carregamentoGeralMes }}</p>
                         </div>
@@ -27,7 +27,7 @@
                             <p>Acomulado mês atual</p>
                         </div>
                     </div>
-                    <div class="cardCarregmento">
+                    <div class="cardCarregmento w-10 lg:w-3">
                         <div class="valorCarregamento">
                             <p>{{ carregamentoGeralAno }}</p>
                         </div>
@@ -38,16 +38,16 @@
                 </div>        
         </div>
     </div><!--EndCarregamento-->
-    <div class="row2"@efeitoFade>
-        <div class="totaisWrap">
-            <div class="tituloCarregamento2">
+    <div class="row2 flex flex-column lg:flex-row"@efeitoFade>
+        <div class="justify-content-center lg:w-12">
+            <div class="tituloCarregamento2 mt-2">
                 <b> Calcinação</b>
             </div>
-            <div class="totais">
+            <div class="flex flex-column align-items-center gap-3 lg:flex-row lg:mt-6">
                 <div class="nomes">
                     <p>AZBE</p>
                 </div>
-                <div class="card">
+                <div class="card w-10 lg:w-3">
                     <div class="valor">
                         <p>{{ azbeDia }}</p>
                     </div>
@@ -55,7 +55,7 @@
                         <p>Último dia</p>
                     </div>
                 </div>
-                <div class="card">
+                <div class="card w-10 lg:w-3">
                     <div class="valor">
                         <p>{{ azbeMes }}</p>
                     </div>
@@ -63,7 +63,7 @@
                         <p>Acomulado mês atual</p>
                     </div>
                 </div>
-                <div class="card">
+                <div class="card w-10 lg:w-3">
                     <div class="valor">
                         <p>{{ azbeAno }}</p>
                     </div>
@@ -72,11 +72,11 @@
                     </div>
                 </div>
             </div><!--EndTotais-->
-            <div class="totais">
+            <div class="flex flex-column align-items-center gap-3 mt-3 lg:flex-row">
                 <div class="nomes">
                     <p>Metálicos</p>
                 </div>
-                <div class="card">
+                <div class="card w-10 lg:w-3">
                     <div class="valor">
                         <p>{{ metalicosDia }}</p>
                     </div>
@@ -84,7 +84,7 @@
                         <p>Último dia</p>
                     </div>
                 </div>
-                <div class="card">
+                <div class="card w-10 lg:w-3">
                     <div class="valor">
                         <p>{{ metalicosMes }}</p>
                     </div>
@@ -92,7 +92,7 @@
                         <p>Acomulado mês atual</p>
                     </div>
                 </div>
-                <div class="card">
+                <div class="card w-10 lg:w-3">
                     <div class="valor">
                         <p>{{ metalicosAno }}</p>
                     </div>
@@ -102,12 +102,12 @@
                 </div>
             </div><!--EndTotais-->
         </div>    
-        <div class="produtividadeWrap">
-            <div class="tituloCarregamento2">
+        <div class="produtividadeWrap w-12 ">
+            <div class="tituloCarregamento2 w-12 mt-2">
                 <b>Total dos Fornos</b>
             </div>
-            <div class="produtividade">
-                <div class="cardForno">
+            <div class="produtividade flex flex-column align-items-center w-12 ">
+                <div class="cardForno w-10">
                     <div class="valorForno">
                         <p>{{ fornosTotalDia }}</p>
                     </div>
@@ -115,7 +115,7 @@
                         <p>Último dia</p>
                     </div>
                 </div>
-                <div class="cardForno">
+                <div class="cardForno w-10">
                     <div class="valorForno">
                         <p>{{ fornosTotalMes }}</p>
                     </div>
@@ -123,7 +123,7 @@
                         <p>Acomulado mês atual</p>
                     </div>
                 </div>
-                <div class="cardForno">
+                <div class="cardForno w-10">
                     <div class="valorForno">
                         <p>{{ fornosTotalAno }}</p>
                     </div>
@@ -134,16 +134,19 @@
             </div>
         </div><!--EndProdutividade-->
     </div><!--enRow2-->
-    <div class="row2"@efeitoFade>
-        <div class="totaisWrap">
+    <div class="row2 flex-column md:flex-row"@efeitoFade>
+        <div class="justify-content-center mt-3">
             <div class="tituloCarregamento2">
-                <i class="pi pi-plus-circle"></i><span (click)="exibirGrafico()" style="cursor: pointer;"> <b> Beneficiamento </b></span><br>
+                <i class="pi pi-plus-circle mt-2"></i><span (click)="exibirGrafico()" style="cursor: pointer;"> <b> Beneficiamento </b></span><br>
             </div>
-            <div class="totais">
-                <div class="nomes">
-                    <p>Cal Virgem CV-C</p>
-                </div>
-                <div class="cardCalcinacao">
+
+            <div class="nomes w-10 lg:w-1 lg:mb-0">
+                <p>Cal Virgem CV-C</p>
+            </div>
+
+            <div class=" w-12 flex flex-column align-items-center gap-1 lg:flex-row lg:justify-content-center">
+                
+                <div class="cardCalcinacao w-10 lg:w-2">
                     <div class="valor">
                         <p>{{ cvcTotalDia }}</p>
                     </div>
@@ -151,7 +154,7 @@
                         <p>Último dia</p>
                     </div>
                 </div>
-                <div class="cardCalcinacao">
+                <div class="cardCalcinacao w-10 lg:w-2">
                     <div class="valor">
                         <p>{{ cvcTotalMes }}</p>
                     </div>
@@ -159,7 +162,7 @@
                         <p>Acomulado mês atual</p>
                     </div>
                 </div>
-                <div class="cardCalcinacao">
+                <div class="cardCalcinacao w-10 lg:w-2">
                     <div class="valor">
                         <p>{{ cvcTotalAno }}</p>
                     </div>
@@ -167,12 +170,41 @@
                         <p>Acomulado ano atual</p>
                     </div>
                 </div>
-            </div><!--EndTotais-->
-            <div class="totais">
-                <div class="nomes">
-                    <p>Cal Hidratada CH-II</p>
+
+                <div class="cardEnsacado w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ cvcEnsacadosTotalDia }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Último dia</p>
+                    </div>
                 </div>
-                <div class="cardCalcinacao">
+                <div class="cardEnsacado w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ cvcEnsacadosTotalMes }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                    </div>
+                </div>
+                <div class="cardEnsacado w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ cvcEnsacadosTotalAno }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                    </div>
+                </div>
+
+            </div><!--EndTotais-->
+
+            <div class="nomes mt-2 w-10 lg:w-1 lg:-mb-4 lg:mt-3">
+                <p>Cal Hidratada CH-II</p>
+            </div>
+
+            <div class="mt-3 w-12 flex flex-column align-items-center gap-1 lg:flex-row lg:justify-content-center ">
+                
+                <div class="cardCalcinacao w-10 lg:w-2">
                     <div class="valor">
                         <p>{{ hidraulicaTotalDia }}</p>
                     </div>
@@ -180,7 +212,7 @@
                         <p>Último dia</p>
                     </div>
                 </div>
-                <div class="cardCalcinacao">
+                <div class="cardCalcinacao w-10 lg:w-2">
                     <div class="valor">
                         <p>{{ hidraulicaTotalMes }}</p>
                     </div>
@@ -188,7 +220,7 @@
                         <p>Acomulado mês atual</p>
                     </div>
                 </div>
-                <div class="cardCalcinacao">
+                <div class="cardCalcinacao w-10 lg:w-2">
                     <div class="valor">
                         <p>{{ hidraulicaTotalAno }}</p>
                     </div>
@@ -196,12 +228,41 @@
                         <p>Acomulado ano atual</p>
                     </div>
                 </div>
-            </div><!--EndTotais-->
-            <div class="totais">
-                <div class="nomes">
-                    <p>Cal Hidráulica</p>
+
+                <div class="cardEnsacado w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ ch2EnsacadosTotalDia }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Último dia</p>
+                    </div>
                 </div>
-                <div class="cardCalcinacao">
+                <div class="cardEnsacado w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ ch2EnsacadosTotalMes }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                    </div>
+                </div>
+                <div class="cardEnsacado w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ ch2EnsacadosTotalAno }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                    </div>
+                </div>
+            
+            </div><!--EndTotais-->
+
+            <div class="nomes mt-2 w-10 lg:w-1">
+                <p>Cal Hidráulica</p>
+            </div>
+
+            <div class="flex flex-column w-12 mt-1 align-items-center gap-1 lg:flex-row lg:justify-content-center">
+                
+                <div class="cardCalcinacao w-10 lg:w-2">
                     <div class="valor">
                         <p>{{ ch2TotalDia }}</p>
                     </div>
@@ -209,7 +270,7 @@
                         <p>Último dia</p>
                     </div>
                 </div>
-                <div class="cardCalcinacao">
+                <div class="cardCalcinacao w-10 lg:w-2">
                     <div class="valor">
                         <p>{{ ch2TotalMes }}</p>
                     </div>
@@ -217,7 +278,7 @@
                         <p>Acomulado mês atual</p>
                     </div>
                 </div>
-                <div class="cardCalcinacao">
+                <div class="cardCalcinacao w-10 lg:w-2">
                     <div class="valor">
                         <p>{{ ch2TotalAno }}</p>
                     </div>
@@ -225,106 +286,46 @@
                         <p>Acomulado ano atual</p>
                     </div>
                 </div>
+                 <div class="cardEnsacado w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ hidraulicaEnsacadosTotalDia }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Último dia</p>
+                    </div>
+                </div>
+                <div class="cardEnsacado w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ hidraulicaEnsacadosTotalMes }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                    </div>
+                </div>
+                <div class="cardEnsacado w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ hidraulicaEnsacadosTotalAno }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                    </div>
+                </div>
             </div><!--EndTotais-->
         </div>    
-        <div class="produtividadeWrap">
-            <div class="tituloCarregamento2">
-                <b>Volume Ensacado</b>
-            </div>
-            <!-- <div class="produtividade"> -->
-                <div class="totais">
-                    <div class="cardEnsacado">
-                        <div class="valor">
-                            <p>{{ cvcEnsacadosTotalDia }}</p>
-                        </div>
-                        <div class="unidade">
-                            <p>Último dia</p>
-                        </div>
-                    </div>
-                    <div class="cardEnsacado">
-                        <div class="valor">
-                            <p>{{ cvcEnsacadosTotalMes }}</p>
-                        </div>
-                        <div class="unidade">
-                            <p>Acomulado mês atual</p>
-                        </div>
-                    </div>
-                    <div class="cardEnsacado">
-                        <div class="valor">
-                            <p>{{ cvcEnsacadosTotalAno }}</p>
-                        </div>
-                        <div class="unidade">
-                            <p>Acomulado ano atual</p>
-                        </div>
-                    </div>
-                </div><!--EndTotais-->
-                <div class="totais">
-                    <div class="cardEnsacado">
-                        <div class="valor">
-                            <p>{{ ch2EnsacadosTotalDia }}</p>
-                        </div>
-                        <div class="unidade">
-                            <p>Último dia</p>
-                        </div>
-                    </div>
-                    <div class="cardEnsacado">
-                        <div class="valor">
-                            <p>{{ ch2EnsacadosTotalMes }}</p>
-                        </div>
-                        <div class="unidade">
-                            <p>Acomulado mês atual</p>
-                        </div>
-                    </div>
-                    <div class="cardEnsacado">
-                        <div class="valor">
-                            <p>{{ ch2EnsacadosTotalAno }}</p>
-                        </div>
-                        <div class="unidade">
-                            <p>Acomulado ano atual</p>
-                        </div>
-                    </div>
-                </div><!--EndTotais-->
-                <div class="totais">
-                    <div class="cardEnsacado">
-                        <div class="valor">
-                            <p>{{ hidraulicaEnsacadosTotalDia }}</p>
-                        </div>
-                        <div class="unidade">
-                            <p>Último dia</p>
-                        </div>
-                    </div>
-                    <div class="cardEnsacado">
-                        <div class="valor">
-                            <p>{{ hidraulicaEnsacadosTotalMes }}</p>
-                        </div>
-                        <div class="unidade">
-                            <p>Acomulado mês atual</p>
-                        </div>
-                    </div>
-                    <div class="cardEnsacado">
-                        <div class="valor">
-                            <p>{{ hidraulicaEnsacadosTotalAno }}</p>
-                        </div>
-                        <div class="unidade">
-                            <p>Acomulado ano atual</p>
-                        </div>
-                    </div>
-                </div><!--EndTotais-->
-        <!--EndProdutividade-->
-    </div><!--enRow2-->
+        
 <!---------------------------------------------MODAIS--------------------------------->
     <p-dialog
         [modal]="true"
         [(visible)]="abrirModal"
         [style]="{ width: '95%', height:'95%' }"
-        [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"   
+        
     >
     <div class="titulo">
         <p-divider align="left" type="solid">
             <b>Produção e Carregamento Cal</b>
         </p-divider> 
     </div>
-    <div class="rowBotoes">
+    <div class="flex flex-row justify-content-center lg:justify-content-end ">
         <div 
             class="btnCalc"
             (click)="gerarGrafico('mensal','acumulado')"
@@ -340,102 +341,113 @@
             <p>No ano</p>
         </div>
     </div>
-    <div class="rowBotoesFabricas">
+    <div class="rowBotoesFabricas mt-3 w-12 flex-column gap-2 align-items-center lg:flex-row">
         <div 
-            class="btnCalc"
+            class="btnCalc w-10 lg:w-1"
             (click)="gerarGrafico(selectedButton,'acumulado')"
             [ngClass]="{'active': selectedProduct === 'acumulado'}"
         >
             <p>Acumulado</p>
         </div>
         <div 
-            class="btnCalc"
+            class="btnCalc w-10 lg:w-1"
            (click)="gerarGrafico(selectedButton,'cvc')"
            [ngClass]="{'active': selectedProduct === 'cvc'}"
         >
             <p>CVC</p>
         </div>
         <div 
-            class="btnCalc"
+            class="btnCalc w-10 lg:w-1"
             (click)="gerarGrafico(selectedButton,'ch2')"
             [ngClass]="{'active': selectedProduct === 'ch2'}"
         >
             <p>CH2</p>
         </div>
-        <div class="btnCalc"
+        <div class="btnCalc w-10 lg:w-1"
         (click)="gerarGrafico(selectedButton,'hidraulica')"
         [ngClass]="{'active': selectedProduct === 'hidraulica'}"
         >
             <p>Hidráulica</p>
         </div>
         <div 
-            class="btnCalc" 
+            class="btnCalc w-10 lg:w-1" 
         >
              <a (click)="exibirEquipamentos()" style="color: inherit;"><p>Detalhar</p></a> 
         </div>
     </div>
-    <div class="containerModal">
-        <div class="chartBarEnsacados">
+
+    <div class="w-full justify-content-center flex flex-column lg:flex-row lg:h-18rem">
+
+        <div class="chartBarEnsacados w-full lg:w-10">
             <canvas id="graficoTotalProducaoDiaria"></canvas>
         </div>
-        <div class="projecoes">
-            <div class="titulo2">
-                <span> <b>Média do Período</b></span><br>
-            </div>
-            <div class="media">
-                <div class="card2">
-                    <div class="valor">
-                        <p>{{ mediaEnsacados }}</p>
-                    </div>
-                    <div class="unidade2">
-                        <p>Tn</p>
+        
+        <div class="projecoes mt-3 w-full flex-row lg:flex-column lg:w-2 lg:mt-0">
+            <div class="af w-6 lg:w-full">
+                <div class="titulo2">
+                    <span> <b>Média do Período</b></span><br>
+                </div>
+                <div class="media">
+                    <div class="card2 h-6rem">
+                        <div class="valor">
+                            <p>{{ mediaEnsacados }}</p>
+                        </div>
+                        <div class="unidade2">
+                            <p>Tn</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="titulo2">
-                <span> <b> Projeção para o Período</b></span><br>
-            </div>
-            <div class="projecao">
-                <div class="card2">
-                    <div class="valor">
-                        <p>{{ projecaoEnsacados }}</p>
-                    </div>
-                    <div class="unidade2">
-                        <p>Tn</p>
+            <div class="af w-6 lg:w-full">    
+                <div class="titulo2">
+                    <span> <b> Projeção para o Período</b></span><br>
+                </div>
+                <div class="projecao">
+                    <div class="card2 h-6rem">
+                        <div class="valor">
+                            <p>{{ projecaoEnsacados }}</p>
+                        </div>
+                        <div class="unidade2">
+                            <p>Tn</p>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </div>                           
         </div>
     </div>
     <br/>
-    <div class="containerModal">
-        <div class="chartBarEnsacados">
+    <div class="w-full mt-3 justify-content-center flex flex-column lg:flex-row lg:h-18rem">
+        <div class="chartBarEnsacados w-full lg:w-10">
             <canvas id="graficoTotalCarregamentoDiario"></canvas>
         </div>    
-        <div class="projecoes">
-            <div class="titulo2">
-                <span> <b>Média do Período</b></span><br>
-            </div>
-            <div class="media">
-                <div class="card2">
-                    <div class="valor">
-                        <p>{{ mediaEnsacadosCarregamento }}</p>
-                    </div>
-                    <div class="unidade2">
-                        <p>Tn</p>
+        <div class="projecoes mt-3 w-full flex-row lg:flex-column lg:w-2 lg:mt-0">
+            <div class="af w-6 lg:w-full">
+                <div class="titulo2">
+                    <span> <b>Média do Período</b></span><br>
+                </div>
+                <div class="media">
+                    <div class="card2 h-6rem">
+                        <div class="valor">
+                            <p>{{ mediaEnsacadosCarregamento }}</p>
+                        </div>
+                        <div class="unidade2">
+                            <p>Tn</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="titulo2">
-                <span> <b> Projeção para o Período</b></span><br>
-            </div>
-            <div class="projecao">
-                <div class="card2">
-                    <div class="valor">
-                        <p>{{ projecaoEnsacadosCarregamento }}</p>
-                    </div>
-                    <div class="unidade2">
-                        <p>Tn</p>
+            <div class="af w-6 lg:w-full">
+                <div class="titulo2">
+                    <span> <b> Projeção para o Período</b></span><br>
+                </div>
+                <div class="projecao">
+                    <div class="card2 h-6rem">
+                        <div class="valor">
+                            <p>{{ projecaoEnsacadosCarregamento }}</p>
+                        </div>
+                        <div class="unidade2">
+                            <p>Tn</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -454,9 +466,9 @@
                 <b>Produtividade Fábricas</b>
             </p-divider>   
             <div class="container">
-                <div class="rowSuperior">
-                    <div class="buttons">
-                        <p-calendar
+                <div class="rowSuperior flex-wrap">
+                    <div class="buttons w-12 lg:w-6">
+                        <p-datepicker
                             [style]="{'width':'100%'}"
                             id="da" 
                             [(ngModel)]="data"
@@ -464,13 +476,13 @@
                             [showIcon]="true"
                             placeholder="Data"
                         >
-                        </p-calendar>
+                        </p-datepicker>
                         <div class="btnCalcProd" 
                             (click)="calcularEquipamentosDetalhes(data)">
                             <p>Calcular</p>
                         </div>
                     </div>    
-                    <div class="rightEqpto">
+                    <div class="rightEqpto w-12 lg:w-20rem">
                         <div class="tituloEqpto">
                             <span> <b>Carregamento geral</b></span><br>
                         </div>
@@ -486,16 +498,16 @@
                         </div>    
                     </div>    
                 </div><!--end rowSupeiror-->
-                <div class="containerInterno">
-                    <div class="esquerda">
-                        <div class="rowWrap">
+                <div class=" flex flex-wrap justify-content-center lg:flex-nowrap lg:w-12">
+                    <div class="w-12 flex flex-column align-items-center">
+                        <div class="rowWrap w-12 flex flex-column lg:flex-row lg:w-12 lg:mt-1">
                             <div class="tituloFab">
                                 <b> Ensacados </b>
                             </div>
-                            <div class="rowEsq">
-                                <div class="coluna1">
-                                    <div class="linha1">
-                                        <div class="eqpto">
+                            <div class="flex flex-column lg:flex-row lg:w-12">
+                                <div class="flex flex-column lg:flex-row ">
+                                    <div class="flex w-12 flex-column align-items-center lg:flex-row">
+                                        <div class="eqpto text-center w-2 -ml-8">
                                             <p>MB-01</p>
                                         </div>
                                         <div class="cardProd">
@@ -516,8 +528,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="coluna2">
-                                    <div class="cardFab">
+                                <div class="flex flex-column w-12 align-items-center lg:flex-row">
+                                    <div class="cardFab w-6">
                                         <div class="valorCarregamentoProd">
                                             <p>{{ mb01Produtividade }}</p>
                                         </div>
@@ -536,14 +548,14 @@
                                 </div>
                             </div><!--end row1-->
                         </div>    
-                        <div class="rowWrap">
+                        <div class="rowWrap w-12 flex flex-column lg:flex-row lg:w-12 lg:mt-1">
                             <div class="tituloFab">
                                 <b> Ensacados</b>
                             </div>
-                            <div class="rowEsq">   
-                                <div class="coluna1">
-                                    <div class="linha1">
-                                        <div class="eqpto">
+                            <div class="flex flex-column lg:flex-row lg:w-12">   
+                                <div class="flex flex-column lg:flex-row">
+                                    <div class="flex flex-column align-items-center lg:flex-row">
+                                        <div class="eqpto text-center w-2 -ml-8">
                                             <p>MB-02</p>
                                         </div>
                                         <div class="cardProd">
@@ -564,7 +576,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="coluna2">
+                                <div class="flex flex-column w-12 align-items-center lg:flex-row">
                                     <div class="cardFab">
                                         <div class="valorCarregamentoProd">
                                             <p>{{ mb02Produtividade }}</p>
@@ -584,14 +596,14 @@
                                 </div>
                             </div><!--end row2-->
                         </div><!--EndTitle-->    
-                        <div class="rowWrap">
+                        <div class="rowWrap w-12 flex flex-column lg:flex-row lg:w-12 lg:mt-1">
                             <div class="tituloFab">
                                 <b> Ensacados </b>
                             </div>
-                            <div class="rowEsq">
-                                <div class="coluna1">
-                                    <div class="linha1">
-                                        <div class="eqpto">
+                            <div class="flex flex-column lg:flex-row lg:w-12">
+                                <div class="flex flex-column lg:flex-row">
+                                    <div class="flex flex-column align-items-center lg:flex-row">
+                                        <div class="eqpto text-center w-2 -ml-8">
                                             <p>MB-03</p>
                                         </div>
                                         <div class="cardProd">
@@ -612,7 +624,7 @@
                                         </div>
                                     </div>
                                 </div>    
-                                <div class="coluna2">
+                                <div class="flex flex-column w-12 align-items-center lg:flex-row">
                                     <div class="cardFab">
                                         <div class="valorCarregamentoProd">
                                             <p>{{ mb03Produtividade }}</p>
@@ -632,14 +644,14 @@
                                 </div>
                             </div><!--end row3-->
                         </div>
-                        <div class="rowWrap">
+                        <div class="mt-3 rowWrap w-12 flex flex-column lg:flex-row lg:w-12 lg:mt-1">
                             <div class="tituloFab">
                                 <b> Ensacados </b>
                             </div>
-                            <div class="rowEsq">
-                                <div class="coluna1">
-                                    <div class="linha1">
-                                        <div class="eqpto">
+                            <div class="flex flex-column lg:flex-row lg:w-12">
+                                <div class="flex flex-column lg:flex-row">
+                                    <div class="flex flex-column align-items-center lg:flex-row">
+                                        <div class=" text-center w-3 ">
                                             <p>MG-01</p>
                                         </div>
                                         <div class="cardProd">
@@ -660,7 +672,7 @@
                                         </div>
                                     </div>
                                 </div>    
-                                <div class="coluna2">
+                                <div class="flex flex-column w-12 align-items-center lg:flex-row">
                                     <div class="cardFab">
                                         <div class="valorCarregamentoProd">
                                             <p>{{ mg01Produtividade }}</p>
@@ -681,7 +693,7 @@
                             </div><!--end row3-->
                         </div>        
                     </div><!--end Esquerda-->
-                    <div class="direita">
+                    <div class="direita w-10 lg:w-2">
                         <div class="totais">
                             <div class="cardFabDir">
                                 <div class="valorCarregamentoProd">

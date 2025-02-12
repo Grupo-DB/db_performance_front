@@ -127,8 +127,6 @@
     color: #eee;
 }
 .row2{
-    display: flex;
-    width: 90%;
     background-color: #e2e7f3;
     margin: 5px auto;
     border-radius: 10px;
@@ -181,7 +179,7 @@
     margin: 10px;
     text-align: center;
     height: 100px;
-    width: 400px;
+    //width: 400px;
     border-radius: 10px;
     background-color:#444959;
     box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
@@ -574,10 +572,10 @@ align-items: center;
 .rowWrap{
 display: flex;
 flex-direction: column;
-height: 10%;
+//height: 10%;
 border-radius: 8px;
 background-color: #e2e7f3;
-margin: 5px;
+//margin: 5px;
 }
 .containerInterno .direita{
 height: 100%;

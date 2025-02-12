@@ -6,11 +6,11 @@
     </div>
 
     <div class="row1"@swipeAnimationReverse>
-        <div class="carregamentos">
+        <div class="carregamentos w-8">
             <div class="tituloCarregamento">
                 <span> <b> Carregamento geral</b></span><br>
             </div>
-                <div class="carregamentoWrap">
+                <div class="carregamentoWrap flex-wrap gap-3">
                     <div class="cardCarregmento">
                         <div class="valorCarregamento">
                             <p>{{ totalCarregamentoDia }}</p>
@@ -38,12 +38,12 @@
                 </div>        
         </div>
     </div><!--EndCarregamento-->
-    <div class="row2"@swipeAnimation>
-        <div class="totaisWrap">
+    <div class="row2 w-12 flex-column  lg:flex-row "@swipeAnimation>
+        <div class="justify-content-center mt-3">
             <div class="tituloCarregamento">
                 <b>Produção</b>
             </div>
-            <div class="totais">
+            <div class=" flex flex-wrap justify-content-center gap-3">
                 <div class="card">
                     <div class="valor">
                         <p>{{ totalProducaoDia }}</p>
@@ -70,11 +70,11 @@
                 </div>
             </div><!--EndTotais-->
         </div>    
-        <div class="produtividadeWrap">
+        <div class="justify-content-center mt-3 ">
             <div class="tituloCarregamento">
                 <b>Volume ensacado</b>
             </div>
-            <div class="totais">
+            <div class="totais flex-wrap gap-3">
                 <div class="card">
                     <div class="valor">
                         <p>{{ totalEnsacadosDia }}</p>
@@ -113,7 +113,7 @@
                 </div>
             </ng-template>
             <ng-template pTemplate="content">
-                <p-table [value]="dados" responsiveLayout="scroll">
+                <p-table [value]="dados" responsiveLayout="scroll" stripedRows scrollable="true">
                     <ng-template pTemplate="header">
                         <tr>
                             <th>Produto</th>
@@ -342,17 +342,17 @@
 <p-dialog
     [modal]="true"
     [(visible)]="exibirGraficos" 
-    [style]="{ width: '90%', height: '90%' }" 
-    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" 
+    [style]="{ width: '95%', height: '95%' }" 
 >
     <div class="titulo">
         <p-divider align="left" type="solid">
             <b>Produção e Carregamento Argamassa</b>
         </p-divider>
     </div>
-    <div class="rowInit">
-        <div class="dropdown">
-            <p-dropdown
+    <div class="rowInit flex-wrap lg:flex-nowrap">
+        <div class="dropdown mb-3">
+            <p-select
+                appendTo="body"
                 [style]="{'width':'100%'}"
                 [options]="produtos"
                 optionLabel="nome"
@@ -360,7 +360,7 @@
                 [(ngModel)]="selectedProduto"
                 (onChange)="onProdutoSelecionado($event)"
             >
-            </p-dropdown>
+            </p-select>
                
         </div>
 
@@ -399,72 +399,80 @@
             </div>
         </div>
     </div>
-    <div class="containerModal">
+    <div class=" w-full justify-content-center flex flex-column lg:flex-row lg:h-18rem">
         
-            <div class="chartProdutosArgamassa">
+            <div class="chartProdutosArgamassa w-full lg:w-10">
                 <canvas id="graficoProducaoProduto"></canvas>
             </div>
         
         
         <!--Garficos-->
-        <div class="projecoes">
-            <div class="titulo2">
-                <span> <b>Média do Período</b></span><br>
-            </div>
-            <div class="media">
-                <div class="card2">
-                    <div class="valor">
-                        <p>{{ mediaProducao }}</p>
-                    </div>
-                    <div class="unidade2">
-                        <p>Sc</p>
+        <div class="projecoes mt-3 w-full flex-row lg:flex-column lg:w-2 lg:mt-0">
+            <div class="af w-6 lg:w-full">    
+                <div class="titulo2">
+                    <span> <b>Média do Período</b></span><br>
+                </div>
+                <div class="media">
+                    <div class="card2 h-6rem">
+                        <div class="valor">
+                            <p>{{ mediaProducao }}</p>
+                        </div>
+                        <div class="unidade2">
+                            <p>Sc</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="titulo2">
-                <span> <b> Projeção para o Período</b></span><br>
-            </div>
-            <div class="media">
-                <div class="card2">
-                    <div class="valor">
-                        <p>{{ projecaoProducao }}</p>
-                    </div>
-                    <div class="unidade2">
-                        <p>Sc</p>
+            <div class="af w-6 lg:w-full">    
+                <div class="titulo2">
+                    <span> <b> Projeção para o Período</b></span><br>
+                </div>
+                <div class="media">
+                    <div class="card2 h-6rem">
+                        <div class="valor">
+                            <p>{{ projecaoProducao }}</p>
+                        </div>
+                        <div class="unidade2">
+                            <p>Sc</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="containerModal">
-        <div class="chartProdutosArgamassa">
+    <div class=" w-full mt-3 justify-content-center flex flex-column lg:flex-row lg:h-18rem">
+        <div class="chartProdutosArgamassa w-full lg:w-10">
             <canvas id="graficoProdutoCarregamento"></canvas>
         </div>
 
-        <div class="projecoes">
-            <div class="titulo2">
-                <span> <b>Média do Período</b></span><br>
-            </div>
-            <div class="media">
-                <div class="card2">
-                    <div class="valor">
-                        <p>{{ mediaCarregamento }}</p>
-                    </div>
-                    <div class="unidade2">
-                        <p>Sc</p>
+        <div class="projecoes mt-3 w-full flex-row lg:flex-column lg:w-2 lg:mt-0">
+            <div class="af w-6 lg:w-full">
+                <div class="titulo2">
+                    <span> <b>Média do Período</b></span><br>
+                </div>
+                <div class="media">
+                    <div class="card2 h-6rem">
+                        <div class="valor">
+                            <p>{{ mediaCarregamento }}</p>
+                        </div>
+                        <div class="unidade2">
+                            <p>Sc</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="titulo2">
-                <span> <b> Projeção para o Período</b></span><br>
-            </div>
-            <div class="media">
-                <div class="card2">
-                    <div class="valor">
-                        <p>{{ projecaoCarregamento }}</p>
-                    </div>
-                    <div class="unidade2">
-                        <p>Sc</p>
+            <div class="af w-6 lg:w-full">
+                <div class="titulo2">
+                    <span> <b> Projeção para o Período</b></span><br>
+                </div>
+                <div class="media">
+                    <div class="card2 h-6rem">
+                        <div class="valor">
+                            <p>{{ projecaoCarregamento }}</p>
+                        </div>
+                        <div class="unidade2">
+                            <p>Sc</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -474,19 +482,19 @@
 </p-dialog>
 <!---------------------------------  detalhes equipamentos ------------------ -->
 <p-dialog 
-[modal]="true"
-[(visible)]="equipamentosVisivel" 
-[style]="{ width: '90%', height: '90%' }" 
-[breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"   
+    [modal]="true"
+    [(visible)]="equipamentosVisivel" 
+    [style]="{ width: '95%', height: '95%' }" 
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"   
 >
-<div class="titulo">
+
     <p-divider align="left" type="solid">
         <b>Produtividade Fábrica</b>
     </p-divider>   
     <div class="container">
-        <div class="rowSuperior">
-            <div class="buttons">
-                <p-calendar
+        <div class="rowSuperior flex-wrap">
+            <div class="buttons w-12 lg:w-6">
+                <p-datepicker
                     [style]="{'width':'100%'}"
                     id="da" 
                     [(ngModel)]="data"
@@ -494,7 +502,7 @@
                     [showIcon]="true"
                     placeholder="Data"
                 >
-                </p-calendar>
+                </p-datepicker>
                 <div 
                     class="btnCalcProd"
                     (click)="calcularEquipamentosDetalhes(data)" 
@@ -502,7 +510,7 @@
                     <p>Calcular</p>
                 </div>
             </div>    
-            <div class="rightEqpto">
+            <div class="rightEqpto w-12 lg:w-20rem">
                 <div class="tituloEqpto">
                     <span> <b>Carregamento geral</b></span><br>
                 </div>
@@ -518,16 +526,16 @@
                 </div>    
             </div>    
         </div><!--end rowSupeiror-->
-        <div class="containerInterno">
-            <div class="esquerda">
-                <div class="rowWrap">
+        <div class="containerInterno flex flex-wrap justify-content-center lg:flex-nowrap lg:w-12">
+            <div class="w-12">
+                <div class="rowWrap flex flex-column lg:flex-row lg:w-12 lg:mt-1">
                     <div class="tituloFab">
                         <b> Ensacados </b>
                     </div>
-                    <div class="rowEsq">
-                        <div class="coluna1">
-                            <div class="linha1">
-                                <div class="eqpto">
+                    <div class="flex flex-column lg:flex-row lg:w-12">
+                        <div class="flex flex-column lg:flex-row ">
+                            <div class="flex w-12 flex-column align-items-center lg:flex-row">
+                                <div class="eqpto text-center w-2 -ml-8">
                                     <p>MH-01</p>
                                 </div>
                                 <div class="cardProd">
@@ -548,8 +556,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="coluna2">
-                            <div class="cardFab">
+                        <div class="flex flex-column w-12 align-items-center lg:flex-row">
+                            <div class="cardFab w-6">
                                 <div class="valorCarregamentoProd">
                                     <p>{{ mh01Produtividade }}</p>
                                 </div>
@@ -557,7 +565,7 @@
                                     <p>Produtividade equipamento</p>
                                 </div>
                             </div>
-                            <div class="cardFab">
+                            <div class="cardFab w-6">
                                 <div class="valorCarregamentoProd">
                                     <p>{{ mh01Producao }}</p>
                                 </div>
@@ -568,14 +576,14 @@
                         </div>
                     </div><!--end row1-->
                 </div>    
-                <div class="rowWrap">
+                <div class="rowWrap flex flex-column lg:flex-row lg:w-12 lg:mt-1">
                     <div class="tituloFab">
                         <b> Ensacados</b>
                     </div>
-                    <div class="rowEsq">   
-                        <div class="coluna1">
-                            <div class="linha1">
-                                <div class="eqpto">
+                    <div class="flex flex-column lg:flex-row lg:w-12">   
+                        <div class="flex flex-column lg:flex-row">
+                            <div class="flex flex-column align-items-center lg:flex-row">
+                                <div class="eqpto text-center w-2 -ml-8">
                                     <p>MH-02</p>
                                 </div>
                                 <div class="cardProd">
@@ -596,8 +604,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="coluna2">
-                            <div class="cardFab">
+                        <div class="flex flex-column w-12 align-items-center lg:flex-row">
+                            <div class="cardFab w-6">
                                 <div class="valorCarregamentoProd">
                                     <p>{{ mh02Produtividade }}</p>
                                 </div>
@@ -605,7 +613,7 @@
                                     <p>Produtividade equipamento</p>
                                 </div>
                             </div>
-                            <div class="cardFab">
+                            <div class="cardFab w-6">
                                 <div class="valorCarregamentoProd">
                                     <p>{{ mh02Producao }}</p>
                                 </div>
@@ -617,7 +625,7 @@
                     </div><!--end row2-->
                 </div><!--EndTitle-->          
             </div><!--end Esquerda-->
-            <div class="direita">
+            <div class="direita w-10 lg:w-2">
                 <div class="totais">
                     <div class="cardFabDir">
                         <div class="valorCarregamentoProd">
@@ -639,14 +647,14 @@
             </div><!--End Direita-->
         </div><!--end containerInterno--> 
     </div><!--end container--> 
-</div>
+
 
 </p-dialog> 
 <!----------------------ACUMULADOS----------------------->
 <p-dialog 
     [modal]="true"
     [(visible)]="acumuladoVisivel" 
-    [style]="{ width: '90%', height: '90%' }" 
+    [style]="{ width: '95%', height: '95%' }" 
     [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"   
 >
 <div class="titulo">

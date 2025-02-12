@@ -11,12 +11,14 @@ import { DatePipe } from '@angular/common';
 import { CalendarModule } from 'primeng/calendar';
 import { FormsModule } from '@angular/forms';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { DatePickerModule } from 'primeng/datepicker';
 
 @Component({
   selector: 'app-cal',
   standalone: true,
   imports: [
-    DividerModule,CommonModule,RouterLink,TableModule,DialogModule,CalendarModule,FormsModule
+    DividerModule,CommonModule,RouterLink,DatePickerModule,
+    TableModule,DialogModule,CalendarModule,FormsModule
   ],
   providers: [
     HomeService,DatePipe
@@ -516,7 +518,7 @@ graficoProducaoTotalEnsacadosChartMes(volumeDiario: any) {
       },
       plugins: {
         legend: {
-          display: true,
+          display: false,
           position: 'top',
           labels: {
             font: {
@@ -613,7 +615,7 @@ graficoProducaoTotalEnsacadosChartAno(volumeMensal: any) {
       },
       plugins: {
         legend: {
-          display: true,
+          display: false,
           position: 'top',
           labels: {
             font: {
@@ -1130,7 +1132,7 @@ graficoCarregamentoEnsacadosChartMes(volumeDiario: any){
       },
       plugins: {
         legend: {
-          display: true,
+          display: false,
           position: 'top',
           labels: {
             font: {
@@ -1228,7 +1230,7 @@ graficoCarregamentoEnsacadosChartAno(volumeMensal: any) {
       },
       plugins: {
         legend: {
-          display: true,
+          display: false,
           position: 'top',
           labels: {
             font: {
