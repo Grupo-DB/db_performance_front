@@ -5,12 +5,12 @@
         </p-divider>
     </div>
     <div class="row1"@swipeAnimation>
-        <div class="carregamentos">
+        <div class="carregamentos w-12 lg:w-6">
             <div class="tituloCarregamento">
                 <span> <b> Carregamento geral</b></span><br>
             </div>
-                <div class="carregamentoWrap">
-                    <div class="cardCarregmento">
+                <div class="carregamentoWrap flex flex-column gap-1 align-items-center lg:flex-row">
+                    <div class="cardCarregmento w-10 lg:w-3">
                         <div class="valorCarregamento">
                             <p>{{ carregamentoGeralDia }}</p>
                         </div>
@@ -18,7 +18,7 @@
                             <p>Último dia</p>
                         </div>
                     </div>
-                    <div class="cardCarregmento">
+                    <div class="cardCarregmento w-10 lg:w-3">
                         <div class="valorCarregamento">
                             <p>{{ carregamentoGeralMes }}</p>
                         </div>
@@ -26,7 +26,7 @@
                             <p>Acomulado mês atual</p>
                         </div>
                     </div>
-                    <div class="cardCarregmento">
+                    <div class="cardCarregmento w-10 lg:w-3">
                         <div class="valorCarregamento">
                             <p>{{ carregamentoGeralAno }}</p>
                         </div>
@@ -37,12 +37,12 @@
                 </div>        
         </div>
     </div><!--EndCarregamento-->
-    <div class="row2"@swipeAnimationReverse>
-        <div class="totaisWrap">
-            <div class="tituloCarregamento">
+    <div class="row2 flex flex-column lg:flex-row w-12"@swipeAnimationReverse>
+        <div class="justify-content-center lg:w-12">
+            <div class="tituloCarregamento mt-2">
                 <b> Total Fábrica</b>
             </div>
-            <div class="totais">
+            <div class="flex flex-column align-items-center gap-3 lg:flex-row lg:mt-5">
                 <div class="card">
                     <div class="valor">
                     <p>{{ producaoGeralDia }}</p>
@@ -69,11 +69,11 @@
                 </div>
             </div><!--EndTotais-->
         </div>    
-        <div class="produtividadeWrap"@swipeAnimation>
+        <div class="flex flex-column mt-2 align-items-center gap-3 w-12  lg:mt-2"@swipeAnimation>
             <div class="tituloCarregamento">
                 <b> Produtividade</b>
             </div>
-            <div class="produtividade">
+            <div class="produtividade w-11">
                 <p-table 
                 [value]="fertilizanteDados"
                 [scrollable]="true" 
@@ -108,13 +108,13 @@
             </div>
         </div><!--EndProdutividade-->
     </div><!--Row2-->
-    <div class="rowBag"@swipeAnimation>
-        <div class="totaisBagsWrap">
+    <div class="rowBag w-12 flex flex-column lg:flex-row"@swipeAnimation>
+        <div class="justify-content-center lg:w-12">
             <div class="tituloCarregamento">
                 <b>S-10 Big Bag</b>
             </div>
-            <div class="totaisBags">
-                <div class="cardBag">
+            <div class="flex flex-column align-items-center gap-3 lg:flex-row lg:mt-2 ">
+                <div class="cardBag lg:w-4">
                     <div class="valor">
                         <p>{{ bigBagS10Dia }} sc</p>
                     </div>
@@ -122,7 +122,7 @@
                         <p>Último dia</p>
                     </div>
                 </div>
-                <div class="cardBag">
+                <div class="cardBag lg:w-4">
                     <div class="valor">
                         <p>{{ bigBagS10Mes }} sc</p>
                     </div>
@@ -130,7 +130,7 @@
                         <p>Acomulado mês atual</p>
                     </div>
                 </div>
-                <div class="cardBag">
+                <div class="cardBag lg:w-4">
                     <div class="valor">
                         <p>{{ bigBagS10Ano }} sc</p>
                     </div>
@@ -140,11 +140,11 @@
                 </div>
             </div>
         </div><!--EndWrapBags-->
-        <div class="estoqueWrap">
+        <div class="justify-content-center lg:w-3">
             <div class="tituloCarregamento">
                 <b>Estoque</b>
             </div>
-            <div class="estoqueBags">
+            <div class="flex flex-column align-items-center gap-3 lg:flex-row lg:mt-2 ">
                 <div class="cardBagEst">
                     <div class="valor">
                         <p>{{ estoqueBigBagS10Dia }} sc</p>
@@ -156,13 +156,13 @@
             </div>
         </div>
     </div>
-    <div class="rowBag"@swipeAnimationReverse>
-        <div class="totaisBagsWrap">
+    <div class="rowBag w-12  flex flex-column lg:flex-row lg:mt-3"@swipeAnimationReverse>
+        <div class="justify-content-center lg:w-12">
             <div class="tituloCarregamento">
                 <b>S-10 50 kg</b>
             </div>
-            <div class="totaisBags">
-                <div class="cardBag">
+            <div class="flex flex-column align-items-center gap-3 lg:flex-row lg:mt-2">
+                <div class="cardBag lg:w-4">
                     <div class="valor">
                         <p>{{ s10Sc50KgDia }} sc</p>
                     </div>
@@ -170,7 +170,7 @@
                         <p>Último dia</p>
                     </div>
                 </div>
-                <div class="cardBag">
+                <div class="cardBag lg:w-4">
                     <div class="valor">
                         <p>{{ s10Sc50KgMes }} sc</p>
                     </div>
@@ -178,7 +178,7 @@
                         <p>Acomulado mês atual</p>
                     </div>
                 </div>
-                <div class="cardBag">
+                <div class="cardBag lg:w-4">
                     <div class="valor">
                         <p>{{ s10Sc50KgAno }} sc</p>
                     </div>
@@ -188,11 +188,11 @@
                 </div>
             </div>
         </div><!--EndWrapBags-->
-        <div class="estoqueWrap">
+        <div class="justify-content-center lg:w-3">
             <div class="tituloCarregamento">
                 <b>Estoque</b>
             </div>
-            <div class="estoqueBags">
+            <div class="flex flex-column align-items-center gap-3 lg:flex-row lg:mt-2">
                 <div class="cardBagEst">
                     <div class="valor">
                         <p>{{ estoqueS10Sc50KgDia}}</p>
@@ -204,13 +204,13 @@
             </div>
         </div>
     </div>
-    <div class="rowBag"@swipeAnimation>
-        <div class="totaisBagsWrap">
+    <div class="rowBag w-12 flex flex-column lg:flex-row lg:mt-3"@swipeAnimation>
+        <div class="justify-content-center lg:w-12">
             <div class="tituloCarregamento">
                 <b>DB CA S</b>
             </div>
-            <div class="totaisBags">
-                <div class="cardBag">
+            <div class="flex flex-column align-items-center gap-3 lg:flex-row lg:mt-2">
+                <div class="cardBag lg:w-4">
                     <div class="valor">
                         <p>{{ dbCaSGranelDia }} tn</p>
                     </div>
@@ -218,7 +218,7 @@
                         <p>Último dia</p>
                     </div>
                 </div>
-                <div class="cardBag">
+                <div class="cardBag lg:w-4">
                     <div class="valor">
                         <p>{{ dbCaSGranelMes }} tn</p>
                     </div>
@@ -226,7 +226,7 @@
                         <p>Acomulado mês atual</p>
                     </div>
                 </div>
-                <div class="cardBag">
+                <div class="cardBag lg:w-4">
                     <div class="valor">
                         <p>{{ dbCaSGranelAno }} tn</p>
                     </div>
@@ -236,11 +236,11 @@
                 </div>
             </div>
         </div><!--EndWrapBags-->
-        <div class="estoqueWrap">
+        <div class="justify-content-center lg:w-3">
             <div class="tituloCarregamento">
                 <b>Estoque</b>
             </div>
-            <div class="estoqueBags">
+            <div class="flex flex-column align-items-center gap-3 lg:flex-row lg:mt-2">
                 <div class="cardBagEst">
                     <div class="valor">
                         <p>{{ estoqueDbCaSGranelDia }} Tn</p>

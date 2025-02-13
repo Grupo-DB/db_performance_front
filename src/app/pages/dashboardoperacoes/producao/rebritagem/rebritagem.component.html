@@ -4,12 +4,12 @@
             <b><a routerLink="../../">Painel Operacional</a> / <a routerLink="../">Produção</a> / Rebritagem</b>
         </p-divider>
     </div>
-    <div class="row"@slideAnimation>
-        <div class="totais">
+    <div class="row flex flex-column lg:flex-row"@slideAnimation>
+        <div class="totais flex flex-column w-12 lg:w-6">
             <div class="titulo1">
                 <span> <b> Tn Rebritada</b></span><br>
             </div>
-            <div class="card">
+            <div class="card w-10">
                 <div class="valor">
                 <p>{{ tnRebritadaDia }}</p>
                 </div>
@@ -17,7 +17,7 @@
                 <p>Último dia</p>
                 </div>
             </div>
-            <div class="card">
+            <div class="card w-10">
                 <div class="valor">
                 <p>{{ tnRebritadaMes }}</p>
                 </div>
@@ -25,7 +25,7 @@
                 <p>Acomulado mês atual</p>
                 </div>
             </div>
-            <div class="card">
+            <div class="card w-10">
                 <div class="valor">
                 <p>{{ tnRebritadaAno }}</p>
                 </div>
@@ -34,7 +34,7 @@
                 </div>
             </div>
         </div>
-        <div class="paradas"@slideAnimation>
+        <div class="paradas w-12 mt-3 mb-3  lg:w-6 lg:mt-0 lg:mb-0"@slideAnimation>
             <div class="titulo1">
                 <span> <b> Paradas na Rebritagem</b></span><br>
             </div>

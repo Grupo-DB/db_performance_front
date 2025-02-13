@@ -247,7 +247,7 @@ tr {
 }
 .tituloFab{
     font-family: 'Aptos', sans-serif;
-    margin-left: 25px;
+    margin-left: 15px;
     margin-top: 10px;
     margin-bottom: 8px;
 }
@@ -456,12 +456,10 @@ tr {
     margin-top: 10px;
 }
 .rowWrapFCM2{
-    display: flex;
-    flex-direction: column;
-    height: 10%;
+    
     border-radius: 8px;
     background-color:#e2e7f3;
-    margin: 5px;
+   
 }
 .coluna1FCM2{
     display: flex;
@@ -531,12 +529,10 @@ tr {
     align-items: center;
 }
 .rowWrap{
-    display: flex;
-    flex-direction: column;
-    height: 38%;
+   
     border-radius: 8px;
     background-color: #e2e7f3;
-    margin: 5px;
+    //margin: 5px;
 }
 .containerInterno .direita{
     height: 100%;

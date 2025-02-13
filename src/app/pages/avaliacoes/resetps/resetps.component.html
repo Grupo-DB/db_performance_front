@@ -9,12 +9,12 @@
         </div>
         <form [formGroup]="createpassForm">
             <div class="f1">
-                <p-inputGroup>
-                    <p-inputGroupAddon>
-                        <i class="pi pi-key"></i>
-                    </p-inputGroupAddon>
-                    <span class="p-float-label">
+                <p-floatlabel variant="on">
+                    <p-iconfield>
+                        <p-inputicon class="pi pi-key"/>
                         <input
+                            variant="filled"
+                            [style]="{'width':'100%'}"
                             pInputText
                             type="password"
                             id="newPassword"
@@ -23,16 +23,16 @@
                             required
                         />
                         <label for="newPassword">Nova Senha</label>
-                    </span>                
-                </p-inputGroup>
+                    </p-iconfield>                
+                </p-floatlabel>
             </div>
             <div class="f2">    
-                <p-inputGroup>
-                    <p-inputGroupAddon>
-                        <i class="pi pi-key"></i>
-                    </p-inputGroupAddon>
-                    <span class="p-float-label">
+                <p-floatlabel variant="on">
+                    <p-iconfield>
+                        <p-inputicon class="pi pi-key"/>
                         <input
+                            variant="filled"
+                            [style]="{'width':'100%'}"
                             pInputText
                             type="password"
                             id="newPassword"
@@ -41,8 +41,8 @@
                             required
                         />
                         <label for="newPassword">Confirmar Senha</label>
-                    </span>                
-                </p-inputGroup>
+                    </p-iconfield>                
+                </p-floatlabel>
                 <div class="botoes-form">
                     <p-toast></p-toast>
                     <div class="btnsec" (click)="clearForm()">

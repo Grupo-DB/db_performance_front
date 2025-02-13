@@ -25,16 +25,16 @@
     margin-bottom: 10px;
 }
 .calcEsquerda{
-    height: 400px;
-    width: 60%;
-    display: flex;
-    flex-direction: column;
+    //height: 400px;
+    //width: 60%;
+    //display: flex;
+    //flex-direction: column;
     .britadaCalcario{
         margin-left: 8px;
         margin-right: 8px;
         background-color: #e2e7f3;
         border-radius: 8px;
-        height: 200px;
+        //height: 200px;
     }
     .britadaCal{
         margin-left: 8px;
@@ -42,7 +42,7 @@
         margin-top: 8px;
         background-color:#e2e7f3;
         border-radius: 8px;
-        height: 200px;
+        //height: 200px;
     }
 }
 .interna{
@@ -50,8 +50,7 @@
     justify-content: center;
 }
 .calcDireita{
-    height: 400px;
-    width: 40%;
+    
     background-color: #e2e7f3;
     border-radius: 8px;
     margin-right: 8px;
@@ -129,20 +128,20 @@
     height: 300px;
 }
 
-tr {
-    background-color:#f2f1f0;
-    font-size: 16px;
-    height: 10px;
-    color: #333;
-    border-radius: 8px;
-  }
-  td{
-    border-radius: 8px;
-  }
-  th{
-    background-color: #2d53da;
-    color: #eee;
-  }
+// tr {
+//     background-color:#f2f1f0;
+//     font-size: 16px;
+//     height: 10px;
+//     color: #333;
+//     border-radius: 8px;
+//   }
+//   td{
+//     border-radius: 8px;
+//   }
+//   th{
+//     background-color: #2d53da;
+//     color: #eee;
+//   }
   .containerModal{
     justify-content: center;
     width: 100%;
@@ -162,9 +161,10 @@ tr {
   .projecoes{
     display: flex;
     flex-direction: column;
-    height: 80%;
-    width: 25%;
-    margin-left: 25px;
+    justify-self: flex-end;
+    height: 100%;
+    width: 20%;
+    margin-left: 5px;
     border-radius: 8px;
     background-color: #e2e7f3;
   }

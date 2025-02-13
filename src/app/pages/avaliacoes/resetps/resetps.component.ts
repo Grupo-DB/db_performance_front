@@ -10,6 +10,9 @@ import { passwordValidator } from '../createuser/passwordValidator';
 import { ToastrService } from 'ngx-toastr';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { FloatLabelModule } from 'primeng/floatlabel';
 interface CreatepassForm{
   newPassword: FormControl,
   confirmPassword: FormControl,
@@ -19,7 +22,10 @@ interface CreatepassForm{
 @Component({
   selector: 'app-resetps',
   standalone: true,
-  imports: [CommonModule,ToastModule,ReactiveFormsModule,FormsModule,InputTextModule,InputGroupAddonModule,InputGroupModule],
+  imports: [
+    CommonModule,ToastModule,ReactiveFormsModule,FormsModule,InputTextModule,
+    InputGroupAddonModule,InputGroupModule,IconFieldModule,InputIconModule,FloatLabelModule 
+  ],
   providers: [MessageService,ToastrService],
   templateUrl: './resetps.component.html',
   styleUrl: './resetps.component.scss'

@@ -11,21 +11,67 @@ import { CalendarModule } from 'primeng/calendar';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { trigger, state, style, transition, animate, query, stagger } from '@angular/animations';
+import { trigger, state, style, transition, animate, query, stagger, keyframes } from '@angular/animations';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { MessageService } from 'primeng/api';
+import { DatePickerModule } from 'primeng/datepicker';
 
 @Component({
   selector: 'app-calcario',
   standalone: true,
   imports: [
-    DividerModule,RouterLink,CommonModule,TableModule,DialogModule,CalendarModule,FormsModule,MatProgressSpinnerModule,ProgressSpinnerModule,ProgressBarModule
+    DividerModule,RouterLink,CommonModule,TableModule,
+    DialogModule,CalendarModule,FormsModule,MatProgressSpinnerModule,
+    ProgressSpinnerModule,ProgressBarModule,DatePickerModule
    
   ], 
   providers:[
     HomeService,DatePipe,MessageService
   ],
+  animations:[
+                trigger('efeitoFade',[
+                        transition(':enter',[
+                          style({ opacity: 0 }),
+                          animate('2s', style({ opacity:1 }))
+                        ])
+                      ]),
+                      trigger('efeitoZoom', [
+                        transition(':enter', [
+                          style({ transform: 'scale(0)' }),
+                          animate('2s', style({ transform: 'scale(1)' })),
+                        ]),
+                      ]),
+                      trigger('bounceAnimation', [
+                        transition(':enter', [
+                          animate('4.5s ease-out', keyframes([
+                            style({ transform: 'scale(0.5)', offset: 0 }),
+                            style({ transform: 'scale(1.2)', offset: 0.5 }),
+                            style({ transform: 'scale(1)', offset: 1 }),
+                          ])),
+                        ]),
+                      ]),
+                      trigger('swipeAnimation', [
+                        transition(':enter', [
+                          style({ transform: 'translateX(-100%)' }),
+                          animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+                        ]),
+                        transition(':leave', [
+                          style({ transform: 'translateX(0)' }),
+                          animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+                        ]),
+                      ]),
+                      trigger('swipeAnimationReverse', [
+                        transition(':enter', [
+                          style({ transform: 'translateX(100%)' }),
+                          animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+                        ]),
+                        transition(':leave', [
+                          style({ transform: 'translateX(0)' }),
+                          animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+                        ]),
+                      ]),
+              ],
 
   templateUrl: './calcario.component.html',
   styleUrl: './calcario.component.scss',
