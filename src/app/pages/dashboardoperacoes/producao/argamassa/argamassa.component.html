@@ -70,7 +70,7 @@
                 </div>
             </div><!--EndTotais-->
         </div>    
-        <div class="justify-content-center mt-3 ">
+        <div class="justify-content-center mt-3 w-6">
             <div class="tituloCarregamento">
                 <b>Volume ensacado</b>
             </div>
@@ -359,6 +359,7 @@
                 optionValue="cod"
                 [(ngModel)]="selectedProduto"
                 (onChange)="onProdutoSelecionado($event)"
+                appendTo="body"
             >
             </p-select>
                
@@ -501,6 +502,7 @@
                     dateFormat="dd/mm/yy"                  
                     [showIcon]="true"
                     placeholder="Data"
+                    appendTo="body"
                 >
                 </p-datepicker>
                 <div 

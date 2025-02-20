@@ -518,7 +518,7 @@ graficoProducaoTotalEnsacadosChartMes(volumeDiario: any) {
       },
       plugins: {
         legend: {
-          display: false,
+          display: true,
           position: 'top',
           labels: {
             font: {
@@ -615,7 +615,7 @@ graficoProducaoTotalEnsacadosChartAno(volumeMensal: any) {
       },
       plugins: {
         legend: {
-          display: false,
+          display: true,
           position: 'top',
           labels: {
             font: {
@@ -1132,7 +1132,7 @@ graficoCarregamentoEnsacadosChartMes(volumeDiario: any){
       },
       plugins: {
         legend: {
-          display: false,
+          display: true,
           position: 'top',
           labels: {
             font: {
@@ -1230,7 +1230,7 @@ graficoCarregamentoEnsacadosChartAno(volumeMensal: any) {
       },
       plugins: {
         legend: {
-          display: false,
+          display: true,
           position: 'top',
           labels: {
             font: {

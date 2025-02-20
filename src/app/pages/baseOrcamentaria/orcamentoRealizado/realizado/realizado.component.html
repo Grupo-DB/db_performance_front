@@ -56,529 +56,147 @@
 </div>
 
 <div class="container">
-    <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation>
-        <div class="fg1 flex flex-column w-12 align-items-center lg:w-6 lg:mt-5"> 
-            <div class="form2 w-10">
-                <p-floatlabel variant="on"> 
-                    <p-multiSelect
-                        variant="filled"
-                        id="ccPai" 
-                        [style]="{'width':'100%'}"
-                        [options]="ccsPai" 
-                        [(ngModel)]="selectedCcPai"
-                        optionValue="id"
-                        optionLabel="nome"
-                        [filter]="true" 
-                        filterBy="nome"
-                        inputId="float-label" 
-                        (onChange)="onCcPaiSelecionado($event.value)"
-                    >
-                    </p-multiSelect>
-                    <label for="float-label">Selecione o Centro de Custo Pai</label>
-                </p-floatlabel>
-            </div>
-            <div class="form2 w-10">
-                <p-floatlabel variant="on"> 
-                    <p-multiSelect
-                        variant="filled"
-                        id="ccPai" 
-                        [style]="{'width':'100%'}"
-                        [options]="filiaisSga" 
-                        [(ngModel)]="selectedsFiliais"
-                        optionValue="cod"
-                        optionLabel="nome"
-                        [filter]="true" 
-                        filterBy="nome"
-                        inputId="float-label" 
-                        (onChange)="onFiliaisInformada($event.value)"
-                    >
-                    </p-multiSelect>
-                    <label for="float-label">Selecione as Filiais</label>
-                </p-floatlabel>
-            </div>
-            <div class="form2 w-10 text-left">
-                <p-floatlabel variant="on">
-                    <p-inputnumber
-                        fluid="true" 
-                        variant="filled"
-                        mode="decimal"
-                        [(ngModel)]="selectedAno"
-                        [showButtons]="true" 
-                        [min]="2024" 
-                        [max]="2999"
-                        [useGrouping]="false" 
-                        (ngModelChange)="onAnoInformado($event)"
-                    />
-                    <label>Ano Vigente</label>
-                </p-floatlabel>
-            </div>     
+    <div class="form-geral">
+        <div class="flex flex-column lg:flex-row"@swipeAnimation>
+            <div class="fg1 flex flex-column w-12 align-items-center lg:w-6 lg:mt-5"> 
+                <div class="form2 w-10" *ngIf="hasGroup(['OrcamentoGestor','Admin'])">
+                    <p-floatlabel variant="on"> 
+                        <p-multiSelect
+                            variant="filled"
+                            id="ccPai" 
+                            [style]="{'width':'100%'}"
+                            [options]="ccsPai" 
+                            [(ngModel)]="selectedCcPai"
+                            optionValue="id"
+                            optionLabel="nome"
+                            [filter]="true" 
+                            filterBy="nome"
+                            appendTo="body"
+                            inputId="float-label" 
+                            (onChange)="onCcPaiSelecionado($event.value)"
+                        >
+                        </p-multiSelect>
+                        <label for="float-label">Sel. o Centro de Custo Pai</label>
+                    </p-floatlabel>
+                </div>
+                <div class="form2 w-10" *ngIf="hasGroup(['OrcamentoGestor','Admin'])">
+                    <p-floatlabel variant="on"> 
+                        <p-multiSelect
+                            variant="filled"
+                            id="ccPai" 
+                            [style]="{'width':'100%'}"
+                            [options]="filiaisSga" 
+                            [(ngModel)]="selectedsFiliais"
+                            optionValue="cod"
+                            appendTo="body"
+                            optionLabel="nome"
+                            [filter]="true" 
+                            filterBy="nome"
+                            inputId="float-label" 
+                            (onChange)="onFiliaisInformada($event.value)"
+                        >
+                        </p-multiSelect>
+                        <label for="float-label">Selecione as Filiais</label>
+                    </p-floatlabel>
+                </div>
+                <div class="form2 w-10 text-left">
+                    <p-floatlabel variant="on">
+                        <p-inputnumber
+                            fluid="true" 
+                            variant="filled"
+                            mode="decimal"
+                            [(ngModel)]="selectedAno"
+                            [showButtons]="true" 
+                            [min]="2024" 
+                            [max]="2999"
+                            [useGrouping]="false" 
+                            (ngModelChange)="onAnoInformado($event)"
+                        />
+                        <label>Ano Vigente</label>
+                    </p-floatlabel>
+                </div>     
+                
+                                
             
-                               
-         
-            <div class="text-xs flex flex-row" *ngIf="selectedCcPai.length <= 1">    
-                <div class="w-2 m-4 text-left lg:w-2 lg:text-sm">
-                    Gestor:<br>
-                    Empresa:<br>
-                    Filial:<br>
-                    Área:<br>
-                    Ambiente:<br>
-                    Setor:<br>
-                </div>
-                <div class="w-10 ml-0 m-4 text-left lg:w-10 lg:text-sm" *ngIf="detalhes">
-                    <strong>{{ detalhes.gestor_detalhes.nome }}</strong><br>
-                    <strong>{{ detalhes.cc_pai_detalhes.empresa_detalhes.nome }}</strong><br>
-                    <strong>{{ detalhes.cc_pai_detalhes.filial_detalhes.nome }}</strong><br>
-                    <strong>{{ detalhes.cc_pai_detalhes.area_detalhes.nome }}</strong><br>
-                    <strong>{{ detalhes.cc_pai_detalhes.setor_detalhes.nome }}</strong><br>
-                    <strong>{{ detalhes.cc_pai_detalhes.ambiente_detalhes.nome }}</strong><br>
-                </div>
-            </div>  
-                    
-            <div *ngIf="isLoading" class="loading-animation flex flex-column form2 w-10 justify-content-center">
-                <!-- Coloque aqui a sua animação de carregamento -->
-                <img src="assets/imagens/startmanager2.gif" alt="Loading..." class="w-12">
-            </div>        
-                    
-            <div  class="flex flex-wrap gap-5">           
-                <div class="grafico1 w-full">
-                    <canvas id="graficoTotalChart"></canvas>
-                </div>
-            
-                <div class="w-full">
-                    <canvas id="graficoBaseChart"></canvas>
-                </div>
-                <div class="w-full">
-                    <canvas id="gruposContasRealizadosChart"></canvas>
+                <div class=" w-full text-xs flex flex-row "  *ngIf="selectedCcPai.length <= 1">    
+                    <div class="w-6 m-4 text-left  lg:w-2 lg:text-sm lg:ml-8 " >
+                        Gestor:<br>
+                        Empresa:<br>
+                        Filial:<br>
+                        Área:<br>
+                        Ambiente:<br>
+                        Setor:<br>
+                    </div>
+                    <div class="w-6 ml-0 m-4 text-left lg:w-10 lg:text-sm" *ngIf="detalhes">
+                        <strong>{{ detalhes.gestor_detalhes.nome }}</strong><br>
+                        <strong>{{ detalhes.cc_pai_detalhes.empresa_detalhes.nome }}</strong><br>
+                        <strong>{{ detalhes.cc_pai_detalhes.filial_detalhes.nome }}</strong><br>
+                        <strong>{{ detalhes.cc_pai_detalhes.area_detalhes.nome }}</strong><br>
+                        <strong>{{ detalhes.cc_pai_detalhes.setor_detalhes.nome }}</strong><br>
+                        <strong>{{ detalhes.cc_pai_detalhes.ambiente_detalhes.nome }}</strong><br>
+                    </div>
                 </div>  
             </div>            
-        </div>             
-        <div class="fg1 flex flex-column w-12 align-items-center lg:w-6"@slideAnimation>
-            <div class="titulo w-12">
-                <p-divider align="left" type="solid">
-                   <h3> <b>ORÇADO</b></h3>
-                </p-divider>
-            </div>    
-            
-            <p-metergroup [value]="resultadosTotais" labelPosition="start">
-                <ng-template #label>
-                    <div class="flex flex-wrap gap-3 justify-content-center w-full">
-                        <ng-container *ngFor="let meterItem of resultadosTotais; let index = index">
-                            <p-card class="w-14rem w-12 shadow-2  hover:shadow-6 md:w-10"@slideAnimation> 
-                                <div class="flex justify-content-between gap-3">
-                                    <div class="flex flex-column gap-1">
-                                        <span class="text-secondary text-md" style="white-space: nowrap; margin-left: -10px; text-align: start;">{{ meterItem.label | uppercase }}</span>
-                                        <span class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start;">R$ {{ meterItem.value }}</span>
-                                    </div>
-                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                        <i style="font-size: 1rem" [class]="meterItem.icon"></i>
-                                    </span>
-                                </div>
-                            </p-card>
-                        </ng-container>
-                    </div>
-                </ng-template>
-            </p-metergroup>
                 
-                
-                    <div class="wrapInplacePrincipal overflow-x-auto">
-                        <p-inplace
-                            closable="True"
-                        >
-                            <ng-template pTemplate="display">
-                                <div class="inline-flex align-items-start">
-                                    <span class="ml-2"><i class="pi pi-plus-circle"></i> <strong> Orçamento Analítico Mensal</strong></span>
-                                </div>
-                            </ng-template>
-                            <ng-template pTemplate="content" class="overflow-x-auto w-full">
-                                <p-tabView  styleClass="tabview-custom " >
-                                    <p-tabPanel>
-                                        <ng-template pTemplate="header">
-                                            <div class="flex align-items-center gap-2">
-                                                <span class=" white-space-nowrap m-0" style="color: #444959;"> Mês a Mês</span>
-                                            </div>
-                                        </ng-template>
-                                            
-                                                <p-meterGroup [value]="resultadosMensais" labelPosition="start">
-                                                    <ng-template #label>
-                                                        <div style="max-height: 500px; overflow-x: scroll; margin-top: 20px;">
-                                                            <div class="flex flex-wrap gap-3 ml-0 justify-content-center">
-                                                                <ng-container *ngFor="let meterItem of resultadosMensais; let index = index">
-                                                                    <p-card class="w-14rem  shadow-4 border-round-md hover:shadow-6 " @slideAnimation >
-                                                                        <div class="flex justify-content-between gap-2">
-                                                                            <div class="flex flex-column gap-3">
-                                                                                <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label | uppercase }}</span>
-                                                                                <span class="font-bold text-md"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
-                                                                            </div>
-                                                                            <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff',}">
-                                                                                <a (click)="modalDetalhes(meterItem)"style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
-                                                                            </span>
-                                                                        </div>
-                                                                    </p-card>
-                                                                </ng-container>
-                                                            </div>
-                                                        </div>    
-                                                    </ng-template>
-                                                </p-meterGroup>
-                                             
-                                    </p-tabPanel>
-
-                                    <p-tabPanel>
-                                        <ng-template pTemplate="header">
-                                            <div class="flex align-items-center gap-2">
-                                                <span class="white-space-nowrap m-0" style="color: #444959;"> Tipo de Custo</span>
-                                            </div>
-                                        </ng-template>
-                                        <p-meterGroup [value]="tiposMensais" labelPosition="start">
-                                            <ng-template #label>
-                                                <div class="" style="max-height: 500px; min-height: 200px; overflow-y: auto;">
-                                                    <div class="flex flex-wrap gap-3 mt-3 mb-3 justify-content-center">
-                                                        <ng-container *ngFor="let meterItem of tiposMensais; let index = index">
-                                                            <p-card class="w-10  shadow-4 border-round-md hover:shadow-6 border-0.2" @slideAnimation >
-                                                                <div class="flex justify-content-between gap-3">
-                                                                    <div class="flex flex-column gap-3">
-                                                                        <span class="text-secondary text-md" style="white-space: nowrap;text-align: start;">{{ meterItem.label | uppercase }}</span>
-                                                                        <span class="font-bold text-md"style="white-space: nowrap;text-align: start;">R$ {{ meterItem.value }}</span>
-                                                                    </div>
-                                                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                        <a (click)="abrirModalGrupoMensais()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
-                                                                    </span>
-                                                                </div>
-                                                            </p-card>
-                                                        </ng-container>
-                                                    </div>
-                                                </div>    
-                                            </ng-template>
-                                        </p-meterGroup>
-                                    </p-tabPanel>
-
-                                    <p-tabPanel>
-                                        <ng-template pTemplate="header">
-                                            <div class="flex align-items-center gap-2">
-                                                <span class="white-space-nowrap m-0" style="color: #444959;"> Grupo de Contas</span>
-                                            </div>
-                                        </ng-template>
-                                        <p-meterGroup [value]="contasMensais" labelPosition="start">
-                                            <ng-template #label>
-                                                <div class="w-full" style="max-height: 500px; overflow-y: auto;">
-                                                    <div class="flex flex-wrap gap-3 justify-content-center mt-3 mb-3">
-                                                        <ng-container *ngFor="let meterItem of contasMensais; let index = index">
-                                                            <p-card class="w-10  shadow-4 border-round-md hover:shadow-6 border-0.2" @slideAnimation >
-                                                                <div class="flex justify-content-between gap-3">
-                                                                    <div class="flex flex-column gap-3">
-                                                                        <span class="text-secondary text-md" style="white-space: nowrap; text-align: start; ">{{ meterItem.label | uppercase }}</span>
-                                                                        <span class="font-bold text-md"style="white-space: nowrap; text-align: start; ">R$ {{ meterItem.value }}</span>
-                                                                    </div>
-                                                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                        <a (click)="abrirModalTiposMensais()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
-                                                                    </span>
-                                                                </div>
-                                                            </p-card>
-                                                        </ng-container>
-                                                    </div>
-                                                </div>    
-                                            </ng-template>
-                                        </p-meterGroup>
-                                    </p-tabPanel>
-
-                                    <p-tabPanel>
-                                        <ng-template pTemplate="header">
-                                            <div class="flex align-items-center gap-2">
-                                                <span class="white-space-nowrap m-0" style="color: #444959;"> Contas Analíticas</span>
-                                            </div>
-                                        </ng-template>
-                                        <p-meterGroup [value]="raizMensais" labelPosition="start">
-                                            <ng-template #label>
-                                                <div class="w-full" style="max-height: 500px; overflow-y: auto;">
-                                                    <div class="flex flex-wrap justify-content-center gap-3 mt-3 mb-3">
-                                                        <ng-container *ngFor="let meterItem of raizMensais; let index = index">
-                                                            <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2" @slideAnimation >
-                                                                <div class="flex  gap-2">
-                                                                    <div class="flex flex-column  gap-3">
-                                                                        <span class="text-secondary text-md -ml-2" style="white-space: nowrap; text-align: start;">{{ meterItem.label | uppercase }}</span>
-                                                                        <span class="font-bold text-md ml-0"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
-                                                                    </div>
-                                                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                        <a (click)="abrirModalContasAnaliticas()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
-                                                                    </span>
-                                                                </div>
-                                                            </p-card>
-                                                        </ng-container>
-                                                    </div>
-                                                </div>    
-                                            </ng-template>
-                                        </p-meterGroup> 
-                                    </p-tabPanel>
-                                </p-tabView>
-                            </ng-template>   
-                        </p-inplace>
-                    </div>    
-                
-                
-                    <div class="wrapInplacePrincipal overflow-x-auto">
-                        <p-inplace
-                            closable="True"
-                        >
-                            <ng-template pTemplate="display">
-                                <div class="inline-flex align-items-start">
-                                    <span class="ml-2"><i class="pi pi-plus-circle"></i> <strong> Orçamento Analítico Anual</strong></span>
-                                </div>
-                            </ng-template>
-                            <ng-template pTemplate="content">
-                                <p-tabView styleClass="tabview-custom w-full" class="w-12">
-                                    <p-tabPanel>
-                                        <ng-template pTemplate="header">
-                                            <div class="flex align-items-center gap-2">
-                                                <span class=" white-space-nowrap m-0" style="color: #444959;"> Tipo de Custo</span>
-                                            </div>
-                                        </ng-template>
-                                        <p-meterGroup [value]="tiposAnuais" labelPosition="start">
-                                            <ng-template #label>
-                                                <div class="w-12" style="max-height: 500px; overflow-y: auto;">
-                                                    <div class="flex flex-wrap gap-3 mb-3 mt-3 justify-content-center">
-                                                        <ng-container *ngFor="let meterItem of tiposAnuais; let index = index">
-                                                            <p-card class="w-10 shadow-4 border-round-md hover:shadow-6 border-0.2" @slideAnimation >
-                                                                <div class="flex justify-content-between gap-2">
-                                                                    <div class="flex flex-column gap-3">
-                                                                        <span class="text-secondary text-md -ml-2" style="white-space: nowrap; text-align: start;">{{ meterItem.label | uppercase }}</span>
-                                                                        <span class="font-bold text-md"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
-                                                                    </div>
-                                                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                        <a (click)="abrirModalTiposAnual()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
-                                                                    </span>
-                                                                </div>
-                                                            </p-card>
-                                                        </ng-container>
-                                                    </div>
-                                                </div>    
-                                            </ng-template>
-                                        </p-meterGroup>
-                                    </p-tabPanel>
-                                    <p-tabPanel>
-                                        <ng-template pTemplate="header">
-                                            <div class="flex align-items-center gap-2">
-                                                <span class=" white-space-nowrap m-0" style="color: #444959;"> Grupo de Contas</span>
-                                            </div>
-                                        </ng-template>
-                                        <p-meterGroup [value]="contasAnuais" labelPosition="start">
-                                            <ng-template #label>
-                                                <div class="w-full" style="max-height: 500px; overflow-y: auto;">
-                                                    <div class="flex flex-wrap gap-3 mb-3 mt-3 justify-content-center">
-                                                        <ng-container *ngFor="let meterItem of contasAnuais; let index = index">
-                                                            <p-card class="w-10 shadow-4 border-round-md hover:shadow-6 border-0.2" @slideAnimation >
-                                                                <div class="flex justify-content-between gap-2">
-                                                                    <div class="flex flex-column gap-3">
-                                                                        <span class="text-secondary text-md -ml-2 " style="white-space: nowrap; text-align: start;">{{ meterItem.label | uppercase }}</span>
-                                                                        <span class="font-bold text-md"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
-                                                                    </div>
-                                                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                        <a (click)="abrirModalGruposAnual()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
-                                                                    </span>
-                                                                </div>
-                                                            </p-card>
-                                                        </ng-container>
-                                                    </div>
-                                                </div>    
-                                            </ng-template>
-                                        </p-meterGroup>     
-                                    </p-tabPanel>
-                                    <p-tabPanel>
-                                        <ng-template pTemplate="header">
-                                            <div class="flex align-items-center gap-2">
-                                                <span class=" white-space-nowrap m-0" style="color: #444959;"> Contas Analíticas</span>
-                                            </div>
-                                        </ng-template>
-                                        <p-meterGroup [value]="raizAnuais" labelPosition="start">
-                                            <ng-template #label>
-                                                <div class="w-full" style="max-height: 500px; overflow-y: auto;">
-                                                    <div class="flex flex-wrap gap-3 mb-3 mt-3">
-                                                        <ng-container *ngFor="let meterItem of raizAnuais; let index = index">
-                                                            <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2" @slideAnimation >
-                                                                <div class="flex justify-content-between gap-2">
-                                                                    <div class="flex flex-column gap-3">
-                                                                        <span class="text-secondary text-md -ml-2" style="white-space: nowrap; text-align: start;">{{ meterItem.label | uppercase }}</span>
-                                                                        <span class="font-bold text-md"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
-                                                                    </div>
-                                                                    <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                        <a (click)="abrirModalContasAnual()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
-                                                                    </span>
-                                                                </div>
-                                                            </p-card>
-                                                        </ng-container>
-                                                    </div>
-                                                </div>    
-                                            </ng-template>
-                                        </p-meterGroup>
-                                    </p-tabPanel>
-                                </p-tabView>
-                            </ng-template>
-                        </p-inplace>
-                    </div>           
-               
-                <div class="titulo w-12 ">
-                    <p-divider align="left" type="solid">
-                       <h3> <b>REALIZADO</b></h3>
-                    </p-divider>
-                </div>
-
-                <p-meterGroup [value]="resultadosTotaisRealizado" labelPosition="start">
-                    <ng-template #label>
-                        <div class="flex flex-wrap justify-content-center mb-3 mt-3 md: w-full">
-                            <ng-container *ngFor="let meterItem of resultadosTotaisRealizado; let index = index">
-                                <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.4 md:w-30rem" @slideAnimation> 
-                                    <div class="flex justify-content-between gap-3">
-                                        <div class="flex flex-column gap-1">
-                                            <span class="text-secondary text-lg" style="white-space: nowrap; text-align: start;">{{ meterItem.label | uppercase }}</span>
-                                            <span class="font-bold text-lg" style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
-                                        </div>
-                                        <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                            <i style="font-size: 1rem" [class]="meterItem.icon"></i>
-                                        </span>
-                                    </div>
-                                </p-card>
-                            </ng-container>
+            <div class="fg1 flex flex-column w-12 align-items-center lg:w-6"@slideAnimation>
+                <p-card class="w-14rem mt-5 w-4 shadow-2 hover:shadow-6 md:w-10" [style]="{ 'background-color': '#002B5C' }" @slideAnimation>
+                    <div class="flex justify-content-between gap-3">
+                        <div class="flex flex-column gap-1">
+                            <span class="text-secondary font-bold text-md" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">Orçado Total</span>
+                            <span class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">R$ {{ teste2 }}</span>
                         </div>
-                    </ng-template>
-                </p-meterGroup>
-
-               
-                    <div class="wrapInplacePrincipal overflow-x-auto">
-                        <p-inplace
-                            closable="True"
-                        >
-                        <ng-template pTemplate="display">
-                            <div class="inline-flex align-items-start">
-                                <span class="ml-2"><i class="pi pi-plus-circle"></i> <strong> Exibir gastos realizados</strong></span>
-                            </div>
-                        </ng-template>
-                        <ng-template pTemplate="content">
-                            <p-tabView styleClass="tabview-custom">
-                                <p-tabPanel>
-                                    <ng-template pTemplate="header">
-                                        <div class="flex align-items-center gap-2">
-                                            <span class=" white-space-nowrap m-0" style="color: #444959;"> Tipos de Custo</span>
-                                        </div>
-                                    </ng-template>
-                                    <p-meterGroup [value]="tiposCusto" labelPosition="start">
-                                        <ng-template #label>
-                                            <div style="max-height: 500px; overflow-y: auto;">
-                                                <div class="flex flex-wrap gap-3 mb-3 mt-3 justify-content-center">
-                                                    <ng-container *ngFor="let meterItem of tiposCusto; let index = index">
-                                                        <p-card class="w-10 shadow-4 border-round-md hover:shadow-6 border-0.2" @slideAnimation >
-                                                            <div class="flex justify-content-between gap-2">
-                                                                <div class="flex flex-column gap-3">
-                                                                    <span class="text-secondary text-md -ml-2" style="white-space: nowrap; text-align: start;">{{ meterItem.label | uppercase }}</span>
-                                                                    <span class="font-bold text-md"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
-                                                                </div>
-                                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                    <a (click)="abrirModalRealizadoTipos()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
-                                                                </span>
-                                                            </div>
-                                                        </p-card>
-                                                    </ng-container>
-                                                </div>
-                                            </div>    
-                                        </ng-template>
-                                    </p-meterGroup> 
-                                </p-tabPanel>
-
-                                <p-tabPanel>
-                                    <ng-template pTemplate="header">
-                                        <div class="flex align-items-center gap-2">
-                                            <span class=" white-space-nowrap m-0" style="color: #444959;"> Centros de Custo</span>
-                                        </div>
-                                    </ng-template>
-                                    <p-meterGroup [value]="ccs" labelPosition="start">
-                                        <ng-template #label>
-                                            <div style="max-height: 500px; overflow-y: auto;">
-                                                <div class="flex flex-wrap gap-3 mb-3 mt-3 justify-content-center">
-                                                    <ng-container *ngFor="let meterItem of ccs; let index = index">
-                                                        <p-card class="w-10 shadow-4 border-round-md hover:shadow-6 border-0.2" @slideAnimation >
-                                                            <div class="flex justify-content-between gap-2">
-                                                                <div class="flex flex-column gap-3">
-                                                                    <span class="text-secondary text-md -ml-2" style="white-space: nowrap;text-align: start;">{{ meterItem.label | uppercase }}</span>
-                                                                    <span class="font-bold text-md"style="white-space: nowrap;text-align: start;">R$ {{ meterItem.value }}</span>
-                                                                </div>
-                                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                    <a (click)="abrirModalRealizadoCcs()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
-                                                                </span>
-                                                            </div>
-                                                        </p-card>
-                                                    </ng-container>
-                                                </div>
-                                            </div>    
-                                        </ng-template>
-                                    </p-meterGroup> 
-                                </p-tabPanel>
-
-                                <p-tabPanel>
-                                    <ng-template pTemplate="header">
-                                        <div class="flex align-items-center gap-2">
-                                            <span class=" white-space-nowrap m-0" style="color: #444959;"> Grupos Contábeis</span>
-                                        </div>
-                                    </ng-template>
-                                    <p-meterGroup [value]="gruposContabeis" labelPosition="start">
-                                        <ng-template #label>
-                                            <div style="max-height: 500px; overflow-y: auto;">
-                                                <div class="flex flex-wrap gap-3 mb-3 mt-3 justify-content-center">
-                                                    <ng-container *ngFor="let meterItem of gruposContabeis; let index = index">
-                                                        <p-card class="w-10 shadow-4 border-round-md hover:shadow-6 border-0.2" @slideAnimation >
-                                                            <div class="flex justify-content-between gap-2">
-                                                                <div class="flex flex-column gap-3">
-                                                                    <span class="text-secondary text-md -ml-2" style="white-space: nowrap;text-align: start;">{{ meterItem.label | uppercase }}</span>
-                                                                    <span class="font-bold text-md"style="white-space: nowrap;text-align: start;">R$ {{ meterItem.value }}</span>
-                                                                </div>
-                                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                    <a (click)="abrirModalRealizadoGruposContabeis()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
-                                                                </span>
-                                                            </div>
-                                                        </p-card>
-                                                    </ng-container>
-                                                </div>
-                                            </div>    
-                                        </ng-template>
-                                    </p-meterGroup> 
-                                </p-tabPanel>
-
-                                <p-tabPanel>
-                                    <ng-template pTemplate="header">
-                                        <div class="flex align-items-center gap-2">
-                                            <span class=" white-space-nowrap m-0" style="color: #444959;"> Contas Analiticas</span>
-                                        </div>
-                                    </ng-template>
-                                    <p-meterGroup [value]="contasCompletas" labelPosition="start">
-                                        <ng-template #label>
-                                            <div style="max-height: 500px; overflow-y: auto;">
-                                                <div class="flex flex-wrap gap-3 mb-3 mt-3">
-                                                    <ng-container *ngFor="let meterItem of contasCompletas; let index = index">
-                                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2" @slideAnimation >
-                                                            <div class="flex justify-content-between gap-2">
-                                                                <div class="flex flex-column gap-3">
-                                                                    <span class="text-secondary text-md -ml-2" style="white-space: nowrap;text-align: start;">{{ meterItem.label | uppercase }}</span>
-                                                                    <span class="font-bold text-md"style="white-space: nowrap;text-align: start;">R$ {{ meterItem.value }}</span>
-                                                                </div>
-                                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                                                    <a (click)="abrirModalRealizadoContasAnaliticas()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
-                                                                </span>
-                                                            </div>
-                                                        </p-card>
-                                                    </ng-container>
-                                                </div>
-                                            </div>    
-                                        </ng-template>
-                                    </p-meterGroup> 
-                                </p-tabPanel>
-
-                            </p-tabView>
-                        </ng-template>
-                        </p-inplace>
+                        <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center" [style]="{ 'background-color': '#ffffff' }">
+                            <a (click)="orcadoDetalhes()"><i class="pi pi-wallet" style="font-size: 1.5rem; color: #002B5C;"></i></a>
+                        </span>
                     </div>
-
-               
-                
+                </p-card>
+                <p-card class="w-14rem w-4 mt-1 shadow-2 hover:shadow-6 md:w-10" [style]="{ 'background-color': '#4972B0' }" @slideAnimation>
+                    <div class="flex justify-content-between gap-3">
+                        <div class="flex flex-column gap-1">
+                            <span class="text-secondary font-bold text-md" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">Realizado Total</span>
+                            <span class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">R$ {{ teste }}</span>
+                        </div>
+                        <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center" [style]="{ 'background-color': '#ffffff' }">
+                            <a (click)="realizadoDetalhes()"><i class="pi pi-wallet" style="font-size: 1.5rem; color: #4972B0;"></i></a>
+                        </span>
+                    </div>
+                </p-card>
+                <p-card class="w-14rem w-4 mt-1 shadow-2 hover:shadow-6 md:w-10" [style]="{ 'background-color': '#7F94B5' }" @slideAnimation>
+                    <div class="flex justify-content-between gap-3">
+                        <div class="flex flex-column gap-1">
+                            <span class="text-secondary font-bold text-md" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">Saldo Total</span>
+                            <span class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">R$ {{ saldo }}</span>
+                        </div>
+                        <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center" [style]="{ 'background-color': '#ffffff' }">
+                            <i class="pi pi-wallet" style="font-size: 1.5rem; color: #7F94B5;"></i>
+                        </span>
+                    </div>
+                </p-card>        
             </div>
         </div>
-    </div>
 
+        <div *ngIf="isLoading" class="loading-animation flex flex-column form2 w-10 justify-content-center">
+            <!-- Coloque aqui a sua animação de carregamento -->
+            <img src="assets/imagens/startmanager2.gif" alt="Loading..." class="w-12">
+        </div>        
+                
+        <div class="w-full align-items-center  mb-6 flex flex-column gap-5 lg:flex-row">           
+            <div class="grafico1 w-12 lg:w-4">
+                <canvas id="graficoTotalChart"></canvas>
+            </div>
+        
+            <div class="grafico1 w-12 lg:w-4">
+                <canvas id="graficoBaseChart"></canvas>
+            </div>
+            <div class="grafico1 w-11 lg:w-3 justify-content-center">
+                <canvas id="gruposContasRealizadosChart"></canvas>
+            </div>  
+        </div>
+
+    </div>    
+</div>
+
+              
 
 
 <!----------------SIDEBAR_______________________________-->
@@ -609,6 +227,381 @@
    
 </p-drawer>
 
+<!---------------------------SIDEBAR ORÇADOS ---------------------------------------------------------------->                    
+<p-drawer 
+    [(visible)]="modalVisible2" 
+    position="right" 
+    [style]="{ width: '80%', }"
+    styleClass="w-full md:w-10 lg:w-8"
+>
+    <p-inplace
+        closable="True"
+    >
+        <ng-template pTemplate="display">
+            <div class="inline-flex align-items-start">
+                <span class="ml-2"><i class="pi pi-plus-circle"></i> <strong> Orçamento Analítico Mensal</strong></span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="content" class="overflow-x-auto w-full">
+            <p-tabView  styleClass="tabview-custom " >
+                <p-tabPanel>
+                    <ng-template pTemplate="header">
+                        <div class="flex align-items-center gap-2">
+                            <span class=" white-space-nowrap m-0" style="color: #444959;"> Mês a Mês</span>
+                        </div>
+                    </ng-template>
+                        
+                            <p-meterGroup [value]="resultadosMensais" labelPosition="start">
+                                <ng-template #label>
+                                    <div style="max-height: 500px; overflow-x: scroll; margin-top: 20px;">
+                                        <div class="flex flex-wrap gap-3 ml-0 justify-content-center">
+                                            <ng-container *ngFor="let meterItem of resultadosMensais; let index = index">
+                                                <p-card class="w-14rem  shadow-4 border-round-md hover:shadow-6 " @slideAnimation >
+                                                    <div class="flex justify-content-between gap-2">
+                                                        <div class="flex flex-column gap-3">
+                                                            <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                            <span class="font-bold text-md"style="white-space: nowrap; text-align: start;">R$ {{ meterItem.value }}</span>
+                                                        </div>
+                                                        <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff',}">
+                                                            <a (click)="modalDetalhes(meterItem)"style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
+                                                        </span>
+                                                    </div>
+                                                </p-card>
+                                            </ng-container>
+                                        </div>
+                                    </div>    
+                                </ng-template>
+                            </p-meterGroup>
+                        
+                </p-tabPanel>
+
+                <p-tabPanel>
+                    <ng-template pTemplate="header">
+                        <div class="flex align-items-center gap-2">
+                            <span class="white-space-nowrap m-0" style="color: #444959;"> Tipo de Custo</span>
+                        </div>
+                    </ng-template>
+                    <p-meterGroup [value]="tiposMensais" labelPosition="start">
+                        <ng-template #label>
+                            <div class="" style="max-height: 500px; min-height: 200px; overflow-y: auto;">
+                                <div class="flex flex-wrap gap-3 mt-3 mb-3 justify-content-center">
+                                    <ng-container *ngFor="let meterItem of tiposMensais; let index = index">
+                                        <p-card class="w-12  shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" @slideAnimation >
+                                            <div class="flex justify-content-between gap-3">
+                                                <div class="flex flex-column gap-3">
+                                                    <span class="text-secondary text-md" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                    <span class="font-bold text-md"style="text-align: start;">R$ {{ meterItem.value }}</span>
+                                                </div>
+                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                    <a (click)="abrirModalGrupoMensais()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
+                                                </span>
+                                            </div>
+                                        </p-card>
+                                    </ng-container>
+                                </div>
+                            </div>    
+                        </ng-template>
+                    </p-meterGroup>
+                </p-tabPanel>
+
+                <p-tabPanel>
+                    <ng-template pTemplate="header">
+                        <div class="flex align-items-center gap-2">
+                            <span class="white-space-nowrap m-0" style="color: #444959;"> Grupo de Contas</span>
+                        </div>
+                    </ng-template>
+                    <p-meterGroup [value]="contasMensais" labelPosition="start">
+                        <ng-template #label>
+                            <div class="w-full" style="max-height: 500px; overflow-y: auto;">
+                                <div class="flex flex-wrap gap-3 justify-content-center mt-3 mb-3">
+                                    <ng-container *ngFor="let meterItem of contasMensais; let index = index">
+                                        <p-card class="w-12  shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" @slideAnimation >
+                                            <div class="flex justify-content-between gap-3">
+                                                <div class="flex flex-column gap-3">
+                                                    <span class="text-secondary text-md" style="text-align: start; ">{{ meterItem.label | uppercase }}</span>
+                                                    <span class="font-bold text-md"style="text-align: start; ">R$ {{ meterItem.value }}</span>
+                                                </div>
+                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                    <a (click)="abrirModalTiposMensais()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
+                                                </span>
+                                            </div>
+                                        </p-card>
+                                    </ng-container>
+                                </div>
+                            </div>    
+                        </ng-template>
+                    </p-meterGroup>
+                </p-tabPanel>
+
+                <p-tabPanel>
+                    <ng-template pTemplate="header">
+                        <div class="flex align-items-center gap-2">
+                            <span class="white-space-nowrap m-0" style="color: #444959;"> Contas Analíticas</span>
+                        </div>
+                    </ng-template>
+                    <p-meterGroup [value]="raizMensais" labelPosition="start">
+                        <ng-template #label>
+                            <div class="w-full" style="max-height: 500px; overflow-y: auto;">
+                                <div class="flex flex-wrap justify-content-center gap-3 mt-3 mb-3">
+                                    <ng-container *ngFor="let meterItem of raizMensais; let index = index">
+                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" @slideAnimation >
+                                            <div class="flex justify-content-between gap-3">
+                                                <div class="flex flex-column  gap-3">
+                                                    <span class="text-secondary text-md -ml-2" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                    <span class="font-bold text-md ml-0"style="text-align: start;">R$ {{ meterItem.value }}</span>
+                                                </div>
+                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                    <a (click)="abrirModalContasAnaliticas()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
+                                                </span>
+                                            </div>
+                                        </p-card>
+                                    </ng-container>
+                                </div>
+                            </div>    
+                        </ng-template>
+                    </p-meterGroup> 
+                </p-tabPanel>
+            </p-tabView>
+        </ng-template>   
+    </p-inplace>
+
+    <p-inplace
+        closable="True"
+    >
+        <ng-template pTemplate="display">
+            <div class="inline-flex align-items-start">
+                <span class="ml-2"><i class="pi pi-plus-circle"></i> <strong> Orçamento Analítico Anual</strong></span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+            <p-tabView styleClass="tabview-custom w-full" class="w-12">
+                <p-tabPanel>
+                    <ng-template pTemplate="header">
+                        <div class="flex align-items-center gap-2">
+                            <span class=" white-space-nowrap m-0" style="color: #444959;"> Tipo de Custo</span>
+                        </div>
+                    </ng-template>
+                    <p-meterGroup [value]="tiposAnuais" labelPosition="start">
+                        <ng-template #label>
+                            <div class="w-12" style="max-height: 500px; overflow-y: auto;">
+                                <div class="flex flex-wrap gap-3 mb-3 mt-3 justify-content-center">
+                                    <ng-container *ngFor="let meterItem of tiposAnuais; let index = index">
+                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" @slideAnimation >
+                                            <div class="flex justify-content-between gap-2">
+                                                <div class="flex flex-column gap-3">
+                                                    <span class="text-secondary text-md -ml-2" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                    <span class="font-bold text-md"style="text-align: start;">R$ {{ meterItem.value }}</span>
+                                                </div>
+                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                    <a (click)="abrirModalTiposAnual()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
+                                                </span>
+                                            </div>
+                                        </p-card>
+                                    </ng-container>
+                                </div>
+                            </div>    
+                        </ng-template>
+                    </p-meterGroup>
+                </p-tabPanel>
+                <p-tabPanel>
+                    <ng-template pTemplate="header">
+                        <div class="flex align-items-center gap-2">
+                            <span class=" white-space-nowrap m-0" style="color: #444959;"> Grupo de Contas</span>
+                        </div>
+                    </ng-template>
+                    <p-meterGroup [value]="contasAnuais" labelPosition="start">
+                        <ng-template #label>
+                            <div class="w-full" style="max-height: 500px; overflow-y: auto;">
+                                <div class="flex flex-wrap gap-3 mb-3 mt-3 justify-content-center">
+                                    <ng-container *ngFor="let meterItem of contasAnuais; let index = index">
+                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" @slideAnimation >
+                                            <div class="flex justify-content-between gap-2">
+                                                <div class="flex flex-column gap-3">
+                                                    <span class="text-secondary text-md -ml-2 " style="text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                    <span class="font-bold text-md"style="text-align: start;">R$ {{ meterItem.value }}</span>
+                                                </div>
+                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                    <a (click)="abrirModalGruposAnual()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
+                                                </span>
+                                            </div>
+                                        </p-card>
+                                    </ng-container>
+                                </div>
+                            </div>    
+                        </ng-template>
+                    </p-meterGroup>     
+                </p-tabPanel>
+                <p-tabPanel>
+                    <ng-template pTemplate="header">
+                        <div class="flex align-items-center gap-2">
+                            <span class=" white-space-nowrap m-0" style="color: #444959;"> Contas Analíticas</span>
+                        </div>
+                    </ng-template>
+                    <p-meterGroup [value]="raizAnuais" labelPosition="start">
+                        <ng-template #label>
+                            <div class="w-full" style="max-height: 500px; overflow-y: auto;">
+                                <div class="flex flex-wrap justify-content-center gap-3 mb-3 mt-3">
+                                    <ng-container *ngFor="let meterItem of raizAnuais; let index = index">
+                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" @slideAnimation >
+                                            <div class="flex justify-content-between gap-3">
+                                                <div class="flex flex-column gap-3">
+                                                    <span class="text-secondary text-md -ml-2" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                    <span class="font-bold text-md"style="text-align: start;">R$ {{ meterItem.value }}</span>
+                                                </div>
+                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                    <a (click)="abrirModalContasAnual()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
+                                                </span>
+                                            </div>
+                                        </p-card>
+                                    </ng-container>
+                                </div>
+                            </div>    
+                        </ng-template>
+                    </p-meterGroup>
+                </p-tabPanel>
+            </p-tabView>
+        </ng-template>
+    </p-inplace>
+</p-drawer>
+
+
+<!---------------------------SIDEBAR REALIZADOS ---------------------------------------------------------------->
+<p-drawer 
+    [(visible)]="modalVisibleRealizado" 
+    position="right" 
+    [style]="{ width: '60%', }"
+    styleClass="w-full md:w-10 lg:w-8"
+>
+    <p-inplace
+        closable="True"
+    >
+        <ng-template pTemplate="display">
+            <div class="inline-flex align-items-start">
+                <span class="ml-2"><i class="pi pi-plus-circle"></i> <strong> Exibir gastos realizados</strong></span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+            <p-tabView styleClass="tabview-custom">
+                <p-tabPanel>
+                    <ng-template pTemplate="header">
+                        <div class="flex align-items-center gap-2">
+                            <span class=" white-space-nowrap m-0" style="color: #444959;"> Tipos de Custo</span>
+                        </div>
+                    </ng-template>
+                    <p-meterGroup [value]="tiposCusto" labelPosition="start">
+                        <ng-template #label>
+                            <div style="max-height: 500px; overflow-y: auto;">
+                                <div class="flex flex-wrap gap-3 mb-3 mt-3 justify-content-center">
+                                    <ng-container *ngFor="let meterItem of tiposCusto; let index = index">
+                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" @slideAnimation >
+                                            <div class="flex justify-content-between gap-2">
+                                                <div class="flex flex-column gap-3">
+                                                    <span class="text-secondary text-md -ml-2" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                    <span class="font-bold text-md"style="text-align: start;">R$ {{ meterItem.value }}</span>
+                                                </div>
+                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                    <a (click)="abrirModalRealizadoTipos()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
+                                                </span>
+                                            </div>
+                                        </p-card>
+                                    </ng-container>
+                                </div>
+                            </div>    
+                        </ng-template>
+                    </p-meterGroup> 
+                </p-tabPanel>
+
+                <p-tabPanel>
+                    <ng-template pTemplate="header">
+                        <div class="flex align-items-center gap-2">
+                            <span class=" white-space-nowrap m-0" style="color: #444959;"> Centros de Custo</span>
+                        </div>
+                    </ng-template>
+                    <p-meterGroup [value]="ccs" labelPosition="start">
+                        <ng-template #label>
+                            <div style="max-height: 500px; overflow-y: auto;">
+                                <div class="flex flex-wrap gap-3 mb-3 mt-3 justify-content-center">
+                                    <ng-container *ngFor="let meterItem of ccs; let index = index">
+                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" @slideAnimation >
+                                            <div class="flex justify-content-between gap-2">
+                                                <div class="flex flex-column gap-3">
+                                                    <span class="text-secondary text-md -ml-2" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                    <span class="font-bold text-md"style="text-align: start;">R$ {{ meterItem.value }}</span>
+                                                </div>
+                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                    <a (click)="abrirModalRealizadoCcs()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
+                                                </span>
+                                            </div>
+                                        </p-card>
+                                    </ng-container>
+                                </div>
+                            </div>    
+                        </ng-template>
+                    </p-meterGroup> 
+                </p-tabPanel>
+
+                <p-tabPanel>
+                    <ng-template pTemplate="header">
+                        <div class="flex align-items-center gap-2">
+                            <span class=" white-space-nowrap m-0" style="color: #444959;"> Grupos Contábeis</span>
+                        </div>
+                    </ng-template>
+                    <p-meterGroup [value]="gruposContabeis" labelPosition="start">
+                        <ng-template #label>
+                            <div style="max-height: 500px; overflow-y: auto;">
+                                <div class="flex flex-wrap gap-3 mb-3 mt-3 justify-content-center">
+                                    <ng-container *ngFor="let meterItem of gruposContabeis; let index = index">
+                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" @slideAnimation >
+                                            <div class="flex justify-content-between gap-2">
+                                                <div class="flex flex-column gap-3">
+                                                    <span class="text-secondary text-md -ml-2" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                    <span class="font-bold text-md"style="text-align: start;">R$ {{ meterItem.value }}</span>
+                                                </div>
+                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                    <a (click)="abrirModalRealizadoGruposContabeis()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
+                                                </span>
+                                            </div>
+                                        </p-card>
+                                    </ng-container>
+                                </div>
+                            </div>    
+                        </ng-template>
+                    </p-meterGroup> 
+                </p-tabPanel>
+
+                <p-tabPanel>
+                    <ng-template pTemplate="header">
+                        <div class="flex align-items-center gap-2">
+                            <span class=" white-space-nowrap m-0" style="color: #444959;"> Contas Analiticas</span>
+                        </div>
+                    </ng-template>
+                    <p-meterGroup [value]="contasCompletas" labelPosition="start">
+                        <ng-template #label>
+                            <div style="max-height: 500px; overflow-y: auto;">
+                                <div class="flex flex-wrap justify-content-center gap-3 mb-3 mt-3">
+                                    <ng-container *ngFor="let meterItem of contasCompletas; let index = index">
+                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10"@slideAnimation >
+                                            <div class="flex justify-content-between gap-2">
+                                                <div class="flex flex-column gap-3">
+                                                    <span class="text-secondary text-md -ml-2" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                    <span class="font-bold text-md"style="text-align: start;">R$ {{ meterItem.value }}</span>
+                                                </div>
+                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
+                                                    <a (click)="abrirModalRealizadoContasAnaliticas()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
+                                                </span>
+                                            </div>
+                                        </p-card>
+                                    </ng-container>
+                                </div>
+                            </div>    
+                        </ng-template>
+                    </p-meterGroup> 
+                </p-tabPanel>
+
+            </p-tabView>
+        </ng-template>
+    </p-inplace>
+</p-drawer>
 <!-----------------------------MODAL GRAFICOS-->
 <!--Grafico Tipos de Custo Mensal-->
 <p-dialog 

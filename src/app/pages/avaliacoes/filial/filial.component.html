@@ -256,6 +256,7 @@
                                     [options]="empresas"
                                     formControlName="empresa"
                                     optionLabel="nome"
+                                    optionValue="id"
                                 >
                                 </p-select>
                                 <label for="float-label" style="margin-left: 15px;">Selecione a Empresa</label>
@@ -282,12 +283,12 @@
                             <p-floatLabel variant="on">
                                 <p-inputmask
                                     variant="filled"  
-                                    id="cnpj_input" 
+                                    
                                     mask="99.999.999/9999-99" 
                                     formControlName="cnpj" 
                                     [style]="{'width':'100%'}">
                                 </p-inputmask>
-                                <label  for="cnpj_input">Informe o CNPJ</label>
+                                
                             </p-floatLabel>
                         </div>
                     </div>

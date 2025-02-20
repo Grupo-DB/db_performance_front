@@ -193,7 +193,7 @@
                                 [(ngModel)]="selectedRaizAnalitica"
                                 (onChange)="onRaizAnaliticaSelecionada($event.value)"
                                 [filter]="true" 
-                                filterBy="raiz_contabil"
+                                filterBy="descricao"
                                 [showClear]="true" 
                             >
                                 <ng-template pTemplate="filter" let-options="options">
@@ -593,7 +593,7 @@
     <p-dialog 
         [modal]="true"
         [(visible)]="editFormVisible" 
-        [style]="{ width: '90%', height:'90%'}"
+        [style]="{ width: '65rem'}"
     >
         <div class="titulo">
             <p-divider align="left" type="solid">
@@ -606,7 +606,7 @@
                     title="Editar Conta Contabil"
                 >
                     <div class="editgeral flex flex-column lg:flex-row">
-                        <div class="fg1edit flex flex-column w-12 align-items-center lg:w-6">
+                        <div class="fg1edit flex flex-column w-12 align-items-center lg:w-12">
                             <div class="form1edit w-10">
                                 <p-floatlabel variant="on">
                                     <p-iconfield>

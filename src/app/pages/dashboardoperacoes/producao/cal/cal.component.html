@@ -378,11 +378,11 @@
 
     <div class="w-full justify-content-center flex flex-column lg:flex-row lg:h-18rem">
 
-        <div class="chartBarEnsacados w-full lg:w-10">
+        <div class="chartBarEnsacados w-full h-24rem lg:w-10">
             <canvas id="graficoTotalProducaoDiaria"></canvas>
         </div>
         
-        <div class="projecoes mt-3 w-full flex-row lg:flex-column lg:w-2 lg:mt-0">
+        <div class="projecoes mt-3  w-full flex-row lg:flex-column lg:w-2  lg:h-24rem lg:justify-content-center lg:align-items-center lg:mt-0">
             <div class="af w-6 lg:w-full">
                 <div class="titulo2">
                     <span> <b>Média do Período</b></span><br>
@@ -416,11 +416,11 @@
         </div>
     </div>
     <br/>
-    <div class="w-full mt-3 justify-content-center flex flex-column lg:flex-row lg:h-18rem">
-        <div class="chartBarEnsacados w-full lg:w-10">
+    <div class="w-full mt-3 justify-content-center flex flex-column lg:flex-row lg:h-18rem lg:mt-8">
+        <div class="chartBarEnsacados w-full h-24rem lg:w-10">
             <canvas id="graficoTotalCarregamentoDiario"></canvas>
         </div>    
-        <div class="projecoes mt-3 w-full flex-row lg:flex-column lg:w-2 lg:mt-0">
+        <div class="projecoes mt-3 w-full flex-row lg:flex-column lg:w-2  lg:h-24rem lg:justify-content-center align-items-center lg:mt-1">
             <div class="af w-6 lg:w-full">
                 <div class="titulo2">
                     <span> <b>Média do Período</b></span><br>
@@ -474,6 +474,7 @@
                             dateFormat="dd/mm/yy"                  
                             [showIcon]="true"
                             placeholder="Data"
+                            appendTo="body"
                         >
                         </p-datepicker>
                         <div class="btnCalcProd" 
@@ -497,8 +498,8 @@
                         </div>    
                     </div>    
                 </div><!--end rowSupeiror-->
-                <div class=" flex flex-wrap justify-content-center lg:flex-nowrap lg:w-12">
-                    <div class=" flex flex-wrap justify-content-center lg:flex-nowrap lg:w-12">
+                <div class=" flex flex-column justify-content-center lg:flex-row lg:w-12">
+                    <div class=" flex flex-column justify-content-center lg:w-12">
                         <div class="rowWrap w-12 flex flex-column lg:flex-row lg:w-11 lg:mt-3">
                             <div class="tituloFab">
                                 <b> Ensacados </b>

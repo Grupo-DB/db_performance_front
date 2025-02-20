@@ -6,7 +6,7 @@ import { routes } from './app.routes';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideToastr } from 'ngx-toastr';
 import { provideAnimations } from '@angular/platform-browser/animations'
-import Material from '@primeng/themes/material';
+import Lara from '@primeng/themes/lara';
 
 import { registerLocaleData } from '@angular/common';
 import pt from '@angular/common/locales/pt';
@@ -16,6 +16,8 @@ import { provideNzIcons } from './icons-provider';
 import { en_US, provideNzI18n } from 'ng-zorro-antd/i18n';
 import en from '@angular/common/locales/en';
 import { providePrimeNG } from 'primeng/config';
+import { MyPreset } from './styles';
+
 
 registerLocaleData(pt);
 
@@ -27,7 +29,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
         providePrimeNG({
             theme: {
-                preset: Material,
+                preset: MyPreset,
                 options: {
                   darkModeSelector: '.my-app-dark',
               }

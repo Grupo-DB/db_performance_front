@@ -42,6 +42,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 import { SelectModule } from 'primeng/select';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { DatePickerModule } from 'primeng/datepicker';
 
 interface RegisterColaboradorForm {
   empresa: FormControl;
@@ -145,7 +146,7 @@ interface TipoContrato{
     ReactiveFormsModule,FormsModule,NzUploadModule,CommonModule,DialogModule,InputNumberModule,InputSwitchModule,BooleanToStatusPipe,
     InputMaskModule,CalendarModule,CheckboxModule,ConfirmDialogModule,DividerModule,
     FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,ToastModule,
-    IconFieldModule,InputIconModule,SelectModule,ToggleSwitchModule
+    IconFieldModule,InputIconModule,SelectModule,ToggleSwitchModule,DatePickerModule
   ],
   providers:[
     MessageService,SetorService,ColaboradorService,ColaboradorService,AmbienteService,TipoContratoService,
@@ -752,7 +753,8 @@ abrirModalEdicao(colaborador: Colaborador) {
     user:colaborador.user,
     username:colaborador.username,
     password: colaborador.password,
-    salario: colaborador.salario,
+    salario:colaborador.salario,
+    //salario: parseFloat(colaborador.salario.toString().replace(/\./g, '').replace(',', '.')),
     raca: colaborador.raca,
     instrucao: colaborador.instrucao,
     categoria: colaborador.categoria,
@@ -771,10 +773,8 @@ visualizarColaboradorDetalhes(id: number) {
     data => {
       // Formate as datas e o salário
       this.formatarDatas(data);
-      if (data.salario) {
-        data.salario = this.currencyPipe.transform(data.salario, 'BRL', 'symbol', '1.2-2');
-      }
       this.colaboradorDetalhes = data;
+      data.salario = this.formatSalary(data.salario);
     },
     error => {
       console.error('Erro ao buscar detalhes do colaborador:', error);
@@ -797,6 +797,22 @@ formatarDatas(obj: any) {
 
 isDate(value: string): boolean {
   return !isNaN(Date.parse(value));
+}
+
+isNumber(value: any): boolean {
+  return !isNaN(parseFloat(value)) && isFinite(value);
+}
+
+formatSalary(salary: any): number {
+  if (typeof salary === 'string') {
+    // Substitua a vírgula por ponto
+    salary = salary.replace(',', '.');
+  }
+  // Converte para número com 2 casas decimais
+  const valorNumerico = Number(parseFloat(salary).toFixed(2));
+
+  // Se a conversão falhar, retorna 0 para evitar erros
+  return isNaN(valorNumerico) ? 0 : valorNumerico;
 }
 
 saveEdit(){
@@ -909,7 +925,7 @@ excluirColaborador(id: number) {
     accept: () => {
       this.colaboradorService.deleteColaborador(id).subscribe({
         next: () => {
-          this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Filial excluída com sucesso!!', life: 1000 });
+          this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Colaborador excluído com sucesso!!', life: 1000 });
           setTimeout(() => {
             window.location.reload(); // Atualiza a página após a exclusão
           }, 1000); // Tempo em milissegundos (1 segundo de atraso)
@@ -945,11 +961,12 @@ submit() {
     const formData = new FormData();
 
     let situacao = this.registercolaboradorForm.value.situacao;
-
 // Verifique explicitamente se o valor é null ou undefined
     if (situacao === null || situacao === undefined) {
     situacao = 0; // ou qualquer valor padrão que você queira
 }
+
+   
 
     // Verificar e formatar a data de admissão
     let dataFormatadaad = '';
@@ -1014,7 +1031,7 @@ submit() {
     formData.append('dominio_id',this.registercolaboradorForm.value.dominio_id);
     formData.append('sgg_id',this.registercolaboradorForm.value.sgg_id);
     formData.append('tornar_avaliado', this.registercolaboradorForm.value.tornar_avaliado);
-    formData.append('tornar_avaliador', this.registercolaboradorForm.value.tornar_avaliador);
+    formData.append('tornar_avaliador',this.registercolaboradorForm.value.tornar_avaliador);
     formData.append('tornar_gestor', this.registercolaboradorForm.value.tornar_gestor)
 
     // Add a imagem ao FormData

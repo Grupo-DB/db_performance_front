@@ -381,22 +381,14 @@ applyFilters2():void{
             datasets: [{
                 data: Object.values(graficoDados),
                 backgroundColor: [
-                    '#4C5264',
-                    '#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',                   
+                    ' #002B5C',
+                    '#4972B0',
+                    '#004598',
+                   '#7F94B5',
+                   '#CCD3DC',            
                 ],
                 hoverBackgroundColor: [
-                    '#898993',
-                    '#97a3c2',
-                    '#4C5264',
-                    '#07449b',
-                    '#242730',
-		            '#12bfd7',	            
-		            '#1890FF',
+                   ' #ffb100'
                 ]
             }]
         },
@@ -429,22 +421,14 @@ updateSalarioInstrucaoChart(graficoSalarioInstrucao: any): void {
             datasets: [{
                 data: Object.values(graficoSalarioInstrucao),
                 backgroundColor: [
-                    '#4C5264',
-                    '#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
+                    ' #002B5C',
+                    '#4972B0',
+                    '#004598',
+                   '#7F94B5',
+                   '#CCD3DC',  
                 ],
                 hoverBackgroundColor: [
-                    '#898993',
-                    '#97a3c2',
-                    '#4C5264',
-                    '#07449b',
-                    '#242730',
-		            '#12bfd7',	            
-		            '#1890FF',
+                    ' #ffb100'
                 ]
             }]
         },
@@ -500,22 +484,14 @@ updateDoughnutChart(graficoDadosInstrucao: any): void {
             datasets: [{
                 data: Object.values(graficoDadosInstrucao),
                 backgroundColor: [
-                    '#4C5264',
-                    '#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
+                   ' #002B5C',
+                    '#4972B0',
+                    '#004598',
+                   '#7F94B5',
+                   '#CCD3DC',  
                 ],
                 hoverBackgroundColor: [
-                    '#898993',
-                    '#97a3c2',
-                    '#4C5264',
-                    '#07449b',
-                    '#242730',
-		            '#12bfd7',	            
-		            '#1890FF',
+                    ' #ffb100'
                 ]
             }]
         },
@@ -548,22 +524,14 @@ updatePolarAreaChart(graficoDadosEstadoCivil: any): void {
             datasets: [{
                 data: Object.values(graficoDadosEstadoCivil),
                 backgroundColor: [
-                    '#4C5264',
-                    '#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
+                    ' #002B5C',
+                    '#4972B0',
+                    '#004598',
+                   '#7F94B5',
+                   '#CCD3DC', 
                 ],
                 hoverBackgroundColor: [
-                    '#898993',
-                    '#97a3c2',
-                    '#4C5264',
-                    '#07449b',
-                    '#242730',
-		            '#12bfd7',	            
-		            '#1890FF',
+                    ' #ffb100'
                 ]
             }]
         },
@@ -601,30 +569,26 @@ updateSalarioRacaChart(graficoDadosSalarioRacas: any,  graficoDadosRacas: any): 
                 label: 'Colaboradores',
                 data :Object.values(graficoDadosRacas),
                 backgroundColor: [
-                   '#4C5264',
-                    '#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
+                   ' #002B5C',
+                    '#4972B0',
+                    '#004598',
+                   '#7F94B5',
+                   '#CCD3DC',  
                 ],
-                hoverBackgroundColor: '#64B5F6'
+                hoverBackgroundColor:  '#ffb100'
             },
                
             {
                 label: 'Média Salarial',
                 data: Object.values(graficoDadosSalarioRacas),
                 backgroundColor: [
-                   '#4C5264',
-                    '#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
+                    ' #002B5C',
+                    '#4972B0',
+                    '#004598',
+                   '#7F94B5',
+                   '#CCD3DC', 
                 ],
-                hoverBackgroundColor: '#64B5F6'
+                hoverBackgroundColor:  ' #ffb100'
             },
         ]
         },
@@ -681,15 +645,13 @@ updateSalarioGeneroChart(graficoDadosSalarioGenero: any): void {
                 label: 'Gêneros',
                 data: Object.values(graficoDadosSalarioGenero),
                 backgroundColor: [
-                    '#4C5264',
-                    '#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
+                    ' #002B5C',
+                    '#4972B0',
+                    '#004598',
+                   '#7F94B5',
+                   '#CCD3DC', 
                 ],
-                hoverBackgroundColor: '#64B5F6'
+                hoverBackgroundColor:  ' #ffb100'
             }]
         },
         options: {
@@ -745,16 +707,10 @@ updateNotaPerguntasChart(graficoNotasPerguntas: any): void {
                 data: Object.values(graficoNotasPerguntas),
                 pointRadius:4,
                 backgroundColor: [
-                    'rgba(18, 191, 215, 0.5)',
+                    'rgba(0, 69, 152, 0.2)' 
                 ],
                 hoverBackgroundColor: [
-                    '#4C5264',
-                    '#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
+                   ' #ffb100'
                 ]
             }]
         },
@@ -814,23 +770,10 @@ updateNotaGestorPerguntasChart(graficoNotasPerguntasGestor: any): void {
                 //fill:true,
                 //spanGaps:false,
                 backgroundColor: [
-                    //'#4C5264',
-                    //'#07449b',
-                    // '#12bfd7',
-                    // '#242730',
-                    // '#97a3c2',
-                    // '#898993',
-                    // '#1890FF',
-                    'rgba(18, 191, 215, 0.5)',
+                   'rgba(0, 69, 152, 0.2)'
                 ],
                 hoverBackgroundColor: [
-                    '#4C5264',
-                    '#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
+                    ' #ffb100'
                 ]
             }]
         },
@@ -888,15 +831,13 @@ updateInstrucaoRacaChart(graficoInstrucaoRacaGenero: any): void {
                 label: 'Colaboradores',
                 data: Object.values(graficoInstrucaoRacaGenero),
                 backgroundColor: [
-                    '#4C5264',
-                    '#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
+                    ' #002B5C',
+                    '#4972B0',
+                    '#004598',
+                   '#7F94B5',
+                   '#CCD3DC', 
                 ],
-                hoverBackgroundColor: '#64B5F6'
+                hoverBackgroundColor:  ' #ffb100'
             }]
         },
         options: {
@@ -935,15 +876,13 @@ updateAmbientesInfosChart( graficoAmbientesSalInfos: any, ): void {
                 label: 'Média Salarial',
                 data: Object.values(graficoAmbientesSalInfos),
                 backgroundColor: [
-                   '#4C5264',
-                    '#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
+                    ' #002B5C',
+                    '#4972B0',
+                    '#004598',
+                   '#7F94B5',
+                   '#CCD3DC',  
                 ],
-                hoverBackgroundColor: '#64B5F6'
+                hoverBackgroundColor:  ' #ffb100'
             },
         ]
         },
@@ -987,23 +926,10 @@ updateNotaAvaliadosChart(graficoNotasAvaliados: any): void {
                 data: Object.values(graficoNotasAvaliados),
                 pointRadius:4,
                 backgroundColor: [
-                    //'#4C5264',
-                    //'#07449b',
-                    // '#12bfd7',
-                    // '#242730',
-                    // '#97a3c2',
-                    // '#898993',
-                    // '#1890FF',
-                    'rgba(18, 191, 215, 0.5)',
+                    'rgba(0, 69, 152, 0.2)'
                 ],
                 hoverBackgroundColor: [
-                    '#4C5264',
-                    '#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
+                     ' #ffb100'
                 ]
             }]
         },
@@ -1061,23 +987,10 @@ updateNotaAvaliadosChart(graficoNotasAvaliados: any): void {
                 data: Object.values(graficoNotasAvaliadores),
                 pointRadius:4,
                 backgroundColor: [
-                    //'#4C5264',
-                    //'#07449b',
-                    // '#12bfd7',
-                    // '#242730',
-                    // '#97a3c2',
-                    // '#898993',
-                    // '#1890FF',
-                    'rgba(18, 191, 215, 0.5)',
+                   'rgba(0, 69, 152, 0.2)'
                 ],
                 hoverBackgroundColor: [
-                    '#4C5264',
-                    '#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
+                    ' #ffb100'
                 ]
             }]
         },
@@ -1136,23 +1049,10 @@ updateNotaAvaliadosChart(graficoNotasAvaliados: any): void {
                 data: Object.values(graficoNotasAvaliadoresGestor),
                 pointRadius:4,
                 backgroundColor: [
-                    //'#4C5264',
-                    //'#07449b',
-                    // '#12bfd7',
-                    // '#242730',
-                    // '#97a3c2',
-                    // '#898993',
-                    // '#1890FF',
-                    'rgba(18, 191, 215, 0.5)',
+                   'rgba(0, 69, 152, 0.2)'
                 ],
                 hoverBackgroundColor: [
-                    '#4C5264',
-                    '#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
+                    ' #ffb100'
                 ]
             }]
         },
@@ -1210,23 +1110,10 @@ updateNotaAvaliadosChart(graficoNotasAvaliados: any): void {
                 data: Object.values(graficoNotasAvaliadoGestor),
                 pointRadius:4,
                 backgroundColor: [
-                    //'#4C5264',
-                    //'#07449b',
-                    // '#12bfd7',
-                    // '#242730',
-                    // '#97a3c2',
-                    // '#898993',
-                    // '#1890FF',
-                    'rgba(18, 191, 215, 0.5)',
+                    'rgba(0, 69, 152, 0.5)'
                 ],
                 hoverBackgroundColor: [
-                    '#4C5264',
-                    '#07449b',
-                    '#12bfd7',
-                    '#242730',
-                    '#97a3c2',
-                    '#898993',
-                    '#1890FF',
+                     ' #ffb100'
                 ]
             }]
         },

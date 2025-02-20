@@ -284,14 +284,14 @@
                                <p-floatlabel variant="on">
                                 <p-select
                                     variant="filled"
-                                    [style]="{'width':'100%'}"
+                                    [style]="{'width':'50%'}"
                                     [options]="produtos"
                                     optionValue="id"
                                     formControlName="produto"
                                     optionLabel="nome"
                                     [filter]="true"
                                     filterBy="nome"
-                                    [appendTo]="'body'"
+                                    appendTo="body"
                                 >
                                 </p-select>
                                 <label for="me">Produto</label>
@@ -301,7 +301,7 @@
                                 <p-floatlabel variant="on">
                                 <p-inputNumber
                                     variant="filled"
-                                    [style]="{'width':'100%'}"
+                                    [style]="{'width':'900px'}"
                                     formControlName="preco_medio_venda"
                                     inputId="currency-us"
                                     mode="currency"

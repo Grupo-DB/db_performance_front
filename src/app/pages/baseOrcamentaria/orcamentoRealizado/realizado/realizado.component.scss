@@ -270,18 +270,16 @@ tr {
     border-radius: 8px;
     width: 100%;
   }
-  td{
-    border-radius: 8px;
-  }
+  
   th{
     height: 2px;
-    background-color: #2d53da;
+    //background-color: #002B5C;
     color: #eee;
   }
   .grafico1{
-    margin-left: -5%;
+    //margin-left: -5%;
     margin-top: 5%;
-    height: 400px;
+    height: 450px;
     //width: 50%;
     
   }
@@ -350,7 +348,7 @@ tr {
 }
 
 .form-geral{
-    width: 90%;
+    width: 95%;
     margin-left: auto;
     margin-right: auto;
     border-radius: 8px;

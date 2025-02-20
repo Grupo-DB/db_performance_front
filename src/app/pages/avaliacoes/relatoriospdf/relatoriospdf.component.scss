@@ -1,0 +1,47 @@
+.menu{
+    position:static;
+     //transform: translate(-1%, -180%);
+     
+     width: 100%;
+ }
+ .titulo{
+    justify-content: center;
+    margin-top: 50px;
+    h2{
+        color:slategrey;
+    }
+}
+.btnsec{
+    cursor: pointer;
+        background-color: #444959;
+        color: #fff;
+        width: 220px;
+        height: 60px;
+        border-radius: 5px;
+        margin-left: 5px;
+        p{
+            text-align: center;
+            margin-top: 10px;
+            margin-left: 2px;
+            padding: 10px;
+        }
+}
+.btnsecav{
+    cursor: pointer;
+        background-color: #444959;
+        color: #fff;
+        width: 300px;
+        height: 60px;
+        border-radius: 5px;
+        margin-left: 5px;
+        p{
+            text-align: center;
+            margin-top: 10px;
+            margin-left: 2px;
+            padding: 10px;
+        }
+}
+.filtrosPdf{
+    display: flex;
+    justify-content: space-around;
+ }

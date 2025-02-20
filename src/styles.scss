@@ -3,7 +3,12 @@
 @import "ng-zorro-antd/ng-zorro-antd.css";
 @import "../node_modules/quill/dist/quill.core.css";
 @import "../node_modules/quill/dist/quill.snow.css";
+@import "~ng-zorro-antd/ng-zorro-antd.dark.css";
+@import "~ng-zorro-antd/ng-zorro-antd.css"; // Import the default theme as well
 
+.dark-theme {
+  @import "~ng-zorro-antd/ng-zorro-antd.dark.css";
+}
 
 * {
     margin: 0px;

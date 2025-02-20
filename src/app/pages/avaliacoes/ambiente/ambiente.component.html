@@ -223,6 +223,7 @@
                                 [style]="{'width':'100%'}" 
                                 [options]="empresas" 
                                 id="empresa"
+                                optionValue="id"
                                 formControlName="empresa"
                                 optionLabel="nome"
                                 (onChange)="onEmpresaSelecionada($event.value)"
@@ -238,6 +239,7 @@
                                 [style]="{'width':'100%'}" 
                                 [options]="filiais" 
                                 id="filial"
+                                optionValue="id"
                                 formControlName="filial"
                                 optionLabel="nome"
                                 (onChange)="onFilialSelecionada($event.value)"
@@ -255,6 +257,7 @@
                                 [style]="{'width':'100%'}" 
                                 [options]="areas" 
                                 id="area"
+                                optionValue="id"
                                 formControlName="area"
                                 optionLabel="nome"
                                 (onChange)="onAreaSelecionada($event.value)"
@@ -266,6 +269,7 @@
                     <div class="form2 w-10 text-left mb-3">    
                         <p-floatLabel variant="on">
                             <p-select
+                                optionValue="id"
                                 variant="filled"
                                 [style]="{'width':'100%'}" 
                                 [options]="setores" 

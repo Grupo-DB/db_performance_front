@@ -1,4 +1,3 @@
-
 <div *ngIf="hasGroup(['Admin','RHGestor'])" class="container">
 
     <div class="titulo2">
@@ -260,16 +259,16 @@
                 </div>
                 <div class="form5 w-10 text-left">
                     <p-floatLabel variant="on">
-                        <p-calendar
+                        <p-datepicker
                             variant="filled"
                             [style]="{'width':'100%'}"
                             id="da"
                             formControlName="data_admissao"
                             dateFormat="dd/mm/yy"
-                            [showIcon]="true"
                             inputId="float-label"
+                            [showIcon]="true"
                         >
-                        </p-calendar>
+                        </p-datepicker>
                         <label for="float-label" >Data de Admissão</label>
                     </p-floatLabel>
                 </div>
@@ -305,20 +304,20 @@
                 </div>
                 <div class="form7 w-10 text-left">
                     <p-floatLabel variant="on">
-                        <p-calendar
+                        <p-datepicker           
                             variant="filled"
                             id="dc"
                             [style]="{'width':'100%'}"
                             formControlName="data_nascimento"
                             dateFormat="dd/mm/yy"
-                            [showIcon]="true"
                             inputId="float-label"
+                            [showIcon]="true"
                         >
-                        </p-calendar>
+                        </p-datepicker>
                         <label for="float-label" style="margin-left: 5px;">Data de Nascimento</label>
                     </p-floatLabel>
                 </div>
-                <div class="dvft w-10 text-justify">
+                <div class="dvft w-10 flex-wrap lg:text-justify">
                     <p><label for="foto">Carregar Foto</label></p>
                     <input
                         id="foto"
@@ -356,19 +355,19 @@
                                 formControlName="tornar_avaliador"
                             >
                             </p-toggleswitch>
-                            <p><label for="sit"[style]="{'margin-left':'20px'}">Avaliado </label></p>
+                            <p><label for="sit"[style]="{'margin-left':'10px'}">Avaliado </label></p>
                             <p-toggleswitch
                                 id="sit"
                                 formControlName="tornar_avaliado"
                             >
                             </p-toggleswitch>
-                            <p><label for="sit"[style]="{'margin-left':'30px'}">Situação </label></p>
+                            <p><label for="sit"[style]="{'margin-left':'10px'}">Situação </label></p>
                                 <p-toggleswitch
                                     id="sit"
                                     formControlName="situacao"
                                 >
                                 </p-toggleswitch>
-                            <p><label for="sit"[style]="{'margin-left':'20px'}">Gestor de Orçamento</label></p>
+                            <p><label for="sit"[style]="{'margin-left':'10px'}">Gestor de Orçamento</label></p>
                                 <p-toggleswitch
                                     id="sit"
                                     formControlName="tornar_gestor"
@@ -714,16 +713,16 @@
                     </div>
                     <div class="form5ed w-10 text-left">
                         <p-floatLabel variant="on">
-                            <p-calendar
+                            <p-datepicker
                                 variant="filled"
                                 [style]="{'width':'100%'}"
                                 id="da"
                                 formControlName="data_admissao"
                                 dateFormat="dd/mm/yy"
-                                [showIcon]="true"
                                 inputId="float-label"
+                                [showIcon]="true"
                             >
-                            </p-calendar>
+                            </p-datepicker>
                             <label for="float-label" >Data de Admissão</label>
                         </p-floatLabel>
                     </div>
@@ -790,21 +789,39 @@
                     </div>
                 </div>
                     <div class="fg2edit flex flex-column w-12 align-items-center lg:w-6">
-                        <div class="dvsaled w-10 text-left">
+                        <!-- <div class="dvsaled w-10 text-left">
                             <p-floatLabel variant="on" >
                                 <p-inputNumber
                                     variant="filled"
                                     inputId="on_label"
                                     formControlName="salario"
-                                    inputId="currency-us"
-                                    mode="currency"
                                     currency="BRL"
-                                    locale="pt-BR"
-        
+                                    mode="currency"
+                                    locale="de-DE"
+                                    
                                 />
-                                <label for="on_label">Informe o Salário</label>
+                                <label for="on_label">Informe o Salário R$</label>
                             </p-floatLabel>
+                        </div> -->
+
+
+                        <div class="form1edit w-10">
+                            <p-floatlabel variant="on">
+                                <p-iconfield>
+                                    
+                                    <input
+                                        variant="filled"
+                                        [style]="{'width':'99%'}"
+                                        pInputText id="on_label"
+                                        autocomplete="off"
+                                        formControlName="salario"
+                                        type="text"
+                                    />
+                                </p-iconfield>
+                                <label for="on_label">Informe o Salário R$</label>
+                            </p-floatlabel>
                         </div>
+
                         <div class="dvcated w-10 text-left">
                             <p-floatLabel variant="on">
                                 <p-select
@@ -855,59 +872,59 @@
                         </div>
                         <div class="form7ed w-10 text-left">
                             <p-floatLabel variant="on">
-                                <p-calendar
+                                <p-datepicker
                                     variant="filled"
                                     id="dc"
                                     [style]="{'width':'100%'}"
                                     formControlName="data_nascimento"
                                     dateFormat="dd/mm/yy"
-                                    [showIcon]="true"
                                     inputId="float-label"
+                                    [showIcon]="true"
                                 >
-                                </p-calendar>
+                                </p-datepicker>
                                 <label for="float-label" style="margin-left: 5px;">Data de Nascimento</label>
                             </p-floatLabel>
                         </div>
                         <div class="form8ed w-10 text-left">
                             <p-floatLabel variant="on">
-                                <p-calendar
+                                <p-datepicker
                                     variant="filled"
                                     [style]="{'width':'100%'}"
                                     formControlName="data_troca_setor"
                                     [disabled]="true"
                                     dateFormat="dd/mm/yy"
-                                    [showIcon]="true"
                                     inputId="float-label"
+                                    [showIcon]="true"
                                 >
-                                </p-calendar>
+                                </p-datepicker>
                                 <label for="float-label" style="margin-left: 5px;">Data Troca de Setor</label>
                             </p-floatLabel>
                         </div>
                         <div class="form9ed w-10 text-left">
                             <p-floatLabel variant="on">
-                                <p-calendar
+                                <p-datepicker
                                     variant="filled"
                                     [style]="{'width':'100%'}"
                                     formControlName="data_troca_cargo"
                                     dateFormat="dd/mm/yy"
-                                    [showIcon]="true"
                                     inputId="float-label"
+                                    [showIcon]="true"
                                 >
-                                </p-calendar>
+                                </p-datepicker>
                                 <label for="float-label" style="margin-left: 5px;">Data de Troca de Cargo</label>
                             </p-floatLabel>
                         </div>
                         <div class="form10ed w-10 text-left">
                             <p-floatLabel variant="on">
-                                    <p-calendar
+                                    <p-datepicker
                                         variant="filled"
                                         [style]="{'width':'100%'}"
                                         formControlName="data_demissao"
                                         dateFormat="dd/mm/yy"
-                                        [showIcon]="true"
                                         inputId="float-label"
+                                        [showIcon]="true"
                                     >
-                                    </p-calendar>
+                                    </p-datepicker>
                                     <label for="float-label" style="margin-left: 5px;">Data de Demissão</label>
                                 </p-floatLabel>
                         </div>
@@ -933,29 +950,29 @@
                             </div>
                                 <div class="btns flex flex-column align-items-start md:flex-row">
                                     <p><label  for="sit" >Avaliador </label></p>
-                                    <p-inputSwitch
+                                    <p-toggleswitch
                                         id="sit"
                                         formControlName="tornar_avaliador"
                                     >
-                                    </p-inputSwitch>
-                                    <p><label for="sit"[style]="{'margin-left':'20px'}">Avaliado </label></p>
-                                    <p-inputSwitch
+                                    </p-toggleswitch>
+                                    <p><label for="sit"[style]="{'margin-left':'10px'}">Avaliado </label></p>
+                                    <p-toggleswitch
                                         id="sit"
                                         formControlName="tornar_avaliado"
                                     >
-                                    </p-inputSwitch>
-                                    <p><label for="sit"[style]="{'margin-left':'30px'}">Situação </label></p>
-                                        <p-inputSwitch
+                                    </p-toggleswitch>
+                                    <p><label for="sit"[style]="{'margin-left':'10px'}">Situação </label></p>
+                                        <p-toggleswitch
                                             id="sit"
                                             formControlName="situacao"
                                         >
-                                        </p-inputSwitch>
-                                    <p><label for="sit"[style]="{'margin-left':'30px'}">Gestor de Orçamento </label></p>
-                                        <p-inputSwitch
+                                        </p-toggleswitch>
+                                    <p><label for="sit"[style]="{'margin-left':'10px'}">Gestor de Orçamento </label></p>
+                                        <p-toggleswitch
                                             id="sit"
                                             formControlName="tornar_gestor"
                                         >
-                                        </p-inputSwitch>
+                                        </p-toggleswitch>
                                 </div>
 
                         </div>
@@ -1039,7 +1056,7 @@
             <div *ngIf="colaboradorDetalhes">
                 <div class="detalhes">
                     <p>Nome: <strong>{{ colaboradorDetalhes.nome }}</strong></p>
-                    <p>Salário: <strong>{{ colaboradorDetalhes.salario }}</strong></p>
+                    <p>Salário: <strong>{{ colaboradorDetalhes.salario | currency:'BRL':'symbol':'1.2-4' }}</strong></p>
                     <p>Tipo de Contrato: <strong>{{ colaboradorDetalhes.tipocontrato }}</strong></p>
                     <p>Data de Admissão: <strong>{{ colaboradorDetalhes.data_admissao }}</strong></p>
                     <p>Gênero: <strong>{{ colaboradorDetalhes.genero }}</strong></p>

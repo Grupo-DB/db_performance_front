@@ -190,6 +190,7 @@
                                         pInputText id="on_label"
                                         autocomplete="off"
                                         formControlName="nome"
+                                        optionValue="id"
                                         type="text"
                                     />
                                 </p-iconfield>
@@ -205,6 +206,7 @@
                                     id="empresa"
                                     formControlName="empresa"
                                     optionLabel="nome"
+                                    optionValue="id"
                                     (onChange)="onEmpresaSelecionada($event.value)"
                                 >
                                 </p-select>
@@ -221,6 +223,7 @@
                                     [options]="filiais" 
                                     id="filial"
                                     formControlName="filial"
+                                    optionValue="id"
                                     optionLabel="nome"
                                     (onChange)="onFilialSelecionada($event.value)"
                                 >
@@ -237,6 +240,7 @@
                                     id="area"
                                     formControlName="area"
                                     optionLabel="nome"
+                                    optionValue="id"
                                 >
                                 </p-select>
                                 <label for="area">Área</label>

@@ -106,11 +106,11 @@
                         <tr>                      
                             <td>{{ resultado.label }}</td>
                             <td>{{ resultado.quantidade }}</td>
-                            <td>{{ resultado.preco | currency: 'BRL' }}</td>
-                            <td>{{ resultado.faturamento | currency: 'BRL' }}</td>
+                            <td>{{ resultado.preco  }}</td>
+                            <td>{{ resultado.faturamento  }}</td>
                             <td>{{ resultado.aliquota }}</td>
-                            <td>{{ resultado.deducao | currency: 'BRL' }}</td>
-                            <td>{{ resultado.receitaLiquida | currency: 'BRL' }}</td>
+                            <td>{{ resultado.deducao  }}</td>
+                            <td>{{ resultado.receitaLiquida  }}</td>
                             <td>{{ resultado.percentual }}</td>
                         </tr>
                     </ng-template>
@@ -119,27 +119,16 @@
                             <td colspan="1" class="text-left">Totais</td>
                             <td>{{ quantidadeTotal }}</td>
                             <td></td>
-                            <td>{{ receitaBruta | currency: 'BRL'}} </td>
+                            <td>{{ receitaBrutaFormatada }} </td>
                             <td></td>
-                            <td>{{ deducaoTotal | currency: 'BRL'}}</td>
-                            <td>{{ receitaLiquida | currency: 'BRL'}}</td>
+                            <td>{{ deducaoTotal }}</td>
+                            <td>{{ receitaLiquida }}</td>
                             <td></td>
                         </tr>
                     </ng-template>
                 </p-table>
             </div>
         
-            <div class="wrapInplace">
-                
-                <p-inplace
-                    closable="true"
-                >
-                    <ng-template pTemplate="display">
-                        <div class="inline-flex align-items-center">
-                            <span class="ml-2"><i class="pi pi-plus-circle"></i> Detalhar</span>
-                        </div>
-                    </ng-template>
-                    <ng-template pTemplate="content">
                         <div class="tabela" @swipeAnimationReverse>  
                             <p-treeTable [value]="orcados" [scrollable]="true" scrollHeight="600px" [tableStyle]="{'min-width':'60rem'}">
                                 <!-- Cabeçalho da Tabela -->
@@ -149,14 +138,14 @@
                                         <th colspan="2" class="text-left font-bold pr-6">Receita Bruta</th>
                                         <th></th>
                                         <th></th>
-                                        <th class="text-left font-bold pr-6">{{ receitaBruta | currency:'BRL' }}</th>
+                                        <th class="text-left font-bold pr-6">{{ receitaBrutaFormatada }}</th>
                                         <th></th>
                                     </tr> 
                                 
                                     <tr class="footer-row">
-                                        <th colspan="3" class="text-left font-bold pr-6">Deduções</th>
+                                        <th colspan="3" class="text-left font-bold pr-6">&nbsp;&nbsp;&nbsp;&nbsp;Deduções</th>
                                         <th></th>
-                                        <th class="text-left font-bold pr-6">{{deducaoTotal | currency:'BRL' }}</th>
+                                        <th class="text-left font-bold pr-6">{{deducaoTotal  }}</th>
                                         <th>{{ percentDeducao  }}%</th>
                                     </tr>
 
@@ -164,23 +153,24 @@
                                         <th colspan="2" class="text-left font-bold pr-6">Receita Liquida</th>
                                         <th></th>
                                         <th></th>
-                                        <th class="text-left font-bold pr-6">{{ receitaLiquida | currency:'BRL' }}</th>
+                                        <th class="text-left font-bold pr-6">{{ receitaLiquida }}</th>
                                         <th></th>
                                     </tr>
 
                                 </ng-template>
                                 
                                 <!-- Corpo da Tabela -->
-                                <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
-                                
-                                <!-- Linhas dinâmicas -->
-                                <tr>
-                                    <td colspan="2">
-                                    <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
-                                    {{ rowData.tipo || rowData.nome }} 
-                                    </td>
-                                    <td style="font-weight: bold; font-size: 15px;">{{ rowData.total | currency:'BRL' }} </td>
-                                </tr>
+                                <ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-rowIndex="rowIndex">
+                                    <!-- Linhas dinâmicas -->
+                                    <tr>
+                                        <td colspan="4">
+                                            <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                                            {{ rowData.tipo || rowData.nome }} 
+                                        </td>
+                                        <td style="font-weight: bold; font-size: 15px;">{{ rowData.total }}</td>
+                                        <td *ngIf="!rowNode.parent">{{ percentualTotalGeral }}%</td> 
+                                        
+                                    </tr>
                                 </ng-template>
                             
                                 <!-- Detalhes expandidos -->
@@ -213,9 +203,9 @@
                                 <!-- Rodapé do Grupo (Total Geral) -->
                                 <ng-template pTemplate="footer">
                                 <tr class="footerp-row">
-                                    <td style="font-size: 15px;" class="text-left font-bold">Percentual sob Receita Bruta</td>
+                                    <td style="font-size: 15px;" class="text-left font-bold">Lucro Bruto</td>
                                     <td></td>
-                                    <td style="font-size: 15px;" class="text-left font-bold">{{ percentualTotalGeral }}%</td>
+                                    <td style="font-size: 15px;" class="text-left font-bold">{{ lucroBrutoFormatado }}</td>
                                 </tr>
                                 </ng-template>
                             </p-treeTable> 
@@ -226,13 +216,7 @@
                                 <!-- Cabeçalho da Tabela -->
                                 <ng-template pTemplate="header">
                                 
-                                    <tr class="footer-row">
-                                        <th colspan="2" class="text-left font-bold pr-6">Depreciação Total</th>
-                                        <th></th>
-                                        <th></th>
-                                        <th class="text-left font-bold pr-6">{{ totalDepreciacao | currency:'BRL' }}</th>
-                                        <th></th>
-                                    </tr> 
+                                    
     
                                 </ng-template>
                                 
@@ -241,11 +225,12 @@
                                 
                                   <!-- Linhas dinâmicas -->
                                   <tr>
-                                    <td colspan="2">
+                                    <td colspan="4">
                                       <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
                                       {{ rowData.tipo || rowData.nome }}
                                     </td>
-                                    <td style="font-weight: bold; font-size: 15px;">{{ rowData.total | currency:'BRL' }}</td>
+                                    <td style="font-weight: bold; font-size: 15px;">{{ rowData.total  }}</td>
+                                    <td *ngIf="!rowNode.parent">{{ percentualDespesaGeral }}%</td> 
                                   </tr>
                                 </ng-template>
                               
@@ -268,7 +253,7 @@
                                                 <p-treeTableToggler [rowNode]="subRowNode"></p-treeTableToggler>
                                                 {{ subRowData.nome }}
                                               </td>
-                                              <td>{{ subRowData.total | currency:'BRL' }}</td>
+                                              <td>{{ subRowData.total  }}</td>
                                             </tr>
                                           </ng-template>
                                         </p-treeTable>
@@ -279,27 +264,79 @@
                               
                                 <!-- Rodapé do Grupo (Total Geral) -->
                                 <ng-template pTemplate="footer">
-                                  <tr class="footerp-row">
-                                    <td style="font-size: 15px;" class="text-left font-bold pr-6">Percentual sob Receita Bruta</td>
-                                    <td></td>
-                                    <td style="font-size: 15px;" class="text-left font-bold pr-6">{{ percentualDespesaGeral }}%</td>
-                                  </tr>
+                                    <!-- <tr class="footerp-row">
+                                        <td style="font-size: 15px;" class="text-left font-bold pr-6">Percentual sob Receita Bruta</td>
+                                        <td></td>
+                                        <td style="font-size: 15px;" class="text-left font-bold pr-6">{{ percentualDespesaGeral }}%</td>
+                                    </tr> -->
+                                    <tr class="footerp-row">
+                                        <td style="font-size: 15px;" class="text-left font-bold pr-6">Resultado Operacional</td>
+                                        <td></td>
+                                        <td style="font-size: 15px;" class="text-left font-bold pr-6">{{ resultadoOperacionalFormatado }}</td>
+                                    </tr>
+                                    <tr class="footerp-row">
+                                        <td style="font-size: 15px;" class="text-left font-bold pr-6">Resultado Financeiro</td>
+                                        <td></td>
+                                        <td style="font-size: 15px;" class="text-left font-bold pr-6 nowrap">
+                                            <div class="flex text-left">
+                                                <p-floatLabel variant="on" style="flex: 1;">
+                                                    <p-inputNumber
+                                                        currency="BRL"
+                                                        locale="pt-BR"
+                                                        mode="currency"
+                                                        [(ngModel)]="resultadoFinanceiro"
+                                                    ></p-inputNumber>
+                                                    <label for="resultadoFinanceiro">Informe o valor</label>
+                                                </p-floatLabel>
+                                                <p-button (click)="calcularLucroAntesImpostos()" styleClass="p-button-info ml-2" size="small" icon="pi pi-calculator" label="Calcular"></p-button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="footerp-row">
+                                        <td style="font-size: 15px;" class="text-left font-bold pr-6">Lucro antes dos Impostos</td>
+                                        <td></td>
+                                        <td style="font-size: 15px;" class="text-left font-bold pr-6">{{ lucroAntesImpostosFormatado}}</td>
+                                    </tr>
+                                    <tr class="footerp-row">
+                                        <td style="font-size: 15px;" class="text-left font-bold pr-6">CSSL/IRPJ</td>
+                                        <td></td>
+                                        <td style="font-size: 15px;" class="text-left font-bold pr-6 nowrap">
+                                            <div class="flex text-left">
+                                                <p-floatLabel variant="on" style="flex: 1;">
+                                                    <p-inputNumber
+                                                        currency="BRL"
+                                                        locale="pt-BR"
+                                                        mode="currency"
+                                                        [(ngModel)]="impostos"
+                                                    ></p-inputNumber>
+                                                    <label for="resultadoFinanceiro">Informe o valor</label>
+                                                </p-floatLabel>
+                                                <p-button (click)="calcularLucroLiquido()" styleClass="p-button-info ml-2" size="small" icon="pi pi-calculator" label="Calcular"></p-button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="footerp-row">
+                                        <td style="font-size: 15px;" class="text-left font-bold pr-6">Lucro Liquido</td>
+                                        <td></td>
+                                        <td style="font-size: 15px;" class="text-left font-bold pr-6">{{ lucroLiquidoFormatado }}</td>
+                                    </tr>
+                                    <tr class="footerp-row">
+                                        <td style="font-size: 15px;" class="text-left font-bold pr-6">Depreciação Total</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td style="font-size: 15px;" class="text-left font-bold pr-6">{{ totalDepreciacaoFormatada }}</td>
+                                    </tr> 
+                                    <tr class="footerp-row">
+                                        <td colspan="2" style="font-size: 15px;" class="text-left font-bold pr-6">Ebitda</td>
+                                        
+                                        <td style="font-size: 15px;" class="text-left font-bold pr-6">{{ ebitdaFormatado }}{{ percentualTotalEbitda }}%</td>
+                                        <td >{{ percentualTotalEbitda }}%</td>
+                                    </tr>
                                 </ng-template>
                               </p-treeTable> 
                         </div>
 
-                    </ng-template>
-                </p-inplace>
             </div>
 
-
-
-            
-          
-          
-            
-
-
-</div>
 
 

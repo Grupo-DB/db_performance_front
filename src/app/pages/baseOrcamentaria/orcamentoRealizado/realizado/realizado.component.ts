@@ -30,6 +30,7 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { RouterLink } from '@angular/router';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { DrawerModule } from 'primeng/drawer';
+import { th } from 'date-fns/locale';
 
 export interface ResultadosTotaisArrayItem {
   label: string;
@@ -162,6 +163,7 @@ export class RealizadoComponent implements OnInit {
   orcamentosBase: OrcamentoBase[]|undefined;
   centrosCusto: CentroCusto[]|undefined;
   filiaisSga: FilialSga[] = []
+  meusCcs: any;
   //
   detalhes: any | undefined;
   selectedCcPai: any[]=[];
@@ -192,6 +194,8 @@ export class RealizadoComponent implements OnInit {
   setor!: string;
   //
   modalVisible: boolean= false;
+  modalVisible2: boolean= false;
+  modalVisibleRealizado: boolean= false;
   modalGrafVisible: boolean= false;
   modalGrafVisible2: boolean= false;
   modalGrafVisible3: boolean= false;
@@ -253,7 +257,7 @@ export class RealizadoComponent implements OnInit {
   contasAnualChart: Chart<'doughnut'> | undefined;
   //
   realizadosChart: Chart<'pie'> | undefined;
-  basesChart: Chart<'polarArea'> | undefined;
+  basesChart: Chart<'doughnut'> | undefined;
   constructor(
     private realizadoService: RealizadoService,
     private centroCustoService: CentrocustoService,
@@ -271,6 +275,8 @@ export class RealizadoComponent implements OnInit {
       }
     )
 
+    this.calcsGestor();
+  
     this.filiaisSga = [
       { nome: 'Matriz', cod: 0, codManager: 'Matriz'},
       { nome: 'MPA', cod: 1, codManager: 'F07 - CD MPA'},
@@ -280,11 +286,59 @@ export class RealizadoComponent implements OnInit {
     
   } 
 
+  
+  calcsGestor(): void {
+    this.centroCustoService.getMeusCentrosCusto().subscribe(
+        response => {
+            this.meusCcs = response;
+            console.log('Meus Ccs:', this.meusCcs); // Log para verificar a resposta
+
+            this.centrosCusto = this.meusCcs.map((cc: { codigo: any; }) => cc.codigo);
+            console.log('Centros Custo:', this.centrosCusto); // Log para verificar centros de custo
+            
+            this.selectedCcPai = this.meusCcs.map((cc: { cc_pai_detalhes: { id: any; }; }) => cc.cc_pai_detalhes.id);
+            console.log('Selected Cc Pai:', this.selectedCcPai); // Log para verificar selectedCcPai
+
+            this.onCcPaiSelecionado(this.selectedCcPai);
+
+            const filialId = this.meusCcs[0].cc_pai_detalhes.filial_detalhes.id;
+            console.log('Filial ID:', filialId); // Log para verificar filialId
+
+            // Mapeamento dos valores
+            const filialMap = {
+                4: 0,
+                1: 1,
+                3: 2,
+                5: 3
+            };
+
+            // Converte o valor usando o mapeamento
+            const mappedFilialId = filialMap[filialId as keyof typeof filialMap] !== undefined ? filialMap[filialId as keyof typeof filialMap] : filialId;
+            console.log('Mapped Filial ID:', mappedFilialId); // Log para verificar mappedFilialId
+
+            this.selectedsFiliais = [mappedFilialId];
+            console.log('Selecteds Filiais:', this.selectedsFiliais); // Log para verificar selectedsFiliais
+
+            if (this.selectedsFiliais.length > 0) {
+                this.calculosOrcamentosRealizados();
+                this.onFiliaisInformada(this.selectedsFiliais);
+                console.log('Fil', this.selectedsFiliais);
+            } else {
+                console.error('A lista de filiais está vazia ou contém apenas valores inválidos.');
+            }
+        },
+        error => {
+            console.error('Não carregou', error);
+        }
+    );
+}
+
+
   hasGroup(groups: string[]): boolean {
     return this.loginService.hasAnyGroup(groups);
   }
 
-
+  
   modalDetalhes(meterItem:any) {
     this.modalVisible = true;
     console.log('Index:', meterItem);
@@ -297,7 +351,13 @@ export class RealizadoComponent implements OnInit {
             console.error('Não rolou',erro)
           }
        )}
-  
+  }
+  orcadoDetalhes(){
+    this.modalVisible2 = true;
+  }
+
+  realizadoDetalhes(){
+    this.modalVisibleRealizado = true;
   }
   
   onFiliaisInformada(selectedCods: any[]): void{
@@ -321,7 +381,7 @@ export class RealizadoComponent implements OnInit {
       console.log('Centro de Custo Pai selecionado ID:', ccPaiId); // Log para depuração
       this.selectedCcPai = ccPaiId; // Atualiza a variável
       this.orcamentosBaseByCcpai(); // Chama a API com o ID
-      this.ccPaiDetalhes();
+      this.ccPaiDetalhes(); 
       this.carregarCcs(ccPaiId);
       
     } else {
@@ -333,6 +393,7 @@ export class RealizadoComponent implements OnInit {
 
   ccPaiDetalhes():Promise <void>{
     return new Promise((resolve, reject) => {
+      console.log('CC Pai Selecionado KD:', this.selectedCcPai); // Log para depuração
       if(this.selectedCcPai !== undefined){
         this.orcamentoBaseService.getOrcamentoBaseDetalhe(this.selectedCcPai).subscribe(
           (response) => {
@@ -341,7 +402,8 @@ export class RealizadoComponent implements OnInit {
             this.area = response.area;
             this.ambiente = response.ambiente;
             this.setor = response.setor;
-            resolve(); // Resolva a Promise após a conclusão
+            resolve(); // Resolve a Promise após a conclusão
+            console.log('Detalhes:', response); // Log para depuração
           },
           error =>{
             console.error('Não carregou', error)
@@ -350,6 +412,9 @@ export class RealizadoComponent implements OnInit {
       }
     })
   }
+
+
+
 
   calcularTotal(): void{
     this.orcamentoBaseService.calculosTotais(this.selectedAno,this.selectedsFiliais).subscribe(
@@ -360,6 +425,7 @@ export class RealizadoComponent implements OnInit {
   }
 
   orcamentosBaseByCcpai(): void {
+    
     if (this.selectedCcPai !== null) {
       this.orcamentoBaseService.getOrcamentoBaseByCcPai(this.selectedCcPai,this.selectedAno,this.selectedCodManagers).subscribe(
         response => {
@@ -385,23 +451,23 @@ export class RealizadoComponent implements OnInit {
           ];
           
           this.resultadosMensais = [
-            { label: 'Janeiro',num: 1, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[1], icon:'pi pi-money-bill' },
-            { label: 'Fevereiro', num: 2, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[2], icon:'pi pi-money-bill' },
-            { label: 'Março', num: 3, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[3], icon:'pi pi-money-bill' },
-            { label: 'Abril', num: 4, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[4], icon:'pi pi-money-bill' },
-            { label: 'Maio', num: 5, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[5], icon:'pi pi-money-bill' },
-            { label: 'Junho', num: 6, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[6], icon:'pi pi-money-bill' },
-            { label: 'Julho', num: 7, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[7], icon:'pi pi-money-bill' },
-            { label: 'Agosto', num: 8, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[8], icon:'pi pi-money-bill' },
-            { label: 'Setembro', num: 9, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[9], icon:'pi pi-money-bill' },
-            { label: 'Outubro', num: 10, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[10], icon:'pi pi-money-bill' },
-            { label: 'Novembro', num: 11, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[11], icon:'pi pi-money-bill' },
-            { label: 'Dezembro', num: 12, color1: '#00B036', color2: '#fbbf24', value: response.mensal_por_mes[12], icon:'pi pi-money-bill' },
+            { label: 'Janeiro',num: 1, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[1], icon:'pi pi-money-bill' },
+            { label: 'Fevereiro', num: 2, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[2], icon:'pi pi-money-bill' },
+            { label: 'Março', num: 3, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[3], icon:'pi pi-money-bill' },
+            { label: 'Abril', num: 4, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[4], icon:'pi pi-money-bill' },
+            { label: 'Maio', num: 5, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[5], icon:'pi pi-money-bill' },
+            { label: 'Junho', num: 6, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[6], icon:'pi pi-money-bill' },
+            { label: 'Julho', num: 7, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[7], icon:'pi pi-money-bill' },
+            { label: 'Agosto', num: 8, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[8], icon:'pi pi-money-bill' },
+            { label: 'Setembro', num: 9, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[9], icon:'pi pi-money-bill' },
+            { label: 'Outubro', num: 10, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[10], icon:'pi pi-money-bill' },
+            { label: 'Novembro', num: 11, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[11], icon:'pi pi-money-bill' },
+            { label: 'Dezembro', num: 12, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[12], icon:'pi pi-money-bill' },
           ];
 
           this.contasMensais = Object.keys(response.conta_por_mes).map((key) => ({
             label: key,
-            color1: '#004EAE',
+            color1: '#7F94B5',
             color2: '#fbbf24',
             value: response.conta_por_mes[key],
             icon: 'pi pi-chart-bar',
@@ -410,7 +476,7 @@ export class RealizadoComponent implements OnInit {
           this.dictAnualOrcadoTiposCusto = response.conta_por_ano;
           this.contasAnuais = Object.keys(response.conta_por_ano).map((key) => ({
             label: key,
-            color1: '#FFB100',
+            color1: '#7F94B5',
             color2: '#fbbf24',
             value: response.conta_por_ano[key],
             icon: 'pi pi-chart-bar',
@@ -419,7 +485,7 @@ export class RealizadoComponent implements OnInit {
           this.dictOrcadoGrupoContas2 = response.tipo_por_grupo_mes;
           this.tiposMensais = Object.keys(response.tipo_por_grupo_mes).map((key) => ({
             label: key,
-            color1: '#FFB100',
+            color1: '#002B5C',
             color2: '#fbbf24',
             value: response.tipo_por_grupo_mes[key],
             icon: 'pi pi-chart-bar',
@@ -428,7 +494,7 @@ export class RealizadoComponent implements OnInit {
           this.dictAnualOrcadoTiposCusto = response.tipo_por_ano;
           this.tiposAnuais = Object.keys(response.tipo_por_ano).map((key) => ({
             label: key,
-            color1: '#004EAE',
+            color1: '#002B5C',
             color2: '#fbbf24',
             value: response.tipo_por_ano[key],
             icon: 'pi pi-chart-bar',
@@ -436,7 +502,7 @@ export class RealizadoComponent implements OnInit {
 
           this.raizMensais = Object.keys(response.raiz_por_mes).map((key) => ({
             label: key,
-            color1: '#00CFDD',
+            color1: '#4972B0',
             color2: '#fbbf24',
             value: response.raiz_por_mes[key],
             icon: 'pi pi-chart-bar',
@@ -444,7 +510,7 @@ export class RealizadoComponent implements OnInit {
 
           this.raizAnuais = Object.keys(response.raiz_por_ano).map((key) => ({
             label: key,
-            color1: '#00CFDD',
+            color1: '#4972B0',
             color2: '#fbbf24',
             value: response.raiz_por_ano[key],
             icon: 'pi pi-chart-bar',
@@ -580,7 +646,7 @@ graficoContasAnaliticasAnual(): void{
 
   calculosOrcamentosRealizados(){
     this.isLoading=true;
-
+    
     if (this.selectedCcPai !== null){
       this.orcamentoBaseService.calcularOrcamentoRealizado(this.centrosCusto,this.selectedAno,this.selectedsFiliais).subscribe(
         response =>{
@@ -599,7 +665,7 @@ graficoContasAnaliticasAnual(): void{
             this.dictRealizadoTipoCusto = response.total_tipo_deb;
             this.tiposCusto = Object.keys(response.total_tipo_deb).map((key) => ({
               label: key,
-              color1: '#00CFDD',
+              color1: '#002B5C',
               color2: '#fbbf24',
               value: response.total_tipo_deb[key],
               icon: 'pi pi-chart-bar',
@@ -608,7 +674,7 @@ graficoContasAnaliticasAnual(): void{
             this.dictRealizadoCentroCusto = response.df_agrupado;
             this.ccs = Object.keys(response.df_agrupado).map((key) => ({
               label: key,
-              color1: '#004EAE',
+              color1: '#4972B0',
               color2: '#fbbf24',
               value: response.df_agrupado[key],
               icon: 'pi pi-chart-bar',
@@ -617,7 +683,7 @@ graficoContasAnaliticasAnual(): void{
             this.dictRealizadoGruposContabeis = response.total_grupo_com_nomes;
             this.gruposContabeis = Object.keys(response.total_grupo_com_nomes).map((key) => ({
               label: key,
-              color1: '#FFB100',
+              color1: '#7F94B5',
               color2: '#fbbf24',
               value: response.total_grupo_com_nomes[key],
               icon: 'pi pi-chart-bar',
@@ -628,7 +694,7 @@ graficoContasAnaliticasAnual(): void{
             this.dictRealizadoContasAnaliticas = response.conta_completa_nomes;
             this.contasCompletas = Object.keys(response.conta_completa_nomes).map((key) => ({
               label: key,
-              color1: '#00B036',
+              color1: '#004598',
               color2: '#fbbf24',
               value: response.conta_completa_nomes[key],
               icon: 'pi pi-chart-bar',
@@ -731,8 +797,8 @@ calcularSaldo() {
 
   // Formata o saldo para incluir pontuações (milhares)
   const saldoFormatado = saldoCalculado.toLocaleString('pt-BR', {
-    minimumFractionDigits: 4,
-    maximumFractionDigits: 4,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   });
 
   const orcadoFormatado = orcado.toLocaleString('pt-BR', {
@@ -745,6 +811,7 @@ calcularSaldo() {
   console.log('percent:', this.percent);
   // Exibe o saldo formatado (apenas para visualização, mantém o original como número)
   console.log('Saldo formatado:', saldoFormatado);
+
 
   // Salva o saldo original para uso no nz-progress
   this.saldo = saldoFormatado;
@@ -774,19 +841,19 @@ calcularSaldo() {
                 {
                     label: 'Base',
                     data:[valor2], // Apenas o valor de `response.total`
-                    backgroundColor: '#1890FF',
+                    backgroundColor: '#002B5C',
                     hoverBackgroundColor: '#FFB100'
                 },
                 {
                     label: 'Realizado',
                     data: [valor1], // Apenas o valor de `response.total` do realizado
-                    backgroundColor: '#97a3c2',
+                    backgroundColor: '#4972B0',
                     hoverBackgroundColor: '#FFB100'
                 },
                 {
                   label: 'Saldo',
                   data: [valor3], // Apenas o valor de `response.total` do realizado
-                  backgroundColor: '#3a3e4c',
+                  backgroundColor: '#7F94B5',
                   hoverBackgroundColor: '#FFB100'
               }
             ]
@@ -821,7 +888,13 @@ calcularSaldo() {
             },
             plugins: {
                 legend: {
-                    display: true
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                      font: {
+                          size: 12 
+                      }
+                  }
                 },
                 title: {
                     display: true,
@@ -852,23 +925,11 @@ this.gruposChart = new Chart(ctx, {
         datasets: [{
             data: values,
             backgroundColor: [
-              '#1890FF',
-              '#4C5264',
-              '#e0ede9',
-              '#07449b',
-              '#12bfd7',
-              '#242730',
-              '#97a3c2',
-              '#898993',
-              '#4C5264',
-              '#e0ede9',
-              '#f2f1f0',
-              '#e3e3f3',
-              '#444959',
-              '#97a3c2',
-              '#898993',
-              '#3A3E4C',
-              '#242730',                  
+             ' #002B5C',
+              '#4972B0',
+              '#004598',
+              '#7F94B5',
+              '#CCD3DC',                  
             ],
             hoverBackgroundColor: [
                 '#FFB100',
@@ -896,6 +957,8 @@ this.gruposChart = new Chart(ctx, {
                 display:true,
                 position:'bottom',
                 labels: {
+                  usePointStyle: false,
+                  boxWidth: 15,
                   font: {
                       size: 10  // Tamanho da fonte desejado
                   }
@@ -933,29 +996,17 @@ graficoBaseOrcamentos(tipoOrcadoMes: any): void {
   );
 
     this.basesChart = new Chart(ctx, {
-      type: 'polarArea',
+      type: 'doughnut',
       data: {
           labels: labels,
           datasets: [{
               data: values,
               backgroundColor: [
-                '#1890FF',
-                '#4C5264',
-                '#e0ede9',
-                '#07449b',
-                '#12bfd7',
-                '#242730',
-                '#97a3c2',
-                '#898993',
-                '#4C5264',
-                '#e0ede9',
-                '#f2f1f0',
-                '#e3e3f3',
-                '#444959',
-                '#97a3c2',
-                '#898993',
-                '#3A3E4C',
-                '#242730', 
+                ' #002B5C',
+                '#4972B0',
+                '#004598',
+                '#7F94B5',
+                '#CCD3DC',  
               ],
               hoverBackgroundColor: [
                   '#FFB100',
@@ -1044,23 +1095,11 @@ graficoOrcadoTipoCustoMensal(tipoOrcadoMes: any): void{
           datasets: [{
               data: values,
               backgroundColor: [
-                '#1890FF',
-                '#4C5264',
-                '#e0ede9',
-                '#07449b',
-                '#12bfd7',
-                '#242730',
-                '#97a3c2',
-                '#898993',
-                '#4C5264',
-                '#e0ede9',
-                '#f2f1f0',
-                '#e3e3f3',
-                '#444959',
-                '#97a3c2',
-                '#898993',
-                '#3A3E4C',
-                '#242730', 
+                ' #002B5C',
+                    '#4972B0',
+                    '#004598',
+                   '#7F94B5',
+                   '#CCD3DC', 
               ],
               hoverBackgroundColor: [
                   '#FFB100',
@@ -1122,23 +1161,11 @@ graficoOrcadoGrupoContas(tipoOrcado: any): void{
           datasets: [{
               data: values,
               backgroundColor: [
-                '#1890FF',
-                '#4C5264',
-                '#e0ede9',
-                '#07449b',
-                '#12bfd7',
-                '#242730',
-                '#97a3c2',
-                '#898993',
-                '#4C5264',
-                '#e0ede9',
-                '#f2f1f0',
-                '#e3e3f3',
-                '#444959',
-                '#97a3c2',
-                '#898993',
-                '#3A3E4C',
-                '#242730', 
+                ' #002B5C',
+                    '#4972B0',
+                    '#004598',
+                   '#7F94B5',
+                   '#CCD3DC', 
               ],
               hoverBackgroundColor: [
                   '#FFB100',
@@ -1200,23 +1227,11 @@ graficoOrcadoContasAnaliticas(tipoOrcadoMes: any): void{
           datasets: [{
               data: values,
               backgroundColor: [
-                '#1890FF',
-                '#4C5264',
-                '#e0ede9',
-                '#07449b',
-                '#12bfd7',
-                '#242730',
-                '#97a3c2',
-                '#898993',
-                '#4C5264',
-                '#e0ede9',
-                '#f2f1f0',
-                '#e3e3f3',
-                '#444959',
-                '#97a3c2',
-                '#898993',
-                '#3A3E4C',
-                '#242730', 
+                ' #002B5C',
+                    '#4972B0',
+                    '#004598',
+                   '#7F94B5',
+                   '#CCD3DC', 
               ],
               hoverBackgroundColor: [
                   '#FFB100',
@@ -1279,23 +1294,11 @@ graficoOrcadoTiposCustosAnual(tipoOrcadoMes: any): void{
           datasets: [{
               data: values,
               backgroundColor: [
-                '#1890FF',
-                '#4C5264',
-                '#e0ede9',
-                '#07449b',
-                '#12bfd7',
-                '#242730',
-                '#97a3c2',
-                '#898993',
-                '#4C5264',
-                '#e0ede9',
-                '#f2f1f0',
-                '#e3e3f3',
-                '#444959',
-                '#97a3c2',
-                '#898993',
-                '#3A3E4C',
-                '#242730', 
+                ' #002B5C',
+                    '#4972B0',
+                    '#004598',
+                   '#7F94B5',
+                   '#CCD3DC', 
               ],
               hoverBackgroundColor: [
                   '#FFB100',
@@ -1357,23 +1360,11 @@ graficoOrcadoGruposContasAnual(tipoOrcadoMes: any): void{
           datasets: [{
               data: values,
               backgroundColor: [
-                '#1890FF',
-                '#4C5264',
-                '#e0ede9',
-                '#07449b',
-                '#12bfd7',
-                '#242730',
-                '#97a3c2',
-                '#898993',
-                '#4C5264',
-                '#e0ede9',
-                '#f2f1f0',
-                '#e3e3f3',
-                '#444959',
-                '#97a3c2',
-                '#898993',
-                '#3A3E4C',
-                '#242730',  
+                ' #002B5C',
+                    '#4972B0',
+                    '#004598',
+                   '#7F94B5',
+                   '#CCD3DC',  
               ],
               hoverBackgroundColor: [
                   '#FFB100',
@@ -1435,23 +1426,11 @@ graficoOrcadoContasAnaliticasAnual(tipoOrcadoMes: any): void{
           datasets: [{
               data: values,
               backgroundColor: [
-                '#1890FF',
-                '#4C5264',
-                '#e0ede9',
-                '#07449b',
-                '#12bfd7',
-                '#242730',
-                '#97a3c2',
-                '#898993',
-                '#4C5264',
-                '#e0ede9',
-                '#f2f1f0',
-                '#e3e3f3',
-                '#444959',
-                '#97a3c2',
-                '#898993',
-                '#3A3E4C',
-                '#242730',  
+                ' #002B5C',
+                    '#4972B0',
+                    '#004598',
+                   '#7F94B5',
+                   '#CCD3DC',  
               ],
               hoverBackgroundColor: [
                   '#FFB100',
@@ -1516,22 +1495,11 @@ graficoRealizadoTiposCustos(tipoOrcadoMes: any): void {
               data: values,
               backgroundColor: [
                 '#1890FF',
-                '#4C5264',
-                '#e0ede9',
-                '#07449b',
-                '#12bfd7',
-                '#242730',
-                '#97a3c2',
-                '#898993',
-                '#4C5264',
-                '#e0ede9',
-                '#f2f1f0',
-                '#e3e3f3',
-                '#444959',
-                '#97a3c2',
-                '#898993',
-                '#3A3E4C',
-                '#242730',  
+                ' #002B5C',
+                    '#4972B0',
+                    '#004598',
+                   '#7F94B5',
+                   '#CCD3DC',  
               ],
               hoverBackgroundColor: [
                   '#FFB100',
@@ -1617,23 +1585,11 @@ graficoRealizadoCentrosCustos(tipoOrcadoMes: any): void {
           datasets: [{
               data: values,
               backgroundColor: [
-                '#1890FF',
-                '#4C5264',
-                '#e0ede9',
-                '#07449b',
-                '#12bfd7',
-                '#242730',
-                '#97a3c2',
-                '#898993',
-                '#4C5264',
-                '#e0ede9',
-                '#f2f1f0',
-                '#e3e3f3',
-                '#444959',
-                '#97a3c2',
-                '#898993',
-                '#3A3E4C',
-                '#242730', 
+                ' #002B5C',
+                    '#4972B0',
+                    '#004598',
+                   '#7F94B5',
+                   '#CCD3DC',  
               ],
               hoverBackgroundColor: [
                   '#FFB100',
@@ -1719,23 +1675,11 @@ graficoRealizadoGruposContabeis(tipoOrcadoMes: any): void {
           datasets: [{
               data: values,
               backgroundColor: [
-                '#1890FF',
-                '#4C5264',
-                '#e0ede9',
-                '#07449b',
-                '#12bfd7',
-                '#242730',
-                '#97a3c2',
-                '#898993',
-                '#4C5264',
-                '#e0ede9',
-                '#f2f1f0',
-                '#e3e3f3',
-                '#444959',
-                '#97a3c2',
-                '#898993',
-                '#3A3E4C',
-                '#242730', 
+                ' #002B5C',
+                    '#4972B0',
+                    '#004598',
+                   '#7F94B5',
+                   '#CCD3DC', 
               ],
               hoverBackgroundColor: [
                   '#FFB100',
@@ -1821,23 +1765,11 @@ graficoRealizadoContasAnaliticas(tipoOrcadoMes: any): void {
           datasets: [{
               data: values,
               backgroundColor: [
-                '#1890FF',
-                '#4C5264',
-                '#e0ede9',
-                '#07449b',
-                '#12bfd7',
-                '#242730',
-                '#97a3c2',
-                '#898993',
-                '#4C5264',
-                '#e0ede9',
-                '#f2f1f0',
-                '#e3e3f3',
-                '#444959',
-                '#97a3c2',
-                '#898993',
-                '#3A3E4C',
-                '#242730', 
+                ' #002B5C',
+                    '#4972B0',
+                    '#004598',
+                   '#7F94B5',
+                   '#CCD3DC', 
               ],
               hoverBackgroundColor: [
                   '#FFB100',

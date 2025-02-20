@@ -38,9 +38,26 @@
       <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['RHAvaliacao'])">
           <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
       </li>
-      <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item nzMatchRouter="">
-          <a style="font-size: 13px;" routerLink="../relatorios" >Relatórios</a>
-      </li>
+  
+      <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Relatórios" style="font-size: 13px;">
+        <ul>
+          <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../mapaavaliadores">Mapa de Avaliadores</a>
+          </li>
+          <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../comparativoavaliadores">Comparativo entre Avaliadores</a>
+          </li>
+          <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../mapaavaliados">Mapa de Avaliados</a>
+          </li>
+          <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../evolucaoavaliacoes">Evolução das Avaliações</a>
+          </li>
+          <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../relatoriospdf">Relatŕorios em PDF</a>
+          </li>
+        </ul>
+      </li> 
       
   </ul>
 </div>

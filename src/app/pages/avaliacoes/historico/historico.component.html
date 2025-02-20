@@ -1,50 +1,66 @@
-
 <div class="menu w-full">
     <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 45px;box-shadow: 2px 0 6px ; ">
-            <li nz-menu-item nzMatchRouter="#">
-                <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
-            </li>
-            <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
-                <ul>
-                    <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                        <a routerLink="../tipoavaliacao" >Tipos de Avaliações</a>
-                    </li>
-                    <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                        <a routerLink="../pergunta" >Perguntas</a>
-                    </li>
-                    <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                        <a routerLink="../formulario" >Formulários</a>
-                    </li>
-                </ul>
-            </li>    
-            
-            <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
-                <ul>
-                    <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
-                        <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
-                    </li>
-                    <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
-                        <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados a um Formulário</a>
-                    </li>
-                    <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
-                        <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
-                    </li>
-                </ul>    
-            </li>
-      
-            
+        <li nz-menu-item nzMatchRouter="#">
+            <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
+        </li>
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="../tipoavaliacao" >Tipos de Avaliações</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="../pergunta" >Perguntas</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="../formulario" >Formulários</a>
+                </li>
+            </ul>
+        </li>    
+        
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+                    <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+                    <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados a um Formulário</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+                    <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
+                </li>
+            </ul>    
+        </li>
+
+        
+        <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
+        </li>
+        <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['RHAvaliacao'])">
+            <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
+        </li>
+    
+        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Relatórios" style="font-size: 13px;">
+          <ul>
             <li nz-menu-item nzMatchRouter="">
-                <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
+              <a style="font-size: 13px;" routerLink="../mapaavaliadores">Mapa de Avaliadores</a>
             </li>
-            <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['RHAvaliacao'])">
-                <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
+            <li nz-menu-item nzMatchRouter="">
+              <a style="font-size: 13px;" routerLink="../comparativoavaliadores">Comparativo entre Avaliadores</a>
             </li>
-            <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item nzMatchRouter="">
-                <a style="font-size: 13px;" routerLink="../relatorios" >Relatórios</a>
+            <li nz-menu-item nzMatchRouter="">
+              <a style="font-size: 13px;" routerLink="../mapaavaliados">Mapa de Avaliados</a>
             </li>
-            
-        </ul>
-      </div>
+            <li nz-menu-item nzMatchRouter="">
+              <a style="font-size: 13px;" routerLink="../evolucaoavaliacoes">Evolução das Avaliações</a>
+            </li>
+            <li nz-menu-item nzMatchRouter="">
+              <a style="font-size: 13px;" routerLink="../relatoriospdf">Relatŕorios em PDF</a>
+            </li>
+          </ul>
+        </li> 
+        
+    </ul>
+</div>
       
 <div class="container">
     <div class="titulo">

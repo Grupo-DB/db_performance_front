@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -19,4 +19,15 @@ import { ButtonModule } from 'primeng/button';
 })
 export class AppComponent {
   isCollapsed = false;
+
+  constructor(private renderer: Renderer2) {}
+
+  toggleDarkMode() {
+    const darkThemeClass = 'dark-theme';
+    if (document.body.classList.contains(darkThemeClass)) {
+      this.renderer.removeClass(document.body, darkThemeClass);
+    } else {
+      this.renderer.addClass(document.body, darkThemeClass);
+    }
+  }
 }

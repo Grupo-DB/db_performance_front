@@ -49,6 +49,11 @@ import { RealizadoComponent } from './pages/baseOrcamentaria/orcamentoRealizado/
 import { ProjecaoComponent } from './pages/baseOrcamentaria/dre/projecao/projecao.component';
 import { ProdutoComponent } from './pages/baseOrcamentaria/dre/produto/produto.component';
 import { ProjetadoComponent } from './pages/baseOrcamentaria/dre/projetado/projetado.component';
+import { MapaavaliadoresComponent } from './pages/avaliacoes/mapaavaliadores/mapaavaliadores.component';
+import { ComparativoavaliadoresComponent } from './pages/avaliacoes/comparativoavaliadores/comparativoavaliadores.component';
+import { MapaavaliadosComponent } from './pages/avaliacoes/mapaavaliados/mapaavaliados.component';
+import { EvoulucaoavaliacoesComponent } from './pages/avaliacoes/evoulucaoavaliacoes/evoulucaoavaliacoes.component';
+import { RelatoriospdfComponent } from './pages/avaliacoes/relatoriospdf/relatoriospdf.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -81,6 +86,11 @@ export const routes: Routes = [
       { path: 'inicial', component:InicialComponent },
       { path: 'historico', component:HistoricoComponent },
       { path: 'relatorios', component:RelatoriosComponent },
+      { path: 'mapaavaliadores', component:MapaavaliadoresComponent },
+      { path: 'comparativoavaliadores', component:ComparativoavaliadoresComponent },
+      { path: 'mapaavaliados', component:MapaavaliadosComponent },
+      { path: 'evolucaoavaliacoes', component:EvoulucaoavaliacoesComponent },
+      { path: 'relatoriospdf', component:RelatoriospdfComponent },
       { path: 'homeoperacoes',component:HomeoperacoesComponent},
       { path: 'homeoperacoes/homeproducao', component:HomeproducaoComponent },
       { path: 'homeoperacoes/homeproducao/homebritagem', component:HomebritagemComponent },

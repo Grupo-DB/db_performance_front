@@ -245,7 +245,9 @@
                                 [options]="empresas"
                                 formControlName="empresa"
                                 optionLabel="nome"
+                                optionValue="id"
                                 (ngModelChange)="onEmpresaSelecionada($event)"
+                                appendTo="body"
                             >
                             </p-select>
                             <label for="float-label" style="margin-left: 15px;">Selecione a Empresa</label>
@@ -261,7 +263,9 @@
                                 [options]="filiais"
                                 formControlName="filial"
                                 optionLabel="nome"
+                                optionValue="id"
                                 (ngModelChange)="onFilialSelecionada($event)"
+                                appendTo="body"
                             >
                             </p-select>
                             <label for="float-label" style="margin-left: 15px;">Selecione a Filial</label>
@@ -279,14 +283,16 @@
                                 [options]="areas"
                                 formControlName="area"
                                 optionLabel="nome"
+                                optionValue="id"
                                 (ngModelChange)="onAreaSelecionada($event)"
+                                appendTo="body"
                             >
                             </p-select>
                             <label for="float-label" style="margin-left: 15px;">Selecione a Área</label>
                         </p-floatLabel>
                     </div>
                     
-                    <div class="form2 w-10 text-left mb-3">
+                    <div class="form2 w-10 text-left">
                         <p-floatLabel variant="on">
                             <p-select
                                 variant="filled"
@@ -295,6 +301,8 @@
                                 [options]="setores"
                                 formControlName="setor"
                                 optionLabel="nome"
+                                optionValue="id"
+                                appendTo="body"
                             >
                             </p-select>
                             <label for="float-label" style="margin-left: 15px;">Selecione o Ambiente</label>
@@ -310,6 +318,8 @@
                                 [options]="ambientes"
                                 formControlName="ambiente"
                                 optionLabel="nome"
+                                optionValue="id"
+                                appendTo="body"
                             >
                             </p-select>
                             <label for="float-label" style="margin-left: 15px;">Selecione o Setor</label>

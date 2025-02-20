@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { MessageService,ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ButtonModule } from 'primeng/button';
 @Component({
   selector: 'app-termos',
   standalone: true,
-  imports: [DialogModule,ConfirmDialogModule],
+  imports: [DialogModule,ConfirmDialogModule,ButtonModule],
   providers:[MessageService,ConfirmationService],
   templateUrl: './termos.component.html',
   styleUrl: './termos.component.scss'

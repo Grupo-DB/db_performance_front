@@ -21,6 +21,7 @@ import { Filial } from '../filial/filial.component';
 import { UserService } from '../../../services/avaliacoesServices/users/user.service';
 import { FormsModule } from '@angular/forms'; // Import FormsModule
 import { NotificacoesService } from '../../../services/avaliacoesServices/notifications/notificacoes.service'; 
+import { ButtonModule } from 'primeng/button';
 
 
 @Component({
@@ -29,7 +30,7 @@ import { NotificacoesService } from '../../../services/avaliacoesServices/notifi
   templateUrl: './welcome.component.html',
   styleUrls: ['./welcome.component.scss'],
   imports:[
-    CommonModule, RouterOutlet, NzIconModule,NzUploadModule, NzLayoutModule, NzMenuModule,RouterLink,DividerModule,FormsModule],
+    CommonModule,ButtonModule, RouterOutlet, NzIconModule,NzUploadModule, NzLayoutModule, NzMenuModule,RouterLink,DividerModule,FormsModule],
   providers: [MessageService,UploadService]
 })
 export class WelcomeComponent implements OnInit,OnDestroy  {
@@ -93,6 +94,14 @@ export class WelcomeComponent implements OnInit,OnDestroy  {
 
     this.getUnreadCount();
   }
+
+  toggleDarkMode() {
+    const element = document.querySelector('html');
+    if (element) {
+      element.classList.toggle('my-app-dark');
+    }
+}
+
 
   ngOnDestroy(): void {
     if (this.intervalId) {
