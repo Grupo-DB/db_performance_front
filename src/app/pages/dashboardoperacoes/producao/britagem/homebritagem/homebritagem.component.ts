@@ -64,6 +64,10 @@ export class HomebritagemComponent implements OnInit {
   teste:any;
   totalUltimoDia!:number;
   volumeMensal: any;
+  tnRejeitoDia!:number;
+  tnHsTrab!:number;
+  produtividadeHj!:number;
+  totalAgregado!:number;
   //
   botaoSelecionado: string = '';
   constructor(
@@ -102,6 +106,14 @@ export class HomebritagemComponent implements OnInit {
     this.tnBritadaCalDia = respostaAtual.volume_britado[62];
     this.tnBritadaCalMes = respostaMensal.volume_britado[62];
     this.tnBritadaCalAno = respostaAnual.volume_britado[62];
+    //REJEITO
+    this.tnRejeitoDia = respostaAtual.volume_britado[66];
+    //HS TRABALHADAS
+    this.tnHsTrab = respostaAtual.horas_trabalhadas;
+    //PRODUTIVIDADE
+    this.produtividadeHj = respostaAtual.produtividade;
+    //TOTAL AGREGADO
+    this.totalAgregado = respostaAtual.volume_britado_total;
     });
   }
   graficoMensal(tipoCalculo: string){
@@ -216,7 +228,8 @@ graficoBritadaCalcarioChartAno(volumeMensal: any) {
         {
           label: 'Tn Pedra Britada Calcario',
           data: loc44Data, // Dados de LOCCOD 44
-          backgroundColor: '##4C5264',
+          backgroundColor: '#002B5C',
+          hoverBackgroundColor: '#ffb100',
           borderColor: '#4C5264',
           borderWidth: 1
         },
@@ -286,7 +299,8 @@ graficoBritadaCalcarioChartMes(volumeDiario: any) {
         {
           label: 'Tn Pedra Britada Calcario',
           data: loc44Data, // Dados de LOCCOD 44
-          backgroundColor: '#4C5264',
+          backgroundColor: '#002B5C',
+          hoverBackgroundColor: '#ffb100',
           borderColor: '#eee',
           borderWidth: 1
         },
@@ -360,7 +374,8 @@ graficoBritadaCalChartAno(volumeMensal: any) {
         {
           label: 'Tn Pedra Britada Calcario',
           data: loc62Data, // Dados de LOCCOD 44
-          backgroundColor: '#4C5264',
+          backgroundColor: '#002B5C',
+          hoverBackgroundColor: '#ffb100',
           borderColor: '#4C5264',
           borderWidth: 1
         },
@@ -433,7 +448,8 @@ graficoBritadaCalChartMes(volumeDiario: any) {
         {
           label: 'Tn Pedra Britada Cal',
           data: loc62Data, // Dados de LOCCOD 44
-          backgroundColor: '#4C5264',
+          backgroundColor: '#002B5C',
+          hoverBackgroundColor: '#ffb100',
           borderColor: '#4C5264',
           borderWidth: 1
         },

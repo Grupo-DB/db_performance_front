@@ -119,6 +119,7 @@ export class CalComponent implements OnInit {
   abrirModal : boolean = false;
   equipamentosVisivel: boolean = false;
   data: any;
+  dataFim: any;
   constructor (
   private  homeService: HomeService,
   private datePipe: DatePipe,
@@ -405,9 +406,10 @@ graficoAnualHidraulicaCarregamento(tipoCalculo: string){
   });
 };
 ////////////////////
-calcularEquipamentosDetalhes(data: any){
+calcularEquipamentosDetalhes(data: any, dataFim: any){
   const formattedDate = this.datePipe.transform(this.data, 'yyyy-MM-dd');
-  this.homeService.calculosCalEquipamentosDetalhes(formattedDate).subscribe(response => {
+  const formattedDateFim = this.datePipe.transform(this.dataFim, 'yyyy-MM-dd');
+  this.homeService.calculosCalEquipamentosDetalhes(formattedDate,formattedDateFim).subscribe(response => {
     /**MB01 */
     this.mb01HoraParado = response.mb01_hora_parado_quant;
     this.mb01HoraProd = response.mb01_hora_producao_quant;
@@ -464,29 +466,29 @@ graficoProducaoTotalEnsacadosChartMes(volumeDiario: any) {
         {
           label: 'Produção Total Diária Acumulada (Tn)',
           data: totalProductionData, // Data for total production
-          backgroundColor: '#1890FF',
-          //borderColor: '#FF4500',
+          backgroundColor: '#71AAE0',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
         {
           label: 'Produção Total Diária CVC (Tn)',
           data: cvcData, // Data for total production
-          backgroundColor: '#242730',
-          //borderColor: '#FF4500',
+          backgroundColor:'#004598',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
         {
           label: 'Produção Total Diária CH2 (Tn)',
           data: ch2Data, // Data for total production
-          backgroundColor: '#12bfd7',
-          //borderColor: '#FF4500',
+          backgroundColor: '#002B5C',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
         {
           label: 'Produção Total Diária Hidráulica (Tn)',
           data: hidraulicaData, // Data for total production
-          backgroundColor: '#97A3C2',
-          //borderColor: '#FF4500',
+          backgroundColor: '#7F94B5',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         }
       ]
@@ -561,29 +563,29 @@ graficoProducaoTotalEnsacadosChartAno(volumeMensal: any) {
         {
           label: 'Produção Total Mensal Acumulada (Tn)',
           data: totalProductionData, // Data for total production
-          backgroundColor: '#1890FF',
-          //borderColor: '#FF4500',
+          backgroundColor: '#71AAE0',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
         {
           label: 'Produção Total Mensal CVC (Tn)',
           data: cvcData, // Data for total production
-          backgroundColor: '#242730',
-          //borderColor: '#FF4500',
+          backgroundColor:'#004598',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
         {
           label: 'Produção Total Mensal CH2 (Tn)',
           data: ch2Data, // Data for total production
-          backgroundColor: '#12bfd7',
-          //borderColor: '#FF4500',
+          backgroundColor: '#002B5C',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
         {
           label: 'Produção Total Mensal Hidráulica (Tn)',
           data: hidraulicaData, // Data for total production
-          backgroundColor: '#97A3C2',
-          //borderColor: '#FF4500',
+          backgroundColor: '#7F94B5',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         }
       ]
@@ -650,8 +652,8 @@ graficoProducaoCvcEnsacadosChartMes(volumeDiario: any) {
         {
           label: 'Volume Ensacados CVC Diário',
           data: cvcData, // Dados de LOCCOD 44
-          backgroundColor: '#242730',
-          //borderColor: '#3A3E4C',
+          backgroundColor:'#004598',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
       ]
@@ -719,8 +721,8 @@ graficoProducaoCvcEnsacadosChartAno(volumeDiario: any) {
         {
           label: 'Volume Ensacados CVC Mensal',
           data: cvcData, // Dados de LOCCOD 44
-          backgroundColor: '#242730',
-          //borderColor: '#3A3E4C',
+          backgroundColor:'#004598',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
       ]
@@ -789,8 +791,8 @@ graficoProducaoCh2EnsacadosChartMes(volumeDiario: any) {
         {
           label: 'Volume Ensacados CH2 Diário',
           data: ch2Data, // Dados de LOCCOD 44
-          backgroundColor: '#12bfd7',
-          //borderColor: '#3A3E4C',
+          backgroundColor: '#002B5C',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
       ]
@@ -858,8 +860,8 @@ graficoProducaoCh2EnsacadosChartAno(volumeDiario: any) {
         {
           label: 'Volume Ensacados CH2 Mensal',
           data: ch2Data, // Dados de LOCCOD 44
-          backgroundColor: '#12bfd7',
-          //borderColor: '#3A3E4C',
+          backgroundColor: '#002B5C',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
       ]
@@ -928,8 +930,8 @@ graficoProducaoHidraulicaEnsacadosChartMes(volumeDiario: any) {
         {
           label: 'Volume Ensacados CVC Diário',
           data: hidraulicaData, // Dados de LOCCOD 44
-          backgroundColor: '#97A3C2',
-          //borderColor: '#3A3E4C',
+          backgroundColor: '#7F94B5',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
       ]
@@ -997,8 +999,8 @@ graficoProducaoHidraulicaEnsacadosChartAno(volumeDiario: any) {
         {
           label: 'Volume Ensacados Hidráulica Mensal',
           data: hidraulicaData, // Dados de LOCCOD 44
-          backgroundColor: '#97A3C2',
-          //borderColor: '#3A3E4C',
+          backgroundColor: '#7F94B5',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
       ]
@@ -1078,29 +1080,29 @@ graficoCarregamentoEnsacadosChartMes(volumeDiario: any){
         {
           label: 'Carregamento Total Diário Acumulada (Tn)',
           data: totalProductionData, // Data for total production
-          backgroundColor: '#1890FF',
-          //borderColor: '#FF4500',
+          backgroundColor: '#71AAE0',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
         {
           label: 'Carregamento Total Diário CVC (Tn)',
           data: cvcData, // Data for total production
-          backgroundColor: '#242730',
-          //borderColor: '#FF4500',
+          backgroundColor: '#004598',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
         {
           label: 'Carregamento Total Diário CH2 (Tn)',
           data: ch2Data, // Data for total production
-          backgroundColor: '#12bfd7',
-          //borderColor: '#FF4500',
+          backgroundColor: '#002B5C',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
         {
           label: 'Carregamento Total Diário Hidráulica (Tn)',
           data: hidraulicaData, // Data for total production
-          backgroundColor: '#97A3C2',
-          //borderColor: '#FF4500',
+          backgroundColor: '#7F94B5',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         }
       ]
@@ -1176,29 +1178,29 @@ graficoCarregamentoEnsacadosChartAno(volumeMensal: any) {
         {
           label: 'Carregamento Total Mensal Acumulado (Tn)',
           data: totalProductionData, // Data for total production
-          backgroundColor: '#1890FF',
-          //borderColor: '#FF4500',
+          backgroundColor: '#71AAE0',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
         {
           label: 'Carregamento Total Mensal CVC (Tn)',
           data: cvcData, // Data for total production
-          backgroundColor: '#242730',
-          //borderColor: '#FF4500',
+          backgroundColor: '#004598',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
         {
           label: 'Carregamento Total Mensal CH2 (Tn)',
           data: ch2Data, // Data for total production
-          backgroundColor: '#12bfd7',
-          //borderColor: '#FF4500',
+          backgroundColor: '#002B5C',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
         {
           label: 'Carregamento Total Mensal Hidráulica (Tn)',
           data: hidraulicaData, // Data for total production
-          backgroundColor: '#97A3C2',
-          //borderColor: '#FF4500',
+          backgroundColor: '#7F94B5',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         }
       ]
@@ -1266,8 +1268,8 @@ graficoCarregamentoCvcEnsacadosChartMes(volumeDiario: any) {
         {
           label: 'Volume Carregamento CVC Diário',
           data: cvcData, // Dados de LOCCOD 44
-          backgroundColor: '#242730',
-          //borderColor: '#3A3E4C',
+          backgroundColor: '#004598',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
       ]
@@ -1335,8 +1337,8 @@ graficoCarregamentoCvcEnsacadosChartAno(volumeDiario: any) {
         {
           label: 'Volume Carregamento CVC Mensal',
           data: cvcData, // Dados de LOCCOD 44
-          backgroundColor: '#242730',
-          //borderColor: '#3A3E4C',
+          backgroundColor: '#004598',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
       ]
@@ -1406,8 +1408,8 @@ graficoCarregamentoCh2EnsacadosChartMes(volumeDiario: any) {
         {
           label: 'Volume Carregamento CH2 Diário',
           data: ch2Data, // Dados de LOCCOD 44
-          backgroundColor: '#12bfd7',
-          //borderColor: '#3A3E4C',
+          backgroundColor: '#002B5C',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
       ]
@@ -1475,8 +1477,8 @@ graficoCarregamentoCh2EnsacadosChartAno(volumeDiario: any) {
         {
           label: 'Volume Carregamento CH2 Mensal',
           data: ch2Data, // Dados de LOCCOD 44
-          backgroundColor: '#12bfd7',
-          //borderColor: '#3A3E4C',
+          backgroundColor: '#002B5C',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
       ]
@@ -1527,7 +1529,7 @@ graficoCarregamentoCh2EnsacadosChartAno(volumeDiario: any) {
   });
 }
 
-////----------------------------------------GRAFICOS CH2 CARREGAMENTO-----------------------------////////////////
+////----------------------------------------GRAFICOS HIDRAULICA CARREGAMENTO-----------------------------////////////////
 /** MENSAL */
 graficoCarregamentoHidraulicaEnsacadosChartMes(volumeDiario: any) {
   // Preparando os dados para o gráfico
@@ -1546,8 +1548,8 @@ graficoCarregamentoHidraulicaEnsacadosChartMes(volumeDiario: any) {
         {
           label: 'Volume Carregamento Hidraulica Diário',
           data: hidraulicaData, // Dados de LOCCOD 44
-          backgroundColor: '#97A3C2',
-          //borderColor: '#3A3E4C',
+          backgroundColor: '#7F94B5',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
       ]
@@ -1615,8 +1617,8 @@ graficoCarregamentoHidraulicaEnsacadosChartAno(volumeDiario: any) {
         {
           label: 'Volume Carregamento Hidraulica Mensal',
           data: hidraulicaData, // Dados de LOCCOD 44
-          backgroundColor: '#97A3C2',
-          //borderColor: '#3A3E4C',
+          backgroundColor: '#7F94B5',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
       ]

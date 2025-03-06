@@ -23,16 +23,15 @@
     margin-bottom: 8px;
 }
 .row1 {
-    display: flex;
-    width: 90%;
-    flex-direction: row-reverse;
-    margin: 10px auto;
+    width: 95%;
+   
 }
-.row1 .carregamentos{
-    background-color: #e2e7f3;
-    width: 50%;
+.carregamentos{
+    background-color: #E3E7EC;
+    //width: 50%;
     border-radius: 8px;
 }
+
 .carregamentos .carregamentoWrap{
     display: flex;
     justify-content: space-around;
@@ -49,7 +48,7 @@
     height: 80px;
     width: 180px;
     border-radius: 10px;
-    background-color:#2d53da;
+    background-color:#002B5C;
     box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
     -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
@@ -90,7 +89,7 @@
     height: 140px;
     width: 220px;
     border-radius: 10px;
-    background-color:#2d53da;
+    background-color:#002B5C;
     box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
     -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
@@ -119,10 +118,8 @@
     color: #eee;
 }
 .row2{
-    display: flex;
     width: 90%;
-    background-color: #e2e7f3;
-    margin: 10px auto;
+    background-color: #E3E7EC;
     border-radius: 10px;
 }
 .wrapInplace{
@@ -144,34 +141,19 @@
 }
 .totais{
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     //margin-top: 30px;
     margin-bottom: 10px;
     //background-color: antiquewhite;
 }
-// tr {
-//     background-color:#f2f1f0;
-//     font-size: 16px;
-//     height: 8px;
-//     color: #333;
-//     border-radius: 8px;
-//     width: 100%;
-//   }
-//   td{
-//     border-radius: 8px;
-//   }
-//   th{
-//     height: 2px;
-//     background-color: #2d53da;
-//     color: #eee;
-//   }
+
   .filial{
     background-color: #1890FF;
   }
   .chartProdutosArgamassa{
     width: 80%;
     height: 100%;
-    background-color: #e2e7f3;
+    background-color: #E3E7EC;
     border-radius: 8px;
     box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
     -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
@@ -180,7 +162,7 @@
   .chartProdutosArgamassaAcumulado{
     width: 100%;
     height: 580px;
-    background-color: #e2e7f3;
+    background-color: #E3E7EC;
     border-radius: 8px;
     box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
     -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
@@ -220,7 +202,7 @@
     }
 }
 .btnCalc.active {
-    background-color: #71AAE0; /* Cor quando o botão for clicado */
+    background-color: #4972B0; /* Cor quando o botão for clicado */
     color: white;
   }
  
@@ -240,7 +222,7 @@
     width: 20%;
     margin-left: 5px;
     border-radius: 8px;
-    background-color: #e2e7f3;
+    background-color: #E3E7EC;
   }
   .titulo2{
     font-family: 'Aptos', sans-serif;
@@ -260,7 +242,7 @@
     height: 90%;
     width: 80%;
     border-radius: 10px;
-    background-color:#2d53da;
+    background-color:#002B5C;
     box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
     -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
@@ -313,7 +295,7 @@
     justify-content: center;
     width: 20%;
     height: 140px;
-    background-color: #e2e7f3;
+    background-color: #E3E7EC;
     border-radius: 8px;
     margin: 5px;
 }   
@@ -338,7 +320,7 @@
     height: 90px;
     width: 200px;
     border-radius: 10px;
-    background-color:#2d53da;
+    background-color:#002B5C;
     box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
     -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
@@ -379,7 +361,7 @@
 }
 .btnCalcProd{
     cursor: pointer;
-    background-color: #2d53da;
+    background-color: #002B5C;
     color: #eee;
     width: 320px;
     height: 53px;
@@ -393,7 +375,7 @@
 
 .tituloFab{
     font-family: 'Aptos', sans-serif;
-    margin-left: 25px;
+    margin-left: 15px;
     margin-top: 10px;
     margin-bottom: 8px;
 } 
@@ -416,7 +398,7 @@
     flex-direction: column;
     //height: 60%;
     border-radius: 8px;
-    background-color: #e2e7f3;
+    background-color: #E3E7EC;
     //margin: 5px;
     }
 .esquerda .rowEsq{
@@ -444,7 +426,7 @@
             height: 150px;
             width: 250px;
             border-radius: 10px;
-            background-color:#2d53da;
+            background-color:#002B5C;
             box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
             -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
             -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
@@ -487,7 +469,7 @@
             height: 208px;
             width: 200px;
             border-radius: 10px;
-            background-color:#2d53da;
+            background-color:#002B5C;
             box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
             -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
             -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
@@ -508,7 +490,7 @@
             align-items: center;
             //height: 600px;
             border-radius: 8px;
-            background-color: #e2e7f3;
+            background-color: #E3E7EC;
             
             }
             .direita .estoques{
@@ -532,7 +514,7 @@
                 height: 208px;
                 width: 200px;
                 border-radius: 10px;
-                background-color:#444959; /* cor base */
+                background-color:#4972B0; /* cor base */
                 
                 box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
                 -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
@@ -553,4 +535,10 @@
                 box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
                 -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
                 -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
-                }            
+                }
+                
+.selecionado {
+    background-color: #4972B0; /* Cor de fundo do botão selecionado */
+    color: white;              /* Cor do texto do botão selecionado */
+    /* Adicione outros estilos, como borda ou sombra, se quiser */
+}                

@@ -9,39 +9,31 @@ import { Observable } from 'rxjs';
 })
 export class HomeService {
   //declarar as urls
-  private calcarioUrl = 'http://172.50.10.79:8008/home/calcular_calcario/';
-  private britagemUrl =  'http://172.50.10.79:8008/britagem/calcular_britagem/';
-  private rebritagemUrl =  'http://172.50.10.79:8008/rebritagem/calcular_rebritagem/';
-  private fabricaCalcarioUrl =  'http://172.50.10.79:8008/calcario/calcular_calcario/';
-  private fabricaFertilizanteUrl =  'http://172.50.10.79:8008/fertilizante/calcular_fertilizante/';
-  private graficosFabricaCalcarioUrl =  'http://172.50.10.79:8008/calcario/calcular_calcario_graficos/';
-  private rebritagemParadasUrl =  'http://172.50.10.79:8008/rebritagem/calcular_rebritagem_paradas/';
-  private graficosUrl =  'http://172.50.10.79:8008/britagem/calcular_graficos/';
-  private calculosEquipamentosUrl = 'http://172.50.10.79:8008/calcario/calcular_equipamentos_detalhes/';
-  private calUrl = 'http://172.50.10.79:8008/cal/calcular_cal/';
-  private calProdutosUrl = 'http://172.50.10.79:8008/cal/calcular_cal_produtos/';
-  private calEquipamentosUrl = 'http://172.50.10.79:8008/cal/calcular_cal_equipamentos/';
-  private calGraficosUrl = 'http://172.50.10.79:8008/cal/calcular_cal_graficos/';
-  private calEquipamentosDetalhesUrl = 'http://172.50.10.79:8008/cal/calcular_cal_detalhes/';
-  private calGraficosCarregamentoUrl = 'http://172.50.10.79:8008/cal/calcular_cal_carregamento_graficos/';
-  private calcarioGraficosCarregamentoUrl = 'http://172.50.10.79:8008/calcario/calcular_calcario_carregamento_graficos/';
-  private argamasssaCarregamentoUrl = 'http://172.50.10.79:8008/argamassa/calcular_argamassa/';
-  private argamassaProdutosUrl = 'http://172.50.10.79:8008/argamassa/calcular_argamassa_produtos/';
-  private argamassaProdutosCarregamentoUrl = 'http://172.50.10.79:8008/argamassa/calcular_argamassa_produtos_carregamento/';
-  private argamassaProdutosGraficolUrl = 'http://172.50.10.79:8008/argamassa/calcular_argamassa_graficos/';
-  private argamassaProdutosGraficoCarregamentolUrl = 'http://172.50.10.79:8008/argamassa/calcular_argamassa_graficos_carregamento/';
-  private argamassaEquipamentosDetalhesUrl = 'http://172.50.10.79:8008/argamassa/calcular_argamassa_equipamentos/';
+  private calcarioUrl = 'http://localhost:8000/home/calcular_calcario/';
+  private britagemUrl =  'http://localhost:8000/britagem/calcular_britagem/';
+  private rebritagemUrl =  'http://localhost:8000/rebritagem/calcular_rebritagem/';
+  private fabricaCalcarioUrl =  'http://localhost:8000/calcario/calcular_calcario/';
+  private fabricaFertilizanteUrl =  'http://localhost:8000/fertilizante/calcular_fertilizante/';
+  private graficosFabricaCalcarioUrl =  'http://localhost:8000/calcario/calcular_calcario_graficos/';
+  private rebritagemParadasUrl =  'http://localhost:8000/rebritagem/calcular_rebritagem_paradas/';
+  private graficosUrl =  'http://localhost:8000/britagem/calcular_graficos/';
+  private calculosEquipamentosUrl = 'http://localhost:8000/calcario/calcular_equipamentos_detalhes/';
+  private calUrl = 'http://localhost:8000/cal/calcular_cal/';
+  private calProdutosUrl = 'http://localhost:8000/cal/calcular_cal_produtos/';
+  private calEquipamentosUrl = 'http://localhost:8000/cal/calcular_cal_equipamentos/';
+  private calGraficosUrl = 'http://localhost:8000/cal/calcular_cal_graficos/';
+  private calEquipamentosDetalhesUrl = 'http://localhost:8000/cal/calcular_cal_detalhes/';
+  private calGraficosCarregamentoUrl = 'http://localhost:8000/cal/calcular_cal_carregamento_graficos/';
+  private calcarioGraficosCarregamentoUrl = 'http://localhost:8000/calcario/calcular_calcario_carregamento_graficos/';
+  private argamasssaCarregamentoUrl = 'http://localhost:8000/argamassa/calcular_argamassa/';
+  private argamassaProdutosUrl = 'http://localhost:8000/argamassa/calcular_argamassa_produtos/';
+  private argamassaProdutosCarregamentoUrl = 'http://localhost:8000/argamassa/calcular_argamassa_produtos_carregamento/';
+  private argamassaProdutosGraficolUrl = 'http://localhost:8000/argamassa/calcular_argamassa_graficos/';
+  private argamassaProdutosGraficoCarregamentolUrl = 'http://localhost:8000/argamassa/calcular_argamassa_graficos_carregamento/';
+  private argamassaEquipamentosDetalhesUrl = 'http://localhost:8000/argamassa/calcular_argamassa_equipamentos/';
 
   constructor(private  httpClient: HttpClient, private router: Router,) { }
 
-  //méotodos executáveis
-  // atualCalculosCalcario():Observable<any>{
-  //   return this.httpClient.post<any>(this.calcarioUrl);
-  // }
-  // atualCalculosCalcario(data_inicio: string, data_fim: string): Observable<any> {
-  //   const payload = { data_inicio, data_fim };
-  //   return this.httpClient.post<any>(this.calcarioUrl, payload);
-  // }
   calcularCalcario(tipoCalculo: string): Observable<any> {
     return this.httpClient.post<any>(this.calcarioUrl, { tipo_calculo: tipoCalculo });
   }
@@ -81,8 +73,8 @@ export class HomeService {
   fabricaCalGraficos(tipoCalculo: string,etapa: number): Observable<any> {
     return this.httpClient.post<any>(this.calGraficosUrl, { tipo_calculo: tipoCalculo, etapa: etapa});
   }
-  calculosCalEquipamentosDetalhes(data: any):Observable<any> {
-    return this.httpClient.post<any>(this.calEquipamentosDetalhesUrl, { data: data }); 
+  calculosCalEquipamentosDetalhes(data: any, dataFim:any):Observable<any> {
+    return this.httpClient.post<any>(this.calEquipamentosDetalhesUrl, { data:data, dataFim: dataFim}); 
   }
   fabricaCalGraficosCarregamento(tipoCalculo: string,): Observable<any>{
     return this.httpClient.post<any>(this.calGraficosCarregamentoUrl, { tipo_calculo: tipoCalculo})
@@ -105,7 +97,7 @@ export class HomeService {
   argamassaProducaoGeralCarregamento(tipoCalculo: any):Observable<any>{
     return this.httpClient.post<any>(this.argamassaProdutosCarregamentoUrl, {tipo_calculo: tipoCalculo})
   }
-  argamassaEquipamentosDetalhes(data: any):Observable<any>{
-    return this.httpClient.post<any>(this.argamassaEquipamentosDetalhesUrl, {data: data})
+  argamassaEquipamentosDetalhes(data: any, dataFim: any):Observable<any>{
+    return this.httpClient.post<any>(this.argamassaEquipamentosDetalhesUrl, {data: data, data_fim: dataFim})
   }
 }

@@ -310,11 +310,7 @@ export class ProjecaoComponent implements OnInit {
       })
     );
   }
-  
 
- 
-  
-  
 
   removeLinha(index: number): void {
     this.linhas.removeAt(index);

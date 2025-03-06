@@ -21,6 +21,7 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { SelectModule } from 'primeng/select';
+import { InputNumber, InputNumberModule } from 'primeng/inputnumber';
 
 interface RegisterProdutoForm{
   nome: FormControl;
@@ -38,7 +39,7 @@ export interface Produto{
   standalone: true,
   imports: [
     CommonModule,ReactiveFormsModule,RouterLink,FormsModule,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
-    DropdownModule,InputTextModule,TableModule,DialogModule,ButtonModule,
+    DropdownModule,InputTextModule,TableModule,DialogModule,ButtonModule,InputNumberModule,
     ConfirmDialogModule,ToastModule,FloatLabelModule,SelectModule,IconFieldModule,InputIconModule
   ],
   providers: [

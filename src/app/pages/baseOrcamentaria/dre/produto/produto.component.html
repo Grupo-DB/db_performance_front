@@ -221,19 +221,19 @@
                             </div>
                         </div>
                         <div class="fg1edit mb-3 flex flex-column w-12 align-items-center lg:w-6">
-                            <div class="form2 w-10">
+                            <div class="form2 w-10 text-left">
                                 <p-floatlabel variant="on">
-                                    <p-iconfield>
-                                        <p-inputicon class="pi pi-file-edit" />
-                                        <input
+                                        <p-inputNumber
                                             variant="filled"
                                             [style]="{'width':'100%'}"
                                             pInputText id="on_label"
                                             autocomplete="off"
                                             formControlName="aliquota"
-                                            type="text"
+                                            mode="decimal"
+                                            [minFractionDigits]="2"
+                                            
+                                            
                                         />
-                                    </p-iconfield>
                                     <label for="on_label">Informe à aliquota</label>
                                 </p-floatlabel>
                             </div>

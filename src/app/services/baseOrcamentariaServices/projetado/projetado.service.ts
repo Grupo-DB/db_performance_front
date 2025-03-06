@@ -6,18 +6,18 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ProjetadoService {
-  private apiUrl='http://172.50.10.79:8008/dre/linhas/calculosDre/'
-  private orcadoUrl='http://172.50.10.79:8008/orcamento/orcamentosbase/calculosOrcado/'
-  private despesasUrl='http://172.50.10.79:8008/orcamento/orcamentosbase/calculosDespesa/'
+  private apiUrl='http://localhost:8000/dre/linhas/calculosDre/'
+  private orcadoUrl='http://localhost:8000/orcamento/orcamentosbase/calculosOrcado/'
+  private despesasUrl='http://localhost:8000/orcamento/orcamentosbase/calculosDespesa/'
   constructor(private http: HttpClient) { }
 
-  getCalculodDre(): Observable<any>{
-    return this.http.get<any[]>(this.apiUrl)
+  getCalculodDre(ano:number, periodo: number): Observable<any>{
+    return this.http.post(this.apiUrl,{ano:ano, periodo:periodo})
   }
-  getCalculosdOrcado(): Observable<any>{
-    return this.http.get<any[]>(this.orcadoUrl)
+  getCalculosdOrcado(ano:number, periodo:number): Observable<any>{
+    return this.http.post(this.orcadoUrl,{ano:ano, periodo:periodo})
   }
-  getCalculosdDespesa(): Observable<any>{
-    return this.http.get<any[]>(this.despesasUrl)
+  getCalculosdDespesa(ano:number, periodo:number): Observable<any>{
+    return this.http.post(this.despesasUrl,{ano:ano, periodo:periodo})
   }
 }

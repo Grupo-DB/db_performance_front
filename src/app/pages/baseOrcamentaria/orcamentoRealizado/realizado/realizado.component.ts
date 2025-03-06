@@ -30,7 +30,7 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { RouterLink } from '@angular/router';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { DrawerModule } from 'primeng/drawer';
-import { th } from 'date-fns/locale';
+import { th, tr } from 'date-fns/locale';
 
 export interface ResultadosTotaisArrayItem {
   label: string;
@@ -195,6 +195,8 @@ export class RealizadoComponent implements OnInit {
   //
   modalVisible: boolean= false;
   modalVisible2: boolean= false;
+  modalVisible4: boolean= false;
+  modalVisible5: boolean= false;
   modalVisibleRealizado: boolean= false;
   modalGrafVisible: boolean= false;
   modalGrafVisible2: boolean= false;
@@ -204,6 +206,8 @@ export class RealizadoComponent implements OnInit {
   modalGrafVisible7: boolean= false;
   modalGrafVisibleRealizado: boolean= false;
   detalhesMensais: any[] = [];
+  detalhesLancamentosGrupos: any[] = [];
+  detalhesLancamentosContas: any[] = [];
   //
   saldoFormatado!: any;
   saldo!: any;
@@ -212,6 +216,8 @@ export class RealizadoComponent implements OnInit {
   teste: any;
   teste2: any;
   percent: any;
+  totalGrupo: any;
+  totalConta: any;
 
   //
   dictOrcadoTiposCusto: any;
@@ -258,6 +264,13 @@ export class RealizadoComponent implements OnInit {
   //
   realizadosChart: Chart<'pie'> | undefined;
   basesChart: Chart<'doughnut'> | undefined;
+
+  meses = Array.from({ length: 12 }, (_, i) => ({
+    key: i + 1,
+    value: new Date(0, i).toLocaleString('default', { month: 'long' }),
+  }));
+  dropdown: any;
+
   constructor(
     private realizadoService: RealizadoService,
     private centroCustoService: CentrocustoService,
@@ -706,6 +719,38 @@ graficoContasAnaliticasAnual(): void{
       )
     }
   }
+
+  grupoLancamentos(meterItem: any) {
+    this.modalVisible4 = true;
+    console.log('Index:', meterItem);
+    const indice = meterItem.label;
+    if (this.selectedCcPai !== null) {
+      this.orcamentoBaseService.calcularOrcamentoRealizado(this.centrosCusto, this.selectedAno, this.selectedsFiliais).subscribe(
+        response => {
+          this.detalhesLancamentosGrupos = response.total_grupo_com_nomes_detalhes[indice];
+          this.totalGrupo = response.total_grupo_com_nomes[indice];
+        }, erro => {
+          console.error('Não rolou', erro);
+        }
+      )
+    }
+  }
+  contaLancamentos(meterItem: any) {
+    this.modalVisible5 = true;
+    console.log('Index:', meterItem);
+    const indice = meterItem.label;
+    if (this.selectedCcPai !== null) {
+      this.orcamentoBaseService.calcularOrcamentoRealizado(this.centrosCusto, this.selectedAno, this.selectedsFiliais).subscribe(
+        response => {
+          this.detalhesLancamentosContas = response.conta_completa_detalhes[indice];
+          this.totalConta = response.conta_completa_nomes[indice];
+        }, erro => {
+          console.error('Não rolou', erro);
+        }
+      )
+    }
+  }
+
 
   /**Abrir Gráficos Realizados */  
   //Tipos de Custo Realizado

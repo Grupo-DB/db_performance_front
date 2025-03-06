@@ -6,6 +6,13 @@
   <div class="rowBotoes">
       <div 
         class="btnCalc" 
+        (click)="calcular('atualizado')"
+        [ngClass]="{'selecionado': botaoSelecionado === 'atualizado'}"
+      >
+        <p>Acomp. Parcial</p>
+      </div>
+      <div 
+        class="btnCalc" 
         (click)="calcular('atual')"
         [ngClass]="{'selecionado': botaoSelecionado === 'atual'}"
       >

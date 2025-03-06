@@ -147,14 +147,17 @@ export class CalcarioComponent implements OnInit {
   fcmiiiMg01HoraProd!: number;
   fcmiiiMg01HoraParado!: number;
   fcmiiiMg01Producao!: number;
+  fcmiiiMg01Produtividade!: number;
   //FCM3 MG02
   fcmiiiMg02HoraProd!: number;
   fcmiiiMg02HoraParado!: number;
   fcmiiiMg02Producao!: number;
+  fcmiiiMg02Produtividade!: number;
   //FCM3 MG03
   fcmiiiMg03HoraProd!: number;
   fcmiiiMg03HoraParado!: number;
   fcmiiiMg03Producao!: number;
+  fcmiiiMg03Produtividade!: number;
   //GERAIS FCMIII
   fcmiiiProdutividadeGera!: number;
   fcmiiiProducaoGeral!: number;
@@ -165,6 +168,8 @@ export class CalcarioComponent implements OnInit {
   totalCarregamento!: number;
   /**ESTOQUE */
   estoqueTotal!: number;
+  estoqueFcmiii!: number;
+  estoqueFcms!: number;
   ////
   mostrarElemento = true;
   loading: boolean = true;
@@ -280,11 +285,16 @@ export class CalcarioComponent implements OnInit {
       this.fcmiMg01HoraProd = response.fcmi_mg01_hora_producao;
       this.fcmiMg01HoraParado = response.fcmi_mg01_hora_parado;
       this.fcmiMg01Producao = response.fcmi_mg01_producao;
+      this.fcmiMg01Produtividade = response.fcmi_mg01_produtividade;
+      //
       this.fcmiMg02HoraProd = response.fcmi_mg02_hora_producao;
       this.fcmiMg02HoraParado = response.fcmi_mg02_hora_parado;
       this.fcmiMg02Producao = response.fcmi_mg02_producao;
+      this.fcmiMg02Produtividade = response.fcmi_mg02_produtividade;
+      //
       this.fcmiProducaoGeral = response.fcmi_producao_geral;
       this.fcmiProdutividadeGeral = response.fcmi_produtividade_geral;
+      // FCMII - MG01
       this.fcmiiMg01HoraProd = response.fcmii_mg01_hora_prod;
       this.fcmiiMg01HoraParado = response.fcmii_mg01_hora_parado;
       this.fcmiiMg01Producao = response.fcmii_mg01_producao;
@@ -293,14 +303,17 @@ export class CalcarioComponent implements OnInit {
       this.fcmiiiMg01HoraProd = response.fcmiii_mg01_hora_prod;
       this.fcmiiiMg01HoraParado = response.fcmiii_mg01_hora_parado;
       this.fcmiiiMg01Producao = response.fcmiii_mg01_producao;
+      this.fcmiiiMg01Produtividade = response.fcmiii_mg01_produtividade;
       //FCMIII - MG02
       this.fcmiiiMg02HoraProd = response.fcmiii_mg02_hora_prod;
       this.fcmiiiMg02HoraParado = response.fcmiii_mg02_hora_parado;
       this.fcmiiiMg02Producao = response.fcmiii_mg02_producao;
+      this.fcmiiiMg02Produtividade = response.fcmiii_mg02_produtividade;
       //FCMIII - MG03
       this.fcmiiiMg03HoraProd = response.fcmiii_mg03_hora_prod;
       this.fcmiiiMg03HoraParado = response.fcmiii_mg03_hora_parado;
       this.fcmiiiMg03Producao = response.fcmiii_mg03_producao;
+      this.fcmiiiMg03Produtividade = response.fcmiii_mg03_produtividade;
       //FCMIII - TOTAIS
       this.fcmiiiProdutividadeGera = response.fcmiii_produtividade_geral;
       this.fcmiiiProducaoGeral = response.fcmiii_producao_geral;
@@ -309,8 +322,11 @@ export class CalcarioComponent implements OnInit {
       this.producaoGeralFabrica = response.producao_geral_fabricas;
       this.totalCarregamento = response.total_carregamento;
       //ESTOQUE
-      this.estoqueTotal = response.estoque_total
+      this.estoqueTotal = response.estoque_atual;
+      this.estoqueFcmiii = response.estoque_fcmiii;
+      this.estoqueFcms = response.estoque_fcms;
     })
+    
   }
 
 // Função para gerar gráfico com base no tipo e na fábrica
@@ -497,8 +513,8 @@ gerarGrafico(tipoCalculo: string, local: string): void {
           {
             label: 'Produção Diária Tn',
             data: fcmiData, // Dados de LOCCOD 44
-            backgroundColor: '#242730',
-            //borderColor: '#3A3E4C',
+            backgroundColor: '#004598',
+            hoverBackgroundColor: '#ffb100',
             borderWidth: 1
           },
         ]
@@ -566,8 +582,8 @@ gerarGrafico(tipoCalculo: string, local: string): void {
           {
             label: 'Produção Diária Tn',
             data: fcmiiData, // Dados de LOCCOD 44
-            backgroundColor: '#12bfd7',
-            //borderColor: '#3A3E4C',
+            backgroundColor: '#002B5C',
+            hoverBackgroundColor: '#ffb100',
             borderWidth: 1
           },
         ]
@@ -634,8 +650,8 @@ gerarGrafico(tipoCalculo: string, local: string): void {
           {
             label: 'Produção Diária Tn',
             data: fcmiiiData, // Dados de LOCCOD 44
-            backgroundColor: '#97A3C2',
-            //borderColor: '#3A3E4C',
+            backgroundColor: '#7F94B5',
+            hoverBackgroundColor: '#ffb100',
             borderWidth: 1
           },
         ]
@@ -678,7 +694,7 @@ gerarGrafico(tipoCalculo: string, local: string): void {
           },
           title: {
             display: true,
-            text: 'Total em Toneladas por Dia',
+            text: 'Total em Toneladas Produzidas por Dia',
             
           }
         }
@@ -713,29 +729,29 @@ gerarGrafico(tipoCalculo: string, local: string): void {
           {
             label: 'Produção Total Diária Acumulada (Tn)',
             data: totalProductionData, // Data for total production
-            backgroundColor: '#1890FF',
-            //borderColor: '#FF4500',
+            backgroundColor: '#71AAE0',
+            hoverBackgroundColor: '#ffb100',
             borderWidth: 1
           },
           {
             label: 'Produção Total Diária FCMI (Tn)',
             data: fcmiData, // Data for total production
-            backgroundColor: '#242730',
-            //borderColor: '#FF4500',
+            backgroundColor: '#004598',
+            hoverBackgroundColor: '#ffb100',
             borderWidth: 1
           },
           {
             label: 'Produção Total Diária FCMII (Tn)',
             data: fcmiiData, // Data for total production
-            backgroundColor: '#12bfd7',
-            //borderColor: '#FF4500',
+            backgroundColor: '#002B5C',
+            hoverBackgroundColor: '#ffb100',
             borderWidth: 1
           },
           {
             label: 'Produção Total Diária FCMIII (Tn)',
             data: fcmiiiData, // Data for total production
-            backgroundColor: '#97A3C2',
-            //borderColor: '#FF4500',
+            backgroundColor: '#7F94B5',
+            hoverBackgroundColor: '#ffb100',
             borderWidth: 1
           }
         ]
@@ -801,8 +817,8 @@ gerarGrafico(tipoCalculo: string, local: string): void {
           {
             label: 'Produção Mensal Tn',
             data: fcmiData, // Dados de LOCCOD 44
-            backgroundColor: '#242730',
-            //borderColor: '#3A3E4C',
+            backgroundColor: '#004598',
+            hoverBackgroundColor: '#ffb100',
             borderWidth: 1
           },
         ]
@@ -870,8 +886,8 @@ gerarGrafico(tipoCalculo: string, local: string): void {
           {
             label: 'Produção Mensal Tn',
             data: fcmiiData, // Dados de LOCCOD 44
-            backgroundColor: '#12bfd7',
-            //borderColor: '#3A3E4C',
+            backgroundColor: '#002B5C',
+            hoverBackgroundColor: '#ffb100',
             borderWidth: 1
           },
         ]
@@ -939,8 +955,8 @@ gerarGrafico(tipoCalculo: string, local: string): void {
           {
             label: 'Produção Mensal Tn',
             data: fcmiiiData, // Dados de LOCCOD 44
-            backgroundColor: '#97A3C2',
-            //borderColor: '#3A3E4C',
+            backgroundColor: '#7F94B5',
+            hoverBackgroundColor: '#ffb100',
             borderWidth: 1
           },
         ]
@@ -1017,29 +1033,29 @@ gerarGrafico(tipoCalculo: string, local: string): void {
           {
             label: 'Produção Total Mensal Acumulada (Tn)',
             data: totalProductionData, // Data for total production
-            backgroundColor: '#1890FF',
-            //borderColor: '#FF4500',
+            backgroundColor: '#71AAE0',
+            hoverBackgroundColor: '#ffb100',
             borderWidth: 1
           },
           {
             label: 'Produção Total Mensal FCMI (Tn)',
             data: fcmiData, // Data for total production
-            backgroundColor: '#242730',
-            //borderColor: '#FF4500',
+            backgroundColor: '#004598',
+            hoverBackgroundColor: '#ffb100',
             borderWidth: 1
           },
           {
             label: 'Produção Total Mensal FCMII (Tn)',
             data: fcmiiData, // Data for total production
-            backgroundColor: '#12bfd7',
-            //borderColor: '#FF4500',
+            backgroundColor: '#002B5C',
+            hoverBackgroundColor: '#ffb100',
             borderWidth: 1
           },
           {
             label: 'Produção Total Mensal FCMIII (Tn)',
             data: fcmiiiData, // Data for total production
-            backgroundColor: '#97A3C2',
-            //borderColor: '#FF4500',
+            backgroundColor: '#7F94B5',
+            hoverBackgroundColor: '#ffb100',
             borderWidth: 1
           }
         ]
@@ -1116,31 +1132,31 @@ graficoCarregamentoTotalFabricasChartMes(volumeDiario: any) {
       labels: labels, // Days of the month
       datasets: [
         {
-          label: 'CArregamento Total Diário Acumulado (Tn)',
+          label: 'Carregamento Total Diário Acumulado (Tn)',
           data: totalProductionData, // Data for total production
-          backgroundColor: '#1890FF',
-          //borderColor: '#FF4500',
+          backgroundColor: '#71AAE0',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
         {
           label: 'Carregamento Total Diário FCMI (Tn)',
           data: fcmiData, // Data for total production
-          backgroundColor: '#242730',
-          //borderColor: '#FF4500',
+          backgroundColor: '#004598',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
         {
           label: 'Carregamento Total Diário FCMII (Tn)',
           data: fcmiiData, // Data for total production
-          backgroundColor: '#12bfd7',
-          //borderColor: '#FF4500',
+          backgroundColor: '#002B5C',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
         {
           label: 'Carregamento Total Diário FCMIII (Tn)',
           data: fcmiiiData, // Data for total production
-          backgroundColor: '#97A3C2',
-          //borderColor: '#FF4500',
+          backgroundColor: '#7F94B5',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         }
       ]
@@ -1216,29 +1232,29 @@ graficoCarregamentoTotalFabricasChartAno(volumeMensal: any) {
         {
           label: 'Carregamento Total Mensal Acumulada (Tn)',
           data: totalProductionData, // Data for total production
-          backgroundColor: '#1890FF',
-          //borderColor: '#FF4500',
+          backgroundColor: '#71AAE0',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
         {
           label: 'Carregamento Total Mensal FCMI (Tn)',
           data: fcmiData, // Data for total production
-          backgroundColor: '#242730',
-          //borderColor: '#FF4500',
+          backgroundColor: '#004598',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
         {
           label: 'Carregamento Total Mensal FCMII (Tn)',
           data: fcmiiData, // Data for total production
-          backgroundColor: '#12bfd7',
-          //borderColor: '#FF4500',
+          backgroundColor: '#002B5C',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
         {
           label: 'Carregamento Total Mensal FCMIII (Tn)',
           data: fcmiiiData, // Data for total production
-          backgroundColor: '#97A3C2',
-          //borderColor: '#FF4500',
+          backgroundColor: '#7F94B5',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         }
       ]
@@ -1306,8 +1322,8 @@ graficoCarregamentoFcmiChartMes(volumeDiario: any) {
         {
           label: 'Volume Carregamento FCM I Diário',
           data: fcmiData, // Dados de LOCCOD 44
-          backgroundColor: '#242730',
-          //borderColor: '#3A3E4C',
+          backgroundColor: '#004598',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
       ]
@@ -1375,8 +1391,8 @@ graficoCarregamentoFcmiChartAno(volumeDiario: any) {
         {
           label: 'Volume Carregamento FCM I Mensal',
           data: fcmiiData, // Dados de LOCCOD 44
-          backgroundColor: '#242730',
-          //borderColor: '#3A3E4C',
+          backgroundColor: '#004598',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
       ]
@@ -1445,8 +1461,8 @@ graficoCarregamentoFcmiiChartMes(volumeDiario: any) {
         {
           label: 'Volume Carregamento FCM II Diário',
           data: fcmiiData, // Dados de LOCCOD 44
-          backgroundColor: '#12bfd7',
-          //borderColor: '#3A3E4C',
+          backgroundColor: '#002B5C',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
       ]
@@ -1514,8 +1530,8 @@ graficoCarregamentoFcmiiChartAno(volumeDiario: any) {
         {
           label: 'Volume Carregamento FCM II Mensal',
           data: fcmiiData, // Dados de LOCCOD 44
-          backgroundColor: '#12bfd7',
-          //borderColor: '#3A3E4C',
+          backgroundColor: '#002B5C',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
       ]
@@ -1584,8 +1600,8 @@ graficoCarregamentoFcmiiiChartMes(volumeDiario: any) {
         {
           label: 'Volume Carregamento FCM III Diário',
           data: fcmiiiData, // Dados de LOCCOD 44
-          backgroundColor: '#97A3C2',
-          //borderColor: '#3A3E4C',
+          backgroundColor: '#7F94B5',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
       ]
@@ -1653,8 +1669,8 @@ graficoCarregamentoFcmiiiChartAno(volumeDiario: any) {
         {
           label: 'Volume Carregamento FCM III Mensal',
           data: fcmiiiData, // Dados de LOCCOD 44
-          backgroundColor: '#97A3C2',
-          //borderColor: '#3A3E4C',
+          backgroundColor: '#7F94B5',
+          hoverBackgroundColor: '#ffb100',
           borderWidth: 1
         },
       ]

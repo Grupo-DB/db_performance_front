@@ -25,14 +25,10 @@
     margin-bottom: 10px;
 }
 .calcEsquerda{
-    //height: 400px;
-    //width: 60%;
-    //display: flex;
-    //flex-direction: column;
     .britadaCalcario{
         margin-left: 8px;
         margin-right: 8px;
-        background-color: #e2e7f3;
+        background-color: #E3E7EC;
         border-radius: 8px;
         //height: 200px;
     }
@@ -40,7 +36,7 @@
         margin-left: 8px;
         margin-right: 8px;
         margin-top: 8px;
-        background-color:#e2e7f3;
+        background-color:#E3E7EC;
         border-radius: 8px;
         //height: 200px;
     }
@@ -51,7 +47,7 @@
 }
 .calcDireita{
     
-    background-color: #e2e7f3;
+    background-color: #99A9C2;
     border-radius: 8px;
     margin-right: 8px;
 }
@@ -80,7 +76,7 @@
     height: 140px;
     width: 220px;
     border-radius: 10px;
-    background-color:#2d53da;
+    background-color:#002B5C;
     box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
     -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
@@ -123,25 +119,11 @@
     width: 100%;
     margin-left: 8px;
     margin-right: 8px;
-    background-color: #e2e7f3;
+    background-color: #99A9C2;
     border-radius: 8px;
     height: 300px;
 }
 
-// tr {
-//     background-color:#f2f1f0;
-//     font-size: 16px;
-//     height: 10px;
-//     color: #333;
-//     border-radius: 8px;
-//   }
-//   td{
-//     border-radius: 8px;
-//   }
-//   th{
-//     background-color: #2d53da;
-//     color: #eee;
-//   }
   .containerModal{
     justify-content: center;
     width: 100%;
@@ -149,7 +131,7 @@
     display: flex;
   }
   .chartRadarAvaliadores{
-    background-color: #e2e7f3;
+    background-color: #E3E7EC;
     border-radius: 8px;
     height: 80%;
     width: 65%;
@@ -166,7 +148,7 @@
     width: 20%;
     margin-left: 5px;
     border-radius: 8px;
-    background-color: #e2e7f3;
+    background-color: #E3E7EC;
   }
   .media{
     display: flex;
@@ -208,7 +190,7 @@
     height: 90%;
     width: 80%;
     border-radius: 10px;
-    background-color:#4C5264;
+    background-color:#002B5C;
     box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
     -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
@@ -222,7 +204,7 @@
     }
 }
 .selecionado {
-    background-color: #71AAE0; /* Cor de fundo do botão selecionado */
+    background-color: #4972B0; /* Cor de fundo do botão selecionado */
     color: white;              /* Cor do texto do botão selecionado */
     /* Adicione outros estilos, como borda ou sombra, se quiser */
 }

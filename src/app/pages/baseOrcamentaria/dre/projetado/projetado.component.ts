@@ -24,6 +24,8 @@ import { TableRowCollapseEvent, TableRowExpandEvent } from 'primeng/table';
 import {  TreeTableModule } from 'primeng/treetable';
 import { animate, keyframes, style, transition, trigger } from '@angular/animations';
 import { th } from 'date-fns/locale';
+import { SelectModule } from 'primeng/select';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 export interface ResultadosArrayItem {
   label: string;
@@ -47,9 +49,12 @@ interface CentroCustoPai {
   standalone: true,
  
   imports: [
-    CommonModule,ReactiveFormsModule,RouterLink,FormsModule,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
-    DropdownModule,InputTextModule,TableModule,DialogModule,ButtonModule,MessagesModule,InputNumberModule,
-    ConfirmDialogModule,ToastModule,FloatLabelModule,InputNumberModule,InplaceModule,TreeTableModule,FloatLabelModule
+    CommonModule,ReactiveFormsModule,RouterLink,FormsModule,DividerModule,
+    NzMenuModule,InputGroupModule,InputGroupAddonModule,ToastModule,
+    DropdownModule,InputTextModule,TableModule,DialogModule,ButtonModule,
+    MessagesModule,InputNumberModule,SelectModule,MultiSelectModule,
+    ConfirmDialogModule,ToastModule,FloatLabelModule,InputNumberModule,InplaceModule,
+    TreeTableModule,FloatLabelModule
   ],
   providers: [
     MessageService,ConfirmationService,
@@ -126,7 +131,8 @@ export class ProjetadoComponent implements OnInit {
   ebitdaFormatado: any;
   totalDepreciacaoFormatada: any;
   percentualTotalEbitda: any;
-
+  ano!: number;
+  periodo!: number;
   //
   orcados: any[] = [];
   despesas: any[] = [];
@@ -145,6 +151,12 @@ export class ProjetadoComponent implements OnInit {
   @ViewChild('dt1') dt1!: Table;
   inputValue: string = '';
 
+  meses = Array.from({ length: 12 }, (_, i) => ({
+    key: i + 1,
+    value: new Date(0, i).toLocaleString('default', { month: 'long' }),
+  }));
+  dropdown: any;
+
    constructor(
       private fb: FormBuilder, 
       private loginService: LoginService,
@@ -159,6 +171,11 @@ export class ProjetadoComponent implements OnInit {
     this.getDespesas();
   }
 
+  executaCalculos(): void {
+    this.getResultados();
+    this.getOrcados();
+    this.getDespesas();
+  }
    
   hasGroup(groups: string[]): boolean {
     return this.loginService.hasAnyGroup(groups);
@@ -174,77 +191,115 @@ export class ProjetadoComponent implements OnInit {
     
      
     getOrcados(): void {
-      this.projetadoService.getCalculosdOrcado().subscribe(
+      this.projetadoService.getCalculosdOrcado(this.ano, this.periodo).subscribe(
         response => {
-
+          // Receita Bruta obtida da resposta
+          const receitaBruta = this.receitaBruta;
+    
           this.totalGeral = response.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
           this.custoTotalFormatado = response.total;
+    
           this.orcados = [{
             data: {
               tipo: 'Custo Total',
               total: this.totalGeral
             },
-            children: response.resultado.map((item: any) => ({
-              data: {
-                tipo: item.tipo,
-                total: item.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-              },
-              children: item.centros_custo.map((centro: any) => ({
+            children: response.resultado.map((item: any) => {
+              // Calcula o percentual de cada "tipo" em relação à receita bruta
+              const percentualTipo = receitaBruta ? (item.total / receitaBruta) * 100 : 0;
+    
+              return {
                 data: {
-                  nome: centro.nome,
-                  total: centro.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-                }
-              }))
-            }))
+                  tipo: item.tipo,
+                  total: item.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+                  percentual: percentualTipo.toFixed(2) + '%'
+                },
+                children: item.centros_custo.map((centro: any) => {
+                  // Calcula o percentual de cada centro de custo dentro do tipo
+                  const percentualCentro = receitaBruta ? (centro.total / receitaBruta) * 100 : 0;
+    
+                  return {
+                    data: {
+                      nome: centro.nome,
+                      total: centro.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+                      percentual: percentualCentro.toFixed(2) + '%'
+                    }
+                  };
+                })
+              };
+            })
           }];
+    
           this.calculatePercentualTotalGeral();
           this.calcularLucroBruto();
         },
         error => {
-          console.error("Erro ao obter os cálculos do orçado:", error);
+          if (error.status === 404) {
+            this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Não existem dados correspondentes ao seu filtro.' });
+          } else {
+            this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Não existem dados correspondentes ao seu filtro.' });
+          }
         }
       );
     }
 
-
-
-
     getDespesas(): void {
-      this.projetadoService.getCalculosdDespesa().subscribe(
+      this.projetadoService.getCalculosdDespesa(this.ano, this.periodo).subscribe(
         response => {
-          this.totalGeralDespesa= response.total;
+          // Receita Bruta obtida da resposta
+          const receitaBruta = this.receitaBruta;
+    
+          this.totalGeralDespesa = response.total;
           this.totalDepreciacao = response.depreciacao;
           this.totalDepreciacaoFormatada = response.depreciacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    
           this.despesas = [{
             data: {
               tipo: 'Despesa Total',
               total: this.totalGeralDespesa.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
             },
-            children: response.resultado.map((item: any) => ({
-              data: {
-                tipo: item.tipo,
-                total: item.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-              },
-              children: item.centros_custo.map((centro: any) => ({
+            children: response.resultado.map((item: any) => {
+              // Calcula o percentual de cada "tipo" em relação à receita bruta
+              const percentualTipo = receitaBruta ? (item.total / receitaBruta) * 100 : 0;
+    
+              return {
                 data: {
-                  nome: centro.nome,
-                  total: centro.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-                }
-              }))
-            }))
+                  tipo: item.tipo,
+                  total: item.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+                  percentual: percentualTipo.toFixed(2) + '%'
+                },
+                children: item.centros_custo.map((centro: any) => {
+                  // Calcula o percentual de cada centro de custo dentro do tipo
+                  const percentualCentro = receitaBruta ? (centro.total / receitaBruta) * 100 : 0;
+    
+                  return {
+                    data: {
+                      nome: centro.nome,
+                      total: centro.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+                      percentual: percentualCentro.toFixed(2) + '%'
+                    }
+                  };
+                })
+              };
+            })
           }];
+    
           this.calculoPercentualDespesa();
           this.calcularResultOper();
-          
         },
         error => {
-          console.error("Erro ao obter os cálculos do orçado:", error);
+          if (error.status === 404) {
+            this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Não existem dados correspondentes ao seu filtro.' });
+          } else {
+            this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Não existem dados correspondentes ao seu filtro.' });
+          }
         }
       );
-    }  
+    }
   
     getResultados(): void {
-      this.projetadoService.getCalculodDre().subscribe(response => {
+      this.projetadoService.getCalculodDre(this.ano, this.periodo).subscribe(
+        response => {
         // Combinar as informações em um único array
         this.resultados = Object.keys(response.quantidade).map((key) => ({
           label: key,
@@ -264,8 +319,16 @@ export class ProjetadoComponent implements OnInit {
         this.quantidadeTotal = response.quantidade_total;
         this.percentDeducao = Math.round(response.percentual_deducao_total);
         this.calculatePercentualTotalGeral();
-      });
-    }
+      },
+      error => {
+        if (error.status === 404) {
+          this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Não existem dados correspondentes ao seu filtro.' });
+        } else {
+          this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Não existem dados correspondentes ao seu filtro.' });
+        }
+      }
+    );
+  }
 
     calcularLucroLiquido(): void{
       if(this.impostos > 0){
@@ -276,18 +339,22 @@ export class ProjetadoComponent implements OnInit {
       }
     }
     calcularLucroAntesImpostos(): void{
-      this.lucroAntesImpostos = this.resultadoOperacional - this.resultadoFinanceiro;
+      this.lucroAntesImpostos = this.resultadoOperacional + this.resultadoFinanceiro;
       this.lucroAntesImpostosFormatado = this.lucroAntesImpostos.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
     calcularLucroBruto(): void{
       this.lucroBruto = this.receitaLiquidaValor - this.custoTotalFormatado;
+      console.log('hahaha',this.receitaLiquidaValor);
       this.lucroBrutoFormatado = this.lucroBruto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      this.calcularResultOper();
     }
 
     calcularResultOper(): void{
       this.resultadoOperacional = this.lucroBruto - this.totalGeralDespesa;
+      console.log('kkkkkkkkkk',this.lucroBruto);
       this.resultadoOperacionalFormatado = this.resultadoOperacional.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      
       this.calcularEbitda();
     }
 

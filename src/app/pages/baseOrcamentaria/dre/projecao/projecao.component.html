@@ -85,7 +85,6 @@
                                 id="empresa"
                                 inputId="float-label"
                                 [options]="produtos"
-                                [(ngModel)]="selectedProduto"
                                 optionValue="id"
                                 formControlName="produto"
                                 optionLabel="nome"
@@ -141,15 +140,15 @@
 
                         <td>
                             <p-inputnumber
-                                
+                                locale="pt-BR"
                                 mode="decimal"
                                 formControlName="quantidade_carregada"
                                 inputId="quantidade_carregada"
-                                [useGrouping]="false" />
+                                [useGrouping]="true" />
                         </td>
 
                         <td>
-                            <button size="small" severity="info" label="Remover" pButton [rounded]="true" (onClick)="removeLinha(index)" ></button>
+                            <button size="small" severity="info" label="Remover" pButton [rounded]="true" (click)="removeLinha(index)" ></button>
                         </td>
                     </tr>
                 </ng-template>
@@ -357,7 +356,9 @@
                                             variant="filled"
                                             [style]="{'width':'420px'}"
                                             formControlName="quantidade_carregada"
-                                            useGrouping="false"
+                                            useGrouping="true"
+                                            mode="decimal"
+                                            locale="pt-BR"
                                         />
                                     <label for="ano">Quantidade Carregada</label>
                                 </p-floatlabel>

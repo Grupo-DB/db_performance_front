@@ -339,7 +339,7 @@
                     <span> <b>Média do Período</b></span><br>
                 </div>
                 <div class="media">
-                    <div class="card2 h-6rem">
+                    <div class="card2 gap-3 h-6rem">
                         <div class="valor">
                             <p>{{ media }}</p>
                         </div>
@@ -351,10 +351,10 @@
             </div>
             <div class="af w-6 lg:w-full">    
                 <div class="titulo2">
-                    <span> <b> Projeção para o Período</b></span><br>
+                    <span> <b> Projeção no Período</b></span><br>
                 </div>
                 <div class="projecao">
-                    <div class="card2 h-6rem">
+                    <div class="card2 gap-3 h-6rem">
                         <div class="valor">
                             <p>{{ projecao }}</p>
                         </div>
@@ -377,7 +377,7 @@
                     <span> <b>Média do Período</b></span><br>
                 </div>
                 <div class="media">
-                    <div class="card2 h-6rem">
+                    <div class="card2 gap-3 h-6rem">
                         <div class="valor">
                             <p>{{ mediaCarregamento }}</p>
                         </div>
@@ -389,10 +389,10 @@
             </div>
             <div class="af w-6 lg:w-full">    
                 <div class="titulo2">
-                    <span> <b> Projeção para o Período</b></span><br>
+                    <span> <b> Projeção no Período</b></span><br>
                 </div>
                 <div class="projecao">
-                    <div class="card2 h-6rem">
+                    <div class="card2 gap-3 h-6rem">
                         <div class="valor">
                             <p>{{ projecaoCarregamento }}</p>
                         </div>
@@ -434,18 +434,16 @@
                     <p>Calcular</p>
                 </div>
             </div>    
-            <div class="rightEqpto w-12 lg:w-20rem">
+            <div class="rightEqpto w-12 mt-3 lg:mt-0 lg:w-15rem">
                 <div class="tituloEqpto">
-                    <span> <b>Carregamento geral</b></span><br>
+                    <span> <b>Carregamento geral Tn</b></span><br>
                 </div>
                 <div class="media2">
                     <div class="cardCarregamentoEqpto w-10">
                         <div class="valorCarregamentoEqpto">
                             <p>{{ totalCarregamento }}</p>
                         </div>
-                        <div class="unidadeCarregamentoEqpto">
-                            <p>Carregamento geral</p>
-                        </div>    
+                          
                     </div>
                 </div>    
             </div>    
@@ -486,6 +484,14 @@
                                             <p>Tn produzida</p>
                                         </div>
                                     </div>
+                                    <div class="cardProd w-10 lg:w-3">
+                                        <div class="valorCarregamentoProd">
+                                            <p>{{ fcmiMg01Produtividade }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoProd">
+                                            <p>Produtividade</p>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="flex flex-column mt-3 align-items-center lg:flex-row"><!--MG02-->
                                     <div class="text-center font-bold w-2 -ml-8 lg:w-2 lg:ml-0">
@@ -513,6 +519,14 @@
                                         </div>
                                         <div class="unidadeCarregamentoProd">
                                             <p>Tn produzida</p>
+                                        </div>
+                                    </div>
+                                    <div class="cardProd w-10 lg:w-3">
+                                        <div class="valorCarregamentoProd">
+                                            <p>{{ fcmiMg02Produtividade }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoProd">
+                                            <p>Produtividade</p>
                                         </div>
                                     </div>
                                 </div>
@@ -573,6 +587,14 @@
                                         <p>Tn produzida</p>
                                     </div>
                                 </div>
+                                <div class="cardProd w-10 lg:w-2">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ fcmiiMg01Produtividade }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Produtividade</p>
+                                    </div>
+                                </div>
                                 <div class="cardFabFCM2 w-10 lg:w-2">
                                     <div class="valorCarregamentoFab">
                                         <p>{{ fcmiiMg01Produtividade }}</p>
@@ -628,6 +650,14 @@
                                         <p>Tn produzida</p>
                                     </div>
                                 </div>
+                                <div class="cardProd w-10 lg:w-3">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ fcmiiiMg01Produtividade }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Produtividade</p>
+                                    </div>
+                                </div>
                             </div>
                             <div class="flex flex-column mt-3 align-items-center lg:flex-row">
                                 <div class="text-center font-bold w-2 -ml-8 lg:w-2 lg:ml-0">
@@ -657,6 +687,14 @@
                                         <p>Tn produzida</p>
                                     </div>
                                 </div>
+                                <div class="cardProd w-10 lg:w-3">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ fcmiiiMg02Produtividade }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Produtividade</p>
+                                    </div>
+                                </div>
                             </div>
                             <div class="flex flex-column mt-3 align-items-center lg:flex-row">
                                 <div class="text-center font-bold w-2 -ml-8 lg:w-2 lg:ml-0">
@@ -684,6 +722,14 @@
                                     </div>
                                     <div class="unidadeCarregamentoProd">
                                         <p>Tn produzida</p>
+                                    </div>
+                                </div>
+                                <div class="cardProd w-10 lg:w-3">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ fcmiiiMg03Produtividade }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Produtividade</p>
                                     </div>
                                 </div>
                                 
@@ -730,10 +776,26 @@
                     </div>
                     <div class="cardFabDir">
                         <div class="valorCarregamentoFab">
+                            <p>{{ estoqueFcms }}</p>
+                        </div>
+                        <div class="unidadeCarregamentoFab">
+                            <p>Estq. FCM I/II</p>
+                        </div>
+                    </div>
+                    <div class="cardFabDir">
+                        <div class="valorCarregamentoFab">
+                            <p>{{ estoqueFcmiii }}</p>
+                        </div>
+                        <div class="unidadeCarregamentoFab">
+                            <p>Estq. FCM III</p>
+                        </div>
+                    </div>
+                    <div class="cardFabDir">
+                        <div class="valorCarregamentoFab">
                             <p>{{ estoqueTotal }}</p>
                         </div>
                         <div class="unidadeCarregamentoFab">
-                            <p>Estoque calcário</p>
+                            <p>Estq. Total</p>
                         </div>
                     </div>
                 </div>

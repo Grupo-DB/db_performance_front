@@ -200,7 +200,7 @@
 
 
 <!----------------SIDEBAR_______________________________-->
-<p-drawer [(visible)]="modalVisible" position="right" [style]="{ width: '60%', }" >
+<p-drawer [(visible)]="modalVisible" position="right" [style]="{ width: '90%', }" >
 
     
         <p-table [value]="detalhesMensais" responsiveLayout="scroll" stripedRows>
@@ -222,16 +222,81 @@
                     <td>R$ {{ detalheMensal.valor_real | number: '1.2-2' }} </td>
                 </tr>
             </ng-template>
-           
         </p-table>
    
+</p-drawer>
+
+<!-------------------------DEATLHES REALIZADOS GRUPOS---------------------------------->
+
+<p-drawer [(visible)]="modalVisible4" position="right" [style]="{ width: '65%'}" >
+    <p-table [value]="detalhesLancamentosGrupos" responsiveLayout="scroll" stripedRows>
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Data</th>
+                <th>Lançamento COD</th>
+                <th>Descrição</th>
+                <th>Valor Total</th>    
+                <th>Quantidade</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-detalheLancamentoGrupo>
+            <tr>
+                <td>{{ detalheLancamentoGrupo.LANCDATA }}</td>
+                <td>{{ detalheLancamentoGrupo.LANCCOD }}</td>
+                <td>{{ detalheLancamentoGrupo.DESCRICAO }}</td>
+                <td>R$ {{ detalheLancamentoGrupo.SALDO | number: '1.2-2' }}</td>
+                <td>{{ detalheLancamentoGrupo.QTD }}</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <tr>
+                <td><b>Total</b></td>
+                <td></td>
+                <td></td>
+                <td><b>R$ {{ totalGrupo }}</b></td>
+                <td></td>
+            </tr>    
+        </ng-template>
+    </p-table>
+</p-drawer>
+<!------------------------CONTAS ANALITICAS -LANÇAMENTOS---------------------------------------------->
+<p-drawer [(visible)]="modalVisible5" position="right" [style]="{ width: '65%'}" >
+    <p-table [value]="detalhesLancamentosContas" responsiveLayout="scroll" stripedRows>
+        <ng-template pTemplate="header">            
+            <tr>
+                <th>Data</th>               
+                <th>Lançamento COD</th>
+                <th>Descrição</th>
+                <th>Valor Total</th>    
+                <th>Quantidade</th>            
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-detalheLancamentoConta>
+            <tr>                        
+                <td>{{ detalheLancamentoConta.LANCDATA }}</td>
+                <td>{{ detalheLancamentoConta.LANCCOD }}</td>
+                <td>{{ detalheLancamentoConta.DESCRICAO }}</td> 
+                <td>R$ {{ detalheLancamentoConta.SALDO | number: '1.2-2' }}</td>
+                <td>{{ detalheLancamentoConta.QTD }}</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <tr>
+                <td><b>Total</b></td>
+                <td></td>
+                <td></td>
+                <td><b>R$ {{ totalConta }}</b></td>
+                <td></td>
+            </tr>    
+        </ng-template>
+    </p-table>
 </p-drawer>
 
 <!---------------------------SIDEBAR ORÇADOS ---------------------------------------------------------------->                    
 <p-drawer 
     [(visible)]="modalVisible2" 
     position="right" 
-    [style]="{ width: '80%', }"
+    [style]="{ width: '90%', }"
     styleClass="w-full md:w-10 lg:w-8"
 >
     <p-inplace
@@ -469,7 +534,7 @@
 <p-drawer 
     [(visible)]="modalVisibleRealizado" 
     position="right" 
-    [style]="{ width: '60%', }"
+    [style]="{ width: '96%' }"
     styleClass="w-full md:w-10 lg:w-8"
 >
     <p-inplace
@@ -497,7 +562,7 @@
                                             <div class="flex justify-content-between gap-2">
                                                 <div class="flex flex-column gap-3">
                                                     <span class="text-secondary text-md -ml-2" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
-                                                    <span class="font-bold text-md"style="text-align: start;">R$ {{ meterItem.value }}</span>
+                                                    <span class="font-bold text-md"style="text-align: start;">R$ {{ meterItem.value }}</span>  
                                                 </div>
                                                 <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
                                                     <a (click)="abrirModalRealizadoTipos()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
@@ -554,7 +619,9 @@
                                         <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" @slideAnimation >
                                             <div class="flex justify-content-between gap-2">
                                                 <div class="flex flex-column gap-3">
-                                                    <span class="text-secondary text-md -ml-2" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                    <a (click)="grupoLancamentos(meterItem)" style="text-decoration: none; color: inherit;">    
+                                                        <span class="text-secondary text-md -ml-2" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                    </a>
                                                     <span class="font-bold text-md"style="text-align: start;">R$ {{ meterItem.value }}</span>
                                                 </div>
                                                 <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
@@ -583,7 +650,9 @@
                                         <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10"@slideAnimation >
                                             <div class="flex justify-content-between gap-2">
                                                 <div class="flex flex-column gap-3">
-                                                    <span class="text-secondary text-md -ml-2" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                    <a (click)="contaLancamentos(meterItem)" style="text-decoration: none; color: inherit;">
+                                                        <span class="text-secondary text-md -ml-2" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                    </a>
                                                     <span class="font-bold text-md"style="text-align: start;">R$ {{ meterItem.value }}</span>
                                                 </div>
                                                 <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">

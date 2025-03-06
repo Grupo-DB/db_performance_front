@@ -5,6 +5,58 @@
         </p-divider>
     </div>
     <div class="flex flex-column  lg:flex-row"@slideAnimation>
+        <div class="calcEsquerda w-12 lg:w-8 mt-2 lg:w-8">
+            <div class="britadaCalcario">
+                <div class="titulo">
+                    <p><b>Último Dia</b></p>
+                </div>
+                <div class="flex flex-column justify-content-center align-items-center gap-3 lg:flex-row lg:-mt-1"@slideAnimation>
+                    <div class="card lg:w-5 lg:mb-3">
+                        <div class="valor">
+                        <p>{{ totalAgregado }}</p>
+                        </div>
+                        <div class="unidade">
+                        <p>Tn Britado</p>
+                        </div>
+                    </div>
+                    <div class="card lg:w-5 lg:mb-3">
+                        <div class="valor">
+                        <p>{{ tnHsTrab }}</p>
+                        </div>
+                        <div class="unidade">
+                        <p>Hs Trabalhadas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>    
+            <div class="britadaCal mt-3">
+                <div class="titulo">
+                    <p><b>Último Dia</b></p>
+                </div>
+                <div class="flex flex-column  justify-content-center align-items-center gap-3 lg:flex-row lg:-mt-1"@slideAnimation>
+                    <div class="card lg:w-5 lg:mb-3">
+                        <div class="valor">
+                        <p>{{ produtividadeHj }}</p>
+                        </div>
+                        <div class="unidade">
+                        <p>Produtividade</p>
+                        </div>
+                    </div>
+                    <div class="card lg:w-5 lg:mb-3">
+                        <div class="valor">
+                        <p>{{ tnRejeitoDia }}</p>
+                        </div>
+                        <div class="unidade">
+                        <p>Tn Rejeito</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+            
+
+
         <div class="calcEsquerda w-12 mt-2 lg:w-8">
            <div class="britadaCalcario">
                 <div class="titulo">
@@ -232,7 +284,7 @@
                     <span> <b>Média do Período</b></span><br>
                 </div>
                 <div class="media">
-                    <div class="card2 h-6rem">
+                    <div class="card2 gap-3 h-6rem">
                         <div class="valor">
                             <p>{{ mediaCalcario }}</p>
                         </div>
@@ -247,7 +299,7 @@
                     <span> <b> Projeção no Período</b></span><br>
                 </div>
                 <div class="projecao">
-                    <div class="card2 h-6rem">
+                    <div class="card2 gap-3 h-6rem">
                         <div class="valor">
                             <p>{{ projecaoCalcario }}</p>
                         </div>
@@ -301,7 +353,7 @@
                     <span> <b>Média do Período</b></span><br>
                 </div>
                 <div class="media">
-                    <div class="card2 h-6rem">
+                    <div class="card2 gap-3 h-6rem">
                         <div class="valor">
                             <p>{{ mediaCal }}</p>
                         </div>
@@ -316,7 +368,7 @@
                     <span> <b> Projeção no Período</b></span><br>
                 </div>
                 <div class="projecao">
-                    <div class="card2 h-6rem">
+                    <div class="card2 gap-3 h-6rem">
                         <div class="valor">
                             <p>{{ projecaoCal }}</p>
                         </div>

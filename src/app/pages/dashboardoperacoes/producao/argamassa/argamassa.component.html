@@ -5,12 +5,36 @@
         </p-divider>
     </div>
 
-    <div class="row1"@swipeAnimationReverse>
-        <div class="carregamentos w-8">
-            <div class="tituloCarregamento">
+    <div class=" flex flex-column lg:flex-row lg:justify-content-around"@swipeAnimationReverse>        
+        <div class="carregamentos w-12 mb-3 mr-3 md:w-12 lg:w-3 lg:mt-3">
+            <div class="mb-4 md:w-12 ">    
+                <div class="tituloCarregamento mt-4">
+                    <span> <b>Selecione a unidade</b></span><br>
+                </div>
+                <div class="flex flex-row  mt-4  justify-content-center">
+                    <div 
+                        class="btnCalc"
+                        (click)="exibirDadosTotal()"
+                        [ngClass]="{'selecionado': botaoSelecionado === 'total'}"    
+                    >
+                        <p>Toneladas</p>
+                    </div>
+                    <div 
+                        class="btnCalc"
+                        (click)="exibirDadosEnsacados()"
+                        [ngClass]="{'selecionado': botaoSelecionado === 'ensacados'}"    
+                    >
+                        <p>Ensacados</p>
+                    </div>
+                </div>    
+            </div>  
+        </div>
+        <div class="carregamentos w-12 md:w-12 lg:w-5">
+            <div class="tituloCarregamento mt-4">
                 <span> <b> Carregamento geral</b></span><br>
             </div>
-                <div class="carregamentoWrap flex-wrap gap-3">
+
+                <div class="carregamentoWrap flex-wrap gap-3" *ngIf="!exibirEnsacados">
                     <div class="cardCarregmento">
                         <div class="valorCarregamento">
                             <p>{{ totalCarregamentoDia }}</p>
@@ -35,73 +59,105 @@
                             <p>Acomulado ano atual</p>
                         </div>
                     </div>
-                </div>        
-        </div>
+                </div>
+                
+                <div class="carregamentoWrap flex-wrap gap-3" *ngIf="exibirEnsacados">
+                    <div class="cardCarregmento">
+                        <div class="valorCarregamento">
+                            <p>{{ totalEnsacadosCarregamentoDia }}</p>
+                        </div>
+                        <div class="unidadeCarregamento">
+                            <p>Último dia</p>
+                        </div>
+                    </div>
+                    <div class="cardCarregmento">
+                        <div class="valorCarregamento">
+                            <p>{{ totalEnsacadosCarregamentoMes }}</p>
+                        </div>
+                        <div class="unidadeCarregamento">
+                            <p>Acomulado mês atual</p>
+                        </div>
+                    </div>
+                    <div class="cardCarregmento">
+                        <div class="valorCarregamento">
+                            <p>{{ totalEnsacadosCarregamentoAno }}</p>
+                        </div>
+                        <div class="unidadeCarregamento">
+                            <p>Acomulado ano atual</p>
+                        </div>
+                    </div>
+                </div>
+
+        </div>  
     </div><!--EndCarregamento-->
-    <div class="row2 w-12 flex-column  lg:flex-row "@swipeAnimation>
-        <div class="justify-content-center mt-3">
-            <div class="tituloCarregamento">
-                <b>Produção</b>
+ 
+        <div class="row2 mt-5 m-auto"@swipeAnimation>
+            <div class="justify-content-center mt-3">
+                <div class="tituloCarregamento">
+                    <b>Produção Tn</b>
+                </div>
+                <div class=" flex flex-wrap justify-content-center gap-3">
+                    <div class="card">
+                        <div class="valor">
+                            <p>{{ totalProducaoDia }}</p>
+                        </div>
+                        <div class="unidade">
+                            <p>Último dia</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="valor">
+                            <p>{{ totalProducaoMes }}</p>
+                        </div>
+                        <div class="unidade">
+                            <p>Acomulado mês atual</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="valor">
+                            <p>{{ totalProducaoAno }}</p>
+                        </div>
+                        <div class="unidade">
+                            <p>Acomulado ano atual</p>
+                        </div>
+                    </div>
+                </div><!--EndTotais-->
             </div>
-            <div class=" flex flex-wrap justify-content-center gap-3">
-                <div class="card">
-                    <div class="valor">
-                        <p>{{ totalProducaoDia }}</p>
-                    </div>
-                    <div class="unidade">
-                        <p>Último dia</p>
-                    </div>
+        </div>
+        <div class="row2 mt-5 m-auto"@swipeAnimationReverse>        
+            <div class="justify-content-center mt-5 w-12">
+                <div class="tituloCarregamento">
+                    <b>Produção Ensacados</b>
                 </div>
-                <div class="card">
-                    <div class="valor">
-                        <p>{{ totalProducaoMes }}</p>
+                <div class="totais flex-wrap gap-3">
+                    <div class="card">
+                        <div class="valor">
+                            <p>{{ totalEnsacadosDia }}</p>
+                        </div>
+                        <div class="unidade">
+                            <p>Último dia</p>
+                        </div>
                     </div>
-                    <div class="unidade">
-                        <p>Acomulado mês atual</p>
+                    <div class="card">
+                        <div class="valor">
+                            <p>{{ totalEnsacadosMes }}</p>
+                        </div>
+                        <div class="unidade">
+                            <p>Acomulado mês atual</p>
+                        </div>
                     </div>
-                </div>
-                <div class="card">
-                    <div class="valor">
-                        <p>{{ totalProducaoAno }}</p>
+                    <div class="card">
+                        <div class="valor">
+                            <p>{{ totalEnsacadosAno }}</p>
+                        </div>
+                        <div class="unidade">
+                            <p>Acomulado ano atual</p>
+                        </div>
                     </div>
-                    <div class="unidade">
-                        <p>Acomulado ano atual</p>
-                    </div>
-                </div>
-            </div><!--EndTotais-->
-        </div>    
-        <div class="justify-content-center mt-3 w-6">
-            <div class="tituloCarregamento">
-                <b>Volume ensacado</b>
-            </div>
-            <div class="totais flex-wrap gap-3">
-                <div class="card">
-                    <div class="valor">
-                        <p>{{ totalEnsacadosDia }}</p>
-                    </div>
-                    <div class="unidade">
-                        <p>Último dia</p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="valor">
-                        <p>{{ totalEnsacadosMes }}</p>
-                    </div>
-                    <div class="unidade">
-                        <p>Acomulado mês atual</p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="valor">
-                        <p>{{ totalEnsacadosAno }}</p>
-                    </div>
-                    <div class="unidade">
-                        <p>Acomulado ano atual</p>
-                    </div>
-                </div>
-            </div><!--EndTotais-->
-        </div><!--EndProdutividade-->
-    </div><!--enRow2-->
+                </div><!--EndTotais-->
+            </div><!--EndProdutividade-->
+        </div><!--enRow2-->
+ 
     <div class="wrapInplace">
         <p-inplace
             
@@ -113,7 +169,7 @@
                 </div>
             </ng-template>
             <ng-template pTemplate="content">
-                <p-table [value]="dados" responsiveLayout="scroll" stripedRows scrollable="true">
+                <p-table [value]="dados" responsiveLayout="scroll" stripedRows scrollable="true" *ngIf="exibirEnsacados">
                     <ng-template pTemplate="header">
                         <tr>
                             <th>Produto</th>
@@ -291,14 +347,14 @@
                             <td>{{ dado.mes20 }}</td>
                             <td>{{ dado.ano20 }}</td>
                         </tr>
-                        <tr *ngIf="dado.nome21">
+                        <!-- <tr *ngIf="dado.nome21">
                             <td>
                                 <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',2718);calcularGraficosCarregamentoMensal('mensal',2718)" style="cursor: pointer;"></i> {{ dado.nome21 }}
                             </td>
                             <td>{{ dado.dia21 }}</td>
                             <td>{{ dado.mes21 }}</td>
                             <td>{{ dado.ano21 }}</td>
-                        </tr>
+                        </tr> -->
                         <tr *ngIf="dado.nome22">
                             <td>
                                 <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',25878);calcularGraficosCarregamentoMensal('mensal',25878)" style="cursor: pointer;"></i> {{ dado.nome22 }}
@@ -333,6 +389,230 @@
                         </tr>
                     </ng-template>
                 </p-table>
+
+
+
+                <p-table [value]="dados" responsiveLayout="scroll" stripedRows scrollable="true" *ngIf="!exibirEnsacados">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Produto</th>
+                            <th>Último dia</th>
+                            <th>Acumulado Mês</th>
+                            <th>Acumulado Ano</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-dado>
+                        <tr *ngIf="dado.tnNome26">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',2728);calcularGraficosCarregamentoMensal('mensal',2728)" style="cursor: pointer;"></i> {{ dado.tnNome26 }} 
+                            </td>
+                            <td>{{ dado.tnDia26 }}</td>
+                            <td>{{ dado.tnMes26 }}</td>
+                            <td>{{ dado.tnAno26 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome27">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',22089);calcularGraficosCarregamentoMensal('mensal',22089)" style="cursor: pointer;"></i> {{ dado.tnNome27 }}
+                            </td>
+                            <td>{{ dado.tnDia27 }}</td>
+                            <td>{{ dado.tnMes27 }}</td>
+                            <td>{{ dado.tnAno27 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome28">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',2708);calcularGraficosCarregamentoMensal('mensal',2708)" style="cursor: pointer;"></i> {{ dado.tnNome28 }}
+                            </td>
+                            <td>{{ dado.tnDia28 }}</td>
+                            <td>{{ dado.tnMes28 }}</td>
+                            <td>{{ dado.tnAno28 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome29">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',2709);calcularGraficosCarregamentoMensal('mensal',2709)" style="cursor: pointer;"></i> {{ dado.tnNome29 }}
+                            </td>
+                            <td>{{ dado.tnDia29 }}</td>
+                            <td>{{ dado.tnMes29 }}</td>
+                            <td>{{ dado.tnAno29 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome30">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',2710);calcularGraficosCarregamentoMensal('mensal',2710)" style="cursor: pointer;"></i> {{ dado.tnNome30 }}
+                            </td>
+                            <td>{{ dado.tnDia30 }}</td>
+                            <td>{{ dado.tnMes30 }}</td>
+                            <td>{{ dado.tnAno30 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome31">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',2730);calcularGraficosCarregamentoMensal('mensal',2730)" style="cursor: pointer;"></i> {{ dado.tnNome31 }}
+                            </td>
+                            <td>{{ dado.tnDia31 }}</td>
+                            <td>{{ dado.tnMes31 }}</td>
+                            <td>{{ dado.tnAno31 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome32">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',23987);calcularGraficosCarregamentoMensal('mensal',23987)" style="cursor: pointer;"></i> {{ dado.tnNome32 }}
+                            </td>
+                            <td>{{ dado.tnDia32 }}</td>
+                            <td>{{ dado.tnMes32 }}</td>
+                            <td>{{ dado.tnAno32 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome33">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',23988);calcularGraficosCarregamentoMensal('mensal',23988)" style="cursor: pointer;"></i> {{ dado.tnNome33 }}
+                            </td>
+                            <td>{{ dado.tnDia33 }}</td>
+                            <td>{{ dado.tnMes33 }}</td>
+                            <td>{{ dado.tnAno33 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome34">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',23989);calcularGraficosCarregamentoMensal('mensal',23989)" style="cursor: pointer;"></i> {{ dado.tnNome34 }}
+                            </td>
+                            <td>{{ dado.tnDia34 }}</td>
+                            <td>{{ dado.tnMes34 }}</td>
+                            <td>{{ dado.tnAno34 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome35">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',24021);calcularGraficosCarregamentoMensal('mensal',24021)" style="cursor: pointer;"></i> {{ dado.tnNome35 }}
+                            </td>
+                            <td>{{ dado.tnDia35 }}</td>
+                            <td>{{ dado.tnMes35 }}</td>
+                            <td>{{ dado.tnAno35 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome36">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',24022);calcularGraficosCarregamentoMensal('mensal',24022)" style="cursor: pointer;"></i> {{ dado.tnNome36 }}
+                            </td>
+                            <td>{{ dado.tnDia36 }}</td>
+                            <td>{{ dado.tnMes36 }}</td>
+                            <td>{{ dado.tnAno36 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome37">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',24023);calcularGraficosCarregamentoMensal('mensal',24023)" style="cursor: pointer;"></i> {{ dado.tnNome37}}
+                            </td>
+                            <td>{{ dado.tnDia37 }}</td>
+                            <td>{{ dado.tnMes37 }}</td>
+                            <td>{{ dado.tnAno37 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome38">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',24019);calcularGraficosCarregamentoMensal('mensal',24019)" style="cursor: pointer;"></i> {{ dado.tnNome38 }}
+                            </td>
+                            <td>{{ dado.tnDia38 }}</td>
+                            <td>{{ dado.tnMes38 }}</td>
+                            <td>{{ dado.tnAno38 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome39">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',24020);calcularGraficosCarregamentoMensal('mensal',24020)" style="cursor: pointer;"></i> {{ dado.tnNome39 }}
+                            </td>
+                            <td>{{ dado.tnDia39 }}</td>
+                            <td>{{ dado.tnMes39 }}</td>
+                            <td>{{ dado.tnAno39 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome40">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',24024);calcularGraficosCarregamentoMensal('mensal',24024)" style="cursor: pointer;"></i> {{ dado.tnNome40 }}
+                            </td>
+                            <td>{{ dado.tnDia40 }}</td>
+                            <td>{{ dado.tnMes40 }}</td>
+                            <td>{{ dado.tnAno40 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome41">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',2715);calcularGraficosCarregamentoMensal('mensal',2715)" style="cursor: pointer;"></i> {{ dado.tnNome41 }}
+                            </td>
+                            <td>{{ dado.tnDia41 }}</td>
+                            <td>{{ dado.tnMes41 }}</td>
+                            <td>{{ dado.tnAno41 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome42">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',2716);calcularGraficosCarregamentoMensal('mensal',2716)" style="cursor: pointer;"></i> {{ dado.tnNome42 }}
+                            </td>
+                            <td>{{ dado.tnDia42 }}</td>
+                            <td>{{ dado.tnMes42 }}</td>
+                            <td>{{ dado.tnAno42 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome43">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',2711);calcularGraficosCarregamentoMensal('mensal',2711)" style="cursor: pointer;"></i> {{ dado.tnNome43 }}
+                            </td>
+                            <td>{{ dado.tnDia43 }}</td>
+                            <td>{{ dado.tnMes43 }}</td>
+                            <td>{{ dado.tnAno43 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome44">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',2714);calcularGraficosCarregamentoMensal('mensal',2714)" style="cursor: pointer;"></i> {{ dado.tnNome44 }}
+                            </td>
+                            <td>{{ dado.tnDia44 }}</td>
+                            <td>{{ dado.tnMes44 }}</td>
+                            <td>{{ dado.tnAno44 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome45">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',24222);calcularGraficosCarregamentoMensal('mensal',24222)" style="cursor: pointer;"></i> {{ dado.tnNome45 }}
+                            </td>
+                            <td>{{ dado.tnDia45 }}</td>
+                            <td>{{ dado.tnMes45 }}</td>
+                            <td>{{ dado.tnAno45 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome46">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',2717);calcularGraficosCarregamentoMensal('mensal',2717)" style="cursor: pointer;"></i> {{ dado.tnNome46 }}
+                            </td>
+                            <td>{{ dado.tnDia46 }}</td>
+                            <td>{{ dado.tnMes46 }}</td>
+                            <td>{{ dado.tnAno46 }}</td>
+                        </tr>
+                        <!-- <tr *ngIf="dado.tnNome47">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',2718);calcularGraficosCarregamentoMensal('mensal',2718)" style="cursor: pointer;"></i> {{ dado.tnNome47 }}
+                            </td>
+                            <td>{{ dado.tnDia47 }}</td>
+                            <td>{{ dado.tnMes47 }}</td>
+                            <td>{{ dado.tnAno47 }}</td>
+                        </tr> -->
+                        <tr *ngIf="dado.tnDia48">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',25878);calcularGraficosCarregamentoMensal('mensal',25878)" style="cursor: pointer;"></i> {{ dado.tnNome48 }}
+                            </td>
+                            <td>{{ dado.tnDia48 }}</td>
+                            <td>{{ dado.tnMes48 }}</td>
+                            <td>{{ dado.tnAno48 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome49">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',25877);calcularGraficosCarregamentoMensal('mensal',25877)" style="cursor: pointer;"></i> {{ dado.tnNome49 }}
+                            </td>
+                            <td>{{ dado.tnDia49 }}</td>
+                            <td>{{ dado.tnMes49 }}</td>
+                            <td>{{ dado.tnAno49 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome50">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',2719);calcularGraficosCarregamentoMensal('mensal',2719)" style="cursor: pointer;"></i> {{ dado.tnNome50 }}
+                            </td>
+                            <td>{{ dado.tnDia50 }}</td>
+                            <td>{{ dado.tnMes50 }}</td>
+                            <td>{{ dado.tnAno50 }}</td>
+                        </tr>
+                        <tr *ngIf="dado.tnNome51">
+                            <td>
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',2729);calcularGraficosCarregamentoMensal('mensal',2729)" style="cursor: pointer;"></i> {{ dado.tnNome51 }}
+                            </td>
+                            <td>{{ dado.tnDia51 }}</td>
+                            <td>{{ dado.tnMes51 }}</td>
+                            <td>{{ dado.tnAno51 }}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+
             </ng-template>
         </p-inplace>
     </div>    
@@ -414,27 +694,27 @@
                     <span> <b>Média do Período</b></span><br>
                 </div>
                 <div class="media">
-                    <div class="card2 h-6rem">
+                    <div class="card2 h-6rem gap-3">
                         <div class="valor">
                             <p>{{ mediaProducao }}</p>
                         </div>
                         <div class="unidade2">
-                            <p>Sc</p>
+                            <p>Tn</p>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="af w-6 lg:w-full">    
                 <div class="titulo2">
-                    <span> <b> Projeção para o Período</b></span><br>
+                    <span> <b> Projeção no Período</b></span><br>
                 </div>
                 <div class="media">
-                    <div class="card2 h-6rem">
+                    <div class="card2 h-6rem gap-3">
                         <div class="valor">
                             <p>{{ projecaoProducao }}</p>
                         </div>
                         <div class="unidade2">
-                            <p>Sc</p>
+                            <p>Tn</p>
                         </div>
                     </div>
                 </div>
@@ -452,27 +732,27 @@
                     <span> <b>Média do Período</b></span><br>
                 </div>
                 <div class="media">
-                    <div class="card2 h-6rem">
+                    <div class="card2 h-6rem gap-3">
                         <div class="valor">
                             <p>{{ mediaCarregamento }}</p>
                         </div>
                         <div class="unidade2">
-                            <p>Sc</p>
+                            <p>Tn</p>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="af w-6 lg:w-full">
                 <div class="titulo2">
-                    <span> <b> Projeção para o Período</b></span><br>
+                    <span> <b> Projeção no Período</b></span><br>
                 </div>
                 <div class="media">
-                    <div class="card2 h-6rem">
+                    <div class="card2 h-6rem gap-3">
                         <div class="valor">
                             <p>{{ projecaoCarregamento }}</p>
                         </div>
                         <div class="unidade2">
-                            <p>Sc</p>
+                            <p>Tn</p>
                         </div>
                     </div>
                 </div>
@@ -494,20 +774,30 @@
     </p-divider>   
     <div class="container">
         <div class="rowSuperior flex-wrap">
-            <div class="buttons w-12 lg:w-6">
+            <div class="buttons w-12 flex flex-column gap-3 lg:w-6 lg:flex-row">
                 <p-datepicker
                     [style]="{'width':'100%'}"
                     id="da" 
                     [(ngModel)]="data"
                     dateFormat="dd/mm/yy"                  
                     [showIcon]="true"
-                    placeholder="Data"
+                    placeholder="Data Início"
+                    appendTo="body"
+                >
+                </p-datepicker>
+                <p-datepicker
+                    [style]="{'width':'100%'}"
+                    id="da" 
+                    [(ngModel)]="dataFim"
+                    dateFormat="dd/mm/yy"                  
+                    [showIcon]="true"
+                    placeholder="Data Fim"
                     appendTo="body"
                 >
                 </p-datepicker>
                 <div 
                     class="btnCalcProd"
-                    (click)="calcularEquipamentosDetalhes(data)" 
+                    (click)="calcularEquipamentosDetalhes(data,dataFim)" 
                 >
                     <p>Calcular</p>
                 </div>
@@ -532,7 +822,7 @@
             <div class="w-12">
                 <div class="rowWrap flex flex-column lg:flex-row lg:w-12 lg:mt-1">
                     <div class="tituloFab">
-                        <b> Ensacados </b>
+                        <b> Ensacados Tn</b>
                     </div>
                     <div class="flex flex-column lg:flex-row lg:w-12">
                         <div class="flex flex-column lg:flex-row ">
@@ -580,7 +870,7 @@
                 </div>    
                 <div class="rowWrap flex flex-column lg:flex-row lg:w-12 lg:mt-1">
                     <div class="tituloFab">
-                        <b> Ensacados</b>
+                        <p><b>Ensacados Tn</b></p>
                     </div>
                     <div class="flex flex-column lg:flex-row lg:w-12">   
                         <div class="flex flex-column lg:flex-row">
@@ -634,7 +924,7 @@
                             <p>{{ argamassaProdutividade }}</p>
                         </div>
                         <div class="unidadeCarregamentoProd">
-                            <p>Produtividade do Dia</p>
+                            <p>Produtividade do Período</p>
                         </div>
                     </div>
                     <div class="cardFabDir">
@@ -642,7 +932,7 @@
                             <p>{{ argamassaProducao }}</p>
                         </div>
                         <div class="unidadeCarregamentoProd">
-                            <p>Produção do Dia</p>
+                            <p>Produção do Período</p>
                         </div>
                     </div>
                 </div>
