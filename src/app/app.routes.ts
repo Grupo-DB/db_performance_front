@@ -54,6 +54,7 @@ import { ComparativoavaliadoresComponent } from './pages/avaliacoes/comparativoa
 import { MapaavaliadosComponent } from './pages/avaliacoes/mapaavaliados/mapaavaliados.component';
 import { EvoulucaoavaliacoesComponent } from './pages/avaliacoes/evoulucaoavaliacoes/evoulucaoavaliacoes.component';
 import { RelatoriospdfComponent } from './pages/avaliacoes/relatoriospdf/relatoriospdf.component';
+import { OrcamentogrupoitensComponent } from './pages/baseOrcamentaria/orcamentoGrupoItens/orcamentogrupoitens/orcamentogrupoitens.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -111,7 +112,8 @@ export const routes: Routes = [
       { path: 'baseOrcamentaria/orcamentoRealizado/realizado', component:RealizadoComponent },
       { path: 'baseOrcamentaria/dre/projecao', component:ProjecaoComponent },
       { path: 'baseOrcamentaria/dre/produto', component:ProdutoComponent },
-      { path: 'baseOrcamentaria/dre/projetado', component:ProjetadoComponent }
+      { path: 'baseOrcamentaria/dre/projetado', component:ProjetadoComponent },
+      { path: 'baseOrcamentaria/orcamentoGrupoItens/orcamentogrupoitens', component:OrcamentogrupoitensComponent },
     ],
   },
   

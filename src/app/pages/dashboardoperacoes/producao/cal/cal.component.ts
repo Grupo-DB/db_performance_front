@@ -10,27 +10,63 @@ import { Chart } from 'chart.js';
 import { DatePipe } from '@angular/common';
 import { CalendarModule } from 'primeng/calendar';
 import { FormsModule } from '@angular/forms';
-import { trigger, transition, style, animate } from '@angular/animations';
+import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 import { DatePickerModule } from 'primeng/datepicker';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-cal',
   standalone: true,
   imports: [
     DividerModule,CommonModule,RouterLink,DatePickerModule,
-    TableModule,DialogModule,CalendarModule,FormsModule
+    TableModule,DialogModule,CalendarModule,FormsModule,ProgressSpinnerModule
   ],
   providers: [
     HomeService,DatePipe
   ],
-  animations:[
-    trigger('efeitoFade',[
-      transition(':enter',[
-        style({ opacity: 0 }),
-        animate('2s', style({ opacity:1 }))
-      ])
-    ]),
-  ],
+    animations:[
+                  trigger('efeitoFade',[
+                          transition(':enter',[
+                            style({ opacity: 0 }),
+                            animate('2s', style({ opacity:1 }))
+                          ])
+                        ]),
+                        trigger('efeitoZoom', [
+                          transition(':enter', [
+                            style({ transform: 'scale(0)' }),
+                            animate('2s', style({ transform: 'scale(1)' })),
+                          ]),
+                        ]),
+                        trigger('bounceAnimation', [
+                          transition(':enter', [
+                            animate('4.5s ease-out', keyframes([
+                              style({ transform: 'scale(0.5)', offset: 0 }),
+                              style({ transform: 'scale(1.2)', offset: 0.5 }),
+                              style({ transform: 'scale(1)', offset: 1 }),
+                            ])),
+                          ]),
+                        ]),
+                        trigger('swipeAnimation', [
+                          transition(':enter', [
+                            style({ transform: 'translateX(-100%)' }),
+                            animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+                          ]),
+                          transition(':leave', [
+                            style({ transform: 'translateX(0)' }),
+                            animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+                          ]),
+                        ]),
+                        trigger('swipeAnimationReverse', [
+                          transition(':enter', [
+                            style({ transform: 'translateX(100%)' }),
+                            animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+                          ]),
+                          transition(':leave', [
+                            style({ transform: 'translateX(0)' }),
+                            animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+                          ]),
+                        ]),
+                ],
   templateUrl: './cal.component.html',
   styleUrl: './cal.component.scss'
 })
@@ -120,6 +156,7 @@ export class CalComponent implements OnInit {
   equipamentosVisivel: boolean = false;
   data: any;
   dataFim: any;
+  loading: boolean = false;
   constructor (
   private  homeService: HomeService,
   private datePipe: DatePipe,
@@ -141,7 +178,7 @@ export class CalComponent implements OnInit {
     const respostaAtual = response.atual;
     const respostaMensal = response.mensal;
     const respostaAnual = response.anual;
-
+  
     // Processando os dados da Movimentação de cargas Fábrica de Fertilizantes
     this.carregamentoGeralDia = respostaAtual.total_movimentacao;
     this.carregamentoGeralMes = respostaMensal.total_movimentacao;
@@ -409,6 +446,7 @@ graficoAnualHidraulicaCarregamento(tipoCalculo: string){
 calcularEquipamentosDetalhes(data: any, dataFim: any){
   const formattedDate = this.datePipe.transform(this.data, 'yyyy-MM-dd');
   const formattedDateFim = this.datePipe.transform(this.dataFim, 'yyyy-MM-dd');
+  this.loading = true;
   this.homeService.calculosCalEquipamentosDetalhes(formattedDate,formattedDateFim).subscribe(response => {
     /**MB01 */
     this.mb01HoraParado = response.mb01_hora_parado_quant;
@@ -435,6 +473,7 @@ calcularEquipamentosDetalhes(data: any, dataFim: any){
     this.ensacadosEstoque = response.estoque_total;
     this.ensacadosProducaoGeral = response.producao_geral;
     this.ensacadosProdutividade = response.produtividade_geral;
+    this.loading = false;
   })
 }
 

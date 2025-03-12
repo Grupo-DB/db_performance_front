@@ -177,6 +177,9 @@ export class CalcarioComponent implements OnInit {
   loading3: boolean = true;
 
   data: any;
+  dataFim: any;
+
+  loadingResults: boolean = false;
   constructor(
     private homeService: HomeService,
     private datePipe: DatePipe,
@@ -279,9 +282,11 @@ export class CalcarioComponent implements OnInit {
     this.equipamentosVisivel = true;
   }
 
-  calcularEquipamentos(data: any){
+  calcularEquipamentos(data: any, dataFim: any) {
     const formattedDate = this.datePipe.transform(this.data, 'yyyy-MM-dd');
-    this.homeService.calculosEquipamentosDetalhes(formattedDate).subscribe(response => {
+    const formattedDateFim = this.datePipe.transform(this.dataFim, 'yyyy-MM-dd');
+    this.loadingResults = true;
+    this.homeService.calculosEquipamentosDetalhes(formattedDate, formattedDateFim).subscribe(response => {
       this.fcmiMg01HoraProd = response.fcmi_mg01_hora_producao;
       this.fcmiMg01HoraParado = response.fcmi_mg01_hora_parado;
       this.fcmiMg01Producao = response.fcmi_mg01_producao;
@@ -325,6 +330,9 @@ export class CalcarioComponent implements OnInit {
       this.estoqueTotal = response.estoque_atual;
       this.estoqueFcmiii = response.estoque_fcmiii;
       this.estoqueFcms = response.estoque_fcms;
+
+      this.loadingResults = false;
+
     })
     
   }

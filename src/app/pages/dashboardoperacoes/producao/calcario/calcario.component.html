@@ -418,19 +418,29 @@
     </p-divider>
     <div class="container">
         <div class="rowSuperior flex-wrap">
-            <div class="buttons w-12 lg:w-6">
+            <div class="buttons flex flex-column gap-3 w-12 lg:w-6 lg:flex-row lg:ml-7">
                 <p-datepicker
                     [style]="{'width':'100%'}"
                     id="da" 
                     [(ngModel)]="data"
                     dateFormat="dd/mm/yy"                  
                     [showIcon]="true"
-                    placeholder="Data"
+                    placeholder="Data Inicio"
+                    appendTo="body"
+                >
+                </p-datepicker>
+                <p-datepicker
+                    [style]="{'width':'100%'}"
+                    id="da" 
+                    [(ngModel)]="dataFim"
+                    dateFormat="dd/mm/yy"                  
+                    [showIcon]="true"
+                    placeholder="Data Fim"
                     appendTo="body"
                 >
                 </p-datepicker>
                 <div class="btnCalcProd" 
-                    (click)="calcularEquipamentos(data)">
+                    (click)="calcularEquipamentos(data,dataFim)">
                     <p>Calcular</p>
                 </div>
             </div>    
@@ -454,8 +464,11 @@
                     <div class="tituloFab lg:w-2">
                         <b> FCM I </b>
                     </div>
-                    <div class="flex flex-column lg:flex-row lg:w-12">
-                            <div class="flex flex-column lg:w-12 ">
+                    <div *ngIf="loadingResults" class="loading-indicator">
+                        <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                    </div>
+                    <div class="flex flex-column lg:flex-row lg:w-12"*ngIf="!loadingResults">
+                            <div class="flex flex-column lg:w-12"@swipeAnimation>
                                 <div class="flex flex-column align-items-center lg:flex-row lg:mt-2">
                                     <div class="text-center font-bold w-4 -ml-8 lg:w-2 lg:ml-0">
                                         <p>MG-01</p>
@@ -531,7 +544,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="flex flex-column align-items-center lg:w-4 lg:-mt-2 lg:flex-row  ">
+                            <div class="flex flex-column align-items-center lg:w-4 lg:-mt-2 lg:flex-row"@swipeAnimationReverse>
                                 <div class="cardFab">
                                     <div class="valorCarregamentoFab">
                                         <p>{{ fcmiProdutividadeGeral }}</p>
@@ -557,8 +570,11 @@
                     <div class="tituloFab lg:w-2">
                         <b> FCM II </b>
                     </div>
-                    <div class="flex flex-column lg:flex-row lg:w-12">   
-                        <div class="flex flex-column lg:w-12">
+                    <div *ngIf="loadingResults" class="loading-indicator">
+                        <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                    </div>
+                    <div class="flex flex-column lg:flex-row lg:w-12"*ngIf="!loadingResults">   
+                        <div class="flex flex-column lg:w-12"@swipeAnimationReverse>
                             <div class="flex w-12 flex-column align-items-center lg:flex-row">
                                 <div class="text-center font-bold w-2 -ml-8 lg:w-1 lg:ml-0">
                                     <p>MG-01</p>
@@ -620,8 +636,11 @@
                     <div class="tituloFab lg:w-2">
                         <b> FCM III </b>
                     </div>
-                    <div class="flex flex-column  lg:w-12 lg:flex-row">
-                        <div class="flex flex-column lg:w-12 ">
+                    <div *ngIf="loadingResults" class="loading-indicator">
+                        <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                    </div>
+                    <div class="flex flex-column  lg:w-12 lg:flex-row"*ngIf="!loadingResults">
+                        <div class="flex flex-column lg:w-12"@swipeAnimation>
                             <div class="flex flex-column align-items-center lg:flex-row lg:mt-5 ">
                                 <div class="text-center font-bold w-2 -ml-8 lg:w-2 lg:ml-0">
                                     <p>MG-01</p>
@@ -735,8 +754,8 @@
                                 
                             </div>
                         </div>
-                        <div class="flex flex-column align-items-center lg:w-2 lg:-mt-5">    
-                            <div class="cardFab">
+                        <div class="flex flex-column align-items-center lg:w-2 lg:-mt-5"@swipeAnimationReverse>    
+                            <div class="cardFab w-10 lg:w-11">
                                 <div class="valorCarregamentoFab">
                                     <p>{{ fcmiiiProdutividadeGera }}</p>
                                 </div>
@@ -744,7 +763,7 @@
                                     <p>Produtividade fábrica</p>
                                 </div>
                             </div>
-                            <div class="cardFab lg:-mt-2">
+                            <div class="cardFab w-10 lg:w-11 lg:-mt-2">
                                 <div class="valorCarregamentoFab">
                                     <p>{{ fcmiiiProducaoGeral }}</p>
                                 </div>
@@ -756,9 +775,12 @@
                     </div><!--end row3-->
                 </div>       
             </div><!--end Esquerda-->
-            <div class="direita mt-3">
-                <div class="totais">
-                    <div class="cardFabDir">
+            <div *ngIf="loadingResults" class="loading-indicator">
+                <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+            </div>
+            <div class="direita mt-3 lg:w-2"*ngIf="!loadingResults">
+                <div class="totais"@efeitoFade>
+                    <div class="cardFabDir w-10">
                         <div class="valorCarregamentoFab">
                             <p>{{ produtividadeFabricasGeral }}</p>
                         </div>
@@ -766,7 +788,7 @@
                             <p>Produtividade</p>
                         </div>
                     </div>
-                    <div class="cardFabDir">
+                    <div class="cardFabDir w-10">
                         <div class="valorCarregamentoFab">
                             <p>{{ producaoGeralFabrica }}</p>
                         </div>
@@ -774,7 +796,7 @@
                             <p>Produção diária</p>
                         </div>
                     </div>
-                    <div class="cardFabDir">
+                    <div class="cardFabDir w-10">
                         <div class="valorCarregamentoFab">
                             <p>{{ estoqueFcms }}</p>
                         </div>
@@ -782,7 +804,7 @@
                             <p>Estq. FCM I/II</p>
                         </div>
                     </div>
-                    <div class="cardFabDir">
+                    <div class="cardFabDir w-10">
                         <div class="valorCarregamentoFab">
                             <p>{{ estoqueFcmiii }}</p>
                         </div>
@@ -790,7 +812,7 @@
                             <p>Estq. FCM III</p>
                         </div>
                     </div>
-                    <div class="cardFabDir">
+                    <div class="cardFabDir w-10">
                         <div class="valorCarregamentoFab">
                             <p>{{ estoqueTotal }}</p>
                         </div>

@@ -538,13 +538,13 @@
                             <td>{{ dado.tnMes42 }}</td>
                             <td>{{ dado.tnAno42 }}</td>
                         </tr>
-                        <tr *ngIf="dado.tnNome43">
+                        <tr *ngIf="dado.tnNome53">
                             <td>
-                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',2711);calcularGraficosCarregamentoMensal('mensal',2711)" style="cursor: pointer;"></i> {{ dado.tnNome43 }}
+                                <i class="pi pi-plus-circle" (click)="calcularGraficosMensal('mensal',2711);calcularGraficosCarregamentoMensal('mensal',2711)" style="cursor: pointer;"></i> {{ dado.tnNome53 }}
                             </td>
-                            <td>{{ dado.tnDia43 }}</td>
-                            <td>{{ dado.tnMes43 }}</td>
-                            <td>{{ dado.tnAno43 }}</td>
+                            <td>{{ dado.tnDia53 }}</td>
+                            <td>{{ dado.tnMes53 }}</td>
+                            <td>{{ dado.tnAno53 }}</td>
                         </tr>
                         <tr *ngIf="dado.tnNome44">
                             <td>
@@ -802,7 +802,7 @@
                     <p>Calcular</p>
                 </div>
             </div>    
-            <div class="rightEqpto w-12 lg:w-20rem">
+            <div class="rightEqpto w-12 lg:w-15rem">
                 <div class="tituloEqpto">
                     <span> <b>Carregamento geral</b></span><br>
                 </div>
@@ -824,8 +824,11 @@
                     <div class="tituloFab">
                         <b> Ensacados Tn</b>
                     </div>
-                    <div class="flex flex-column lg:flex-row lg:w-12">
-                        <div class="flex flex-column lg:flex-row ">
+                    <div *ngIf="loading" class="loading-indicator">
+                        <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                    </div> 
+                    <div class="flex flex-column lg:flex-row lg:w-12"*ngIf="!loading">
+                        <div class="flex flex-column lg:flex-row"@swipeAnimation>
                             <div class="flex w-12 flex-column align-items-center lg:flex-row">
                                 <div class="eqpto text-center w-2 -ml-8">
                                     <p>MH-01</p>
@@ -848,8 +851,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="flex flex-column w-12 align-items-center lg:flex-row">
-                            <div class="cardFab w-6">
+                        <div class="flex flex-column w-12 align-items-center lg:flex-row lg:justify-content-center"@swipeAnimationReverse>
+                            <div class="cardFab w-10 lg:w-4">
                                 <div class="valorCarregamentoProd">
                                     <p>{{ mh01Produtividade }}</p>
                                 </div>
@@ -857,7 +860,7 @@
                                     <p>Produtividade equipamento</p>
                                 </div>
                             </div>
-                            <div class="cardFab w-6">
+                            <div class="cardFab w-10 lg:w-4">
                                 <div class="valorCarregamentoProd">
                                     <p>{{ mh01Producao }}</p>
                                 </div>
@@ -872,8 +875,11 @@
                     <div class="tituloFab">
                         <p><b>Ensacados Tn</b></p>
                     </div>
-                    <div class="flex flex-column lg:flex-row lg:w-12">   
-                        <div class="flex flex-column lg:flex-row">
+                    <div *ngIf="loading" class="loading-indicator">
+                        <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                    </div> 
+                    <div class="flex flex-column lg:flex-row lg:w-12"*ngIf="!loading">   
+                        <div class="flex flex-column lg:flex-row"@swipeAnimation>
                             <div class="flex flex-column align-items-center lg:flex-row">
                                 <div class="eqpto text-center w-2 -ml-8">
                                     <p>MH-02</p>
@@ -896,8 +902,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="flex flex-column w-12 align-items-center lg:flex-row">
-                            <div class="cardFab w-6">
+                        <div class="flex flex-column w-12 align-items-center lg:flex-row lg:justify-content-center"@swipeAnimationReverse>
+                            <div class="cardFab w-10 lg:w-4">
                                 <div class="valorCarregamentoProd">
                                     <p>{{ mh02Produtividade }}</p>
                                 </div>
@@ -905,7 +911,7 @@
                                     <p>Produtividade equipamento</p>
                                 </div>
                             </div>
-                            <div class="cardFab w-6">
+                            <div class="cardFab w-10 lg:w-4">
                                 <div class="valorCarregamentoProd">
                                     <p>{{ mh02Producao }}</p>
                                 </div>
@@ -917,9 +923,9 @@
                     </div><!--end row2-->
                 </div><!--EndTitle-->          
             </div><!--end Esquerda-->
-            <div class="direita w-10 lg:w-2">
-                <div class="totais">
-                    <div class="cardFabDir">
+            <div class="direita w-12 lg:w-2"*ngIf="!loading">
+                <div class="totais"@swipeAnimationReverse>
+                    <div class="cardFabDir w-10 lg:w-10">
                         <div class="valorCarregamentoProd">
                             <p>{{ argamassaProdutividade }}</p>
                         </div>
@@ -927,7 +933,7 @@
                             <p>Produtividade do Período</p>
                         </div>
                     </div>
-                    <div class="cardFabDir">
+                    <div class="cardFabDir w-10 lg:w-10">
                         <div class="valorCarregamentoProd">
                             <p>{{ argamassaProducao }}</p>
                         </div>
@@ -989,5 +995,5 @@
             </div>
         </div>
     
-</div>
+    </div>
 </p-dialog> 

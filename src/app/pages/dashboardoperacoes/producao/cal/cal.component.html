@@ -407,7 +407,7 @@
             </div>
             <div class="af w-6 lg:w-full">    
                 <div class="titulo2">
-                    <span> <b> Projeção para o Período</b></span><br>
+                    <span> <b> Projeção no Período</b></span><br>
                 </div>
                 <div class="projecao">
                     <div class="card2 h-6rem">
@@ -445,7 +445,7 @@
             </div>
             <div class="af w-6 lg:w-full">
                 <div class="titulo2">
-                    <span> <b> Projeção para o Período</b></span><br>
+                    <span> <b> Projeção no Período</b></span><br>
                 </div>
                 <div class="projecao">
                     <div class="card2 h-6rem">
@@ -499,7 +499,7 @@
                             <p>Calcular</p>
                         </div>
                     </div>    
-                    <div class="rightEqpto w-12 lg:w-20rem">
+                    <div class="rightEqpto w-12 lg:w-21rem">
                         <div class="tituloEqpto">
                             <span> <b>Carregamento geral</b></span><br>
                         </div>
@@ -515,16 +515,20 @@
                         </div>    
                     </div>    
                 </div><!--end rowSupeiror-->
+                
                 <div class=" flex flex-column justify-content-center lg:flex-row lg:w-12">
                     <div class=" flex flex-column justify-content-center lg:w-12">
                         <div class="rowWrap w-12 flex flex-column lg:flex-row lg:w-11 lg:mt-3">
-                            <div class="tituloFab">
+                            <div class="tituloFab w-1">
                                 <b> Ensacados </b>
                             </div>
-                            <div class="flex flex-column lg:flex-row lg:w-12">
-                                <div class="flex flex-column lg:flex-row ">
-                                    <div class="flex w-12 flex-column align-items-center lg:flex-row">
-                                        <div class="eqpto text-center w-2 -ml-8">
+                            <div *ngIf="loading" class="loading-indicator">
+                                <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                            </div> 
+                            <div class="flex flex-column lg:flex-row lg:w-12" *ngIf="!loading">
+                                <div class="flex flex-column lg:flex-row">
+                                    <div class="flex w-12 flex-column align-items-center lg:flex-row"@swipeAnimation>
+                                        <div class="eqpto w-2 -ml-8">
                                             <p>MB-01</p>
                                         </div>
                                         <div class="cardProd">
@@ -545,8 +549,11 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="flex flex-column w-12 align-items-center lg:flex-row">
-                                    <div class="cardFab w-6">
+                                <div *ngIf="loading" class="loading-indicator">
+                                    <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                                </div> 
+                                <div class="flex flex-column w-12 align-items-center lg:flex-row lg:justify-content-center"@swipeAnimationReverse>
+                                    <div class="cardProd  w-10 lg:w-5">
                                         <div class="valorCarregamentoProd">
                                             <p>{{ mb01Produtividade }}</p>
                                         </div>
@@ -554,7 +561,7 @@
                                             <p>Produtividade equipamento</p>
                                         </div>
                                     </div>
-                                    <div class="cardFab">
+                                    <div class="cardProd  w-10 lg:w-5">
                                         <div class="valorCarregamentoProd">
                                             <p>{{ mb01Producao }}</p>
                                         </div>
@@ -566,13 +573,16 @@
                             </div><!--end row1-->
                         </div>    
                         <div class="rowWrap w-12 flex flex-column md:mt-3 w-11 lg:flex-row lg:w-11 lg:mt-3">
-                            <div class="tituloFab">
+                            <div class="tituloFab w-1">
                                 <b> Ensacados</b>
                             </div>
-                            <div class="flex flex-column lg:flex-row lg:w-12">   
+                            <div *ngIf="loading" class="loading-indicator">
+                                <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                            </div> 
+                            <div class="flex flex-column lg:flex-row lg:w-12"*ngIf="!loading">   
                                 <div class="flex flex-column lg:flex-row">
-                                    <div class="flex flex-column align-items-center lg:flex-row">
-                                        <div class="eqpto text-center w-2 -ml-8">
+                                    <div class="flex flex-column align-items-center lg:flex-row"@swipeAnimation>
+                                        <div class="eqpto text-left w-2 -ml-8">
                                             <p>MB-02</p>
                                         </div>
                                         <div class="cardProd">
@@ -593,8 +603,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="flex flex-column w-12 align-items-center lg:flex-row">
-                                    <div class="cardFab">
+                                
+                                <div class="flex flex-column w-12 align-items-center lg:flex-row lg:justify-content-center"@swipeAnimationReverse>
+                                    <div class="cardProd w-10 lg:w-5">
                                         <div class="valorCarregamentoProd">
                                             <p>{{ mb02Produtividade }}</p>
                                         </div>
@@ -602,7 +613,7 @@
                                             <p>Produtividade equipamento</p>
                                         </div>
                                     </div>
-                                    <div class="cardFab">
+                                    <div class="cardProd w-10 lg:w-5">
                                         <div class="valorCarregamentoProd">
                                             <p>{{ mb02Producao }}</p>
                                         </div>
@@ -614,13 +625,16 @@
                             </div><!--end row2-->
                         </div><!--EndTitle-->    
                         <div class="rowWrap w-12 flex flex-column md:mt-3 w-11 lg:flex-row lg:w-11 lg:mt-3">
-                            <div class="tituloFab">
+                            <div class="tituloFab w-1">
                                 <b> Ensacados </b>
                             </div>
-                            <div class="flex flex-column lg:flex-row lg:w-12">
-                                <div class="flex flex-column lg:flex-row">
-                                    <div class="flex flex-column align-items-center lg:flex-row">
-                                        <div class="eqpto text-center w-2 -ml-8">
+                            <div *ngIf="loading" class="loading-indicator">
+                                <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                            </div> 
+                            <div class="flex flex-column lg:flex-row lg:w-12"*ngIf="!loading">
+                                <div class="flex flex-column lg:flex-row"@swipeAnimation>
+                                    <div class="flex flex-column align-items-center w-12 lg:flex-row lg:justify-content-center">
+                                        <div class="eqpto text-left w-2 -ml-8">
                                             <p>MB-03</p>
                                         </div>
                                         <div class="cardProd">
@@ -641,8 +655,8 @@
                                         </div>
                                     </div>
                                 </div>    
-                                <div class="flex flex-column w-12 align-items-center lg:flex-row">
-                                    <div class="cardFab">
+                                <div class="flex flex-column w-12 align-items-center lg:flex-row lg:justify-content-center"@swipeAnimationReverse>
+                                    <div class="cardProd w-10 lg:w-5">
                                         <div class="valorCarregamentoProd">
                                             <p>{{ mb03Produtividade }}</p>
                                         </div>
@@ -650,7 +664,7 @@
                                             <p>Produtividade equipamento</p>
                                         </div>
                                     </div>
-                                    <div class="cardFab">
+                                    <div class="cardProd w-10 lg:w-5">
                                         <div class="valorCarregamentoProd">
                                             <p>{{ mb03Producao }}</p>
                                         </div>
@@ -662,13 +676,16 @@
                             </div><!--end row3-->
                         </div>
                         <div class="mt-3 rowWrap w-12 flex flex-column md:mt-3 w-11 lg:flex-row lg:w-11 lg:mt-3">
-                            <div class="tituloFab">
+                            <div class="tituloFab w-1">
                                 <b> Ensacados </b>
                             </div>
-                            <div class="flex flex-column lg:flex-row lg:w-12">
+                            <div *ngIf="loading" class="loading-indicator">
+                                <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                            </div> 
+                            <div class="flex flex-column lg:flex-row lg:w-12"*ngIf="!loading">
                                 <div class="flex flex-column lg:flex-row">
-                                    <div class="flex flex-column align-items-center lg:flex-row">
-                                        <div class="eqpto  text-center w-2 -ml-8">
+                                    <div class="flex flex-column align-items-center lg:flex-row lg:justify-content-center"@swipeAnimation>
+                                        <div class="eqpto  text-left w-2 -ml-8">
                                             <p>MG-01</p>
                                         </div>
                                         <div class="cardProd">
@@ -689,8 +706,8 @@
                                         </div>
                                     </div>
                                 </div>    
-                                <div class="flex flex-column w-12 align-items-center lg:flex-row">
-                                    <div class="cardFab">
+                                <div class="flex flex-column w-12 align-items-center lg:flex-row lg:justify-content-center"@swipeAnimationReverse>
+                                    <div class="cardProd w-10 lg:w-5">
                                         <div class="valorCarregamentoProd">
                                             <p>{{ mg01Produtividade }}</p>
                                         </div>
@@ -698,7 +715,7 @@
                                             <p>Produtividade equipamento</p>
                                         </div>
                                     </div>
-                                    <div class="cardFab">
+                                    <div class="cardProd w-10 lg:w-5">
                                         <div class="valorCarregamentoProd">
                                             <p>{{ mg01Producao }}</p>
                                         </div>
@@ -710,9 +727,9 @@
                             </div><!--end row3-->
                         </div>        
                     </div><!--end Esquerda-->
-                    <div class="direita w-10 lg:w-2">
-                        <div class="totais">
-                            <div class="cardFabDir">
+                    <div class="direita w-12 lg:w-3 lg:mt-3"*ngIf="!loading">
+                        <div class="totais"@efeitoFade>
+                            <div class="cardFabDir w-10 lg:w-8">
                                 <div class="valorCarregamentoProd">
                                     <p>{{ ensacadosProdutividade }}</p>
                                 </div>
@@ -720,15 +737,15 @@
                                     <p>Produtividade</p>
                                 </div>
                             </div>
-                            <div class="cardFabDir">
+                            <div class="cardFabDir w-10 lg:w-8">
                                 <div class="valorCarregamentoProd">
                                     <p>{{ ensacadosProducaoGeral }}</p>
                                 </div>
                                 <div class="unidadeCarregamentoProd">
-                                    <p>Produção diária</p>
+                                    <p>Produção total</p>
                                 </div>
                             </div>
-                            <div class="cardFabDir">
+                            <div class="cardFabDir w-10 lg:w-8">
                                 <div class="valorCarregamentoProd">
                                     <p>{{ ensacadosEstoque }}</p>
                                 </div>

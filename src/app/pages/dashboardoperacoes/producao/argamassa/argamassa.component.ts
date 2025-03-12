@@ -16,6 +16,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 interface Produto {
   nome: string;
   cod: number;
@@ -24,7 +25,7 @@ interface Produto {
   selector: 'app-argamassa',
   standalone: true,
   imports: [
-    DividerModule,CommonModule,RouterLink,DatePickerModule,
+    DividerModule,CommonModule,RouterLink,DatePickerModule,ProgressSpinnerModule,
     InplaceModule,TableModule,DialogModule,MatSelectModule,FormsModule,DropdownModule,CalendarModule,SelectModule
   ],
   providers: [
@@ -57,6 +58,7 @@ interface Produto {
 })
 export class ArgamassaComponent implements OnInit {
 selectedButton: string = 'mensal';  // Define o valor inicial (mensal ou anual)
+loading: boolean = false;
 //Carregamento
 totalCarregamentoDia!: number;
 totalCarregamentoMes!: number;
@@ -231,7 +233,7 @@ constructor(
         { nome14: 'PRIMEX ARGAMASSA ESTRUTURAL AAE-ESPECIAL - SC 20 KG', dia14:respostaAtual['PRIMEX ARGAMASSA ESTRUTURAL AAE-ESPECIAL - SC 20 KG'],mes14:respostaMensal['PRIMEX ARGAMASSA ESTRUTURAL AAE-ESPECIAL - SC 20 KG'],ano14:respostaAnual['PRIMEX ARGAMASSA ESTRUTURAL AAE-ESPECIAL - SC 20 KG'] },
         { nome15: 'PRIMEX ARGAMASSA GROSSA - SC- 25 KG', dia15:respostaAtual['PRIMEX ARGAMASSA GROSSA - SC- 25 KG'],mes15:respostaMensal['PRIMEX ARGAMASSA GROSSA - SC- 25 KG'],ano15:respostaAnual['PRIMEX ARGAMASSA GROSSA - SC- 25 KG'] },
         { nome16: 'PRIMEX ARGAMASSA GROSSA C/ FIBRA - SC 25 KG', dia16:respostaAtual['PRIMEX ARGAMASSA GROSSA C/ FIBRA - SC 25 KG'],mes16:respostaMensal['PRIMEX ARGAMASSA GROSSA C/ FIBRA - SC 25 KG'],ano16:respostaAnual['PRIMEX ARGAMASSA GROSSA C/ FIBRA - SC 25 KG'] },
-        { nome17: 'PRIMEX ARGAMASSA MEDIA - SC 25 KG', dia17:respostaAtual['PRIMEX ARGAMASSA MEDIA - SC 25 KG'],mes17:respostaMensal['PRIMEX ARGAMASSA MEDIA - SC 25 KG'],ano17:respostaAtual['PRIMEX ARGAMASSA MEDIA - SC 25 KG'] },
+        { nome17: 'PRIMEX ARGAMASSA MEDIA - SC 25 KG', dia17:respostaAtual['PRIMEX ARGAMASSA MEDIA - SC 25 KG'],mes17:respostaMensal['PRIMEX ARGAMASSA MEDIA - SC 25 KG'],ano17:respostaAnual['PRIMEX ARGAMASSA MEDIA - SC 25 KG'] },
         { nome18: 'PRIMEX ARGAMASSA MEDIA C/ FIBRA - SC 25 KG', dia18:respostaAtual['PRIMEX ARGAMASSA MEDIA C/ FIBRA - SC 25 KG'],mes18:respostaMensal['PRIMEX ARGAMASSA MEDIA C/ FIBRA - SC 25 KG'],ano18:respostaAnual['PRIMEX ARGAMASSA MEDIA C/ FIBRA - SC 25 KG'] },
         { nome19: 'PRIMEX ARGAMASSA MULTIPLO USO - SC 20 KG', dia19:respostaAtual['PRIMEX ARGAMASSA MULTIPLO USO - SC 20 KG'],mes19:respostaMensal['PRIMEX ARGAMASSA MULTIPLO USO - SC 20 KG'],ano19:respostaAnual['PRIMEX ARGAMASSA MULTIPLO USO - SC 20 KG'] },
         { nome20: 'PRIMEX ARGAMASSA P/ PISO - SC 25 KG', dia20:respostaAtual['PRIMEX ARGAMASSA P/ PISO - SC 25 KG'],mes20:respostaMensal['PRIMEX ARGAMASSA P/ PISO - SC 25 KG'],ano20:respostaAnual['PRIMEX ARGAMASSA P/ PISO - SC 25 KG'] },
@@ -259,7 +261,7 @@ constructor(
         { tnNome40: 'PRIMEX ARGAMASSA ESTRUTURAL AAE-ESPECIAL - TN', tnDia40:respostaAtual['PRIMEX ARGAMASSA ESTRUTURAL AAE-ESPECIAL - TN'],tnMes40:respostaMensal['PRIMEX ARGAMASSA ESTRUTURAL AAE-ESPECIAL - TN'],tnAno40:respostaAnual['PRIMEX ARGAMASSA ESTRUTURAL AAE-ESPECIAL - TN'] },
         { tnNome41: 'PRIMEX ARGAMASSA GROSSA - TN', tnDia41:respostaAtual['PRIMEX ARGAMASSA GROSSA - TN'],tnMes41:respostaMensal['PRIMEX ARGAMASSA GROSSA - TN'],tnAno41:respostaAnual['PRIMEX ARGAMASSA GROSSA - TN'] },
         { tnNome42: 'PRIMEX ARGAMASSA GROSSA C/ FIBRA - TN', tnDia42:respostaAtual['PRIMEX ARGAMASSA GROSSA C/ FIBRA - TN'],tnMes42:respostaMensal['PRIMEX ARGAMASSA GROSSA C/ FIBRA - TN'],tnAno42:respostaAnual['PRIMEX ARGAMASSA GROSSA C/ FIBRA - TN'] },
-        { tnNome43: 'PRIMEX ARGAMASSA MEDIA - TN', tnDia43:respostaAtual['PRIMEX ARGAMASSA MEDIA - TN'],tnMes43:respostaMensal['PRIMEX ARGAMASSA MEDIA - TN'],tnAno43:respostaAtual['PRIMEX ARGAMASSA MEDIA - TN'] },
+        { tnNome53: 'PRIMEX ARGAMASSA MEDIA - TN', tnDia53:respostaAtual['PRIMEX ARGAMASSA MEDIA - TN'],tnMes53:respostaMensal['PRIMEX ARGAMASSA MEDIA - TN'],tnAno53:respostaAnual['PRIMEX ARGAMASSA MEDIA - TN'] },
         { tnNome44: 'PRIMEX ARGAMASSA MEDIA C/ FIBRA - TN', tnDia44:respostaAtual['PRIMEX ARGAMASSA MEDIA C/ FIBRA - TN'],tnMes44:respostaMensal['PRIMEX ARGAMASSA MEDIA C/ FIBRA - TN'],tnAno44:respostaAnual['PRIMEX ARGAMASSA MEDIA C/ FIBRA - TN'] },
         { tnNome45: 'PRIMEX ARGAMASSA MULTIPLO USO - TN', tnDia45:respostaAtual['PRIMEX ARGAMASSA MULTIPLO USO - TN'],tnMes45:respostaMensal['PRIMEX ARGAMASSA MULTIPLO USO - TN'],tnAno45:respostaAnual['PRIMEX ARGAMASSA MULTIPLO USO - TN'] },
         { tnNome46: 'PRIMEX ARGAMASSA P/ PISO - TN', tnDia46:respostaAtual['PRIMEX ARGAMASSA P/ PISO - TN'],tnMes46:respostaMensal['PRIMEX ARGAMASSA P/ PISO - TN'],tnAno46:respostaAnual['PRIMEX ARGAMASSA P/ PISO - TN'] },
@@ -323,6 +325,7 @@ calcularProducaoGeralCarregamento(tipoCalculo: string){
 calcularEquipamentosDetalhes(data: any, dataFim: any) {
   const formattedDate = this.datePipe.transform(this.data, 'yyyy-MM-dd');
   const formattedDateFim = this.datePipe.transform(this.dataFim, 'yyyy-MM-dd');
+  this.loading = true;
   this.homeService.argamassaEquipamentosDetalhes(data, dataFim).subscribe( response => {
     /**MH-01 */
     this.mh01HoraParado = response.mh01_hora_parado;
@@ -338,6 +341,8 @@ calcularEquipamentosDetalhes(data: any, dataFim: any) {
     this.argamassaProducao = response.argamassa_producao;
     this.argamassaProdutividade = response.argamassa_produtividade;
     this.argamassaCarregamentoDia = response.total_movimentacao;
+    
+    this.loading = false;
   })
 }
   calcularGraficosMensal(tipoCalculo: string, produto:number){

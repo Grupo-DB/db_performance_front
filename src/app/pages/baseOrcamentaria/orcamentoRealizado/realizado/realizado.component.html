@@ -273,11 +273,8 @@
         </ng-template>
         <ng-template pTemplate="body" let-detalheLancamentoConta>
             <tr>                        
-                <td>{{ detalheLancamentoConta.LANCDATA }}</td>
-                <td>{{ detalheLancamentoConta.LANCCOD }}</td>
-                <td>{{ detalheLancamentoConta.DESCRICAO }}</td> 
-                <td>R$ {{ detalheLancamentoConta.SALDO | number: '1.2-2' }}</td>
-                <td>{{ detalheLancamentoConta.QTD }}</td>
+                <td>{{ detalheLancamentoConta }}</td>
+               
             </tr>
         </ng-template>
         <ng-template pTemplate="footer">

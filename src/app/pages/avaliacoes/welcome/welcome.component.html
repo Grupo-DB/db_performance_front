@@ -43,6 +43,11 @@
           </ul> 
           <ul>
             <li nz-menu-item   nzMatchRouter>
+              <a href="http://localhost:8000/admin/" target="_blank"><span nz-icon nzType="user" nzTheme="outline"></span>  Admin</a>
+            </li> 
+          </ul>
+          <ul>
+            <li nz-menu-item   nzMatchRouter>
               <a routerLink="baseOrcamentaria/orcamentoBase/homeOrcamento" ><span nz-icon nzType="dollar" nzTheme="outline"></span>  Orçamento</a>
             </li> 
           </ul>
@@ -69,7 +74,7 @@
           </ul>
           <ul>
             <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
-              <a routerLink="#" >BI - Produção</a>
+              <a href="https://app.powerbi.com/reportEmbed?reportId=db000524-b09b-4a62-9284-5b02d8a4bceb&autoAuth=true&ctid=6411a146-b3ce-405e-9f45-6a52f518d922&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly93YWJpLWJyYXppbC1zb3V0aC1yZWRpcmVjdC5hbmFseXNpcy53aW5kb3dzLm5ldC8ifQ%3D%3D" target="_blank" >BI - Produção</a>
             </li> 
           </ul>
         </li>

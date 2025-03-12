@@ -26,27 +26,13 @@ import { SelectModule } from 'primeng/select';
 interface RegisterGrupoItensForm{
   codigo: FormControl;
   nome_completo: FormControl;
-  nivel_1: FormControl;
-  nivel_2: FormControl;
-  nivel_3: FormControl;
-  nivel_4: FormControl;
-  nivel_5: FormControl;
-  nivel_6: FormControl;
-  nivel_7: FormControl;
   gestor: FormControl;
 }
 
 export interface GrupoItens{
-  id: number;
+  id: string;
   codigo: string;
   nome_completo: string;
-  nivel_1: string;
-  nivel_2: string;
-  nivel_3: string;
-  nivel_4: string;
-  nivel_5: string;
-  nivel_6: string;
-  nivel_7: string;
   gestor: string;
 }
 
@@ -132,26 +118,12 @@ export class GrupoItensComponent implements OnInit {
     this.registerForm = new FormGroup({
       codigo: new FormControl('', Validators.required),
       nome_completo: new FormControl('', Validators.required),
-      nivel_1: new FormControl('', Validators.required),
-      nivel_2: new FormControl('', Validators.required),
-      nivel_3: new FormControl('', Validators.required),
-      nivel_4: new FormControl('', Validators.required),
-      nivel_5: new FormControl('', Validators.required),
-      nivel_6: new FormControl('', Validators.required),
-      nivel_7: new FormControl('', Validators.required),
       gestor: new FormControl('', Validators.required),
     });
     this.editForm = this.fb.group({
       id:[''],
       codigo:[''],
       nome_completo:[''],
-      nivel_1:[''],
-      nivel_2:[''],
-      nivel_3:[''],
-      nivel_4:[''],
-      nivel_5:[''],
-      nivel_6:[''],
-      nivel_7:[''],
       gestor:['']
     });
   }
@@ -202,13 +174,6 @@ export class GrupoItensComponent implements OnInit {
       id: grupoItens.id,
       codigo: grupoItens.codigo,
       nome_completo: grupoItens.nome_completo,
-      nivel_1: grupoItens.nivel_1,
-      nivel_2: grupoItens.nivel_2,
-      nivel_3: grupoItens.nivel_3,
-      nivel_4: grupoItens.nivel_4,
-      nivel_5: grupoItens.nivel_5,
-      nivel_6: grupoItens.nivel_6,
-      nivel_7: grupoItens.nivel_7,
       gestor: grupoItens.gestor
     })
   }
@@ -219,13 +184,6 @@ export class GrupoItensComponent implements OnInit {
     const dadosAtualizados: Partial<GrupoItens>={
       codigo: this.editForm.value.codigo,
       nome_completo: this.editForm.value.nome_completo,
-      nivel_1: this.editForm.value.nivel_1,
-      nivel_2: this.editForm.value.nivel_2,
-      nivel_3: this.editForm.value.nivel_3,
-      nivel_4: this.editForm.value.nivel_4,
-      nivel_5: this.editForm.value.nivel_5,
-      nivel_6: this.editForm.value.nivel_6,
-      nivel_7: this.editForm.value.nivel_7,
       gestor: gestorId
     };
     this.grupoItensService.editGrupoItens(grupoItensId,dadosAtualizados).subscribe({
@@ -289,13 +247,6 @@ export class GrupoItensComponent implements OnInit {
     this.grupoItensService.registerGrupoItens(
       this.registerForm.value.codigo,
       this.registerForm.value.nome_completo,
-      this.registerForm.value.nivel_1,
-      this.registerForm.value.nivel_2,
-      this.registerForm.value.nivel_3,
-      this.registerForm.value.nivel_4,
-      this.registerForm.value.nivel_5,
-      this.registerForm.value.nivel_6,
-      this.registerForm.value.nivel_7,
       gestorId
     ).subscribe({
       next: () => {

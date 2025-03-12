@@ -537,11 +537,11 @@ align-items: center;
 justify-content: space-around;
 }
 .eqpto {
-display: flex;
-justify-content: center;  /* Centraliza horizontalmente */
-align-items: center;      /* Centraliza verticalmente */
-height: 120px;            /* Define uma altura qualquer para o exemplo */
-width: 100px;
+// display: flex;
+// justify-content: center;  /* Centraliza horizontalmente */
+// align-items: center;      /* Centraliza verticalmente */
+// height: 120px;            /* Define uma altura qualquer para o exemplo */
+// width: 100px;
 font-family: 'Aptos', sans-serif;
 font-weight: 700;
 }
@@ -590,7 +590,7 @@ display: flex;
 flex-direction: column;
 justify-content: center;
 align-items: center;
-height: 1052px;
+height: 700px;
 border-radius: 8px;
 background-color: #E3E7EC;
 

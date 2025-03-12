@@ -55,8 +55,8 @@ export class HomeService {
   fabricaCalcarioGrafico(tipoCalculo: any,fabrica:any,): Observable<any> {
     return this.httpClient.post<any>(this.graficosFabricaCalcarioUrl, { tipo_calculo: tipoCalculo, fabrica:fabrica });
   }
-  calculosEquipamentosDetalhes(data: any):Observable<any> {
-    return this.httpClient.post<any>(this.calculosEquipamentosUrl, { data: data }); 
+  calculosEquipamentosDetalhes(data:any, dataFim:any):Observable<any> {
+    return this.httpClient.post<any>(this.calculosEquipamentosUrl, { data: data, dataFim: dataFim}); 
   }
   fabricaFertilizante(tipoCalculo: string): Observable<any> {
     return this.httpClient.post<any>(this.fabricaFertilizanteUrl, { tipo_calculo: tipoCalculo});
