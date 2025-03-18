@@ -81,6 +81,9 @@ export class OrcamentoBaseService {
   getOrcamentoBaseByCcPai(id: any, ano: any, filiais:any): Observable<any>{
     return this.httpClient.get<any>(`${this.apiUrl}byCcPai/?centro_de_custo_pai_id=${id}&ano=${ano}&filial=${filiais}`)
   }
+  getOrcamentoBaseByGrupoIten(cod: any, centro_de_custo_pai_id: any, ano: any, filiais:any): Observable<any>{
+    return this.httpClient.get<any>(`${this.apiUrl}byGrupoItens/?grupo_itens=${cod}&centro_de_custo_pai_id=${centro_de_custo_pai_id}&ano=${ano}&filial=${filiais}`)
+  }
   calculosTotais(ano: any, filiais:any): Observable<any>{
     return this.httpClient.get<any>(`${this.apiUrl}total/?ano=${ano}&filial=${filiais}`)
   }

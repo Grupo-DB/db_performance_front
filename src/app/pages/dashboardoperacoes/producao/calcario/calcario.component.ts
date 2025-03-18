@@ -283,8 +283,15 @@ export class CalcarioComponent implements OnInit {
   }
 
   calcularEquipamentos(data: any, dataFim: any) {
-    const formattedDate = this.datePipe.transform(this.data, 'yyyy-MM-dd');
-    const formattedDateFim = this.datePipe.transform(this.dataFim, 'yyyy-MM-dd');
+   // Ajusta o horário da dataFim para 23:59:00
+  const dataFimComHorario = new Date(this.dataFim);
+  dataFimComHorario.setHours(23, 59, 0, 0); // Define o horário para 23:59:00
+
+  const dataInicioHorario = new Date(this.data);
+  dataInicioHorario.setHours(0, 0, 0, 0); // Define o horário para 00:00:00
+  // Formata as datas
+  const formattedDate = this.datePipe.transform(this.data, 'yyyy-MM-dd HH:mm:ss');
+  const formattedDateFim = this.datePipe.transform(dataFimComHorario, 'yyyy-MM-dd HH:mm:ss');
     this.loadingResults = true;
     this.homeService.calculosEquipamentosDetalhes(formattedDate, formattedDateFim).subscribe(response => {
       this.fcmiMg01HoraProd = response.fcmi_mg01_hora_producao;
@@ -335,6 +342,19 @@ export class CalcarioComponent implements OnInit {
 
     })
     
+  }
+
+  getPeriodoSelecionado(): string {
+    if (this.data && this.dataFim) {
+      const dataFimMenosUm = new Date(this.dataFim);
+      dataFimMenosUm.setDate(dataFimMenosUm.getDate() - 1); // Subtrai 1 dia
+  
+      const dataInicioFormatada = this.datePipe.transform(this.data, 'dd/MM/yyyy');
+      const dataFimFormatada = this.datePipe.transform(dataFimMenosUm, 'dd/MM/yyyy');
+  
+      return `Período selecionado: ${dataInicioFormatada} - ${dataFimFormatada}`;
+    }
+    return 'Nenhum período selecionado.';
   }
 
 // Função para gerar gráfico com base no tipo e na fábrica

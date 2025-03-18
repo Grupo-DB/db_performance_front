@@ -54,7 +54,7 @@
         <b>Acompanhamento do Orçamento</b>
     </p-divider>
 </div>
-
+<p-toast></p-toast>
 <div class="container">
     <div class="form-geral">
         <div class="flex flex-column lg:flex-row"@swipeAnimation>
@@ -115,10 +115,20 @@
                         <label>Ano Vigente</label>
                     </p-floatlabel>
                 </div>     
-                
-                                
-            
-                <div class=" w-full text-xs flex flex-row "  *ngIf="selectedCcPai.length <= 1">    
+                <p-toast></p-toast>
+                <div 
+                    class="form2 w-10 h-3rem"
+                    style="background-color: #002B5C; cursor: pointer; border-radius: 4px; color: #ffffff; display: flex; justify-content: center; align-items: center;font-size: 16px;"
+                    (click)="executarCalculos()"
+                >
+                    Calcular
+                </div>
+             <br>                   
+            <p-message severity="info"@swipeAnimation *ngIf="detalhes" closable="true">
+                <ng-template #icon>
+                    <p-avatar icon="pi pi-user" class=" inline-flex justify-content-center align-items-center text-center" size="large" [style]="{'background-color': '#ece9fc', 'color': '#004598','margin': '0 auto'}" />
+                </ng-template>
+                <div class=" w-full text-xs flex flex-row "  *ngIf="selectedCcPai.length <= 1 && detalhes">    
                     <div class="w-6 m-4 text-left  lg:w-2 lg:text-sm lg:ml-8 " >
                         Gestor:<br>
                         Empresa:<br>
@@ -135,10 +145,11 @@
                         <strong>{{ detalhes.cc_pai_detalhes.setor_detalhes.nome }}</strong><br>
                         <strong>{{ detalhes.cc_pai_detalhes.ambiente_detalhes.nome }}</strong><br>
                     </div>
-                </div>  
+                </div>
+            </p-message>      
             </div>            
                 
-            <div class="fg1 flex flex-column w-12 align-items-center lg:w-6"@slideAnimation>
+            <div class="fg1 flex flex-column w-12 align-items-center lg:w-6 lg:gap-2 lg:mt-5"@slideAnimation>
                 <p-card class="w-14rem mt-5 w-4 shadow-2 hover:shadow-6 md:w-10" [style]="{ 'background-color': '#002B5C' }" @slideAnimation>
                     <div class="flex justify-content-between gap-3">
                         <div class="flex flex-column gap-1">
@@ -175,7 +186,7 @@
             </div>
         </div>
 
-        <div *ngIf="isLoading" class="loading-animation flex flex-column form2 w-10 justify-content-center">
+        <div *ngIf="isLoading" class="loading-animation flex flex-column form2 w-5 justify-content-center m-auto">
             <!-- Coloque aqui a sua animação de carregamento -->
             <img src="assets/imagens/startmanager2.gif" alt="Loading..." class="w-12">
         </div>        
@@ -273,7 +284,11 @@
         </ng-template>
         <ng-template pTemplate="body" let-detalheLancamentoConta>
             <tr>                        
-                <td>{{ detalheLancamentoConta }}</td>
+                <td>{{ detalheLancamentoConta.LANCDATA }}</td>
+                <td>{{ detalheLancamentoConta.LANCCOD }}</td>
+                <td>{{ detalheLancamentoConta.DESCRICAO }}</td>
+                <td>R$ {{ detalheLancamentoConta.SALDO | number: '1.2-2' }}</td>
+                <td>{{ detalheLancamentoConta.QTD }}</td>
                
             </tr>
         </ng-template>

@@ -443,7 +443,7 @@
                     (click)="calcularEquipamentos(data,dataFim)">
                     <p>Calcular</p>
                 </div>
-            </div>    
+            </div>
             <div class="rightEqpto w-12 mt-3 lg:mt-0 lg:w-15rem">
                 <div class="tituloEqpto">
                     <span> <b>Carregamento geral Tn</b></span><br>
@@ -463,7 +463,7 @@
                 <div class="rowWrap mt-3 w-12 flex flex-column md:mt-3 w-11  lg:w-11 lg:mt-3">
                     <div class="tituloFab lg:w-2">
                         <b> FCM I </b>
-                    </div>
+                    </div>    
                     <div *ngIf="loadingResults" class="loading-indicator">
                         <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
                     </div>
@@ -820,6 +820,15 @@
                             <p>Estq. Total</p>
                         </div>
                     </div>
+                </div>
+                <div class="periodo-selecionado mt-3">
+                    <p style="font-size: 20px;" *ngIf="data && dataFim">
+                      Período: 
+                    </p>
+                    <b><p style="font-size: 20px;" >{{ data | date: 'dd/MM/yyyy' }} - {{ dataFim | date: 'dd/MM/yyyy' }}</p></b>
+                    <p *ngIf="!data || !dataFim">
+                      Nenhum período selecionado.
+                    </p>
                 </div>
             </div><!--End Direita-->
         </div><!--end containerInterno--> 

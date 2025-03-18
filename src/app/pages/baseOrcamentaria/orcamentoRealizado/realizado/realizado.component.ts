@@ -30,7 +30,11 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { RouterLink } from '@angular/router';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { DrawerModule } from 'primeng/drawer';
-import { th, tr } from 'date-fns/locale';
+import { MessageModule } from 'primeng/message';
+import { AvatarModule } from 'primeng/avatar';
+import { Toast } from 'ngx-toastr';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 export interface ResultadosTotaisArrayItem {
   label: string;
@@ -136,9 +140,9 @@ export interface FilialSga{
   selector: 'app-realizado',
   standalone: true,
   imports: [
-    DropdownModule,FloatLabelModule,DividerModule,CommonModule,FormsModule,InputNumberModule,DrawerModule,
-    MeterGroupModule,CardModule,ButtonModule,InplaceModule,DialogModule,TableModule,ChartModule,
-    SidebarModule,TabViewModule,MultiSelectModule,KnobModule,NzProgressModule,NzMenuModule,RouterLink
+    DropdownModule,FloatLabelModule,DividerModule,CommonModule,FormsModule,InputNumberModule,DrawerModule,ToastModule,
+    MeterGroupModule,CardModule,ButtonModule,InplaceModule,DialogModule,TableModule,ChartModule,MessageModule,
+    SidebarModule,TabViewModule,MultiSelectModule,KnobModule,NzProgressModule,NzMenuModule,RouterLink,AvatarModule
   ],
   animations: [
       trigger('slideAnimation', [
@@ -152,6 +156,26 @@ export interface FilialSga{
           style({ opacity: 0 }),
           animate('2s', style({ opacity:1 }))
         ])
+      ]),
+      trigger('swipeAnimation', [
+        transition(':enter', [
+          style({ transform: 'translateX(-100%)' }),
+          animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+        ]),
+        transition(':leave', [
+          style({ transform: 'translateX(0)' }),
+          animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+        ]),
+      ]),
+      trigger('swipeAnimationReverse', [
+        transition(':enter', [
+          style({ transform: 'translateX(100%)' }),
+          animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+        ]),
+        transition(':leave', [
+          style({ transform: 'translateX(0)' }),
+          animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+        ]),
       ]),
     ],
   templateUrl: './realizado.component.html',
@@ -277,6 +301,7 @@ export class RealizadoComponent implements OnInit {
     private centroCustoPaiService: CentrocustopaiService,
     private orcamentoBaseService: OrcamentoBaseService,
     private loginService: LoginService,
+    private messageService: MessageService
   ){}
   ngOnInit(): void {
 
@@ -376,31 +401,31 @@ export class RealizadoComponent implements OnInit {
   onFiliaisInformada(selectedCods: any[]): void{
     const selectedFiliais = this.filiaisSga.filter(filial => selectedCods.includes(filial.cod));
     this.selectedCodManagers = selectedFiliais.map(filial => filial.codManager).join(',');
-    this.orcamentosBaseByCcpai();
-    this.calculosOrcamentosRealizados();
-    this.calcularSaldo();
+    //this.orcamentosBaseByCcpai();
+   // this.calculosOrcamentosRealizados();
+   // this.calcularSaldo();
   }
 
   onAnoInformado(ano: any):void{
       
       this.selectedAno = ano; //Atualiza o ano
-      this.orcamentosBaseByCcpai();
-      this.calculosOrcamentosRealizados();
-      this.calcularSaldo();
+     // this.orcamentosBaseByCcpai();
+      //this.calculosOrcamentosRealizados();
+     // this.calcularSaldo();
   }
   
   onCcPaiSelecionado(ccPaiId: any[]): void {
     if (ccPaiId.length <= 1) {
       console.log('Centro de Custo Pai selecionado ID:', ccPaiId); // Log para depuração
       this.selectedCcPai = ccPaiId; // Atualiza a variável
-      this.orcamentosBaseByCcpai(); // Chama a API com o ID
-      this.ccPaiDetalhes(); 
+     // this.orcamentosBaseByCcpai(); // Chama a API com o ID
+      //this.ccPaiDetalhes(); 
       this.carregarCcs(ccPaiId);
       
     } else {
       this.selectedCcPai = ccPaiId;
       this.carregarCcs(ccPaiId);
-      this.orcamentosBaseByCcpai();
+      //this.orcamentosBaseByCcpai();
     }
   }
 
@@ -542,7 +567,7 @@ export class RealizadoComponent implements OnInit {
         console.log('Centros de Custo Originais:', centrosCusto);
         this.centrosCusto = centrosCusto.map((centroCusto: any)=>centroCusto.codigo);
         this.detalhes = centrosCusto[0];
-        this.calculosOrcamentosRealizados();
+        //this.calculosOrcamentosRealizados();
         console.log('Ccs',this.centrosCusto)
       }, error =>{
         console.error('Não rolou',error)
@@ -657,68 +682,87 @@ graficoContasAnaliticasAnual(): void{
     }, 0);
 }
 
-  calculosOrcamentosRealizados(){
-    this.isLoading=true;
-    
-    if (this.selectedCcPai !== null){
-      this.orcamentoBaseService.calcularOrcamentoRealizado(this.centrosCusto,this.selectedAno,this.selectedsFiliais).subscribe(
-        response =>{
-            this.isLoading=false;
+calculosOrcamentosRealizados(): Promise<void> {
+  this.isLoading = true;
 
-            this.teste = response.total_realizado;
-            
-            this.totalRealizado = Number(response.total_real);
+  return new Promise((resolve, reject) => {
+    if (this.selectedCcPai !== null) {
+      this.orcamentoBaseService.calcularOrcamentoRealizado(this.centrosCusto, this.selectedAno, this.selectedsFiliais).subscribe(
+        response => {
+          this.isLoading = false;
 
-            this.resultadosTotaisRealizado = [
-              { label: 'Realizado Total', num: 1, color1: '#004EAE', color2: '#fbbf24',  value: response.total_realizado, icon:'pi pi-wallet' },
-              //{ label: 'Orçado Mensal', num: 2, color1: '#FFB100', color2: '#fbbf24',  value: response.total_mensal, icon:'pi pi-wallet' },
-              //{ label: 'Orçado Anual',num: 3, color1: '#00B036', color2: '#fbbf24', value: response.total_anual, icon:'pi pi-wallet' },
-            ];
+          this.teste = response.total_realizado;
+          this.totalRealizado = Number(response.total_real);
 
-            this.dictRealizadoTipoCusto = response.total_tipo_deb;
-            this.tiposCusto = Object.keys(response.total_tipo_deb).map((key) => ({
-              label: key,
-              color1: '#002B5C',
-              color2: '#fbbf24',
-              value: response.total_tipo_deb[key],
-              icon: 'pi pi-chart-bar',
-            }));
+          this.resultadosTotaisRealizado = [
+            { label: 'Realizado Total', num: 1, color1: '#004EAE', color2: '#fbbf24', value: response.total_realizado, icon: 'pi pi-wallet' },
+          ];
 
-            this.dictRealizadoCentroCusto = response.df_agrupado;
-            this.ccs = Object.keys(response.df_agrupado).map((key) => ({
-              label: key,
-              color1: '#4972B0',
-              color2: '#fbbf24',
-              value: response.df_agrupado[key],
-              icon: 'pi pi-chart-bar',
-            }));
+          this.dictRealizadoTipoCusto = response.total_tipo_deb;
+          this.tiposCusto = Object.keys(response.total_tipo_deb).map((key) => ({
+            label: key,
+            color1: '#002B5C',
+            color2: '#fbbf24',
+            value: response.total_tipo_deb[key],
+            icon: 'pi pi-chart-bar',
+          }));
 
-            this.dictRealizadoGruposContabeis = response.total_grupo_com_nomes;
-            this.gruposContabeis = Object.keys(response.total_grupo_com_nomes).map((key) => ({
-              label: key,
-              color1: '#7F94B5',
-              color2: '#fbbf24',
-              value: response.total_grupo_com_nomes[key],
-              icon: 'pi pi-chart-bar',
-            }));
+          this.dictRealizadoCentroCusto = response.df_agrupado;
+          this.ccs = Object.keys(response.df_agrupado).map((key) => ({
+            label: key,
+            color1: '#4972B0',
+            color2: '#fbbf24',
+            value: response.df_agrupado[key],
+            icon: 'pi pi-chart-bar',
+          }));
 
-            this.graficoRealizadoGrupos(response.total_grupo_com_nomes)
+          this.dictRealizadoGruposContabeis = response.total_grupo_com_nomes;
+          this.gruposContabeis = Object.keys(response.total_grupo_com_nomes).map((key) => ({
+            label: key,
+            color1: '#7F94B5',
+            color2: '#fbbf24',
+            value: response.total_grupo_com_nomes[key],
+            icon: 'pi pi-chart-bar',
+          }));
 
-            this.dictRealizadoContasAnaliticas = response.conta_completa_nomes;
-            this.contasCompletas = Object.keys(response.conta_completa_nomes).map((key) => ({
-              label: key,
-              color1: '#004598',
-              color2: '#fbbf24',
-              value: response.conta_completa_nomes[key],
-              icon: 'pi pi-chart-bar',
-            }));
-            this.montarGraficoTotais();
-            this.calcularSaldo();
+          this.graficoRealizadoGrupos(response.total_grupo_com_nomes);
+
+          this.dictRealizadoContasAnaliticas = response.conta_completa_nomes;
+          this.contasCompletas = Object.keys(response.conta_completa_nomes).map((key) => ({
+            label: key,
+            color1: '#004598',
+            color2: '#fbbf24',
+            value: response.conta_completa_nomes[key],
+            icon: 'pi pi-chart-bar',
+          }));
+
+          resolve(); // Resolve a Promise em caso de sucesso
+        },
+        error => {
+          this.isLoading = false;
+          console.error('Erro ao calcular realizado:', error);
+
+          // Exibe mensagem de erro apropriada
+          if (error.status === 500) {
+            this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro interno no servidor. Verifique os dados e tente novamente.' });
+          } else if (error.status === 400) {
+            this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Dados inválidos. Por favor, revise as informações enviadas.' });
+          } else {
+            this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Ocorreu um erro inesperado. Por favor, tente novamente mais tarde.' });
+          }
+
+          reject(error); // Rejeita a Promise em caso de erro
         }
-       
-      )
+      );
+    } else {
+      this.isLoading = false;
+      const error = new Error('Centro de custo pai não selecionado.');
+      console.error(error.message);
+      this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Centro de custo pai não selecionado.' });
+      reject(error);
     }
-  }
+  });
+}
 
   grupoLancamentos(meterItem: any) {
     this.modalVisible4 = true;
@@ -863,6 +907,27 @@ calcularSaldo() {
   this.montarGraficoTotais();
 }
 
+async executarCalculos(): Promise<void> {
+  this.messageService.add({ severity: 'success', summary: 'Enviado!', detail: 'Aguarde um momento, os dados estão sendo processados.' });
+  try {
+
+   // await this.calcsGestor();
+    await this.orcamentosBaseByCcpai();
+    await this.calculosOrcamentosRealizados();
+    await this.calcularSaldo();
+    this.montarGraficoTotais();
+
+  } catch (err: any) {
+    console.error('Erro ao executar cálculos:', err);
+
+    // Verifica o status do erro e exibe mensagens apropriadas
+    if (err.status === 500) {
+      this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Informe todos os campos ou verifique se o grupo de itens possui orçamentos.' });
+    } else if (err.status === 401 || err.status === 200) {
+      this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Sessão expirada! Por favor, faça o login com suas credenciais novamente.' });
+    }
+  }
+}
   //======================================GRAFICOS=====================================////
 
 /**Toal Realizado x Orçado*/  
@@ -937,8 +1002,10 @@ calcularSaldo() {
                     position: 'bottom',
                     labels: {
                       font: {
-                          size: 12 
-                      }
+                          size: 12,
+                          weight: 'bold', 
+                      },
+                      color: '#4972B0'
                   }
                 },
                 title: {
@@ -1005,8 +1072,10 @@ this.gruposChart = new Chart(ctx, {
                   usePointStyle: false,
                   boxWidth: 15,
                   font: {
-                      size: 10  // Tamanho da fonte desejado
-                  }
+                      size: 10,
+                      weight: 'bold',
+                  },
+                  color: '#4972B0'
               }
             },
             title: {
@@ -1031,86 +1100,101 @@ graficoBaseOrcamentos(tipoOrcadoMes: any): void {
   }
 
   if (this.basesChart) {
-      this.basesChart.destroy();
+    this.basesChart.destroy();
   }
 
-  // Converter os valores de string para número
+  // Converter os valores de string para número corretamente
   const labels = Object.keys(tipoOrcadoMes);
-  const values = Object.values(tipoOrcadoMes).map(value => 
-    Number(String(value).replace('.', '').replace(',', '.'))
-  );
+  const values: number[] = Object.values(tipoOrcadoMes).map(value => {
+    if (typeof value === 'string') {
+      // Remove separadores de milhares e converte vírgula decimal para ponto
+      return parseFloat(value.replace(/\./g, '').replace(',', '.'));
+    }
+    return value as number; // Garante que o valor seja tratado como número
+  });
 
-    this.basesChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-          labels: labels,
-          datasets: [{
-              data: values,
-              backgroundColor: [
-                ' #002B5C',
-                '#4972B0',
-                '#004598',
-                '#7F94B5',
-                '#CCD3DC',  
-              ],
-              hoverBackgroundColor: [
-                  '#FFB100',
-              ]
-          }]
+  this.basesChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        backgroundColor: [
+          '#002B5C',
+          '#4972B0',
+          '#004598',
+          '#7F94B5',
+          '#CCD3DC',
+        ],
+        hoverBackgroundColor: [
+          '#FFB100',
+        ]
+      }]
+    },
+    options: {
+      animation: {
+        onComplete: () => {
+          delayed = true;
+        },
+        delay: (context: { type: string; mode: string; dataIndex: number; datasetIndex: number; }) => {
+          let delay = 0;
+          if (context.type === 'data' && context.mode === 'default' && !delayed) {
+            delay = context.dataIndex * 300 + context.datasetIndex * 100;
+          }
+          return delay;
+        },
       },
-      options: {
-        //indexAxis: 'y',
-        animation: {
-          onComplete: () => {
-            delayed = true;
-          },
-          delay: (context: { type: string; mode: string; dataIndex: number; datasetIndex: number; }) => {
-            let delay = 0;
-            if (context.type === 'data' && context.mode === 'default' && !delayed) {
-              delay = context.dataIndex * 300 + context.datasetIndex * 100;
-            }
-            return delay;
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: 'bottom',
+          labels: {
+            font: {
+              size: 10,
+              weight: 'bold',
+            },
+            color: '#4972B0'
+          }
+        },
+        title: {
+          display: true,
+          position: 'top',
+          text: 'Total Orçado por Bases de Orcamento',
+          color: '#1890FF',
+        },
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              return `${context.label}: ${new Intl.NumberFormat('pt-BR').format(context.raw)}`;
+            },
           },
         },
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-              legend: {
-                  display:true,
-                  position:'bottom',
-              },
-              title: {
-                  display: true,
-                  position: 'top',
-                  text: 'Total Orçado por Bases de Orcamento',
-                  color: '#1890FF',
-              }
+      },
+      scales: {
+        x: {
+          display: false,
+          beginAtZero: true,
+          grid: {
+            display: false,
           },
-          scales: {
-                x: {
-                    
-                    display:false,
-                    beginAtZero: true,
-                    grid:{
-                        display:false,
-                    },
-                    ticks: {
-                        color: '#000'
-                    }
-                },
-                y: {
-                   
-                    display:false,
-                    beginAtZero: true,
-                    grid:{
-                        display:false,
-                    },
-                    ticks: {
-                        color: '#000'
-                    }
-                }
-            },
-      }
+          ticks: {
+            color: '#000'
+          }
+        },
+        y: {
+          display: false,
+          beginAtZero: true,
+          grid: {
+            display: false,
+          },
+          ticks: {
+            color: '#000'
+          }
+        }
+      },
+    }
   });
 }
 
@@ -1880,3 +1964,7 @@ graficoRealizadoContasAnaliticas(tipoOrcadoMes: any): void {
 }
 
 }
+function reject(error: any) {
+  throw new Error('Function not implemented.');
+}
+
