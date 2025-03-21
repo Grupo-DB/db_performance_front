@@ -28,6 +28,9 @@ export class GrupoItensService {
   getGruposItens():Observable<any[]>{
     return this.httpClient.get<any[]>(this.apiUrl);
   }
+  getMeusGruposItens():Observable<any[]>{
+    return this.httpClient.get<any[]>(`${this.apiUrl}meusGrupos/`);
+  }
   getGrupoItensDetalhes(id: any): Observable<any>{
     const url = `${this.apiUrl}${id}/`;
     return this.httpClient.get<any>(

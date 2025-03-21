@@ -30,7 +30,7 @@
                     <a routerLink="/welcome/baseOrcamentaria/dre/produto">Linha de Produtos</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/baseOrcamentaria/dre/projecao"> Projeções</a>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/projecao"> Projeções de Vendas</a>
                 </li>
             </ul>
         </li >
@@ -39,6 +39,9 @@
             <ul>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoRealizado/realizado"> Orçado x Realizado Setorial</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoGrupoItens/orcamentogrupoitens"> Orçado x Realizado Grupo de Itens</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/dre/projetado"> DRE Projetado</a>

@@ -33,7 +33,8 @@ export interface GrupoItens{
   id: string;
   codigo: string;
   nome_completo: string;
-  gestor: string;
+  gestor: any;
+  gestor_detalhes: any;
 }
 
 @Component({
@@ -130,7 +131,8 @@ export class GrupoItensComponent implements OnInit {
   ngOnInit(): void {
     this.raizAnaliticaSevice.getGestores().subscribe(
       gestores =>{
-        this.gestores = gestores
+        this.gestores = gestores;
+        this.mapGestores();
       },
       error => {
         console.error('Não Carregou', error)
@@ -174,13 +176,13 @@ export class GrupoItensComponent implements OnInit {
       id: grupoItens.id,
       codigo: grupoItens.codigo,
       nome_completo: grupoItens.nome_completo,
-      gestor: grupoItens.gestor
+      gestor: grupoItens.gestor_detalhes.id
     })
   }
 
   saveEdit(){
     const grupoItensId = this.editForm.value.id;
-    const gestorId = this.editForm.value.gestor.id;
+    const gestorId = this.editForm.value.gestor;
     const dadosAtualizados: Partial<GrupoItens>={
       codigo: this.editForm.value.codigo,
       nome_completo: this.editForm.value.nome_completo,
@@ -208,6 +210,22 @@ export class GrupoItensComponent implements OnInit {
         } 
     }
     })
+  }
+
+  mapGestores() {
+    this.gruposItens.forEach(grupoIten => {
+      // Verifica se o gestor existe e se o id do gestor bate com o id do centroCusto
+      const gestor = this.gestores?.find((gestor_detalhes: { id: any; }) => gestor_detalhes.id === grupoIten.gestor_detalhes);
+  
+      // Se o gestor for encontrado, associamos o nome ao centroCusto
+      if (gestor) {
+        grupoIten.gestorNome = gestor.gestor_detalhes ? gestor.gestor_detalhes.nome : 'Nome não encontrado';
+      } else {
+        grupoIten.gestorNome = 'Gestor não encontrado';
+      }
+    });
+  
+    this.loading = false;
   }
 
   excluirGrupoItens(id: number) {

@@ -30,17 +30,20 @@
                     <a routerLink="/welcome/baseOrcamentaria/dre/produto">Linha de Produtos</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/baseOrcamentaria/dre/projecao"> Projeções</a>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/projecao"> Projeções de Vendas</a>
                 </li>
             </ul>
         </li >
         
-        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Acompanhamento "  style="font-size: 13px; ">
+        <li *ngIf="hasGroup(['Admin','OrcamentoGestor'])" nz-submenu nzTitle="Acompanhamento "  style="font-size: 13px; ">
             <ul>
-                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','OrcamentoGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoRealizado/realizado"> Orçado x Realizado Setorial</a>
                 </li>
-                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','OrcamentoGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoGrupoItens/orcamentogrupoitens"> Orçado x Realizado Grupo de Itens</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','OrcamentoGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/dre/projetado"> DRE Projetado</a>
                 </li>
             </ul>
@@ -59,7 +62,7 @@
     <div class="form-geral">
         <div class="flex flex-column lg:flex-row"@swipeAnimation>
             <div class="fg1 flex flex-column w-12 align-items-center lg:w-6 lg:mt-5"> 
-                <div class="form2 w-10" *ngIf="hasGroup(['OrcamentoGestor','Admin'])">
+                <div class="form2 w-10" *ngIf="hasGroup(['Admin',])">
                     <p-floatlabel variant="on"> 
                         <p-multiSelect
                             variant="filled"
@@ -124,12 +127,12 @@
                     Calcular
                 </div>
              <br>                   
-            <p-message severity="info"@swipeAnimation *ngIf="detalhes" closable="true">
+            <p-message size="small" severity="info"@swipeAnimation *ngIf="detalhes && selectedCcPai.length <= 1" closable="true">
                 <ng-template #icon>
-                    <p-avatar icon="pi pi-user" class=" inline-flex justify-content-center align-items-center text-center" size="large" [style]="{'background-color': '#ece9fc', 'color': '#004598','margin': '0 auto'}" />
+                    <p-avatar [image]="detalhes.gestor_detalhes.image" class="md:ml-5 inline-flex justify-content-center align-items-center text-center" size="xlarge" shape="circle" />  
                 </ng-template>
                 <div class=" w-full text-xs flex flex-row "  *ngIf="selectedCcPai.length <= 1 && detalhes">    
-                    <div class="w-6 m-4 text-left  lg:w-2 lg:text-sm lg:ml-8 " >
+                    <div class="w-6 mr-4 text-left  lg:w-2 lg:text-sm lg:ml-8 " >
                         Gestor:<br>
                         Empresa:<br>
                         Filial:<br>
@@ -137,7 +140,7 @@
                         Ambiente:<br>
                         Setor:<br>
                     </div>
-                    <div class="w-6 ml-0 m-4 text-left lg:w-10 lg:text-sm" *ngIf="detalhes">
+                    <div class="w-6 ml-0 mr-4 text-left lg:w-10 lg:text-sm" *ngIf="detalhes">
                         <strong>{{ detalhes.gestor_detalhes.nome }}</strong><br>
                         <strong>{{ detalhes.cc_pai_detalhes.empresa_detalhes.nome }}</strong><br>
                         <strong>{{ detalhes.cc_pai_detalhes.filial_detalhes.nome }}</strong><br>
@@ -154,8 +157,11 @@
                     <div class="flex justify-content-between gap-3">
                         <div class="flex flex-column gap-1">
                             <span class="text-secondary font-bold text-md" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">Orçado Total</span>
-                            <span class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">R$ {{ teste2 }}</span>
+                            <span *ngIf="!isLoading" class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">R$ {{ teste2 }}</span>
                         </div>
+                        <div *ngIf="isLoading" class="loading-indicator">
+                            <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '50px', height: '50px' }" />
+                        </div> 
                         <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center" [style]="{ 'background-color': '#ffffff' }">
                             <a (click)="orcadoDetalhes()"><i class="pi pi-wallet" style="font-size: 1.5rem; color: #002B5C;"></i></a>
                         </span>
@@ -165,10 +171,13 @@
                     <div class="flex justify-content-between gap-3">
                         <div class="flex flex-column gap-1">
                             <span class="text-secondary font-bold text-md" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">Realizado Total</span>
-                            <span class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">R$ {{ teste }}</span>
+                            <span *ngIf="!isLoading" class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">R$ {{ teste }}</span>
                         </div>
+                        <div *ngIf="isLoading" class="loading-indicator">
+                            <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '50px', height: '50px' }" />
+                        </div> 
                         <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center" [style]="{ 'background-color': '#ffffff' }">
-                            <a (click)="realizadoDetalhes()"><i class="pi pi-wallet" style="font-size: 1.5rem; color: #4972B0;"></i></a>
+                            <a (click)="realizadoDetalhes()"><i class="pi pi-wallet" style="font-size: 1.5rem; color: #002B5C;"></i></a>
                         </span>
                     </div>
                 </p-card>
@@ -176,8 +185,11 @@
                     <div class="flex justify-content-between gap-3">
                         <div class="flex flex-column gap-1">
                             <span class="text-secondary font-bold text-md" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">Saldo Total</span>
-                            <span class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">R$ {{ saldo }}</span>
+                            <span *ngIf="!isLoading" class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">R$ {{ saldo }}</span>
                         </div>
+                        <div *ngIf="isLoading" class="loading-indicator">
+                            <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '50px', height: '50px' }" />
+                        </div> 
                         <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center" [style]="{ 'background-color': '#ffffff' }">
                             <i class="pi pi-wallet" style="font-size: 1.5rem; color: #7F94B5;"></i>
                         </span>
@@ -240,68 +252,135 @@
 <!-------------------------DEATLHES REALIZADOS GRUPOS---------------------------------->
 
 <p-drawer [(visible)]="modalVisible4" position="right" [style]="{ width: '65%'}" >
-    <p-table [value]="detalhesLancamentosGrupos" responsiveLayout="scroll" stripedRows>
-        <ng-template pTemplate="header">
-            <tr>
-                <th>Data</th>
-                <th>Lançamento COD</th>
-                <th>Descrição</th>
-                <th>Valor Total</th>    
-                <th>Quantidade</th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-detalheLancamentoGrupo>
-            <tr>
-                <td>{{ detalheLancamentoGrupo.LANCDATA }}</td>
-                <td>{{ detalheLancamentoGrupo.LANCCOD }}</td>
-                <td>{{ detalheLancamentoGrupo.DESCRICAO }}</td>
-                <td>R$ {{ detalheLancamentoGrupo.SALDO | number: '1.2-2' }}</td>
-                <td>{{ detalheLancamentoGrupo.QTD }}</td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="footer">
-            <tr>
-                <td><b>Total</b></td>
-                <td></td>
-                <td></td>
-                <td><b>R$ {{ totalGrupo }}</b></td>
-                <td></td>
-            </tr>    
-        </ng-template>
-    </p-table>
+    <p-divider align="left" type="solid">
+        <b>Detalhes Realizado</b>
+    </p-divider>
+    <div class="w-12 flex justify-content-center mt-8">
+        <p-progress-spinner 
+            *ngIf="isLoading" 
+            strokeWidth="8" 
+            fill="transparent" 
+            animationDuration=".5s" 
+            [style]="{ width: '150px', height: '150px' }" 
+        />
+    </div>
+    <div *ngIf="!isLoading"> 
+        <p-table [value]="detalhesLancamentosGrupos" responsiveLayout="scroll" stripedRows>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Data</th>
+                    <th>Lançamento COD</th>
+                    <th>Descrição</th>
+                    <th>Valor Total</th>    
+                    <th>Quantidade</th>
+                </tr>
+                <tr>
+                    <th>
+                        <p-columnFilter
+                            type="text"
+                            matchMode="contains"
+                            [showMenu]="false"
+                            field="LANCDATA"
+                            placeholder="Data"
+                            ariaLabel="Filter Name"
+                            pTooltip="Para filtrar por mês digite: /mês por exemplo /02 para fevereiro"
+                            tooltipPosition="right"
+                        >
+                        </p-columnFilter>
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-detalheLancamentoGrupo>
+                <tr>
+                    <td>{{ detalheLancamentoGrupo.LANCDATA }}</td>
+                    <td>{{ detalheLancamentoGrupo.LANCCOD }}</td>
+                    <td>{{ detalheLancamentoGrupo.DESCRICAO }}</td>
+                    <td>R$ {{ detalheLancamentoGrupo.SALDO | number: '1.2-2' }}</td>
+                    <td>{{ detalheLancamentoGrupo.QTD }}</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <tr>
+                    <td><b>Total</b></td>
+                    <td></td>
+                    <td></td>
+                    <td><b>R$ {{ totalGrupo }}</b></td>
+                    <td></td>
+                </tr>    
+            </ng-template>
+        </p-table>
+    </div>    
 </p-drawer>
 <!------------------------CONTAS ANALITICAS -LANÇAMENTOS---------------------------------------------->
 <p-drawer [(visible)]="modalVisible5" position="right" [style]="{ width: '65%'}" >
-    <p-table [value]="detalhesLancamentosContas" responsiveLayout="scroll" stripedRows>
-        <ng-template pTemplate="header">            
-            <tr>
-                <th>Data</th>               
-                <th>Lançamento COD</th>
-                <th>Descrição</th>
-                <th>Valor Total</th>    
-                <th>Quantidade</th>            
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-detalheLancamentoConta>
-            <tr>                        
-                <td>{{ detalheLancamentoConta.LANCDATA }}</td>
-                <td>{{ detalheLancamentoConta.LANCCOD }}</td>
-                <td>{{ detalheLancamentoConta.DESCRICAO }}</td>
-                <td>R$ {{ detalheLancamentoConta.SALDO | number: '1.2-2' }}</td>
-                <td>{{ detalheLancamentoConta.QTD }}</td>
-               
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="footer">
-            <tr>
-                <td><b>Total</b></td>
-                <td></td>
-                <td></td>
-                <td><b>R$ {{ totalConta }}</b></td>
-                <td></td>
-            </tr>    
-        </ng-template>
-    </p-table>
+
+    <p-divider align="left" type="solid">
+        <b>Detalhes Realizado</b>
+    </p-divider>
+    <div class="w-12 flex justify-content-center mt-8">
+        <p-progress-spinner 
+            *ngIf="isLoading" 
+            strokeWidth="8" 
+            fill="transparent" 
+            animationDuration=".5s" 
+            [style]="{ width: '150px', height: '150px' }" 
+        />
+    </div>
+    <div *ngIf="!isLoading">   
+        <p-table [value]="detalhesLancamentosContas" responsiveLayout="scroll" stripedRows>
+            <ng-template pTemplate="header">            
+                <tr>
+                    <th>Data</th>               
+                    <th>Lançamento COD</th>
+                    <th>Descrição</th>
+                    <th>Valor Total</th>    
+                    <th>Quantidade</th>            
+                </tr>
+                <tr>
+                    <th>
+                        <p-columnFilter
+                            type="text"
+                            matchMode="contains"
+                            [showMenu]="false"
+                            field="LANCDATA"
+                            placeholder="Data"
+                            ariaLabel="Filter Name"
+                            pTooltip="Para filtrar por mês digite: /mês por exemplo /02 para fevereiro"
+                            tooltipPosition="right"
+                        >
+                        </p-columnFilter>
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-detalheLancamentoConta>
+                <tr>                        
+                    <td>{{ detalheLancamentoConta.LANCDATA }}</td>
+                    <td>{{ detalheLancamentoConta.LANCCOD }}</td>
+                    <td>{{ detalheLancamentoConta.DESCRICAO }}</td>
+                    <td>R$ {{ detalheLancamentoConta.SALDO | number: '1.2-2' }}</td>
+                    <td>{{ detalheLancamentoConta.QTD }}</td>
+                
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <tr>
+                    <td><b>Total</b></td>
+                    <td></td>
+                    <td></td>
+                    <td><b>R$ {{ totalConta }}</b></td>
+                    <td></td>
+                </tr>    
+            </ng-template>
+        </p-table>
+    </div>
 </p-drawer>
 
 <!---------------------------SIDEBAR ORÇADOS ---------------------------------------------------------------->                    
@@ -333,7 +412,7 @@
                                     <div style="max-height: 500px; overflow-x: scroll; margin-top: 20px;">
                                         <div class="flex flex-wrap gap-3 ml-0 justify-content-center">
                                             <ng-container *ngFor="let meterItem of resultadosMensais; let index = index">
-                                                <p-card class="w-14rem  shadow-4 border-round-md hover:shadow-6 " @slideAnimation >
+                                                <p-card class="w-14rem  shadow-4 border-round-md hover:shadow-6" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
                                                     <div class="flex justify-content-between gap-2">
                                                         <div class="flex flex-column gap-3">
                                                             <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label | uppercase }}</span>
@@ -363,11 +442,11 @@
                             <div class="" style="max-height: 500px; min-height: 200px; overflow-y: auto;">
                                 <div class="flex flex-wrap gap-3 mt-3 mb-3 justify-content-center">
                                     <ng-container *ngFor="let meterItem of tiposMensais; let index = index">
-                                        <p-card class="w-12  shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" @slideAnimation >
+                                        <p-card class="w-12  shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
                                             <div class="flex justify-content-between gap-3">
                                                 <div class="flex flex-column gap-3">
-                                                    <span class="text-secondary text-md" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
-                                                    <span class="font-bold text-md"style="text-align: start;">R$ {{ meterItem.value }}</span>
+                                                    <span class="text-secondary text-md w-12" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                    <span class="font-bold text-md w-12"style="text-align: start;">R$ {{ meterItem.value }}</span>
                                                 </div>
                                                 <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
                                                     <a (click)="abrirModalGrupoMensais()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
@@ -392,11 +471,11 @@
                             <div class="w-full" style="max-height: 500px; overflow-y: auto;">
                                 <div class="flex flex-wrap gap-3 justify-content-center mt-3 mb-3">
                                     <ng-container *ngFor="let meterItem of contasMensais; let index = index">
-                                        <p-card class="w-12  shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" @slideAnimation >
+                                        <p-card class="w-12  shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
                                             <div class="flex justify-content-between gap-3">
                                                 <div class="flex flex-column gap-3">
-                                                    <span class="text-secondary text-md" style="text-align: start; ">{{ meterItem.label | uppercase }}</span>
-                                                    <span class="font-bold text-md"style="text-align: start; ">R$ {{ meterItem.value }}</span>
+                                                    <span class="text-secondary text-md w-12" style="text-align: start; ">{{ meterItem.label | uppercase }}</span>
+                                                    <span class="font-bold text-md w-12"style="text-align: start; ">R$ {{ meterItem.value }}</span>
                                                 </div>
                                                 <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
                                                     <a (click)="abrirModalTiposMensais()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
@@ -421,11 +500,11 @@
                             <div class="w-full" style="max-height: 500px; overflow-y: auto;">
                                 <div class="flex flex-wrap justify-content-center gap-3 mt-3 mb-3">
                                     <ng-container *ngFor="let meterItem of raizMensais; let index = index">
-                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" @slideAnimation >
+                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
                                             <div class="flex justify-content-between gap-3">
                                                 <div class="flex flex-column  gap-3">
-                                                    <span class="text-secondary text-md -ml-2" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
-                                                    <span class="font-bold text-md ml-0"style="text-align: start;">R$ {{ meterItem.value }}</span>
+                                                    <span class="text-secondary text-md w-12" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                    <span class="font-bold text-md  w-12"style="text-align: start;">R$ {{ meterItem.value }}</span>
                                                 </div>
                                                 <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
                                                     <a (click)="abrirModalContasAnaliticas()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
@@ -463,11 +542,11 @@
                             <div class="w-12" style="max-height: 500px; overflow-y: auto;">
                                 <div class="flex flex-wrap gap-3 mb-3 mt-3 justify-content-center">
                                     <ng-container *ngFor="let meterItem of tiposAnuais; let index = index">
-                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" @slideAnimation >
+                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
                                             <div class="flex justify-content-between gap-2">
                                                 <div class="flex flex-column gap-3">
-                                                    <span class="text-secondary text-md -ml-2" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
-                                                    <span class="font-bold text-md"style="text-align: start;">R$ {{ meterItem.value }}</span>
+                                                    <span class="text-secondary text-md w-12" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                    <span class="font-bold text-md w-12"style="text-align: start;">R$ {{ meterItem.value }}</span>
                                                 </div>
                                                 <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
                                                     <a (click)="abrirModalTiposAnual()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
@@ -491,11 +570,11 @@
                             <div class="w-full" style="max-height: 500px; overflow-y: auto;">
                                 <div class="flex flex-wrap gap-3 mb-3 mt-3 justify-content-center">
                                     <ng-container *ngFor="let meterItem of contasAnuais; let index = index">
-                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" @slideAnimation >
+                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
                                             <div class="flex justify-content-between gap-2">
                                                 <div class="flex flex-column gap-3">
-                                                    <span class="text-secondary text-md -ml-2 " style="text-align: start;">{{ meterItem.label | uppercase }}</span>
-                                                    <span class="font-bold text-md"style="text-align: start;">R$ {{ meterItem.value }}</span>
+                                                    <span class="text-secondary text-md -w-12" style="white-space: nowrap; text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                    <span class="font-bold text-md w-12"style="text-align: start;">R$ {{ meterItem.value }}</span>
                                                 </div>
                                                 <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
                                                     <a (click)="abrirModalGruposAnual()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
@@ -519,11 +598,11 @@
                             <div class="w-full" style="max-height: 500px; overflow-y: auto;">
                                 <div class="flex flex-wrap justify-content-center gap-3 mb-3 mt-3">
                                     <ng-container *ngFor="let meterItem of raizAnuais; let index = index">
-                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" @slideAnimation >
+                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
                                             <div class="flex justify-content-between gap-3">
                                                 <div class="flex flex-column gap-3">
-                                                    <span class="text-secondary text-md -ml-2" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
-                                                    <span class="font-bold text-md"style="text-align: start;">R$ {{ meterItem.value }}</span>
+                                                    <span class="text-secondary text-md w-12" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
+                                                    <span class="font-bold text-md w-12"style="text-align: start;">R$ {{ meterItem.value }}</span>
                                                 </div>
                                                 <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center"[style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
                                                     <a (click)="abrirModalContasAnual()" style="text-decoration: none; color: inherit;"><i style="font-size: 1.5rem" [class]="meterItem.icon"></i></a>
@@ -570,7 +649,7 @@
                             <div style="max-height: 500px; overflow-y: auto;">
                                 <div class="flex flex-wrap gap-3 mb-3 mt-3 justify-content-center">
                                     <ng-container *ngFor="let meterItem of tiposCusto; let index = index">
-                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" @slideAnimation >
+                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
                                             <div class="flex justify-content-between gap-2">
                                                 <div class="flex flex-column gap-3">
                                                     <span class="text-secondary text-md -ml-2" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
@@ -599,7 +678,7 @@
                             <div style="max-height: 500px; overflow-y: auto;">
                                 <div class="flex flex-wrap gap-3 mb-3 mt-3 justify-content-center">
                                     <ng-container *ngFor="let meterItem of ccs; let index = index">
-                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" @slideAnimation >
+                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
                                             <div class="flex justify-content-between gap-2">
                                                 <div class="flex flex-column gap-3">
                                                     <span class="text-secondary text-md -ml-2" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
@@ -628,7 +707,7 @@
                             <div style="max-height: 500px; overflow-y: auto;">
                                 <div class="flex flex-wrap gap-3 mb-3 mt-3 justify-content-center">
                                     <ng-container *ngFor="let meterItem of gruposContabeis; let index = index">
-                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" @slideAnimation >
+                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
                                             <div class="flex justify-content-between gap-2">
                                                 <div class="flex flex-column gap-3">
                                                     <a (click)="grupoLancamentos(meterItem)" style="text-decoration: none; color: inherit;">    
@@ -659,7 +738,7 @@
                             <div style="max-height: 500px; overflow-y: auto;">
                                 <div class="flex flex-wrap justify-content-center gap-3 mb-3 mt-3">
                                     <ng-container *ngFor="let meterItem of contasCompletas; let index = index">
-                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10"@slideAnimation >
+                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
                                             <div class="flex justify-content-between gap-2">
                                                 <div class="flex flex-column gap-3">
                                                     <a (click)="contaLancamentos(meterItem)" style="text-decoration: none; color: inherit;">

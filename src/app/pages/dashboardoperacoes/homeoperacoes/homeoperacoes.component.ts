@@ -5,6 +5,7 @@ import { DividerModule } from 'primeng/divider';
 import { RouterLink,RouterModule } from '@angular/router';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 
 @Component({
   selector: 'app-homeoperacoes',
@@ -24,6 +25,9 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
   templateUrl: './homeoperacoes.component.html',
   styleUrl: './homeoperacoes.component.scss'
 })
+
+
+
 export class HomeoperacoesComponent implements OnInit {
   totalAtualCalcario!:number;
   totalCalcario!: string;
@@ -37,6 +41,7 @@ export class HomeoperacoesComponent implements OnInit {
   loading: boolean = true;
   constructor(
     private homeService: HomeService,
+    private loginService: LoginService
   ){}
   ngOnInit(): void {
     this.calcular('atual')    
@@ -55,5 +60,8 @@ calcular(tipoCalculo: string) {
   });
 }
 
+hasGroup(groups: string[]): boolean {
+  return this.loginService.hasAnyGroup(groups);
+} 
 
 }

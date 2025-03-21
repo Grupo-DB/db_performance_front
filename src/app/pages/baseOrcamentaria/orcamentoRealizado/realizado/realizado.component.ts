@@ -35,6 +35,8 @@ import { AvatarModule } from 'primeng/avatar';
 import { Toast } from 'ngx-toastr';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TooltipModule } from 'primeng/tooltip';
 
 export interface ResultadosTotaisArrayItem {
   label: string;
@@ -141,8 +143,8 @@ export interface FilialSga{
   standalone: true,
   imports: [
     DropdownModule,FloatLabelModule,DividerModule,CommonModule,FormsModule,InputNumberModule,DrawerModule,ToastModule,
-    MeterGroupModule,CardModule,ButtonModule,InplaceModule,DialogModule,TableModule,ChartModule,MessageModule,
-    SidebarModule,TabViewModule,MultiSelectModule,KnobModule,NzProgressModule,NzMenuModule,RouterLink,AvatarModule
+    MeterGroupModule,CardModule,ButtonModule,InplaceModule,DialogModule,TableModule,ChartModule,MessageModule,ProgressSpinnerModule,
+    SidebarModule,TabViewModule,MultiSelectModule,KnobModule,NzProgressModule,NzMenuModule,RouterLink,AvatarModule,TooltipModule
   ],
   animations: [
       trigger('slideAnimation', [
@@ -196,6 +198,7 @@ export class RealizadoComponent implements OnInit {
   valorOrcadoGastoMensal!: number;
   valorOrcadoGastoAnual!: number;
   selectedsFiliais: any[]=[];
+  gestorImagem: any;
   //
   Janeiro!: number;
   Fevereiro!: number;
@@ -275,6 +278,7 @@ export class RealizadoComponent implements OnInit {
   totais!: any;
   //
   isLoading: boolean = true;
+  isLoading2: boolean = true;
   //  
   totaisChart: Chart<'bar'> | undefined;
   gruposChart: Chart<'pie'> | undefined;
@@ -429,27 +433,29 @@ export class RealizadoComponent implements OnInit {
     }
   }
 
-  ccPaiDetalhes():Promise <void>{
-    return new Promise((resolve, reject) => {
-      console.log('CC Pai Selecionado KD:', this.selectedCcPai); // Log para depuração
-      if(this.selectedCcPai !== undefined){
-        this.orcamentoBaseService.getOrcamentoBaseDetalhe(this.selectedCcPai).subscribe(
-          (response) => {
-            this.empresa = response.empresa;
-            this.filial = response.filial;
-            this.area = response.area;
-            this.ambiente = response.ambiente;
-            this.setor = response.setor;
-            resolve(); // Resolve a Promise após a conclusão
-            console.log('Detalhes:', response); // Log para depuração
-          },
-          error =>{
-            console.error('Não carregou', error)
-          }
-        )
-      }
-    })
-  }
+  // ccPaiDetalhes():Promise <void>{
+  //   return new Promise((resolve, reject) => {
+  //     console.log('CC Pai Selecionado KD:', this.selectedCcPai); // Log para depuração
+  //     if(this.selectedCcPai !== undefined){
+  //       this.orcamentoBaseService.getOrcamentoBaseDetalhe(this.selectedCcPai).subscribe(
+  //         (response) => {
+  //           this.empresa = response.empresa;
+  //           this.filial = response.filial;
+  //           this.area = response.area;
+  //           this.ambiente = response.ambiente;
+  //           this.setor = response.setor;
+            
+  //           console.log('img',this.gestorImagem)
+  //           resolve(); // Resolve a Promise após a conclusão
+  //           console.log('Detalhes:', response); // Log para depuração
+  //         },
+  //         error =>{
+  //           console.error('Não carregou', error)
+  //         }
+  //       )
+  //     }
+  //   })
+  // }
 
 
 
@@ -567,8 +573,10 @@ export class RealizadoComponent implements OnInit {
         console.log('Centros de Custo Originais:', centrosCusto);
         this.centrosCusto = centrosCusto.map((centroCusto: any)=>centroCusto.codigo);
         this.detalhes = centrosCusto[0];
+        this.gestorImagem = centrosCusto[0].gestor_detalhes.image;
         //this.calculosOrcamentosRealizados();
-        console.log('Ccs',this.centrosCusto)
+        console.log('Ccs',this.centrosCusto);
+        console.log('Imagem:', this.gestorImagem);
       }, error =>{
         console.error('Não rolou',error)
       }
@@ -765,6 +773,7 @@ calculosOrcamentosRealizados(): Promise<void> {
 }
 
   grupoLancamentos(meterItem: any) {
+    this.isLoading = true;
     this.modalVisible4 = true;
     console.log('Index:', meterItem);
     const indice = meterItem.label;
@@ -773,6 +782,7 @@ calculosOrcamentosRealizados(): Promise<void> {
         response => {
           this.detalhesLancamentosGrupos = response.total_grupo_com_nomes_detalhes[indice];
           this.totalGrupo = response.total_grupo_com_nomes[indice];
+          this.isLoading = false;
         }, erro => {
           console.error('Não rolou', erro);
         }
@@ -780,6 +790,7 @@ calculosOrcamentosRealizados(): Promise<void> {
     }
   }
   contaLancamentos(meterItem: any) {
+    this.isLoading = true;
     this.modalVisible5 = true;
     console.log('Index:', meterItem);
     const indice = meterItem.label;
@@ -788,6 +799,7 @@ calculosOrcamentosRealizados(): Promise<void> {
         response => {
           this.detalhesLancamentosContas = response.conta_completa_detalhes[indice];
           this.totalConta = response.conta_completa_nomes[indice];
+          this.isLoading = false;
         }, erro => {
           console.error('Não rolou', erro);
         }

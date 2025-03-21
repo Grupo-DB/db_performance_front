@@ -71,13 +71,13 @@ export class WelcomeComponent implements OnInit,OnDestroy  {
         this.empresas = empresas;
         setTimeout(() => {
           this.isLoading = false; // Defina como false após o tempo de atraso
-        }, 3200); // Tempo de atraso em milissegundos (2 segundos)
+        }, 1200); // Tempo de atraso em milissegundos (2 segundos)
       },
       error => {
         console.error('Error fetching users:',error);
         setTimeout(() => {
           this.isLoading = false; // Defina como false após o tempo de atraso
-        }, 3200); // Tempo de atraso em milissegundos (2 segundos)
+        }, 1200); // Tempo de atraso em milissegundos (2 segundos)
       }
     );
 

@@ -30,7 +30,7 @@
                     <a routerLink="/welcome/baseOrcamentaria/dre/produto">Linha de Produtos</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/baseOrcamentaria/dre/projecao"> Projeções</a>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/projecao"> Projeções de Vendas</a>
                 </li>
             </ul>
         </li >
@@ -39,6 +39,9 @@
             <ul>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoRealizado/realizado"> Orçado x Realizado Setorial</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoGrupoItens/orcamentogrupoitens"> Orçado x Realizado Grupo de Itens</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/dre/projetado"> DRE Projetado</a>
@@ -188,7 +191,7 @@
                 <tr>                      
                     <td>{{ grupoItens.codigo}}</td>
                     <td>{{ grupoItens.nome_completo }}</td>
-                    <td>{{ getNomeGestor(grupoItens.gestor) }}</td>
+                    <td>{{ grupoItens.gestor_detalhes.nome }}</td>
                     
                     <td class="td-acao">
                         <div class="btnsec" (click)="abrirModalEdicao(grupoItens)">
@@ -223,7 +226,7 @@
 
                 <form 
                     [formGroup]="editForm"
-                    title="Editar Conta Contabil"      
+                    title="Editar Grupo de Itens"      
                 >
                 <div class="editGeral flex flex-column lg:flex-row">
                     <div class="fg1edit flex flex-column w-12 align-items-center lg:w-6">
@@ -259,21 +262,17 @@
                                     <label for="on_label">Informe o Nome Completo</label>
                                 </p-floatlabel>
                             </div>
-                            
-                            
-                       
         
                             <div class="form2 w-10 mb-3 text-left">
                                 <p-floatlabel variant="on">
                                     <p-select
                                         variant="filled"
-                                        id="ccPai" 
+                                        id="gestor" 
                                         [style]="{'width':'100%'}"
                                         [options]="gestores" 
                                         formControlName="gestor"
-                                        optionLabel="nome"
                                         optionValue="id"
-                                        [disabled]="true"
+                                        optionLabel="nome"
                                         [filter]="true" 
                                         filterBy="nome"
                                         appendTo="body"
