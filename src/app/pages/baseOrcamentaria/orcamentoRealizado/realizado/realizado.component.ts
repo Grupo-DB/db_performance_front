@@ -375,9 +375,44 @@ export class RealizadoComponent implements OnInit {
     );
 }
 
-
   hasGroup(groups: string[]): boolean {
     return this.loginService.hasAnyGroup(groups);
+  }
+
+  limparDadosRealizado(): void {
+    this.dictRealizadoTipoCusto = null;
+    this.dictRealizadoCentroCusto = null;
+    this.dictRealizadoGruposContabeis = null;
+    this.dictRealizadoContasAnaliticas = null;
+    this.resultadosTotaisRealizado = [];
+    this.ccs = [];
+    this.gruposContabeis = [];
+    this.contasCompletas = [];
+    console.log('Dados de realizado limpos.');
+  }
+  limparDadosDetalhes(): void {
+    this.dictRealizadoContasAnaliticas = null;
+  }
+  limparDadosGrupos(): void {
+    this.dictRealizadoGruposContabeis = null;
+  }
+  
+  limparDadosOrcado(): void {
+    this.dictOrcadoTiposCusto = null;
+    this.dictOrcadoGrupoContas2 = null;
+    this.dictOrcadoContasAnaliticas = null;
+    this.dictAnualOrcadoTiposCusto = null;
+    this.dictAnualOrcadoGrupoContas = null;
+    this.dictAnualOrcadoContasAnaliticas = null;
+    this.resultadosTotais = [];
+    this.resultadosMensais = [];
+    this.contasMensais = [];
+    this.contasAnuais = [];
+    this.tiposMensais = [];
+    this.tiposAnuais = [];
+    this.raizMensais = [];
+    this.raizAnuais = [];
+    console.log('Dados de orçado limpos.');
   }
 
   

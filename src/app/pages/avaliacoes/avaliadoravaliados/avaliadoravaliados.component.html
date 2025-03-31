@@ -144,7 +144,7 @@
         [tableStyle]="{ 'min-width': '50rem' }"
         currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
         [rowsPerPageOptions]="[1, 5, 10]"
-        [globalFilterFields]="['nome','avaliados']"
+        [globalFilterFields]="['avaliado.nome']"
         stripedRows
         scrollable="true"
     >
@@ -173,7 +173,7 @@
                 <th style="width:25%" type="text" field="nome" display="menu">
                     Nome
                 </th>
-                <th style="width:25%" type="text" field="avaliados" display="menu">
+                <th style="width:25%" type="text" field="avaliado.nome" display="menu">
                     Avaliados
                 </th>
               

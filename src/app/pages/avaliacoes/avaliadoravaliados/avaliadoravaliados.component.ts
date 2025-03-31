@@ -96,8 +96,11 @@ export class AvaliadorAvaliadosComponent implements OnInit {
   avaliadores: Avaliador [] = [];
   avaliados: Avaliado [] | undefined;
   targetAvaliados!: Avaliado[];
+  originalAvaliadores: Avaliador[] = [];
+  avaliadoresOriginais: any[] = [];
   avaliadoresavaliados: any[]=[]; 
   loading: boolean = true; 
+  
   registerassociacaoForm!: FormGroup<RegisterAssociacaoForm>;
   @ViewChild('RegisterAssociacaoForm') RegisterAssociacaoForm: any;
   @ViewChild('dt1') dt1!: Table;
@@ -161,16 +164,36 @@ export class AvaliadorAvaliadosComponent implements OnInit {
       );
     }
 
-    clear(table: Table) {
-      table.clear();
-    }
-    
+
     clearForm() {
     this.registerassociacaoForm.reset();
     }
     
-    filterTable() {
-    this.dt1.filterGlobal(this.inputValue, 'contains');
+ 
+
+    filterTable(): void {
+      if (!this.avaliadoresOriginais.length) {
+        this.avaliadoresOriginais = [...this.avaliadores]; // Garante que temos os dados originais
+      }
+    
+      if (!this.inputValue || this.inputValue.trim() === '') {
+        this.avaliadores = [...this.avaliadoresOriginais]; // Restaura os dados originais
+        return;
+      }
+    
+      const searchValue = this.inputValue.trim().toLowerCase();
+    
+      this.avaliadores = this.avaliadoresOriginais.filter(avaliador =>
+        avaliador.avaliados.some((avaliado: { nome: string; }) =>
+          avaliado.nome.toLowerCase().includes(searchValue)
+        )
+      );
+    }
+    
+    clear(dt1: any): void {
+      this.inputValue = ''; // Limpa o campo de entrada
+      this.avaliadores = [...this.avaliadoresOriginais]; // Restaura os dados originais
+      dt1.reset(); // Reseta o estado da tabela
     }
     
     submit() {

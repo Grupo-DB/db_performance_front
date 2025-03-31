@@ -21,7 +21,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
 import { MessagesModule } from 'primeng/messages';
 import { animate, keyframes, style, transition, trigger } from '@angular/animations';
-import { Select, SelectModule } from 'primeng/select';
+import { SelectModule } from 'primeng/select';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 
@@ -340,8 +340,7 @@ export class ProjecaoComponent implements OnInit {
           } 
         }
       })
-       
-      
+          
     }
   }
 }

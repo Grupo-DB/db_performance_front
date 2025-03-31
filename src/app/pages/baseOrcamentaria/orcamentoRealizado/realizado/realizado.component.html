@@ -32,6 +32,9 @@
                 <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/dre/projecao"> Projeções de Vendas</a>
                 </li>
+                <li *ngIf="hasGroup(['Admin','OrcamentoGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/custoproducao">Projeções de Produção</a>
+                </li>
             </ul>
         </li >
         
@@ -45,6 +48,9 @@
                 </li>
                 <li *ngIf="hasGroup(['Admin','OrcamentoGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/dre/projetado"> DRE Projetado</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','OrcamentoGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/indicadorescp">Indicadores Custo de Produção</a>
                 </li>
             </ul>
            
@@ -223,7 +229,12 @@
 
 
 <!----------------SIDEBAR_______________________________-->
-<p-drawer [(visible)]="modalVisible" position="right" [style]="{ width: '90%', }" >
+<p-drawer 
+    [(visible)]="modalVisible" 
+    position="right" 
+    [style]="{ width: '90%', }" 
+    (onHide)="limparDadosOrcado()"
+>
 
     
         <p-table [value]="detalhesMensais" responsiveLayout="scroll" stripedRows>
@@ -251,7 +262,12 @@
 
 <!-------------------------DEATLHES REALIZADOS GRUPOS---------------------------------->
 
-<p-drawer [(visible)]="modalVisible4" position="right" [style]="{ width: '65%'}" >
+<p-drawer 
+    [(visible)]="modalVisible4" 
+    position="right" 
+    [style]="{ width: '65%'}" 
+    (onHide)="limparDadosGrupos()" 
+>
     <p-divider align="left" type="solid">
         <b>Detalhes Realizado</b>
     </p-divider>
@@ -316,7 +332,7 @@
     </div>    
 </p-drawer>
 <!------------------------CONTAS ANALITICAS -LANÇAMENTOS---------------------------------------------->
-<p-drawer [(visible)]="modalVisible5" position="right" [style]="{ width: '65%'}" >
+<p-drawer [(visible)]="modalVisible5" position="right" [style]="{ width: '65%'}" (onHide)="limparDadosDetalhes()">
 
     <p-divider align="left" type="solid">
         <b>Detalhes Realizado</b>
@@ -389,6 +405,7 @@
     position="right" 
     [style]="{ width: '90%', }"
     styleClass="w-full md:w-10 lg:w-8"
+    (onHide)="limparDadosOrcado()"
 >
     <p-inplace
         closable="True"
@@ -627,6 +644,7 @@
     position="right" 
     [style]="{ width: '96%' }"
     styleClass="w-full md:w-10 lg:w-8"
+    (onHide)="limparDadosRealizado()"
 >
     <p-inplace
         closable="True"

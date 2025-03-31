@@ -153,7 +153,7 @@ export class ProjetadoComponent implements OnInit {
 
   meses = Array.from({ length: 12 }, (_, i) => ({
     key: i + 1,
-    value: new Date(0, i).toLocaleString('default', { month: 'long' }),
+    value: new Date(0, i).toLocaleString('pt-BR', { month: 'long' }),
   }));
   dropdown: any;
 
@@ -166,9 +166,9 @@ export class ProjetadoComponent implements OnInit {
     ) {}
 
   ngOnInit(): void {
-    this.getResultados();
-    this.getOrcados();
-    this.getDespesas();
+    // this.getResultados();
+    // this.getOrcados();
+    // this.getDespesas();
   }
 
   executaCalculos(): void {
