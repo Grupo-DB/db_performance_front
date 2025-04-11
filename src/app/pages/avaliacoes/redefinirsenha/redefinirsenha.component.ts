@@ -11,10 +11,15 @@ import { ToastrService } from 'ngx-toastr';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { HttpClient } from '@angular/common/http';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 @Component({
   selector: 'app-redefinirsenha',
   standalone: true,
-  imports: [CommonModule,ToastModule,ReactiveFormsModule,FormsModule,InputTextModule,InputGroupAddonModule,InputGroupModule],
+  imports: [CommonModule,ToastModule,ReactiveFormsModule,FloatLabelModule,IconFieldModule,
+  FormsModule,InputTextModule,InputGroupAddonModule,InputGroupModule,InputIconModule
+],
   providers: [MessageService,ToastrService],
   templateUrl: './redefinirsenha.component.html',
   styleUrl: './redefinirsenha.component.scss'

@@ -57,6 +57,7 @@ import { RelatoriospdfComponent } from './pages/avaliacoes/relatoriospdf/relator
 import { OrcamentogrupoitensComponent } from './pages/baseOrcamentaria/orcamentoGrupoItens/orcamentogrupoitens/orcamentogrupoitens.component';
 import { CustoproducaoComponent } from './pages/baseOrcamentaria/dre/custoproducao/custoproducao.component';
 import { IndicadorescpComponent } from './pages/baseOrcamentaria/dre/indicadorescp/indicadorescp.component';
+import { CurvaComponent } from './pages/baseOrcamentaria/dre/curva/curva.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -117,7 +118,8 @@ export const routes: Routes = [
       { path: 'baseOrcamentaria/dre/projetado', component:ProjetadoComponent },
       { path: 'baseOrcamentaria/orcamentoGrupoItens/orcamentogrupoitens', component:OrcamentogrupoitensComponent },
       { path: 'baseOrcamentaria/dre/custoproducao', component:CustoproducaoComponent },
-      { path: 'baseOrcamentaria/dre/indicadorescp', component:IndicadorescpComponent}
+      { path: 'baseOrcamentaria/dre/indicadorescp', component:IndicadorescpComponent },
+      { path: 'baseOrcamentaria/dre/curva', component:CurvaComponent}
     ],
   },
   

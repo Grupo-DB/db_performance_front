@@ -293,9 +293,11 @@ export class RealizadoComponent implements OnInit {
   realizadosChart: Chart<'pie'> | undefined;
   basesChart: Chart<'doughnut'> | undefined;
 
+  periodo!: number;
+
   meses = Array.from({ length: 12 }, (_, i) => ({
     key: i + 1,
-    value: new Date(0, i).toLocaleString('default', { month: 'long' }),
+    value: new Date(0, i).toLocaleString('pt-BR', { month: 'long' }),
   }));
   dropdown: any;
 
@@ -421,7 +423,7 @@ export class RealizadoComponent implements OnInit {
     console.log('Index:', meterItem);
     const mes = meterItem.num;
     if (this.selectedCcPai !== null) {
-      this.orcamentoBaseService.getOrcamentoBaseByCcPai(this.selectedCcPai, this.selectedAno, this.selectedCodManagers).subscribe(
+      this.orcamentoBaseService.getOrcamentoBaseByCcPai(this.selectedCcPai, this.selectedAno, this.periodo, this.selectedCodManagers).subscribe(
         response => {
            this.detalhesMensais = response.detalhamento_mensal[mes];
           }, erro =>{
@@ -468,32 +470,6 @@ export class RealizadoComponent implements OnInit {
     }
   }
 
-  // ccPaiDetalhes():Promise <void>{
-  //   return new Promise((resolve, reject) => {
-  //     console.log('CC Pai Selecionado KD:', this.selectedCcPai); // Log para depuração
-  //     if(this.selectedCcPai !== undefined){
-  //       this.orcamentoBaseService.getOrcamentoBaseDetalhe(this.selectedCcPai).subscribe(
-  //         (response) => {
-  //           this.empresa = response.empresa;
-  //           this.filial = response.filial;
-  //           this.area = response.area;
-  //           this.ambiente = response.ambiente;
-  //           this.setor = response.setor;
-            
-  //           console.log('img',this.gestorImagem)
-  //           resolve(); // Resolve a Promise após a conclusão
-  //           console.log('Detalhes:', response); // Log para depuração
-  //         },
-  //         error =>{
-  //           console.error('Não carregou', error)
-  //         }
-  //       )
-  //     }
-  //   })
-  // }
-
-
-
 
   calcularTotal(): void{
     this.orcamentoBaseService.calculosTotais(this.selectedAno,this.selectedsFiliais).subscribe(
@@ -506,7 +482,7 @@ export class RealizadoComponent implements OnInit {
   orcamentosBaseByCcpai(): void {
     
     if (this.selectedCcPai !== null) {
-      this.orcamentoBaseService.getOrcamentoBaseByCcPai(this.selectedCcPai,this.selectedAno,this.selectedCodManagers).subscribe(
+      this.orcamentoBaseService.getOrcamentoBaseByCcPai(this.selectedCcPai,this.selectedAno,this.periodo,this.selectedCodManagers).subscribe(
         response => {
           this.dictOrcadoTiposCusto = response.conta_por_mes;
           //this.dictAnualOrcadoTiposCusto = response.tipo_por_ano;
@@ -730,7 +706,7 @@ calculosOrcamentosRealizados(): Promise<void> {
 
   return new Promise((resolve, reject) => {
     if (this.selectedCcPai !== null) {
-      this.orcamentoBaseService.calcularOrcamentoRealizado(this.centrosCusto, this.selectedAno, this.selectedsFiliais).subscribe(
+      this.orcamentoBaseService.calcularOrcamentoRealizado(this.centrosCusto,this.periodo, this.selectedAno, this.selectedsFiliais).subscribe(
         response => {
           this.isLoading = false;
 
@@ -813,7 +789,7 @@ calculosOrcamentosRealizados(): Promise<void> {
     console.log('Index:', meterItem);
     const indice = meterItem.label;
     if (this.selectedCcPai !== null) {
-      this.orcamentoBaseService.calcularOrcamentoRealizado(this.centrosCusto, this.selectedAno, this.selectedsFiliais).subscribe(
+      this.orcamentoBaseService.calcularOrcamentoRealizado(this.centrosCusto,this.periodo, this.selectedAno, this.selectedsFiliais).subscribe(
         response => {
           this.detalhesLancamentosGrupos = response.total_grupo_com_nomes_detalhes[indice];
           this.totalGrupo = response.total_grupo_com_nomes[indice];
@@ -830,7 +806,7 @@ calculosOrcamentosRealizados(): Promise<void> {
     console.log('Index:', meterItem);
     const indice = meterItem.label;
     if (this.selectedCcPai !== null) {
-      this.orcamentoBaseService.calcularOrcamentoRealizado(this.centrosCusto, this.selectedAno, this.selectedsFiliais).subscribe(
+      this.orcamentoBaseService.calcularOrcamentoRealizado(this.centrosCusto,this.periodo, this.selectedAno, this.selectedsFiliais).subscribe(
         response => {
           this.detalhesLancamentosContas = response.conta_completa_detalhes[indice];
           this.totalConta = response.conta_completa_nomes[indice];

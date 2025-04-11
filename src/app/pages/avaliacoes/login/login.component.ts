@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
@@ -12,24 +12,29 @@ import { CommonModule } from '@angular/common';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
-
+import { DrawerModule } from 'primeng/drawer';
+import { AccordionModule } from 'primeng/accordion';
+import { DividerModule } from 'primeng/divider';
 
 @Component({
   selector: 'app-login',
+  encapsulation: ViewEncapsulation.None, // Desativa o encapsulamento de estilos
   standalone: true,
   imports: [
-    ReactiveFormsModule,ButtonModule,ToastModule,FloatLabelModule,IconFieldModule,InputIconModule,
-    InputTextModule,InputGroupAddonModule,InputGroupModule,CommonModule, RouterLink,
+    ReactiveFormsModule,ButtonModule,ToastModule,FloatLabelModule,IconFieldModule,InputIconModule,DividerModule,
+    InputTextModule,InputGroupAddonModule,InputGroupModule,CommonModule, RouterLink,DrawerModule,AccordionModule
   ],
   providers: [
     MessageService,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
+  
 })
 export class LoginComponent {
   loginForm!: FormGroup;
   toastrService: any;
+  modalVisible: boolean = false;
 
   constructor(
     private router: Router,

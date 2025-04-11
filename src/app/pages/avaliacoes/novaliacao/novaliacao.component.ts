@@ -64,6 +64,7 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { SelectModule } from 'primeng/select';
 import { FloatLabelModule } from 'primeng/floatlabel';
+import { Dialog, DialogModule } from 'primeng/dialog';
 
 // Custom validator function
 function respostaJustificativaValidator(control: AbstractControl): { [key: string]: any } | null {
@@ -118,7 +119,7 @@ interface Tipo{
     ReactiveFormsModule,FormsModule,StepperModule,CommonModule,MatStepperModule,MatFormFieldModule,CalendarModule,MatRadioModule,DividerModule,
     InputMaskModule,StepsModule,NzStepsModule,MatInputModule,MatButtonModule,MatSelectModule,RadioButtonModule,InputTextModule,
     RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,SafeHtmlPipe,
-    NzMenuModule,TabMenuModule,SelectModule,FloatLabelModule
+    NzMenuModule,TabMenuModule,SelectModule,FloatLabelModule,DialogModule
   ],
   providers: [
     {
@@ -138,7 +139,7 @@ export class NovaliacaoComponent implements OnInit, OnDestroy {
   colaboradores: Colaborador [] | undefined;
   avaliadores: Avaliador [] | undefined;
   formularios: Formulario [] | undefined;
-  formularioSelecionado: number | undefined;
+  formularioSelecionado: any | undefined;
   periodos: Periodo [] | undefined;
   empresas: Empresa[]| undefined;
   filiais: Filial[]| undefined;
@@ -187,6 +188,18 @@ export class NovaliacaoComponent implements OnInit, OnDestroy {
     { key: 'pessimo', name: 'Péssimo', value: 1 },
     { key: 'nao_se_aplica', name: 'Não se aplica', value: 'nao_se_aplica' },
 ];
+
+  formulariosCods: any[] = [
+    { id:2, nome: 'Avaliação Geral'},
+    { id:3, nome: 'Avaliação do Gestor'}
+  ];
+
+//formularioSelecionado: number; // Guarda o id do formulário selecionado
+//formulariosDisponiveis: number[] = []; // Lista de formulários disponíveis
+showFormularioSelect: boolean = false; // Flag para mostrar o select
+
+//formularioSelecionado: number | null = null; // Armazena o ID do formulário selecionado
+formulariosDisponiveis: { id: number; nome: string }[] = []; // Lista de formulários disponíveis
 
   constructor(
     private router: Router,
@@ -353,25 +366,40 @@ export class NovaliacaoComponent implements OnInit, OnDestroy {
     const dataAtual = new Date();
     const mesAtual = dataAtual.getMonth() + 1; // +1 porque os meses em JavaScript são indexados a partir de 0
     const anoAtual = dataAtual.getFullYear();
-    let trimestre = '';
 
-    switch (Math.ceil(mesAtual / 3)) {
-      case 1:
-        trimestre = 'Primeiro Trimestre';
-        break;
-      case 2: 
-        break;
-      case 3:
-        trimestre = 'Terceiro Trimestre';
-        break;
-      case 4:
-        trimestre = 'Quarto Trimestre';
-        break;
-      default:
-        trimestre = 'Indeterminado';
+    // Calcula o trimestre atual
+    let trimestreAtual = Math.ceil(mesAtual / 3);
+    let anoReferencia = anoAtual;
+
+    // Ajusta para o trimestre anterior
+    if (trimestreAtual === 1) {
+        trimestreAtual = 4; // Se for o primeiro trimestre, o anterior é o quarto trimestre do ano anterior
+        anoReferencia -= 1;
+    } else {
+        trimestreAtual -= 1; // Caso contrário, apenas subtraia 1 do trimestre atual
     }
 
-    this.trimestre = `${trimestre} de ${anoAtual}`;
+    // Define o nome do trimestre
+    let trimestre = '';
+    switch (trimestreAtual) {
+        case 1:
+            trimestre = 'Primeiro Trimestre';
+            break;
+        case 2:
+            trimestre = 'Segundo Trimestre';
+            break;
+        case 3:
+            trimestre = 'Terceiro Trimestre';
+            break;
+        case 4:
+            trimestre = 'Quarto Trimestre';
+            break;
+        default:
+            trimestre = 'Indeterminado';
+    }
+
+    this.trimestre = `${trimestre} de ${anoReferencia}`;
+    console.log('Período de Avaliação:', this.trimestre);
 }
 
 
@@ -448,6 +476,38 @@ export class NovaliacaoComponent implements OnInit, OnDestroy {
       console.error('O ID do avaliado é indefinido');
     }
   }
+
+  // onAvaliadoSelecionado(avaliado: any): void {
+  //   const id = avaliado.id;
+  //   const form = avaliado.formulario;
+    
+  //   if (id !== undefined) {
+  //     console.log('Avaliado selecionado ID:', id); // Log para depuração
+  //     this.avaliadoSelecionadoId = id;
+  
+  //     if (Array.isArray(form) && form.length > 1) {
+  //       // Caso tenha mais de um formulário, guarda os formulários para o select
+  //       this.formulariosDisponiveis = form;
+  //       console.log('Formulários disponíveis:', this.formulariosDisponiveis); // Log para depuração
+  //       this.showFormularioSelect = true; // Exibe o select
+  //     } else {
+  //       // Se tiver apenas um formulário, carrega diretamente
+  //       this.carregarPerguntasDoFormulario(form[0] || form); // Aqui assume-se que form é um array, mas pode ser único
+  //       this.showFormularioSelect = false; // Não exibe o select
+  //     }
+  
+  //     this.obterDetalhesAvaliado(); // Espera a obtenção dos detalhes do avaliado
+  //   } else {
+  //     console.error('O ID do avaliado é indefinido');
+  //   }
+  // }
+  
+  // selecionarFormulario(formularioSelecionado: number) {
+  //   this.obterDetalhesAvaliado();
+  //   console.log('Formulário selecionado:', formularioSelecionado);
+  //   this.carregarPerguntasDoFormulario(formularioSelecionado);
+  // }
+
 
   obterDetalhesAvaliado(): Promise<void> {
     return new Promise((resolve, reject) => {

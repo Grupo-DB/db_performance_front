@@ -52,13 +52,16 @@
                 <li *ngIf="hasGroup(['Admin','OrcamentoGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/dre/indicadorescp">Indicadores Custo de Produção</a>
                 </li>
+                <li *ngIf="hasGroup(['Admin','OrcamentoGestor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/curva">Curva ABC</a>
+                </li>
             </ul>
            
         </li>    
     </ul>
 </div>
 
-<div class="titulo mt-3">
+<div class="titulo mt-6">
     <p-divider align="left" type="solid">
         <b>Indicadores Custo de Produção</b>
     </p-divider>
@@ -106,7 +109,7 @@
             Calcular
         </div>
     </div>
-    <div *ngIf="loading" class="loading-animation flex flex-column form2 w-10 justify-content-center m-auto">
+    <div *ngIf="loading" class="loading-animation flex flex-column form2 w-5 justify-content-center m-auto">
         <!-- Coloque aqui a sua animação de carregamento -->
         <img src="assets/imagens/startmanager2.gif" alt="Loading..." class="w-12">
     </div> 
@@ -122,43 +125,48 @@
             currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
             [rowsPerPageOptions]="[20, 40, 60]"
             [globalFilterFields]="['id','ano','raiz_analitica_desc','raiz_contabil_grupo_desc','mes_especifico']"
-            sortMode="multiple"
+            sortMode="single"
             scrollable="true"
             stripedRows
+            sortField="fabrica"
+            [sortOrder]="1"
         >
             <ng-template pTemplate="header">
                 <tr class="footer-row1">
-                    <th style="width:10%" type="text" field="codigo" display="menu">
-                        Centro de Custo Pai
+                    <th pSortableColumn="fabrica" style="width:10%" type="text" field="fabrica" display="menu">
+                        Unidade Produtiva <p-sortIcon field="fabrica" />
                     </th>
-                    <th style="width:10%" type="text" field="codigo" display="menu">
-                        Linha de Produtos
+                    <th pSortableColumn="label" style="width:10%" type="text" field="label" display="menu">
+                        Linha de Produtos <p-sortIcon field="label" />
                     </th>
-                    <th style="width:10%" type="text" field="codigo" display="menu">
-                        Vr / Tn Projetado
+                    <th pSortableColumn="projetado" style="width:10%" type="text" field="projetado" display="menu">
+                        Vr / Tn Projetado <p-sortIcon field="projetado" />
                     </th>
-                    <th style="width:10%" type="text" field="codigo" display="menu">
-                        Vr / Tn Realizado
+                    <th pSortableColumn="realizado" style="width:10%" type="text" field="realizado" display="menu">
+                        Vr / Tn Realizado <p-sortIcon field="realizado" />
                     </th>
-                    <th style="width:10%" type="text" field="codigo" display="menu">
-                        Diferença Vr
+                    <th pSortableColumn="diferenca" style="width:10%" type="text" field="diferenca" display="menu">
+                        Diferença Vr <p-sortIcon field="diferenca" />
                     </th>
-                    <th style="width:10%" type="text" field="codigo" display="menu">
-                        Diferença %
+                    <th pSortableColumn="diferencaPercentual" style="width:10%" type="text" field="diferencaPercentual"display="menu">
+                        Diferença % <p-sortIcon field="diferencaPercentual" />
                     </th>
                     <th style="width:10%" type="text" field="status" display="menu">
                         Status
+                    </th>
+                    <th style="width:10%" type="text" field="status" display="menu">
+                        Detalhes
                     </th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-resultado>
                 <tr class="resultados-row">
-                    <td>{{ resultado.ccPai }}</td>
+                    <td>{{ resultado.fabrica }}</td>
                     <td>{{ resultado.label }}</td>
                     <td>{{ resultado.projetado }}</td>
                     <td>{{ resultado.realizado }}</td>
                     <td>{{ resultado.diferenca }}</td>
-                    <td>{{ resultado.diferencaPercentual | percent }}</td>
+                    <td>{{ resultado.diferencaPercentual | percent:'1.0' }}</td>
                     <td class="text-right">
                         <i
                             class="pi"
@@ -169,10 +177,38 @@
                             [style.color]="resultado.diferencaPercentual > 0 ? '#22c55e' : '#ef4444'"
                         ></i>
                     </td>
+                    <td>
+                        <p-button 
+        (onClick)="displayResultado($event, resultado, op)" 
+        icon="pi pi-search" 
+        severity="secondary" 
+        rounded 
+    ></p-button>
+                    </td>
 
                 </tr>
             </ng-template>
-        </p-table>    
+        </p-table>
+        <p-popover #op (onHide)="selectedResultado = null">
+            <ng-template #content>
+                <div *ngIf="selectedResultado" class="rounded flex flex-col">
+                    <div class="flex justify-center rounded">
+                        <div class="relative mx-auto">
+                            <!-- Detalhes do resultado -->
+                            <p><strong>Valor Projetado:</strong> {{ selectedResultado.projetadoCcPai }}</p>
+                            <p><strong>Produção Projetada :</strong> {{ selectedResultado.quantidadeProjetada }} Tn</p>
+                            <p><strong>Valor Realizado:</strong> {{ selectedResultado.realizadoCcPai }}</p>
+                            <p><strong>Produção Realizada:</strong> {{ selectedResultado.producao }} Tn</p>
+                            
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <!-- <p-button icon="pi pi-times" bu outlined (onClick)="hidePopover()" /> -->
+                        <p-button icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" (onClick)="hidePopover()"/>
+                    </div>
+                </div>
+            </ng-template>
+        </p-popover>    
 
     </div>
 </div>

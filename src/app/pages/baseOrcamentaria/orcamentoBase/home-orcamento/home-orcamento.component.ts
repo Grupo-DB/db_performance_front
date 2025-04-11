@@ -23,8 +23,4 @@ export class HomeOrcamentoComponent {
     return this.loginService.hasAnyGroup(groups);
     } 
 
-
-
-
-
 }

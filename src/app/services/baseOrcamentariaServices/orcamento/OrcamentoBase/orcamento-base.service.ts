@@ -78,11 +78,11 @@ export class OrcamentoBaseService {
   getOrcamentoBaseDetalhe(id: any): Observable<any>{
     return this.httpClient.get(`${this.apiUrl}${id}/`);
   }
-  getOrcamentoBaseByCcPai(id: any, ano: any, filiais:any): Observable<any>{
-    return this.httpClient.get<any>(`${this.apiUrl}byCcPai/?centro_de_custo_pai_id=${id}&ano=${ano}&filial=${filiais}`)
+  getOrcamentoBaseByCcPai(id: any, ano: any, periodo: any, filiais:any): Observable<any>{
+    return this.httpClient.get<any>(`${this.apiUrl}byCcPai/?centro_de_custo_pai_id=${id}&ano=${ano}&periodo=${periodo}&filial=${filiais}`)
   }
-  getOrcamentoBaseByGrupoIten(cod: any, centro_de_custo_pai_id: any, ano: any, filiais:any): Observable<any>{
-    return this.httpClient.get<any>(`${this.apiUrl}byGrupoItens/?grupo_itens=${cod}&centro_de_custo_pai_id=${centro_de_custo_pai_id}&ano=${ano}&filial=${filiais}`)
+  getOrcamentoBaseByGrupoIten(cod: any, centro_de_custo_pai_id: any,periodo: any, ano: any, filiais:any): Observable<any>{
+    return this.httpClient.get<any>(`${this.apiUrl}byGrupoItens/?grupo_itens=${cod}&centro_de_custo_pai_id=${centro_de_custo_pai_id}&periodo=${periodo}&ano=${ano}&filial=${filiais}`)
   }
   calculosTotais(ano: any, filiais:any): Observable<any>{
     return this.httpClient.get<any>(`${this.apiUrl}total/?ano=${ano}&filial=${filiais}`)
@@ -99,7 +99,7 @@ export class OrcamentoBaseService {
     const dissidioUrl = 'http://localhost:8000/orcamento/aplicarDissidio/';
     return this.httpClient.post<any>(dissidioUrl, {porcentagem:porcentagem})
   }
-  calcularOrcamentoRealizado(ccs: any, ano: any, filiais:any): Observable<any>{
-    return this.httpClient.post<any>(this.apiRealizadoUrl, {ccs:ccs, ano:ano, filiais:filiais})
+  calcularOrcamentoRealizado(ccs: any, periodo: any, ano: any, filiais:any): Observable<any>{
+    return this.httpClient.post<any>(this.apiRealizadoUrl, {ccs:ccs, periodo:periodo, ano:ano, filiais:filiais})
   }
 }

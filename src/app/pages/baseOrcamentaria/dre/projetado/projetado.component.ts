@@ -131,7 +131,7 @@ export class ProjetadoComponent implements OnInit {
   ebitdaFormatado: any;
   totalDepreciacaoFormatada: any;
   percentualTotalEbitda: any;
-  ano!: number;
+  ano: number = 2025;
   periodo!: number;
   //
   orcados: any[] = [];
@@ -166,8 +166,8 @@ export class ProjetadoComponent implements OnInit {
     ) {}
 
   ngOnInit(): void {
-    // this.getResultados();
-    // this.getOrcados();
+    this.getResultados();
+    this.getOrcados();
     // this.getDespesas();
   }
 
@@ -194,9 +194,9 @@ export class ProjetadoComponent implements OnInit {
       this.projetadoService.getCalculosdOrcado(this.ano, this.periodo).subscribe(
         response => {
           // Receita Bruta obtida da resposta
-          const receitaBruta = this.receitaBruta;
-    
-          this.totalGeral = response.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+          const receitaLiquida = this.receitaLiquida;
+          //console.log('receita liquida', receitaLiquida);
+          this.totalGeral = response.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
           this.custoTotalFormatado = response.total;
     
           this.orcados = [{
@@ -205,24 +205,26 @@ export class ProjetadoComponent implements OnInit {
               total: this.totalGeral
             },
             children: response.resultado.map((item: any) => {
-              // Calcula o percentual de cada "tipo" em relação à receita bruta
-              const percentualTipo = receitaBruta ? (item.total / receitaBruta) * 100 : 0;
+              const receitaLiquidaValor = this.receitaLiquidaValor;
+              //console.log('receita liquida valor', receitaLiquidaValor);
+              const percentualTipo = receitaLiquidaValor ? (item.total / receitaLiquidaValor) * 100 : 0;
     
               return {
                 data: {
                   tipo: item.tipo,
-                  total: item.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-                  percentual: percentualTipo.toFixed(2) + '%'
+                  total: item.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 }),
+                  percentual: percentualTipo.toFixed(0) + '%'
                 },
                 children: item.centros_custo.map((centro: any) => {
-                  // Calcula o percentual de cada centro de custo dentro do tipo
-                  const percentualCentro = receitaBruta ? (centro.total / receitaBruta) * 100 : 0;
+                  const receitaLiquidaValor = this.receitaLiquidaValor;
+                  //console.log('receita liquida valor', receitaLiquidaValor);
+                  const percentualCentro = receitaLiquidaValor ? (centro.total / receitaLiquidaValor) * 100 : 0;
     
                   return {
                     data: {
                       nome: centro.nome,
-                      total: centro.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-                      percentual: percentualCentro.toFixed(2) + '%'
+                      total: centro.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 }),
+                      percentual: percentualCentro.toFixed(0) + '%'
                     }
                   };
                 })
@@ -247,36 +249,36 @@ export class ProjetadoComponent implements OnInit {
       this.projetadoService.getCalculosdDespesa(this.ano, this.periodo).subscribe(
         response => {
           // Receita Bruta obtida da resposta
-          const receitaBruta = this.receitaBruta;
+          const receitaLiquida = this.receitaLiquida;
     
           this.totalGeralDespesa = response.total;
           this.totalDepreciacao = response.depreciacao;
-          this.totalDepreciacaoFormatada = response.depreciacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+          this.totalDepreciacaoFormatada = response.depreciacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
     
           this.despesas = [{
             data: {
               tipo: 'Despesa Total',
-              total: this.totalGeralDespesa.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+              total: this.totalGeralDespesa.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 }),
             },
             children: response.resultado.map((item: any) => {
-              // Calcula o percentual de cada "tipo" em relação à receita bruta
-              const percentualTipo = receitaBruta ? (item.total / receitaBruta) * 100 : 0;
+              const receitaLiquidaValor = this.receitaLiquidaValor;
+              const percentualTipo = receitaLiquidaValor ? (item.total / receitaLiquidaValor) * 100 : 0;
     
               return {
                 data: {
                   tipo: item.tipo,
-                  total: item.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-                  percentual: percentualTipo.toFixed(2) + '%'
+                  total: item.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 }),
+                  percentual: percentualTipo.toFixed(0) + '%'
                 },
                 children: item.centros_custo.map((centro: any) => {
-                  // Calcula o percentual de cada centro de custo dentro do tipo
-                  const percentualCentro = receitaBruta ? (centro.total / receitaBruta) * 100 : 0;
+                  const receitaLiquidaValor = this.receitaLiquidaValor;
+                  const percentualCentro = receitaLiquidaValor ? (centro.total / receitaLiquidaValor) * 100 : 0;
     
                   return {
                     data: {
                       nome: centro.nome,
-                      total: centro.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-                      percentual: percentualCentro.toFixed(2) + '%'
+                      total: centro.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 }),
+                      percentual: percentualCentro.toFixed(0) + '%'
                     }
                   };
                 })
@@ -305,17 +307,17 @@ export class ProjetadoComponent implements OnInit {
           label: key,
           quantidade: response.quantidade[key],
           aliquota: response.aliquota[key],
-          preco: response.preco_medio_venda[key].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) || 0,
-          faturamento: response.faturamento[key].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) || 0,
-          deducao: response.deudcao[key].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) || 0,
-          receitaLiquida: response.receita_liquida[key].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) || 0,
+          preco: response.preco_medio_venda[key].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0  }) || 0,
+          faturamento: response.faturamento[key].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0  }) || 0,
+          deducao: response.deudcao[key].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0  }) || 0,
+          receitaLiquida: response.receita_liquida[key].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0  }) || 0,
           percentual: Math.round(response.receita_liquida_percent[key])
         }));
         this.receitaBruta = response.receita_bruta;
-        this.receitaBrutaFormatada = response.receita_bruta.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        this.deducaoTotal = response.deducao_total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        this.receitaBrutaFormatada = response.receita_bruta.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        this.deducaoTotal = response.deducao_total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
         this.receitaLiquidaValor = response.receita_liquida_total;
-        this.receitaLiquida = response.receita_liquida_total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        this.receitaLiquida = response.receita_liquida_total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
         this.quantidadeTotal = response.quantidade_total;
         this.percentDeducao = Math.round(response.percentual_deducao_total);
         this.calculatePercentualTotalGeral();
@@ -333,54 +335,54 @@ export class ProjetadoComponent implements OnInit {
     calcularLucroLiquido(): void{
       if(this.impostos > 0){
       this.lucroLiquido = this.lucroAntesImpostos - this.impostos;
-      this.lucroLiquidoFormatado = this.lucroLiquido.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      this.lucroLiquidoFormatado = this.lucroLiquido.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL',minimumFractionDigits: 0, maximumFractionDigits: 0 });
       } else {
         this.lucroLiquido = 0;
       }
     }
     calcularLucroAntesImpostos(): void{
       this.lucroAntesImpostos = this.resultadoOperacional + this.resultadoFinanceiro;
-      this.lucroAntesImpostosFormatado = this.lucroAntesImpostos.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      this.lucroAntesImpostosFormatado = this.lucroAntesImpostos.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL',minimumFractionDigits: 0, maximumFractionDigits: 0 });
     }
 
     calcularLucroBruto(): void{
       this.lucroBruto = this.receitaLiquidaValor - this.custoTotalFormatado;
       console.log('hahaha',this.receitaLiquidaValor);
-      this.lucroBrutoFormatado = this.lucroBruto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      this.lucroBrutoFormatado = this.lucroBruto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
       this.calcularResultOper();
     }
 
     calcularResultOper(): void{
       this.resultadoOperacional = this.lucroBruto - this.totalGeralDespesa;
       console.log('kkkkkkkkkk',this.lucroBruto);
-      this.resultadoOperacionalFormatado = this.resultadoOperacional.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      this.resultadoOperacionalFormatado = this.resultadoOperacional.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
       
       this.calcularEbitda();
     }
 
     calculatePercentualTotalGeral(): void {
-      if (this.receitaBruta > 0) {
-        this.percentualTotalGeral = Math.round((this.custoTotalFormatado / this.receitaBruta) * 100);
+      if (this.receitaLiquidaValor > 0) {
+        this.percentualTotalGeral = Math.round((this.custoTotalFormatado / this.receitaLiquidaValor) * 100);
         console.log('adfgadfgdafg',this.percentualTotalGeral);
       }
     }
 
     calculoPercentualDespesa(): void {
-      if (this.receitaBruta > 0) {
-        this.percentualDespesaGeral = Math.round((this.totalGeralDespesa / this.receitaBruta) * 100);
+      if (this.receitaLiquidaValor > 0) {
+        this.percentualDespesaGeral = Math.round((this.totalGeralDespesa / this.receitaLiquidaValor) * 100);
         console.log(this.percentualDespesaGeral);
       }
     }
 
     calcularEbitda(): void {
       this.ebitda = this.resultadoOperacional + this.totalDepreciacao;
-      this.ebitdaFormatado = this.ebitda.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      this.ebitdaFormatado = this.ebitda.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
       this.percentualEbitda();
     }
 
     percentualEbitda(): void {
-      if (this.receitaBruta > 0) {
-        this.percentualTotalEbitda = Math.round((this.ebitda / this.receitaBruta) * 100);
+      if (this.receitaLiquidaValor > 0) {
+        this.percentualTotalEbitda = Math.round((this.ebitda / this.receitaLiquidaValor) * 100);
       }
     }
     ///////////////////////////////////////////

@@ -63,7 +63,7 @@
 </div>
 
 
-<div *ngIf="hasGroup(['Admin','RHGestor'])" class="container">
+<div *ngIf="hasGroup(['Admin','RHGestor'])" class="titulo mt-6 mb-6 text-2xl">
         <p-divider align="left" type="solid">
             <b>Cadastro de Perguntas</b>
         </p-divider>     
@@ -92,7 +92,7 @@
                             </p-floatlabel>
                         </div>
                     
-                        <div class="form2 w-10 mb-3">
+                        <div class="form2 w-10 mb-5">
                             <p class="w-3 ml-0"><strong>Legenda</strong></p>
                             <p-editor 
                                 formControlName="legenda" 
@@ -103,7 +103,7 @@
             </div>            
         </form>
 
-        <div class="flex ml-5 mb-5 mt-2 md:justify-content-center mt-3 lg:justify-content-center lg:mt-0"@efeitoFade>
+        <div class="flex ml-5 mb-5 mt-2 md:justify-content-center mt-6 lg:justify-content-center lg:mt-5"@efeitoFade>
             <p-toast></p-toast>
             <div class="btnsec" (click)="clearForm()">
                 <p>Limpar</p>

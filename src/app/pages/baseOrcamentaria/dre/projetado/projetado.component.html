@@ -58,7 +58,7 @@
     </ul>
 </div>
 
-<div class="titulo mt-3">
+<div class="titulo mt-6 mb-6">
     <p-divider align="left" type="solid">
         <b>DRE Projetado</b>
     </p-divider>
@@ -119,36 +119,38 @@
                     currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
                     [rowsPerPageOptions]="[20, 40, 60]"
                     [globalFilterFields]="['id','ano','raiz_analitica_desc','raiz_contabil_grupo_desc','mes_especifico']"
-                    sortMode="multiple"
+                    sortMode="single"
                     scrollable="true"
                     stripedRows
+                    sortField="quantidade" 
+                    [sortOrder]="-1"
                 >
                    
                     <ng-template pTemplate="header">
                         <tr class="footer-row1">
-                            <th style="width:10%" type="text" field="codigo" display="menu">
-                                Linha de Produtos
+                            <th style="width:10%" type="text" field="label" display="menu">
+                                Linha de Produtos 
                             </th>
-                            <th style="width:10%" type="text" field="nome" display="menu">
-                                Quantidade (tn)
+                            <th pSortableColumn="quantidade" style="width:10%" type="text" field="quantidade" display="menu">
+                                Quantidade (tn) <p-sortIcon field="quantidade" />
                             </th>
-                            <th style="width:10%" type="text" field="nome" display="menu">
-                                Preço Médio (R$)
+                            <th pSortableColumn="preco" style="width:10%" type="text" field="preco" display="menu">
+                                Preço Médio (R$) <p-sortIcon field="preco" />
                             </th>
-                            <th style="width:10%" type="text" field="nome" display="menu">
-                               Faturamento
+                            <th pSortableColumn="faturamento" style="width:10%" type="text" field="faturamento" display="menu">
+                               Faturamento <p-sortIcon field="faturamento" />
                             </th>
-                            <th style="width:10%" type="text" field="gestorNome" display="menu">
-                                Aliquota Dedução (%)
+                            <th pSortableColumn="aliquota" style="width:10%" type="text" field="aliquota" display="menu">
+                                Aliquota Dedução (%) <p-sortIcon field="aliquota" />
                             </th>
-                            <th style="width:10%" type="text" field="gestorNome" display="menu">
-                                Dedução
+                            <th pSortableColumn="deducao" style="width:10%" type="text" field="deducao" display="menu">
+                                Dedução <p-sortIcon field="deducao" />
                             </th>
-                            <th style="width:10%" type="text" field="gestorNome" display="menu">
-                                Receita Liquida
+                            <th pSortableColumn="receitaLiquida" style="width:10%" type="text" field="receitaLiquida" display="menu">
+                                Receita Liquida <p-sortIcon field="receitaLiquida" />
                             </th>
-                            <th style="width:10%" type="text" field="gestorNome" display="menu">
-                                %
+                            <th pSortableColumn="percentual" style="width:10%" type="text" field="percentual" display="menu">
+                                % <p-sortIcon field="percentual" />
                             </th>
                         </tr>
                     </ng-template>

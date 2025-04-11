@@ -63,9 +63,12 @@
 </div>
 
 <div class="container">
-  <p-divider align="left" type="solid">
-    <b>Nova Avaliação</b> 
-  </p-divider><br> 
+  <div class="titulo mt-6 mb-6 text-2xl">
+    <p-divider align="left" type="solid">
+      <b>Nova Avaliação</b> 
+    </p-divider>
+  </div>  
+    <br> 
   <p style="margin-left: 22px;">Periodo: <strong>{{ trimestre }}</strong></p>
   <br>
 
@@ -154,6 +157,24 @@
           </p-floatlabel>
         </div> 
       </div>
+      <br>
+      <!-- <div *ngIf="showFormularioSelect" class="drops w-full justify-content-center"> 
+        <div class="dp2 w-10 md:w-6">  
+            <p-select
+                variant="filled"
+                [style]="{'width':'100%'}"
+                [(ngModel)]="formularioSelecionado" 
+                [options]="formulariosCods"
+                optionLabel="nome"
+                optionValue="id"
+                placeholder="Selecione o Tipo de Avaliação"
+                (onChange)="selecionarFormulario($event.value)"
+            >   
+            </p-select>
+           
+          
+        </div> 
+      </div> -->
       <br>  
       <input type="hidden" formControlName="tipo">
       <input type="hidden" formControlName="avaliador" [(ngModel)]="avaliador" > 
@@ -225,7 +246,21 @@
 
 
 
-
+  <!-- <p-dialog [(visible)]="tipoAvaliacaoModalVisivel" header="Selecione o Tipo de Avaliação" [modal]="true" [closable]="false">
+    <div *ngIf="tiposAvaliacaoDisponiveis.length > 0">
+        <p-radioButton 
+            *ngFor="let tipo of tiposAvaliacaoDisponiveis" 
+            name="tipoAvaliacao" 
+            [value]="tipo" 
+            [(ngModel)]="tipoAvaliacaoSelecionado">
+            {{ tipo }}
+        </p-radioButton>
+    </div>
+    <p-footer>
+        <button pButton label="Confirmar" (click)="confirmarTipoAvaliacao()" [disabled]="!tipoAvaliacaoSelecionado"></button>
+        <button pButton label="Cancelar" (click)="tipoAvaliacaoModalVisivel = false"></button>
+    </p-footer>
+</p-dialog> -->
 
 
   

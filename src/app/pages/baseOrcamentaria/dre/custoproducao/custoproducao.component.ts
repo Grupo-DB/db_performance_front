@@ -121,13 +121,13 @@ export class CustoproducaoComponent implements OnInit{
   linhaForm: FormGroup;
 
   fabricas = [
-    { nome: 'Fábrica de Calcário' },
-    { nome: 'Fábrica de Cal' },
-    { nome: 'Fábrica de Argamassa' },
-    { nome: 'Fábrica de Calcinação' },
-    { nome: 'Fábrica de Fertilizantes' },
-    { nome: 'Britagem' },
-    { nome: 'Mineração' },
+    { nome: '05 - Fábrica de Calcário' },
+    { nome: '04 - Fábrica de Cal' },
+    { nome: '06 - Fábrica de Argamassa' },
+    { nome: '03 - Fábrica de Calcinação' },
+    { nome: '07 - Fábrica de Fertilizantes' },
+    { nome: '02 - Britagem' },
+    { nome: '01 - Mineração' },
   ]
 
   constructor(

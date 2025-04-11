@@ -37,11 +37,12 @@ export class GrupoItensService {
       url
     );
   }
-  calcularOrcamentoRealizado(grupoItens: any, ccs: any, filiais:any, ano: any): Observable<any>{
+  calcularOrcamentoRealizado(grupoItens: any, ccs: any, filiais:any, periodo: any, ano: any): Observable<any>{
     return this.httpClient.post<any>(this.apiRealizadoUrl, {
       grupo_itens: grupoItens,
       ccs: ccs,
       filiais: filiais,
+      periodo: periodo,
       ano: ano
     })
 }

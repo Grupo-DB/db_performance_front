@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputGroupModule } from 'primeng/inputgroup';
@@ -27,6 +27,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { SelectModule } from 'primeng/select';
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
+import { ConfirmDialog } from 'primeng/confirmdialog';
 
 interface RegisterAssociacaoForm{
   avaliador: FormControl,
@@ -37,13 +38,13 @@ interface RegisterAssociacaoForm{
   selector: 'app-avaliadoravaliados',
   standalone: true,
   imports: [
-    TabMenuModule,NzIconModule,NzLayoutModule,NzMenuModule,
+    TabMenuModule,NzIconModule,NzLayoutModule,NzMenuModule,ConfirmDialog,
     ReactiveFormsModule,FormsModule,PickListModule,CommonModule,
     InputMaskModule,DividerModule,IconFieldModule,InputIconModule,SelectModule,FloatLabelModule,
     RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
   ],
   providers:[
-    MessageService,
+    MessageService,ConfirmationService
   ],
   animations:[
                     trigger('efeitoFade',[
@@ -112,7 +113,8 @@ export class AvaliadorAvaliadosComponent implements OnInit {
     private avaliadorService: AvaliadorService,
     private avaliadoService: AvaliadoService,
     private cdr: ChangeDetectorRef,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private confirmationService: ConfirmationService
   )
   {
     this.registerassociacaoForm = new FormGroup({
@@ -148,18 +150,48 @@ export class AvaliadorAvaliadosComponent implements OnInit {
      );
     }
     
+    
+    confirmRemoval(avaliador: Avaliador, avaliado: Avaliado): void {
+      this.confirmationService.confirm({
+        message: `Tem certeza de que deseja remover ${avaliado.nome} do avaliador ${avaliador.nome}?`,
+        header: 'Confirmação',
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: 'Sim',
+        rejectLabel: 'Cancelar',
+        acceptButtonStyleClass: 'p-button-info',
+        rejectButtonStyleClass: 'p-button-secondary',
+        accept: () => {
+          this.removeAvaliado(avaliador, avaliado);
+        }
+      });
+    }
+  
     removeAvaliado(avaliador: Avaliador, avaliado: Avaliado): void {
       this.avaliadorService.removeAvaliado(avaliador.id, avaliado.id).subscribe(
-        updatedAvaliador => {
+        (updatedAvaliador) => {
           // Atualiza o formulário localmente
-          const index = this.avaliadores.findIndex(f => f.id === avaliador.id);
+          const index = this.avaliadores.findIndex((f) => f.id === avaliador.id);
           if (index !== -1) {
             this.avaliadores[index] = updatedAvaliador;
-            //this.mapFormularios(); // Atualiza o texto das perguntas
           }
+  
+          // Exibe mensagem de sucesso
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Removido',
+            detail: `${avaliado.nome} foi removido com sucesso.`
+          });
+  
+          // Atualiza a tabela
+          this.cdr.detectChanges();
         },
-        error => {
+        (error) => {
           console.error('Erro ao remover avaliado:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Não foi possível remover o avaliado. Tente novamente.'
+          });
         }
       );
     }

@@ -19,13 +19,10 @@ import { Card, CardModule } from 'primeng/card';
 import { OrcamentoBaseService } from '../../../../services/baseOrcamentariaServices/orcamento/OrcamentoBase/orcamento-base.service';
 import { CentrocustoService } from '../../../../services/baseOrcamentariaServices/orcamento/CentroCusto/centrocusto.service';
 import { CentroCusto } from '../../orcamentoBase/centrocusto/centrocusto.component';
-import { Table } from 'jspdf-autotable';
 import { TableModule } from 'primeng/table';
-import { th } from 'date-fns/locale';
 import { TooltipModule } from 'primeng/tooltip';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { InplaceModule } from 'primeng/inplace';
-import { forkJoin, tap } from 'rxjs';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { Chart } from 'chart.js';
 import { ButtonModule } from 'primeng/button';
@@ -123,6 +120,14 @@ export class OrcamentogrupoitensComponent {
   dictOrcado:any;
   dictRealizado:any;
   graficoTotalOrcadoRealizado:Chart<'bar'> | undefined;
+
+  periodo!: number;
+
+  meses = Array.from({ length: 12 }, (_, i) => ({
+    key: i + 1,
+    value: new Date(0, i).toLocaleString('pt-BR', { month: 'long' }),
+  }));
+  dropdown: any;
 
   constructor(
     private loginService: LoginService,
@@ -269,7 +274,7 @@ calculosOrcamentosRealizados(): Promise<void> {
     if (this.selectedGruposItensCodigos.length !== null) {
       let totalRealizadoAcumulado = 0; // Variável para acumular o total realizado
       this.loading = true;
-      this.grupoItensService.calcularOrcamentoRealizado(this.selectedGruposItensCodigos, this.centrosCusto, this.selectedFiliais, this.selectedAno).subscribe(
+      this.grupoItensService.calcularOrcamentoRealizado(this.selectedGruposItensCodigos, this.centrosCusto, this.selectedFiliais,this.periodo, this.selectedAno).subscribe(
         response => {
           totalRealizadoAcumulado += response.total; // Acumula o total realizado
           this.detalhesRealizadoGrupoItens = response.agrupado_por_pai;
@@ -321,7 +326,7 @@ ccsLancamentos(meterItem: any) {
   console.log('Index:', meterItem);
   const indice = meterItem.label;
   if (this.selectedGruposItensCodigos !== null) {
-    this.grupoItensService.calcularOrcamentoRealizado(this.selectedGruposItensCodigos, this.centrosCusto, this.selectedFiliais, this.selectedAno).subscribe(
+    this.grupoItensService.calcularOrcamentoRealizado(this.selectedGruposItensCodigos, this.centrosCusto, this.selectedFiliais,this.periodo, this.selectedAno).subscribe(
       response => {
         this.detalhesRealizadoGrupoItens = response.agrupado_por_pai[indice].detalhes;
         this.detalhesRealizadoCC = response.df_agrupado_pais_detalhes[indice].detalhes;
@@ -339,7 +344,7 @@ orcamentosByGrupoItens(): void {
   if (this.selectedGruposItensCodigos !== null) {
     let totalOrcadoAcumulado = 0; // Variável para acumular o total orçado
 
-    this.orcamentoBaseService.getOrcamentoBaseByGrupoIten(this.selectedGruposItensCodigos, this.selectedCcsPais, this.selectedAno, this.selectedCodManagers).subscribe(
+    this.orcamentoBaseService.getOrcamentoBaseByGrupoIten(this.selectedGruposItensCodigos, this.selectedCcsPais,this.periodo, this.selectedAno, this.selectedCodManagers).subscribe(
       response => {
         totalOrcadoAcumulado += response.total; // Acumula o total orçado
         this.ccsPaisArray = Object.keys(response.total_por_cc_pai).map((key) => ({

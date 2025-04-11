@@ -27,7 +27,7 @@ import { CustoproducaoService } from '../../../../services/baseOrcamentariaServi
 import { CentroCusto } from '../../orcamentoBase/centrocusto/centrocusto.component';
 import { CentrocustoService } from '../../../../services/baseOrcamentariaServices/orcamento/CentroCusto/centrocusto.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { th } from 'date-fns/locale';
+import { Popover, PopoverModule } from 'primeng/popover';
 
 @Component({
   selector: 'app-indicadorescp',
@@ -37,7 +37,7 @@ import { th } from 'date-fns/locale';
     DropdownModule,InputTextModule,TableModule,DialogModule,ButtonModule,
     MessagesModule,InputNumberModule,SelectModule,MultiSelectModule,ProgressSpinnerModule,
     ConfirmDialogModule,ToastModule,FloatLabelModule,InputNumberModule,InplaceModule,
-    TreeTableModule,FloatLabelModule
+    TreeTableModule,FloatLabelModule,PopoverModule
   ],
   providers: [
     MessageService,ConfirmationService,
@@ -96,7 +96,11 @@ export class IndicadorescpComponent implements OnInit {
   centrosCusto: CentroCusto[]| undefined;
   detalhes: any | undefined; 
   loading: boolean = false;
+  selectedResultado: any = null;
+ 
 
+
+  @ViewChild('op') op!: Popover;
   @ViewChild('RegisterProjecaoForm') RegisterProjecaoForm: any;
   @ViewChild('dt1') dt1!: Table;
   inputValue: string = '';
@@ -123,11 +127,15 @@ constructor(
       response => {
         this.resultados = Object.keys(response.resultados).map((key) => ({
           label: response.resultados[key].produto,
-          projetado: response.resultados[key].projetado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) || 0,
-          realizado: response.resultados[key].realizado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) || 0,
-          diferenca: response.resultados[key].diferenca.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) || 0,
+          projetado: response.resultados[key].projetado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 }) || 0,
+          realizado: response.resultados[key].realizado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 }) || 0,
+          diferenca: response.resultados[key].diferenca.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 }) || 0,
           diferencaPercentual: response.resultados[key].percentual,
-          ccPai: response.resultados[key].centro_custo_pai_detalhes.nome,
+          fabrica: response.resultados[key].fabrica,
+          quantidadeProjetada: parseFloat(response.resultados[key].quantidade).toFixed(0),
+          projetadoCcPai: response.resultados[key].projetado_cc_pai.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 }) || 0,
+          realizadoCcPai: response.resultados[key].realizado_cc_pai.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 }) || 0,
+          producao: parseFloat(response.resultados[key].producao).toFixed(0),
       }));
       this.loading = false;
     },error =>{
@@ -138,6 +146,16 @@ constructor(
       }
     });
   }
+
+  displayResultado(event: Event, resultado: any, popover: any): void {
+    this.selectedResultado = resultado; 
+    
+    popover.toggle(event); 
+}
+
+hidePopover() {
+    this.op.hide();
+}
   
   hasGroup(groups: string[]): boolean {
     return this.loginService.hasAnyGroup(groups);
