@@ -65,4 +65,17 @@
     <p-divider align="left" type="solid">
         <b>Home Base Orcamentaria</b>
     </p-divider> 
+
+    <div *ngFor="let gestor of gestores" class="progress-container">
+        <div class="progress-label">
+          <span>{{ gestor.nome }}</span>
+          <span>{{ gestor.realizado | number:'1.2-2' }} / {{ gestor.orcado | number:'1.2-2' }}</span>
+        </div>
+        <nz-progress
+          [nzPercent]="gestor.porcentagem"
+          [nzStrokeColor]="gestor.porcentagem >= 100 ? '#52c41a' : '#1890ff'"
+          [nzStatus]="gestor.porcentagem >= 100 ? 'success' : 'active'"
+        ></nz-progress>
+      </div>
+
 </div>
