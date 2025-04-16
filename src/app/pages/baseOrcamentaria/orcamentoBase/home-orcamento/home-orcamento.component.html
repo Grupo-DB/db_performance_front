@@ -63,19 +63,201 @@
 
 <div class="titulo mt-6 mb-6 text-2xl">
     <p-divider align="left" type="solid">
-        <b>Home Base Orcamentaria</b>
-    </p-divider> 
-
-    <div *ngFor="let gestor of gestores" class="progress-container">
-        <div class="progress-label">
-          <span>{{ gestor.nome }}</span>
-          <span>{{ gestor.realizado | number:'1.2-2' }} / {{ gestor.orcado | number:'1.2-2' }}</span>
-        </div>
-        <nz-progress
-          [nzPercent]="gestor.porcentagem"
-          [nzStrokeColor]="gestor.porcentagem >= 100 ? '#52c41a' : '#1890ff'"
-          [nzStatus]="gestor.porcentagem >= 100 ? 'success' : 'active'"
-        ></nz-progress>
-      </div>
-
+        <b>Base Orcamentaria</b>
+    </p-divider>
 </div>
+ 
+    <div class="geral flex flex-column justify-content-around  lg:flex-row">
+        <div class="flex flex-column w-11 justify-content-center align-items-center lg:w-5">
+            <div class="flex flex-column justify-content-center align-items-center mt-3 mb-3 w-10 lg:w-5">
+                <h2>Total Realizado</h2>
+                <nz-progress
+                  [nzPercent]="totalPorcentagem"
+                  [nzStrokeColor]="{ '0%': '#CCD3DC', '50%': '#7F94B5', '100%': '#004598' }"
+                  [nzStatus]="totalPorcentagem >= 100 ? 'exception' : 'active'"
+                  [nzShowInfo]="true"
+                  [nzType]="'dashboard'"
+                  [nzWidth]="250"
+                  [nzGapDegree]="20"
+                  [nzStrokeLinecap]="'round'"
+                  [nzStrokeWidth]="15"
+                ></nz-progress>
+            </div>
+
+            <h2>Centro de Custos Pai</h2>
+            <div *ngFor="let ccPai of ccsPaisPaginados" class="h-4rem w-12 mt-2 ">
+                <div class="text-left ">
+                    <span style="font-size: small;">Centro de Custo Pai:</span> 
+                    <span style="color: #004598; font-size: medium; "> {{ ccPai.nome }}</span>
+                </div>
+                <div class="mt-1 text-left linha-conteudo">
+                    <div>      
+                        <span style="font-weight: 500; font-size: 20px;">{{ ccPai.realizadoFormatado }}</span> 
+                        <span style="font-size: medium;"> realizados de </span> 
+                        <span style="font-weight: 500; font-size: 20px;">{{ ccPai.orcadoFormatado }} </span>
+                        <span style="font-size: medium;"> orçados </span>
+                    </div>    
+                    <!-- <span style="margin-right: 40px;"><i class="pi pi-user"></i></span> -->
+                    <span 
+                        style="margin-right: 40px;" 
+                        pTooltip="Gestor: {{ ccPai.gestor }}" 
+                        tooltipPosition="top">
+                        <i class="pi pi-user"></i>
+                    </span>
+                </div>
+                <nz-progress
+                [nzPercent]="ccPai.porcentagem"
+                [nzStrokeColor]="{ '0%': '#CCD3DC','20%':'#7F94B5', '40%': '#2db7f5', '60%': '#4972B0','80%': '#004598','100%': '#002B5C' }"
+                [nzStatus]="ccPai.porcentagem >= 100 ? 'exception' : 'active'"
+                ></nz-progress>
+            </div>
+            <p-paginator 
+                [rows]="5" 
+                [totalRecords]="ccsPais.length" 
+                [first]="primeiroItem"
+                (onPageChange)="atualizarPagina($event)"
+                styleClass="mt-4">
+            </p-paginator>
+            
+        </div>
+        <div class="w-11 mt-3 lg:w-1" (click)="carregarFiltros()">Filtros</div>
+        <div class="flex flex-column w-11 justify-content-center align-items-center lg:w-5">
+            <div class="flex flex-column justify-content-center align-items-center mt-3 mb-3 w-10 lg:w-5">
+                <h2>Total Realizado</h2>
+                <nz-progress
+                  [nzPercent]="totalPorcentagemGp"
+                  [nzStrokeColor]="{ '0%': '#CCD3DC', '50%': '#7F94B5', '100%': '#004598' }"
+                  [nzStatus]="totalPorcentagemGp >= 100 ? 'exception' : 'active'"
+                  [nzShowInfo]="true"
+                  [nzType]="'dashboard'"
+                  [nzWidth]="250"
+                  [nzGapDegree]="20"
+                  [nzStrokeLinecap]="'round'"
+                  [nzStrokeWidth]="15"
+                ></nz-progress>
+            </div>
+
+            <h2>Grupos de Itens</h2>
+            <div *ngFor="let grupoIten of grupoItensPaginados" class="h-4rem w-12 mt-2 ">
+                <div class="text-left ">
+                <span style="font-size: small;">Grupo de Itens:</span> 
+                <span style="color: #004598; font-size: medium; "> {{ grupoIten.nome }}</span>
+                </div>
+                <div class="mt-1 text-left linha-conteudo">
+                    <div>  
+                        <span style="font-weight: 500; font-size: 20px;">{{ grupoIten.realizadoFormatado }}</span> 
+                        <span style="font-size: medium;"> realizados de </span> 
+                        <span style="font-weight: 500; font-size: 20px;">{{ grupoIten.orcadoFormatado }} </span>
+                        <span style="font-size: medium;"> orçados</span>
+                    </div>
+                    <span 
+                        style="margin-right: 40px;" 
+                        pTooltip="Gestor: {{ grupoIten.gestor }}" 
+                        tooltipPosition="top">
+                        <i class="pi pi-user"></i>
+                    </span>
+                </div>
+                <nz-progress
+                [nzPercent]="grupoIten.porcentagem"
+                [nzStrokeColor]="{ '0%': '#CCD3DC','20%':'#7F94B5', '40%': '#2db7f5', '60%': '#4972B0','80%': '#004598','100%': '#002B5C' }"
+                [nzStatus]="grupoIten.porcentagem >= 100 ? 'exception' : 'active'"
+                ></nz-progress>
+            </div>
+            <p-paginator 
+                [rows]="5" 
+                [totalRecords]="grupoItens.length" 
+                [first]="primeiroItemGp"
+                (onPageChange)="atualizarPaginaGp($event)"
+                styleClass="mt-4">
+            </p-paginator>
+            
+        </div>
+        
+    </div>
+
+
+    <p-drawer
+        [(visible)]="exibirModal"
+        [closable]="true"
+        position="top"
+    >
+    <div class="flex flex-column w-12 justify-content-center align-items-center gap-2 lg:flex-row">
+        <div class="w-12 lg:w-3" *ngIf="hasGroup(['OrcamentoGestor','Admin'])">
+            <p-floatlabel variant="on"> 
+                <p-multiSelect
+                    variant="filled"
+                    id="ccPai" 
+                    [style]="{'width':'100%'}"
+                    [options]="filiaisSga" 
+                    [(ngModel)]="filial"
+                    optionValue="codManager"
+                    appendTo="body"
+                    optionLabel="nome"
+                    [filter]="true" 
+                    filterBy="nome"
+                    inputId="float-label" 
+                    
+                >
+                </p-multiSelect>
+                <label for="float-label">Selecione as Filiais</label>
+            </p-floatlabel>
+        </div>
+        <div class="w-12 lg:w-3" *ngIf="hasGroup(['OrcamentoGestor','Admin'])">
+            <p-floatLabel variant="on">    
+                <p-multiSelect
+                    variant="filled"
+                    [style]="{'width':'100%'}"
+                    [options]="meses"
+                    optionLabel="value"
+                    optionValue="key"
+                    inputId="float-label"
+                    appendTo="body"
+                    [(ngModel)]="periodo"
+                >
+                </p-multiSelect>
+                <label for="float-label">Selecione os Meses</label>
+            </p-floatLabel>
+        </div>
+
+
+    <div class="w-12 lg:w-3 text-left">
+        <p-floatlabel variant="on">
+            <p-inputnumber
+                fluid="true" 
+                variant="filled"
+                mode="decimal"
+                [(ngModel)]="ano"
+                [showButtons]="true" 
+                [min]="2024" 
+                [max]="2999"
+                [useGrouping]="false" 
+                
+            />
+            <label>Ano Vigente</label>
+        </p-floatlabel>
+    </div>
+
+    
+        <div 
+            class="w-12 lg:w-3  h-3rem"
+            style="background-color: #002B5C; cursor: pointer; border-radius: 4px; color: #ffffff; display: flex; justify-content: center; align-items: center;font-size: 16px;"
+            (click)="calcular()"
+        >
+            Calcular
+        </div>
+    
+
+   </div> 
+    </p-drawer>
+
+
+
+    
+
+
+
+
+
+
+    
+   

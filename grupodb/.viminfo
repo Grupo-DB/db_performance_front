@@ -1,0 +1,326 @@
+# Este arquivo viminfo foi gerado pelo Vim 8.2.
+# Você pode editá-lo se for cuidadoso!
+
+# Viminfo version
+|1,4
+
+# Valor de 'encoding' quando este arquivo foi escrito
+*encoding=utf-8
+
+
+# hlsearch on (H) or off (h):
+~h
+# Histórico de linha de comando (mais recente primeiro):
+:q
+|2,0,1742904414,,"q"
+:q!
+|2,0,1719849458,,"q!"
+:wq
+|2,0,1719849444,,"wq"
+:wq!
+|2,0,1719843279,,"wq!"
+:qa!
+|2,0,1718139479,,"qa!"
+:qw
+|2,0,1718136165,,"qw"
+:::::q
+|2,0,1711040537,,"::::q"
+:Q
+|2,0,1711040520,,"Q"
+
+# Histórico de expressões de busca (mais recente primeiro):
+
+# Histórico de expressões (mais recente primeiro):
+
+# Histórico de linha de entrada (mais recente primeiro):
+
+# Histórico de linha de debug (mais recente primeiro):
+
+# Registradores:
+
+# Marcas nos arquivos:
+'0  1  0  /opt/db_performance/baseOrcamentaria/custoproducao/models.py
+|4,48,1,0,1742904414,"/opt/db_performance/baseOrcamentaria/custoproducao/models.py"
+'1  1  0  /opt/manager/db_performance/db_performance/__init__.py
+|4,49,1,0,1720557979,"/opt/manager/db_performance/db_performance/__init__.py"
+'2  185  0  /opt/manager/db_performance/db_performance/settings.py
+|4,50,185,0,1720557628,"/opt/manager/db_performance/db_performance/settings.py"
+'3  98  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,51,98,0,1720557593,"/opt/manager/db_performance/db_performance/tasks.py"
+'4  40  0  /opt/manager/db_performance/db_performance/celery.py
+|4,52,40,0,1720557411,"/opt/manager/db_performance/db_performance/celery.py"
+'5  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,53,1,0,1720557304,"/opt/manager/db_performance/db_performance/tasks.py"
+'6  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,54,1,0,1720557304,"/opt/manager/db_performance/db_performance/tasks.py"
+'7  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,55,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+'8  6  0  /etc/nginx/sites-available/manager
+|4,56,6,0,1719843386,"/etc/nginx/sites-available/manager"
+'9  16  0  /etc/nginx/sites-available/manager
+|4,57,16,0,1719843310,"/etc/nginx/sites-available/manager"
+
+# Lista de saltos (mais recente primeiro):
+-'  1  0  /opt/db_performance/baseOrcamentaria/custoproducao/models.py
+|4,39,1,0,1742904414,"/opt/db_performance/baseOrcamentaria/custoproducao/models.py"
+-'  1  0  /opt/manager/db_performance/db_performance/__init__.py
+|4,39,1,0,1720557979,"/opt/manager/db_performance/db_performance/__init__.py"
+-'  1  0  /opt/manager/db_performance/db_performance/__init__.py
+|4,39,1,0,1720557979,"/opt/manager/db_performance/db_performance/__init__.py"
+-'  185  0  /opt/manager/db_performance/db_performance/settings.py
+|4,39,185,0,1720557628,"/opt/manager/db_performance/db_performance/settings.py"
+-'  185  0  /opt/manager/db_performance/db_performance/settings.py
+|4,39,185,0,1720557628,"/opt/manager/db_performance/db_performance/settings.py"
+-'  185  0  /opt/manager/db_performance/db_performance/settings.py
+|4,39,185,0,1720557628,"/opt/manager/db_performance/db_performance/settings.py"
+-'  185  0  /opt/manager/db_performance/db_performance/settings.py
+|4,39,185,0,1720557628,"/opt/manager/db_performance/db_performance/settings.py"
+-'  1  0  /opt/manager/db_performance/db_performance/settings.py
+|4,39,1,0,1720557598,"/opt/manager/db_performance/db_performance/settings.py"
+-'  1  0  /opt/manager/db_performance/db_performance/settings.py
+|4,39,1,0,1720557598,"/opt/manager/db_performance/db_performance/settings.py"
+-'  1  0  /opt/manager/db_performance/db_performance/settings.py
+|4,39,1,0,1720557598,"/opt/manager/db_performance/db_performance/settings.py"
+-'  1  0  /opt/manager/db_performance/db_performance/settings.py
+|4,39,1,0,1720557598,"/opt/manager/db_performance/db_performance/settings.py"
+-'  98  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,98,0,1720557593,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  98  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,98,0,1720557593,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  98  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,98,0,1720557593,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  98  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,98,0,1720557593,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  98  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,98,0,1720557593,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  98  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,98,0,1720557593,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  98  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,98,0,1720557593,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  98  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,98,0,1720557593,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557578,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557578,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557578,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557578,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557578,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557578,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557578,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557578,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  40  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,40,0,1720557411,"/opt/manager/db_performance/db_performance/celery.py"
+-'  40  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,40,0,1720557411,"/opt/manager/db_performance/db_performance/celery.py"
+-'  40  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,40,0,1720557411,"/opt/manager/db_performance/db_performance/celery.py"
+-'  40  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,40,0,1720557411,"/opt/manager/db_performance/db_performance/celery.py"
+-'  40  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,40,0,1720557411,"/opt/manager/db_performance/db_performance/celery.py"
+-'  40  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,40,0,1720557411,"/opt/manager/db_performance/db_performance/celery.py"
+-'  40  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,40,0,1720557411,"/opt/manager/db_performance/db_performance/celery.py"
+-'  40  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,40,0,1720557411,"/opt/manager/db_performance/db_performance/celery.py"
+-'  40  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,40,0,1720557411,"/opt/manager/db_performance/db_performance/celery.py"
+-'  40  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,40,0,1720557411,"/opt/manager/db_performance/db_performance/celery.py"
+-'  40  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,40,0,1720557411,"/opt/manager/db_performance/db_performance/celery.py"
+-'  40  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,40,0,1720557411,"/opt/manager/db_performance/db_performance/celery.py"
+-'  40  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,40,0,1720557411,"/opt/manager/db_performance/db_performance/celery.py"
+-'  40  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,40,0,1720557411,"/opt/manager/db_performance/db_performance/celery.py"
+-'  40  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,40,0,1720557411,"/opt/manager/db_performance/db_performance/celery.py"
+-'  40  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,40,0,1720557411,"/opt/manager/db_performance/db_performance/celery.py"
+-'  1  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,1,0,1720557315,"/opt/manager/db_performance/db_performance/celery.py"
+-'  1  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,1,0,1720557315,"/opt/manager/db_performance/db_performance/celery.py"
+-'  1  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,1,0,1720557315,"/opt/manager/db_performance/db_performance/celery.py"
+-'  1  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,1,0,1720557315,"/opt/manager/db_performance/db_performance/celery.py"
+-'  1  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,1,0,1720557315,"/opt/manager/db_performance/db_performance/celery.py"
+-'  1  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,1,0,1720557315,"/opt/manager/db_performance/db_performance/celery.py"
+-'  1  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,1,0,1720557315,"/opt/manager/db_performance/db_performance/celery.py"
+-'  1  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,1,0,1720557315,"/opt/manager/db_performance/db_performance/celery.py"
+-'  1  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,1,0,1720557315,"/opt/manager/db_performance/db_performance/celery.py"
+-'  1  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,1,0,1720557315,"/opt/manager/db_performance/db_performance/celery.py"
+-'  1  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,1,0,1720557315,"/opt/manager/db_performance/db_performance/celery.py"
+-'  1  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,1,0,1720557315,"/opt/manager/db_performance/db_performance/celery.py"
+-'  1  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,1,0,1720557315,"/opt/manager/db_performance/db_performance/celery.py"
+-'  1  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,1,0,1720557315,"/opt/manager/db_performance/db_performance/celery.py"
+-'  1  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,1,0,1720557315,"/opt/manager/db_performance/db_performance/celery.py"
+-'  1  0  /opt/manager/db_performance/db_performance/celery.py
+|4,39,1,0,1720557315,"/opt/manager/db_performance/db_performance/celery.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557304,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557304,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557304,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557304,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557304,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557304,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557304,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557304,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557304,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557304,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557304,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557304,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557304,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557304,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557304,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  1  0  /opt/manager/db_performance/db_performance/tasks.py
+|4,39,1,0,1720557304,"/opt/manager/db_performance/db_performance/tasks.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+-'  346  20  /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+|4,39,346,20,1719849458,"/opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py"
+
+# Histórico de marcas nos arquivos (mais recente primeiro):
+
+> /opt/db_performance/baseOrcamentaria/custoproducao/models.py
+	*	1742904412	0
+	"	1	0
+
+> /opt/manager/db_performance/db_performance/__init__.py
+	*	1720557978	0
+	"	1	0
+
+> /opt/manager/db_performance/db_performance/settings.py
+	*	1720557627	0
+	"	185	0
+
+> /opt/manager/db_performance/db_performance/tasks.py
+	*	1720557592	0
+	"	98	0
+
+> /opt/manager/db_performance/db_performance/celery.py
+	*	1720557410	0
+	"	40	0
+
+> /opt/manager/db_performance/venv/lib/python3.10/site-packages/django/contrib/auth/models.py
+	*	1719849453	0
+	"	346	20
+	^	346	21
+	.	346	20
+	+	346	20
+
+> /etc/nginx/sites-available/manager
+	*	1719843383	0
+	"	6	0
+	^	6	0
+	.	3	26
+	+	3	26
+
+> /opt/manager/db_performance/management/serializers.py
+	*	1718311021	0
+	"	219	27
+
+> /opt/db_performance/db_performance/settings.py
+	*	1718139473	0
+	"	51	30
+	^	51	31
+	.	20	30
+	+	20	30
+
+> /opt/manager/db_performance/requirements.txt
+	*	1718136223	0
+	"	42	11
+	^	26	12
+	.	27	0
+	+	27	0
+
+> /etc/netplan/00
+	*	1711040662	0
+	"	1	0
+	^	1	0
+	.	1	0
+	+	1	0
+	+	2	0
+	+	1	0

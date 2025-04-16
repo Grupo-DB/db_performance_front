@@ -27,3 +27,21 @@
         margin-right: .25rem;
     }
 }
+.linha-conteudo {
+    display: flex;
+    justify-content: space-between; /* Espaça o conteúdo e o ícone */
+    align-items: center; /* Alinha verticalmente os itens */
+  }
+.geral{
+    background: linear-gradient(to top, #7A91A8, #BCC6D3, #E5EAEE,#F8FAFC,#ffffff);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    font-family: 'Calibri', sans-serif;
+    color: black;
+    h2{
+        color:slategrey;
+    }
+}
+:host ::ng-deep .p-paginator {
+    background-color: transparent;
+  }
