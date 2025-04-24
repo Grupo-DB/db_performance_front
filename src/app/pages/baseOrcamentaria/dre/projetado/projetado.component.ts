@@ -147,6 +147,8 @@ export class ProjetadoComponent implements OnInit {
   totalDepreciacao: any;
   totalOriginal: any;
 
+  loading: boolean = false;
+
   @ViewChild('RegisterProjecaoForm') RegisterProjecaoForm: any;
   @ViewChild('dt1') dt1!: Table;
   inputValue: string = '';
@@ -191,6 +193,7 @@ export class ProjetadoComponent implements OnInit {
     
      
     getOrcados(): void {
+      this.loading = true;
       this.projetadoService.getCalculosdOrcado(this.ano, this.periodo).subscribe(
         response => {
           // Receita Bruta obtida da resposta
@@ -231,7 +234,7 @@ export class ProjetadoComponent implements OnInit {
               };
             })
           }];
-    
+          this.loading = false;
           this.calculatePercentualTotalGeral();
           this.calcularLucroBruto();
         },
@@ -246,6 +249,7 @@ export class ProjetadoComponent implements OnInit {
     }
 
     getDespesas(): void {
+      this.loading = true;
       this.projetadoService.getCalculosdDespesa(this.ano, this.periodo).subscribe(
         response => {
           // Receita Bruta obtida da resposta
@@ -285,7 +289,7 @@ export class ProjetadoComponent implements OnInit {
               };
             })
           }];
-    
+          this.loading = false;
           this.calculoPercentualDespesa();
           this.calcularResultOper();
         },
@@ -300,6 +304,7 @@ export class ProjetadoComponent implements OnInit {
     }
   
     getResultados(): void {
+      this.loading = true;
       this.projetadoService.getCalculodDre(this.ano, this.periodo).subscribe(
         response => {
         // Combinar as informações em um único array
@@ -321,6 +326,7 @@ export class ProjetadoComponent implements OnInit {
         this.quantidadeTotal = response.quantidade_total;
         this.percentDeducao = Math.round(response.percentual_deducao_total);
         this.calculatePercentualTotalGeral();
+        this.loading = false;
       },
       error => {
         if (error.status === 404) {
@@ -333,16 +339,20 @@ export class ProjetadoComponent implements OnInit {
   }
 
     calcularLucroLiquido(): void{
+      this.loading = true;
       if(this.impostos > 0){
       this.lucroLiquido = this.lucroAntesImpostos - this.impostos;
       this.lucroLiquidoFormatado = this.lucroLiquido.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL',minimumFractionDigits: 0, maximumFractionDigits: 0 });
-      } else {
+      this.loading = false;
+    } else {
         this.lucroLiquido = 0;
       }
     }
     calcularLucroAntesImpostos(): void{
+      this.loading = true;
       this.lucroAntesImpostos = this.resultadoOperacional + this.resultadoFinanceiro;
       this.lucroAntesImpostosFormatado = this.lucroAntesImpostos.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL',minimumFractionDigits: 0, maximumFractionDigits: 0 });
+      this.loading = false;
     }
 
     calcularLucroBruto(): void{

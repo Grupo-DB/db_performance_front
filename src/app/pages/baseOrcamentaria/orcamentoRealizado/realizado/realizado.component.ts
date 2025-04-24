@@ -277,7 +277,7 @@ export class RealizadoComponent implements OnInit {
   selectedCodManagers: any;
   totais!: any;
   //
-  isLoading: boolean = true;
+  isLoading: boolean = false;
   isLoading2: boolean = true;
   //  
   totaisChart: Chart<'bar'> | undefined;
@@ -334,16 +334,19 @@ export class RealizadoComponent implements OnInit {
   calcsGestor(): void {
     this.centroCustoService.getMeusCentrosCusto().subscribe(
         response => {
-            this.meusCcs = response;
+            this.meusCcs = response.map((centroCusto: any) => ({
+                id: centroCusto.cc_pai_detalhes.id,
+                nome: centroCusto.cc_pai_detalhes.nome
+            }));
             console.log('Meus Ccs:', this.meusCcs); // Log para verificar a resposta
 
             this.centrosCusto = this.meusCcs.map((cc: { codigo: any; }) => cc.codigo);
-            console.log('Centros Custo:', this.centrosCusto); // Log para verificar centros de custo
+            console.log('Centros Custo Para Calcular:', this.centrosCusto); // Log para verificar centros de custo
             
-            this.selectedCcPai = this.meusCcs.map((cc: { cc_pai_detalhes: { id: any; }; }) => cc.cc_pai_detalhes.id);
-            console.log('Selected Cc Pai:', this.selectedCcPai); // Log para verificar selectedCcPai
+            //this.selectedCcPai = this.meusCcs.map((cc: { cc_pai_detalhes: { id: any; }; }) => cc.cc_pai_detalhes.id);
+            //console.log('Selected Cc Pai:', this.selectedCcPai); // Log para verificar selectedCcPai
 
-            this.onCcPaiSelecionado(this.selectedCcPai);
+            //this.onCcPaiSelecionado(this.selectedCcPai);
 
             const filialId = this.meusCcs[0].cc_pai_detalhes.filial_detalhes.id;
             console.log('Filial ID:', filialId); // Log para verificar filialId
@@ -364,7 +367,7 @@ export class RealizadoComponent implements OnInit {
             console.log('Selecteds Filiais:', this.selectedsFiliais); // Log para verificar selectedsFiliais
 
             if (this.selectedsFiliais.length > 0) {
-                this.calculosOrcamentosRealizados();
+                //this.calculosOrcamentosRealizados();
                 this.onFiliaisInformada(this.selectedsFiliais);
                 console.log('Fil', this.selectedsFiliais);
             } else {
@@ -382,7 +385,7 @@ export class RealizadoComponent implements OnInit {
   }
 
   limparDadosRealizado(): void {
-    this.dictRealizadoTipoCusto = null;
+    this.tiposCusto = [];
     this.dictRealizadoCentroCusto = null;
     this.dictRealizadoGruposContabeis = null;
     this.dictRealizadoContasAnaliticas = null;
@@ -616,7 +619,7 @@ export class RealizadoComponent implements OnInit {
     this.modalGrafVisible5 = true;
     this.graficoTiposCustoAnual();
   }
-  graficoTiposCustoAnual(): void{
+graficoTiposCustoAnual(): void{
     //Anual tipo de custo 
     if (!this.dictAnualOrcadoTiposCusto) {
       console.error('Dados não disponíveis. Verifique se orcamentosBaseByCcpai() foi chamado.');
@@ -627,7 +630,7 @@ export class RealizadoComponent implements OnInit {
         // Aguarde a renderização do modal antes de montar o gráfico
         this.graficoOrcadoTiposCustosAnual(this.dictAnualOrcadoTiposCusto);
     }, 1);
-  }
+}
 /** ===========  Grupos de Contas ==============  */
 abrirModalGruposAnual(): void{
   this.modalGrafVisible6 = true;
@@ -763,7 +766,7 @@ calculosOrcamentosRealizados(): Promise<void> {
 
           // Exibe mensagem de erro apropriada
           if (error.status === 500) {
-            this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro interno no servidor. Verifique os dados e tente novamente.' });
+            this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'O parâmetro periodo contém meses futuros, o que não é permitido.Caso o período esteja correto verifique os demais dados ou informe o responsável.',life: 25000 });
           } else if (error.status === 400) {
             this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Dados inválidos. Por favor, revise as informações enviadas.' });
           } else {

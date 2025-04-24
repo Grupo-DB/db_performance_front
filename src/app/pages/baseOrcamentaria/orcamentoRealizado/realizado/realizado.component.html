@@ -1,7 +1,7 @@
 <div class="menu">
     <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
         <li nz-menu-item nzMatchRouter="#">
-            <a style="font-size: 13px;" routerLink="homeOrcamento">Início</a>
+            <a style="font-size: 13px;" routerLink="/welcome/baseOrcamentaria/orcamentoBase/homeOrcamento">Início</a>
         </li>
         <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
             <ul>
@@ -91,6 +91,28 @@
                         <label for="float-label">Sel. o Centro de Custo Pai</label>
                     </p-floatlabel>
                 </div>
+
+                <div class="form2 w-10" *ngIf="hasGroup(['OrcamentoGestor'])">
+                    <p-floatlabel variant="on"> 
+                        <p-multiSelect
+                            variant="filled"
+                            id="ccPai" 
+                            [style]="{'width':'100%'}"
+                            [options]="meusCcs" 
+                            [(ngModel)]="selectedCcPai"
+                            optionValue="id"
+                            optionLabel="nome"
+                            [filter]="true" 
+                            filterBy="nome"
+                            appendTo="body"
+                            inputId="float-label" 
+                            (onChange)="onCcPaiSelecionado($event.value)"
+                        >
+                        </p-multiSelect>
+                        <label for="float-label">Sel. o Centro de Custo Pai</label>
+                    </p-floatlabel>
+                </div>
+
                 <div class="form2 w-10" *ngIf="hasGroup(['OrcamentoGestor','Admin'])">
                     <p-floatlabel variant="on"> 
                         <p-multiSelect

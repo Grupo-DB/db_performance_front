@@ -1,7 +1,7 @@
 <div class="menu">
     <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
         <li nz-menu-item nzMatchRouter="#">
-            <a style="font-size: 13px;" routerLink="homeOrcamento">Início</a>
+            <a style="font-size: 13px;" routerLink="/welcome/baseOrcamentaria/orcamentoBase/homeOrcamento">Início</a>
         </li>
         <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
             <ul>
@@ -67,6 +67,11 @@
     </p-divider>
 </div>
 
+<div *ngIf="loading" class="loading-animation flex flex-column form2 w-5 justify-content-center m-auto">
+    <!-- Coloque aqui a sua animação de carregamento -->
+    <img src="assets/imagens/startmanager2.gif" alt="Loading..." class="w-12">
+</div> 
+
 <div class="container">
     <p-toast></p-toast>
         <div class="flex flex-column align-items-center justify-content-around lg:flex-row">
@@ -110,7 +115,7 @@
         </div>
 
         </div>    
-            <div class="tabela mt-3" @efeitoFade>
+            <div *ngIf="!loading" class="tabela mt-3" @efeitoFade>
                 <p-table
                     #dt1
                     [value]="resultados"
@@ -183,7 +188,8 @@
                     </ng-template>
                 </p-table>
             </div>
-            <div class="tabela mt-3"@swipeAnimation>
+            <div *ngIf="!loading" class="tabela mt-3"@swipeAnimation>
+                
                 <p-table
                     #dt1
                     [value]="resultados"
@@ -272,7 +278,7 @@
                     </ng-template>
                 </p-treeTable> 
             </div>
-            <div class="tabela mt-3"@swipeAnimation>  
+            <div *ngIf="!loading" class="tabela mt-3"@swipeAnimation>  
                 <p-treeTable [value]="despesas" [scrollable]="true" scrollHeight="600px" [tableStyle]="{'min-width':'60rem'}">
                     <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
                       <!-- Linhas dinâmicas -->

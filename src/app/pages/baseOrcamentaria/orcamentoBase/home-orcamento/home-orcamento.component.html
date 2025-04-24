@@ -63,31 +63,45 @@
 
 <div class="titulo mt-6 mb-6 text-2xl">
     <p-divider align="left" type="solid">
-        <b>Base Orcamentaria</b>
+        <b>Gestão Orcamentária</b>
     </p-divider>
 </div>
- 
-    <div class="geral flex flex-column justify-content-around  lg:flex-row">
-        <div class="flex flex-column w-11 justify-content-center align-items-center lg:w-5">
-            <div class="flex flex-column justify-content-center align-items-center mt-3 mb-3 w-10 lg:w-5">
-                <h2>Total Realizado</h2>
-                <nz-progress
-                  [nzPercent]="totalPorcentagem"
-                  [nzStrokeColor]="{ '0%': '#CCD3DC', '50%': '#7F94B5', '100%': '#004598' }"
-                  [nzStatus]="totalPorcentagem >= 100 ? 'exception' : 'active'"
-                  [nzShowInfo]="true"
-                  [nzType]="'dashboard'"
-                  [nzWidth]="250"
-                  [nzGapDegree]="20"
-                  [nzStrokeLinecap]="'round'"
-                  [nzStrokeWidth]="15"
-                ></nz-progress>
-            </div>
 
-            <h2>Centro de Custos Pai</h2>
-            <div *ngFor="let ccPai of ccsPaisPaginados" class="h-4rem w-12 mt-2 ">
+    <div *ngIf="loadingRealizado" class="loading-animation flex flex-column form2 w-5 justify-content-center m-auto">
+        <!-- Coloque aqui a sua animação de carregamento -->
+        <img src="assets/imagens/startmanager2.gif" alt="Loading..." class="w-12">
+    </div>
+    <p-toast></p-toast>
+    <div *ngIf="!loadingRealizado" class="geral flex flex-column justify-content-around  lg:flex-row">
+        <div class="flex flex-column w-11 justify-content-center mt-5 align-items-center lg:w-5">
+            <div class="flex flex-column w-12  lg:flex-row">
+                <div class="flex flex-column justify-content-center align-items-end w-11 gap-2 lg:w-4">
+                    <h1>Orçamento Setorial</h1>
+                    <span style="font-size: larger;">Total Orçado </span>
+                    <span style="color: #004598; font-size: x-large; ">{{ totalOrcadoFormatado }}</span>
+                    <br>
+                    <span style="font-size: larger;">Total Realizado </span>
+                    <span style="color: #004598; font-size: x-large; ">{{ totalRealizadoFormatado }}</span>
+                </div>
+                <div class="flex flex-column w-12 justify-content-center align-items-center mt-3 mb-3 w-11 lg:w-8">
+                    
+                    <nz-progress
+                    [nzPercent]="totalPorcentagem"
+                    [nzStrokeColor]="{ '0%': '#CCD3DC', '50%': '#7F94B5', '100%': '#004598' }"
+                    [nzStatus]="totalPorcentagem >= 100 ? 'exception' : 'active'"
+                    [nzShowInfo]="true"
+                    [nzType]="'dashboard'"
+                    [nzWidth]="250"
+                    [nzGapDegree]="20"
+                    [nzStrokeLinecap]="'round'"
+                    [nzStrokeWidth]="15"
+                    
+                    ></nz-progress>
+                </div>
+            </div>
+            
+            <div *ngFor="let ccPai of ccsPaisPaginados" class="h-8rem lg:h-4rem w-12 mt-2 ">
                 <div class="text-left ">
-                    <span style="font-size: small;">Centro de Custo Pai:</span> 
                     <span style="color: #004598; font-size: medium; "> {{ ccPai.nome }}</span>
                 </div>
                 <div class="mt-1 text-left linha-conteudo">
@@ -120,27 +134,41 @@
             </p-paginator>
             
         </div>
-        <div class="w-11 mt-3 lg:w-1" (click)="carregarFiltros()">Filtros</div>
-        <div class="flex flex-column w-11 justify-content-center align-items-center lg:w-5">
-            <div class="flex flex-column justify-content-center align-items-center mt-3 mb-3 w-10 lg:w-5">
-                <h2>Total Realizado</h2>
-                <nz-progress
-                  [nzPercent]="totalPorcentagemGp"
-                  [nzStrokeColor]="{ '0%': '#CCD3DC', '50%': '#7F94B5', '100%': '#004598' }"
-                  [nzStatus]="totalPorcentagemGp >= 100 ? 'exception' : 'active'"
-                  [nzShowInfo]="true"
-                  [nzType]="'dashboard'"
-                  [nzWidth]="250"
-                  [nzGapDegree]="20"
-                  [nzStrokeLinecap]="'round'"
-                  [nzStrokeWidth]="15"
-                ></nz-progress>
+        <div class="flex justify-content-center  w-12 mt-3 mb-3 lg:w-1">
+            <div class="class">
+                <p-button (onClick)="carregarFiltros()" label="Filtros" icon="pi pi-angle-double-down" />
+            </div>    
+        </div>
+        <p-toast></p-toast>
+        <div class="flex flex-column w-11 mt-5 justify-content-center align-items-center lg:w-5">
+            <div class="flex flex-column w-12 lg:flex-row">
+                <div class="flex flex-column justify-content-center align-items-end gap-2 w-11 lg:w-4">
+                    <h1>Orçamento Grupos de Itens</h1>
+                    <span style="font-size: larger;">Total Orçado </span>
+                    <span style="color: #004598; font-size: x-large; ">{{ totalOrcadoFormatadoGp }}</span>
+                    <br>
+                    <span style="font-size: larger;">Total Realizado </span>
+                    <span style="color: #004598; font-size: x-large; ">{{ totalRealizadoFormatadoGp }}</span>
+                </div>
+                <div class="flex flex-column justify-content-center align-items-center mt-3 mb-3 w-12 lg:w-8">
+                    
+                    <nz-progress
+                    [nzPercent]="totalPorcentagemGp"
+                    [nzStrokeColor]="{ '0%': '#CCD3DC', '50%': '#7F94B5', '100%': '#004598' }"
+                    [nzStatus]="totalPorcentagemGp >= 100 ? 'exception' : 'active'"
+                    [nzShowInfo]="true"
+                    [nzType]="'dashboard'"
+                    [nzWidth]="250"
+                    [nzGapDegree]="20"
+                    [nzStrokeLinecap]="'round'"
+                    [nzStrokeWidth]="15"
+                    ></nz-progress>
+                </div>
             </div>
 
-            <h2>Grupos de Itens</h2>
-            <div *ngFor="let grupoIten of grupoItensPaginados" class="h-4rem w-12 mt-2 ">
+            <div *ngFor="let grupoIten of grupoItensPaginados" class="h-8rem lg:h-4rem w-12 mt-2 ">
                 <div class="text-left ">
-                <span style="font-size: small;">Grupo de Itens:</span> 
+                
                 <span style="color: #004598; font-size: medium; "> {{ grupoIten.nome }}</span>
                 </div>
                 <div class="mt-1 text-left linha-conteudo">
@@ -175,14 +203,153 @@
         
     </div>
 
+    <br>
+<!-------------------------------------------------------------------------------------------------------------------------------->
+
+<div *ngIf="!loadingRealizado" class="geral flex flex-column justify-content-around  lg:flex-row">
+    <div class="flex flex-column w-11 justify-content-center mt-5 align-items-center lg:w-5">
+        <div class="flex flex-column w-12  lg:flex-row">
+            <div class="flex flex-column justify-content-center align-items-end w-11 gap-2 lg:w-4">
+                <h1>Meu Orçamento Setorial</h1>
+                <span style="font-size: larger;">Total Orçado </span>
+                <span style="color: #004598; font-size: x-large; ">{{ meuTotalOrcadoFormatado }}</span>
+                <br>
+                <span style="font-size: larger;">Total Realizado </span>
+                <span style="color: #004598; font-size: x-large; ">{{ meuTotalRealizadoFormatado }}</span>
+            </div>
+            <div class="flex flex-column w-12 justify-content-center align-items-center mt-3 mb-3 w-11 lg:w-8">
+                
+                <nz-progress
+                [nzPercent]="meuTotalPorcentagem"
+                [nzStrokeColor]="{ '0%': '#CCD3DC', '50%': '#7F94B5', '100%': '#004598' }"
+                [nzStatus]="meuTotalPorcentagem >= 100 ? 'exception' : 'active'"
+                [nzShowInfo]="true"
+                [nzType]="'dashboard'"
+                [nzWidth]="250"
+                [nzGapDegree]="20"
+                [nzStrokeLinecap]="'round'"
+                [nzStrokeWidth]="15"
+                
+                ></nz-progress>
+            </div>
+        </div>
+        
+        <div *ngFor="let meuCcPai of meuCcsPaisPaginados" class="h-8rem lg:h-4rem w-12 mt-2 ">
+            <div class="text-left ">
+                <span style="color: #004598; font-size: medium; "> {{ meuCcPai.nome }}</span>
+            </div>
+            <div class="mt-1 text-left linha-conteudo">
+                <div>      
+                    <span style="font-weight: 500; font-size: 20px;">{{ meuCcPai.meuRealizadoFormatado }}</span> 
+                    <span style="font-size: medium;"> realizados de </span> 
+                    <span style="font-weight: 500; font-size: 20px;">{{ meuCcPai.meuOrcadoFormatado }} </span>
+                    <span style="font-size: medium;"> orçados </span>
+                </div>    
+                <!-- <span style="margin-right: 40px;"><i class="pi pi-user"></i></span> -->
+                <!-- <span 
+                    style="margin-right: 40px;" 
+                    pTooltip="Gestor: {{ meuCcPai.gestor }}" 
+                    tooltipPosition="top">
+                    <i class="pi pi-user"></i>
+                </span> -->
+            </div>
+            <nz-progress
+            [nzPercent]="meuCcPai.meuPorcentagem"
+            [nzStrokeColor]="{ '0%': '#CCD3DC','20%':'#7F94B5', '40%': '#2db7f5', '60%': '#4972B0','80%': '#004598','100%': '#002B5C' }"
+            [nzStatus]="meuCcPai.meuPorcentagem >= 100 ? 'exception' : 'active'"
+            ></nz-progress>
+        </div>
+        <p-paginator 
+            [rows]="5" 
+            [totalRecords]="meuCcsPais.length" 
+            [first]="meuPrimeiroItem"
+            (onPageChange)="meuAtualizarPagina($event)"
+            styleClass="mt-4">
+        </p-paginator>
+        
+    </div>
+    <div class="flex justify-content-center  w-12 mt-3 mb-3 lg:w-1">
+        <div class="class">
+            <p-button (onClick)="carregarFiltros()" label="Filtros" icon="pi pi-angle-double-down" />
+        </div>    
+    </div>
+    <p-toast></p-toast>
+    <div class="flex flex-column w-11 mt-5 justify-content-center align-items-center lg:w-5">
+        <div class="flex flex-column w-12 lg:flex-row">
+            <div class="flex flex-column justify-content-center align-items-end gap-2 w-11 lg:w-4">
+                <h1>Meu Orçamento Grupos de Itens</h1>
+                <span style="font-size: larger;">Total Orçado </span>
+                <span style="color: #004598; font-size: x-large; ">{{ meuTotalOrcadoFormatadoGp }}</span>
+                <br>
+                <span style="font-size: larger;">Total Realizado </span>
+                <span style="color: #004598; font-size: x-large; ">{{ meuTotalRealizadoFormatadoGp }}</span>
+            </div>
+            <div class="flex flex-column justify-content-center align-items-center mt-3 mb-3 w-12 lg:w-8">
+                
+                <nz-progress
+                [nzPercent]="meuTotalPorcentagemGp"
+                [nzStrokeColor]="{ '0%': '#CCD3DC', '50%': '#7F94B5', '100%': '#004598' }"
+                [nzStatus]="meuTotalPorcentagemGp >= 100 ? 'exception' : 'active'"
+                [nzShowInfo]="true"
+                [nzType]="'dashboard'"
+                [nzWidth]="250"
+                [nzGapDegree]="20"
+                [nzStrokeLinecap]="'round'"
+                [nzStrokeWidth]="15"
+                ></nz-progress>
+            </div>
+        </div>
+
+        <div *ngFor="let meuGrupoIten of meuGrupoItensPaginados" class="h-8rem lg:h-4rem w-12 mt-2 ">
+            <div class="text-left ">
+            
+            <span style="color: #004598; font-size: medium; "> {{ meuGrupoIten.nome }}</span>
+            </div>
+            <div class="mt-1 text-left linha-conteudo">
+                <div>  
+                    <span style="font-weight: 500; font-size: 20px;">{{ meuGrupoIten.meuRealizadoFormatado }}</span> 
+                    <span style="font-size: medium;"> realizados de </span> 
+                    <span style="font-weight: 500; font-size: 20px;">{{ meuGrupoIten.meuOrcadoFormatado }} </span>
+                    <span style="font-size: medium;"> orçados</span>
+                </div>
+                <!-- <span 
+                    style="margin-right: 40px;" 
+                    pTooltip="Gestor: {{ meuGrupoIten.gestor }}" 
+                    tooltipPosition="top">
+                    <i class="pi pi-user"></i>
+                </span> -->
+            </div>
+            <nz-progress
+            [nzPercent]="meuGrupoIten.meuPorcentagem"
+            [nzStrokeColor]="{ '0%': '#CCD3DC','20%':'#7F94B5', '40%': '#2db7f5', '60%': '#4972B0','80%': '#004598','100%': '#002B5C' }"
+            [nzStatus]="meuGrupoIten.meuPorcentagem >= 100 ? 'exception' : 'active'"
+            ></nz-progress>
+        </div>
+        <p-paginator 
+            [rows]="5" 
+            [totalRecords]="meuGrupoItens.length" 
+            [first]="meuPrimeiroItemGp"
+            (onPageChange)="meuAtualizarPaginaGp($event)"
+            styleClass="mt-4">
+        </p-paginator>
+        
+    </div>
+    
+</div>
+
+
+
+
+<!------------------------------------------------------------------------------------------------------------------------------->
 
     <p-drawer
         [(visible)]="exibirModal"
         [closable]="true"
         position="top"
+        [style]="{ height: '12rem' }"
     >
-    <div class="flex flex-column w-12 justify-content-center align-items-center gap-2 lg:flex-row">
-        <div class="w-12 lg:w-3" *ngIf="hasGroup(['OrcamentoGestor','Admin'])">
+    <div class="flex flex-column w-12 justify-content-center align-items-center gap-3 lg:flex-row lg:mt-4">
+        <div class="mt-4 w-12 lg:w-3 lg:mt-0" *ngIf="hasGroup(['OrcamentoGestor','Admin'])">
             <p-floatlabel variant="on"> 
                 <p-multiSelect
                     variant="filled"
@@ -190,13 +357,13 @@
                     [style]="{'width':'100%'}"
                     [options]="filiaisSga" 
                     [(ngModel)]="filial"
-                    optionValue="codManager"
+                    optionValue="cod"
                     appendTo="body"
                     optionLabel="nome"
                     [filter]="true" 
                     filterBy="nome"
                     inputId="float-label" 
-                    
+                    (onChange)="onFiliaisInformada($event.value)"
                 >
                 </p-multiSelect>
                 <label for="float-label">Selecione as Filiais</label>

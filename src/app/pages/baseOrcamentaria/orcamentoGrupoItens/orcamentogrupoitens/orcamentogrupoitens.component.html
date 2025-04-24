@@ -1,7 +1,7 @@
 <div class="menu">
     <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
         <li nz-menu-item nzMatchRouter="#">
-            <a style="font-size: 13px;" routerLink="homeOrcamento">Início</a>
+            <a style="font-size: 13px;" routerLink="/welcome/baseOrcamentaria/orcamentoBase/homeOrcamento">Início</a>
         </li>
         <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
             <ul>
@@ -69,7 +69,7 @@
         <b>Orçamento Grupo de Itens</b>
     </p-divider>
 </div>
-
+<p-toast></p-toast>
 <div class="container">
     <div class="form-geral">
         <div class="flex flex-column lg:flex-row"@swipeAnimation>

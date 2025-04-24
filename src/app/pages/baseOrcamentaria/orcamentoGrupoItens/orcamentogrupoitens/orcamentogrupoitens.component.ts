@@ -314,7 +314,7 @@ async executarCalculos(): Promise<void> {
 
     // Verifica o status do erro e exibe mensagens apropriadas
     if (err.status === 500) {
-      this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Informe todos os campos ou verifique se o grupo de itens possue orçamentos.' });
+      this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'O parâmetro periodo contém meses futuros, o que não é permitido.Caso o período esteja correto verifique os demais dados ou informe o responsável.',life: 25000 });
     } else if (err.status === 401 || err.status === 200) {
       this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
     }
