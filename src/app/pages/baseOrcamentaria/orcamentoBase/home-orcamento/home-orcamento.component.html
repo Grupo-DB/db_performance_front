@@ -46,13 +46,13 @@
                 <li *ngIf="hasGroup(['Admin','OrcamentoGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoGrupoItens/orcamentogrupoitens"> Orçado x Realizado Grupo de Itens</a>
                 </li>
-                <li *ngIf="hasGroup(['Admin','OrcamentoGestor'])" nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/dre/projetado"> DRE Projetado</a>
                 </li>
-                <li *ngIf="hasGroup(['Admin','OrcamentoGestor'])" nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/dre/indicadorescp">Indicadores Custo de Produção</a>
                 </li>
-                <li *ngIf="hasGroup(['Admin','OrcamentoGestor'])" nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/dre/curva">Curva ABC</a>
                 </li>
             </ul>
@@ -63,20 +63,25 @@
 
 <div class="titulo mt-6 mb-6 text-2xl">
     <p-divider align="left" type="solid">
-        <b>Gestão Orcamentária</b>
+        <b>Gestão Orçamentária</b>
     </p-divider>
 </div>
 
-    <div *ngIf="loadingRealizado" class="loading-animation flex flex-column form2 w-5 justify-content-center m-auto">
+    <p-toast></p-toast>
+    <div *ngIf="loadingInicial" class="loading-animation flex flex-column form2 w-5 justify-content-center m-auto">
         <!-- Coloque aqui a sua animação de carregamento -->
         <img src="assets/imagens/startmanager2.gif" alt="Loading..." class="w-12">
     </div>
-    <p-toast></p-toast>
-    <div *ngIf="!loadingRealizado" class="geral flex flex-column justify-content-around  lg:flex-row">
+    <div *ngIf="!loadingInicial && hasGroup(['Admin','Master'])" class="geral flex flex-column justify-content-around ml-3 mr-3 lg:flex-row">
+        <div class="flex justify-content-center  w-12 mt-3 mb-3 lg:w-1">
+            <div class="class">
+                <p-button (onClick)="carregarFiltros()" label="Filtros" icon="pi pi-angle-double-down" />
+            </div>    
+        </div>
         <div class="flex flex-column w-11 justify-content-center mt-5 align-items-center lg:w-5">
             <div class="flex flex-column w-12  lg:flex-row">
                 <div class="flex flex-column justify-content-center align-items-end w-11 gap-2 lg:w-4">
-                    <h1>Orçamento Setorial</h1>
+                    <h1 style="text-align: right;">Orçamento Setorial</h1>
                     <span style="font-size: larger;">Total Orçado </span>
                     <span style="color: #004598; font-size: x-large; ">{{ totalOrcadoFormatado }}</span>
                     <br>
@@ -100,12 +105,12 @@
                 </div>
             </div>
             
-            <div *ngFor="let ccPai of ccsPaisPaginados" class="h-8rem lg:h-4rem w-12 mt-2 ">
+            <div *ngFor="let ccPai of ccsPaisPaginados" class="h-8rem lg:h-5rem w-12 mt-2 ">
                 <div class="text-left ">
                     <span style="color: #004598; font-size: medium; "> {{ ccPai.nome }}</span>
                 </div>
-                <div class="mt-1 text-left linha-conteudo">
-                    <div>      
+                <div class="mt-1  text-left linha-conteudo">
+                    <div class="gap-3">      
                         <span style="font-weight: 500; font-size: 20px;">{{ ccPai.realizadoFormatado }}</span> 
                         <span style="font-size: medium;"> realizados de </span> 
                         <span style="font-weight: 500; font-size: 20px;">{{ ccPai.orcadoFormatado }} </span>
@@ -134,16 +139,12 @@
             </p-paginator>
             
         </div>
-        <div class="flex justify-content-center  w-12 mt-3 mb-3 lg:w-1">
-            <div class="class">
-                <p-button (onClick)="carregarFiltros()" label="Filtros" icon="pi pi-angle-double-down" />
-            </div>    
-        </div>
+        
         <p-toast></p-toast>
-        <div class="flex flex-column w-11 mt-5 justify-content-center align-items-center lg:w-5">
+        <div *ngIf="!loadingOrcado" class="flex flex-column w-11 mt-5 justify-content-center align-items-center lg:w-5">
             <div class="flex flex-column w-12 lg:flex-row">
                 <div class="flex flex-column justify-content-center align-items-end gap-2 w-11 lg:w-4">
-                    <h1>Orçamento Grupos de Itens</h1>
+                    <h1 style="text-align: right;">Orçamento Grupos de Itens</h1>
                     <span style="font-size: larger;">Total Orçado </span>
                     <span style="color: #004598; font-size: x-large; ">{{ totalOrcadoFormatadoGp }}</span>
                     <br>
@@ -166,7 +167,7 @@
                 </div>
             </div>
 
-            <div *ngFor="let grupoIten of grupoItensPaginados" class="h-8rem lg:h-4rem w-12 mt-2 ">
+            <div *ngFor="let grupoIten of grupoItensPaginados" class="h-8rem lg:h-5rem w-12 mt-2 ">
                 <div class="text-left ">
                 
                 <span style="color: #004598; font-size: medium; "> {{ grupoIten.nome }}</span>
@@ -204,13 +205,21 @@
     </div>
 
     <br>
-<!-------------------------------------------------------------------------------------------------------------------------------->
-
-<div *ngIf="!loadingRealizado" class="geral flex flex-column justify-content-around  lg:flex-row">
+<!---------------------------------------------------INDIVIDUAL----------------------------------------------------------------------------->
+<div *ngIf="loadingInicial2 && hasGroup(['Admin','Master','OrcamentoGestor','OrcamentoGestorItens'])" class="loading-animation flex flex-column form2 w-5 justify-content-center m-auto">
+    <!-- Coloque aqui a sua animação de carregamento -->
+    <img src="assets/imagens/startmanager2.gif" alt="Loading..." class="w-12">
+</div>
+<div *ngIf="!loadingInicial2 && hasGroup(['Admin','Master','OrcamentoGestor'])" class="geral2 flex flex-column justify-content-around ml-3 mr-3 lg:flex-row">
+    <div class="flex justify-content-center  w-12 mt-3 mb-3 lg:w-1">
+        <div class="class">
+            <p-button (onClick)="carregarFiltros()" label="Filtros" icon="pi pi-angle-double-down" />
+        </div>    
+    </div>
     <div class="flex flex-column w-11 justify-content-center mt-5 align-items-center lg:w-5">
         <div class="flex flex-column w-12  lg:flex-row">
-            <div class="flex flex-column justify-content-center align-items-end w-11 gap-2 lg:w-4">
-                <h1>Meu Orçamento Setorial</h1>
+            <div class="flex flex-column justify-content-center align-items-end w-11 gap-2 lg:w-5">
+                <h1 style="text-align: right;">Meu Orçamento Setorial</h1>
                 <span style="font-size: larger;">Total Orçado </span>
                 <span style="color: #004598; font-size: x-large; ">{{ meuTotalOrcadoFormatado }}</span>
                 <br>
@@ -234,7 +243,7 @@
             </div>
         </div>
         
-        <div *ngFor="let meuCcPai of meuCcsPaisPaginados" class="h-8rem lg:h-4rem w-12 mt-2 ">
+        <div *ngFor="let meuCcPai of meuCcsPaisPaginados" class="h-8rem lg:h-5rem w-12 mt-2 ">
             <div class="text-left ">
                 <span style="color: #004598; font-size: medium; "> {{ meuCcPai.nome }}</span>
             </div>
@@ -245,13 +254,6 @@
                     <span style="font-weight: 500; font-size: 20px;">{{ meuCcPai.meuOrcadoFormatado }} </span>
                     <span style="font-size: medium;"> orçados </span>
                 </div>    
-                <!-- <span style="margin-right: 40px;"><i class="pi pi-user"></i></span> -->
-                <!-- <span 
-                    style="margin-right: 40px;" 
-                    pTooltip="Gestor: {{ meuCcPai.gestor }}" 
-                    tooltipPosition="top">
-                    <i class="pi pi-user"></i>
-                </span> -->
             </div>
             <nz-progress
             [nzPercent]="meuCcPai.meuPorcentagem"
@@ -268,16 +270,12 @@
         </p-paginator>
         
     </div>
-    <div class="flex justify-content-center  w-12 mt-3 mb-3 lg:w-1">
-        <div class="class">
-            <p-button (onClick)="carregarFiltros()" label="Filtros" icon="pi pi-angle-double-down" />
-        </div>    
-    </div>
+    
     <p-toast></p-toast>
-    <div class="flex flex-column w-11 mt-5 justify-content-center align-items-center lg:w-5">
+    <div *ngIf="hasGroup(['Admin','OrcamentoGestorItens'])" class="flex flex-column w-11 mt-5 justify-content-center align-items-center lg:w-5">
         <div class="flex flex-column w-12 lg:flex-row">
             <div class="flex flex-column justify-content-center align-items-end gap-2 w-11 lg:w-4">
-                <h1>Meu Orçamento Grupos de Itens</h1>
+                <h1 style="text-align: right;">Meu Orçamento Grupos de Itens</h1>
                 <span style="font-size: larger;">Total Orçado </span>
                 <span style="color: #004598; font-size: x-large; ">{{ meuTotalOrcadoFormatadoGp }}</span>
                 <br>
@@ -300,7 +298,7 @@
             </div>
         </div>
 
-        <div *ngFor="let meuGrupoIten of meuGrupoItensPaginados" class="h-8rem lg:h-4rem w-12 mt-2 ">
+        <div *ngFor="let meuGrupoIten of meuGrupoItensPaginados" class="h-8rem lg:h-5rem w-12 mt-2 ">
             <div class="text-left ">
             
             <span style="color: #004598; font-size: medium; "> {{ meuGrupoIten.nome }}</span>
@@ -336,9 +334,6 @@
     </div>
     
 </div>
-
-
-
 
 <!------------------------------------------------------------------------------------------------------------------------------->
 

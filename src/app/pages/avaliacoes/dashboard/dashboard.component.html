@@ -3,43 +3,43 @@
       <li nz-menu-item nzMatchRouter="#">
           <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
       </li>
-      <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+      <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
           <ul>
-              <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+              <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item  nzMatchRouter>
                   <a routerLink="../tipoavaliacao" >Tipos de Avaliações</a>
               </li>
-              <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+              <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item  nzMatchRouter>
                   <a routerLink="../pergunta" >Perguntas</a>
               </li>
-              <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+              <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item  nzMatchRouter>
                   <a routerLink="../formulario" >Formulários</a>
               </li>
           </ul>
       </li>    
       
-      <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
+      <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
           <ul>
-              <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+              <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item   nzMatchRouter>
                   <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
               </li>
-              <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+              <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item   nzMatchRouter>
                   <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados a um Formulário</a>
               </li>
-              <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+              <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item   nzMatchRouter>
                   <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
               </li>
           </ul>    
       </li>
 
       
-      <li nz-menu-item nzMatchRouter="">
+      <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])">
           <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
       </li>
-      <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['RHAvaliacao'])">
+      <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])">
           <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
       </li>
   
-      <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Relatórios" style="font-size: 13px;">
+      <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-submenu nzTitle="Relatórios" style="font-size: 13px;">
         <ul>
           <li nz-menu-item nzMatchRouter="">
             <a style="font-size: 13px;" routerLink="../mapaavaliadores">Mapa de Avaliadores</a>
@@ -63,13 +63,13 @@
 </div>
 
 
-<div *ngIf="hasGroup(['Admin','RHGestor'])" class="titulo mt-6 mb-6 text-2xl">
+<div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="titulo mt-6 mb-6 text-2xl">
   <p-divider align="left" type="solid">
       <b>Mapa de Colaboradores</b>
   </p-divider> 
 </div>
 
-<div *ngIf="hasGroup(['Admin','RHGestor'])" class="flex flex-column w-full align-items-center lg:flex-row w-full justify-content-around">
+<div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="flex flex-column w-full align-items-center lg:flex-row w-full justify-content-around">
     <div class="flex w-10 m-3 lg:w-3">
       <p-multi-select
         [style]="{'width': '100%'}"
@@ -84,13 +84,6 @@
 
     </div>
     <div class="flex w-10 m-3 lg:w-3">  
-      <!-- <mat-form-field>
-        <mat-label>Selecione a Área</mat-label>
-        <mat-select [(ngModel)]="selectedAreas" multiple (selectionChange)="onAreaSelecionada($event.value)">
-          <mat-option *ngFor="let area of areas" [value]="area.id">{{ area.nome }}</mat-option>
-        </mat-select>
-      </mat-form-field> -->
-
       <p-multi-select
         [style]="{'width': '100%'}"
         variant="filled"
@@ -104,13 +97,6 @@
 
     </div>   
     <div class="flex w-10 m-3 lg:w-3">  
-      <!-- <mat-form-field>
-        <mat-label>Selecione o Ambiente</mat-label>
-        <mat-select [(ngModel)]="selectedSetores" multiple (selectionChange)="onSetorSelecionado($event.value)">
-          <mat-option *ngFor="let setor of setores" [value]="setor.id">{{ setor.nome }}</mat-option>
-        </mat-select>
-      </mat-form-field> -->
-
       <p-multi-select
         variant="filled"
         [style]="{'width': '100%'}"
@@ -123,13 +109,6 @@
 
     </div>
     <div class="flex w-10 m-3 lg:w-3">  
-      <!-- <mat-form-field>
-        <mat-label>Selecione o Setor</mat-label>
-        <mat-select [(ngModel)]="selectedAmbientes" multiple (selectionChange)="onAmbienteSelecionado($event.value)">
-          <mat-option *ngFor="let ambiente of ambientes" [value]="ambiente.id">{{ ambiente.nome }}</mat-option>
-        </mat-select>
-      </mat-form-field> -->
-
       <p-multi-select
         variant="filled"
         [style]="{'width': '100%'}"
@@ -142,13 +121,6 @@
 
     </div>
     <div class="flex w-10 m-3 lg:w-3">
-      <!-- <mat-form-field>
-        <mat-label>Selecione o Cargo</mat-label>
-        <mat-select [(ngModel)]="selectedCargos" multiple (selectionChange)="applyFilters()">
-          <mat-option *ngFor="let cargo of cargos" [value]="cargo.id">{{ cargo.nome }}</mat-option>
-        </mat-select>
-      </mat-form-field> -->
-
       <p-multi-select
         variant="filled"
         [style]="{'width': '100%'}"
@@ -159,14 +131,12 @@
         defaultLabel="Selecione o Cargo"
         (onChange)="applyFilters()"></p-multi-select>
     </div>
-  
-  
 </div>
   
-  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="cards flex flex-wrap w-full">
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="cards flex flex-wrap w-full">
      
       <p-card 
-        *ngIf="hasGroup(['Admin','RHGestor'])" 
+        *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
         class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
         header="{{ totalColaboradores }}"
       >
@@ -178,7 +148,7 @@
        
     
       <p-card 
-        *ngIf="hasGroup(['Admin','RHGestor'])" 
+        *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
         class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
         header=" {{ mediaSalarios | currency:'BRL':'symbol':'1.2-2' }}"
       >
@@ -190,7 +160,7 @@
     
     
       <p-card 
-        *ngIf="hasGroup(['Admin','RHGestor'])" 
+        *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
         class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
         header="{{ mediaIdade }} anos"
       >
@@ -202,7 +172,7 @@
     
     
       <p-card 
-        *ngIf="hasGroup(['Admin','RHGestor'])" 
+        *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
         class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
         header="{{ mediaTempoServico }} anos"
       >
@@ -214,54 +184,54 @@
 
   </div>
 
-  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="graficos flex flex-wrap w-full">
-    <div *ngIf="hasGroup(['Admin','RHGestor'])" class="chart-container">
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="graficos flex flex-wrap w-full">
+    <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="chart-container">
       <canvas id="pieChart"></canvas>
     </div>
-    <div *ngIf="hasGroup(['Admin','RHGestor'])" class="chart-container">
+    <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="chart-container">
       <canvas id="doughnutChart"></canvas>
     </div>
-    <div *ngIf="hasGroup(['Admin','RHGestor'])" class="chart-container">
+    <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="chart-container">
         <canvas id="salarioInstrucaoChart"></canvas>
     </div>
       
   </div>
-  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="graficos2 flex flex-wrap w-full">
-    <div *ngIf="hasGroup(['Admin','RHGestor'])" class="chart-container">
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="graficos2 flex flex-wrap w-full">
+    <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="chart-container">
       <canvas id="salarioRacaChart"></canvas>
     </div>
-    <div *ngIf="hasGroup(['Admin','RHGestor'])" class="chart-container">
+    <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="chart-container">
       <canvas id="salarioGeneroChart"></canvas>
     </div>
-    <div *ngIf="hasGroup(['Admin','RHGestor'])" class="chart-container">
+    <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="chart-container">
       <canvas id="polarAreaChart"></canvas>
     </div>
 
   </div>
  
-  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="chartAmbientes">
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="chartAmbientes">
     <canvas id="ambientesInfosChart"></canvas>
   </div>
 
-  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="chartRacaGen">
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="chartRacaGen">
     <canvas id="instrucaoRacaGeneroChart"></canvas>
   </div>
   
 
-  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="titulo mt-6 mb-6 text-2xl">
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="titulo mt-6 mb-6 text-2xl">
     <p-divider align="left" type="solid">
         <b>Avaliações e Feedbacks Totais</b>
     </p-divider> 
   </div>
 
 <div 
-  *ngIf="hasGroup(['Admin','RHGestor'])"
+  *ngIf="hasGroup(['Admin','Master','RHGestor'])"
   class=
     "flex flex-column w-full align-items-center
     md:flex-row w-full align-items-center 
     lg:flex-row w-full justify-content-end"
 >
-  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="flex w-10 mt-3 lg:w-3">
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="flex w-10 mt-3 lg:w-3">
     <p-floatlabel variant="on">
       <p-datepicker
           [style]="{'width':'100%'}"
@@ -275,7 +245,7 @@
     </p-floatlabel>  
      
   </div>
-  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="flex w-10 mt-3 lg:w-3">
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="flex w-10 mt-3 lg:w-3">
     <p-floatlabel variant="on">
       <p-datepicker
           [style]="{'width':'100%'}"
@@ -292,7 +262,7 @@
 
 
 <div 
-  *ngIf="hasGroup(['Admin','RHGestor'])" 
+  *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
   class="flex flex-column w-full 
         md:flex-row w-full   
         lg:flex-row w-full justify-content-center"
@@ -302,7 +272,7 @@
           md:flex-row w-full justify-content-around"
     >
         <p-card 
-          *ngIf="hasGroup(['Admin','RHGestor'])" 
+          *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
           class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
           header="{{ totalAvaliacoesGeral }}" 
         >
@@ -313,7 +283,7 @@
         </p-card>
       
         <p-card 
-          *ngIf="hasGroup(['Admin','RHGestor'])"
+          *ngIf="hasGroup(['Admin','Master','RHGestor'])"
           class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6"  
           header="{{ avMediaTotal }}" 
         >
@@ -339,14 +309,14 @@
     </div>
   </div> 
 
-  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="titulo mt-6 mb-6 text-2xl">
-    <p-divider *ngIf="hasGroup(['Admin','RHGestor'])" align="left" type="solid">
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="titulo mt-6 mb-6 text-2xl">
+    <p-divider *ngIf="hasGroup(['Admin','Master','RHGestor'])" align="left" type="solid">
         <b>Avaliações e Feedbacks Gerais</b>
     </p-divider> 
   </div>
 
   <div 
-    *ngIf="hasGroup(['Admin','RHGestor'])" 
+    *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
     class="flex flex-column w-full 
           md:flex-row w-full   
           lg:flex-row justify-content-around w-full"
@@ -356,7 +326,7 @@
             lg:flex-row w-full justify-content-around"
     >
           <p-card
-            *ngIf="hasGroup(['Admin','RHGestor'])"  
+            *ngIf="hasGroup(['Admin','Master','RHGestor'])"  
             class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
             header="{{ totalAvaliacoes }}">
             <p>
@@ -366,7 +336,7 @@
           </p-card>
         
           <p-card 
-            *ngIf="hasGroup(['Admin','RHGestor'])" 
+            *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
             class="cardsWidth shadow-4 border-round-3xl hover:shadow-6" 
             header="{{ mediaRespostas }}"
           >
@@ -401,26 +371,26 @@
 
 
 
-  <div *ngIf="hasGroup(['Admin','RHGestor'])" class="titulo mt-6 mb-6 text-2xl">
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="titulo mt-6 mb-6 text-2xl">
     <p-divider align="left" type="solid">
         <b>Avaliações e Feedbacks Gestores</b>
     </p-divider> 
   </div>
 
   <div 
-    *ngIf="hasGroup(['Admin','RHGestor'])" 
+    *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
     class="flex flex-column w-full 
           md:flex-row w-full   
           lg:flex-row justify-content-around w-full"
   >
     <div 
-      *ngIf="hasGroup(['Admin','RHGestor'])" 
+      *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
       class="cards flex flex-column align-items-center 
             lg:flex-row w-full justify-content-around"
     >
       
         <p-card 
-          *ngIf="hasGroup(['Admin','RHGestor'])" 
+          *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
           class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
           header="{{ totalAvaliacoesGestor }}">
           <p class="m-0">
@@ -430,7 +400,7 @@
         </p-card>
         
         <p-card 
-          *ngIf="hasGroup(['Admin','RHGestor'])" 
+          *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
           class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
           header="{{ avMediaGestor }}" 
         >
@@ -440,7 +410,7 @@
           </p>
         </p-card>
 
-        <div *ngIf="hasGroup(['Admin','RHGestor'])" class="progressFbGestor mt-5">  
+        <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="progressFbGestor mt-5">  
           <nz-progress
             [nzSize]="'small'"
             [nzStatus]="'normal'"
@@ -453,14 +423,14 @@
           </nz-progress>
           <p>Feedbacks Realizados</p>
         </div>
-      <div *ngIf="hasGroup(['Admin','RHGestor'])" class="chartRadarGestor md:w-10 lg:w-6">
+      <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="chartRadarGestor md:w-10 lg:w-6">
         <canvas id="notaGestorPerguntasChart"></canvas>
       </div>
 
     </div>  
   </div>
 
-  <div class="titulo mt-6 mb-6 text-2xl">
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" class="titulo mt-6 mb-6 text-2xl">
     <p-divider align="left" type="solid">
         <b>Meus Indicadores Avaliação Geral</b>
     </p-divider> 
@@ -468,7 +438,7 @@
 
   
   <div 
-    *ngIf="hasGroup(['Admin','RHGestor'])" 
+    *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" 
     class="flex flex-column w-full 
           md:flex-row w-full   
           lg:flex-row justify-content-around w-full"
@@ -479,7 +449,7 @@
     >
 
       <p-card
-        *ngIf="hasGroup(['Admin','RHGestor'])" 
+        *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" 
         class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
         header=" {{ totalAvaliacoesAvaliador }}">
         <p class="m-0">
@@ -489,7 +459,7 @@
       </p-card>
 
       <p-card 
-        *ngIf="hasGroup(['Admin','RHGestor'])" 
+        *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" 
         class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
         header=" {{ mediaNotaAvaliador }}">
         <p class="m-0">
@@ -499,7 +469,7 @@
       </p-card>
 
       <p-card 
-        *ngIf="hasGroup(['Admin','RHGestor'])"
+        *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])"
         class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
         header=" {{ avSemAvaliacao }}">
         <p class="m-0">
@@ -522,7 +492,7 @@
 
 
 <div 
-    *ngIf="hasGroup(['Admin','RHGestor'])" 
+    *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" 
     class="flex flex-column w-full 
           md:flex-row w-full   
           lg:flex-row justify-content-around w-full"
@@ -533,7 +503,7 @@
     >
 
       <p-card
-        *ngIf="hasGroup(['Admin','RHGestor'])" 
+        *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" 
         class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
         header=" {{ avaliador_total_av_gestor }}">
         <p class="m-0">
@@ -543,7 +513,7 @@
       </p-card>
 
       <p-card
-        *ngIf="hasGroup(['Admin','RHGestor'])" 
+        *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" 
         class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
         header=" {{ avaliador_media_nota_gestor }}">
         <p class="m-0">
@@ -568,7 +538,7 @@
   </div>
 
 <div 
-  *ngIf="hasGroup(['Admin','RHGestor'])" 
+  *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" 
   class="flex flex-column w-full 
         md:flex-row w-full   
         lg:flex-row justify-content-around w-full"
@@ -587,6 +557,7 @@
                 [(ngModel)]="avaliadoSelecionadoId"
                 optionLabel="nome"
                 optionValue="id"
+                appendTo="body"
                 (ngModelChange)="onAvaliadoSelecionado($event.value)"
               >
               </p-multiselect>
@@ -594,7 +565,7 @@
           </p-float-label>
       </div>
         <p-card  
-          *ngIf="hasGroup(['Admin','RHGestor'])"
+          *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])"
           class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
           header="{{ totalAvaliacoesAvaliado }}">
           <p class="m-0">
@@ -604,7 +575,7 @@
         </p-card>
 
         <p-card
-          *ngIf="hasGroup(['Admin','RHGestor'])" 
+          *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" 
           class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
           header=" {{ mediaNotaAvaliado}}">
           <p class="m-0">
@@ -630,7 +601,7 @@
 
 
 <div 
-    *ngIf="hasGroup(['Admin','RHGestor'])" 
+    *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" 
     class="flex flex-column w-full 
           md:flex-row w-full   
           lg:flex-row justify-content-around w-full"
@@ -649,6 +620,7 @@
             [(ngModel)]="avaliadoSelecionadoId2"
             optionLabel="nome"
             optionValue="id"
+            appendTo="body"
             (ngModelChange)="onAvaliadoSelecionado2($event.value)"
           >
           </p-multiselect>
@@ -656,7 +628,7 @@
         </p-float-label>
       </div>
         <p-card 
-          *ngIf="hasGroup(['Admin','RHGestor'])"
+          *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])"
           class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
           header="{{ avaliado_total_av_gestor }}">
           <p class="m-0">
@@ -666,7 +638,7 @@
         </p-card>
 
         <p-card
-          *ngIf="hasGroup(['Admin','RHGestor'])" 
+          *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" 
           class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
           header=" {{ avaliado_media_nota_gestor }}">
           <p class="m-0">

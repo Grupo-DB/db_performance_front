@@ -29,7 +29,7 @@ import { CentroCusto } from '../centrocusto/centrocusto.component';
   standalone: true,
   imports: [
     DividerModule,CommonModule,NzMenuModule,RouterLink,DividerModule,ToastModule,
-    FloatLabelModule,MultiSelectModule,DrawerModule,
+    FloatLabelModule,MultiSelectModule,DrawerModule,ProgressSpinnerModule,
     InputNumberModule,ProgressSpinnerModule,ButtonModule,
     FormsModule,RadioButtonModule,NzProgressModule,PaginatorModule,TooltipModule
   ],
@@ -86,10 +86,11 @@ export class HomeOrcamentoComponent implements OnInit {
   filial: number[] = [0];
   periodo: any[] = [];
   filiaisSga: FilialSga[] = []
-  loading: boolean = false;
+  //loading: boolean = true;
   loadingRealizado: boolean = false;
- 
-
+  loadingOrcado: boolean = false;
+  loadingInicial: boolean = false;
+  loadingInicial2: boolean = false;
   selectedCodManagers: any = 'Matriz';
 
   ccsPais: { nome: string; orcado: number; realizado: number; gestor: string; orcadoFormatado: string; realizadoFormatado: string; porcentagem: number }[] = [];
@@ -141,7 +142,7 @@ export class HomeOrcamentoComponent implements OnInit {
   meusGrupos: any;
   meusCcs: any;
   meusCcsCodigos: any;
-
+  
   exibirModal: boolean = false;
 
   selectedGruposItensCodigos: any[] = [];
@@ -169,9 +170,10 @@ export class HomeOrcamentoComponent implements OnInit {
   ){}
 
   ngOnInit(): void {
-    this.loading = true;
+    this.loadingInicial = true;
+    this.loadingInicial2 = true;
     const mesAtual = new Date().getMonth() + 1; // getMonth() retorna de 0 a 11, então adicionamos 1
-  this.periodo = Array.from({ length: mesAtual }, (_, i) => i + 1);
+    this.periodo = Array.from({ length: mesAtual }, (_, i) => i + 1);
     this.calcularOrcado();
     this.calcularRealizado();
     this.filtroInicial();
@@ -248,14 +250,14 @@ export class HomeOrcamentoComponent implements OnInit {
   }
 
   calcularOrcado(): void {
-    this.loading = true;
+    
     this.curvaService.getGarficoOrcamento(this.ano,this.periodo,this.selectedCodManagers).subscribe(
       (response) => {
         this.orcadosResultadosCcsPai = response.total_por_cc_pai;
         this.orcadosResultadosGruposItens = response.total_por_grupo_itens;
         this.totalOrcadoCcPai = response.total_cc;
         this.totalOrcadoGruposItens = response.total_grupo_itens;
-        this.loading = false;
+        //this.loading = false;
       },
       (error) => {
         console.error('Erro ao obter os dados do gráfico:', error);
@@ -274,7 +276,7 @@ export class HomeOrcamentoComponent implements OnInit {
   }
 
   calcularMeuOrcado(): void{
-    this.loading = true;
+    this.loadingOrcado = true;
     this.carregarCcs(this.meusCcs);
     console.log('Meus CcCCCCCCCCCCCs:', this.meusCcsPaisUpdated);
     this.curvaService.getGarficoMeuOrcamentoGp(this.ano,this.periodo,this.selectedCodManagers,this.meusGrupos).subscribe(
@@ -284,7 +286,7 @@ export class HomeOrcamentoComponent implements OnInit {
         this.meuOrcadosResultadosGruposItens = response.total_por_grupo_itens;
         //this.meuTotalOrcadoCcPai = response.total_cc;
         this.meuTotalOrcadoGruposItens = response.total_grupo_itens;
-        this.loading = false;
+        //this.loading = false;
       },
       (error) => {
         console.error('Erro ao obter os dados do gráfico:', error);
@@ -293,20 +295,21 @@ export class HomeOrcamentoComponent implements OnInit {
           this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro interno no servidor. Verifique os dados e tente novamente.' });
         } else if (error.status === 400) {
           this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Dados inválidos. Por favor, revise as informações enviadas.' });
-        } else {
-          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Ocorreu um erro inesperado. Por favor, tente novamente mais tarde.' });
-        }
+        } //else {
+          //this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Ocorreu um erro inesperado. Por favor, tente novamente mais tarde.' });
+        //}
 
         reject(error);
 
       }
     );
+    this.loadingOrcado = true;
     this.curvaService.getGarficoMeuOrcamentoCc(this.ano,this.periodo,this.selectedCodManagers,this.meusCcsPaisUpdated).subscribe(
       (response) => {
         this.meuOrcadosResultadosCcsPai = response.total_por_cc_pai;
         console.log('Dados do CCS MEU ORCADO', this.meuOrcadosResultadosCcsPai);
         this.meuTotalOrcadoCcPai = response.total_cc;
-        this.loading = false;
+        this.loadingOrcado = false;
       },
       (error) => {
         console.error('Erro ao obter os dados do gráfico:', error);
@@ -325,12 +328,11 @@ export class HomeOrcamentoComponent implements OnInit {
   }
 
   calcularMeuRealizadoCc(): void{
-    this.loadingRealizado = true;
     this.curvaService.calcularMeuRealizadoCc(this.ano,this.periodo,this.filial,this.meusCcs).subscribe(
       (response) => {
         this.meuRealizadosResultadosCcsPai = response.agrupado_por_pai;
         this.meuTotalRealizadoCcPai = response.total_soma_ccs;
-        this.loadingRealizado = false;
+        //this.loading = false;
       }
       ,
       (error) => {
@@ -351,9 +353,9 @@ export class HomeOrcamentoComponent implements OnInit {
       (response) => {
         this.meuRealizadosResultadosGruposItens = response.dicionario_soma_nomes;
         this.meuTotalRealizadoGruposItens = response.total_soma_gps;
-        this.loadingRealizado = false;
         this.calcularMeuProgresso();
         this.calcularMeuProgressoGruposItens();
+        this.loadingInicial2 = false;
       },
       (error) => {
         console.error('Erro ao obter os dados do gráfico:', error);
@@ -362,9 +364,9 @@ export class HomeOrcamentoComponent implements OnInit {
           this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Erro interno no servidor. Verifique os dados e tente novamente.' });
         } else if (error.status === 400) {
           this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Dados inválidos. Por favor, revise as informações enviadas.' });
-        } else {
-          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Ocorreu um erro inesperado. Por favor, tente novamente mais tarde.' });
-        }
+        } //else {
+          //this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Ocorreu um erro inesperado. Por favor, tente novamente mais tarde.' });
+        //}
 
         reject(error); // Rejeita a Promise em caso de erro
       }
@@ -372,7 +374,7 @@ export class HomeOrcamentoComponent implements OnInit {
   }
 
   calcularRealizado(): void {
-    this.loadingRealizado = true;
+    
     this.curvaService.calcularRealizado(this.ano,this.periodo,this.filial).subscribe(
       (response) => {
         this.realizadosResultadosCcsPai = response.agrupado_por_pai;
@@ -385,7 +387,7 @@ export class HomeOrcamentoComponent implements OnInit {
         //console.log('totalRealizadoGruposItens:', this.totalRealizadoGruposItens);
         this.calcularProgresso();
         this.calcularProgressoGruposItens();
-        this.loadingRealizado = false;
+        this.loadingInicial = false;
       },
       (error) => {
         console.error('Erro ao obter os dados do gráfico:', error);
@@ -404,6 +406,8 @@ export class HomeOrcamentoComponent implements OnInit {
   }
 
   calcular():void {
+    this.loadingInicial = true;
+    this.loadingInicial2 = true;
     this.messageService.add({ severity: 'success', summary: 'Enviado!', detail: 'Aguarde um momento, os dados estão sendo processados.' });
     this.calcularOrcado();
     this.calcularRealizado();
@@ -417,7 +421,7 @@ export class HomeOrcamentoComponent implements OnInit {
   }
 
   calcularMeuProgresso(): void {
-    this.loading = true;
+    
     // Verifica se os dados de orçado e realizado estão disponíveis
     if (!this.meuOrcadosResultadosCcsPai || !this.meuRealizadosResultadosCcsPai) {
       //console.error('Dados de orçado ou realizado estão ausentes.');
@@ -476,30 +480,21 @@ export class HomeOrcamentoComponent implements OnInit {
 
     this.meuTotalPorcentagem = totalOrcado > 0 ? parseFloat(((totalRealizado / totalOrcado) * 100).toFixed(1)) : 0;
 
-    this.loading = false;
-
     // Formata os valores para exibição
     this.meuTotalOrcadoFormatado = formatarParaBRL(totalOrcado);
     this.meuTotalRealizadoFormatado = formatarParaBRL(totalRealizado);
     this.meuTotalPorcentagemFormatada = `${this.meuTotalPorcentagem.toFixed(1)}%`;
 
     
-
     console.log('Total Orçado (BRL):', this.meuTotalOrcadoFormatado);
     console.log('Total Realizado (BRL):', this.meuTotalRealizadoFormatado);
     console.log('Porcentagem Total:', this.meuTotalPorcentagemFormatada);
 
   }
 
-  
-  
-
-  
-
 
 
   calcularProgresso(): void {
-    this.loading = true;
     // Verifica se os dados de orçado e realizado estão disponíveis
     if (!this.orcadosResultadosCcsPai || !this.realizadosResultadosCcsPai) {
       //console.error('Dados de orçado ou realizado estão ausentes.');
@@ -560,15 +555,12 @@ export class HomeOrcamentoComponent implements OnInit {
 
     this.totalPorcentagem = totalOrcado > 0 ? parseFloat(((totalRealizado / totalOrcado) * 100).toFixed(1)) : 0;
 
-    this.loading = false;
-
     // Formata os valores para exibição
     this.totalOrcadoFormatado = formatarParaBRL(totalOrcado);
     this.totalRealizadoFormatado = formatarParaBRL(totalRealizado);
     this.totalPorcentagemFormatada = `${this.totalPorcentagem.toFixed(1)}%`;
 
     
-
     console.log('Total Orçado (BRL):', this.totalOrcadoFormatado);
     console.log('Total Realizado (BRL):', this.totalRealizadoFormatado);
     console.log('Porcentagem Total:', this.totalPorcentagemFormatada);
@@ -576,7 +568,7 @@ export class HomeOrcamentoComponent implements OnInit {
   }
 
   calcularProgressoGruposItens(): void {
-    this.loading = true;
+
 
     // Verifica se os dados de orçado e realizado estão disponíveis
     if (!this.orcadosResultadosGruposItens || !this.realizadosResultadosGruposItens) {
@@ -648,8 +640,6 @@ export class HomeOrcamentoComponent implements OnInit {
     this.totalRealizadoFormatadoGp = formatarParaBRL(totalRealizado);
     this.totalPorcentagemFormatadaGp = `${this.totalPorcentagemGp.toFixed(1)}%`;
     
-    this.loading = false;
-
     console.log('Total Orçado GP (BRL):', this.totalOrcadoFormatadoGp);
     console.log('Total Realizado GP (BRL):', this.totalRealizadoFormatadoGp);
     console.log('Porcentagem Total GP:', this.totalPorcentagemFormatadaGp);
@@ -658,7 +648,6 @@ export class HomeOrcamentoComponent implements OnInit {
 
 
   calcularMeuProgressoGruposItens(): void {
-    this.loading = true;
 
     // Verifica se os dados de orçado e realizado estão disponíveis
     if (!this.meuOrcadosResultadosGruposItens || !this.meuRealizadosResultadosGruposItens) {
@@ -730,8 +719,6 @@ export class HomeOrcamentoComponent implements OnInit {
     this.meuTotalRealizadoFormatadoGp = formatarParaBRL(totalRealizado);
     this.meuTotalPorcentagemFormatadaGp = `${this.meuTotalPorcentagemGp.toFixed(1)}%`;
     
-    this.loading = false;
-
     console.log('Meu Total Orçado GP (BRL):', this.meuTotalOrcadoFormatadoGp);
     console.log('Meu Total Realizado GP (BRL):', this.meuTotalRealizadoFormatadoGp);
     console.log('Meu Porcentagem Total GP:', this.meuTotalPorcentagemFormatadaGp);

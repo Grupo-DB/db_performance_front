@@ -16,26 +16,26 @@
         </a>
       </div>
       <ul nz-menu style="background-color:#444959;"  nzMode="inline" [nzInlineCollapsed]="isCollapsed">               
-        <li *ngIf="hasGroup(['Admin','RHGestor','OrcamentoGestor'])" nz-submenu  style="background-color: #444959; width: 100%;"   nzTitle="Corporativo" nzIcon="global">
+        <li *ngIf="hasGroup(['Admin','Master','RHGestor','OrcamentoGestor','GestorOperacoes'])" nz-submenu  style="background-color: #444959; width: 100%;"   nzTitle="Corporativo" nzIcon="global">
           <ul>
-              <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu  style="background-color: #3a3e4c;"  nzTitle="Cadastros" nzIcon="appstore-add">
+              <li nz-submenu  style="background-color: #3a3e4c;"  nzTitle="Cadastros" nzIcon="appstore-add">
                 <ul>
-                  <li *ngIf="hasGroup(['Admin','RHGestor'])" style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
+                  <li style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
                     <a routerLink="registercompany">Empresas</a>
                   </li>
-                  <li *ngIf="hasGroup(['Admin','RHGestor'])" style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
+                  <li style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
                     <a routerLink="filial">Filiais</a>
                   </li>
-                  <li *ngIf="hasGroup(['Admin','RHGestor'])" style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
+                  <li style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
                     <a routerLink="area">Áreas</a>
                   </li>
-                  <li *ngIf="hasGroup(['Admin','RHGestor'])" style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
+                  <li style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
                     <a routerLink="setor">Ambientes</a>
                   </li>
-                  <li *ngIf="hasGroup(['Admin','RHGestor'])" style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
+                  <li style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
                     <a routerLink="ambiente">Setores</a>
                   </li>
-                  <li *ngIf="hasGroup(['Admin','RHGestor'])" style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
+                  <li style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
                     <a routerLink="cargo">Cargos</a>
                   </li>
                 </ul>
@@ -47,20 +47,20 @@
             </li> 
           </ul>
           <ul>
-            <li *ngIf="hasGroup(['Admin','OrcamentoGestor'])" nz-menu-item   nzMatchRouter>
+            <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestor'])" nz-menu-item   nzMatchRouter>
               <a routerLink="baseOrcamentaria/orcamentoBase/homeOrcamento" ><span nz-icon nzType="dollar" nzTheme="outline"></span>  Orçamento</a>
             </li> 
           </ul>
         </li>
 
-        <li *ngIf="hasGroup(['Admin','RHGestor','RHAvaliacao'])" nz-submenu style="background-color: #444959;"  nzTitle="Gestão de Pessoas" nzIcon="team">
+        <li *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" nz-submenu style="background-color: #444959;"  nzTitle="Gestão de Pessoas" nzIcon="team">
           <ul>
-            <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+            <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item   nzMatchRouter>
               <a routerLink="colaborador" ><span nz-icon nzType="user" nzTheme="outline"></span> Colaboradores</a>
             </li> 
           </ul>
           <ul>
-            <li *ngIf="hasGroup(['Admin','RHGestor','RHAvaliacao'])" nz-menu-item nzMatchRouter>
+            <li *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" nz-menu-item nzMatchRouter>
               <a routerLink="dashboard" ><span nz-icon nzType="audit" nzTheme="outline"></span> Avaliação de Funcionários</a>
             </li> 
           </ul>

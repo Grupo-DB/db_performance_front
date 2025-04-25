@@ -334,10 +334,14 @@ export class RealizadoComponent implements OnInit {
   calcsGestor(): void {
     this.centroCustoService.getMeusCentrosCusto().subscribe(
         response => {
-            this.meusCcs = response.map((centroCusto: any) => ({
-                id: centroCusto.cc_pai_detalhes.id,
-                nome: centroCusto.cc_pai_detalhes.nome
-            }));
+            this.meusCcs = Array.from(
+                new Map(
+                    response.map((centroCusto: any) => [
+                        centroCusto.cc_pai_detalhes.id,
+                        { id: centroCusto.cc_pai_detalhes.id, nome: centroCusto.cc_pai_detalhes.nome }
+                    ])
+                ).values()
+            );
             console.log('Meus Ccs:', this.meusCcs); // Log para verificar a resposta
 
             this.centrosCusto = this.meusCcs.map((cc: { codigo: any; }) => cc.codigo);
@@ -975,19 +979,19 @@ async executarCalculos(): Promise<void> {
             labels: ['Orçamento'],
             datasets: [
                 {
-                    label: 'Base',
+                    label: 'Base R$',
                     data:[valor2], // Apenas o valor de `response.total`
                     backgroundColor: '#002B5C',
                     hoverBackgroundColor: '#FFB100'
                 },
                 {
-                    label: 'Realizado',
+                    label: 'Realizado R$',
                     data: [valor1], // Apenas o valor de `response.total` do realizado
                     backgroundColor: '#4972B0',
                     hoverBackgroundColor: '#FFB100'
                 },
                 {
-                  label: 'Saldo',
+                  label: 'Saldo R$',
                   data: [valor3], // Apenas o valor de `response.total` do realizado
                   backgroundColor: '#7F94B5',
                   hoverBackgroundColor: '#FFB100'

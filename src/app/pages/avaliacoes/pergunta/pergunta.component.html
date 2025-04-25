@@ -3,43 +3,43 @@
         <li nz-menu-item nzMatchRouter="#">
             <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
         </li>
-        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+        <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
             <ul>
-                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="../tipoavaliacao" >Tipos de Avaliações</a>
                 </li>
-                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="../pergunta" >Perguntas</a>
                 </li>
-                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="../formulario" >Formulários</a>
                 </li>
             </ul>
         </li>    
         
-        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
+        <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
             <ul>
-                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item   nzMatchRouter>
                     <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
                 </li>
-                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item   nzMatchRouter>
                     <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados a um Formulário</a>
                 </li>
-                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item   nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item   nzMatchRouter>
                     <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
                 </li>
             </ul>    
         </li>
-
+  
         
-        <li nz-menu-item nzMatchRouter="">
+        <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])">
             <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
         </li>
-        <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['RHAvaliacao'])">
+        <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])">
             <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
         </li>
     
-        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Relatórios" style="font-size: 13px;">
+        <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-submenu nzTitle="Relatórios" style="font-size: 13px;">
           <ul>
             <li nz-menu-item nzMatchRouter="">
               <a style="font-size: 13px;" routerLink="../mapaavaliadores">Mapa de Avaliadores</a>
@@ -60,10 +60,10 @@
         </li> 
         
     </ul>
-</div>
+  </div>
 
 
-<div *ngIf="hasGroup(['Admin','RHGestor'])" class="titulo mt-6 mb-6 text-2xl">
+<div class="titulo mt-6 mb-6 text-2xl">
         <p-divider align="left" type="solid">
             <b>Cadastro de Perguntas</b>
         </p-divider>     
@@ -116,7 +116,7 @@
    
     
     
-        <div *ngIf="hasGroup(['Admin','RHGestor'])" class="tabela"@swipeAnimationReverse>
+        <div class="tabela"@swipeAnimationReverse>
             <p-toast />
             <p-confirmDialog />
             <p-table
