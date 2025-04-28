@@ -1,49 +1,40 @@
 <div class="menu">
     <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
         <li nz-menu-item nzMatchRouter="#">
-            <a style="font-size: 13px;" routerLink="homeOrcamento">Início</a>
+            <a style="font-size: 13px;" routerLink="/welcome/baseOrcamentaria/orcamentoBase/homeOrcamento">Início</a>
         </li>
-        <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+        <li *ngIf="hasGroup(['Admin','Master'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
             <ul>
-                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizAnalitica" >Raízes Analíticas</a>
                 </li>
-                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/centrocustopai" >Centro de Custo Pai</a>
                 </li>
-                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/centrocusto" >Centro de Custo </a>
                 </li>
-                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizSintetica" >Raiz Sintética</a>
                 </li>
-                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/contaContabil" >Conta Contábil</a>
                 </li>
-                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/grupoItens" >Grupos de Itens</a>
                 </li>
-                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/orcamentoBase" >Orçamento Base</a>
-                </li>
-                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/baseOrcamentaria/dre/produto">Linha de Produtos</a>
-                </li>
-                <li *ngIf="hasGroup(['Admin','RHGestor'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/baseOrcamentaria/dre/projecao"> Projeções de Vendas</a>
-                </li>
-                <li *ngIf="hasGroup(['Admin','OrcamentoGestor'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/baseOrcamentaria/dre/custoproducao">Projeções de Produção</a>
                 </li>
             </ul>
         </li >
         
-        <li *ngIf="hasGroup(['Admin','OrcamentoGestor'])" nz-submenu nzTitle="Acompanhamento "  style="font-size: 13px; ">
+        <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorSetor','OrcamentoGestorItens'])" nz-submenu nzTitle="Acompanhamento "  style="font-size: 13px; ">
             <ul>
-                <li *ngIf="hasGroup(['Admin','OrcamentoGestor'])" nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorSetor'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoRealizado/realizado"> Orçado x Realizado Setorial</a>
                 </li>
-                <li *ngIf="hasGroup(['Admin','OrcamentoGestor'])" nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorItens'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/orcamentoGrupoItens/orcamentogrupoitens"> Orçado x Realizado Grupo de Itens</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
@@ -141,7 +132,7 @@
         </div>
         
         <p-toast></p-toast>
-        <div *ngIf="!loadingOrcado" class="flex flex-column w-11 mt-5 justify-content-center align-items-center lg:w-5">
+        <div *ngIf="!loadingOrcado && hasGroup(['Admin','Master'])" class="flex flex-column w-11 mt-5 justify-content-center align-items-center lg:w-5">
             <div class="flex flex-column w-12 lg:flex-row">
                 <div class="flex flex-column justify-content-center align-items-end gap-2 w-11 lg:w-4">
                     <h1 style="text-align: right;">Orçamento Grupos de Itens</h1>
@@ -206,11 +197,11 @@
 
     <br>
 <!---------------------------------------------------INDIVIDUAL----------------------------------------------------------------------------->
-<div *ngIf="loadingInicial2 && hasGroup(['Admin','Master','OrcamentoGestor','OrcamentoGestorItens'])" class="loading-animation flex flex-column form2 w-5 justify-content-center m-auto">
+<div *ngIf="loadingInicial2 && hasGroup(['OrcamentoGestorSetor'])" class="loading-animation flex flex-column form2 w-5 justify-content-center m-auto">
     <!-- Coloque aqui a sua animação de carregamento -->
     <img src="assets/imagens/startmanager2.gif" alt="Loading..." class="w-12">
 </div>
-<div *ngIf="!loadingInicial2 && hasGroup(['Admin','Master','OrcamentoGestor'])" class="geral2 flex flex-column justify-content-around ml-3 mr-3 lg:flex-row">
+<div *ngIf="!loadingInicial2 && hasGroup(['Admin','Master','OrcamentoGestorSetor'])" class="geral2 flex flex-column justify-content-around ml-3 mr-3 lg:flex-row">
     <div class="flex justify-content-center  w-12 mt-3 mb-3 lg:w-1">
         <div class="class">
             <p-button (onClick)="carregarFiltros()" label="Filtros" icon="pi pi-angle-double-down" />
@@ -272,7 +263,7 @@
     </div>
     
     <p-toast></p-toast>
-    <div *ngIf="hasGroup(['Admin','OrcamentoGestorItens'])" class="flex flex-column w-11 mt-5 justify-content-center align-items-center lg:w-5">
+    <div *ngIf="hasGroup(['Admin','Master','OrcamentoGestorItens'])" class="flex flex-column w-11 mt-5 justify-content-center align-items-center lg:w-5">
         <div class="flex flex-column w-12 lg:flex-row">
             <div class="flex flex-column justify-content-center align-items-end gap-2 w-11 lg:w-4">
                 <h1 style="text-align: right;">Meu Orçamento Grupos de Itens</h1>
@@ -344,7 +335,7 @@
         [style]="{ height: '12rem' }"
     >
     <div class="flex flex-column w-12 justify-content-center align-items-center gap-3 lg:flex-row lg:mt-4">
-        <div class="mt-4 w-12 lg:w-3 lg:mt-0" *ngIf="hasGroup(['OrcamentoGestor','Admin'])">
+        <div class="mt-4 w-12 lg:w-3 lg:mt-0">
             <p-floatlabel variant="on"> 
                 <p-multiSelect
                     variant="filled"
@@ -364,7 +355,7 @@
                 <label for="float-label">Selecione as Filiais</label>
             </p-floatlabel>
         </div>
-        <div class="w-12 lg:w-3" *ngIf="hasGroup(['OrcamentoGestor','Admin'])">
+        <div class="w-12 lg:w-3">
             <p-floatLabel variant="on">    
                 <p-multiSelect
                     variant="filled"

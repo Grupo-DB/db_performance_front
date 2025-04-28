@@ -9,7 +9,7 @@ import { Empresa } from '../../../pages/avaliacoes/registercompany/registercompa
   providedIn: 'root'
 })
 export class RegisterCompanyService {
-  private apiUrl = 'http://localhost:8000/management/empresas/';
+  private apiUrl = 'http://172.50.10.79:8008/management/empresas/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
   registercompany(nome: string, cnpj: string, endereco: string, cidade: string, estado: string, codigo: string){
@@ -31,6 +31,6 @@ export class RegisterCompanyService {
   return this.httpClient.delete(url);
   }
   getEmpresa(id: string) {
-    return this.httpClient.get<any>(`http://localhost:8000/management/empresas/${id}`);
+    return this.httpClient.get<any>(`http://172.50.10.79:8008/management/empresas/${id}`);
   }
 }

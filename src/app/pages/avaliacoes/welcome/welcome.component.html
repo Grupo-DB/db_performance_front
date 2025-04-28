@@ -16,7 +16,7 @@
         </a>
       </div>
       <ul nz-menu style="background-color:#444959;"  nzMode="inline" [nzInlineCollapsed]="isCollapsed">               
-        <li *ngIf="hasGroup(['Admin','Master','RHGestor','OrcamentoGestor','GestorOperacoes'])" nz-submenu  style="background-color: #444959; width: 100%;"   nzTitle="Corporativo" nzIcon="global">
+        <li *ngIf="hasGroup(['Admin','Master','RHGestor','OrcamentoGestor','GestorOperacoes','OrcamentoGestorItens'])" nz-submenu  style="background-color: #444959; width: 100%;"   nzTitle="Corporativo" nzIcon="global">
           <ul>
               <li nz-submenu  style="background-color: #3a3e4c;"  nzTitle="Cadastros" nzIcon="appstore-add">
                 <ul>
@@ -40,19 +40,38 @@
                   </li>
                 </ul>
               </li>        
+          </ul>
+          <ul>
+            <li *ngIf="hasGroup(['Admin','Master','RHGestor','OrcamentoGestorSetor','OrcamentoGestorItens'])" nz-submenu style="background-color: #3a3e4c;"  nzTitle="Plan. Estratégico" nzIcon="project">
+              <ul>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-submenu  style="background-color: #3a3e4c;"  nzTitle="Cadastros" nzIcon="appstore-add">
+                    <ul>
+                      <li style="margin-bottom: 0;" nz-menu-item  nzMatchRouter>
+                        <a routerLink="/welcome/baseOrcamentaria/dre/produto">Linha de Produtos</a>
+                      </li>
+                      <li style="margin-bottom: 0;" nz-menu-item  nzMatchRouter>
+                        <a routerLink="/welcome/baseOrcamentaria/dre/projecao"> Projeções de Vendas</a>
+                      </li>
+                      <li style="margin-bottom: 0;" nz-menu-item  nzMatchRouter>
+                        <a routerLink="/welcome/baseOrcamentaria/dre/custoproducao">Projeções de Produção</a>
+                      </li>
+                    </ul>
+                  </li>
+              </ul>
+              <ul>
+                <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorSetor','OrcamentoGestorItens'])" nz-menu-item   nzMatchRouter style="background-color: #3a3e4c;">
+                  <a routerLink="baseOrcamentaria/orcamentoBase/homeOrcamento" ><span nz-icon nzType="dollar" nzTheme="outline" ></span>  Orçamento</a>
+                </li> 
+              </ul>
+          </li>
           </ul> 
           <ul>
             <li *ngIf="hasGroup(['Admin'])" nz-menu-item   nzMatchRouter>
-              <a href="http://localhost:8000/admin/" target="_blank"><span nz-icon nzType="user" nzTheme="outline"></span>  Admin</a>
-            </li> 
-          </ul>
-          <ul>
-            <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestor'])" nz-menu-item   nzMatchRouter>
-              <a routerLink="baseOrcamentaria/orcamentoBase/homeOrcamento" ><span nz-icon nzType="dollar" nzTheme="outline"></span>  Orçamento</a>
+              <a href="http://172.50.10.79:8008/admin/" target="_blank"><span nz-icon nzType="user" nzTheme="outline"></span>  Admin</a>
             </li> 
           </ul>
         </li>
-
+        
         <li *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" nz-submenu style="background-color: #444959;"  nzTitle="Gestão de Pessoas" nzIcon="team">
           <ul>
             <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item   nzMatchRouter>
@@ -65,14 +84,14 @@
             </li> 
           </ul>
         </li>
-        <li *ngIf="hasGroup(['Admin','Producao'])" nz-submenu style="background-color: #444959;"  nzTitle="Gestão Operacional" nzIcon="bar-chart">
+        <li *ngIf="hasGroup(['Admin','Master','GestorOperacoes'])" nz-submenu style="background-color: #444959;"  nzTitle="Gestão Operacional" nzIcon="bar-chart">
           <ul>
-            <li *ngIf="hasGroup(['Admin','Producao'])" nz-menu-item   nzMatchRouter>
+            <li *ngIf="hasGroup(['Admin','Master','GestorOperacoes'])" nz-menu-item   nzMatchRouter>
               <a routerLink="homeoperacoes" > Painel Operacional</a>
             </li> 
           </ul>
           <ul>
-            <li *ngIf="hasGroup(['Admin','Producao'])" nz-menu-item   nzMatchRouter>
+            <li *ngIf="hasGroup(['Admin','Master','GestorOperacoes'])" nz-menu-item   nzMatchRouter>
               <a href="https://app.powerbi.com/reportEmbed?reportId=db000524-b09b-4a62-9284-5b02d8a4bceb&autoAuth=true&ctid=6411a146-b3ce-405e-9f45-6a52f518d922&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly93YWJpLWJyYXppbC1zb3V0aC1yZWRpcmVjdC5hbmFseXNpcy53aW5kb3dzLm5ldC8ifQ%3D%3D" target="_blank" >BI - Produção</a>
             </li> 
           </ul>
