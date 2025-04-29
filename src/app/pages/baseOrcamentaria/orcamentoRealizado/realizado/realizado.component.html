@@ -40,7 +40,7 @@
                 <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/dre/projetado"> DRE Projetado</a>
                 </li>
-                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorProd'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/baseOrcamentaria/dre/indicadorescp">Indicadores Custo de Produção</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
@@ -157,6 +157,29 @@
                     </p-floatlabel>
                 </div>     
                 <p-toast></p-toast>
+                <div *ngIf="hasGroup(['Admin','Master'])"  class="flex flex-column w-10 justify-content-between lg:flex-row">
+                    <div class="form2 w-10 flex flex-wrap gap-1 justify-content-between">
+                        <div class="flex items-center">
+                            <p-radiobutton name="pizza" [(ngModel)]="filtroGlobal" (ngModelChange)="onCcPaiSelecionado($event.value)" value="globalMatriz" inputId="ingredient1" />
+                            <label for="ingredient1" class="ml-2">Orçamento Setorial Global Matriz</label>
+                        </div>
+                
+                        <div class="flex items-center">
+                            <p-radiobutton name="pizza" [(ngModel)]="filtroGlobal" value="indiretosMatriz" inputId="ingredient2" />
+                            <label for="ingredient2" class="ml-2">Orçamento Setorial Indiretos Matriz</label>
+                        </div>
+                    </div>    
+                    <div class="form2 w-10 flex flex-wrap gap-1 justify-content-between">
+                        <div class="flex items-center">
+                            <p-radiobutton name="pizza" [(ngModel)]="filtroGlobal" value="admMatriz" inputId="ingredient3" />
+                            <label for="ingredient3" class="ml-2">Orçamento Setorial Administrativo Matriz</label>
+                        </div>
+                        <div class="flex items-center">
+                            <p-radiobutton name="pizza" [(ngModel)]="filtroGlobal" value="admAtm" inputId="ingredient4" />
+                            <label for="ingredient4" class="ml-2">Orçamento Setorial Administrativo F08 - UP ATM</label>
+                        </div>
+                    </div>
+                </div>    
                 <div 
                     class="form2 w-10 h-3rem"
                     style="background-color: #002B5C; cursor: pointer; border-radius: 4px; color: #ffffff; display: flex; justify-content: center; align-items: center;font-size: 16px;"
@@ -191,8 +214,8 @@
             </div>            
                 
             <div class="fg1 flex flex-column w-12 align-items-center lg:w-6 lg:gap-2 lg:mt-3"@slideAnimation>
-                <p-card class="w-14rem mt-5 w-4 shadow-2 hover:shadow-6 md:w-10" [style]="{ 'background-color': '#002B5C' }" @slideAnimation>
-                    <div class="flex justify-content-between gap-3">
+                <p-card class="w-10  mt-5 w-4 shadow-2 hover:shadow-6 md:w-10 lg:w-10" [style]="{ 'background-color': '#002B5C' }" @slideAnimation>
+                    <div class="flex justify-content-between gap-3 lg:h-4rem">
                         <div class="flex flex-column gap-1">
                             <span class="text-secondary font-bold text-md" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">Orçado Total</span>
                             <span *ngIf="!isLoading" class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">R$ {{ teste2 }}</span>
@@ -205,8 +228,8 @@
                         </span>
                     </div>
                 </p-card>
-                <p-card class="w-14rem w-4 mt-1 shadow-2 hover:shadow-6 md:w-10" [style]="{ 'background-color': '#4972B0' }" @slideAnimation>
-                    <div class="flex justify-content-between gap-3">
+                <p-card class="w-10 mt-1 shadow-2 hover:shadow-6 md:w-10 lg:w-10" [style]="{ 'background-color': '#4972B0' }" @slideAnimation>
+                    <div class="flex justify-content-between gap-3 lg:h-4rem">
                         <div class="flex flex-column gap-1">
                             <span class="text-secondary font-bold text-md" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">Realizado Total</span>
                             <span *ngIf="!isLoading" class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">R$ {{ teste }}</span>
@@ -219,8 +242,8 @@
                         </span>
                     </div>
                 </p-card>
-                <p-card class="w-14rem w-4 mt-1 shadow-2 hover:shadow-6 md:w-10" [style]="{ 'background-color': '#7F94B5' }" @slideAnimation>
-                    <div class="flex justify-content-between gap-3">
+                <p-card class="w-10 w-4 mt-1 shadow-2 hover:shadow-6 md:w-10 lg:w-10" [style]="{ 'background-color': '#7F94B5' }" @slideAnimation>
+                    <div class="flex justify-content-between gap-3 lg:h-4rem">
                         <div class="flex flex-column gap-1">
                             <span class="text-secondary font-bold text-md" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">Saldo Total</span>
                             <span *ngIf="!isLoading" class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">R$ {{ saldo }}</span>

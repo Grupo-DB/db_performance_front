@@ -37,6 +37,8 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TooltipModule } from 'primeng/tooltip';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { el } from 'date-fns/locale';
 
 export interface ResultadosTotaisArrayItem {
   label: string;
@@ -142,7 +144,7 @@ export interface FilialSga{
   selector: 'app-realizado',
   standalone: true,
   imports: [
-    DropdownModule,FloatLabelModule,DividerModule,CommonModule,FormsModule,InputNumberModule,DrawerModule,ToastModule,
+    DropdownModule,FloatLabelModule,DividerModule,CommonModule,FormsModule,InputNumberModule,DrawerModule,ToastModule,RadioButtonModule,
     MeterGroupModule,CardModule,ButtonModule,InplaceModule,DialogModule,TableModule,ChartModule,MessageModule,ProgressSpinnerModule,
     SidebarModule,TabViewModule,MultiSelectModule,KnobModule,NzProgressModule,NzMenuModule,RouterLink,AvatarModule,TooltipModule
   ],
@@ -193,7 +195,7 @@ export class RealizadoComponent implements OnInit {
   //
   detalhes: any | undefined;
   selectedCcPai: any[]=[];
-  selectedAno: number = 2025;
+  selectedAno: any = new Date().getFullYear();
   valorOrcadoTotal!: number;
   valorOrcadoGastoMensal!: number;
   valorOrcadoGastoAnual!: number;
@@ -276,6 +278,7 @@ export class RealizadoComponent implements OnInit {
   //
   selectedCodManagers: any;
   totais!: any;
+  filtroGlobal: any;
   //
   isLoading: boolean = false;
   isLoading2: boolean = true;
@@ -293,7 +296,7 @@ export class RealizadoComponent implements OnInit {
   realizadosChart: Chart<'pie'> | undefined;
   basesChart: Chart<'doughnut'> | undefined;
 
-  periodo!: number;
+  periodo: any;
 
   meses = Array.from({ length: 12 }, (_, i) => ({
     key: i + 1,
@@ -937,8 +940,52 @@ calcularSaldo() {
   this.montarGraficoTotais();
 }
 
+calculosGlobais(): void {
+  
+}
+private delay(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async executarCalculos(): Promise<void> {
   this.messageService.add({ severity: 'success', summary: 'Enviado!', detail: 'Aguarde um momento, os dados estão sendo processados.' });
+  if(this.filtroGlobal === 'globalMatriz'){
+    this.selectedCcPai = [1,2,6,10,12,13,14,15,17,18,23,29,37,40,41,45,46,50];
+    this.onCcPaiSelecionado(this.selectedCcPai);
+    await this.delay(500);
+    this.selectedAno = new Date().getFullYear();
+    this.periodo = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    this.selectedCodManagers = 'Matriz';
+    this.selectedsFiliais = [0];
+  }
+  else if(this.filtroGlobal === 'indiretosMatriz'){
+    this.selectedCcPai = [1,2,13,14,15,17,18,29,37,40,41,45];
+    this.onCcPaiSelecionado(this.selectedCcPai);
+    await this.delay(500);
+    this.selectedAno = new Date().getFullYear();
+    this.periodo = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    this.selectedCodManagers = 'Matriz';
+    this.selectedsFiliais = [0];
+  }
+  else if(this.filtroGlobal === 'admMatriz'){
+    this.selectedCcPai = [6,10,12,23,46,50];
+    this.onCcPaiSelecionado(this.selectedCcPai);
+    await this.delay(500);
+    this.selectedAno = new Date().getFullYear();
+    this.periodo = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    this.selectedCodManagers = 'Matriz';
+    this.selectedsFiliais = [0];
+  }
+  else if(this.filtroGlobal === 'admAtm'){
+    this.selectedCcPai = [57];
+    this.onCcPaiSelecionado(this.selectedCcPai);
+    await this.delay(500);
+    this.selectedAno = new Date().getFullYear();
+    this.periodo = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    this.selectedCodManagers = 'F08 - UP ATM';
+    this.selectedsFiliais = [3];
+  }
+  console.log('selectedCcPai:', this.selectedCcPai);
   try {
 
    // await this.calcsGestor();

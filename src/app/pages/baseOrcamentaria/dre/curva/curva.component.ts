@@ -72,7 +72,7 @@ export class CurvaComponent implements OnInit {
   selectedsFiliais: any[]=[];
   filiaisSga: FilialSga[] = []
   graficoOrcadoRealizado:Chart<'bar'> | undefined;
-  selectedAno: number = 2025;
+  selectedAno: any = new Date().getFullYear();
   periodo!: number;
   selectedCodManagers: any;
   tipoGrafico:any;

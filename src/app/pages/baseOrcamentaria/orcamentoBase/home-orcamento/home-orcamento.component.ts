@@ -154,7 +154,7 @@ export class HomeOrcamentoComponent implements OnInit {
   meusCcsPaisUpdated:any;
   selectedFiliais: any[] = [];
   centrosCusto: CentroCusto[]| undefined;
-  selectedAno: number = 2025;
+  selectedAno: any = new Date().getFullYear();
 
   meses = Array.from({ length: 12 }, (_, i) => ({
     key: i + 1,
