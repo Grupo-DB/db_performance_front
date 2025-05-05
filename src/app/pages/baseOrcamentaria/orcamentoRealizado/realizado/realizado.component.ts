@@ -452,9 +452,7 @@ export class RealizadoComponent implements OnInit {
   onFiliaisInformada(selectedCods: any[]): void{
     const selectedFiliais = this.filiaisSga.filter(filial => selectedCods.includes(filial.cod));
     this.selectedCodManagers = selectedFiliais.map(filial => filial.codManager).join(',');
-    //this.orcamentosBaseByCcpai();
-   // this.calculosOrcamentosRealizados();
-   // this.calcularSaldo();
+    
   }
 
   onAnoInformado(ano: any):void{
@@ -478,6 +476,14 @@ export class RealizadoComponent implements OnInit {
       this.carregarCcs(ccPaiId);
       //this.orcamentosBaseByCcpai();
     }
+  }
+
+  limparFiltroGlobal(): void {
+    this.filtroGlobal = null;
+    this.selectedCcPai = [];
+    this.selectedCodManagers = null;
+    this.selectedsFiliais = [];
+    this.periodo = [];
   }
 
 

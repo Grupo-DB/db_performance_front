@@ -1,0 +1,146 @@
+<div class="menu">
+    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+        <li nz-menu-item nzMatchRouter="#">
+            <a style="font-size: 13px;" routerLink="/welcome/baseOrcamentaria/orcamentoBase/homeOrcamento">Início</a>
+        </li>
+        <li *ngIf="hasGroup(['Admin','Master'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizAnalitica" >Raízes Analíticas</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/centrocustopai" >Centro de Custo Pai</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/centrocusto" >Centro de Custo </a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizSintetica" >Raiz Sintética</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/contaContabil" >Conta Contábil</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/grupoItens" >Grupos de Itens</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/orcamentoBase" >Orçamento Base</a>
+                </li>
+            </ul>
+        </li >
+        
+        <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorSetor','OrcamentoGestorItens'])" nz-submenu nzTitle="Acompanhamento "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorSetor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoRealizado/realizado"> Orçado x Realizado Setorial</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorItens'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoGrupoItens/orcamentogrupoitens"> Orçado x Realizado Grupo de Itens</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/projetado"> DRE Projetado</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorProd'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/indicadorescp">Indicadores Custo de Produção</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/curva">Curva ABC</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/ppr">PPR - Orçamento</a>
+                </li> 
+            </ul>
+           
+        </li>    
+    </ul>
+</div>
+
+<div class="titulo mt-6">
+    <p-divider align="left" type="solid">
+        <b>Fator de contribuição ao bônus global</b>
+    </p-divider>
+</div>
+
+<div class="container">
+
+    <div  class="tabela mt-8" @efeitoFade>
+        <p-table
+            #dt1
+            
+            [paginator]="false"
+            [rows]="20"
+            dataKey="id" 
+            [showCurrentPageReport]="false"
+            [tableStyle]="{ 'min-width': '50rem' }"
+            currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
+            [rowsPerPageOptions]="[20, 40, 60]"
+            [globalFilterFields]="['id','ano','raiz_analitica_desc','raiz_contabil_grupo_desc','mes_especifico']"
+            sortMode="single"
+            scrollable="true"
+            stripedRows
+            sortField="fabrica"
+            [sortOrder]="1"
+        >
+            <ng-template pTemplate="header">
+                <tr class="footer-row1">
+                    <th pSortableColumn="fabrica" style="width:10%" type="text" field="fabrica" display="menu">
+                        Unidade Produtiva <p-sortIcon field="fabrica" />
+                    </th>
+                    <th pSortableColumn="label" style="width:10%" type="text" field="label" display="menu">
+                        Linha de Produtos <p-sortIcon field="label" />
+                    </th>
+                    <th pSortableColumn="projetado" style="width:10%" type="text" field="projetado" display="menu">
+                        Vr / Tn Projetado <p-sortIcon field="projetado" />
+                    </th>
+                    <th pSortableColumn="realizado" style="width:10%" type="text" field="realizado" display="menu">
+                        Vr / Tn Realizado <p-sortIcon field="realizado" />
+                    </th>
+                    <th pSortableColumn="diferenca" style="width:10%" type="text" field="diferenca" display="menu">
+                        Diferença Vr <p-sortIcon field="diferenca" />
+                    </th>
+                    <th pSortableColumn="diferencaPercentual" style="width:10%" type="text" field="diferencaPercentual"display="menu">
+                        Diferença % <p-sortIcon field="diferencaPercentual" />
+                    </th>
+                    <th style="width:10%" type="text" field="status" display="menu">
+                        Status
+                    </th>
+                    <th style="width:10%" type="text" field="status" display="menu">
+                        Detalhes
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-resultado>
+                <tr class="resultados-row">
+                    <td>{{ resultado.fabrica }}</td>
+                    <td>{{ resultado.label }}</td>
+                    <td>{{ resultado.projetado }}</td>
+                    <td>{{ resultado.realizado }}</td>
+                    <td>{{ resultado.diferenca }}</td>
+                    <td>{{ resultado.diferencaPercentual | percent:'1.0' }}</td>
+                    <td class="text-right">
+                        <i
+                            class="pi"
+                            [ngClass]="{
+                                'pi-arrow-circle-up': resultado.diferencaPercentual > 0,
+                                'pi-arrow-circle-down': resultado.diferencaPercentual <= 0
+                            }"
+                            [style.color]="resultado.diferencaPercentual > 0 ? '#22c55e' : '#ef4444'"
+                        ></i>
+                    </td>
+                    <td>
+                        <p-button 
+                             
+                            icon="pi pi-search" 
+                            severity="secondary" 
+                            rounded 
+                        ></p-button>
+                    </td>
+
+                </tr>
+            </ng-template>
+        </p-table>
+         
+
+    </div>
+
+</div>

@@ -174,7 +174,7 @@
                 <b>Feedback</b>
             </p-divider>
 
-            <div *ngIf="avaliacaoDetalhe">
+            <div *ngIf="avaliacaoDetalhe" id="feedbackContent">
                 <h2>Detalhes da Avaliação</h2>
                 <p>Período: <strong>{{ avaliacaoDetalhe.periodo }}</strong></p>
                 <p>Avaliado: <strong>{{ getNomeAvaliado(avaliacaoDetalhe.avaliado) }}</strong></p>
@@ -184,36 +184,12 @@
                 <pre>{{perguntasRespostasFormatada}}</pre>
             </div>
             <p-divider></p-divider>
-            <!-- <form [formGroup]="editForm">
-                <div class="obs">
-                        <p><strong>Editar Perguntas e Respostas:</strong></p>
-                        <textarea 
-                            
-                            rows="10"
-                            cols="30" 
-                            pInputTextarea 
-                            formControlName="perguntasRespostas"
-                        >
-                        </textarea>     
-                </div>
-                <div class="obs">
-                    <p-toast></p-toast>
-                        <p><strong>Observações:</strong></p>
-                        <textarea      
-                            rows="3"
-                            cols="30" 
-                            pInputTextarea 
-                            formControlName="observacoes"
-                        >
-                        </textarea>
-                        <div class="btnpri2" (click)="submit()">
-                            <p>Salvar</p>
-                        </div>
-                </div>
-            </form>     -->
-            <p-divider></p-divider>
+            
             <div class="btnpri3" (click)="onFeedbackButtonClick(avaliacaoDetalhe.id)">
                <br> <p>Finalizar</p>
+            </div>
+            <div class="btnpri3 mt-3" (click)="imprimirPDF()">
+               <br> <p>Imprimir</p>
             </div>
         </div>
         </p-dialog> 

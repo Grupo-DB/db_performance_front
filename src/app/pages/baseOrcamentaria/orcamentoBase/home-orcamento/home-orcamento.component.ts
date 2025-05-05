@@ -82,7 +82,7 @@ export class HomeOrcamentoComponent implements OnInit {
   orcadosResultadosGruposItens: any;
   realizadosResultadosGruposItens: any;
   meuRealizadosResultadosGruposItens: any;
-  ano: number = 2025;
+  ano: number = new Date().getFullYear();
   filial: number[] = [0];
   periodo: any[] = [];
   filiaisSga: FilialSga[] = []

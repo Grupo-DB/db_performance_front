@@ -157,8 +157,8 @@
                     </p-floatlabel>
                 </div>     
                 <p-toast></p-toast>
-                <div *ngIf="hasGroup(['Admin','Master'])"  class="flex flex-column w-10 justify-content-between lg:flex-row">
-                    <div class="form2 w-10 flex flex-wrap gap-1 justify-content-between">
+                <div *ngIf="hasGroup(['Admin','Master'])"  class="flex flex-column w-10  lg:flex-row" style="font-size: 12px;">
+                    <div class="form2 w-10 flex flex-wrap gap-1">
                         <div class="flex items-center">
                             <p-radiobutton name="pizza" [(ngModel)]="filtroGlobal" (ngModelChange)="onCcPaiSelecionado($event.value)" value="globalMatriz" inputId="ingredient1" />
                             <label for="ingredient1" class="ml-2">Orçamento Setorial Global Matriz</label>
@@ -169,16 +169,23 @@
                             <label for="ingredient2" class="ml-2">Orçamento Setorial Indiretos Matriz</label>
                         </div>
                     </div>    
-                    <div class="form2 w-10 flex flex-wrap gap-1 justify-content-between">
-                        <div class="flex items-center">
+                    <div class="form2 w-10 flex flex-wrap gap-1">
+                        <div class="flex items-center text-left">
                             <p-radiobutton name="pizza" [(ngModel)]="filtroGlobal" value="admMatriz" inputId="ingredient3" />
-                            <label for="ingredient3" class="ml-2">Orçamento Setorial Administrativo Matriz</label>
+                            <label  for="ingredient3" class="ml-2">Orçamento Setorial Administrativo Matriz</label>
                         </div>
-                        <div class="flex items-center">
+                        <div class="flex items-center text-left">
                             <p-radiobutton name="pizza" [(ngModel)]="filtroGlobal" value="admAtm" inputId="ingredient4" />
-                            <label for="ingredient4" class="ml-2">Orçamento Setorial Administrativo F08 - UP ATM</label>
+                            <label for="ingredient4" class="ml-2">Orçamento Setorial Administrativo - ATM</label>
                         </div>
                     </div>
+                </div>
+                <div 
+                    class="form2 w-10 h-3rem"
+                    style="background-color: #4972B0; cursor: pointer; border-radius: 4px; color: #ffffff; display: flex; justify-content: center; align-items: center;font-size: 16px;"
+                    (click)="limparFiltroGlobal()"
+                >
+                    Limpar Filtros
                 </div>    
                 <div 
                     class="form2 w-10 h-3rem"
