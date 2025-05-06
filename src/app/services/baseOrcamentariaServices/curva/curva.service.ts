@@ -7,11 +7,11 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class CurvaService {
-  private realizadoUrl = 'http://localhost:8000/curva/calculos_realizados_curva/'
-  private meuRealizadoUrl = 'http://localhost:8000/curva/meus_calculos_cc_curva/'
-  private meuRealizadoGpUrl = 'http://localhost:8000/curva/meus_calculos_gp_curva/'
-  private orcadoUrl = 'http://localhost:8000/orcamento/orcamentosbase/agrupamentosPorAno/'
-  private meuOrcadoUrl = 'http://localhost:8000/orcamento/orcamentosbase/meusAgrupamentosPorAno/'
+  private realizadoUrl = 'http://172.50.10.79:8008/curva/calculos_realizados_curva/'
+  private meuRealizadoUrl = 'http://172.50.10.79:8008/curva/meus_calculos_cc_curva/'
+  private meuRealizadoGpUrl = 'http://172.50.10.79:8008/curva/meus_calculos_gp_curva/'
+  private orcadoUrl = 'http://172.50.10.79:8008/orcamento/orcamentosbase/agrupamentosPorAno/'
+  private meuOrcadoUrl = 'http://172.50.10.79:8008/orcamento/orcamentosbase/meusAgrupamentosPorAno/'
   constructor(
     private httpClient: HttpClient,
     private router: Router

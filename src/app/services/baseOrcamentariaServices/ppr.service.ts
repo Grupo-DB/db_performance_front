@@ -6,7 +6,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class PprService {
-  private apiUrl = 'http://localhost:8000/ppr/realizado_ppr/'
+  private apiUrl = 'http://172.50.10.79:8008/ppr/realizado_ppr/'
+  private apiRealizadoUrl = 'http://172.50.10.79:8008/ppr/realizado_matriz/'
   constructor(
     private httpClient: HttpClient
   ) { }
@@ -19,12 +20,16 @@ export class PprService {
       });
     }
 
-    calcularCusto(ano: number, periodo: any, filial: any): Observable<any> {
-      return this.httpClient.post<any>(this.apiUrl, {
+    calcularCusto2(ano: number, periodo: any, filial: any): Observable<any> {
+      return this.httpClient.post<any>(this.apiRealizadoUrl, {
         ano: ano,
         periodo: periodo,
         filial: filial
       });
+    }
+
+    calcularCusto( ano: any, periodo: any, filiais:any): Observable<any>{
+      return this.httpClient.post<any>(this.apiRealizadoUrl, {ano:ano, periodo:periodo, filiais:filiais})
     }
     
 }

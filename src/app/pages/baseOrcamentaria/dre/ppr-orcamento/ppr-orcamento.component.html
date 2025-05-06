@@ -63,84 +63,51 @@
 
 <div class="container">
 
-    <div  class="tabela mt-8" @efeitoFade>
+    <div  class="tabela mt-5" @efeitoFade>
         <p-table
             #dt1
-            
+            [value]="[
+                { fabrica: 'A) Despesas Adm', label: despesasAdmFormatado, projetado: indices?.despesasAdm, realizado: bonusContribuicao?.despesasAdm },
+                { fabrica: 'Aii) Variável Matriz', label: variavelMatrizFormatado, projetado: indices?.variavelMatriz, realizado: bonusContribuicao?.variavelMatriz },
+                { fabrica: 'Aiii) Fixo Matriz', label: fixoMatrizFormatado, projetado: indices?.fixoMatriz, realizado: bonusContribuicao?.fixoMatriz },
+                { fabrica: 'Aiv) Variável Atm', label: variavelAtmFormatado, projetado: indices?.variavelAtm, realizado: bonusContribuicao?.variavelAtm },
+                { fabrica: 'Av) Fixo Atm', label: fixoAtmFormatado, projetado: indices?.fixoAtm, realizado: bonusContribuicao?.fixoAtm }
+            ]"
             [paginator]="false"
             [rows]="20"
-            dataKey="id" 
-            [showCurrentPageReport]="false"
+            dataKey="fabrica"
             [tableStyle]="{ 'min-width': '50rem' }"
-            currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
-            [rowsPerPageOptions]="[20, 40, 60]"
-            [globalFilterFields]="['id','ano','raiz_analitica_desc','raiz_contabil_grupo_desc','mes_especifico']"
-            sortMode="single"
             scrollable="true"
             stripedRows
-            sortField="fabrica"
-            [sortOrder]="1"
         >
             <ng-template pTemplate="header">
                 <tr class="footer-row1">
-                    <th pSortableColumn="fabrica" style="width:10%" type="text" field="fabrica" display="menu">
-                        Unidade Produtiva <p-sortIcon field="fabrica" />
-                    </th>
-                    <th pSortableColumn="label" style="width:10%" type="text" field="label" display="menu">
-                        Linha de Produtos <p-sortIcon field="label" />
-                    </th>
-                    <th pSortableColumn="projetado" style="width:10%" type="text" field="projetado" display="menu">
-                        Vr / Tn Projetado <p-sortIcon field="projetado" />
-                    </th>
-                    <th pSortableColumn="realizado" style="width:10%" type="text" field="realizado" display="menu">
-                        Vr / Tn Realizado <p-sortIcon field="realizado" />
-                    </th>
-                    <th pSortableColumn="diferenca" style="width:10%" type="text" field="diferenca" display="menu">
-                        Diferença Vr <p-sortIcon field="diferenca" />
-                    </th>
-                    <th pSortableColumn="diferencaPercentual" style="width:10%" type="text" field="diferencaPercentual"display="menu">
-                        Diferença % <p-sortIcon field="diferencaPercentual" />
-                    </th>
-                    <th style="width:10%" type="text" field="status" display="menu">
-                        Status
-                    </th>
-                    <th style="width:10%" type="text" field="status" display="menu">
-                        Detalhes
-                    </th>
+                    <th style="width: 25%">Fator cálculo</th>
+                    <th style="width: 25%">Realizado</th>
+                    <th style="width: 25%">Índice (%)</th>
+                    <th style="width: 25%">Contribuição Bônus (R$)</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-resultado>
                 <tr class="resultados-row">
-                    <td>{{ resultado.fabrica }}</td>
-                    <td>{{ resultado.label }}</td>
-                    <td>{{ resultado.projetado }}</td>
-                    <td>{{ resultado.realizado }}</td>
-                    <td>{{ resultado.diferenca }}</td>
-                    <td>{{ resultado.diferencaPercentual | percent:'1.0' }}</td>
-                    <td class="text-right">
-                        <i
-                            class="pi"
-                            [ngClass]="{
-                                'pi-arrow-circle-up': resultado.diferencaPercentual > 0,
-                                'pi-arrow-circle-down': resultado.diferencaPercentual <= 0
-                            }"
-                            [style.color]="resultado.diferencaPercentual > 0 ? '#22c55e' : '#ef4444'"
-                        ></i>
+                    <td *ngIf="loading">
+                        <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '20px', height: '20px' }" />
                     </td>
-                    <td>
-                        <p-button 
-                             
-                            icon="pi pi-search" 
-                            severity="secondary" 
-                            rounded 
-                        ></p-button>
-                    </td>
-
+                    <td *ngIf="!loading">{{ resultado.fabrica }}</td>
+                    <td *ngIf="!loading">{{ resultado.label  }}</td>
+                    <td *ngIf="!loading">{{ resultado.projetado }}%</td>
+                    <td *ngIf="!loading">{{ resultado.realizado }}</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <tr class="footerp-row">
+                    <td><b>Total</b></td>
+                    <td>{{ totalRealizadoFormatado  }}</td>
+                    <td>100%</td>
+                    <td>{{ totalBonusFormatado }}</td>
                 </tr>
             </ng-template>
         </p-table>
-         
-
     </div>
 
 </div>

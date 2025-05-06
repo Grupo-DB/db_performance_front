@@ -26,6 +26,9 @@ import { ProjetadoService } from '../../../../services/baseOrcamentariaServices/
 import { CentroCusto } from '../../orcamentoBase/centrocusto/centrocusto.component';
 import { CentrocustoService } from '../../../../services/baseOrcamentariaServices/orcamento/CentroCusto/centrocusto.service';
 import { PprService } from '../../../../services/baseOrcamentariaServices/ppr.service';
+import { CurvaService } from '../../../../services/baseOrcamentariaServices/curva/curva.service';
+import { RealizadoService } from '../../../../services/baseOrcamentariaServices/realizado/realizado.service';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-ppr-orcamento',
@@ -35,7 +38,7 @@ import { PprService } from '../../../../services/baseOrcamentariaServices/ppr.se
     DropdownModule,InputTextModule,TableModule,DialogModule,ButtonModule,
     MessagesModule,InputNumberModule,SelectModule,MultiSelectModule,
     ConfirmDialogModule,ToastModule,FloatLabelModule,
-    FloatLabelModule
+    FloatLabelModule,ProgressSpinnerModule
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './ppr-orcamento.component.html',
@@ -46,12 +49,36 @@ export class PprOrcamentoComponent implements OnInit {
   periodo: any[] = [];
   centrosCusto: CentroCusto[]|undefined;
   ano: number = new Date().getFullYear();
-  teste: any;
-  filial: any[] = [0];
+  despesasAdm: any;
   variavelMatriz: any;
   fixoMatriz: any;
+  variavelAtm: any;
+  fixoAtm: any;
+  filial: any[] = [0];
+  filialAtm: any[] = [3];
+  indices: any = {};
+  loading: boolean = false;
+  bonusContribuicao: any = {};
+  totalRealizado: number = 0;
+  totalBonus: number = 500000; // Valor fixo do bônus global
+  totalBonusFormatado: string = this.totalBonus.toLocaleString('pt-BR', { 
+    style: 'currency', 
+    currency: 'BRL', 
+    minimumFractionDigits: 2, 
+    maximumFractionDigits: 2 
+  });
+  private readonly VALOR_BASE = 500000; // Valor base de R$ 500.000,00
+  despesasAdmFormatado: any;
+  variavelMatrizFormatado: any;
+  fixoMatrizFormatado: any;
+  variavelAtmFormatado: any;
+  fixoAtmFormatado: any;
+  totalRealizadoFormatado: any;
+  
     constructor(
-        private fb: FormBuilder, 
+        private fb: FormBuilder,
+        private curvaService: CurvaService,
+        private realizadoService: RealizadoService, 
         private loginService: LoginService,
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
@@ -83,20 +110,75 @@ export class PprOrcamentoComponent implements OnInit {
       }
 
      calcularRealizado(): void {
-        this.pprService.calcularRealizado(this.centrosCusto, this.ano, this.periodo, this.filial).subscribe(
+      this.loading = true;  
+      this.pprService.calcularRealizado(this.centrosCusto, this.ano, this.periodo, this.filial).subscribe(
           response =>{
-            this.teste = response
+            this.despesasAdm = response.total_real;
+            this.despesasAdmFormatado = response.total_real.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            //this.loading = false;
             this.calcularCustoMatriz();
+          },error =>{
+            console.error('Deu ruim',error)
           }
-        )
+      )
   }
 
     calcularCustoMatriz(): void {
-      this.pprService.calcularCusto(this.ano, this.periodo, this.filial).subscribe(
+      this.pprService.calcularCusto2(this.ano, this.periodo, this.filial).subscribe(
         response =>{
-          this.variavelMatriz = response.variavel;
-          this.fixoMatriz = response.fixo;
+          this.variavelMatriz = response.total_variavel;
+          this.variavelMatrizFormatado = response.total_variavel.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          this.fixoMatriz = response.custos_fixo;
+          this.fixoMatrizFormatado = response.custos_fixo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          this.calcularCustoAtm();
+        }, error =>{
+          console.error('Deu ruim',error)
         }
       )
-}
+    }
+
+    calcularCustoAtm(): void {
+      this.pprService.calcularCusto2(this.ano, this.periodo, this.filialAtm).subscribe(
+        response =>{
+          this.variavelAtm = response.total_variavel;
+          this.variavelAtmFormatado = response.total_variavel.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          this.fixoAtm = response.custos_fixo;
+          this.fixoAtmFormatado = response.custos_fixo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          console.log('Custo ATM',this.variavelAtm);
+          this.loading = false;
+          // Chamar os cálculos após obter todos os valores
+          this.calcularIndicesEContribuicao();
+        }, error =>{
+          console.error('Deu ruim',error)
+        }
+      )
+    }
+
+    calcularIndicesEContribuicao(): void {
+      this.loading = true;
+      const totalRealizado = this.despesasAdm + this.variavelMatriz + this.fixoMatriz + this.variavelAtm + this.fixoAtm;
+      this.totalRealizado = totalRealizado;
+      this.totalRealizadoFormatado = totalRealizado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      // Cálculo dos índices
+      this.indices = {
+        despesasAdm: ((this.despesasAdm / totalRealizado) * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+        variavelMatriz: ((this.variavelMatriz / totalRealizado) * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+        fixoMatriz: ((this.fixoMatriz / totalRealizado) * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+        variavelAtm: ((this.variavelAtm / totalRealizado) * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+        fixoAtm: ((this.fixoAtm / totalRealizado) * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+       // totalRealizadoFormatado: totalRealizado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      };
+
+      // contribuição do bônus
+      this.bonusContribuicao = {
+        despesasAdm: ((this.despesasAdm / totalRealizado) * this.totalBonus).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+        variavelMatriz: ((this.variavelMatriz / totalRealizado) * this.totalBonus).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+        fixoMatriz: ((this.fixoMatriz / totalRealizado) * this.totalBonus).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+        variavelAtm: ((this.variavelAtm / totalRealizado) * this.totalBonus).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+        fixoAtm: ((this.fixoAtm / totalRealizado) * this.totalBonus).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+      };
+      this.loading = false;
+      console.log('Índices:', this.indices);
+      console.log('Contribuição do Bônus:', this.bonusContribuicao);
+    }
 }
