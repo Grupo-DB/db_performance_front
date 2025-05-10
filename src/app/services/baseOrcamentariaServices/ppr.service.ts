@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 export class PprService {
   private apiUrl = 'http://172.50.10.79:8008/ppr/realizado_ppr/'
   private apiRealizadoUrl = 'http://172.50.10.79:8008/ppr/realizado_matriz/'
+  private orcadoUrl = 'http://172.50.10.79:8008/orcamento/orcamentosbase/calculosPpr/'
   constructor(
     private httpClient: HttpClient
   ) { }
@@ -31,5 +32,8 @@ export class PprService {
     calcularCusto( ano: any, periodo: any, filiais:any): Observable<any>{
       return this.httpClient.post<any>(this.apiRealizadoUrl, {ano:ano, periodo:periodo, filiais:filiais})
     }
-    
+
+    calcularOrcado(ano: any, periodo: any): Observable<any>{
+      return this.httpClient.post<any>(this.orcadoUrl, {ano:ano, periodo:periodo})
+  }
 }

@@ -190,6 +190,36 @@ tr {
     color: #ef4444; /* Vermelho */
   }
 
+.bonus-table {
+  margin-top: 20px;
+
+  h3 {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    th {
+      background-color: #f4f4f4;
+      font-weight: bold;
+    }
+
+    tfoot td {
+      font-weight: bold;
+      text-align: right;
+    }
+  }
+}
+
 //   ' #002B5C',
 //   '#4972B0',
 //   '#004598',

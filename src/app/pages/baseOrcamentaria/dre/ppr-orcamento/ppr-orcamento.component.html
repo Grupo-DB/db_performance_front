@@ -63,11 +63,11 @@
 
 <div class="container">
 
-    <div  class="tabela mt-5" @efeitoFade>
+    <div  class="tabela mt-5"@swipeAnimationReverse>
         <p-table
             #dt1
             [value]="[
-                { fabrica: 'A) Despesas Adm', label: despesasAdmFormatado, projetado: indices?.despesasAdm, realizado: bonusContribuicao?.despesasAdm },
+                { fabrica: 'A) Despesas Adm', label: despesasAdmFormatado, projetado: indices?.despesasAdm, realizado: bonusContribuicao?.despesasAdmFormatado },
                 { fabrica: 'Aii) Variável Matriz', label: variavelMatrizFormatado, projetado: indices?.variavelMatriz, realizado: bonusContribuicao?.variavelMatriz },
                 { fabrica: 'Aiii) Fixo Matriz', label: fixoMatrizFormatado, projetado: indices?.fixoMatriz, realizado: bonusContribuicao?.fixoMatriz },
                 { fabrica: 'Aiv) Variável Atm', label: variavelAtmFormatado, projetado: indices?.variavelAtm, realizado: bonusContribuicao?.variavelAtm },
@@ -94,9 +94,21 @@
                         <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '20px', height: '20px' }" />
                     </td>
                     <td *ngIf="!loading">{{ resultado.fabrica }}</td>
-                    <td *ngIf="!loading">{{ resultado.label  }}</td>
-                    <td *ngIf="!loading">{{ resultado.projetado }}%</td>
-                    <td *ngIf="!loading">{{ resultado.realizado }}</td>
+                    
+                    <td *ngIf="loading2">
+                        <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '20px', height: '20px' }" />
+                    </td>
+                    <td *ngIf="!loading2">{{ resultado.label  }}</td>
+                    
+                    <td *ngIf="loading3">
+                        <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '20px', height: '20px' }" />
+                    </td>
+                    <td *ngIf="!loading3">{{ resultado.projetado }}%</td>
+                    
+                    <td *ngIf="loading4">
+                        <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '20px', height: '20px' }" />
+                    </td>
+                    <td *ngIf="!loading4">{{ resultado.realizado }}</td>
                 </tr>
             </ng-template>
             <ng-template pTemplate="footer">
@@ -105,6 +117,82 @@
                     <td>{{ totalRealizadoFormatado  }}</td>
                     <td>100%</td>
                     <td>{{ totalBonusFormatado }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+<div class="titulo mt-6">
+    <p-divider align="left" type="solid">
+        <b>Cálculo do bônus conquistado</b>
+    </p-divider>
+</div>
+
+
+    <div class="tabela mt-5"@swipeAnimation>  
+        <p-table
+            #dt2
+            [paginator]="false"
+            [rows]="20"
+            dataKey="fabrica"
+            [tableStyle]="{ 'min-width': '50rem' }"
+            scrollable="true"
+            stripedRows
+            [value]="[
+                { fabrica: 'C) Despesas Adm', previsto:orcadoDespesasAdmFormatado, realizado: despesasAdmFormatado, indice: indices2?.despesasAdmFormatado, bonus: bonus?.despesasAdm, valor: valorBonus?.despesasAdm },
+                { fabrica: 'Cii) Variável Matriz', previsto: orcadoVariavelMatrizFormatado, realizado: custoVariavelMatrizFormatado, indice: indices2?.variavelMatrizFormatado, bonus: bonus?.variavelMatriz, valor: valorBonus?.variavelMatriz },
+                { fabrica: 'Ciii) Fixo Matriz', previsto: orcadoFixoMatrizFormatado, realizado: fixoMatrizFormatado, indice: indices2?.fixoMatrizFormatado, bonus: bonus?.fixoMatriz, valor: valorBonus?.fixoMatriz },
+                { fabrica: 'Civ) Variável Atm', previsto: orcadoVariavelAtmFormatado, realizado: custoVariavelAtmFormatado, indice: indices2?.variavelAtmFormatado, bonus: bonus?.variavelAtm, valor: valorBonus?.variavelAtm },
+                { fabrica: 'Cv) Fixo Atm', previsto: orcadoFixoAtmFormatado, realizado: fixoAtmFormatado, indice: indices2?.fixoAtmFormatado, bonus: bonus?.fixoAtm, valor: valorBonus?.fixoAtm }
+            ]"
+        >
+            <ng-template pTemplate="header"> 
+                <tr class="footer-row1">
+                    <th>Fator cálculo</th>
+                    <th>Previsto</th>
+                    <th>Realizado</th>
+                    <th>%</th>
+                    <th>% Bônus</th>
+                    <th>Valor</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-resultado>
+                <tr class="resultados-row">
+                    <td *ngIf="loading5">
+                        <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '20px', height: '20px' }" />
+                    </td>
+                    <td *ngIf="!loading5">{{ resultado.fabrica }}</td>
+
+                    <td *ngIf="loading6">
+                        <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '20px', height: '20px' }" />
+                    </td>
+                    <td *ngIf="!loading6">{{ resultado.previsto }}</td>
+
+                    <td *ngIf="loading7">
+                        <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '20px', height: '20px' }" />
+                    </td>
+                    <td *ngIf="!loading7">{{ resultado.realizado }}</td>
+
+                    <td *ngIf="loading8">
+                        <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '20px', height: '20px' }" />
+                    </td>
+                    <td *ngIf="!loading8">{{ resultado.indice }}%</td>
+
+                    <td *ngIf="loading8">
+                        <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '20px', height: '20px' }" />
+                    </td>
+                    <td *ngIf="!loading8">{{ resultado.bonus }}%</td>
+
+                    <td *ngIf="loading8">
+                        <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '20px', height: '20px' }" />
+                    </td>
+                    <td *ngIf="!loading8">{{ resultado.valor }}</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <tr class="footerp-row">
+                    <td colspan="5"><strong>Total de bônus conquistado</strong></td>
+                    <td><strong>{{ somaBonus }}</strong></td>
                 </tr>
             </ng-template>
         </p-table>

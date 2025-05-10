@@ -50,7 +50,7 @@ export class CustoproducaoService {
   createLinhas(linhas: any[]): Observable<any> {
     return this.http.post(this.apiUrl, linhas);
   }
-  getResultados(ano: number, periodo: number): Observable<any>{
+  getResultados(ano: number, periodo: any): Observable<any>{
     return this.http.post(this.calcUrl, {ano: ano, periodo: periodo});
   }
 }

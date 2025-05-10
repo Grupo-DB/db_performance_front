@@ -128,6 +128,7 @@ export class CustoproducaoComponent implements OnInit{
     { nome: '07 - Fábrica de Fertilizantes' },
     { nome: '02 - Britagem' },
     { nome: '01 - Mineração' },
+    { nome: '08 - F08 - UP ATM' }
   ]
 
   constructor(

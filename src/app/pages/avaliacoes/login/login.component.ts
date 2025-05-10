@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
@@ -35,6 +35,16 @@ export class LoginComponent {
   loginForm!: FormGroup;
   toastrService: any;
   modalVisible: boolean = false;
+  @ViewChild('emailInput') emailInput!: ElementRef;
+
+  openModal(): void {
+    this.modalVisible = true;
+
+    // Aguarde o modal ser exibido antes de definir o foco
+    setTimeout(() => {
+      this.emailInput.nativeElement.focus();
+    }, 0);
+  }
 
   constructor(
     private router: Router,
@@ -42,7 +52,7 @@ export class LoginComponent {
     private messageService: MessageService 
   ){
     this.loginForm = new FormGroup({
-      email: new FormControl('',[Validators.required, Validators.email]),
+      email: new FormControl('',[Validators.required]),
       password: new FormControl('',[Validators.required, Validators.minLength(6)]),
     })
   }

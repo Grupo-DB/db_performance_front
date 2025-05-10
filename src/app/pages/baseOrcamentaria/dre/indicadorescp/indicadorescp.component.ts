@@ -98,8 +98,6 @@ export class IndicadorescpComponent implements OnInit {
   loading: boolean = false;
   selectedResultado: any = null;
  
-
-
   @ViewChild('op') op!: Popover;
   @ViewChild('RegisterProjecaoForm') RegisterProjecaoForm: any;
   @ViewChild('dt1') dt1!: Table;
