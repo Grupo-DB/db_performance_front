@@ -415,7 +415,7 @@ export class PprOrcamentoComponent implements OnInit {
         variavelAtm: (1 - (this.custoVariavelAtm / this.orcadoVariavelAtm)) * 100,
         variavelAtmFormatado: ((1 - (this.custoVariavelAtm / this.orcadoVariavelAtm))*100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
         fixoAtm: (1 - (this.fixoAtm / this.orcadoFixoAtm)) * 100,
-        fixoAtmFormatado: (1 - (this.fixoAtm / this.orcadoFixoAtm)).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+        fixoAtmFormatado: ((1 - (this.fixoAtm / this.orcadoFixoAtm))*100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
       };
 
       this.bonus = {

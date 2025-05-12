@@ -9,6 +9,7 @@ import { Observable } from 'rxjs';
 export class CustoproducaoService {
   private apiUrl = 'http://172.50.10.79:8008/custoproducao/custoproducao/';
   private calcUrl = 'http://172.50.10.79:8008/custoproducao/custoproducao/calculosCustoProducao/';
+  private pedraUrl = 'http://172.50.10.79:8008/britagem/calcular_pedras/';
   constructor(
     private http: HttpClient,
     private router: Router
@@ -52,5 +53,9 @@ export class CustoproducaoService {
   }
   getResultados(ano: number, periodo: any): Observable<any>{
     return this.http.post(this.calcUrl, {ano: ano, periodo: periodo});
+  }
+
+  calcularPedras(ano: number, periodo: any): Observable<any>{
+    return this.http.post(this.pedraUrl, {ano: ano, periodo: periodo});
   }
 }

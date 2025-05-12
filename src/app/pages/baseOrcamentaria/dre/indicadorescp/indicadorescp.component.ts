@@ -145,6 +145,8 @@ constructor(
       }
     
     });
+    
+
   }
 
   displayResultado(event: Event, resultado: any, popover: any): void {
