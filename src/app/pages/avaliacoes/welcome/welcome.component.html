@@ -87,14 +87,18 @@
         <li *ngIf="hasGroup(['Admin','Master','GestorOperacoes'])" nz-submenu style="background-color: #444959;"  nzTitle="Gestão Operacional" nzIcon="bar-chart">
           <ul>
             <li *ngIf="hasGroup(['Admin','Master','GestorOperacoes'])" nz-menu-item   nzMatchRouter>
-              <a routerLink="homeoperacoes" > Painel Operacional</a>
+              <a routerLink="homeoperacoes"><span nz-icon nzType="line-chart" nzTheme="outline"></span> Painel Operacional</a>
             </li> 
           </ul>
-          
           <ul>
             <li *ngIf="hasGroup(['Admin','Master','GestorOperacoes'])" nz-menu-item   nzMatchRouter>
-              <a href="https://app.powerbi.com/reportEmbed?reportId=db000524-b09b-4a62-9284-5b02d8a4bceb&autoAuth=true&ctid=6411a146-b3ce-405e-9f45-6a52f518d922&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly93YWJpLWJyYXppbC1zb3V0aC1yZWRpcmVjdC5hbmFseXNpcy53aW5kb3dzLm5ldC8ifQ%3D%3D" target="_blank" >BI - Produção</a>
+              <a href="https://app.powerbi.com/reportEmbed?reportId=db000524-b09b-4a62-9284-5b02d8a4bceb&autoAuth=true&ctid=6411a146-b3ce-405e-9f45-6a52f518d922&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly93YWJpLWJyYXppbC1zb3V0aC1yZWRpcmVjdC5hbmFseXNpcy53aW5kb3dzLm5ldC8ifQ%3D%3D" target="_blank" ><span nz-icon nzType="dot-chart" nzTheme="outline"></span> BI - Produção</a>
             </li> 
+          </ul>
+          <ul>
+            <li *ngIf="hasGroup(['Admin','Master','LabOperacoes','LabMaster'])" nz-menu-item   nzMatchRouter nzIcon="Experiment">
+              <a routerLink="/welcome/controleQualidade/dashControle"><span nz-icon nzType="experiment" nzTheme="outline"></span> Controle de Qualidade</a>
+            </li>
           </ul>
         </li>
       </ul>

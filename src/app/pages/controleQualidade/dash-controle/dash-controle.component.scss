@@ -1,0 +1,67 @@
+@import "primeicons/primeicons.css";
+.menu{
+    position:static;
+     //transform: translate(-1%, -180%);
+     
+     width: 100%;
+ }
+ .titulo{
+    justify-content: center;
+    text-align: center;
+    margin-top: 50px;
+    h2{
+        color:slategrey;
+    }
+}
+:host ::ng-deep .p-rowgroup-footer td {
+    font-weight: 700;
+}
+
+:host ::ng-deep .p-rowgroup-header {
+    span {
+        font-weight: 700;
+    }
+
+    .p-row-toggler {
+        vertical-align: middle;
+        margin-right: .25rem;
+    }
+}
+.linha-conteudo {
+    display: flex;
+    justify-content: space-between; /* Espaça o conteúdo e o ícone */
+    align-items: center; /* Alinha verticalmente os itens */
+  }
+.geral{
+    background: linear-gradient(to top, #7A91A8, #BCC6D3, #E5EAEE,#F8FAFC,#ffffff);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;  
+    font-family: 'Calibri', sans-serif;
+    color: black;
+    h1{
+        color:slategrey;
+    }
+}
+.geral2{
+    background: linear-gradient(to top, #7A91A8, #BCC6D3, #E5EAEE,#F8FAFC,#ffffff);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    font-family: 'Calibri', sans-serif;
+    color: black;
+    h1{
+        color:slategrey;
+    }
+}
+
+:host ::ng-deep .p-paginator {
+    background-color: transparent;
+  }
+
+  .center-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh; /* ou 100vh para ocupar toda a tela */
+    width: 100%;
+    flex-direction: column;
+  }

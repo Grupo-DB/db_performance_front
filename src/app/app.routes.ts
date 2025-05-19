@@ -59,6 +59,10 @@ import { CustoproducaoComponent } from './pages/baseOrcamentaria/dre/custoproduc
 import { IndicadorescpComponent } from './pages/baseOrcamentaria/dre/indicadorescp/indicadorescp.component';
 import { CurvaComponent } from './pages/baseOrcamentaria/dre/curva/curva.component';
 import { PprOrcamentoComponent } from './pages/baseOrcamentaria/dre/ppr-orcamento/ppr-orcamento.component';
+import { DashControleComponent } from './pages/controleQualidade/dash-controle/dash-controle.component';
+import { CalculoEnsaioComponent } from './pages/controleQualidade/calculo-ensaio/calculo-ensaio.component';
+import { TipoEnsaioComponent } from './pages/controleQualidade/tipo-ensaio/tipo-ensaio.component';
+import { EnsaioComponent } from './pages/controleQualidade/ensaio/ensaio.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -121,7 +125,11 @@ export const routes: Routes = [
       { path: 'baseOrcamentaria/dre/custoproducao', component:CustoproducaoComponent },
       { path: 'baseOrcamentaria/dre/indicadorescp', component:IndicadorescpComponent },
       { path: 'baseOrcamentaria/dre/curva', component:CurvaComponent },
-      { path: 'baseOrcamentaria/dre/ppr', component:PprOrcamentoComponent }
+      { path: 'baseOrcamentaria/dre/ppr', component:PprOrcamentoComponent },
+      { path: 'controleQualidade/dashControle', component:DashControleComponent },
+      { path: 'controleQualidade/calculoEnsaio', component: CalculoEnsaioComponent },
+      { path: 'controleQualidade/tipoEnsaio', component: TipoEnsaioComponent },
+      { path: 'controleQualidade/ensaio', component: EnsaioComponent },
     ],
   },
   

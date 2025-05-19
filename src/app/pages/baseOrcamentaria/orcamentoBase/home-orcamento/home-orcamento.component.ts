@@ -28,7 +28,7 @@ import { CentroCusto } from '../centrocusto/centrocusto.component';
   selector: 'app-home-orcamento',
   standalone: true,
   imports: [
-    DividerModule,CommonModule,NzMenuModule,RouterLink,DividerModule,ToastModule,
+    DividerModule,CommonModule,NzMenuModule,RouterLink,ToastModule,
     FloatLabelModule,MultiSelectModule,DrawerModule,ProgressSpinnerModule,
     InputNumberModule,ProgressSpinnerModule,ButtonModule,
     FormsModule,RadioButtonModule,NzProgressModule,PaginatorModule,TooltipModule
