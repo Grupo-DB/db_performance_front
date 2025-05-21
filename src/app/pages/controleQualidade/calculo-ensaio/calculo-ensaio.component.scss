@@ -149,3 +149,42 @@
         }
     }
 }
+
+.blocos-scroll {
+    height: 100%;
+    overflow-y: auto;
+  }
+  
+  .expressao-container {
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+  }
+  
+  .expressao {
+    position: sticky; // ou remova se não quiser fixa no topo
+    top: 0;
+    width: 100%;
+    font-size: 24px;
+    font-style: italic;
+    font-weight: 500;
+    padding: 1rem 0;
+    background: #fff;
+    text-align: center;
+    z-index: 2;
+  }
+
+
+.drawer-footer {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start; // ou center, se preferir centralizado
+    padding: 1rem;
+    background: #fff;
+    border-top: 1px solid #eee;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+  }

@@ -26,7 +26,211 @@
     </ul>
 </div>
 
+
 <div class="container">
-    <div #blocklyDiv style="height: 400px; width: 100%; border: 1px solid #ccc;"></div>
-    <button (click)="mostrarExpressao()">Obter expressão</button>
+
+    <div class="titulo mt-6 mb-6 text-2xl">
+        <p-divider align="left" type="solid">
+            <b>Cálculos de Ensaios</b>
+        </p-divider>
+    </div>
+
+    <form
+        [formGroup]="registerForm"
+        title="Cadastrar novo cálculo de ensaio"
+        
+    >
+
+    <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation>
+        <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
+            <div class="form2 w-10 mb-3 mt-3">
+                <p-floatlabel variant="on">
+                    <p-iconfield>
+                        <p-inputicon class="pi pi-file-edit" />
+                        <input
+                            variant="filled"
+                            [style]="{'width':'100%'}"
+                            pInputText id="on_label"
+                            autocomplete="off"
+                            formControlName="descricao"
+                            type="text"
+                        />
+                    </p-iconfield>
+                    <label for="on_label">Digite a descrição</label>
+                </p-floatlabel>
+            </div>
+            <div class="flex w-10 ">
+                <div class="form2 w-12 mb-3 mt-3">
+                    <p-floatlabel variant="on">
+                        <p-iconfield>
+                            <p-inputicon class="pi pi-file-edit" />
+                            <input
+                                variant="filled"
+                                [style]="{'width':'100%'}"
+                                pInputText id="on_label"
+                                autocomplete="off"
+                                formControlName="funcao"
+                                type="text"
+                            />
+                        </p-iconfield>
+                        <label for="on_label">Cálculo</label>
+                    </p-floatlabel>
+                </div>
+                <div class="form2 flex w-1 mb-3 mt-3">
+                    <button pButton icon="pi pi-plus" (click)="montarFormula()"></button> 
+                </div>
+            </div>
+        </div>    
+        <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">    
+            <div class="form2 w-10 mb-3 mt-3 text-left">
+                <p-floatLabel variant="on"> 
+                    <p-select
+                        inputId="float-label"
+                        [style]="{'width':'100%'}"
+                        [options]="responsaveis" 
+                        formControlName="responsavel"
+                        optionLabel="value"
+                        optionValue="value"
+                        appendTo="body"
+                        [filter]="true" 
+                        filterBy="value"
+                        [showClear]="true"
+                    >
+                    </p-select>
+                    <label for="float-label">Selecione o Responsável</label>
+                </p-floatLabel> 
+            </div>
+            <div class="form2 w-10 mb-5 mt-3">
+                <p-floatlabel variant="on">
+                    <p-iconfield>
+                        <p-inputicon class="pi pi-file-edit" />
+                        <input
+                            variant="filled"
+                            [style]="{'width':'100%'}"
+                            pInputText id="on_label"
+                            autocomplete="off"
+                            formControlName="valor"
+                            type="text"
+                            [disabled]="true"
+                        />
+                    </p-iconfield>
+                    <label for="on_label">Digite o valor</label>
+                </p-floatlabel>
+            </div>
+        </div>    
+    </div>
+</form>
+</div>    
+
+<div class="flex justify-content-center mb-5 mt-5"@efeitoFade>
+    <p-toast></p-toast>
+    <div class="btnsec" (click)="clearForm()">
+        <p>Limpar</p>
+    </div>
+    <div class="btnpri" (click)="submit()">
+        <p>Salvar</p>            
+    </div>
+
 </div>
+
+
+    <p-drawer
+        [(visible)]="montarFormulaVisivel"
+        position="bottom"
+        styleClass="w-full md:w-10 lg:w-12"
+        [style]="{ height: '60vh' }"
+    >
+        <ng-template pTemplate="header">
+           
+                <p-divider align="left" type="solid">
+                    <b style="font-size: 20px;">Montar Cálculo</b>
+                </p-divider>
+            
+        </ng-template>    
+        <div class="w-full flex flex-column md:flex-row" style="height: 30vh;"> 
+            <div class="flex flex-column w-6 blocos-scroll">
+                <div *ngFor="let bloco of expressaoDinamica; let i = index" class="flex flex-row w-10">
+                    
+                        <div class="w-8 mt-2 mb-2 text-left">
+                            <p-floatLabel variant="on">
+                                <p-select
+                                    [(ngModel)]="bloco.tipo"
+                                    [options]="tipos"
+                                    placeholder="Tipo"
+                                    [showClear]="true"
+                                    optionLabel="label"
+                                    optionValue="value"
+                                    [style]="{ width: '90%' }"
+                                    [filter]="true" 
+                                    filterBy="label"
+                                    appendTo="body"
+                                    inputId="float-label"
+                                    variant="filled" 
+                                >       
+                                </p-select>
+                                <label for="float-label">Informe o elemento</label>
+                            </p-floatLabel>
+                        </div>
+                        <div  *ngIf="bloco.tipo === 'Valor'"  class="w-7 mt-2 mb-2 text-left">    
+                            <p-floatlabel variant="on">
+                                <p-iconfield>
+                                    <p-inputicon class="pi pi-file-edit" />
+                                    <input
+                                    
+                                        [(ngModel)]="bloco.valor"
+                                        variant="filled"
+                                        [style]="{'width':'100%'}"
+                                        pInputText id="on_label"
+                                        autocomplete="off"
+                                        type="text"
+                                        
+                                    />
+                                </p-iconfield>
+                                <label for="on_label">Digite o valor</label>
+                            </p-floatlabel>
+                        </div>
+                        <div *ngIf="bloco.tipo !== 'Valor'" class="w-7 mt-2 mb-2 text-left">     
+                            <p-floatlabel variant="on">
+                                <p-select
+                                    [(ngModel)]="bloco.valor"
+                                    [disabled]="!bloco.tipo"
+                                    [options]="getValoresPorTipo(bloco.tipo || '')"
+                                    [style]="{ width: '100%' }"
+                                    optionLabel="label"
+                                    optionValue="value"
+                                    appendTo="body"
+                                    inputId="float-label"
+                                    variant="filled"  
+                                    [filter]="true" 
+                                    filterBy="label"
+                                    [showClear]="true"
+                                >
+                                </p-select>
+                                <label for="float-label">Informe o elemento</label>
+                            </p-floatlabel>
+                        </div>        
+                        <div class="m-2">    
+                            <button pButton icon="pi pi-trash" (click)="removerBloco(i)" *ngIf="expressaoDinamica.length > 1"></button>
+                        </div>
+                    
+                </div>                   
+            </div>    
+            
+            <p-divider layout="vertical" />
+            
+            <div class="w-4 expressao-container">
+                <div class="expressao">
+                  <span>{{ getExpressaoString() }}</span>
+                </div>
+            </div>
+
+        </div>
+        
+        <ng-template pTemplate="footer">
+            <div class="drawer-footer">
+              <button pButton icon="pi pi-plus" label="Adicionar" (click)="adicionarBloco()"></button>
+            </div>
+        </ng-template>
+    
+    </p-drawer>
+   

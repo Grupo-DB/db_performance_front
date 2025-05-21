@@ -9,7 +9,7 @@ import { AvaliacaoResponse } from '../../../types/avaliacoes/avaliacao-response'
   providedIn: 'root'
 })
 export class RegisterAvaliacaoService {
-  private apiUrl = 'http://172.50.10.79:8008/management/avaliacoes/';
+  private apiUrl = 'http://localhost:8000/management/avaliacoes/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
   registeravaliacao(

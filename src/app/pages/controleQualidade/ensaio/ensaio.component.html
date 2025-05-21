@@ -72,7 +72,6 @@
                         [filter]="true" 
                         filterBy="value"
                         [showClear]="true"
-                        appendTo="body" 
                     >
                     </p-select>
                     <label for="float-label">Selecione o Responsável</label>
@@ -92,12 +91,13 @@
                             autocomplete="off"
                             formControlName="valor"
                             type="text"
+                            [disabled]="true"
                         />
                     </p-iconfield>
                     <label for="on_label">Digite o valor</label>
                 </p-floatlabel>
             </div>
-            <div class="form2 w-10 mb-3 mt-3 text-left">
+            <div class="form2 w-10 mb-5 mt-3 text-left">
                 <p-floatLabel variant="on"> 
                     <p-select
                         variant="filled"
@@ -109,7 +109,8 @@
                         optionValue="id"
                         [filter]="true" 
                         filterBy="nome"
-                        [showClear]="true"    
+                        [showClear]="true"
+                        appendTo="body"
                     >
                     </p-select>
                     <label for="float-label">Selecione o Tipo de Ensaio</label>

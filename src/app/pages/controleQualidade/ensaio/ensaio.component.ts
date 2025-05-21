@@ -165,6 +165,8 @@ export class EnsaioComponent implements OnInit{
   }
 
   ngOnInit() {
+    this.registerForm.get('valor')?.disable();
+    //
     this.loadEnsaios();
     this.loadTiposEnsaio();
   }
@@ -300,7 +302,7 @@ export class EnsaioComponent implements OnInit{
         } else if (err.status === 403) {
           this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Vocês não tem autorização para realizar essa operação.' });
         } else if (err.status === 400) {
-  }
+    }
       }
     });
   }
