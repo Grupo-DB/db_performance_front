@@ -23,6 +23,7 @@ import { MessageService } from 'primeng/api';
 import { GrupoItensService } from '../../../../services/baseOrcamentariaServices/orcamento/GrupoItens/grupo-itens.service';
 import { CentrocustoService } from '../../../../services/baseOrcamentariaServices/orcamento/CentroCusto/centrocusto.service';
 import { CentroCusto } from '../centrocusto/centrocusto.component';
+import { ColaboradorService } from '../../../../services/avaliacoesServices/colaboradores/registercolaborador.service';
 
 @Component({
   selector: 'app-home-orcamento',
@@ -83,7 +84,7 @@ export class HomeOrcamentoComponent implements OnInit {
   realizadosResultadosGruposItens: any;
   meuRealizadosResultadosGruposItens: any;
   ano: number = new Date().getFullYear();
-  filial: number[] = [0];
+  filial: number[] = [];
   periodo: any[] = [];
   filiaisSga: FilialSga[] = []
   //loading: boolean = true;
@@ -91,7 +92,7 @@ export class HomeOrcamentoComponent implements OnInit {
   loadingOrcado: boolean = false;
   loadingInicial: boolean = false;
   loadingInicial2: boolean = false;
-  selectedCodManagers: any = 'Matriz';
+  selectedCodManagers: any = '';
 
   ccsPais: { nome: string; orcado: number; realizado: number; gestor: string; orcadoFormatado: string; realizadoFormatado: string; porcentagem: number }[] = [];
   meuCcsPais: { nome: string; orcado: number; realizado: number; gestor: string; meuOrcadoFormatado: string; meuRealizadoFormatado: string; meuPorcentagem: number }[] = [];
@@ -166,7 +167,8 @@ export class HomeOrcamentoComponent implements OnInit {
   private curvaService: CurvaService,
   private messageService: MessageService,
   private grupoItensService: GrupoItensService,
-  private centroCustoService: CentrocustoService
+  private centroCustoService: CentrocustoService,
+  private colaboradorService: ColaboradorService 
   ){}
 
   ngOnInit(): void {
@@ -174,8 +176,11 @@ export class HomeOrcamentoComponent implements OnInit {
     this.loadingInicial2 = true;
     const mesAtual = new Date().getMonth() + 1; // getMonth() retorna de 0 a 11, então adicionamos 1
     this.periodo = Array.from({ length: mesAtual }, (_, i) => i + 1);
-    this.calcularOrcado();
-    this.calcularRealizado();
+    // Só executa se for master ou admin
+    if (this.hasGroup(['master', 'admin'])) {
+      this.calcularOrcado();
+      this.calcularRealizado();
+    }
     this.filtroInicial();
     this.filiaisSga = [
       { nome: 'Matriz', cod: 0, codManager: 'Matriz'},
@@ -186,6 +191,19 @@ export class HomeOrcamentoComponent implements OnInit {
     setTimeout(() => {
       this.filtroInicial();
     }, 30);
+
+
+    this.colaboradorService.getColaboradorInfo().subscribe(
+      data => {
+        this.selectedCodManagers = data.filial_detalhes.nome;
+
+        // Aqui faz a conversão para o cod
+        const filialObj = this.filiaisSga.find(f => f.codManager === this.selectedCodManagers);
+        if (filialObj) {
+          this.filial = [filialObj.cod];
+        }
+      }
+    );
 
     this.calcsGestor();
 
@@ -209,9 +227,12 @@ export class HomeOrcamentoComponent implements OnInit {
     this.centroCustoService.getMeusCentrosCusto().subscribe(
       response => {
         this.meusCcs = response.map((centroCusto: any)=> centroCusto.cc_pai_detalhes?.id);
+         this.meusCcs = Array.from(new Set(this.meusCcs)); // Remove duplicados aqui!
         this.carregarCcs(this.meusCcs);
-        console.log('Meus Ccs:', this.meusCcs);
+        console.log('Meus CcsJJJJJJJJJJJJJJJJ:', this.meusCcs);
         this.meusCcsCodigos = response.map((centroCusto: any)=> centroCusto.codigo);
+         this.meusCcsCodigos = Array.from(new Set(this.meusCcsCodigos)); // Remove duplicados aqui!
+        console.log('Meus Ccskkkkkkkkkkkkkkkkkkk:', this.meusCcsCodigos);
       },
       error => {
         console.error('Erro ao carregar meus ccs', error);
@@ -224,8 +245,12 @@ export class HomeOrcamentoComponent implements OnInit {
       centrosCusto =>{
         console.log('Centros de Custo Originais:', centrosCusto);
         this.meusCcs = centrosCusto.map((centroCusto: any)=>centroCusto.codigo);
+        this.meusCcs = Array.from(new Set(centrosCusto.map((centroCusto: any) => centroCusto.codigo)));
+        console.log('Meus CcsAAAAAAA:', this.meusCcs);
+        this.meusCcs = Array.from(new Set(this.meusCcs)); // Remove duplicados aqui!
         console.log('Meus Ccs:', this.meusCcs);
         this.meusCcsPaisUpdated = centrosCusto.map((centroCusto: any)=>centroCusto.cc_pai_detalhes?.id);
+        this.meusCcsPaisUpdated = Array.from(new Set(this.meusCcsPaisUpdated)); // Remove duplicados aqui!
         console.log('Meus Ccs Pais:', this.meusCcsPaisUpdated);
       }, error =>{
         console.error('Não rolou',error)
@@ -424,6 +449,7 @@ export class HomeOrcamentoComponent implements OnInit {
     
     // Verifica se os dados de orçado e realizado estão disponíveis
     if (!this.meuOrcadosResultadosCcsPai || !this.meuRealizadosResultadosCcsPai) {
+      console.log('kkkkkkkkkkkkkkkkk', this.meuRealizadosResultadosCcsPai);
       //console.error('Dados de orçado ou realizado estão ausentes.');
       return;
     }

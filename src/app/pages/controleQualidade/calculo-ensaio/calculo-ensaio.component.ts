@@ -27,6 +27,7 @@ import { EnsaioService } from '../../../services/controleQualidade/ensaio.servic
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { AutoComplete, AutoCompleteModule } from 'primeng/autocomplete';
 import { evaluate } from 'mathjs';
+import { id } from 'date-fns/locale';
 
 interface RegisterCalculoEnsaioForm{
   descricao: FormControl;
@@ -182,6 +183,7 @@ export class CalculoEnsaioComponent implements OnInit {
   ];
 
   elementos: any[] = [];
+  editarFormulaVisivel: boolean = false;
 
   constructor(
     private messageService: MessageService,
@@ -201,6 +203,7 @@ export class CalculoEnsaioComponent implements OnInit {
     });
    
     this.editForm = this.fb.group({
+      id: [''],
       descricao: [''],
       funcao: [''],
       ensaios: [''],
@@ -309,6 +312,38 @@ export class CalculoEnsaioComponent implements OnInit {
   montarFormula(){
     this.montarFormulaVisivel = true
   }
+  editarFormula(){
+    // Converta a string da função em blocos para edição
+  const funcao = this.editForm.get('funcao')?.value || '';
+  this.expressaoDinamica = this.converterFuncaoParaBlocos(funcao);
+  this.editarFormulaVisivel = true;
+  }
+
+  converterFuncaoParaBlocos(funcao: string): { tipo: string, valor: string }[] {
+  // Exemplo simples: separa por espaço
+  const tokens = funcao.split(' ');
+  return tokens.map(token => {
+    if (['+', '-', '*', '/'].includes(token)) {
+      return { tipo: 'Operador', valor: token };
+    } else if (!isNaN(Number(token))) {
+      return { tipo: 'Valor', valor: token };
+    } else {
+      return { tipo: 'Ensaio', valor: token };
+    }
+  });
+}
+
+salvarFormula() {
+  const novaExpressao = this.getExpressaoString(); // monta a expressão a partir dos blocos
+  this.registerForm.get('funcao')?.setValue(novaExpressao);
+  this.montarFormulaVisivel = false;
+}
+
+salvarFormulaEditada() {
+  const novaExpressao = this.getExpressaoString(); // monta a expressão a partir dos blocos
+  this.editForm.get('funcao')?.setValue(novaExpressao);
+  this.editarFormulaVisivel = false;
+}
 
   abrirModalEdicao(calculo: CalculoEnsaio) {
     this.editFormVisible = true;
@@ -316,13 +351,26 @@ export class CalculoEnsaioComponent implements OnInit {
       id: calculo.id,
       descricao: calculo.descricao,
       funcao: calculo.funcao,
-      ensaios: calculo.ensaios.detalhes.descricao,
+      ensaios: calculo.ensaios_detalhes.descricao,
       responsavel: calculo.responsavel,
       valor: calculo.valor
     });
   }
 
   saveEdit(){
+
+      const expressao = this.editForm.value.funcao;
+
+    if (!expressao || expressao.trim() === '') {
+      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'A expressão não pode estar vazia.' });
+      return;
+    }
+
+    if (!this.validarExpressaoComValores(expressao)) {
+      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Expressão inválida!' });
+      return;
+    }
+
     const id = this.editForm.value.id;
     const ensaios = this.editForm.value.ensaios;
     const dadosAtualizados: Partial<CalculoEnsaio> = {
@@ -460,7 +508,7 @@ export class CalculoEnsaioComponent implements OnInit {
       severity: 'error',
       summary: 'Expressão inválida!',
       detail: 'A expressão montada possui erro de sintaxe ou operadores inválidos.',
-      life: 4000
+      life: 5000
     });
     return false;
   }
