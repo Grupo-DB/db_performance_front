@@ -172,26 +172,30 @@ export class HomeOrcamentoComponent implements OnInit {
   ){}
 
   ngOnInit(): void {
-    this.loadingInicial = true;
+    
     this.loadingInicial2 = true;
     const mesAtual = new Date().getMonth() + 1; // getMonth() retorna de 0 a 11, então adicionamos 1
     this.periodo = Array.from({ length: mesAtual }, (_, i) => i + 1);
     // Só executa se for master ou admin
-    if (this.hasGroup(['master', 'admin'])) {
+    if (this.hasGroup(['Master', 'Admin'])) {
+      setTimeout(() => {
       this.calcularOrcado();
       this.calcularRealizado();
+      this.loadingInicial = true;
+      }, 1000);
     }
-    this.filtroInicial();
+    //this.filtroInicial();
     this.filiaisSga = [
       { nome: 'Matriz', cod: 0, codManager: 'Matriz'},
       { nome: 'MPA', cod: 1, codManager: 'F07 - CD MPA'},
       { nome: 'ATM', cod: 3, codManager: 'F08 - UP ATM'},
       { nome: 'MFL', cod: 5, codManager: 'F09 - CD MFL'}
     ]
+    if (this.hasGroup(['Master', 'Admin'])) {
     setTimeout(() => {
       this.filtroInicial();
     }, 30);
-
+  }
 
     this.colaboradorService.getColaboradorInfo().subscribe(
       data => {
@@ -206,12 +210,25 @@ export class HomeOrcamentoComponent implements OnInit {
     );
 
     this.calcsGestor();
+    if (this.hasGroup(['OrcamentoGestorSetor', 'OrcamentoGestorItens'])) {
+    setTimeout(() => {
+      this.calcsGestor();
+      this.calcularMeuOrcado();
+      this.calcularMeuRealizadoCc();
+    }, 2000);
+  }
 
+}
+
+////////////////
+  calcularMeusSetoreEGrupos(): void {
+    this.calcsGestor();
+    if (this.hasGroup(['Admin', 'Master'])) {
     setTimeout(() => {
       this.calcularMeuOrcado();
       this.calcularMeuRealizadoCc();
     }, 5000);
-
+  }
   }
 
   calcsGestor(){
@@ -275,7 +292,6 @@ export class HomeOrcamentoComponent implements OnInit {
   }
 
   calcularOrcado(): void {
-    
     this.curvaService.getGarficoOrcamento(this.ano,this.periodo,this.selectedCodManagers).subscribe(
       (response) => {
         this.orcadosResultadosCcsPai = response.total_por_cc_pai;
@@ -328,7 +344,7 @@ export class HomeOrcamentoComponent implements OnInit {
 
       }
     );
-    this.loadingOrcado = true;
+    
     this.curvaService.getGarficoMeuOrcamentoCc(this.ano,this.periodo,this.selectedCodManagers,this.meusCcsPaisUpdated).subscribe(
       (response) => {
         this.meuOrcadosResultadosCcsPai = response.total_por_cc_pai;
@@ -353,13 +369,16 @@ export class HomeOrcamentoComponent implements OnInit {
   }
 
   calcularMeuRealizadoCc(): void{
+    if (this.hasGroup(['OrcamentoGestorSetor'])){
     this.curvaService.calcularMeuRealizadoCc(this.ano,this.periodo,this.filial,this.meusCcs).subscribe(
       (response) => {
         this.meuRealizadosResultadosCcsPai = response.agrupado_por_pai;
         this.meuTotalRealizadoCcPai = response.total_soma_ccs;
-        //this.loading = false;
-      }
-      ,
+        this.calcularMeuProgresso();
+        this.calcularMeuProgressoGruposItens();
+         this.loadingInicial2 = false;
+      },
+    
       (error) => {
         console.error('Erro ao obter os dados do gráfico:', error);
          // Exibe mensagem de erro apropriada
@@ -370,10 +389,12 @@ export class HomeOrcamentoComponent implements OnInit {
         } else {
           this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Ocorreu um erro inesperado. Por favor, tente novamente mais tarde.' });
         }
-
+        
         reject(error); // Rejeita a Promise em caso de erro
       }
-    );
+      
+    )};
+   if (this.hasGroup(['Admin','Master','OrcamentoGestorItens'])){
     this.curvaService.calcularMeuRealizadoGp(this.ano,this.periodo,this.filial,this.meusGrupos).subscribe(
       (response) => {
         this.meuRealizadosResultadosGruposItens = response.dicionario_soma_nomes;
@@ -397,7 +418,7 @@ export class HomeOrcamentoComponent implements OnInit {
       }
     );
   }
-
+}
   calcularRealizado(): void {
     
     this.curvaService.calcularRealizado(this.ano,this.periodo,this.filial).subscribe(
@@ -431,20 +452,22 @@ export class HomeOrcamentoComponent implements OnInit {
   }
 
   calcular():void {
+    if (this.hasGroup(['Master', 'Admin'])) {
     this.loadingInicial = true;
     this.loadingInicial2 = true;
     this.messageService.add({ severity: 'success', summary: 'Enviado!', detail: 'Aguarde um momento, os dados estão sendo processados.' });
     this.calcularOrcado();
     this.calcularRealizado();
     this.calcsGestor();
-    setTimeout(() => {
-      
-      this.calcularMeuOrcado();
-      this.calcularMeuRealizadoCc();
-      
-    }, 5000);
   }
-
+    if (this.hasGroup(['OrcamentoGestorSetor', 'OrcamentoGestorItens'])) {
+      setTimeout(() => {
+        this.calcsGestor();
+        this.calcularMeuOrcado();
+        this.calcularMeuRealizadoCc();
+      }, 3000);
+    }
+  }
   calcularMeuProgresso(): void {
     
     // Verifica se os dados de orçado e realizado estão disponíveis

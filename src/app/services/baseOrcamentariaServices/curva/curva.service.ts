@@ -42,6 +42,7 @@ export class CurvaService {
     });
   }
 
+  
 
   getGarficoOrcamento(ano: number, meses: any, filial: any): Observable<any> {
     return this.httpClient.get<any>(`${this.orcadoUrl}?ano=${ano}&periodo=${meses}&filial=${filial}`);
