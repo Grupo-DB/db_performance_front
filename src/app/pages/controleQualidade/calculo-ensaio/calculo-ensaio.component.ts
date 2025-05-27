@@ -145,10 +145,9 @@ export class CalculoEnsaioComponent implements OnInit {
    { label: 'Valor', value:'Valor' }
   ];
   condicionais = [
-    { label: 'se', value: 'if' },
-    { label: 'se não', value: 'else' },
-    { label: 'enquanto', value: 'else if' },
-    { label: 'para', value: 'for' },
+    { label: 'se', value: '?' },
+    { label: 'então', value: ':' },
+    
   ];
   delimitadores = [
     { label: '(', value: '(' },
@@ -156,14 +155,15 @@ export class CalculoEnsaioComponent implements OnInit {
     { label: '[', value: '[' },
     { label: ']', value: ']' },
     { label: '{', value: '{' },
-    { label: '}', value: '}' },
-    
+    { label: '}', value: '}' },  
   ];
   operadores = [
     { label: '+', value: '+' },
     { label: '-', value: '-' },
     { label: '*', value: '*' },
     { label: '/', value: '/' },
+    { label: 'x²', value: '^' },
+    { label: 'v²', value: 'sqrt' },
   ];
   operadoresLogicos = [
     { label: 'e', value: '&&' },

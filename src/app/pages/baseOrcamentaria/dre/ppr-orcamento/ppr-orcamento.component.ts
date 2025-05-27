@@ -214,6 +214,7 @@ export class PprOrcamentoComponent implements OnInit {
       this.pprService.calcularCusto2(this.ano, this.periodo, this.filial).subscribe(
         response =>{
           this.variavelMatriz = response.total_variavel;
+          console.log('Custo Variável Matriz',this.variavelMatriz);
           this.variavelMatrizFormatado = response.total_variavel.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
           this.fixoMatriz = response.custos_fixo;
           this.fixoMatrizFormatado = response.custos_fixo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -230,10 +231,11 @@ export class PprOrcamentoComponent implements OnInit {
       this.pprService.calcularCusto2(this.ano, this.periodo, this.filialAtm).subscribe(
         response =>{
           this.variavelAtm = response.total_variavel;
+          console.log('Custo Variável AAAAATM',this.variavelAtm);
           this.variavelAtmFormatado = response.total_variavel.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
           this.fixoAtm = response.custos_fixo;
           this.fixoAtmFormatado = response.custos_fixo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
-          console.log('Custo ATM',this.variavelAtm);
+          console.log('Custo FIXO ATM',this.fixoAtm);
           // Chamar os cálculos após obter todos os valores
           this.loading3 = false;
           this.calcularIndicesEContribuicao();
