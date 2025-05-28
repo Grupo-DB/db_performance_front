@@ -1,1 +1,285 @@
-<p>plano works!</p>
+<div class="menu">
+    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+        <li nz-menu-item nzMatchRouter="#">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/dashControle">Início</a>
+        </li>
+        <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/tipoEnsaio">Tipo de Ensaio</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/ensaio" >Ensaio</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/calculoEnsaio" >Cálculo de Ensaio</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/plano" >Plano de Análise</a>
+                </li>
+            </ul>
+        </li >
+        
+        <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-submenu nzTitle="Banco de Análises"  style="font-size: 13px; ">
+        </li>
+        
+        <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-submenu nzTitle="Relatórios"  style="font-size: 13px; ">
+        </li>
+
+    </ul>
+</div>
+
+<div class="container">
+
+    <div class="titulo mt-6 mb-6 text-2xl">
+        <p-divider align="left" type="solid">
+            <b>Planos de Análises</b>
+        </p-divider>
+    </div>
+
+    <form
+        [formGroup]="registerForm"
+        title="Cadastrar novo plano de análise"
+    >
+
+    <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation>
+        <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
+            <div class="form2 w-10 mb-3 mt-3">
+                <p-floatlabel variant="on">
+                    <p-iconfield>
+                        <p-inputicon class="pi pi-file-edit" />
+                        <input
+                            variant="filled"
+                            [style]="{'width':'100%'}"
+                            pInputText id="on_label"
+                            autocomplete="off"
+                            formControlName="descricao"
+                            type="text"
+                        />
+                    </p-iconfield>
+                    <label for="on_label">Digite a descrição</label>
+                </p-floatlabel>
+            </div>
+            <div class="form2 w-10 mb-3 mt-3 text-left">
+                <p-floatLabel variant="on"> 
+                    <p-multiselect
+                        inputId="float-label"
+                        [style]="{'width':'100%'}"
+                        [options]="ensaios" 
+                        formControlName="ensaios"
+                        optionLabel="descricao"
+                        optionValue="id"
+                        appendTo="body"
+                        [filter]="true" 
+                        filterBy="value"
+                        [showClear]="true"
+                    >
+                    </p-multiselect>
+                    <label for="float-label">Selecione o(s) Ensaio(s)</label>
+                </p-floatLabel> 
+            </div>
+        </div>
+        <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">    
+            <div class="form2 w-10 mb-3 mt-3 text-left">    
+                <p-floatLabel variant="on"> 
+                    <p-multiselect
+                        inputId="float-label"
+                        [style]="{'width':'100%'}"
+                        [options]="calculosEnsaio" 
+                        formControlName="calculos_ensaio"
+                        optionLabel="descricao"
+                        optionValue="id"
+                        appendTo="body"
+                        [filter]="true" 
+                        filterBy="value"
+                        [showClear]="true"
+                        
+                    >
+                    </p-multiselect>
+                    <label for="float-label">Selecione o(s) Cálculos de Ensaio(s)</label>
+                </p-floatLabel> 
+            </div>    
+        </div>
+    </div>
+
+    </form>
+
+</div>
+
+<div class="container">
+    <div class="flex justify-content-center mb-5 mt-5"@efeitoFade>
+        <p-toast></p-toast>
+        <div class="btnsec" (click)="clearForm()">
+            <p>Limpar</p>
+        </div>
+        <div class="btnpri" (click)="submit()">
+            <p>Salvar</p>            
+        </div>
+    </div>
+
+    <div class="tabela w-11"@swipeAnimationReverse>
+        <p-toast />
+        <p-confirmDialog />
+        <p-table
+            #dt1
+            [value]="planosAnalise"
+            [paginator]="true"
+            [rows]="10"
+            [rowsPerPageOptions]="[10, 20, 50]"
+            [globalFilterFields]="['descricao','ensaios','calcsEnsaios']"
+            [showCurrentPageReport]="true"
+            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Ensaios"
+            scrollable="true"
+            stripedRows
+        >
+            <ng-template pTemplate="caption">
+                <div class="flex flex-row md: justify-content-end">
+                    <p-floatlabel variant="on">
+                        <p-iconfield>
+                            <p-inputicon class="pi pi-search" />
+                            <input
+                                variant="filled"
+                                [(ngModel)] = "inputValue"
+                                [style]="{'width':'100%'}"
+                                pInputText id="on_label"
+                                autocomplete="off"
+                                type="text"
+                            />
+                        </p-iconfield>
+                        <label for="on_label">Pesquisar</label>
+                    </p-floatlabel>
+                    <button size="small" class="ml-2" pButton [rounded]="true" label="Pesquisar" severity="info"  (click)="filterTable()"></button>
+                    <button size="small" class="ml-2" pButton [rounded]="true" label="Limpar" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 10%; text-align: center;" type="text" field="descricao" display="menu">Descrição</th>
+                    <th style="width: 35%; text-align: center;" type="text" field="ensaios" display="menu">Ensaios</th>
+                    <th style="width: 35%; text-align: center;" type="text" field="calcsEnsaios" display="menu">Cálculos de Ensaios</th>
+                    <th style="width: 20%; text-align: center;" type="text" field="acoes" display="menu">Ações</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-planoAnalise>
+                <tr>
+                    <td style="text-align: center;">{{ planoAnalise.descricao }}</td>
+                    <td style="text-align: center;">
+                        <span *ngFor="let planoAnalise of planoAnalise.ensaio_detalhes; let last = last">
+                            {{ planoAnalise.descricao }}
+                            <span *ngIf="!last">,</span>                                                
+                        </span>             
+                    </td>
+                    <td style="text-align: center;">
+                        <span *ngFor="let planoAnalise of planoAnalise.calculo_ensaio_detalhes; let last = last">
+                            {{ planoAnalise.descricao }}
+                            <span *ngIf="!last">,</span>                                                
+                        </span>             
+                    </td>
+                    <td class="flex justify-content-center">
+                        <div class="btnsec" (click)="abrirModalEdicao(planoAnalise)">
+                            <p>Editar</p>
+                        </div>
+                        
+                        <div class="btnpri" (click)="excluirPlano(planoAnalise.id)">
+                            <p>Excluir</p>            
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="paginatorleft">
+                <p-button type="button"  styleClass="p-button-text"></p-button>
+            </ng-template>
+            <ng-template pTemplate="paginatorright">
+                <p-button type="button"  styleClass="p-button-text"></p-button>
+            </ng-template> 
+        </p-table>
+    </div>
+
+</div>
+
+<!------------------------------------ Modal de Edição ------------------------------------------------>
+<p-drawer
+    [(visible)]="editFormVisible"
+    position="right"
+    [style]="{ width: '60vw' }"
+    styleClass="w-full md:w-10 lg:w-4"
+>
+
+    <div class="titulo">
+        <p-divider align="left" type="solid">
+            <b>Editar Plano de Análise</b>
+        </p-divider> 
+    </div>
+
+    <form
+        [formGroup]="editForm"
+        title="Editar plano de análise"
+    >
+        <div class="editGeral flex flex-column lg:flex-row">
+            <div class="fg1edit flex flex-column w-12 align-items-center lg:w-12">
+                <div class="form2 w-10 mb-3 mt-3">
+                    <p-floatlabel variant="on">
+                        <p-iconfield>
+                            <p-inputicon class="pi pi-file-edit" />
+                            <input
+                                variant="filled"
+                                [style]="{'width':'100%'}"
+                                pInputText id="on_label"
+                                autocomplete="off"
+                                formControlName="descricao"
+                                type="text"
+                            />
+                        </p-iconfield>
+                        <label for="on_label">Digite a descrição</label>
+                    </p-floatlabel>
+                </div>
+                <div class="form2 w-10 mb-3 mt-3 text-left">
+                    <p-floatLabel variant="on"> 
+                        <p-multiselect
+                            inputId="float-label"
+                            [style]="{'width':'100%'}"
+                            [options]="ensaios" 
+                            formControlName="ensaios"
+                            optionLabel="descricao"
+                            optionValue="id"
+                            appendTo="body"
+                            [filter]="true" 
+                            filterBy="value"
+                            [showClear]="true"
+                        >
+                        </p-multiselect>
+                        <label for="float-label">Selecione o(s) Ensaio(s)</label>
+                    </p-floatLabel> 
+                </div>
+                <div class="form2 w-10 mb-5 mt-3 text-left">    
+                    <p-floatLabel variant="on"> 
+                        <p-multiselect
+                            inputId="float-label"
+                            [style]="{'width':'100%'}"
+                            [options]="calculosEnsaio" 
+                            formControlName="calculos_ensaio"
+                            optionLabel="descricao"
+                            optionValue="id"
+                            appendTo="body"
+                            [filter]="true" 
+                            filterBy="value"
+                            [showClear]="true"
+                            
+                        >
+                        </p-multiselect>
+                        <label for="float-label">Selecione o(s) Cálculos de Ensaio(s)</label>
+                    </p-floatLabel> 
+                </div> 
+            </div>
+        </div>
+    </form>
+    <div class="flex justify-content-center mb-5 mt-5">
+            <div class="btnsec" (click)="clearEditForm()">
+                <p>Limpar</p>
+            </div>
+            
+            <div class="btnpri" (click)="saveEdit()">
+                <p>Salvar</p>            
+            </div>
+    </div>
+</p-drawer>

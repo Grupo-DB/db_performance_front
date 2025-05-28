@@ -14,6 +14,9 @@
                 <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/controleQualidade/calculoEnsaio" >Cálculo de Ensaio</a>
                 </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/plano" >Plano de Análise</a>
+                </li>
             </ul>
         </li >
         
@@ -287,8 +290,9 @@
                                 <label for="float-label">Informe o elemento</label>
                             </p-floatlabel>
                         </div>        
-                        <div class="m-2">    
+                        <div class="m-2 flex">    
                             <button pButton icon="pi pi-trash" (click)="removerBloco(i)" *ngIf="expressaoDinamica.length > 1"></button>
+                            <button pButton icon="pi pi-plus" label="Add" (click)="adicionarBloco()"></button>
                         </div>
                     
                 </div>                   
@@ -306,8 +310,8 @@
         
         <ng-template pTemplate="footer">
             <div class="drawer-footer gap-1">
-              <button pButton icon="pi pi-plus" label="Adicionar" (click)="adicionarBloco()"></button>
-            <button pButton icon="pi pi-check" label="Inserir" (click)="salvarFormula()"></button>
+                <button pButton icon="pi pi-plus" label="Adicionar" (click)="adicionarBloco()"></button>
+                <button pButton icon="pi pi-check" label="Inserir" (click)="salvarFormula()"></button>
             </div>
         </ng-template>
     

@@ -27,6 +27,8 @@ import { EnsaioService } from '../../../services/controleQualidade/ensaio.servic
 import { Ensaio } from '../ensaio/ensaio.component';
 import { CalculoEnsaio } from '../calculo-ensaio/calculo-ensaio.component';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
+import { MultiSelect, MultiSelectModule } from 'primeng/multiselect';
+import { id } from 'date-fns/locale';
 
 interface RegisterPlanoForm{
   descricao: FormControl,
@@ -35,9 +37,9 @@ interface RegisterPlanoForm{
 }
 
 export interface Plano{
-  ensaios_detalhes: any;
-  calculos_ensaio_detalhes: any;
   id: number;
+  ensaio_detalhes: any;
+  calculo_ensaio_detalhes: any;
   descricao: string;
   ensaios: any;
   calculos_ensaio: any;
@@ -50,7 +52,7 @@ export interface Plano{
     InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,
     FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,
     ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,
-    InputNumberModule,AutoCompleteModule
+    InputNumberModule,AutoCompleteModule,MultiSelectModule
   ],
   animations:[
     trigger('efeitoFade',[
@@ -102,7 +104,7 @@ export interface Plano{
   styleUrl: './plano.component.scss'
 })
 export class PlanoComponent implements OnInit {
-  planosAnalise: Plano[] = [];
+  planosAnalise: any[] = [];
   ensaios: Ensaio[] = [];
   calculosEnsaio: CalculoEnsaio[] = [];
 
@@ -127,6 +129,7 @@ export class PlanoComponent implements OnInit {
       calculos_ensaio: new FormControl('',[Validators.required]),
     });
     this.editForm = this.fb.group({
+      id:[''],
       descricao:[''],
       ensaios:[''],
       calculos_ensaio:[''],
@@ -182,13 +185,13 @@ export class PlanoComponent implements OnInit {
     this.editForm.reset();
   }
 
-  abrirModalEdicao(plano: Plano){
+  abrirModalEdicao(planoAnalise: Plano){
     this.editFormVisible = true;
     this.editForm.patchValue({
-      id: plano.id,
-      descricao: plano.descricao,
-      ensaios: plano.ensaios_detalhes.id,
-      calculos_ensaio: plano.calculos_ensaio_detalhes.id
+      id: planoAnalise.id,
+      descricao: planoAnalise.descricao,
+      ensaios: planoAnalise.ensaio_detalhes?.map((e: any) => e.id), // se for multi
+      calculos_ensaio: planoAnalise.calculo_ensaio_detalhes?.map((c: any) => c.id) // se for multi
     });
   }
   saveEdit(){

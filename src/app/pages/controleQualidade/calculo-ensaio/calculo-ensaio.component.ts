@@ -1,6 +1,6 @@
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
@@ -145,8 +145,8 @@ export class CalculoEnsaioComponent implements OnInit {
    { label: 'Valor', value:'Valor' }
   ];
   condicionais = [
-    { label: 'se', value: '?' },
-    { label: 'então', value: ':' },
+    { label: 'condição verdadeira', value: '?' },
+    { label: 'se não', value: ':' },
     
   ];
   delimitadores = [
@@ -184,6 +184,18 @@ export class CalculoEnsaioComponent implements OnInit {
 
   elementos: any[] = [];
   editarFormulaVisivel: boolean = false;
+
+  @HostListener('document:keydown.insert', ['$event'])
+  handleInsertShortcut(event: KeyboardEvent) {
+    event.preventDefault();
+    this.adicionarBloco();
+  }
+
+  @HostListener('document:keydown.delete', ['$event'])
+  handleInsertShortcutDelete(event: KeyboardEvent) {
+    event.preventDefault();
+    this.removerBloco(this.expressaoDinamica.length - 1);
+  }
 
   constructor(
     private messageService: MessageService,

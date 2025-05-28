@@ -63,6 +63,7 @@ import { DashControleComponent } from './pages/controleQualidade/dash-controle/d
 import { CalculoEnsaioComponent } from './pages/controleQualidade/calculo-ensaio/calculo-ensaio.component';
 import { TipoEnsaioComponent } from './pages/controleQualidade/tipo-ensaio/tipo-ensaio.component';
 import { EnsaioComponent } from './pages/controleQualidade/ensaio/ensaio.component';
+import { PlanoComponent } from './pages/controleQualidade/plano/plano.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -130,6 +131,7 @@ export const routes: Routes = [
       { path: 'controleQualidade/calculoEnsaio', component: CalculoEnsaioComponent },
       { path: 'controleQualidade/tipoEnsaio', component: TipoEnsaioComponent },
       { path: 'controleQualidade/ensaio', component: EnsaioComponent },
+      { path: 'controleQualidade/plano', component: PlanoComponent }
     ],
   },
   
