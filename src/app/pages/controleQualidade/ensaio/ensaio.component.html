@@ -72,12 +72,48 @@
                         [filter]="true" 
                         filterBy="value"
                         [showClear]="true"
+                        [disabled]="true"
                     >
                     </p-select>
                     <label for="float-label">Selecione o Responsável</label>
                 </p-floatLabel> 
             </div>
-
+            <div class="form2 flex flex-column md:flex-row w-10 mb-3 mt-3">
+                <div class="w-6 text-left md:mb-3 lg:mr-1">
+                    <p-floatLabel variant="on">
+                                <p-inputNumber 
+                                    variant="filled"
+                                    mode="decimal"
+                                    formControlName="tempoPrevistoValor"
+                                    [showButtons]="true" 
+                                    inputId="tempo" 
+                                    [min]="0" 
+                                    [max]="9999"
+                                    [useGrouping]="false" 
+                                />
+                                <label for="tempo">Tempo Previsto</label>
+                    </p-floatLabel>     
+                </div>
+                <div class="w-8 text-left">    
+                    <p-floatLabel variant="on"> 
+                        <p-select
+                            inputId="float-label"
+                            [style]="{'width':'100%'}"
+                            [options]="unidades" 
+                            formControlName="tempoPrevistoUnidade"
+                            optionLabel="value"
+                            optionValue="value"
+                            appendTo="body"
+                            [filter]="true" 
+                            filterBy="value"
+                            [showClear]="true"
+                            
+                        >
+                        </p-select>
+                        <label for="float-label">Informe a Unidade de tempo</label>
+                    </p-floatLabel>
+                </div>    
+            </div>
         </div>
         <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
             <div class="form2 w-10 mb-3 mt-3">
@@ -143,7 +179,7 @@
             [paginator]="true"
             [rows]="10"
             [rowsPerPageOptions]="[10, 20, 50]"
-            [globalFilterFields]="['nome','descricao','responsavel','valor','tipoEnsaio']"
+            [globalFilterFields]="['nome','descricao','responsavel','valor','tempo_previsto','tipo_ensaio_detalhes.nome']"
             [showCurrentPageReport]="true"
             currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Ensaios"
             scrollable="true"
@@ -174,7 +210,8 @@
                     <th style="width: 20%; text-align: center;" type="text" field="descricao" display="menu">Descrição</th>
                     <th style="width: 20%; text-align: center;" type="text" field="responsavel" display="menu">Responsável</th>
                     <th style="width: 20%; text-align: center;" type="text" field="valor" display="menu">Valor</th>
-                    <th style="width: 20%; text-align: center;" type="text" field="tipoEnsaio" display="menu">Tipo de Ensaio</th>
+                    <th style="width: 20%; text-align: center;" type="text" field="tempo_previsto" display="menu">Tempo Previsto</th>
+                    <th style="width: 20%; text-align: center;" type="text" field="tipo_ensaio_detalhes.nome" display="menu">Tipo de Ensaio</th>
                     <th style="width: 20%; text-align: center;" type="text" field="acoes" display="menu">Ações</th>
                 </tr>
             </ng-template>
@@ -183,6 +220,7 @@
                     <td style="text-align: center;">{{ ensaios.descricao }}</td>
                     <td style="text-align: center;">{{ ensaios.responsavel }}</td>
                     <td style="text-align: center;">{{ ensaios.valor }}</td>
+                    <td style="text-align: center;">{{ ensaios.tempo_previsto }}</td>
                     <td style="text-align: center;">{{ ensaios.tipo_ensaio_detalhes.nome }}</td>
                     <td class="flex justify-content-center">
                         <div class="btnsec" (click)="abrirModalEdicao(ensaios)">
@@ -274,6 +312,42 @@
                             <label for="on_label">Digite o Valor</label>
                         </p-floatlabel>
                     </div>
+                    
+                    <div class="w-10 text-left md:mb-3 lg:mr-1">
+                        <p-floatLabel variant="on">
+                                    <p-inputNumber 
+                                        variant="filled"
+                                        mode="decimal"
+                                        formControlName="tempoPrevistoValor"
+                                        [showButtons]="true" 
+                                        inputId="tempo" 
+                                        [min]="0" 
+                                        [max]="9999"
+                                        [useGrouping]="false" 
+                                    />
+                                    <label for="tempo">Tempo Previsto</label>
+                        </p-floatLabel>     
+                    </div>
+                    <div class="w-10 text-left">    
+                        <p-floatLabel variant="on"> 
+                            <p-select
+                                inputId="float-label"
+                                [style]="{'width':'100%'}"
+                                [options]="unidades" 
+                                formControlName="tempoPrevistoUnidade"
+                                optionLabel="value"
+                                optionValue="value"
+                                appendTo="body"
+                                [filter]="true" 
+                                filterBy="value"
+                                [showClear]="true"
+                                
+                            >
+                            </p-select>
+                            <label for="float-label">Informe a Unidade de tempo</label>
+                        </p-floatLabel>
+                    </div>    
+            
                     <div class="w-10 mb-3 mt-3 text-left">
                         <p-floatLabel variant="on"> 
                             <p-select
@@ -281,7 +355,7 @@
                                 inputId="float-label"
                                 [style]="{'width':'100%'}"
                                 [options]="tiposEnsaio" 
-                                formControlName="tipoEnsaio"
+                                formControlName="tipo_ensaio"
                                 optionLabel="nome"
                                 optionValue="id"
                                 [filter]="true" 

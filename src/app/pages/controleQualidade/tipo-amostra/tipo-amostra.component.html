@@ -36,18 +36,17 @@
 
     <div class="titulo mt-6 mb-6 text-2xl">
         <p-divider align="left" type="solid">
-            <b>Planos de Análises</b>
+            <b>Tipo de Amostra</b>
         </p-divider>
     </div>
 
     <form
         [formGroup]="registerForm"
-        title="Cadastrar novo plano de análise"
+        title="Cadastrar novo tipo de amostra"
     >
-
     <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation>
         <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
-            <div class="form2 w-10 mb-3 mt-3">
+            <div class="form2 w-10 mb-5 mt-5">
                 <p-floatlabel variant="on">
                     <p-iconfield>
                         <p-inputicon class="pi pi-file-edit" />
@@ -56,56 +55,34 @@
                             [style]="{'width':'100%'}"
                             pInputText id="on_label"
                             autocomplete="off"
-                            formControlName="descricao"
+                            formControlName="nome"
                             type="text"
                         />
                     </p-iconfield>
-                    <label for="on_label">Digite a descrição</label>
+                    <label for="on_label">Digite o nome</label>
                 </p-floatlabel>
             </div>
-            <div class="form2 w-10 mb-3 mt-3 text-left">
-                <p-floatLabel variant="on"> 
-                    <p-multiselect
-                        inputId="float-label"
-                        [style]="{'width':'100%'}"
-                        [options]="ensaios" 
-                        formControlName="ensaios"
-                        optionLabel="descricao"
-                        optionValue="id"
-                        appendTo="body"
-                        [filter]="true" 
-                        filterBy="value"
-                        [showClear]="true"
-                    >
-                    </p-multiselect>
-                    <label for="float-label">Selecione o(s) Ensaio(s)</label>
-                </p-floatLabel> 
+        </div>
+        <div class="fg1 flex flex-column w-12  align-items-center lg:w-6">
+            <div class="form2 w-10 mb-5 mt-5">
+                <p-floatlabel variant="on">
+                    <p-iconfield>
+                        <p-inputicon class="pi pi-file-edit" />
+                        <input
+                            variant="filled"
+                            [style]="{'width':'100%'}"
+                            pInputText id="on_label"
+                            autocomplete="off"
+                            formControlName="natureza"
+                            type="text"
+                        />
+                    </p-iconfield>
+                    <label for="on_label">Digite a natureza</label>
+                </p-floatlabel>
             </div>
         </div>
-        <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">    
-            <div class="form2 w-10 mb-3 mt-3 text-left">    
-                <p-floatLabel variant="on"> 
-                    <p-multiselect
-                        inputId="float-label"
-                        [style]="{'width':'100%'}"
-                        [options]="calculosEnsaio" 
-                        formControlName="calculos_ensaio"
-                        optionLabel="descricao"
-                        optionValue="id"
-                        appendTo="body"
-                        [filter]="true" 
-                        filterBy="value"
-                        [showClear]="true"
-                        
-                    >
-                    </p-multiselect>
-                    <label for="float-label">Selecione o(s) Cálculos de Ensaio(s)</label>
-                </p-floatLabel> 
-            </div>    
-        </div>
     </div>
-
-    </form>
+    </form> 
 
 </div>
 
@@ -121,18 +98,17 @@
     </div>
 
     <div class="tabela w-11"@swipeAnimationReverse>
-        <p-toast />
+        <p-toast/>
         <p-confirmDialog />
         <p-table
             #dt1
-            [value]="planosAnalise"
+            [value]="tiposAmostra"
             [paginator]="true"
             [rows]="10"
             [rowsPerPageOptions]="[10, 20, 50]"
-            [globalFilterFields]="['descricao','ensaios','calcsEnsaios']"
-            [showCurrentPageReport]="true"
-            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Ensaios"
+            [globalFilterFields]="['nome', 'natureza']"
             scrollable="true"
+            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Ensaios"
             stripedRows
         >
             <ng-template pTemplate="caption">
@@ -157,33 +133,21 @@
             </ng-template>
             <ng-template pTemplate="header">
                 <tr>
-                    <th style="width: 10%; text-align: center;" type="text" field="descricao" display="menu">Descrição</th>
-                    <th style="width: 35%; text-align: center;" type="text" field="ensaios" display="menu">Ensaios</th>
-                    <th style="width: 35%; text-align: center;" type="text" field="calcsEnsaios" display="menu">Cálculos de Ensaios</th>
+                    <th style="width: 10%; text-align: center;" type="text" field="nome" display="menu">Nome</th>
+                    <th style="width: 35%; text-align: center;" type="text" field="natureza" display="menu">Natureza</th>
                     <th style="width: 20%; text-align: center;" type="text" field="acoes" display="menu">Ações</th>
                 </tr>
             </ng-template>
-            <ng-template pTemplate="body" let-planoAnalise>
+            <ng-template pTemplate="body" let-tipoAmostra>
                 <tr>
-                    <td style="text-align: center;">{{ planoAnalise.descricao }}</td>
-                    <td style="text-align: center;">
-                        <span *ngFor="let planoAnalise of planoAnalise.ensaio_detalhes; let last = last">
-                            {{ planoAnalise.descricao }}
-                            <span *ngIf="!last">,</span>                                                
-                        </span>             
-                    </td>
-                    <td style="text-align: center;">
-                        <span *ngFor="let planoAnalise of planoAnalise.calculo_ensaio_detalhes; let last = last">
-                            {{ planoAnalise.descricao }}
-                            <span *ngIf="!last">,</span>                                                
-                        </span>             
-                    </td>
+                    <td style="text-align: center;">{{tipoAmostra.nome}}</td>
+                    <td style="text-align: center;">{{tipoAmostra.natureza}}</td>
                     <td class="flex justify-content-center">
-                        <div class="btnsec" (click)="abrirModalEdicao(planoAnalise)">
+                        <div class="btnsec" (click)="abrirModalEdicao(tipoAmostra)">
                             <p>Editar</p>
                         </div>
                         
-                        <div class="btnpri" (click)="excluirPlano(planoAnalise.id)">
+                        <div class="btnpri" (click)="excluirTipoAmostra(tipoAmostra.id)">
                             <p>Excluir</p>            
                         </div>
                     </td>
@@ -195,29 +159,30 @@
             <ng-template pTemplate="paginatorright">
                 <p-button type="button"  styleClass="p-button-text"></p-button>
             </ng-template> 
-        </p-table>
-    </div>
+        </p-table>    
+    </div>    
 
 </div>
 
-<!------------------------------------ Modal de Edição ------------------------------------------------>
+
+<!------------------------------------ Modal de Edição ----------------------------------------------->
 <p-drawer
     [(visible)]="editFormVisible"
     position="right"
     [style]="{ width: '60vw' }"
     styleClass="w-full md:w-10 lg:w-4"
 >
-
     <div class="titulo">
         <p-divider align="left" type="solid">
-            <b>Editar Plano de Análise</b>
+            <b>Editar Tipo de Amostra</b>
         </p-divider> 
     </div>
 
     <form
         [formGroup]="editForm"
-        title="Editar plano de análise"
+        title="Editar tipo de amostra"
     >
+
         <div class="editGeral flex flex-column lg:flex-row">
             <div class="fg1edit flex flex-column w-12 align-items-center lg:w-12">
                 <div class="form2 w-10 mb-3 mt-3">
@@ -229,50 +194,29 @@
                                 [style]="{'width':'100%'}"
                                 pInputText id="on_label"
                                 autocomplete="off"
-                                formControlName="descricao"
+                                formControlName="nome"
                                 type="text"
                             />
                         </p-iconfield>
-                        <label for="on_label">Digite a descrição</label>
+                        <label for="on_label">Digite o nome</label>
                     </p-floatlabel>
                 </div>
-                <div class="form2 w-10 mb-3 mt-3 text-left">
-                    <p-floatLabel variant="on"> 
-                        <p-multiselect
-                            inputId="float-label"
+                <div class="form2 w-10 mb-3 mt-3">
+                    <p-floatlabel variant="on">
+                    <p-iconfield>
+                        <p-inputicon class="pi pi-file-edit" />
+                        <input
+                            variant="filled"
                             [style]="{'width':'100%'}"
-                            [options]="ensaios" 
-                            formControlName="ensaios"
-                            optionLabel="descricao"
-                            optionValue="id"
-                            appendTo="body"
-                            [filter]="true" 
-                            filterBy="value"
-                            [showClear]="true"
-                        >
-                        </p-multiselect>
-                        <label for="float-label">Selecione o(s) Ensaio(s)</label>
-                    </p-floatLabel> 
+                            pInputText id="on_label"
+                            autocomplete="off"
+                            formControlName="natureza"
+                            type="text"
+                        />
+                    </p-iconfield>
+                    <label for="on_label">Digite a natureza</label>
+                    </p-floatlabel>
                 </div>
-                <div class="form2 w-10 mb-5 mt-3 text-left">    
-                    <p-floatLabel variant="on"> 
-                        <p-multiselect
-                            inputId="float-label"
-                            [style]="{'width':'100%'}"
-                            [options]="calculosEnsaio" 
-                            formControlName="calculos_ensaio"
-                            optionLabel="descricao"
-                            optionValue="id"
-                            appendTo="body"
-                            [filter]="true" 
-                            filterBy="value"
-                            [showClear]="true"
-                            
-                        >
-                        </p-multiselect>
-                        <label for="float-label">Selecione o(s) Cálculos de Ensaio(s)</label>
-                    </p-floatLabel> 
-                </div> 
             </div>
         </div>
     </form>
@@ -285,4 +229,5 @@
                 <p>Salvar</p>            
             </div>
     </div>
+
 </p-drawer>

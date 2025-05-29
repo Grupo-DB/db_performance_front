@@ -31,6 +31,8 @@ interface RegisterEnsaioForm {
   responsavel: FormControl;
   valor: FormControl;
   tipoEnsaio: FormControl;
+  tempoPrevistoValor: FormControl;
+  tempoPrevistoUnidade: FormControl;
 }
 
 export interface Ensaio {
@@ -39,10 +41,16 @@ export interface Ensaio {
   responsavel: string;
   valor: number;
   tipoEnsaio: any;
+  tempoPrevisto: any;
   tipo_ensaio_detalhes: any;
+  tipo_ensaio: any;
+  tempo_previsto: any;
 }
 
 export interface Responsaveis {
+  value: string;
+}
+export interface Unidades {
   value: string;
 }
 
@@ -131,7 +139,16 @@ export class EnsaioComponent implements OnInit{
     { value: 'Camila Vitoria Carneiro Alves Santos'},
   ]
   
-  
+  unidades = [
+    { value: 'Segundos' },
+    { value: 'Minutos' },
+    { value: 'Horas' },
+    { value: 'Turnos' },
+    { value: 'Dias' },
+    { value: 'Semanas' },
+    { value: 'Meses' },
+    { value: 'Anos' },
+  ]
 
   @ViewChild('registerForm') RegisterForm: any;
   @ViewChild('dt1') dt1!: Table;
@@ -149,14 +166,18 @@ export class EnsaioComponent implements OnInit{
       descricao: new FormControl('',[Validators.required, Validators.minLength(3)]),
       responsavel: new FormControl(''),
       valor: new FormControl(0),
-      tipoEnsaio: new FormControl('')
+      tipoEnsaio: new FormControl(''),
+      tempoPrevistoValor: new FormControl('', Validators.required),
+      tempoPrevistoUnidade: new FormControl('', Validators.required),
     });
     this.editForm = this.fb.group({
       id: [''],
       descricao: [''],
       responsavel: [''],
       valor: [''],
-      tipoEnsaio: [''],
+      tipo_ensaio: [''],
+      tempoPrevistoValor: [''],
+      tempoPrevistoUnidade: [''],
     });
   }
 
@@ -206,23 +227,37 @@ export class EnsaioComponent implements OnInit{
   }
 
   abrirModalEdicao(ensaio: Ensaio) {
-    this.editFormVisible = true;
-    this.editForm.patchValue({
-      id: ensaio.id,
-      descricao: ensaio.descricao,
-      responsavel: ensaio.responsavel,
-      valor: ensaio.valor,
-      tipoEnsaio: ensaio.tipo_ensaio_detalhes.id
-    });
+  this.editFormVisible = true;
+
+  // Supondo que ensaio.tempoPrevisto seja uma string tipo "15 Minutos"
+  let tempoPrevistoValor = '';
+  let tempoPrevistoUnidade = '';
+  if (ensaio.tempoPrevisto) {
+    const partes = ensaio.tempoPrevisto ? ensaio.tempoPrevisto.split(' ') : [];
+    tempoPrevistoValor = partes[0] || '';
+    tempoPrevistoUnidade = partes.slice(1).join(' ') || '';
   }
+
+  this.editForm.patchValue({
+    id: ensaio.id,
+    descricao: ensaio.descricao,
+    responsavel: ensaio.responsavel,
+    valor: ensaio.valor,
+    tipo_ensaio: ensaio.tipo_ensaio_detalhes.id,
+    tempoPrevistoValor: tempoPrevistoValor,
+    tempoPrevistoUnidade: tempoPrevistoUnidade,
+  });
+}
   saveEdit(){
     const id = this.editForm.value.id;
-    const tipoEnsaio = this.editForm.value.tipoEnsaio;
+    const tipo_ensaio = this.editForm.value.tipo_ensaio;
+    const tempo_previsto = `${this.editForm.value.tempoPrevistoValor} ${this.editForm.value.tempoPrevistoUnidade}`;
     const dadosAtualizados: Partial<Ensaio> = {
       descricao: this.editForm.value.descricao,
       responsavel: this.editForm.value.responsavel,
       valor: this.editForm.value.valor,
-      tipoEnsaio: tipoEnsaio,
+      tempo_previsto: tempo_previsto,
+      tipo_ensaio: tipo_ensaio
   };
     this.ensaioService.editEnsaio(id, dadosAtualizados).subscribe({
       next:() =>{
@@ -284,11 +319,13 @@ export class EnsaioComponent implements OnInit{
 
   submit(){
     const tipoEnsaio = this.registerForm.value.tipoEnsaio;
+    const tempoPrevisto = `${this.registerForm.value.tempoPrevistoValor} ${this.registerForm.value.tempoPrevistoUnidade}`;
     this.ensaioService.registerEnsaio(
       this.registerForm.value.descricao,
       this.registerForm.value.responsavel,
       this.registerForm.value.valor,
-      tipoEnsaio
+      tipoEnsaio,
+      tempoPrevisto
     ).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Ensaio cadastrado com sucesso!!', life: 1000 });

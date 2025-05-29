@@ -64,6 +64,9 @@ import { CalculoEnsaioComponent } from './pages/controleQualidade/calculo-ensaio
 import { TipoEnsaioComponent } from './pages/controleQualidade/tipo-ensaio/tipo-ensaio.component';
 import { EnsaioComponent } from './pages/controleQualidade/ensaio/ensaio.component';
 import { PlanoComponent } from './pages/controleQualidade/plano/plano.component';
+import { TipoAmostraComponent } from './pages/controleQualidade/tipo-amostra/tipo-amostra.component';
+import { ProdutoAmostraComponent } from './pages/controleQualidade/produto-amostra/produto-amostra.component';
+import { AmostraComponent } from './pages/controleQualidade/amostra/amostra.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -131,7 +134,10 @@ export const routes: Routes = [
       { path: 'controleQualidade/calculoEnsaio', component: CalculoEnsaioComponent },
       { path: 'controleQualidade/tipoEnsaio', component: TipoEnsaioComponent },
       { path: 'controleQualidade/ensaio', component: EnsaioComponent },
-      { path: 'controleQualidade/plano', component: PlanoComponent }
+      { path: 'controleQualidade/plano', component: PlanoComponent },
+      { path: 'controleQualidade/tipoAmostra', component: TipoAmostraComponent },
+      { path: 'controleQualidade/produtoAmostra', component: ProdutoAmostraComponent },
+      { path: 'controleQualidade/amostra', component: AmostraComponent },
     ],
   },
   

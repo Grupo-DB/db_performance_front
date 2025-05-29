@@ -45,8 +45,8 @@ export class EnsaioService {
     const url = `${this.apiUrlEnsaio}${id}/`;
     return this.http.delete(url);
   }
-  registerEnsaio(descricao: string, responsavel: string, valor: number, tipoEnsaio: any){
-    return this.http.post<Ensaio>(this.apiUrlEnsaio, { descricao: descricao, responsavel: responsavel, valor: valor, tipo_ensaio: tipoEnsaio });
+  registerEnsaio(descricao: string, responsavel: string, valor: number, tipoEnsaio: any, tempoPrevisto: any){
+    return this.http.post<Ensaio>(this.apiUrlEnsaio, { descricao: descricao, responsavel: responsavel, valor: valor, tipo_ensaio: tipoEnsaio, tempo_previsto: tempoPrevisto });
   }
 
   //Calculo Ensaio
