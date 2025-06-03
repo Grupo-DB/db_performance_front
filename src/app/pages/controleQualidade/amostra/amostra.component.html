@@ -1,1 +1,348 @@
-<p>amostra works!</p>
+<div class="menu">
+    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+        <li nz-menu-item nzMatchRouter="#">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/dashControle">Início</a>
+        </li>
+        <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/tipoEnsaio">Tipo de Ensaio</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/ensaio" >Ensaio</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/calculoEnsaio" >Cálculo de Ensaio</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/plano" >Plano de Análise</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/tipoAmostra" >Tipo de Amostra</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/produtoAmostra" >Produto de Amostra</a>
+                </li>
+            </ul>
+        </li >
+        
+        <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-submenu nzTitle="Amostras/Ordens de Serviço"  style="font-size: 13px;" routerLink="/welcome/controleQualidade/amostra">
+        </li>
+
+        <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-submenu nzTitle="Banco de Análises"  style="font-size: 13px; ">
+        </li>
+        
+        <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-submenu nzTitle="Relatórios"  style="font-size: 13px; ">
+        </li>
+
+    </ul>
+</div>
+
+<div class="container">
+
+    <div class="titulo mt-6 mb-6 text-2xl">
+        <p-divider align="left" type="solid">
+            <b>Amostras e Ordens de Serviço</b>
+        </p-divider>
+    </div>
+            <form
+                [formGroup]="registerForm"
+                title="Cadastrar nova amostra"
+                class="flex flex-column gap-4"
+            >
+        
+            <p-stepper [(value)]="activeStep" [linear]="true">
+                <p-step-list>
+                    <p-step [value]="1">Amostra</p-step>
+                    <p-step [value]="2">Ordem de Serviço</p-step>
+                    <p-step [value]="3">Análise</p-step>
+                </p-step-list>
+
+                <p-step-panels>
+                    <p-step-panel [value]="1">
+                        <ng-template #content let-activateCallback="activateCallback">
+                            
+                            <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation>
+                                <div class="fg1 flex flex-column w-12 align-items-center lg:w-10">
+                                    <div class="form2 w-10 mb-5 mt-5 mr-1">
+                                        <p-floatLabel variant="on">
+                                            <p-datepicker
+                                                variant="filled"
+                                                [style]="{'width':'100%'}"
+                                                id="da"
+                                                formControlName="dataColeta"
+                                                dateFormat="dd/mm/yy"
+                                                inputId="float-label"
+                                                [showIcon]="true"
+                                                
+                                            >
+                                            </p-datepicker>
+                                            <label for="float-label" >Data de Coleta</label>
+                                        </p-floatLabel>
+                                    </div>
+                                    <div class="form2 w-10 mb-5 mt-5 mr-1">
+                                        <p-floatLabel variant="on">
+                                            <p-datepicker
+                                                variant="filled"
+                                                [style]="{'width':'100%'}"
+                                                id="da"
+                                                formControlName="dataEntrada"
+                                                dateFormat="dd/mm/yy"
+                                                inputId="float-label"
+                                                [showIcon]="true"
+                                            >
+                                            </p-datepicker>
+                                            <label for="float-label" >Data de Entrada</label>
+                                        </p-floatLabel>
+                                    </div>
+                                    <div class="form2 w-10 mb-3 mt-3 mr-1 text-left">
+                                        <p-floatLabel variant="on"> 
+                                            <p-select
+                                                inputId="float-label"
+                                                [style]="{'width':'100%'}"
+                                                [options]="materiais" 
+                                                formControlName="material"
+                                                optionLabel="nome"
+                                                optionValue="id"
+                                                appendTo="body"
+                                                [filter]="true" 
+                                                filterBy="nome"
+                                                [showClear]="true"
+                                                (onChange)="onMaterialChange($event.value)"
+                                            >
+                                            </p-select>
+                                            <label for="float-label">Selecione o Material</label>
+                                        </p-floatLabel> 
+                                    </div>
+                                    <div class="form2 w-10 mb-3 mt-3">
+                                        <p-floatlabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-file-edit" />
+                                                <input
+                                                    variant="filled"
+                                                    [style]="{'width':'100%'}"
+                                                    pInputText id="on_label"
+                                                    autocomplete="off"
+                                                    formControlName="numero"
+                                                    type="text"
+                                                />
+                                            </p-iconfield>
+                                            <label for="on_label">Número</label>
+                                        </p-floatlabel>
+                                    </div>
+                                    <div class="form2 w-10 mb-3 mt-3 text-left">
+                                        <p-floatLabel variant="on"> 
+                                            <p-select
+                                                inputId="float-label"
+                                                [style]="{'width':'100%'}"
+                                                [options]="tiposAmostra" 
+                                                formControlName="tipoAmostra"
+                                                optionLabel="nome"
+                                                optionValue="id"
+                                                appendTo="body"
+                                                [filter]="true" 
+                                                filterBy="value"
+                                                [showClear]="true"
+                                            >
+                                            </p-select>
+                                            <label for="float-label">Tipo de Amostra</label>
+                                        </p-floatLabel> 
+                                    </div>
+                                </div>
+                                <div class="fg2 flex flex-column w-12 align-items-center lg:w-10">    
+                                    <div class="form2 w-10 mb-3 mt-3">
+                                        <p-floatlabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-file-edit" />
+                                                <input
+                                                    variant="filled"
+                                                    [style]="{'width':'100%'}"
+                                                    pInputText id="on_label"
+                                                    autocomplete="off"
+                                                    formControlName="subtipo"
+                                                    type="text"
+                                                />
+                                            </p-iconfield>
+                                            <label for="on_label">Digite o Subtipo</label>
+                                        </p-floatlabel>
+                                    </div>
+                                    <div class="form2 w-10 mb-3 mt-3 text-left">
+                                        <p-floatLabel variant="on"> 
+                                            <p-select
+                                                inputId="float-label"
+                                                [style]="{'width':'100%'}"
+                                                [options]="produtosAmostra" 
+                                                formControlName="produtoAmostra"
+                                                optionLabel="nome"
+                                                optionValue="id"
+                                                appendTo="body"
+                                                [filter]="true" 
+                                                filterBy="value"
+                                                [showClear]="true"
+                                            >
+                                            </p-select>
+                                            <label for="float-label">Produto de Amostra</label>
+                                        </p-floatLabel> 
+                                    </div>
+                                    <div class="form2 w-10 mb-3 mt-3 text-left">
+                                        <p-floatLabel variant="on"> 
+                                            <p-select
+                                                inputId="float-label"
+                                                [style]="{'width':'100%'}"
+                                                [options]="fornecedores" 
+                                                formControlName="produtoAmostra"
+                                                optionLabel="nome"
+                                                optionValue="id"
+                                                appendTo="body"
+                                                [filter]="true" 
+                                                filterBy="value"
+                                                [showClear]="true"
+                                            >
+                                            </p-select>
+                                            <label for="float-label">Fornecedor</label>
+                                        </p-floatLabel> 
+                                    </div>
+                                    <div class="form2 w-10 mb-3 mt-3">
+                                        <p-floatlabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-file-edit" />
+                                                <input
+                                                    variant="filled"
+                                                    [style]="{'width':'100%'}"
+                                                    pInputText id="on_label"
+                                                    autocomplete="off"
+                                                    formControlName="periodoHora"
+                                                    type="text"
+                                                />
+                                            </p-iconfield>
+                                            <label for="on_label">Digite o Período Hora</label>
+                                        </p-floatlabel>
+                                    </div>
+                                    <div class="form2 w-10 mb-3 mt-3 text-left">
+                                        <p-floatLabel variant="on"> 
+                                            <p-select
+                                                inputId="float-label"
+                                                [style]="{'width':'100%'}"
+                                                [options]="periodos" 
+                                                formControlName="periodoTurno"
+                                                optionLabel="nome"
+                                                optionValue="id"
+                                                appendTo="body"
+                                                [filter]="true" 
+                                                filterBy="value"
+                                                [showClear]="true"
+                                            >
+                                            </p-select>
+                                            <label for="float-label">Período Turno</label>
+                                        </p-floatLabel> 
+                                    </div>
+                                </div>
+                                <div class="fg3 flex flex-column w-12 align-items-center lg:w-10">    
+                                    <div class="form2 w-10 mb-3 mt-3">
+                                        <p-floatlabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-file-edit" />
+                                                <input
+                                                    variant="filled"
+                                                    [style]="{'width':'100%'}"
+                                                    pInputText id="on_label"
+                                                    autocomplete="off"
+                                                    formControlName="tipoAmostragem"
+                                                    type="text"
+                                                />
+                                            </p-iconfield>
+                                            <label for="on_label">Digite o Tipo de Amostragem</label>
+                                        </p-floatlabel>
+                                    </div>
+                                    <div class="form2 w-10 mb-3 mt-3 text-left">
+                                        <p-floatLabel variant="on"> 
+                                            <p-select
+                                                inputId="float-label"
+                                                [style]="{'width':'100%'}"
+                                                [options]="locaisColeta" 
+                                                formControlName="localColeta"
+                                                optionLabel="nome"
+                                                optionValue="id"
+                                                appendTo="body"
+                                                [filter]="true" 
+                                                filterBy="value"
+                                                [showClear]="true"
+                                            >
+                                            </p-select>
+                                            <label for="float-label">Local de Coleta</label>
+                                        </p-floatLabel> 
+                                    </div>                    
+                                    <div *ngIf="exibirRepresentatividadeLote()" class="form2 w-10 mb-3 mt-3">
+                                        <p-floatLabel variant="on">
+                                            <input 
+                                                pInputText 
+                                                formControlName="representatividadeLote"
+                                                type="text"
+                                                id="representatividadeLote"
+                                                [style]="{'width':'100%'}"
+                                                autocomplete="off"
+                                                variant="filled"
+                                                [readOnly]="true" 
+                                            />
+                                            <label>Representatividade do Lote Tn</label>
+                                        </p-floatLabel>
+                                    </div>
+                                    <div class="form2 w-10 mb-3 mt-3">
+                                        <p-floatLabel variant="on">
+                                            <input 
+                                                pInputText 
+                                                formControlName="identificacaoComplementar"
+                                                type="text"
+                                                id="identificacaoComplementar"
+                                                [style]="{'width':'100%'}"
+                                                autocomplete="off"
+                                                variant="filled"
+                                                [readOnly]="true" 
+                                            />
+                                            <label>Identificação Complementar</label>
+                                        </p-floatLabel>
+                                    </div>
+                                    <div class="form2 w-10 mb-3 mt-3">
+                                        <p-floatLabel variant="on">
+                                            <input 
+                                                pInputText 
+                                                formControlName="complemento"
+                                                type="text"
+                                                id="complemento"
+                                                [style]="{'width':'100%'}"
+                                                autocomplete="off"
+                                                variant="filled"
+                                                [readOnly]="true" 
+                                            />
+                                            <label>Complemento</label>
+                                        </p-floatLabel>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex pt-6 justify-end">
+                                <p-button (onClick)="activateCallback(2)" label="Next" icon="pi pi-arrow-right" iconPos="right" />
+                            </div>  
+                    </ng-template>
+                </p-step-panel>
+                <p-step-panel [value]="2">
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="flex pt-6 justify-between">
+                            <p-button label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(1)" />
+                            <p-button label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="activateCallback(3)" />
+                        </div>
+                    </ng-template>
+                </p-step-panel>        
+                <p-step-panel [value]="3">
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="flex pt-6 justify-between">
+                            <p-button label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(2)" />
+                            
+                        </div> 
+                    </ng-template>
+                </p-step-panel>
+            </p-step-panels>
+        </p-stepper>
+       </form> 
+        
+</div>
+
