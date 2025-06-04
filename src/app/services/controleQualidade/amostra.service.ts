@@ -62,8 +62,45 @@ export class AmostraService {
     const url = `${this.amostraUrl}${id}/`;
     return this.http.delete(url);
   }
-  registerAmostra(descricao: string, responsavel: string, tipoAmostra: any, produto: any, dataColeta: any){
-    return this.http.post<Amostra>(this.amostraUrl, { descricao: descricao, responsavel: responsavel, tipo_amostra: tipoAmostra, produto: produto, data_coleta: dataColeta });
+  registerAmostra(
+    dataColeta: any,
+    dataEntrada: any,
+    material: any,
+    numero: any,
+    tipoAmostra: any,
+    subtipo: any,
+    produtoAmostra: any,
+    periodoHora: any,
+    periodoTurno: any,
+    tipoAmostragem: any,
+    localColeta: any,
+    representatividadeLote: any,
+    identificacaoComplementar: any,
+    complemento: any,
+    ordem: any,
+    digitador: any,
+    status: any,
+  )
+  {
+    return this.http.post<Amostra>(this.amostraUrl, { 
+      data_coleta: dataColeta,
+      data_entrada: dataEntrada,
+      material: material,
+      numero: numero,
+      tipo_amostra: tipoAmostra,
+      subtipo: subtipo,
+      produto_amostra: produtoAmostra,
+      periodo_hora: periodoHora,
+      periodo_turno: periodoTurno,
+      tipo_amostragem: tipoAmostragem,
+      local_coleta: localColeta,
+      representatividade_lote: representatividadeLote,
+      identificacao_complementar: identificacaoComplementar,
+      complemento: complemento,
+      ordem: ordem,
+      digitador: digitador,
+      status: status
+    });
   }
 
   getProximoSequencial(materialId: number): Observable<number> {

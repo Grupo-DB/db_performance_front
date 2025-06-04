@@ -45,12 +45,7 @@
             <b>Amostras e Ordens de Serviço</b>
         </p-divider>
     </div>
-            <form
-                [formGroup]="registerForm"
-                title="Cadastrar nova amostra"
-                class="flex flex-column gap-4"
-            >
-        
+            
             <p-stepper [(value)]="activeStep" [linear]="true">
                 <p-step-list>
                     <p-step [value]="1">Amostra</p-step>
@@ -61,7 +56,11 @@
                 <p-step-panels>
                     <p-step-panel [value]="1">
                         <ng-template #content let-activateCallback="activateCallback">
-                            
+                            <form
+                                [formGroup]="registerForm"
+                                title="Cadastrar nova amostra"
+                                class="flex flex-column gap-4"
+                            >
                             <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation>
                                 <div class="fg1 flex flex-column w-12 align-items-center lg:w-10">
                                     <div class="form2 w-10 mb-5 mt-5 mr-1">
@@ -321,14 +320,131 @@
                             </div>
                             <div class="flex pt-6 justify-end">
                                 <p-button (onClick)="activateCallback(2)" label="Next" icon="pi pi-arrow-right" iconPos="right" />
-                            </div>  
+                                <p-button (onClick)="submitAmostra()" label="Salvar Amostra" icon="pi pi-arrow-check" iconPos="right" />
+                            </div>
+                        </form>       
                     </ng-template>
                 </p-step-panel>
                 <p-step-panel [value]="2">
                     <ng-template #content let-activateCallback="activateCallback">
+                        <form
+                            [formGroup]="registerOrdemForm"
+                            title="Cadastrar nova Ordem de Serviço"
+                            class="flex flex-column gap-4"
+                        >
+                            <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation>
+                                <div class="fg1 flex flex-column w-12 align-items-center lg:w-10">
+                                    <div class="form2 w-10 mb-3 mt-3">
+                                        <p-floatlabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-file-edit" />
+                                                <input
+                                                    variant="filled"
+                                                    [style]="{'width':'100%'}"
+                                                    pInputText id="on_label"
+                                                    autocomplete="off"
+                                                    formControlName="numero"
+                                                    type="text"
+                                                />
+                                            </p-iconfield>
+                                            <label for="on_label">Número</label>
+                                        </p-floatlabel>
+                                    </div>
+                                    <div class="form2 w-10  mt-1 mr-1">
+                                        <p-floatLabel variant="on">
+                                            <p-datepicker
+                                                variant="filled"
+                                                [style]="{'width':'100%'}"
+                                                id="da"
+                                                formControlName="data"
+                                                dateFormat="dd/mm/yy"
+                                                inputId="float-label"
+                                                [showIcon]="true"
+                                            >
+                                            </p-datepicker>
+                                            <label for="float-label" >Data de Abertura</label>
+                                        </p-floatLabel>
+                                    </div>
+                                    <div class="form2 w-10 mb-3 mt-3 mr-1 text-left">
+                                        <p-floatLabel variant="on"> 
+                                            <p-select
+                                                inputId="float-label"
+                                                [style]="{'width':'100%'}"
+                                                [options]="planosAnalise" 
+                                                formControlName="planoAnalise"
+                                                optionLabel="descricao"
+                                                optionValue="id"
+                                                appendTo="body"
+                                                [filter]="true" 
+                                                filterBy="nome"
+                                                [showClear]="true"
+                                                (onChange)="onMaterialChange($event.value)"
+                                            >
+                                            </p-select>
+                                            <label for="float-label">Selecione o Plano de Análise</label>
+                                        </p-floatLabel> 
+                                    </div>
+                                    <div class="form2 w-10 mb-3 mt-3">
+                                        <p-floatlabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-file-edit" />
+                                                <input
+                                                    variant="filled"
+                                                    [style]="{'width':'100%'}"
+                                                    pInputText id="on_label"
+                                                    autocomplete="off"
+                                                    formControlName="digitador"
+                                                    type="text"
+                                                />
+                                            </p-iconfield>
+                                            <label for="on_label">Digitador</label>
+                                        </p-floatlabel>
+                                    </div>
+                                    <div class="form2 w-10 mb-3 mt-3 mr-1 text-left">
+                                        <p-floatLabel variant="on"> 
+                                            <p-select
+                                                inputId="float-label"
+                                                [style]="{'width':'100%'}"
+                                                [options]="classificacoes" 
+                                                formControlName="classificacao"
+                                                optionLabel="nome"
+                                                optionValue="id"
+                                                appendTo="body"
+                                                [filter]="true" 
+                                                filterBy="nome"
+                                                [showClear]="true"
+                                                (onChange)="onMaterialChange($event.value)"
+                                            >
+                                            </p-select>
+                                            <label for="float-label">Selecione a Classificação</label>
+                                        </p-floatLabel> 
+                                    </div>
+                                    <div class="form2 w-10 mb-3 mt-3 text-left">
+                                        <p-floatLabel variant="on"> 
+                                            <p-select
+                                                inputId="float-label"
+                                                [style]="{'width':'100%'}"
+                                                [options]="responsaveis" 
+                                                formControlName="responsavel"
+                                                optionLabel="value"
+                                                optionValue="value"
+                                                appendTo="body"
+                                                [filter]="true" 
+                                                filterBy="value"
+                                                [showClear]="true"
+                                                [disabled]="true"
+                                            >
+                                            </p-select>
+                                            <label for="float-label">Selecione o Responsável</label>
+                                        </p-floatLabel> 
+                                    </div>
+                                </div>
+                            </div>    
+                        </form>
                         <div class="flex pt-6 justify-between">
                             <p-button label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(1)" />
                             <p-button label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="activateCallback(3)" />
+                            <p-button label="Salvar Ordem de Serviço" icon="pi pi-check" iconPos="right" (onClick)="submitOrdem()" />
                         </div>
                     </ng-template>
                 </p-step-panel>        
@@ -342,7 +458,7 @@
                 </p-step-panel>
             </p-step-panels>
         </p-stepper>
-       </form> 
+       
         
 </div>
 

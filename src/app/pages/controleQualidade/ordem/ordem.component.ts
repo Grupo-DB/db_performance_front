@@ -25,6 +25,17 @@ import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 
+export interface Ordem {
+  id: number;
+  numero: number;
+  data: string;
+  planoAnalise: any;
+  responsavel: string;
+  digitador: string;
+  modificacoes: any;
+  classificacao: any;
+}
+
 @Component({
   selector: 'app-ordem',
   imports: [

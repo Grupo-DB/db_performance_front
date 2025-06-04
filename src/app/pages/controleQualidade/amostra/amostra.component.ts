@@ -1,5 +1,5 @@
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe, formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -33,6 +33,11 @@ import { TipoAmostra } from '../tipo-amostra/tipo-amostra.component';
 import { ProdutoAmostra } from '../produto-amostra/produto-amostra.component';
 import { StepperModule } from 'primeng/stepper';
 import { ToggleButton } from 'primeng/togglebutton';
+import { OrdemService } from '../../../services/controleQualidade/ordem.service';
+import { EnsaioService } from '../../../services/controleQualidade/ensaio.service';
+import { Plano } from '../plano/plano.component';
+import { Colaborador } from '../../avaliacoes/colaborador/colaborador.component';
+import { ColaboradorService } from '../../../services/avaliacoesServices/colaboradores/registercolaborador.service';
 
 interface AmostraForm{
   dataColeta: FormControl,
@@ -54,7 +59,14 @@ interface AmostraForm{
   status: FormControl
 }
 
-
+interface OrdemForm {
+  data: FormControl,
+  numero: FormControl,
+  planoAnalise: FormControl,
+  responsavel: FormControl,
+  digitador: FormControl,
+  classificacao: FormControl
+}
 export interface Amostra {
   id: number;
   nome: string;
@@ -73,6 +85,9 @@ export interface Periodo {
 export interface LocalColeta {
   id: number;
   nome: string;
+}
+export interface Responsaveis {
+  value: string;
 }
 
 @Component({
@@ -129,7 +144,7 @@ export interface LocalColeta {
             ]),
   ],
   providers:[
-    MessageService,ConfirmationService
+    MessageService,ConfirmationService,DatePipe
   ],
   templateUrl: './amostra.component.html',
   styleUrl: './amostra.component.scss'
@@ -137,12 +152,15 @@ export interface LocalColeta {
 export class AmostraComponent implements OnInit {
 
 registerForm!: FormGroup<AmostraForm>;
+registerOrdemForm!: FormGroup<OrdemForm>;
 materiais: Produto[] = [];
 tiposAmostra: TipoAmostra[] = [];
 produtosAmostra: ProdutoAmostra[] = [];
+planosAnalise: Plano[] = [];
 producaoLote: any = null;
 activeStep: number = 1;
 
+digitador: any;
 
 fornecedores = [
   { id: 0, nome:'Cibracal' },
@@ -189,12 +207,37 @@ locaisColeta = [
   { id: 21, nome: 'Saco' },
 ]
 
+classificacoes = [
+  { id: 0, nome: 'Controle de Qualidade' },
+  { id: 1, nome: 'SAC' },
+  { id: 2, nome: 'Desenvolvimento de Produtos' },
+]
+
+responsaveis = [
+    { value: 'Antonio Carlos Vargas Sito' },
+    { value: 'Fabiula Bueno' },
+    { value: 'Janice Castro de Oliveira'},
+    { value: 'Karine Urruth Kaizer'},
+    { value: 'Luciana de Oliveira' },
+    { value: 'Kaua Morales Silbershlach'},
+    { value: 'Marco Alan Lopes'},
+    { value: 'Maria Eduarda da Silva'},
+    { value: 'Monique Barcelos Moreira'},
+    { value: 'Renata Rodrigues Machado Pinto'},
+    { value: 'Sâmella de Campos Moreira'},
+    { value: 'David Weslei Sprada'},
+    { value: 'Camila Vitoria Carneiro Alves Santos'},
+  ]
 constructor(
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private loginService: LoginService,
     private produtoLinhaService: ProjecaoService,
-    private amostraService: AmostraService
+    private amostraService: AmostraService,
+    private ordemService: OrdemService,
+    private ensaioService: EnsaioService,
+    private colaboradorService: ColaboradorService,
+    private datePipe: DatePipe
 )
 {
   this.registerForm = new FormGroup<AmostraForm>({
@@ -216,6 +259,14 @@ constructor(
     digitador: new FormControl(''),
     status: new FormControl('',[Validators.required])
   });
+  this.registerOrdemForm = new FormGroup<OrdemForm>({
+    data: new FormControl('',[Validators.required]),
+    numero: new FormControl('',[Validators.required]),
+    planoAnalise: new FormControl('',[Validators.required]),
+    responsavel: new FormControl('',[Validators.required]),
+    digitador: new FormControl('',[Validators.required]),
+    classificacao: new FormControl('',[Validators.required])
+  });
 
 }
   hasGroup(groups: string[]): boolean {
@@ -225,11 +276,44 @@ constructor(
     this.loadLinhaProdutos();
     this.loadTiposAmostra();
     this.loadProdutosAmostra();
+    this.loadPlanosAnalise();
+    this.getDigitadorInfo();
+    //número da OS
+    this.ordemService.getProximoNumero().subscribe(numero => {
+    this.registerOrdemForm.get('numero')?.setValue(numero);
+    console.log('Número da ordem de serviço gerado:', numero);
+    
+  });
 
      // Chama sempre que algum campo relevante mudar
-  this.registerForm.get('material')?.valueChanges.subscribe(() => this.onCamposRelevantesChange());
-  this.registerForm.get('tipoAmostragem')?.valueChanges.subscribe(() => this.onCamposRelevantesChange());
-  this.registerForm.get('dataColeta')?.valueChanges.subscribe(() => this.onCamposRelevantesChange());
+    this.registerForm.get('material')?.valueChanges.subscribe(() => this.onCamposRelevantesChange());
+    this.registerForm.get('tipoAmostragem')?.valueChanges.subscribe(() => this.onCamposRelevantesChange());
+    this.registerForm.get('dataColeta')?.valueChanges.subscribe(() => this.onCamposRelevantesChange());
+  }
+
+  getDigitadorInfo(): void {
+    this.colaboradorService.getColaboradorInfo().subscribe(
+      data => {
+        this.digitador = data.nome;
+        this.registerOrdemForm.get('digitador')?.setValue(data.nome);
+        this.registerForm.get('digitador')?.setValue(data.nome);
+      },
+      error => {
+        console.error('Erro ao obter informações do colaborador:', error);
+        this.digitador = null; // Garanta que digitador seja null em caso de erro
+      }
+    );
+  }
+
+  loadPlanosAnalise() {
+    this.ensaioService.getPlanoAnalise().subscribe(
+      response => {
+        this.planosAnalise = response;
+      },
+      error => {
+        console.log('Erro ao carregar planos de análise', error);
+      }
+    );
   }
 
   loadLinhaProdutos(){
@@ -284,7 +368,6 @@ onMaterialChange(materialId: number) {
     )
   }
   
-
   gerarNumero(materialNome: string, sequencial: number): string {
   const ano = new Date().getFullYear().toString().slice(-2); // Ex: '25'
   const sequencialFormatado = sequencial.toString().padStart(6, '0'); // Ex: '000008'
@@ -337,5 +420,121 @@ consultarProducao() {
   }
 }
 
+formatarDatas(obj: any) {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      const value = obj[key];
+      if (typeof value === 'string' && this.isDate(value)) {
+        obj[key] = this.datePipe.transform(value, 'dd/MM/yyyy');
+      } else if (typeof value === 'object' && value !== null) {
+        this.formatarDatas(value); // Formatar objetos aninhados recursivamente
+      }
+    }
+  }
+}
+
+isDate(value: string): boolean {
+  return !isNaN(Date.parse(value));
+}
+
+
+submitOrdem(){ 
+  const formData = new FormData();
+
+  let dataFormatada = '';
+  const dataValue = this.registerOrdemForm.value.data;
+      if (dataValue instanceof Date && !isNaN(dataValue.getTime())) {
+      dataFormatada = formatDate(dataValue, 'yyyy-MM-dd', 'en-US');
+  }
+
+  this.ordemService.registerOrdem(
+    //this.registerOrdemForm.value.data,
+    dataFormatada,
+    this.registerOrdemForm.value.numero,
+    this.registerOrdemForm.value.planoAnalise,
+    this.registerOrdemForm.value.responsavel,
+    this.registerOrdemForm.value.digitador,
+    this.registerOrdemForm.value.classificacao,
+    
+  ).subscribe({
+    next:() =>{
+      this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Ordem de serviço registrada com sucesso.' });
+      this.registerOrdemForm.reset();
+      this.activeStep = 3; // Avança para o próximo passo
+    }
+
+    , error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+
+  })
+}
+
+submitAmostra() {
+  const formData = new FormData();
+
+  let dataColetaFormatada = '';
+  const dataColetaValue = this.registerForm.value.dataColeta;
+  if (dataColetaValue instanceof Date && !isNaN(dataColetaValue.getTime())) {
+    dataColetaFormatada = formatDate(dataColetaValue, 'yyyy-MM-dd', 'en-US');
+  }
+
+  let dataEntradaFormatada = '';
+  const dataEntradaValue = this.registerForm.value.dataEntrada;
+  if (dataEntradaValue instanceof Date && !isNaN(dataEntradaValue.getTime())) {
+    dataEntradaFormatada = formatDate(dataEntradaValue, 'yyyy-MM-dd', 'en-US');
+  }
+
+  this.amostraService.registerAmostra( 
+    dataColetaFormatada,
+    dataEntradaFormatada,
+    this.registerForm.value.material,
+    this.registerForm.value.numero,
+    this.registerForm.value.tipoAmostra,
+    this.registerForm.value.subtipo,
+    this.registerForm.value.produtoAmostra,
+    this.registerForm.value.periodoHora,
+    this.registerForm.value.periodoTurno,
+    this.registerForm.value.tipoAmostragem,
+    this.registerForm.value.localColeta,
+    this.registerForm.value.representatividadeLote,
+    this.registerForm.value.identificacaoComplementar,
+    this.registerForm.value.complemento,
+    this.registerForm.value.ordem,
+    this.registerForm.value.digitador,
+    this.registerForm.value.status
+    
+  ).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Amostra registrada com sucesso.' });
+        this.activeStep = 3; // Avança para o próximo passo
+        //this.router.navigate(['/amostras']);
+      },
+      error: (err) => {
+        console.error('Erro ao registrar amostra:', err);
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        } else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        }
+      }
+
+  })
+}
 
 }
