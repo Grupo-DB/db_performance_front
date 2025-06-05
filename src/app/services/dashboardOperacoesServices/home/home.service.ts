@@ -43,6 +43,9 @@ export class HomeService {
   calcularGraficos(tipoCalculo: string): Observable<any>{
     return this.httpClient.post<any>(this.graficosUrl, {tipo_calculo: tipoCalculo})
   }
+  calcularGraficosMes(tipoCalculo: string, mes: number): Observable<any>{
+    return this.httpClient.post<any>(this.graficosUrl, {tipo_calculo: tipoCalculo, mes: mes})
+  }
   calcularRebritagem(tipoCalculo: string): Observable<any> {
     return this.httpClient.post<any>(this.rebritagemUrl, { tipo_calculo: tipoCalculo });
   }

@@ -208,3 +208,17 @@
     color: white;              /* Cor do texto do botão selecionado */
     /* Adicione outros estilos, como borda ou sombra, se quiser */
 }
+
+.titulo2{
+    font-family: 'Aptos', sans-serif;
+    margin-left: 15px;
+    position: relative;
+    margin-bottom: 8px;
+        a {
+            color: #444959; 
+            text-decoration: none;
+            :hover{
+                color: #1890FF;
+            } 
+        }
+}

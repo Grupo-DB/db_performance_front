@@ -38,6 +38,7 @@ import { EnsaioService } from '../../../services/controleQualidade/ensaio.servic
 import { Plano } from '../plano/plano.component';
 import { Colaborador } from '../../avaliacoes/colaborador/colaborador.component';
 import { ColaboradorService } from '../../../services/avaliacoesServices/colaboradores/registercolaborador.service';
+import { AnaliseService } from '../../../services/controleQualidade/analise.service';
 
 interface AmostraForm{
   dataColeta: FormControl,
@@ -67,6 +68,12 @@ interface OrdemForm {
   digitador: FormControl,
   classificacao: FormControl
 }
+
+interface AnaliseForm{
+  amostra: FormControl,
+  estado: FormControl
+}
+
 export interface Amostra {
   id: number;
   nome: string;
@@ -88,6 +95,10 @@ export interface LocalColeta {
 }
 export interface Responsaveis {
   value: string;
+}
+export interface Status {
+  id: number;
+  nome: string;
 }
 
 @Component({
@@ -161,7 +172,6 @@ producaoLote: any = null;
 activeStep: number = 1;
 
 digitador: any;
-
 fornecedores = [
   { id: 0, nome:'Cibracal' },
   { id: 1, nome:'Cliente' },
@@ -206,6 +216,14 @@ locaisColeta = [
   { id: 20, nome: 'FAB II' },
   { id: 21, nome: 'Saco' },
 ]
+status = [
+  { id: 0, nome: 'Pendente' },
+  { id: 1, nome: 'Em Análise' },
+  { id: 2, nome: 'Aprovada' },
+  { id: 3, nome: 'Reprovada' },
+  { id: 4, nome: 'Cancelada' },
+  { id: 5, nome: 'Finalizada' },
+]
 
 classificacoes = [
   { id: 0, nome: 'Controle de Qualidade' },
@@ -228,6 +246,7 @@ responsaveis = [
     { value: 'David Weslei Sprada'},
     { value: 'Camila Vitoria Carneiro Alves Santos'},
   ]
+  analises: any;
 constructor(
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
@@ -237,7 +256,8 @@ constructor(
     private ordemService: OrdemService,
     private ensaioService: EnsaioService,
     private colaboradorService: ColaboradorService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private analiseService: AnaliseService
 )
 {
   this.registerForm = new FormGroup<AmostraForm>({
@@ -278,6 +298,7 @@ constructor(
     this.loadProdutosAmostra();
     this.loadPlanosAnalise();
     this.getDigitadorInfo();
+    this.loadAnalises();
     //número da OS
     this.ordemService.getProximoNumero().subscribe(numero => {
     this.registerOrdemForm.get('numero')?.setValue(numero);
@@ -535,6 +556,98 @@ submitAmostra() {
       }
 
   })
+}
+
+montarAnalise(){
+  this.activeStep = 3;
+}
+
+salvarOrdemEAmostra() {
+  // 1. Formate a data da ordem
+  let dataFormatada = '';
+  const dataValue = this.registerOrdemForm.value.data;
+  if (dataValue instanceof Date && !isNaN(dataValue.getTime())) {
+    dataFormatada = formatDate(dataValue, 'yyyy-MM-dd', 'en-US');
+  }
+
+  // 2. Salve a ordem
+  this.ordemService.registerOrdem(
+    dataFormatada,
+    this.registerOrdemForm.value.numero,
+    this.registerOrdemForm.value.planoAnalise,
+    this.registerOrdemForm.value.responsavel,
+    this.registerOrdemForm.value.digitador,
+    this.registerOrdemForm.value.classificacao
+  ).subscribe({
+    next: (ordemSalva) => {
+      // 3. Pegue o número ou ID da ordem salva
+      const numeroOrdem = ordemSalva.numero; // ou ordemSalva.id, conforme seu backend
+
+      // 4. Formate as datas da amostra
+      let dataColetaFormatada = '';
+      const dataColetaValue = this.registerForm.value.dataColeta;
+      if (dataColetaValue instanceof Date && !isNaN(dataColetaValue.getTime())) {
+        dataColetaFormatada = formatDate(dataColetaValue, 'yyyy-MM-dd', 'en-US');
+      }
+      let dataEntradaFormatada = '';
+      const dataEntradaValue = this.registerForm.value.dataEntrada;
+      if (dataEntradaValue instanceof Date && !isNaN(dataEntradaValue.getTime())) {
+        dataEntradaFormatada = formatDate(dataEntradaValue, 'yyyy-MM-dd', 'en-US');
+      }
+
+      // 5. Salve a amostra vinculando à ordem
+      this.amostraService.registerAmostra(
+        dataColetaFormatada,
+        dataEntradaFormatada,
+        this.registerForm.value.material,
+        this.registerForm.value.numero,
+        this.registerForm.value.tipoAmostra,
+        this.registerForm.value.subtipo,
+        this.registerForm.value.produtoAmostra,
+        this.registerForm.value.periodoHora,
+        this.registerForm.value.periodoTurno,
+        this.registerForm.value.tipoAmostragem,
+        this.registerForm.value.localColeta,
+        this.registerForm.value.representatividadeLote,
+        this.registerForm.value.identificacaoComplementar,
+        this.registerForm.value.complemento,
+        numeroOrdem, // Aqui você passa o número/id da ordem recém salva!
+        this.registerForm.value.digitador,
+        this.registerForm.value.status
+      ).subscribe({
+        next: (amostraCriada) => {
+          // 6. Crie a análise vinculada à amostra recém-criada
+          this.analiseService.registerAnalise(amostraCriada.id, 'PENDENTE').subscribe({
+            next: () => {
+              this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Amostra, ordem e análise registradas com sucesso.' });
+              this.activeStep = 4; // Avança para o próximo passo, se houver
+            },
+            error: () => {
+              this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Amostra e ordem salvas, mas erro ao criar análise.' });
+            }
+          });
+        },
+        error: (err) => {
+          this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao salvar a amostra.' });
+        }
+      });
+    },
+    error: (err) => {
+      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao salvar a ordem.' });
+    }
+  });
+}
+
+loadAnalises(){
+  this.analiseService.getAnalises().subscribe(
+    response => {
+      this.analises = response;
+      
+    },
+    error => {
+      console.log('Erro ao carregar análises', error);
+    }
+  );
 }
 
 }

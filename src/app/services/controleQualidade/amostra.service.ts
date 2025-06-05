@@ -14,6 +14,7 @@ export class AmostraService {
   private produtoUrl = 'http://localhost:8000/amostra/produto/';
   private sequencialUrl = 'http://localhost:8000/amostra/amostra/proximo-sequencial/';
   private representatividadeUrl = 'http://localhost:8000/cal/representatividade/';
+  
   constructor(
     private http: HttpClient
   ) { }

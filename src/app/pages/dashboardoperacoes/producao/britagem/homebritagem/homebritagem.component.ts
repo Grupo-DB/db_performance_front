@@ -9,12 +9,19 @@ import { Chart } from 'chart.js';
 import { forkJoin } from 'rxjs';
 import { KnobModule } from 'primeng/knob';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { SelectModule } from 'primeng/select';
 
+export interface Meses {
+  nome: string;
+  valor: number;
+}
 @Component({
   selector: 'app-homebritagem',
   standalone: true,
   imports: [
-    DividerModule,RouterLink,TableModule,CommonModule,DialogModule,KnobModule
+    DividerModule,RouterLink,TableModule,CommonModule,DialogModule,KnobModule,
+    FloatLabelModule,SelectModule
   ],
   providers:[
     HomeService
@@ -70,6 +77,24 @@ export class HomebritagemComponent implements OnInit {
   totalAgregado!:number;
   //
   botaoSelecionado: string = '';
+  mesSelecionado: any;
+  meses = [
+  { nome: 'Janeiro', valor: 1 },
+  { nome: 'Fevereiro', valor: 2 },
+  { nome: 'Março', valor: 3 },
+  { nome: 'Abril', valor: 4 },
+  { nome: 'Maio', valor: 5 },
+  { nome: 'Junho', valor: 6 },
+  { nome: 'Julho', valor: 7 },
+  { nome: 'Agosto', valor: 8 },
+  { nome: 'Setembro', valor: 9 },
+  { nome: 'Outubro', valor: 10 },
+  { nome: 'Novembro', valor: 11 },
+  { nome: 'Dezembro', valor: 12 }
+];
+
+
+
   constructor(
     private homeService: HomeService,
   ){}
@@ -116,6 +141,18 @@ export class HomebritagemComponent implements OnInit {
     this.totalAgregado = respostaAtual.volume_britado_total;
     });
   }
+
+  graficoMesEspecifico(tipoCalculo: string, mes: any){
+    this.botaoSelecionado = 'mensal';
+    this.homeService.calcularGraficosMes(tipoCalculo, mes).subscribe(response => {
+      this.graficoBritadaCalcarioChartMes(response.volume_diario),
+      this.mediaCalcario = response.volume_diario.media_diaria_calcario;
+      this.mediaCal = response.volume_diario.media_diaria_cal;
+      this.projecaoCalcario = response.volume_diario.projecao_calcario;
+      this.projecaoCal = response.volume_diario.projecao_cal;
+    })
+  }
+
   graficoMensal(tipoCalculo: string){
     this.botaoSelecionado = 'mensal';
     this.homeService.calcularGraficos(tipoCalculo).subscribe(response => {
@@ -126,6 +163,18 @@ export class HomebritagemComponent implements OnInit {
       this.projecaoCal = response.volume_diario.projecao_cal;
     })
   }
+
+  graficoMesEspecificoCal(tipoCalculo: string, mes: any){
+    this.botaoSelecionado = 'mensal';
+    this.homeService.calcularGraficosMes(tipoCalculo, mes).subscribe(response => {
+      this.graficoBritadaCalChartMes(response.volume_diario),
+      this.mediaCalcario = response.volume_diario.media_diaria_calcario;
+      this.mediaCal = response.volume_diario.media_diaria_cal;
+      this.projecaoCalcario = response.volume_diario.projecao_calcario;
+      this.projecaoCal = response.volume_diario.projecao_cal;
+    })
+  }
+  
   graficoMensalCal(tipoCalculo: string){
     this.botaoSelecionado = 'mensal';
     this.homeService.calcularGraficos(tipoCalculo).subscribe(response => {

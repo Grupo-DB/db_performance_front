@@ -1,0 +1,30 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Analise } from '../../pages/controleQualidade/analise/analise.component';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AnaliseService {
+  private analiseUrl = 'http://localhost:8000/analise/analise/';
+  constructor(
+    private httpClient: HttpClient
+  ) { }
+
+  getAnalises(): Observable<any>{
+    return this.httpClient.get<any[]>(this.analiseUrl);   
+  }
+  editAnalise(id: number, dadosAtualizados: Partial<Analise>): Observable<any>{
+    const url = `${this.analiseUrl}${id}/`;
+    return this.httpClient.patch<any>(url, dadosAtualizados);
+  }
+  registerAnalise(amostra: any, estado: string){
+    return this.httpClient.post<Analise>(this.analiseUrl, { amostra: amostra, estado: estado });
+  }
+  deleteAnalise(id: number): Observable<any>{
+    const url = `${this.analiseUrl}${id}/`;
+    return this.httpClient.delete(url);
+  }
+
+}

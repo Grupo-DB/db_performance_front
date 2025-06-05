@@ -82,13 +82,26 @@
     margin-left: 15px;
     position: relative;
     margin-bottom: 8px;
+        a {
+            color: #444959; 
+            text-decoration: none;
+            :hover{
+                color: #1890FF;
+            } 
+        }
 }
-.titulo a {
-    color: inherit; 
-    text-decoration: none; 
-}
-.titulo a:hover {
-    color:#1890FF; 
+.titulo2{
+    font-family: 'Aptos', sans-serif;
+    margin-left: 15px;
+    position: relative;
+    margin-bottom: 8px;
+        a {
+            color: #444959; 
+            text-decoration: none;
+            :hover{
+                color: #1890FF;
+            } 
+        }
 }
 .selecionado {
     background-color: #4972B0; /* Cor de fundo do botão selecionado */

@@ -7,7 +7,7 @@
     <div class="flex flex-column  lg:flex-row"@slideAnimation>
         <div class="calcEsquerda w-12 lg:w-8 mt-2 lg:w-8">
             <div class="britadaCalcario">
-                <div class="titulo">
+                <div class="titulo2">
                     <p><b>Último Dia</b></p>
                 </div>
                 <div class="flex flex-column justify-content-center align-items-center gap-3 lg:flex-row lg:-mt-1"@slideAnimation>
@@ -30,7 +30,7 @@
                 </div>
             </div>    
             <div class="britadaCal mt-3">
-                <div class="titulo">
+                <div class="titulo2">
                     <p><b>Último Dia</b></p>
                 </div>
                 <div class="flex flex-column  justify-content-center align-items-center gap-3 lg:flex-row lg:-mt-1"@slideAnimation>
@@ -59,7 +59,7 @@
 
         <div class="calcEsquerda w-12 mt-2 lg:w-8">
            <div class="britadaCalcario">
-                <div class="titulo">
+                <div class="titulo2">
                     <i class="pi pi-plus-circle"></i><span (click)="exibirGrafico()" style="cursor: pointer;"> <b> Tn Britada Para Calcário</b></span><br>
                 </div>
                 <div class="flex flex-column justify-content-center align-items-center gap-3 lg:flex-row "@slideAnimation>
@@ -90,7 +90,7 @@
                 </div>    
            </div>
            <div class="britadaCal mt-3">
-                <div class="titulo">
+                <div class="titulo2">
                     <i class="pi pi-plus-circle"></i><span (click)="exibirGraficoCal()" style="cursor: pointer;"> <b> Tn Britada Para Cal</b></span><br>
                 </div>
                 <div class="flex flex-column justify-content-center align-items-center gap-3 lg:flex-row"@slideAnimation>
@@ -122,7 +122,7 @@
            </div> 
         </div>
         <div class="calcDireita w-12 mt-3 lg:w-4"@slideAnimation>
-            <div class="titulo">
+            <div class="titulo2">
                 <span> <b> Paradas no Britador</b></span><br>
             </div>
             
@@ -193,7 +193,7 @@
 
     <div class="calculos mt-3 mb-3"@slideAnimation>
         <div class="calcCargas">
-            <div class="titulo">
+            <div class="titulo2">
                 <span> <b> Movimentação de cargas</b></span><br>
             </div>
             <p-table 
@@ -246,7 +246,7 @@
     </div>   
 </div>
 
-<!------------------------MOdal---------------------->
+<!------------------------Modal Calcário---------------------->
 <p-dialog 
     [modal]="true"
     [(visible)]="graficoVisivel1" 
@@ -259,6 +259,25 @@
         </p-divider> 
     </div>
     <div class="flex flex-row justify-content-center lg:justify-content-end">
+        <div class="w-2 ml-1 text-left">
+            <p-floatLabel variant="on"> 
+                <p-select
+                    inputId="float-label"
+                    [style]="{'width':'100%'}"
+                    [options]="meses" 
+                    (ngModel)="mesSelecionado"
+                    optionLabel="nome"
+                    optionValue="valor"
+                    appendTo="body"
+                    [filter]="true" 
+                    filterBy="nome"
+                    [showClear]="true"
+                    (onChange)="graficoMesEspecifico('mensal',$event.value)"
+                >
+                </p-select>
+                <label for="float-label">Selecione o Mês</label>
+            </p-floatLabel> 
+        </div>
         <div 
             class="btnCalc" 
             (click)="graficoMensal('mensal')"
@@ -328,6 +347,25 @@
         </p-divider> 
     </div>
     <div class="flex flex-row justify-content-center lg:justify-content-end">
+        <div class="w-2 ml-1 text-left">
+            <p-floatLabel variant="on"> 
+                <p-select
+                    inputId="float-label"
+                    [style]="{'width':'100%'}"
+                    [options]="meses" 
+                    (ngModel)="mesSelecionado"
+                    optionLabel="nome"
+                    optionValue="valor"
+                    appendTo="body"
+                    [filter]="true" 
+                    filterBy="nome"
+                    [showClear]="true"
+                    (onChange)="graficoMesEspecificoCal('mensal',$event.value)"
+                >
+                </p-select>
+                <label for="float-label">Selecione o Mês</label>
+            </p-floatLabel> 
+        </div>
         <div 
             class="btnCalc" 
             (click)="graficoMensalCal('mensal')"

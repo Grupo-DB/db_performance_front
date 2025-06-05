@@ -189,7 +189,7 @@
                                                 inputId="float-label"
                                                 [style]="{'width':'100%'}"
                                                 [options]="fornecedores" 
-                                                formControlName="produtoAmostra"
+                                                formControlName="fornecedor"
                                                 optionLabel="nome"
                                                 optionValue="id"
                                                 appendTo="body"
@@ -315,6 +315,24 @@
                                             />
                                             <label>Complemento</label>
                                         </p-floatLabel>
+                                    </div>
+                                    <div class="form2 w-10 mb-3 mt-3 text-left">
+                                        <p-floatLabel variant="on"> 
+                                            <p-select
+                                                inputId="float-label"
+                                                [style]="{'width':'100%'}"
+                                                [options]="status" 
+                                                formControlName="status"
+                                                optionLabel="nome"
+                                                optionValue="id"
+                                                appendTo="body"
+                                                [filter]="true" 
+                                                filterBy="value"
+                                                [showClear]="true"
+                                            >
+                                            </p-select>
+                                            <label for="float-label">Status</label>
+                                        </p-floatLabel> 
                                     </div>
                                 </div>
                             </div>
@@ -443,7 +461,7 @@
                         </form>
                         <div class="flex pt-6 justify-between">
                             <p-button label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(1)" />
-                            <p-button label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="activateCallback(3)" />
+                            <p-button label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="activateCallback(3);salvarOrdemEAmostra()" />
                             <p-button label="Salvar Ordem de Serviço" icon="pi pi-check" iconPos="right" (onClick)="submitOrdem()" />
                         </div>
                     </ng-template>
@@ -460,5 +478,10 @@
         </p-stepper>
        
         
+</div>
+
+
+<div class="container">
+
 </div>
 
