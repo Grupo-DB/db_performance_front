@@ -1,6 +1,6 @@
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 import { CommonModule, DatePipe, formatDate } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
@@ -39,6 +39,7 @@ import { Plano } from '../plano/plano.component';
 import { Colaborador } from '../../avaliacoes/colaborador/colaborador.component';
 import { ColaboradorService } from '../../../services/avaliacoesServices/colaboradores/registercolaborador.service';
 import { AnaliseService } from '../../../services/controleQualidade/analise.service';
+import { or } from 'mathjs';
 
 interface AmostraForm{
   dataColeta: FormControl,
@@ -100,7 +101,10 @@ export interface Status {
   id: number;
   nome: string;
 }
-
+interface Column {
+    field: string;
+    header: string;
+}
 @Component({
   selector: 'app-amostra',
   imports: [
@@ -162,6 +166,9 @@ export interface Status {
 })
 export class AmostraComponent implements OnInit {
 
+cols!: Column[];
+selectedColumns!: Column[];  
+
 registerForm!: FormGroup<AmostraForm>;
 registerOrdemForm!: FormGroup<OrdemForm>;
 materiais: Produto[] = [];
@@ -170,7 +177,7 @@ produtosAmostra: ProdutoAmostra[] = [];
 planosAnalise: Plano[] = [];
 producaoLote: any = null;
 activeStep: number = 1;
-
+analisesSimplificadas: any[] = [];
 digitador: any;
 fornecedores = [
   { id: 0, nome:'Cibracal' },
@@ -247,6 +254,7 @@ responsaveis = [
     { value: 'Camila Vitoria Carneiro Alves Santos'},
   ]
   analises: any;
+  
 constructor(
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
@@ -257,7 +265,8 @@ constructor(
     private ensaioService: EnsaioService,
     private colaboradorService: ColaboradorService,
     private datePipe: DatePipe,
-    private analiseService: AnaliseService
+    private analiseService: AnaliseService,
+    private cd: ChangeDetectorRef 
 )
 {
   this.registerForm = new FormGroup<AmostraForm>({
@@ -299,6 +308,7 @@ constructor(
     this.loadPlanosAnalise();
     this.getDigitadorInfo();
     this.loadAnalises();
+    this.cd.markForCheck();
     //número da OS
     this.ordemService.getProximoNumero().subscribe(numero => {
     this.registerOrdemForm.get('numero')?.setValue(numero);
@@ -310,6 +320,34 @@ constructor(
     this.registerForm.get('material')?.valueChanges.subscribe(() => this.onCamposRelevantesChange());
     this.registerForm.get('tipoAmostragem')?.valueChanges.subscribe(() => this.onCamposRelevantesChange());
     this.registerForm.get('dataColeta')?.valueChanges.subscribe(() => this.onCamposRelevantesChange());
+
+    // Configuração das colunas da tabela
+    this.cols = [
+      { field: 'amostraDataEntrada', header: 'Data de Entrada' },
+      { field: 'amostraDataColeta', header: 'Data de Coleta' },
+      { field: 'amostraDigitador', header: 'Digitador' },
+      { field: 'amostraFornecedor', header: 'Fornecedor' },
+      { field: 'amostraIdentificacaoComplementar', header: 'Identificação Complementar' },
+      { field: 'amostraLocalColeta', header: 'Local de Coleta' },
+      { field: 'amostraMaterial', header: 'Material' },
+      { field: 'amostraNumero', header: 'Número da Amostra' },
+      { field: 'amostraPeriodoHora', header: 'Período Hora' },
+      { field: 'amostraPeriodoTurno', header: 'Período Turno' },
+      { field: 'amostraRepresentatividadeLote', header: 'Representatividade do Lote' },
+      { field: 'amostraStatus', header: 'Status' },
+      { field: 'amostraSubtipo', header: 'Subtipo' },
+      { field: 'amostraTipoAmostra', header: 'Tipo de Amostra' },
+      { field: 'amostraTipoAmostragem', header: 'Tipo de Amostragem' },
+      { field: 'estado', header: 'Estado' },
+      { field: 'ordemNumero', header: 'Número da Ordem' },
+      { field: 'ordemClassificacao', header: 'Classificação da Ordem' },
+      { field: 'ordemPlanoAnalise', header: 'Plano de Análise' },
+      { field: 'planoEnsaios', header: 'Ensaios do Plano' },
+    ];
+    // Inicializa as colunas selecionadas com todas as colunas
+    this.selectedColumns = this.cols;// Copia todas as colunas para a seleção inicial
+  
+  
   }
 
   getDigitadorInfo(): void {
@@ -649,5 +687,46 @@ loadAnalises(){
     }
   );
 }
+
+loadUltimaAnalise(){
+  this.analiseService.getAnalises().subscribe(
+    response => {
+      if (response && response.length > 0) {
+        // Pega a última análise (assumindo que o array está ordenado por criação)
+        const ultimaAnalise = response[response.length - 1];
+        this.analisesSimplificadas = [{
+          amostraDataEntrada: ultimaAnalise.amostra_detalhes?.data_entrada,
+          amostraDataColeta: ultimaAnalise.amostra_detalhes?.data_coleta,
+          amostraDigitador: ultimaAnalise.amostra_detalhes?.digitador,
+          amostraFornecedor: ultimaAnalise.amostra_detalhes?.fornecedor,
+          amostraIdentificacaoComplementar: ultimaAnalise.amostra_detalhes?.identificacao_complementar,
+          amostraLocalColeta: ultimaAnalise.amostra_detalhes?.local_coleta,
+          amostraMaterial: ultimaAnalise.amostra_detalhes?.material,
+          amostraNumero: ultimaAnalise.amostra_detalhes?.numero,
+          amostraPeriodoHora: ultimaAnalise.amostra_detalhes?.periodo_hora,
+          amostraPeriodoTurno: ultimaAnalise.amostra_detalhes?.periodo_turno,
+          amostraRepresentatividadeLote: ultimaAnalise.amostra_detalhes?.representatividade_lote,
+          amostraStatus: ultimaAnalise.amostra_detalhes?.status,
+          amostraSubtipo: ultimaAnalise.amostra_detalhes?.subtipo,
+          amostraTipoAmostra: ultimaAnalise.amostra_detalhes?.tipo_amostra,
+          amostraTipoAmostragem: ultimaAnalise.amostra_detalhes?.tipo_amostragem,
+          estado: ultimaAnalise.estado,
+          ordemNumero: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.numero,
+          ordemClassificacao: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.classificacao,
+          ordemPlanoAnalise: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.plano_detalhes?.descricao,
+          planoEnsaios: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.plano_detalhes?.ensaio_detalhes,
+        }];console.log('Numero da Ordem:', ultimaAnalise.ordemNumero);
+      } else {
+        this.analisesSimplificadas = [];
+      }
+    },
+    error => {
+      console.log('Erro ao carregar análises', error);
+      this.analisesSimplificadas = [];
+    }
+  );
+}
+
+
 
 }
