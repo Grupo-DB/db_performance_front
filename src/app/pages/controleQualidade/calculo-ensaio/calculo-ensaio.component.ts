@@ -464,7 +464,10 @@ salvarFormulaEditada() {
     return;
   }
 
-    const ensaios = this.registerForm.value.ensaios;
+    const ensaios = Array.isArray(this.registerForm.value.ensaios)
+  ? this.registerForm.value.ensaios
+  : [this.registerForm.value.ensaios];
+    console.log('Enviando ensaios:', ensaios);
     this.ensaioService.registerCalculoEnsaio(
       this.registerForm.value.descricao,
       this.registerForm.value.funcao,
@@ -526,21 +529,18 @@ salvarFormulaEditada() {
   }
 }
 
-  private atualizarEnsaiosDoForm() {
-    // Pegue todos os descrições dos ensaios
-    const descricoes = this.ensaios.map(e => e.descricao);
-  
-    // Pegue os ensaios usados na expressão
-    const usados = this.expressaoDinamica
-      .filter(b => b.tipo === 'Ensaio' && descricoes.includes(b.valor || ''))
-      .map(b => {
-        // Retorne o objeto Ensaio completo (ou só o id, conforme seu backend espera)
-        return this.ensaios.find(e => e.descricao === b.valor);
-      })
-      .filter(e => !!e);
-  
-    // Atualize o campo do formulário
-    this.registerForm.get('ensaios')?.setValue(usados.map(e => e.id));
-  }
+private atualizarEnsaiosDoForm() {
+  const descricoes = this.ensaios.map(e => e.descricao);
+
+  // Pegue os ensaios usados na expressão, sem duplicatas
+  const usados = this.expressaoDinamica
+    .filter(b => b.tipo === 'Ensaio' && descricoes.includes(b.valor || ''))
+    .map(b => b.valor)
+    .filter((valor, idx, arr) => arr.indexOf(valor) === idx) // elimina duplicatas
+    .map(valor => this.ensaios.find(e => e.descricao === valor))
+    .filter(e => !!e);
+
+  this.registerForm.get('ensaios')?.setValue(usados.map(e => e.id));
+}
 
 }

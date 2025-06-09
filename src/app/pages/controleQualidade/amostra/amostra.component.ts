@@ -254,6 +254,7 @@ responsaveis = [
     { value: 'Camila Vitoria Carneiro Alves Santos'},
   ]
   analises: any;
+planoCalculos: any;
   
 constructor(
     private messageService: MessageService,
@@ -284,7 +285,7 @@ constructor(
     representatividadeLote: new FormControl('',[Validators.required]),
     identificacaoComplementar: new FormControl(''),
     complemento: new FormControl(''),
-    ordem: new FormControl('',[Validators.required]),
+    ordem: new FormControl(''),
     digitador: new FormControl(''),
     status: new FormControl('',[Validators.required])
   });
@@ -445,9 +446,7 @@ onCamposRelevantesChange() {
   }
 }
 
-private normalize(str: string): string {
-  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-}
+
 
   exibirRepresentatividadeLote(): boolean {
   const materialId = this.registerForm.get('material')?.value;
@@ -715,6 +714,7 @@ loadUltimaAnalise(){
           ordemClassificacao: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.classificacao,
           ordemPlanoAnalise: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.plano_detalhes?.descricao,
           planoEnsaios: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.plano_detalhes?.ensaio_detalhes,
+          planoCalculos: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.plano_detalhes?.calculo_ensaio_detalhes,
         }];console.log('Numero da Ordem:', ultimaAnalise.ordemNumero);
       } else {
         this.analisesSimplificadas = [];
@@ -725,6 +725,79 @@ loadUltimaAnalise(){
       this.analisesSimplificadas = [];
     }
   );
+}
+
+sincronizarValoresEnsaios(produto: any, calc: any) {
+  if (!produto.planoEnsaios || !calc.ensaios_detalhes) return;
+  calc.ensaios_detalhes.forEach((ensaioCalc: any) => {
+    const ensaioPlano = produto.planoEnsaios.find((e: any) => e.descricao === ensaioCalc.descricao);
+    if (ensaioPlano) {
+      ensaioCalc.valor = ensaioPlano.valor;
+    }
+  });
+}
+
+calcular(calc: any, produto?: any) {
+  if (produto) {
+    this.sincronizarValoresEnsaios(produto, calc);
+  }
+  if (!calc.ensaios_detalhes || !Array.isArray(calc.ensaios_detalhes)) {
+    calc.resultado = 'Sem ensaios para calcular';
+    return;
+  }
+  let funcaoSubstituida = this.normalize(calc.funcao);
+  calc.ensaios_detalhes.forEach((ensaio: any) => {
+    const valor = ensaio.valor !== undefined && ensaio.valor !== null ? Number(ensaio.valor) : 0;
+    funcaoSubstituida = funcaoSubstituida.replace(
+      new RegExp('\\b' + this.normalize(ensaio.descricao) + '\\b', 'g'),
+      String(valor)
+    );
+  });
+  console.log('Função final para eval:', funcaoSubstituida);
+  try {
+    calc.resultado = eval(funcaoSubstituida);
+  } catch (e) {
+    calc.resultado = 'Erro no cálculo';
+  }
+}
+
+
+private normalize(str: string): string {
+  if (!str) return '';
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+
+recalcularTodosCalculos(produto: any) {
+  if (produto && produto.planoCalculos) {
+    produto.planoCalculos.forEach((calc: any) => this.calcular(calc));
+  }
+}
+
+calcularEnsaios(ensaios: any[], produto: any) {
+  const planoCalculos = produto.planoCalculos || [];
+  if (!planoCalculos.length) {
+    produto.resultado = 'Sem função';
+    return;
+  }
+
+  planoCalculos.forEach((calc: { funcao: any; ensaios_detalhes: any[]; resultado: string; }) => {
+    let funcaoSubstituida = calc.funcao;
+    calc.ensaios_detalhes.forEach((ensaio: any) => {
+      const valor = ensaio.valor !== undefined && ensaio.valor !== null ? ensaio.valor : 0;
+      funcaoSubstituida = funcaoSubstituida.replace(
+        new RegExp('\\b' + ensaio.descricao + '\\b', 'gi'),
+        valor
+      );
+    });
+    console.log('Função final para eval:', funcaoSubstituida);
+    try {
+      calc.resultado = eval(funcaoSubstituida);
+    } catch (e) {
+      calc.resultado = 'Erro no cálculo';
+    }
+  });
+
+  produto.resultado = planoCalculos[0]?.resultado;
 }
 
 
