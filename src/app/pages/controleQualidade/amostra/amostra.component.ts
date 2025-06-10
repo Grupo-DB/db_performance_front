@@ -693,6 +693,7 @@ loadUltimaAnalise(){
       if (response && response.length > 0) {
         // Pega a última análise (assumindo que o array está ordenado por criação)
         const ultimaAnalise = response[response.length - 1];
+        console.log('Última análise:', ultimaAnalise);
         this.analisesSimplificadas = [{
           amostraDataEntrada: ultimaAnalise.amostra_detalhes?.data_entrada,
           amostraDataColeta: ultimaAnalise.amostra_detalhes?.data_coleta,
@@ -713,9 +714,10 @@ loadUltimaAnalise(){
           ordemNumero: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.numero,
           ordemClassificacao: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.classificacao,
           ordemPlanoAnalise: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.plano_detalhes?.descricao,
+          planoDetalhes: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.plano_detalhes || [],
           planoEnsaios: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.plano_detalhes?.ensaio_detalhes,
-          planoCalculos: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.plano_detalhes?.calculo_ensaio_detalhes,
-        }];console.log('Numero da Ordem:', ultimaAnalise.ordemNumero);
+          //planoCalculos: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.plano_detalhes?.calculo_ensaio_detalhes,
+        }];console.log('Numero da Ordem:', this.analisesSimplificadas[0].ordemNumero);
       } else {
         this.analisesSimplificadas = [];
       }
@@ -800,6 +802,11 @@ calcularEnsaios(ensaios: any[], produto: any) {
   produto.resultado = planoCalculos[0]?.resultado;
 }
 
+calcularTodosCalculosDoPlano(plano: any) {
+  if (plano && plano.calculo_ensaio_detalhes) {
+    plano.calculo_ensaio_detalhes.forEach((calc: any) => this.calcular(calc, plano));
+  }
+}
 
 
 }

@@ -506,10 +506,15 @@ salvarFormulaEditada() {
     this.editForm.reset();
   }
 
-  validarExpressaoComValores(expr: string): boolean {
+ validarExpressaoComValores(expr: string): boolean {
   try {
-    // Substitui todas as variáveis por 1 (ou outro valor fictício)
-    const fakeExpr = expr.replace(/[a-zA-Z_][a-zA-Z0-9_]*/g, '1');
+    // Substitui todas as variáveis (inclusive acentuadas) por 1
+    let fakeExpr = expr.replace(/\p{L}[\p{L}0-9_]*/gu, '1');
+    // Remove espaços duplicados
+    fakeExpr = fakeExpr.replace(/\s+/g, ' ');
+    // Remove espaços entre números (ex: "1 1" -> "1")
+    fakeExpr = fakeExpr.replace(/1\s+1/g, '1');
+    console.log('Expressão para validação:', fakeExpr);
     evaluate(fakeExpr);
     this.messageService.add({
       severity: 'info',

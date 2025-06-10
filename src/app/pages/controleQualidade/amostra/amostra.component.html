@@ -191,7 +191,7 @@
                                                 [options]="fornecedores" 
                                                 formControlName="fornecedor"
                                                 optionLabel="nome"
-                                                optionValue="id"
+                                                optionValue="nome"
                                                 appendTo="body"
                                                 [filter]="true" 
                                                 filterBy="value"
@@ -226,7 +226,7 @@
                                                 formControlName="periodoTurno"
                                                 optionLabel="nome"
                                                 optionValue="id"
-                                                appendTo="body"
+                                                appendTo="nome"
                                                 [filter]="true" 
                                                 filterBy="value"
                                                 [showClear]="true"
@@ -261,7 +261,7 @@
                                                 [options]="locaisColeta" 
                                                 formControlName="localColeta"
                                                 optionLabel="nome"
-                                                optionValue="id"
+                                                optionValue="nome"
                                                 appendTo="body"
                                                 [filter]="true" 
                                                 filterBy="value"
@@ -324,7 +324,7 @@
                                                 [options]="status" 
                                                 formControlName="status"
                                                 optionLabel="nome"
-                                                optionValue="id"
+                                                optionValue="nome"
                                                 appendTo="body"
                                                 [filter]="true" 
                                                 filterBy="value"
@@ -385,7 +385,7 @@
                                     </div>
                                     <div class="form2 w-10 mb-3 mt-3 mr-1 text-left">
                                         <p-floatLabel variant="on"> 
-                                            <p-select
+                                            <p-multiselect
                                                 inputId="float-label"
                                                 [style]="{'width':'100%'}"
                                                 [options]="planosAnalise" 
@@ -398,7 +398,7 @@
                                                 [showClear]="true"
                                                 (onChange)="onMaterialChange($event.value)"
                                             >
-                                            </p-select>
+                                            </p-multiselect>
                                             <label for="float-label">Selecione o Plano de Análise</label>
                                         </p-floatLabel> 
                                     </div>
@@ -426,7 +426,7 @@
                                                 [options]="classificacoes" 
                                                 formControlName="classificacao"
                                                 optionLabel="nome"
-                                                optionValue="id"
+                                                optionValue="nome"
                                                 appendTo="body"
                                                 [filter]="true" 
                                                 filterBy="nome"
@@ -469,6 +469,12 @@
                 <p-step-panel [value]="3">
                     <ng-template #content let-activateCallback="activateCallback">
                         <div class="containder">
+                            <div>
+                                <p><b>Data de Entrada:</b> {{ analisesSimplificadas[0].amostraDataEntrada }}</p>
+                                <p><b>Material:</b> {{ analisesSimplificadas[0].amostraMaterial }}</p>
+                                <p><b>Número da Ordem:</b> {{ analisesSimplificadas[0].ordemNumero }}</p>
+                            </div>    
+
                             <p-table 
                                 [value]="analisesSimplificadas"
                                 [paginator]="true"
@@ -480,31 +486,7 @@
                                 <ng-template #caption>
                                     <p-multiselect display="chip" [options]="cols" [(ngModel)]="selectedColumns" optionLabel="header" selectedItemsLabel="{0} columns selected" [style]="{ 'min-width': '200px' }" placeholder="Choose Columns" />
                                 </ng-template>
-                                <!-- <ng-template pTemplate="header">
-                                    <tr>
-                                        <th colspan="16" style="text-align: center;">Amostra</th>
-                                    </tr>
-                                    <tr>
-                                        <th>Data Entrada</th>
-                                        <th>Data Coleta</th>
-                                        <th>amostraDigitador</th>
-                                        <th>amostraFornecedor</th>
-                                        <th>amostraIdentificacaoComplementar</th>
-                                        <th>amostraLocalColeta</th>
-                                        <th>amostraMaterial</th>
-                                        <th>amostraNumero</th>
-                                        <th>amostraPeriodoHora</th>
-                                        <th>amostraPeriodoTurno</th>
-                                        <th>amostraRepresentatividadeLote</th>
-                                        <th>amostraStatus</th>
-                                        <th>amostraSubtipo</th>
-                                        <th>amostraTipoAmostra</th>
-                                        <th>amostraTipoAmostragem</th>
-                                        <th>Estado</th>
-                                        <th>N° Ordem</th>
-                                        <th>Ensaios</th>
-                                    </tr>
-                                </ng-template> -->
+                                
                                 <ng-template #header let-columns>
                                     <tr>
                                         <th>Code</th>
@@ -513,41 +495,50 @@
                                         </th>
                                     </tr>
                                 </ng-template>
-                                <!-- <ng-template #body let-product let-columns="columns">
+                                
+                                <ng-template #body let-product let-columns="columns">
                                     <tr>
-                                        <td>{{ product.code }}</td>
                                         <td *ngFor="let col of columns">
+                                        <ng-container *ngIf="col.field !== 'planoEnsaios'; else ensaios">
                                             {{ product[col.field] }}
+                                        </ng-container>
+                                        <ng-template #ensaios>
+                                            <ng-container *ngFor="let plano of product.planoDetalhes">
+                                            <div>
+                                                <b>{{ plano.descricao }}</b>
+                                                <div *ngFor="let calc of plano.calculo_ensaio_detalhes">
+                                                <div><b>{{ calc.descricao }}</b></div>
+                                                <ul>
+                                                    <li *ngFor="let ensaio of calc.ensaios_detalhes">
+                                                    {{ ensaio.descricao }} - {{ ensaio.responsavel }} - {{ ensaio.tempo_previsto }} - {{ ensaio.tipo_ensaio_detalhes?.nome }}
+                                                    <input type="number"
+                                                            [(ngModel)]="ensaio.valor"
+                                                            (ngModelChange)="calcular(calc, plano)"
+                                                            style="width: 80px; margin-left: 8px;" />
+                                                    Valor: {{ ensaio.valor }}
+                                                    </li>
+                                                </ul>
+                                                <ul>
+                                                    <li *ngFor="let ensaio of plano.ensaio_detalhes">
+                                                        {{ ensaio.descricao }} - {{ ensaio.responsavel }} - {{ ensaio.tempo_previsto }} - {{ ensaio.tipo_ensaio_detalhes?.nome }} (Valor: {{ ensaio.valor }})
+                                                        <input type="number"
+                                                            
+                                                            style="width: 80px; margin-left: 8px;" />
+                                                    </li>
+                                                </ul>
+                                                <div *ngIf="calc.resultado !== undefined">
+                                                    <b>Resultado:</b> {{ calc.resultado }}
+                                                </div>
+                                                </div>
+                                            </div>
+                                            </ng-container>
+                                            <button (click)="recalcularTodosCalculos(product)">Calcular</button>
+                                        </ng-template>
+                                        
                                         </td>
                                     </tr>
-                                </ng-template> -->
-                                <ng-template #body let-product let-columns="columns">
-  <tr>
-    <td *ngFor="let col of columns">
-      <ng-container *ngIf="col.field !== 'planoEnsaios'; else ensaios">
-        {{ product[col.field] }}
-      </ng-container>
-      <ng-template #ensaios>
-        <ng-container *ngFor="let calc of product.planoCalculos">
-  <ul>
-    <li *ngFor="let ensaio of product.planoEnsaios">
-      {{ ensaio.descricao }} - {{ ensaio.responsavel }} - {{ ensaio.tempo_previsto }} - {{ ensaio.tipo_ensaio_detalhes?.nome }}
-      <input type="number"
-             [(ngModel)]="ensaio.valor"
-             (ngModelChange)="calcular(calc, product)"
-             style="width: 80px; margin-left: 8px;" />
-      Valor: {{ ensaio.valor }}
-    </li>
-  </ul>
-  <div *ngIf="calc.resultado !== undefined">
-    <b>Resultado:</b> {{ calc.resultado }}
-  </div>
-</ng-container>
-        <button (click)="recalcularTodosCalculos(product)">Calcular</button>
-      </ng-template>
-    </td>
-  </tr>
-</ng-template>  
+                                </ng-template>
+                                
                             </p-table>    
                             <div class="flex pt-6 justify-between">
                                 <p-button label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(2)" />
