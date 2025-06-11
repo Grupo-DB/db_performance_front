@@ -39,7 +39,7 @@ import { Plano } from '../plano/plano.component';
 import { Colaborador } from '../../avaliacoes/colaborador/colaborador.component';
 import { ColaboradorService } from '../../../services/avaliacoesServices/colaboradores/registercolaborador.service';
 import { AnaliseService } from '../../../services/controleQualidade/analise.service';
-import { or } from 'mathjs';
+import { FieldsetModule } from 'primeng/fieldset';
 
 interface AmostraForm{
   dataColeta: FormControl,
@@ -113,7 +113,7 @@ interface Column {
     FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,
     ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,IconField,
     InputNumberModule,AutoCompleteModule,MultiSelectModule,DatePickerModule,StepperModule,
-    InputIcon,
+    InputIcon,FieldsetModule
   ],
   animations:[
     trigger('efeitoFade',[
@@ -179,6 +179,7 @@ producaoLote: any = null;
 activeStep: number = 1;
 analisesSimplificadas: any[] = [];
 digitador: any;
+idUltimaAanalise: any;
 fornecedores = [
   { id: 0, nome:'Cibracal' },
   { id: 1, nome:'Cliente' },
@@ -324,25 +325,25 @@ constructor(
 
     // Configuração das colunas da tabela
     this.cols = [
-      { field: 'amostraDataEntrada', header: 'Data de Entrada' },
-      { field: 'amostraDataColeta', header: 'Data de Coleta' },
-      { field: 'amostraDigitador', header: 'Digitador' },
-      { field: 'amostraFornecedor', header: 'Fornecedor' },
-      { field: 'amostraIdentificacaoComplementar', header: 'Identificação Complementar' },
-      { field: 'amostraLocalColeta', header: 'Local de Coleta' },
-      { field: 'amostraMaterial', header: 'Material' },
-      { field: 'amostraNumero', header: 'Número da Amostra' },
-      { field: 'amostraPeriodoHora', header: 'Período Hora' },
-      { field: 'amostraPeriodoTurno', header: 'Período Turno' },
-      { field: 'amostraRepresentatividadeLote', header: 'Representatividade do Lote' },
-      { field: 'amostraStatus', header: 'Status' },
-      { field: 'amostraSubtipo', header: 'Subtipo' },
-      { field: 'amostraTipoAmostra', header: 'Tipo de Amostra' },
-      { field: 'amostraTipoAmostragem', header: 'Tipo de Amostragem' },
-      { field: 'estado', header: 'Estado' },
-      { field: 'ordemNumero', header: 'Número da Ordem' },
-      { field: 'ordemClassificacao', header: 'Classificação da Ordem' },
-      { field: 'ordemPlanoAnalise', header: 'Plano de Análise' },
+      //{ field: 'amostraDataEntrada', header: 'Data de Entrada' },
+      //{ field: 'amostraDataColeta', header: 'Data de Coleta' },
+      //{ field: 'amostraDigitador', header: 'Digitador' },
+      //{ field: 'amostraFornecedor', header: 'Fornecedor' },
+      //{ field: 'amostraIdentificacaoComplementar', header: 'Identificação Complementar' },
+      //{ field: 'amostraLocalColeta', header: 'Local de Coleta' },
+      //{ field: 'amostraMaterial', header: 'Material' },
+      //{ field: 'amostraNumero', header: 'Número da Amostra' },
+      //{ field: 'amostraPeriodoHora', header: 'Período Hora' },
+      //{ field: 'amostraPeriodoTurno', header: 'Período Turno' },
+      //{ field: 'amostraRepresentatividadeLote', header: 'Representatividade do Lote' },
+      //{ field: 'amostraStatus', header: 'Status' },
+      //{ field: 'amostraSubtipo', header: 'Subtipo' },
+      //{ field: 'amostraTipoAmostra', header: 'Tipo de Amostra' },
+      //{ field: 'amostraTipoAmostragem', header: 'Tipo de Amostragem' },
+      //{ field: 'estado', header: 'Estado' },
+      //{ field: 'ordemNumero', header: 'Número da Ordem' },
+      //{ field: 'ordemClassificacao', header: 'Classificação da Ordem' },
+      //{ field: 'ordemPlanoAnalise', header: 'Plano de Análise' },
       { field: 'planoEnsaios', header: 'Ensaios do Plano' },
     ];
     // Inicializa as colunas selecionadas com todas as colunas
@@ -693,6 +694,7 @@ loadUltimaAnalise(){
       if (response && response.length > 0) {
         // Pega a última análise (assumindo que o array está ordenado por criação)
         const ultimaAnalise = response[response.length - 1];
+        this.idUltimaAanalise = ultimaAnalise.id;
         console.log('Última análise:', ultimaAnalise);
         this.analisesSimplificadas = [{
           amostraDataEntrada: ultimaAnalise.amostra_detalhes?.data_entrada,
@@ -700,16 +702,21 @@ loadUltimaAnalise(){
           amostraDigitador: ultimaAnalise.amostra_detalhes?.digitador,
           amostraFornecedor: ultimaAnalise.amostra_detalhes?.fornecedor,
           amostraIdentificacaoComplementar: ultimaAnalise.amostra_detalhes?.identificacao_complementar,
+          amostraComplemento: ultimaAnalise.amostra_detalhes?.complemento,
           amostraLocalColeta: ultimaAnalise.amostra_detalhes?.local_coleta,
-          amostraMaterial: ultimaAnalise.amostra_detalhes?.material,
+          amostraMaterial: ultimaAnalise.amostra_detalhes?.material_detalhes?.nome,
           amostraNumero: ultimaAnalise.amostra_detalhes?.numero,
           amostraPeriodoHora: ultimaAnalise.amostra_detalhes?.periodo_hora,
           amostraPeriodoTurno: ultimaAnalise.amostra_detalhes?.periodo_turno,
           amostraRepresentatividadeLote: ultimaAnalise.amostra_detalhes?.representatividade_lote,
           amostraStatus: ultimaAnalise.amostra_detalhes?.status,
           amostraSubtipo: ultimaAnalise.amostra_detalhes?.subtipo,
-          amostraTipoAmostra: ultimaAnalise.amostra_detalhes?.tipo_amostra,
+          amostraTipoAmostra: ultimaAnalise.amostra_detalhes?.tipo_amostra_detalhes?.nome,
+          amostraNatureza: ultimaAnalise.amostra_detalhes?.tipo_amostra_detalhes?.natureza,
           amostraTipoAmostragem: ultimaAnalise.amostra_detalhes?.tipo_amostragem,
+          amostraProdutoAmostra: ultimaAnalise.amostra_detalhes?.produto_amostra_detalhes?.nome,
+          amostraRegistroEmpresa:ultimaAnalise.amostra_detalhes?.produto_amostra_detalhes?.registro_empresa,
+          amostraRegistroProduto: ultimaAnalise.amostra_detalhes?.produto_amostra_detalhes?.registro_produto,
           estado: ultimaAnalise.estado,
           ordemNumero: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.numero,
           ordemClassificacao: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.classificacao,
@@ -806,6 +813,50 @@ calcularTodosCalculosDoPlano(plano: any) {
   if (plano && plano.calculo_ensaio_detalhes) {
     plano.calculo_ensaio_detalhes.forEach((calc: any) => this.calcular(calc, plano));
   }
+}
+
+salvarAnaliseResultados() {
+  // Monte os arrays de ensaios e cálculos a partir dos dados do seu formulário ou do seu objeto de análise
+  const ensaios = this.analisesSimplificadas[0].planoDetalhes
+    .flatMap((plano: { ensaio_detalhes: any[]; }) => plano.ensaio_detalhes?.map(ensaio => ({
+      ensaios: ensaio.id, // id do ensaio (ForeignKey)// valor inputado
+      valores: ensaio.valor // ou outro campo se houver resultado diferente
+    })) || []);
+
+  const calculos = this.analisesSimplificadas[0].planoDetalhes
+    .flatMap((plano: { calculo_ensaio_detalhes: any[]; }) => plano.calculo_ensaio_detalhes?.map(calc => ({
+      calculos: calc.descricao, // ou calc.id se for ForeignKey
+      valores: calc.valor, // se quiser enviar algum valor extra
+      resultados: calc.resultado
+    })) || []);
+
+  const idAnalise = this.idUltimaAanalise;
+  console.log('ID da análise:', idAnalise);
+  const payload = {
+    estado: 'PENDENTE',
+    ensaios: ensaios,
+    calculos: calculos
+  };
+
+  this.analiseService.registerAnaliseResultados(idAnalise, payload).subscribe({
+    next: () => {
+      this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Análise registrada com sucesso.' });
+      this.activeStep = 4; // Avança para o próximo passo
+      this.loadUltimaAnalise();
+    },
+    error: (err) => {
+      console.error('Erro ao registrar análise:', err);
+      if (err.status === 401) {
+        this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+      } else if (err.status === 403) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+      } else if (err.status === 400) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+      } else {
+        this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+      }
+    }
+  });
 }
 
 

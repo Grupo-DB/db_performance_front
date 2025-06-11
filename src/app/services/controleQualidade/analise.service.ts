@@ -22,6 +22,10 @@ export class AnaliseService {
   registerAnalise(amostra: any, estado: string){
     return this.httpClient.post<Analise>(this.analiseUrl, { amostra: amostra, estado: estado });
   }
+  registerAnaliseResultados(id: number, payload: Partial<Analise>): Observable<any> {
+    const url = `${this.analiseUrl}${id}/`;
+    return this.httpClient.patch<any>(url, payload);
+  }
   deleteAnalise(id: number): Observable<any>{
     const url = `${this.analiseUrl}${id}/`;
     return this.httpClient.delete(url);

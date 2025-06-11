@@ -188,3 +188,7 @@
     bottom: 0;
     z-index: 10;
   }
+  :host ::ng-deep .p-fieldset-legend {
+    background-color: #444959;
+    color: #fff;
+  }

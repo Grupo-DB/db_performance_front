@@ -468,14 +468,60 @@
                 </p-step-panel>        
                 <p-step-panel [value]="3">
                     <ng-template #content let-activateCallback="activateCallback">
-                        <div class="containder">
-                            <div>
-                                <p><b>Data de Entrada:</b> {{ analisesSimplificadas[0].amostraDataEntrada }}</p>
-                                <p><b>Material:</b> {{ analisesSimplificadas[0].amostraMaterial }}</p>
-                                <p><b>Número da Ordem:</b> {{ analisesSimplificadas[0].ordemNumero }}</p>
+                        <div class="container">
+                            <div class="w-12">
+                            <p-fieldset>
+                                <ng-template #header>
+                                    <div class="flex flex-row justify-content-between gap-2 px-2">
+                                        <span class="font-bold">Amostra</span>
+                                        <span 
+                                            class="font-bold"
+                                        >
+                                            OS N°: {{ analisesSimplificadas[0].ordemNumero }}
+                                        </span>
+                                    </div>
+                                </ng-template>
+                                <div class="flex flex-column w-12 lg:flex-row">
+                                    <div class="text-left w-4 ">    
+                                        <p><b>Data de Coleta:</b> {{ analisesSimplificadas[0].amostraDataColeta }}</p>
+                                        <p><b>Classificação:</b> {{ analisesSimplificadas[0].ordemClassificacao }}</p>
+                                        <p><b>Digitador:</b> {{ analisesSimplificadas[0].amostraDigitador }}</p>
+                                    </div>
+                                    <div class="text-left w-4 ">    
+                                        <p><b>Data de Entrada:</b> {{ analisesSimplificadas[0].amostraDataEntrada }}</p>
+                                        <p><b>Material:</b> {{ analisesSimplificadas[0].amostraMaterial }}</p>
+                                        <p><b>Número da Ordem:</b> {{ analisesSimplificadas[0].ordemNumero }}</p>
+                                    </div>
+                                    <div class="text-left w-4 ">    
+                                        <p><b>Produto da Amostra:</b> {{ analisesSimplificadas[0].amostraProdutoAmostra }}</p>
+                                        <p><b>Registro de Empresa:</b> {{ analisesSimplificadas[0].amostraRegistroEmpresa }}</p>
+                                        <p><b>Registro de Produto:</b> {{ analisesSimplificadas[0].amostraRegistroProduto }}</p>
+                                    </div>
+                                    <div class="text-left w-4 ">    
+                                        <p><b>Número:</b> {{ analisesSimplificadas[0].amostraNumero }}</p>
+                                        <p><b>Representatividade Lote:</b> {{ analisesSimplificadas[0].amostraRepresentatividadeLote }}</p>
+                                        <p><b>Subtipo:</b> {{ analisesSimplificadas[0].amostraSubtipo }}</p>
+                                    </div>
+                                    <div class="text-left w-4 ">    
+                                        <p><b>Período Hora:</b> {{ analisesSimplificadas[0].amostraPeriodoHora }}</p>
+                                        <p><b>Período Turno:</b> {{ analisesSimplificadas[0].amostraPeriodoTurno }}</p>
+                                        <p><b>Local de Coleta:</b> {{ analisesSimplificadas[0].amostraLocalColeta }}</p>
+                                    </div>
+                                    <div class="text-left w-4 ">    
+                                        <p><b>Complemento:</b> {{ analisesSimplificadas[0].amostraComplemento }}</p>
+                                        <p><b>Identificação Complementar:</b> {{ analisesSimplificadas[0].amostraIdentificacaoComplementar }}</p>
+                                        <p><b>Fornecedor:</b> {{ analisesSimplificadas[0].amostraFornecedor }}</p>
+                                    </div>
+                                    <div class="text-left w-4 ">    
+                                        <p><b>Tipo de Amostra:</b> {{ analisesSimplificadas[0].amostraTipoAmostra }}</p>
+                                        <p><b>Natureza:</b> {{ analisesSimplificadas[0].amostraNatureza }}</p>
+                                        <p><b>Status:</b> {{ analisesSimplificadas[0].estado }}</p>
+                                    </div>
+                                </div>        
+                            </p-fieldset>
                             </div>    
 
-                            <p-table 
+                            <!-- <p-table 
                                 [value]="analisesSimplificadas"
                                 [paginator]="true"
                                 [rows]="10"
@@ -489,7 +535,7 @@
                                 
                                 <ng-template #header let-columns>
                                     <tr>
-                                        <th>Code</th>
+                                        
                                         <th *ngFor="let col of columns">
                                             {{ col.header }}
                                         </th>
@@ -539,7 +585,111 @@
                                     </tr>
                                 </ng-template>
                                 
-                            </p-table>    
+                            </p-table>     -->
+
+                            <!-- Para cada plano -->
+                            <div *ngFor="let plano of analisesSimplificadas[0].planoDetalhes">
+                            <h3>{{ plano.descricao }}</h3>
+
+                            <!-- Tabela para cada ensaio fixo (fora dos cálculos) -->
+                            <ng-container *ngFor="let ensaio of plano.ensaio_detalhes">
+                                <h4>Ensaio: {{ ensaio.descricao }}</h4>
+                                <p-table [value]="[ensaio]">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                    <th>Responsável</th>
+                                    <th>Tempo Previsto</th>
+                                    <th>Tipo</th>
+                                    <th>Valor</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-e>
+                                    <tr>
+                                    <td>
+                                        <div class="form2 w-10 mb-3 mt-3 text-left">
+                                            <p-floatLabel variant="on"> 
+                                                <p-select
+                                                    inputId="float-label"
+                                                    [style]="{'width':'100%'}"
+                                                    [options]="responsaveis" 
+                                                    formControlName="responsavel"
+                                                    optionLabel="value"
+                                                    optionValue="value"
+                                                    appendTo="body"
+                                                    [filter]="true" 
+                                                    filterBy="value"
+                                                    [showClear]="true"
+                                                    
+                                                >
+                                                </p-select>
+                                                <label for="float-label">Selecione o Responsável</label>
+                                            </p-floatLabel> 
+                                        </div> 
+                                    </td>
+                                    <td>{{ e.tempo_previsto }}</td>
+                                    <td>{{ e.tipo_ensaio_detalhes?.nome }}</td>
+                                    <td>
+                                        <input type="number" [(ngModel)]="e.valor" style="width: 80px;" />
+                                    </td>
+                                    </tr>
+                                </ng-template>
+                                </p-table>
+                            </ng-container>
+
+                            <!-- Tabela para cada cálculo (com seus ensaios) -->
+                            <ng-container *ngFor="let calc of plano.calculo_ensaio_detalhes">
+                                <h4>Cálculo: {{ calc.descricao }}</h4>
+                                <p-table [value]="calc.ensaios_detalhes">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                    <th>Ensaio</th>
+                                    <th>Responsável</th>
+                                    <th>Tempo Previsto</th>
+                                    <th>Tipo</th>
+                                    <th>Valor</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-ensaio>
+                                    <tr>
+                                    <td>{{ ensaio.descricao }}</td>
+                                    <td>
+                                        <div class="form2 w-10 mb-3 mt-3 text-left">
+                                            <p-floatLabel variant="on"> 
+                                                <p-select
+                                                    inputId="float-label"
+                                                    [style]="{'width':'100%'}"
+                                                    [options]="responsaveis" 
+                                                    formControlName="responsavel"
+                                                    optionLabel="value"
+                                                    optionValue="value"
+                                                    appendTo="body"
+                                                    [filter]="true" 
+                                                    filterBy="value"
+                                                    [showClear]="true"
+                                                    
+                                                >
+                                                </p-select>
+                                                <label for="float-label">Selecione o Responsável</label>
+                                            </p-floatLabel> 
+                                        </div> 
+                                    </td>
+                                    <td>{{ ensaio.tempo_previsto }}</td>
+                                    <td>{{ ensaio.tipo_ensaio_detalhes?.nome }}</td>
+                                    <td>
+                                        <input type="number" [(ngModel)]="ensaio.valor" (ngModelChange)="calcular(calc, plano)" style="width: 80px;" />
+                                    </td>
+                                    </tr>
+                                </ng-template>
+                                </p-table>
+                                <div *ngIf="calc.resultado !== undefined">
+                                <b>Resultado:</b> {{ calc.resultado }}
+                                </div>
+                            </ng-container>
+                            </div>
+
+                            <p-button label="Salvar Resultados" icon="pi pi-check" iconPos="right" (onClick)="salvarAnaliseResultados()" />
+
+
                             <div class="flex pt-6 justify-between">
                                 <p-button label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(2)" />
                             </div>

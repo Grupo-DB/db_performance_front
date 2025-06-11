@@ -423,33 +423,43 @@ export class PprOrcamentoComponent implements OnInit {
       this.bonus = {
         despesasAdm: this.indices2.despesasAdm >= 0 
           ? '100' 
-          : this.indices2.despesasAdm <= -0.15 
-            ? '0' 
+          : this.indices2.despesasAdm <= -15
+            ? '0'
+            : this.indices2.despesasAdm <= -0.15 
+            ? (100 + this.indices2.despesasAdm).toFixed(2) 
             : ((1 - (parseFloat(this.indices2.despesasAdm))) / (-0.15)),
 
         variavelMatriz: this.indices2.variavelMatriz >= 0 
           ? '100' 
-          : this.indices2.variavelMatriz <= -0.15 
-            ? '0' 
+          : this.indices2.variavelMatriz <= -15
+            ? '0'
+            : this.indices2.variavelMatriz <= -0.15 
+            ? (100 + this.indices2.variavelMatriz).toFixed(2) 
             : ((1 - (parseFloat(this.indices2.variavelMatriz))) / (-0.15)),
 
         fixoMatriz: this.indices2.fixoMatriz >= 0 
           ? '100' 
+          : this.indices2.fixoMatriz <= -15
+          ? '0'    
           : this.indices2.fixoMatriz <= -0.15 
-            ? '0' 
+            ? (100 + this.indices2.fixoMatriz).toFixed(2)
             : ((1 - (parseFloat(this.indices2.fixoMatriz))) / (-0.15)),
-
+        
         variavelAtm: this.indices2.variavelAtm >= 0 
           ? '100' 
-          : this.indices2.variavelAtm <= -0.15 
-            ? '0' 
+          : this.indices2.variavelAtm <= -15
+            ? '0'
+            : this.indices2.variavelAtm <= -0.15  
+            ? (100 + this.indices2.variavelAtm).toFixed(2) 
             : ((1 - (parseFloat(this.indices2.variavelAtm))) / (-0.15)),    
         
         fixoAtm: this.indices2.fixoAtm >= 0 
           ? '100' 
-          : this.indices2.fixoAtm <= -0.15 
-            ? '0' 
-            : ((1 - (parseFloat(this.indices2.fixoAtm))) / (-0.15)),          
+          : this.indices2.fixoAtm <= -15 
+            ? '0'
+            : this.indices2.fixoAtm <= -0.15 
+              ? (100 + this.indices2.fixoAtm).toFixed(2) 
+              : ((1 - (parseFloat(this.indices2.fixoAtm))) / (-0.15)),          
       };
 
       this.valorBonus = {
