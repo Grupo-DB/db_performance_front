@@ -1,10 +1,10 @@
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 import { CommonModule, DatePipe, formatDate } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
-import { MessageService, ConfirmationService } from 'primeng/api';
+import { MessageService, ConfirmationService, MenuItem } from 'primeng/api';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -22,7 +22,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -40,7 +40,9 @@ import { Colaborador } from '../../avaliacoes/colaborador/colaborador.component'
 import { ColaboradorService } from '../../../services/avaliacoesServices/colaboradores/registercolaborador.service';
 import { AnaliseService } from '../../../services/controleQualidade/analise.service';
 import { FieldsetModule } from 'primeng/fieldset';
-
+import { MenuModule } from 'primeng/menu';
+import { SplitButtonModule } from 'primeng/splitbutton';
+import { SpeedDial, SpeedDialModule } from 'primeng/speeddial';
 interface AmostraForm{
   dataColeta: FormControl,
   dataEntrada: FormControl,
@@ -113,7 +115,7 @@ interface Column {
     FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,
     ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,IconField,
     InputNumberModule,AutoCompleteModule,MultiSelectModule,DatePickerModule,StepperModule,
-    InputIcon,FieldsetModule
+    InputIcon,FieldsetModule,MenuModule,SplitButtonModule,DrawerModule,SpeedDialModule
   ],
   animations:[
     trigger('efeitoFade',[
@@ -180,6 +182,13 @@ activeStep: number = 1;
 analisesSimplificadas: any[] = [];
 digitador: any;
 idUltimaAanalise: any;
+responsavelEnsaio: any;
+responsavelCalculo: any;
+@ViewChild('dt1') dt1!: Table;
+inputValue: string = '';
+
+modalVisualizar: boolean = false;
+
 fornecedores = [
   { id: 0, nome:'Cibracal' },
   { id: 1, nome:'Cliente' },
@@ -255,7 +264,9 @@ responsaveis = [
     { value: 'Camila Vitoria Carneiro Alves Santos'},
   ]
   analises: any;
-planoCalculos: any;
+  planoCalculos: any;
+  items: MenuItem[] | undefined;
+  analiseSelecionada: any;
   
 constructor(
     private messageService: MessageService,
@@ -298,7 +309,13 @@ constructor(
     digitador: new FormControl('',[Validators.required]),
     classificacao: new FormControl('',[Validators.required])
   });
-
+  // this.items = [
+  //   {
+  //     label:'Visualizar',
+  //     icon:'pi pi-eye',
+  //     command: () => this.visualizar()
+  // }];
+ 
 }
   hasGroup(groups: string[]): boolean {
     return this.loginService.hasAnyGroup(groups);
@@ -349,22 +366,50 @@ constructor(
     // Inicializa as colunas selecionadas com todas as colunas
     this.selectedColumns = this.cols;// Copia todas as colunas para a seleção inicial
   
-  
+  }
+
+
+  clear(table: Table) {
+    table.clear();
+  }
+  filterTable() {
+    this.dt1.filterGlobal(this.inputValue,'contains');
+  }
+  clearForm(){
+    this.registerForm.reset();
+  }
+  clearEditForm(){
+    //this.editForm.reset();
   }
 
   getDigitadorInfo(): void {
-    this.colaboradorService.getColaboradorInfo().subscribe(
-      data => {
-        this.digitador = data.nome;
-        this.registerOrdemForm.get('digitador')?.setValue(data.nome);
-        this.registerForm.get('digitador')?.setValue(data.nome);
-      },
-      error => {
-        console.error('Erro ao obter informações do colaborador:', error);
-        this.digitador = null; // Garanta que digitador seja null em caso de erro
-      }
-    );
-  }
+  this.colaboradorService.getColaboradorInfo().subscribe(
+    data => {
+      this.digitador = data.nome;
+      this.registerOrdemForm.get('digitador')?.setValue(data.nome);
+      this.registerForm.get('digitador')?.setValue(data.nome);
+
+      // Preencher o campo digitador em todos os ensaios já carregados
+      this.analisesSimplificadas[0].planoDetalhes.forEach((plano: any) => {
+        plano.ensaio_detalhes?.forEach((ensaio: any) => {
+          ensaio.digitador = this.digitador;
+          console.log('Digitador do ensaio:', ensaio.digitador);
+        });
+        plano.calculo_ensaio_detalhes?.forEach((calc: any) => {
+          calc.digitador = this.digitador;
+          // Se quiser mostrar também nos ensaios de cálculo:
+          calc.ensaios_detalhes?.forEach((calc: any) => {
+            calc.digitador = this.digitador;
+          });
+        });
+      });
+    },
+    error => {
+      console.error('Erro ao obter informações do colaborador:', error);
+      this.digitador = null;
+    }
+  );
+}
 
   loadPlanosAnalise() {
     this.ensaioService.getPlanoAnalise().subscribe(
@@ -447,7 +492,31 @@ onCamposRelevantesChange() {
   }
 }
 
+getMenuItems(analise: any) {
+  return [
+    { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(analise) },
+    { label: 'Abrir OS', icon: 'pi pi-folder-open', command: () => this.abrirOS(analise) },
+    { label: 'Editar', icon: 'pi pi-pencil', command: () => this.editar(analise) },
+    { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluir(analise) }
+  ];
+}
 
+
+
+visualizar(analise: any) {
+  this.analiseSelecionada = analise;
+  this.modalVisualizar = true;
+  console.log('Drawer deve abrir', analise); // Adicione para depuração
+}
+abrirOS(analise: any) {
+  // lógica para abrir OS
+}
+editar(analise: any) {
+  // lógica para editar
+}
+excluir(analise: any) {
+  // lógica para excluir
+}
 
   exibirRepresentatividadeLote(): boolean {
   const materialId = this.registerForm.get('material')?.value;
@@ -689,6 +758,7 @@ loadAnalises(){
 }
 
 loadUltimaAnalise(){
+  this.getDigitadorInfo();
   this.analiseService.getAnalises().subscribe(
     response => {
       if (response && response.length > 0) {
@@ -816,19 +886,46 @@ calcularTodosCalculosDoPlano(plano: any) {
 }
 
 salvarAnaliseResultados() {
+  this.getDigitadorInfo();
   // Monte os arrays de ensaios e cálculos a partir dos dados do seu formulário ou do seu objeto de análise
   const ensaios = this.analisesSimplificadas[0].planoDetalhes
-    .flatMap((plano: { ensaio_detalhes: any[]; }) => plano.ensaio_detalhes?.map(ensaio => ({
-      ensaios: ensaio.id, // id do ensaio (ForeignKey)// valor inputado
-      valores: ensaio.valor // ou outro campo se houver resultado diferente
-    })) || []);
+  .flatMap((plano: { ensaio_detalhes: any[]; }) =>
+    plano.ensaio_detalhes?.map((ensaio: any) => ({
+      id: ensaio.id,
+      descricao: ensaio.descricao,
+      valores: ensaio.valor,
+      responsavel: ensaio.responsavel,
+      digitador: this.digitador,
+      tempo_previsto: ensaio.tempo_previsto,
+      tipo: ensaio.tipo_ensaio_detalhes?.nome,
+      ensaios_utilizados: plano.ensaio_detalhes?.map((e: any) => ({
+        id: e.id,
+        descricao: e.descricao,
+        valor: e.valor
+      }))
+    })) || []
+  );
+
+ 
 
   const calculos = this.analisesSimplificadas[0].planoDetalhes
-    .flatMap((plano: { calculo_ensaio_detalhes: any[]; }) => plano.calculo_ensaio_detalhes?.map(calc => ({
-      calculos: calc.descricao, // ou calc.id se for ForeignKey
-      valores: calc.valor, // se quiser enviar algum valor extra
-      resultados: calc.resultado
-    })) || []);
+  .flatMap((plano: { calculo_ensaio_detalhes: any[]; }) =>
+    plano.calculo_ensaio_detalhes?.map(calc => ({
+      calculos: calc.descricao,
+      valores: calc.ensaios_detalhes?.map((e: any) => e.valor), // array dos valores dos ensaios usados
+      resultados: calc.resultado,
+      responsavel: calc.responsavel,
+      digitador: this.digitador,
+      ensaios_utilizados: calc.ensaios_detalhes?.map((e: any) => ({
+        id: e.id,
+        descricao: e.descricao,
+        valor: e.valor
+      }))
+    })) || []
+  );
+
+
+
 
   const idAnalise = this.idUltimaAanalise;
   console.log('ID da análise:', idAnalise);
