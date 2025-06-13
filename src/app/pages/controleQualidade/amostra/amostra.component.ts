@@ -43,6 +43,8 @@ import { FieldsetModule } from 'primeng/fieldset';
 import { MenuModule } from 'primeng/menu';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { SpeedDial, SpeedDialModule } from 'primeng/speeddial';
+import { Ordem } from '../ordem/ordem.component';
+import { Analise } from '../analise/analise.component';
 interface AmostraForm{
   dataColeta: FormControl,
   dataEntrada: FormControl,
@@ -170,13 +172,15 @@ export class AmostraComponent implements OnInit {
 
 cols!: Column[];
 selectedColumns!: Column[];  
-
+amostras: Amostra[] = [];
 registerForm!: FormGroup<AmostraForm>;
 registerOrdemForm!: FormGroup<OrdemForm>;
 materiais: Produto[] = [];
 tiposAmostra: TipoAmostra[] = [];
 produtosAmostra: ProdutoAmostra[] = [];
 planosAnalise: Plano[] = [];
+ordens: Ordem[] = [];
+analises:Analise[] = [];
 producaoLote: any = null;
 activeStep: number = 1;
 analisesSimplificadas: any[] = [];
@@ -263,10 +267,11 @@ responsaveis = [
     { value: 'David Weslei Sprada'},
     { value: 'Camila Vitoria Carneiro Alves Santos'},
   ]
-  analises: any;
+  //analises: any;
   planoCalculos: any;
   items: MenuItem[] | undefined;
   analiseSelecionada: any;
+  amostraSelecionada: any;
   
 constructor(
     private messageService: MessageService,
@@ -326,7 +331,8 @@ constructor(
     this.loadProdutosAmostra();
     this.loadPlanosAnalise();
     this.getDigitadorInfo();
-    this.loadAnalises();
+    //this.loadAnalises();
+    this.loadAmostras();
     this.cd.markForCheck();
     //número da OS
     this.ordemService.getProximoNumero().subscribe(numero => {
@@ -366,6 +372,30 @@ constructor(
     // Inicializa as colunas selecionadas com todas as colunas
     this.selectedColumns = this.cols;// Copia todas as colunas para a seleção inicial
   
+  }
+
+  loadAmostras(): void {
+    this.amostraService.getAmostras().subscribe(
+      response => {
+        this.amostras = response;
+        console.log('Amostras carregadas:', this.amostras);
+      },
+      error => {
+        console.error('Erro ao carregar amostras:', error);
+      }
+    );
+  }
+
+  loadOrdens(): void{
+    this.ordemService.getOrdens().subscribe(
+      response => {
+        this.ordens = response;
+        console.log('Ordens carregadas:', this.ordens);
+      },
+      error => {
+        console.error('Erro ao carregar ordens:', error);
+      }
+    );
   }
 
 
@@ -492,29 +522,30 @@ onCamposRelevantesChange() {
   }
 }
 
-getMenuItems(analise: any) {
+getMenuItems(amostra: any) {
   return [
-    { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(analise) },
-    { label: 'Abrir OS', icon: 'pi pi-folder-open', command: () => this.abrirOS(analise) },
-    { label: 'Editar', icon: 'pi pi-pencil', command: () => this.editar(analise) },
-    { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluir(analise) }
+    { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(amostra) },
+    { label: 'Abrir OS', icon: 'pi pi-folder-open', command: () => this.abrirOS(amostra) },
+    { label: 'Editar', icon: 'pi pi-pencil', command: () => this.editar(amostra) },
+    { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluir(amostra) }
   ];
 }
 
 
 
-visualizar(analise: any) {
-  this.analiseSelecionada = analise;
+visualizar(amostra: any) {
+  this.amostraSelecionada = amostra;
   this.modalVisualizar = true;
-  console.log('Drawer deve abrir', analise); // Adicione para depuração
+  console.log('Drawer deve abrir', amostra); // Adicione para depuração
 }
-abrirOS(analise: any) {
-  // lógica para abrir OS
+abrirOS(amostra: any) {
+  this.amostraSelecionada = amostra;
+  this.activeStep = 2;
 }
-editar(analise: any) {
+editar(amostra: any) {
   // lógica para editar
 }
-excluir(analise: any) {
+excluir(amostra: any) {
   // lógica para excluir
 }
 
@@ -670,6 +701,29 @@ montarAnalise(){
 }
 
 salvarOrdemEAmostra() {
+  // Se houver uma análise selecionada, preencha o formulário de amostra com seus dados
+  if (this.amostraSelecionada ) {
+    const a = this.amostraSelecionada;
+    this.registerForm.patchValue({
+      dataColeta: a.data_coleta ? new Date(a.data_coleta) : '',
+      dataEntrada: a.data_entrada ? new Date(a.data_entrada) : '',
+      material: a.material_detalhes?.id || '',
+      numero: a.numero || '',
+      tipoAmostra: a.tipo_amostra_detalhes?.id || '',
+      subtipo: a.subtipo || '',
+      produtoAmostra: a.produto_amostra_detalhes?.id || '',
+      periodoHora: a.periodo_hora || '',
+      periodoTurno: a.periodo_turno || '',
+      tipoAmostragem: a.tipo_amostragem || '',
+      localColeta: a.local_coleta || '',
+      representatividadeLote: a.representatividade_lote || '',
+      identificacaoComplementar: a.identificacao_complementar || '',
+      complemento: a.complemento || '',
+      digitador: a.digitador || '',
+      status: a.status || ''
+    });
+  }
+
   // 1. Formate a data da ordem
   let dataFormatada = '';
   const dataValue = this.registerOrdemForm.value.data;
