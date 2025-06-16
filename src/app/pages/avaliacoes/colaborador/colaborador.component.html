@@ -1,6 +1,6 @@
-<div class="container">
+<div class="container block">
 
-    <div class="titulo2 mt-6 mb-6 text-2xl">
+    <div class="titulo mt-6 mb-6 text-2xl">
         <p-divider align="left" type="solid">
             <b>Cadastro de Colaboradores</b>
         </p-divider>
@@ -15,8 +15,6 @@
     >
 
         <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation>
-
-
             <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
                 <div class="form1 w-10 ">
                     <p-floatlabel variant="on">
@@ -417,7 +415,7 @@
     </form>
 
 
-    <div class="botoes-form m-5 "@efeitoFade>
+    <div class="botoes-form flex md:flex-row sm:flex-row align-items-center justify-content-center m-5"@efeitoFade>
         <p-toast></p-toast>
             <div class="btnsec" (click)="clearForm()">
                 <p>Limpar</p>
