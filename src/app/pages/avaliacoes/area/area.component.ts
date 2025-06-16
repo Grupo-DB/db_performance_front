@@ -197,7 +197,7 @@ export class AreaComponent implements OnInit {
    onEmpresaSelecionada(empresa: any): void {
     const id = empresa.id;
     if (id !== undefined) {
-      console.log('Empresa selecionada ID:', id); // Log para depuração
+      console.log('Empresa selecionada ID:', id); 
       this.empresaSelecionadaId = id;
       this.filiaisByEmpresa();
     } else {
@@ -209,7 +209,7 @@ export class AreaComponent implements OnInit {
     if (this.empresaSelecionadaId !== null) {
       this.filialService.getFiliaisByEmpresa(this.empresaSelecionadaId).subscribe(data => {
         this.filiais = data;
-        console.log('Filiais carregadas:', this.filiais); // Log para depuração
+        console.log('Filiais carregadas:', this.filiais); 
       });
     }
   } 
@@ -260,8 +260,8 @@ saveEdit() {
     next: () => {
       this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Área atualizada com sucesso!' });
       setTimeout(() => {
-        window.location.reload(); // Atualiza a página após a exclusão
-      }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+        window.location.reload(); 
+      }, 1000); 
     },
     error: (err) => {
       console.error('Login error:', err); 
@@ -295,8 +295,8 @@ excluirArea(id: number) {
         next: () => {
           this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Área excluída com sucesso!!', life: 1000 });
           setTimeout(() => {
-            window.location.reload(); // Atualiza a página após a exclusão
-          }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+            window.location.reload(); 
+          }, 1000); 
         },
         error: (err) => {
           if (err.status === 403) {
@@ -322,8 +322,8 @@ excluirArea(id: number) {
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Área registrada com sucesso!' });
         setTimeout(() => {
-          window.location.reload(); // Atualiza a página após o registro
-        }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+          window.location.reload(); 
+        }, 1000); 
       },
       error: (err) => {
         console.error('Login error:', err); 

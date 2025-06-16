@@ -140,7 +140,7 @@ export class AmbienteComponent implements OnInit {
   {
     this.registerambienteForm = new FormGroup({
       empresa: new FormControl('',[Validators.required]),
-      filial: new FormControl({ value: '', disabled: true }),  // FormControl desabilitado inicialmente
+      filial: new FormControl({ value: '', disabled: true }),  
       area: new FormControl({ value: '', disabled: true }),
       setor: new FormControl({ value: '', disabled: true }),
       nome: new FormControl('',[Validators.required, Validators.minLength(3)]),
@@ -270,7 +270,7 @@ export class AmbienteComponent implements OnInit {
   onEmpresaSelecionada(empresa: any): void {
     const id = empresa.id;
     if (id !== undefined) {
-      console.log('Empresa selecionada ID:', id); // Log para depuração
+      console.log('Empresa selecionada ID:', id); 
       this.empresaSelecionadaId = id;
       this.filiaisByEmpresa();
     } else {
@@ -289,14 +289,14 @@ export class AmbienteComponent implements OnInit {
         if (filialControl) {
           filialControl.enable();
         }
-        console.log('Filiais carregadas:', this.filiais); // Log para depuração
+        console.log('Filiais carregadas:', this.filiais); 
       });
     }
   } 
   onFilialSelecionada(filial: any): void {
     const id = filial.id;
     if (id !== undefined) {
-      console.log('Filial selecionada ID:', id); // Log para depuração
+      console.log('Filial selecionada ID:', id); 
       this.filialSelecionadaId = id;
       this.areasByFilial();
     } else {
@@ -314,14 +314,14 @@ export class AmbienteComponent implements OnInit {
         if (areaControl) {
           areaControl.enable();
         }
-        console.log('Areas carregadas:', this.areas); // Log para depuração
+        console.log('Areas carregadas:', this.areas); 
       });
     }
   } 
   onAreaSelecionada(area: any): void {
     const id = area.id;
     if (id !== undefined) {
-      console.log('Area selecionada ID:', id); // Log para depuração
+      console.log('Area selecionada ID:', id); 
       this.areaSelecionadaId = id;
       this.setoresByArea();
     } else {
@@ -339,7 +339,7 @@ export class AmbienteComponent implements OnInit {
         if (setorControl) {
           setorControl.enable();
         }
-        console.log('Setores carregadas:', this.areas); // Log para depuração
+        console.log('Setores carregadas:', this.areas); 
       });
     }
   }
@@ -387,8 +387,8 @@ export class AmbienteComponent implements OnInit {
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Setor atualizado com sucesso!' });
         setTimeout(() => {
-         window.location.reload(); // Atualiza a página após a exclusão
-        }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+         window.location.reload(); 
+        }, 1000); 
       },
       error: (err) => {
         console.error('Login error:', err); 
@@ -422,8 +422,8 @@ export class AmbienteComponent implements OnInit {
           next: () => {
             this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Ambiente excluído com sucesso!!', life: 1000 });
             setTimeout(() => {
-              window.location.reload(); // Atualiza a página após a exclusão
-            }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+              window.location.reload(); 
+            }, 1000); 
           },
           error: (err) => {
             if (err.status === 403) {
@@ -452,8 +452,8 @@ export class AmbienteComponent implements OnInit {
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Setor registrado com sucesso!' });
         setTimeout(() => {
-          window.location.reload(); // Atualiza a página após o registro
-        }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+          window.location.reload(); 
+        }, 1000); 
       },
       error: (err) => {
         console.error('Login error:', err); 

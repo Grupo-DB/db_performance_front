@@ -93,7 +93,7 @@ export class AvaliadoComponent implements OnInit {
         console.error('Error fetching users:', error);
       }
     );
-    //this.carregarAvaliadores();
+    
 
     
     this.formularioService.getFormularios().subscribe(
@@ -117,32 +117,32 @@ export class AvaliadoComponent implements OnInit {
   this.dt1.filterGlobal(this.inputValue, 'contains');
   }
 
-  // carregarAvaliadores() {
-  //   this.getavaliadorService.getAvaliadores().subscribe(
-  //     (data: any[]) => {
-  //       this.avaliadores = data;
-  //     },
-  //     error => {
-  //       console.error('Erro ao carregar avaliadores:', error);
-  //     }
-  //   );
-  // }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
-  // onChangeAvaliador(idAvaliador: number) {
-  //   if (idAvaliador) {
-  //     this.getavaliadorService.getNomeColaborador(idAvaliador).subscribe(
-  //       (colaborador: any) => {
-  //         const nomeColaborador = colaborador.nome;  // Supondo que o nome está em 'nome'
-  //         this.registeravaliadoForm.patchValue({ avaliador: nomeColaborador });
-  //       },
-  //       error => {
-  //         console.error('Erro ao obter nome do colaborador:', error);
-  //       }
-  //     );
-  //   } else {
-  //     this.registeravaliadoForm.patchValue({ avaliador: '' });
-  //   }
-  // }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
   submit(){
     const colaboradorId = this.registeravaliadoForm.value.colaborador.id;

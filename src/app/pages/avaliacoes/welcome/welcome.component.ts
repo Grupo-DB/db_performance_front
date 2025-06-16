@@ -19,7 +19,7 @@ import { FilialService } from '../../../services/avaliacoesServices/filiais/regi
 import { Empresa } from '../registercompany/registercompany.component';
 import { Filial } from '../filial/filial.component';
 import { UserService } from '../../../services/avaliacoesServices/users/user.service';
-import { FormsModule } from '@angular/forms'; // Import FormsModule
+import { FormsModule } from '@angular/forms'; 
 import { NotificacoesService } from '../../../services/avaliacoesServices/notifications/notificacoes.service'; 
 import { ButtonModule } from 'primeng/button';
 
@@ -70,14 +70,14 @@ export class WelcomeComponent implements OnInit,OnDestroy  {
       empresas => {
         this.empresas = empresas;
         setTimeout(() => {
-          this.isLoading = false; // Defina como false após o tempo de atraso
-        }, 1200); // Tempo de atraso em milissegundos (2 segundos)
+          this.isLoading = false; 
+        }, 1200); 
       },
       error => {
         console.error('Error fetching users:',error);
         setTimeout(() => {
-          this.isLoading = false; // Defina como false após o tempo de atraso
-        }, 1200); // Tempo de atraso em milissegundos (2 segundos)
+          this.isLoading = false; 
+        }, 1200); 
       }
     );
 
@@ -112,7 +112,7 @@ export class WelcomeComponent implements OnInit,OnDestroy  {
   startClock(): void {
     this.intervalId = setInterval(() => {
       this.hoje = Date.now();
-    }, 1000); // Atualiza a cada segundo
+    }, 1000); 
   }
 
 
@@ -175,7 +175,7 @@ export class WelcomeComponent implements OnInit,OnDestroy  {
       },
       error => {
         console.error('Erro ao obter informações do colaborador:', error);
-        this.colaborador = null; // Garanta que avaliador seja null em caso de erro
+        this.colaborador = null; 
       }
     );
   }
