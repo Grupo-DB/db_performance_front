@@ -15,89 +15,89 @@
           <img style="width: 100px;" src="/assets/imagens/logonomemanager.png" alt="logo">
         </a>
       </div>
-      <ul nz-menu style="background-color:#444959;"  nzMode="inline" [nzInlineCollapsed]="isCollapsed">               
-        <li *ngIf="hasGroup(['Admin','Master','RHGestor','OrcamentoGestorSetor','GestorOperacoes','OrcamentoGestorItens'])" nz-submenu  style="background-color: #444959; width: 100%;"   nzTitle="Corporativo" nzIcon="global">
-          <ul>
-              <li nz-submenu  style="background-color: #3a3e4c;"  nzTitle="Cadastros" nzIcon="appstore-add">
-                <ul>
+      <ul nz-menu style="background-color:#4c5264;"  nzMode="inline" [nzInlineCollapsed]="isCollapsed">               
+        <li *ngIf="hasGroup(['Admin','Master','RHGestor','OrcamentoGestorSetor','GestorOperacoes','OrcamentoGestorItens'])" nz-submenu style="width: 100%;" nzTitle="Corporativo" nzIcon="global">
+          <ul class="cor-menu">
+              <li class="cor-menu" nz-submenu nzTitle="Cadastros" nzIcon="appstore-add">
+                <ul class="cor-menu">
                   <li style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
-                    <a routerLink="registercompany">Empresas</a>
+                    <a class="cor-menu-a" routerLink="registercompany">Empresas</a>
                   </li>
                   <li style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
-                    <a routerLink="filial">Filiais</a>
+                    <a class="cor-menu-a" routerLink="filial">Filiais</a>
                   </li>
                   <li style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
-                    <a routerLink="area">Áreas</a>
+                    <a class="cor-menu-a" routerLink="area">Áreas</a>
                   </li>
                   <li style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
-                    <a routerLink="setor">Ambientes</a>
+                    <a class="cor-menu-a" routerLink="setor">Ambientes</a>
                   </li>
                   <li style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
-                    <a routerLink="ambiente">Setores</a>
+                    <a class="cor-menu-a" routerLink="ambiente">Setores</a>
                   </li>
                   <li style="margin-bottom: 0;" nz-menu-item nzMatchRouter>
-                    <a routerLink="cargo">Cargos</a>
+                    <a class="cor-menu-a" routerLink="cargo">Cargos</a>
                   </li>
                 </ul>
               </li>        
           </ul>
           <ul>
-            <li *ngIf="hasGroup(['Admin','Master','RHGestor','OrcamentoGestorSetor','OrcamentoGestorItens'])" nz-submenu style="background-color: #3a3e4c;"  nzTitle="Plan. Estratégico" nzIcon="project">
-              <ul>
-                <li *ngIf="hasGroup(['Admin','Master'])" nz-submenu  style="background-color: #3a3e4c;"  nzTitle="Cadastros" nzIcon="appstore-add">
-                    <ul>
-                      <li style="margin-bottom: 0;" nz-menu-item  nzMatchRouter>
-                        <a routerLink="/welcome/baseOrcamentaria/dre/produto">Linha de Produtos</a>
-                      </li>
-                      <li style="margin-bottom: 0;" nz-menu-item  nzMatchRouter>
-                        <a routerLink="/welcome/baseOrcamentaria/dre/projecao"> Projeções de Vendas</a>
-                      </li>
-                      <li style="margin-bottom: 0;" nz-menu-item  nzMatchRouter>
-                        <a routerLink="/welcome/baseOrcamentaria/dre/custoproducao">Projeções de Produção</a>
-                      </li>
-                    </ul>
-                  </li>
+            <li *ngIf="hasGroup(['Admin','Master','RHGestor','OrcamentoGestorSetor','OrcamentoGestorItens'])" nz-submenu style="background-color: #4c5264;" nzTitle="Plan. Estratégico" nzIcon="project" class="cor-menu">
+              <ul class="cor-menu">
+                <li class="cor-menu" *ngIf="hasGroup(['Admin','Master'])" nz-submenu  style="background-color: #4c5264;"  nzTitle="Cadastros" nzIcon="appstore-add">
+                  <ul class="cor-menu">
+                    <li style="margin-bottom: 0;" nz-menu-item  nzMatchRouter>
+                      <a class="cor-menu-a" routerLink="/welcome/baseOrcamentaria/dre/produto">Linha de Produtos</a>
+                    </li>
+                    <li style="margin-bottom: 0;" nz-menu-item  nzMatchRouter>
+                      <a class="cor-menu-a" routerLink="/welcome/baseOrcamentaria/dre/projecao"> Projeções de Vendas</a>
+                    </li>
+                    <li style="margin-bottom: 0;" nz-menu-item  nzMatchRouter>
+                      <a class="cor-menu-a" routerLink="/welcome/baseOrcamentaria/dre/custoproducao">Projeções de Produção</a>
+                    </li>
+                  </ul>
+                </li>
               </ul>
               <ul>
-                <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorSetor','OrcamentoGestorItens'])" nz-menu-item   nzMatchRouter style="background-color: #3a3e4c;">
-                  <a routerLink="baseOrcamentaria/orcamentoBase/homeOrcamento" ><span nz-icon nzType="dollar" nzTheme="outline" ></span>  Orçamento</a>
+                <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorSetor','OrcamentoGestorItens'])" nz-menu-item nzMatchRouter style="background-color: #4c5264;">
+                  <a class="cor-menu-a" routerLink="baseOrcamentaria/orcamentoBase/homeOrcamento" ><span nz-icon nzType="dollar" nzTheme="outline" ></span>  Orçamento</a>
                 </li> 
               </ul>
           </li>
           </ul> 
           <ul>
-            <li *ngIf="hasGroup(['Admin'])" nz-menu-item   nzMatchRouter>
-              <a href="http://172.50.10.79:8008/admin/" target="_blank"><span nz-icon nzType="user" nzTheme="outline"></span>  Admin</a>
+            <li class="cor-menu" *ngIf="hasGroup(['Admin'])" nz-menu-item   nzMatchRouter>
+              <a class="cor-menu-a" href="http://172.50.10.79:8008/admin/" target="_blank"><span nz-icon nzType="user" nzTheme="outline"></span>  Admin</a>
             </li> 
           </ul>
         </li>
         
-        <li *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" nz-submenu style="background-color: #444959;"  nzTitle="Gestão de Pessoas" nzIcon="team">
+        <li class="cor-menu" *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" nz-submenu style="background-color: #4c5264;"  nzTitle="Gestão de Pessoas" nzIcon="team">
           <ul>
-            <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item   nzMatchRouter>
-              <a routerLink="colaborador" ><span nz-icon nzType="user" nzTheme="outline"></span> Colaboradores</a>
+            <li class="cor-menu" *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item nzMatchRouter>
+              <a class="cor-menu-a" routerLink="colaborador" ><span nz-icon nzType="user" nzTheme="outline"></span> Colaboradores</a>
             </li> 
           </ul>
           <ul>
-            <li *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" nz-menu-item nzMatchRouter>
-              <a routerLink="dashboard" ><span nz-icon nzType="audit" nzTheme="outline"></span> Avaliação de Funcionários</a>
+            <li class="cor-menu" *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" nz-menu-item nzMatchRouter>
+              <a class="cor-menu-a" routerLink="dashboard" ><span nz-icon nzType="audit" nzTheme="outline"></span> Avaliação de Funcionários</a>
             </li> 
           </ul>
         </li>
-        <li *ngIf="hasGroup(['Admin','Master','GestorOperacoes'])" nz-submenu style="background-color: #444959;"  nzTitle="Gestão Operacional" nzIcon="bar-chart">
+        <li class="cor-menu" *ngIf="hasGroup(['Admin','Master','GestorOperacoes'])" nz-submenu style="background-color: #4c5264;" nzTitle="Gestão Operacional" nzIcon="bar-chart">
           <ul>
-            <li *ngIf="hasGroup(['Admin','Master','GestorOperacoes'])" nz-menu-item   nzMatchRouter>
-              <a routerLink="homeoperacoes"><span nz-icon nzType="line-chart" nzTheme="outline"></span> Painel Operacional</a>
+            <li class="cor-menu" *ngIf="hasGroup(['Admin','Master','GestorOperacoes'])" nz-menu-item   nzMatchRouter>
+              <a class="cor-menu-a" routerLink="homeoperacoes"><span nz-icon nzType="line-chart" nzTheme="outline"></span> Painel Operacional</a>
             </li> 
           </ul>
           <ul>
-            <li *ngIf="hasGroup(['Admin','Master','GestorOperacoes'])" nz-menu-item   nzMatchRouter>
-              <a href="https://app.powerbi.com/reportEmbed?reportId=db000524-b09b-4a62-9284-5b02d8a4bceb&autoAuth=true&ctid=6411a146-b3ce-405e-9f45-6a52f518d922&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly93YWJpLWJyYXppbC1zb3V0aC1yZWRpcmVjdC5hbmFseXNpcy53aW5kb3dzLm5ldC8ifQ%3D%3D" target="_blank" ><span nz-icon nzType="dot-chart" nzTheme="outline"></span> BI - Produção</a>
+            <li class="cor-menu" *ngIf="hasGroup(['Admin','Master','GestorOperacoes'])" nz-menu-item   nzMatchRouter>
+              <a class="cor-menu-a" href="https://app.powerbi.com/reportEmbed?reportId=db000524-b09b-4a62-9284-5b02d8a4bceb&autoAuth=true&ctid=6411a146-b3ce-405e-9f45-6a52f518d922&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly93YWJpLWJyYXppbC1zb3V0aC1yZWRpcmVjdC5hbmFseXNpcy53aW5kb3dzLm5ldC8ifQ%3D%3D" target="_blank" ><span nz-icon nzType="dot-chart" nzTheme="outline"></span> BI - Produção</a>
             </li> 
           </ul>
           <ul>
-            <li *ngIf="hasGroup(['Admin','Master','LabOperacoes','LabMaster'])" nz-menu-item   nzMatchRouter nzIcon="Experiment">
-              <a routerLink="/welcome/controleQualidade/dashControle"><span nz-icon nzType="experiment" nzTheme="outline"></span> Controle de Qualidade</a>
+            <li class="cor-menu" *ngIf="hasGroup(['Admin','Master','LabOperacoes','LabMaster'])" nz-menu-item   nzMatchRouter nzIcon="Experiment">
+              <a class="cor-menu-a" routerLink="/welcome/controleQualidade/dashControle"><span nz-icon nzType="experiment" nzTheme="outline"></span> Controle de Qualidade</a>
             </li>
           </ul>
         </li>
