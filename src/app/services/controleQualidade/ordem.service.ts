@@ -7,7 +7,7 @@ import { Ordem } from '../../pages/controleQualidade/ordem/ordem.component';
   providedIn: 'root'
 })
 export class OrdemService {
-  private ordemUrl = 'http://172.50.10.79:8008/ordem/ordem/';
+  private ordemUrl = 'http://localhost:8000/ordem/ordem/';
 
   constructor(
     private httpClient: HttpClient

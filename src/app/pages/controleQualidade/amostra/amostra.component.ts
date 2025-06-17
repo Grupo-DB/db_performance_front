@@ -45,6 +45,7 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 import { SpeedDial, SpeedDialModule } from 'primeng/speeddial';
 import { Ordem } from '../ordem/ordem.component';
 import { Analise } from '../analise/analise.component';
+import { evaluate } from 'mathjs';
 interface AmostraForm{
   dataColeta: FormControl,
   dataEntrada: FormControl,
@@ -522,15 +523,24 @@ onCamposRelevantesChange() {
   }
 }
 
-getMenuItems(amostra: any) {
+getMenuItems(analise: any) {
   return [
-    { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(amostra) },
-    { label: 'Abrir OS', icon: 'pi pi-folder-open', command: () => this.abrirOS(amostra) },
-    { label: 'Editar', icon: 'pi pi-pencil', command: () => this.editar(amostra) },
-    { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluir(amostra) }
+    { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(analise) },
+    { label: 'Abrir OS', icon: 'pi pi-folder-open', command: () => this.abrirOS(analise) },
+    { label: 'Editar', icon: 'pi pi-pencil', command: () => this.editar(analise) },
+    { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluir(analise) },
+    {
+      label: 'Link Externo',
+      icon: 'pi pi-link',
+      //routerLink: ['/welcome/controleQualidade/analise', analise.id]
+      command: () => window.open(`/welcome/controleQualidade/analise`)
+    }
   ];
 }
 
+irLinkExterno(analise: any) {
+  window.open(`/welcome/controleQualidade/analise`, analise.id);
+}
 
 
 visualizar(amostra: any) {
@@ -878,17 +888,24 @@ calcular(calc: any, produto?: any) {
     calc.resultado = 'Sem ensaios para calcular';
     return;
   }
-  let funcaoSubstituida = this.normalize(calc.funcao);
-  calc.ensaios_detalhes.forEach((ensaio: any) => {
-    const valor = ensaio.valor !== undefined && ensaio.valor !== null ? Number(ensaio.valor) : 0;
-    funcaoSubstituida = funcaoSubstituida.replace(
-      new RegExp('\\b' + this.normalize(ensaio.descricao) + '\\b', 'g'),
-      String(valor)
-    );
-  });
-  console.log('Função final para eval:', funcaoSubstituida);
+
+  // 1. Descubra todos os varX usados na expressão
+  const varMatches = (calc.funcao.match(/var\d+/g) || []);
+  const varList = Array.from(new Set(varMatches));
+
+  // 2. Monte safeVars usando o valor correto para cada varX
+  const safeVars: any = {};
+
+  // Aqui, você precisa mapear var6 -> PNquimica %, var9 -> RE (reativ) %
+  // Se não tem esse mapeamento salvo, faça manualmente:
+  // Exemplo: supondo que ensaios_detalhes[0] é var6 e ensaios_detalhes[1] é var9
+  safeVars['var6'] = calc.ensaios_detalhes[0]?.valor ?? 0;
+  safeVars['var9'] = calc.ensaios_detalhes[1]?.valor ?? 0;
+
+  // 3. Avalie usando mathjs
+  console.log('Função final para eval:', calc.funcao, safeVars);
   try {
-    calc.resultado = eval(funcaoSubstituida);
+    calc.resultado = evaluate(calc.funcao, safeVars);
   } catch (e) {
     calc.resultado = 'Erro no cálculo';
   }

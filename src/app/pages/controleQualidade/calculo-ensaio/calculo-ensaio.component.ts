@@ -120,6 +120,10 @@ export class CalculoEnsaioComponent implements OnInit {
   inputValue: string = '';
   @ViewChild('autoComp') autoComp!: AutoComplete;
 
+
+  safeVars: any = {};
+  nameMap: any = {};
+
   responsaveis = [
     { value: 'Antonio Carlos Vargas Sito' },
     { value: 'Fabiula Bueno' },
@@ -184,6 +188,7 @@ export class CalculoEnsaioComponent implements OnInit {
 
   elementos: any[] = [];
   editarFormulaVisivel: boolean = false;
+  resultados: { ensaioId: number, valor: number }[] = [];
 
   @HostListener('document:keydown.insert', ['$event'])
   handleInsertShortcut(event: KeyboardEvent) {
@@ -242,6 +247,9 @@ export class CalculoEnsaioComponent implements OnInit {
    
   }
   
+
+// Gera nomes seguros
+
   getValoresPorTipo(tipo: string): any[] {
     switch (tipo) {
       case 'Ensaio': return this.ensaios.map(e => ({ label: e.descricao, value: e.descricao }));
@@ -275,12 +283,57 @@ export class CalculoEnsaioComponent implements OnInit {
     );
   }
 
-  getExpressaoString() {
-    return this.expressaoDinamica
-      .map(b => b.valor)
-      .filter(v => !!v)
-      .join(' ');
+gerarNomesSegurosComValoresAtuais() {
+  this.safeVars = {};
+  this.nameMap = {};
+  this.ensaios.forEach((ensaio: any, i: number) => {
+    const safeName = 'var' + i;
+    // Busca o valor digitado para este ensaio
+    const resultado = this.resultados.find(r => r.ensaioId === ensaio.id);
+    this.safeVars[safeName] = resultado ? resultado.valor : 0;
+    this.nameMap[ensaio.descricao] = safeName;
+  });
+}
+
+// Monta a expressão substituindo nomes de ensaio por nomes seguros
+getExpressaoString() {
+  this.gerarNomesSegurosComValoresAtuais();
+  return this.expressaoDinamica
+    .map(b => {
+      if (b.tipo === 'Ensaio' && b.valor !== undefined && this.nameMap[b.valor]) {
+        return this.nameMap[b.valor];
+      }
+      return b.valor;
+    })
+    .filter(v => !!v)
+    .join(' ');
+}
+
+converterExpressaoParaNomes(expr: string): string {
+  // Inverte o nameMap para buscar pelo valor
+  const reverseMap = Object.fromEntries(
+    Object.entries(this.nameMap).map(([k, v]) => [v, k])
+  );
+  // Substitui todos os varX pelo nome do ensaio
+  return expr.replace(/var\d+/g, (match) => reverseMap[match] || match);
+}
+// Avalia a expressão usando math.js e os valores dos ensaios
+avaliarExpressao() {
+  const expressao = this.registerForm.get('funcao')?.value;
+  this.gerarNomesSegurosComValoresAtuais(); // <-- agora pega os valores digitados
+  try {
+    const resultado = evaluate(expressao, this.safeVars);
+    return resultado;
+  } catch (e) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Erro ao calcular',
+      detail: 'Expressão inválida ou erro de cálculo.',
+      life: 5000
+    });
+    return null;
   }
+}
 
   addEnsaio(event: any) {
     const variavel = event.descricao;
@@ -325,14 +378,14 @@ export class CalculoEnsaioComponent implements OnInit {
     this.montarFormulaVisivel = true
   }
   editarFormula(){
-    // Converta a string da função em blocos para edição
+    // Converte a string da função em blocos para edição
   const funcao = this.editForm.get('funcao')?.value || '';
-  this.expressaoDinamica = this.converterFuncaoParaBlocos(funcao);
+  const funcaoComNomes = this.converterExpressaoParaNomes(funcao);
+  this.expressaoDinamica = this.converterFuncaoParaBlocos(funcaoComNomes);
   this.editarFormulaVisivel = true;
   }
-
-  converterFuncaoParaBlocos(funcao: string): { tipo: string, valor: string }[] {
-  // Exemplo simples: separa por espaço
+// O método converterFuncaoParaBlocos pode ficar igual, pois agora recebe nomes de ensaio
+converterFuncaoParaBlocos(funcao: string): { tipo: string, valor: string }[] {
   const tokens = funcao.split(' ');
   return tokens.map(token => {
     if (['+', '-', '*', '/'].includes(token)) {
@@ -506,13 +559,21 @@ salvarFormulaEditada() {
     this.editForm.reset();
   }
 
- validarExpressaoComValores(expr: string): boolean {
+// Valida a expressão substituindo variáveis seguras por 1
+validarExpressaoComValores(expr: string): boolean {
   try {
-    // Substitui todas as variáveis (inclusive acentuadas) por 1
-    let fakeExpr = expr.replace(/\p{L}[\p{L}0-9_]*/gu, '1');
-    // Remove espaços duplicados
+    // Gere nomes seguros e substitua na expressão
+    this.gerarNomesSegurosComValoresAtuais();
+    let exprSegura = expr;
+    Object.keys(this.nameMap).forEach(origName => {
+      // Substitui todas as ocorrências do nome original por nome seguro
+      const regex = new RegExp(origName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+      exprSegura = exprSegura.replace(regex, this.nameMap[origName]);
+    });
+
+    // Agora substitua nomes seguros por 1
+    let fakeExpr = exprSegura.replace(/var\d+/g, '1');
     fakeExpr = fakeExpr.replace(/\s+/g, ' ');
-    // Remove espaços entre números (ex: "1 1" -> "1")
     fakeExpr = fakeExpr.replace(/1\s+1/g, '1');
     console.log('Expressão para validação:', fakeExpr);
     evaluate(fakeExpr);
@@ -537,7 +598,7 @@ salvarFormulaEditada() {
 private atualizarEnsaiosDoForm() {
   const descricoes = this.ensaios.map(e => e.descricao);
 
-  // Pegue os ensaios usados na expressão, sem duplicatas
+  // Pegua os ensaios usados na expressão, sem duplicatas
   const usados = this.expressaoDinamica
     .filter(b => b.tipo === 'Ensaio' && descricoes.includes(b.valor || ''))
     .map(b => b.valor)

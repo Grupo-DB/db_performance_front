@@ -7,13 +7,17 @@ import { Analise } from '../../pages/controleQualidade/analise/analise.component
   providedIn: 'root'
 })
 export class AnaliseService {
-  private analiseUrl = 'http://172.50.10.79:8008/analise/analise/';
+  private analiseUrl = 'http://localhost:8000/analise/analise/';
   constructor(
     private httpClient: HttpClient
   ) { }
 
   getAnalises(): Observable<any>{
     return this.httpClient.get<any[]>(this.analiseUrl);   
+  }
+  getAnaliseById(id: number): Observable<Analise> {
+    const url = `${this.analiseUrl}${id}/`;
+    return this.httpClient.get<Analise>(url);
   }
   editAnalise(id: number, dadosAtualizados: Partial<Analise>): Observable<any>{
     const url = `${this.analiseUrl}${id}/`;
