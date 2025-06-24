@@ -34,17 +34,7 @@ import { DividerModule } from 'primeng/divider';
 export class LoginComponent {
   loginForm!: FormGroup;
   toastrService: any;
-  modalVisible: boolean = false;
   @ViewChild('emailInput') emailInput!: ElementRef;
-
-  openModal(): void {
-    this.modalVisible = true;
-
-    // Aguarde o modal ser exibido antes de definir o foco
-    setTimeout(() => {
-      this.emailInput.nativeElement.focus();
-    }, 0);
-  }
 
   constructor(
     private router: Router,
@@ -58,6 +48,10 @@ export class LoginComponent {
   }
   clearForm() {
     this.loginForm.reset();
+    // Foca novamente no nome do usuário
+    setTimeout(() => {
+      this.emailInput.nativeElement.focus();
+    }, 0);
   }
 
   submit() {
