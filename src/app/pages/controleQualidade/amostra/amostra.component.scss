@@ -195,6 +195,11 @@
 
 
 :host ::ng-deep {
+    .p-speeddial-action{ 
+        background-color: #444959 !important;
+        color: white !important;
+    }
+ 
     .speeddial-linear-demo {
         .p-speeddial-direction-up {
             left: calc(50% - 2rem);
