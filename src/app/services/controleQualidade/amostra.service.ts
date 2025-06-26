@@ -9,11 +9,11 @@ import { Amostra } from '../../pages/controleQualidade/amostra/amostra.component
   providedIn: 'root'
 })
 export class AmostraService {
-  private tipoAmostraUrl = 'http://172.50.10.79:8008/amostra/tipoAmostra/';
-  private amostraUrl = 'http://172.50.10.79:8008/amostra/amostra/';
-  private produtoUrl = 'http://172.50.10.79:8008/amostra/produto/';
-  private sequencialUrl = 'http://172.50.10.79:8008/amostra/amostra/proximo-sequencial/';
-  private representatividadeUrl = 'http://172.50.10.79:8008/cal/representatividade/';
+  private tipoAmostraUrl = 'http://localhost:8000/amostra/tipoAmostra/';
+  private amostraUrl = 'http://localhost:8000/amostra/amostra/';
+  private produtoUrl = 'http://localhost:8000/amostra/produto/';
+  private sequencialUrl = 'http://localhost:8000/amostra/amostra/proximo-sequencial/';
+  private representatividadeUrl = 'http://localhost:8000/cal/representatividade/';
   
   constructor(
     private http: HttpClient

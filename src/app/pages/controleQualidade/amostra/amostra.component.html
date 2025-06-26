@@ -663,14 +663,17 @@
                                             <td style="vertical-align: middle;">
                                                 <div style="display: flex; justify-content: end; align-items: center; height: 60px;">
                                                     <div style="position: relative;">
-                                                    <p-speeddial 
-                                                        [model]="getMenuItems(analise)"
-                                                        [radius]="90"
-                                                        type="quarter-circle" 
-                                                        direction="up-left" 
-                                                        [style]="{ position: 'absolute', top: 'calc(50% - 1rem)', right: 0 }" 
-                                                        [buttonProps]="{ severity: 'info', rounded: true }" 
-                                                    />
+                                                        <p-speeddial 
+                                                            [model]="getMenuItems(analise)"
+                                                            [radius]="90"
+                                                            type="quarter-circle" 
+                                                            direction="up-left" 
+                                                            [style]="{ position: 'absolute', top: 'calc(50% - 1rem)', right: 0 }" 
+                                                            [buttonProps]="{ severity: 'info', rounded: true }" 
+                                                        />
+                                                    </div>
+                                                    <div class="class">
+                                                        <a [routerLink]="['/welcome/controleQualidade/analise', analise.id]">Link</a>
                                                     </div>
                                                 </div>
                                             </td>
@@ -929,7 +932,7 @@
 
 <p-drawer header="Visualizar Amostra" [(visible)]="modalVisualizar" position="full">
   <div *ngIf="amostraSelecionada">
-    <p><b>Número:</b> {{ amostraSelecionada.numero }}</p>
+    <p><b>Número:</b> {{ amostraSelecionada.amostra_detalhes.numero }}</p>
     <!-- Outros campos -->
   </div>
 </p-drawer>

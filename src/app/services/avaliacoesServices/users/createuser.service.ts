@@ -13,7 +13,7 @@ import { LoginService } from '../login/login.service';
 
 
 export class CreateuserService {
-  private apiUrl = 'http://172.50.10.79:8008/management/create_user/';
+  private apiUrl = 'http://localhost:8000/management/create_user/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
   
