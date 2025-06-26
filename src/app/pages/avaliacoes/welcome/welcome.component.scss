@@ -72,9 +72,6 @@ nz-header {
   background: #E3E7EC;
   box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
 }
-
-
-
 .app-header .inicio {
   display: flex;
   position: absolute;
@@ -93,6 +90,13 @@ nz-header {
     font-size: 12px;
     background-color: #4c5264;
   }
+}
+
+.app-header .btn-menu {
+  font-size: 25px;
+  padding-left: 15px;
+  cursor: pointer;
+
 }
 
 .app-header .top {
@@ -175,6 +179,11 @@ nz-sider {
   .app-header .header-trigger {
     display: none;
   }
+
+  .app-header .btn-menu {
+    display: none;
+  }
+
   .app-header .inicio
   .app-header .inicio .divnot{
     font-size: 12px;
@@ -191,9 +200,18 @@ nz-sider {
   }
   .app-header .final .empresa{
    display: none;
-}
+  }
+
   .app-header .final .btn{
     margin-top: -50px;
     margin-left: 400px;
   }
 } 
+ .cor-menu {
+    background-color: #4c5264;
+    color: #e0ede9;
+  }
+
+  .cor-menu-a {
+    color: #e0ede9;
+  }

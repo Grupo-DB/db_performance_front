@@ -8,8 +8,13 @@
     background-size: cover; /* Ajusta a imagem para cobrir todo o container */
     background-position: center; /* Centraliza a imagem */
     background-repeat: no-repeat; /* Evita repetição da imagem */
-    height: 100vh;
-    //opacity: 0.9; 
+    height: 100rem;
+    //opacity: 0.9;
+    
+    @media only screen and (max-width: 1500px) {
+        height: auto;
+        padding-left: 64px !important;
+    }
 }
 
 .login {
@@ -110,6 +115,11 @@
     border-radius: 10px;
     color: #ffffff;
     font-size: 18px;
+
+    @media only screen and (max-width: 1500px) {
+       margin-left: 3px !important;
+       padding-top: 4px !important;
+    }
 }
 .lgimg2 {
     display: flex;
@@ -130,6 +140,11 @@
     
 }
 .painel{
-   vertical-align: middle;
-   display: flex;
+    vertical-align: middle;
+    display: flex;
+    height: fit-content;
+
+    @media only screen and (max-width: 1500px) {
+       margin-top: 4px !important;
+    }
 }

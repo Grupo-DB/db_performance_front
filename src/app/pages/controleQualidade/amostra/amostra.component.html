@@ -445,24 +445,21 @@
                                             <td style="vertical-align: middle;">
                                                 <div style="display: flex; justify-content: end; align-items: center; height: 60px;">
                                                     <div style="position: relative;">
-                                                    <p-speeddial 
-                                                        [model]="getMenuItems(amostra)"
-                                                        [radius]="90"
-                                                        type="quarter-circle" 
-                                                        direction="up-left" 
-                                                        [style]="{ position: 'absolute', top: 'calc(50% - 1rem)', right: 0 }" 
-                                                        [buttonProps]="{ severity: 'info', rounded: true }" 
-                                                    />
+                                                        <p-speeddial 
+                                                            showIcon="pi pi-bars" hideIcon="pi pi-times"
+                                                            [model]="getMenuItems(amostra)"
+                                                            [radius]="80"
+                                                            direction="left" 
+                                                            [style]="{ position: 'absolute', top: 'calc(50% - 1rem)', right: 0 }" 
+                                                            [buttonProps]="{ severity: 'info', rounded: true }" 
+                                                            [tooltipOptions]="{ tooltipPosition: 'left' }"
+                                                            />
                                                     </div>
                                                 </div>
                                             </td>
                                         </tr>
                                     </ng-template>
-
-
                                 </p-table>   
-   
-
                             </div>
                         </div>
                         
