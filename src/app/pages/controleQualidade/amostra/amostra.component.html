@@ -442,7 +442,7 @@
                                             <!-- <td style="text-align: center;">{{ analise.amostra_detalhes.subtipo }}</td> -->
                                             <td style="text-align: center;">{{ amostra.status }}</td>
                                             <td style="text-align: center;">{{ amostra.local_coleta }}</td>
-                                            <td style="vertical-align: middle;">
+                                            <td style="vertical-align: middle; text-align: center;">
                                                 <div style="display: flex; justify-content: end; align-items: center; height: 60px;">
                                                     <div style="position: relative;">
                                                         <p-speeddial 
@@ -450,8 +450,8 @@
                                                             [model]="getMenuItems(amostra)"
                                                             [radius]="80"
                                                             direction="left" 
-                                                            [style]="{ position: 'absolute', top: 'calc(50% - 1rem)', right: 0 }" 
-                                                            [buttonProps]="{ severity: 'info', rounded: true }" 
+                                                            [style]="{ position: 'absolute', top: 'calc(0% - 1rem)', right: 0 }" 
+                                                            [buttonProps]="{ severity: 'info', rounded: true }"
                                                             [tooltipOptions]="{ tooltipPosition: 'left' }"
                                                             />
                                                     </div>
@@ -660,20 +660,22 @@
                                             <td style="text-align: center;">{{ analise.amostra_detalhes.fornecedor }}</td>
                                             <td style="text-align: center;">{{ analise.amostra_detalhes.numero }}</td>
                                             
-                                            <td style="vertical-align: middle;">
+                                            <td style="vertical-align: middle; text-align: center;">
                                                 <div style="display: flex; justify-content: end; align-items: center; height: 60px;">
                                                     <div style="position: relative;">
                                                         <p-speeddial 
                                                             [model]="getMenuItems(analise)"
                                                             [radius]="90"
-                                                            type="quarter-circle" 
-                                                            direction="up-left" 
-                                                            [style]="{ position: 'absolute', top: 'calc(50% - 1rem)', right: 0 }" 
-                                                            [buttonProps]="{ severity: 'info', rounded: true }" 
+                                                            direction="left" 
+                                                            [style]="{ position: 'relative', top: 'calc(50% - 1rem)', right: 0 }" 
+                                                            [buttonProps]="{ severity: 'info', rounded: true }"
+                                                            showIcon="pi pi-bars" hideIcon="pi pi-times"
                                                         />
                                                     </div>
-                                                    <div class="class">
-                                                        <a [routerLink]="['/welcome/controleQualidade/analise', analise.id]">Link</a>
+                                                    <div style="position: relative;">
+                                                        <a type="button" class="ml-2" [routerLink]="['/welcome/controleQualidade/analise', analise.id]">
+                                                            <p-button icon="pi pi-book" [rounded]="true"/>
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </td>
