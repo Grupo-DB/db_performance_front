@@ -150,7 +150,7 @@ export class CalculoEnsaioComponent implements OnInit {
   ];
   condicionais = [
     { label: 'condição verdadeira', value: '?' },
-    { label: 'se não', value: ':' },
+    { label: 'condição falsa', value: ':' },
     
   ];
   delimitadores = [
@@ -286,8 +286,8 @@ export class CalculoEnsaioComponent implements OnInit {
 gerarNomesSegurosComValoresAtuais() {
   this.safeVars = {};
   this.nameMap = {};
-  this.ensaios.forEach((ensaio: any, i: number) => {
-    const safeName = 'var' + i;
+  this.ensaios.forEach((ensaio: any) => {
+    const safeName = ensaio.variavel; // Usa o campo variavel do ensaio
     // Busca o valor digitado para este ensaio
     const resultado = this.resultados.find(r => r.ensaioId === ensaio.id);
     this.safeVars[safeName] = resultado ? resultado.valor : 0;
@@ -295,7 +295,8 @@ gerarNomesSegurosComValoresAtuais() {
   });
 }
 
-// Monta a expressão substituindo nomes de ensaio por nomes seguros
+
+
 getExpressaoString() {
   this.gerarNomesSegurosComValoresAtuais();
   return this.expressaoDinamica
@@ -310,17 +311,17 @@ getExpressaoString() {
 }
 
 converterExpressaoParaNomes(expr: string): string {
-  // Inverte o nameMap para buscar pelo valor
+ 
   const reverseMap = Object.fromEntries(
     Object.entries(this.nameMap).map(([k, v]) => [v, k])
   );
-  // Substitui todos os varX pelo nome do ensaio
+  
   return expr.replace(/var\d+/g, (match) => reverseMap[match] || match);
 }
 // Avalia a expressão usando math.js e os valores dos ensaios
 avaliarExpressao() {
   const expressao = this.registerForm.get('funcao')?.value;
-  this.gerarNomesSegurosComValoresAtuais(); // <-- agora pega os valores digitados
+  this.gerarNomesSegurosComValoresAtuais();
   try {
     const resultado = evaluate(expressao, this.safeVars);
     return resultado;

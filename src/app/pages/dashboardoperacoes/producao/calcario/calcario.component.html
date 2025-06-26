@@ -7,7 +7,7 @@
     <div class="rows"@swipeAnimation><!--Carregamentos-->
         <div class="row1">
             <div class="right w-12 lg:w-6">
-                <div class="titulo">
+                <div class="titulo3">
                     <span> <b> Carregamento geral</b></span><br>
                 </div>
 
@@ -46,7 +46,7 @@
         </div>
         <div class="row2 flex flex-column lg:flex-row"@efeitoFade><!--FCM1-->
             <div class="justify-content-center lg:w-12">
-                <div class="titulo">
+                <div class="titulo3">
                     <i class="pi pi-plus-circle"></i>
                     <span (click)="exibirGrafico()" style="cursor: pointer;"><b> FCMI</b></span><br>
                 </div>
@@ -90,7 +90,7 @@
             </div>
 
             <div class="tabelaProdutividade w-12 lg:w-10" *ngIf="!loading">
-                <div class="titulo">
+                <div class="titulo3">
                     <span><b>Produtividade</b></span><br>
                 </div>
                 
@@ -114,7 +114,7 @@
         </div>
         <div class="row3 flex flex-column lg:flex-row"><!--FCMII-->
             <div class="justify-content-center lg:w-12">
-                <div class="titulo">
+                <div class="titulo3">
                     <i class="pi pi-plus-circle"></i><span (click)="exibirGrafico()" style="cursor: pointer;"> <b> FCMII </b></span><br>
                 </div>
                  <!-- Indicador de carregamento -->
@@ -152,7 +152,7 @@
                 <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
             </div>
             <div class="tabelaProdutividade w-12 lg:w-10" *ngIf="!loading2">   
-                <div class="titulo">
+                <div class="titulo3">
                     <span> <b> Produtividade</b></span><br>
                 </div>
                 <p-table 
@@ -189,7 +189,7 @@
         </div>
         <div class="row4 flex flex-column lg:flex-row"@swipeAnimationReverse><!--FCMIII-->
             <div class="justify-content-center lg:w-12">
-                <div class="titulo">
+                <div class="titulo3">
                     <i class="pi pi-plus-circle"></i><span (click)="exibirGrafico()" style="cursor: pointer;"> <b> FCMIII </b></span><br>
                 </div>
                 <div *ngIf="loading3" class="loading-indicator">
@@ -226,7 +226,7 @@
                 <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
             </div>
             <div class="tabelaProdutividade w-12 lg:w-10" *ngIf="!loading3">   
-                <div class="titulo">
+                <div class="titulo3">
                     <span> <b> Produtividade</b></span><br>
                 </div>
                 <p-table 
@@ -412,7 +412,7 @@
     [(visible)]="equipamentosVisivel" 
     [style]="{ width: '95%', height: '95%' }" 
 >
-<div class="titulo">
+<div class="titulo3">
     <p-divider align="left" type="solid">
         <b>Produtividade Fábricas</b>
     </p-divider>

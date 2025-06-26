@@ -162,6 +162,7 @@ export class AnaliseComponent implements OnInit {
 
   ngOnInit(): void {
     this.analiseId = Number(this.route.snapshot.paramMap.get('id'));
+    this.getDigitadorInfo();
     this.getAnalise();
   }
 
@@ -180,33 +181,33 @@ export class AnaliseComponent implements OnInit {
     }
   }
 
-//   getDigitadorInfo(): void {
-//   this.colaboradorService.getColaboradorInfo().subscribe(
-//     data => {
-//       this.digitador = data.nome;
+  getDigitadorInfo(): void {
+  this.colaboradorService.getColaboradorInfo().subscribe(
+    data => {
+      this.digitador = data.nome;
       
 
-//       // Preencher o campo digitador em todos os ensaios já carregados
-//       this.analisesSimplificadas[0].planoDetalhes.forEach((plano: any) => {
-//         plano.ensaio_detalhes?.forEach((ensaio: any) => {
-//           ensaio.digitador = this.digitador;
-//           console.log('Digitador do ensaio:', ensaio.digitador);
-//         });
-//         plano.calculo_ensaio_detalhes?.forEach((calc: any) => {
-//           calc.digitador = this.digitador;
-//           // Se quiser mostrar também nos ensaios de cálculo:
-//           calc.ensaios_detalhes?.forEach((calc: any) => {
-//             calc.digitador = this.digitador;
-//           });
-//         });
-//       });
-//     },
-//     error => {
-//       console.error('Erro ao obter informações do colaborador:', error);
-//       this.digitador = null;
-//     }
-//   );
-// }
+      // Preencher o campo digitador em todos os ensaios já carregados
+      this.analisesSimplificadas[0].planoDetalhes.forEach((plano: any) => {
+        plano.ensaio_detalhes?.forEach((ensaio: any) => {
+          ensaio.digitador = this.digitador;
+          console.log('Digitador do ensaio:', ensaio.digitador);
+        });
+        plano.calculo_ensaio_detalhes?.forEach((calc: any) => {
+          calc.digitador = this.digitador;
+          // Se quiser mostrar também nos ensaios de cálculo:
+          calc.ensaios_detalhes?.forEach((calc: any) => {
+            calc.digitador = this.digitador;
+          });
+        });
+      });
+    },
+    error => {
+      console.error('Erro ao obter informações do colaborador:', error);
+      this.digitador = null;
+    }
+  );
+}
 
   loadPlanosAnalise() {
     this.ensaioService.getPlanoAnalise().subscribe(
@@ -230,35 +231,7 @@ export class AnaliseComponent implements OnInit {
     );
   }
 
-// onMaterialChange(materialId: number) {
-//   console.log('Material selecionado:', materialId);
-//   const material = this.materiais.find(m => m.id === materialId);
-//   if (material) {
-//     // Chama o service para buscar o próximo sequencial do backend
-//     this.amostraService.getProximoSequencial(material.id).subscribe({
-//       next: (sequencial) => {
-//         console.log('Sequencial recebido do backend:', sequencial);
-//         const numero = this.gerarNumero(material.nome, sequencial);
-//         this.registerForm.get('numero')?.setValue(numero);
-//         console.log('Número da amostra gerado:', numero);
-//       },
-//       error: (err) => {
-//         this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Não foi possível gerar o número da amostra.' });
-//       }
-//     });
-//   }
-// }
 
-  // loadTiposAmostra() {
-  //   this.amostraService.getTiposAmostra().subscribe(
-  //     response => {
-  //       this.tiposAmostra = response;
-  //     },
-  //     error => {
-  //       console.log('Erro ao carregar tipos de amostra', error);
-  //     }
-  //   );
-  // }
 
   loadProdutosAmostra(): void{
     this.amostraService.getProdutos().subscribe(
@@ -280,44 +253,12 @@ export class AnaliseComponent implements OnInit {
   return `${materialNome}${ano} ${parte1}.${parte2}`;
 }
 
-// onCamposRelevantesChange() {
-//   console.log('Campos relevantes alterados, verificando exibição de representatividade do lote...');
-//   if (this.exibirRepresentatividadeLote()) {
-//     this.consultarProducao();
-//   } else {
-//     this.registerForm.get('representatividadeLote')?.setValue('');
-//   }
-// }
 
-// getMenuItems(analise: any) {
-//   return [
-//     { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(analise) },
-//     { label: 'Abrir OS', icon: 'pi pi-folder-open', command: () => this.abrirOS(analise) },
-//     { label: 'Editar', icon: 'pi pi-pencil', command: () => this.editar(analise) },
-//     { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluir(analise) },
-//     {
-//       label: 'Link Externo',
-//       icon: 'pi pi-link',
-//       //routerLink: ['/welcome/controleQualidade/analise', analise.id]
-//       command: () => window.open(`/welcome/controleQualidade/analise`)
-//     }
-//   ];
-// }
 
 irLinkExterno(analise: any) {
   window.open(`/welcome/controleQualidade/analise`, analise.id);
 }
 
-
-// visualizar(amostra: any) {
-//   this.amostraSelecionada = amostra;
-//   this.modalVisualizar = true;
-//   console.log('Drawer deve abrir', amostra); // Adicione para depuração
-// }
-// abrirOS(amostra: any) {
-//   this.amostraSelecionada = amostra;
-//   this.activeStep = 2;
-// }
 editar(amostra: any) {
   // lógica para editar
 }
@@ -325,35 +266,6 @@ excluir(amostra: any) {
   // lógica para excluir
 }
 
-//   exibirRepresentatividadeLote(): boolean {
-//   const materialId = this.registerForm.get('material')?.value;
-//   const tipoAmostragem = this.registerForm.get('tipoAmostragem')?.value?.toLowerCase();
-//   const material = this.materiais.find(m => m.id === materialId);
-//   if (!material || !tipoAmostragem) return false;
-//   const nomeMaterial = this.normalize(material.nome);
-//   return (
-//     (nomeMaterial === 'calcario' || nomeMaterial === 'finaliza') &&
-//     tipoAmostragem === 'media'
-//   );
-// }
-
-// consultarProducao() {
-//   const materialId = this.registerForm.get('material')?.value;
-//   const dataColeta = this.registerForm.get('dataColeta')?.value;
-//   if (materialId && dataColeta) {
-//     this.amostraService.getRrepresentatividade(dataColeta).subscribe({
-//       next: (producao) => {
-//         this.producaoLote = producao; // Salva o resultado
-//         // Se quiser, pode também preencher o form:
-//         this.registerForm.get('representatividadeLote')?.setValue(producao.total);
-//       },
-//       error: () => {
-//         this.producaoLote = null;
-//         this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Não foi possível consultar a produção.' });
-//       }
-//     });
-//   }
-// }
 
 formatarDatas(obj: any) {
   for (const key in obj) {
@@ -372,9 +284,155 @@ isDate(value: string): boolean {
   return !isNaN(Date.parse(value));
 }
 
+// loadAnalisePorId(analise: any) {
+//    if (analise && analise.amostra_detalhes?.ordem_detalhes?.plano_detalhes) {
+//     console.log('Análise carregada:', analise);
+//     this.analisesSimplificadas = [{
+//       amostraDataEntrada: analise.amostra_detalhes?.data_entrada,
+//       amostraDataColeta: analise.amostra_detalhes?.data_coleta,
+//       amostraDigitador: analise.amostra_detalhes?.digitador,
+//       amostraFornecedor: analise.amostra_detalhes?.fornecedor,
+//       amostraIdentificacaoComplementar: analise.amostra_detalhes?.identificacao_complementar,
+//       amostraComplemento: analise.amostra_detalhes?.complemento,
+//       amostraLocalColeta: analise.amostra_detalhes?.local_coleta,
+//       amostraMaterial: analise.amostra_detalhes?.material_detalhes?.nome,
+//       amostraNumero: analise.amostra_detalhes?.numero,
+//       amostraPeriodoHora: analise.amostra_detalhes?.periodo_hora,
+//       amostraPeriodoTurno: analise.amostra_detalhes?.periodo_turno,
+//       amostraRepresentatividadeLote: analise.amostra_detalhes?.representatividade_lote,
+//       amostraStatus: analise.amostra_detalhes?.status,
+//       amostraSubtipo: analise.amostra_detalhes?.subtipo,
+//       amostraTipoAmostra: analise.amostra_detalhes?.tipo_amostra_detalhes?.nome,
+//       amostraNatureza: analise.amostra_detalhes?.tipo_amostra_detalhes?.natureza,
+//       amostraTipoAmostragem: analise.amostra_detalhes?.tipo_amostragem,
+//       amostraProdutoAmostra: analise.amostra_detalhes?.produto_amostra_detalhes?.nome,
+//       amostraRegistroEmpresa: analise.amostra_detalhes?.produto_amostra_detalhes?.registro_empresa,
+//       amostraRegistroProduto: analise.amostra_detalhes?.produto_amostra_detalhes?.registro_produto,
+//       estado: analise.estado,
+//       ordemNumero: analise.amostra_detalhes?.ordem_detalhes?.numero,
+//       ordemClassificacao: analise.amostra_detalhes?.ordem_detalhes?.classificacao,
+//       ordemPlanoAnalise: analise.amostra_detalhes?.ordem_detalhes?.plano_detalhes?.descricao,
+//       planoDetalhes: analise.amostra_detalhes?.ordem_detalhes?.plano_detalhes || [],
+//       planoEnsaios: analise.amostra_detalhes?.ordem_detalhes?.plano_detalhes?.ensaio_detalhes,
+//       //planoCalculos: analise.amostra_detalhes?.ordem_detalhes?.plano_detalhes?.calculo_ensaio_detalhes,
+//     }];
+//     console.log('Numero da Análise:', this.analisesSimplificadas[0].ordemNumero);
+//   } else {
+//     this.analisesSimplificadas = [];
+//   }
+// }
+
+
 loadAnalisePorId(analise: any) {
-   if (analise && analise.amostra_detalhes?.ordem_detalhes?.plano_detalhes) {
-    console.log('Análise carregada:', analise);
+  if (
+    analise && 
+    analise.amostra_detalhes?.ordem_detalhes?.plano_detalhes
+  ) {
+    const planoDetalhes = analise.amostra_detalhes.ordem_detalhes.plano_detalhes || [];
+    // Ensaios
+    // if (
+    //   analise.ultimo_ensaio && 
+    //   analise.ultimo_ensaio.ensaios_utilizados && 
+    //   planoDetalhes[0]?.ensaio_detalhes
+    // ) {
+    //   const ultimoUtilizados = analise.ultimo_ensaio.ensaios_utilizados;
+    //   planoDetalhes[0].ensaio_detalhes = planoDetalhes[0].ensaio_detalhes.map((ensaio: any) => {
+    //     const valorRecente = ultimoUtilizados.find((u: any) => String(u.id) === String(ensaio.id));
+    //     //console.log('Procurando valor para', ensaio.descricao, 'ID:', ensaio.id, 'Encontrado:', valorRecente);
+    //     return {
+    //       ...ensaio,
+    //       valor: valorRecente ? valorRecente.valor : ensaio.valor,
+    //       responsavel: valorRecente ? analise.ultimo_ensaio.responsavel : ensaio.responsavel,
+    //       digitador: valorRecente ? analise.ultimo_ensaio.digitador : ensaio.digitador || this.digitador,
+    //     };
+    //   });
+    // }
+
+    if (planoDetalhes[0]?.ensaio_detalhes) {
+  const ultimoUtilizados = analise.ultimo_ensaio?.ensaios_utilizados || [];
+  planoDetalhes[0].ensaio_detalhes = planoDetalhes[0].ensaio_detalhes.map((ensaio: any) => {
+    const valorRecente = ultimoUtilizados.find((u: any) => String(u.id) === String(ensaio.id));
+    return {
+      ...ensaio,
+      valor: valorRecente ? valorRecente.valor : ensaio.valor ?? null,
+      responsavel: valorRecente ? valorRecente.responsavel : ensaio.responsavel ?? null,
+      digitador: valorRecente ? valorRecente.digitador : ensaio.digitador || this.digitador,
+    };
+  });
+}
+
+    console.log('ultimo_calculo:', analise.ultimo_calculo);
+    console.log('ultimo_calculo.ensaios_utilizados:', analise.ultimo_calculo?.ensaios_utilizados);
+    console.log('planoDetalhes[0].calculo_ensaio_detalhes:', planoDetalhes[0]?.calculo_ensaio_detalhes);
+
+
+      // Cálculos
+// if (
+//   analise.calculos_detalhes &&
+//   planoDetalhes[0]?.calculo_ensaio_detalhes
+// ) {
+//   planoDetalhes[0].calculo_ensaio_detalhes = planoDetalhes[0].calculo_ensaio_detalhes.map((calc: any) => {
+//     // Busca o cálculo mais recente (maior id) com a mesma descrição
+//     const calcBanco = analise.calculos_detalhes
+//       .filter((c: any) => c.calculos === calc.descricao)
+//       .sort((a: any, b: any) => b.id - a.id)[0];
+
+//     const ensaiosUtilizados = calcBanco?.ensaios_utilizados || calc.ensaios_detalhes || [];
+//     calc.ensaios_detalhes = ensaiosUtilizados.map((u: any, idx: number) => {
+//       const original = (calc.ensaio_detalhes_original || calc.ensaios_detalhes || []).find((e: any) => String(e.id) === String(u.id));
+//       const responsavelObj = this.responsaveis.find(r =>
+//         r.value === u.responsavel || r.value === u.responsavel || r.value === u.responsavel
+//       );
+//       return {
+//         ...u,
+//         valor: u.valor,
+//         responsavel: responsavelObj || null,
+//         digitador: calcBanco?.digitador || this.digitador, 
+//         tempo_previsto: original?.tempo_previsto ?? null,
+//         tipo_ensaio_detalhes: original?.tipo_ensaio_detalhes ?? null,
+//         variavel: u.variavel || original?.variavel
+//       };
+//     });
+//     // O resultado do cálculo deve ser exibido no campo resultado do cálculo
+//     return {
+//       ...calc,
+//       resultado: calcBanco?.resultados ?? calc.resultado,
+//     };
+//   });
+// }
+
+if (planoDetalhes[0]?.calculo_ensaio_detalhes) {
+  const calculosDetalhes = analise.calculos_detalhes || [];
+  planoDetalhes[0].calculo_ensaio_detalhes = planoDetalhes[0].calculo_ensaio_detalhes.map((calc: any) => {
+    const calcBanco = calculosDetalhes
+      .filter((c: any) => c.calculos === calc.descricao)
+      .sort((a: any, b: any) => b.id - a.id)[0];
+
+    const ensaiosUtilizados = calcBanco?.ensaios_utilizados || calc.ensaios_detalhes || [];
+    calc.ensaios_detalhes = ensaiosUtilizados.length
+      ? ensaiosUtilizados.map((u: any) => {
+          const original = (calc.ensaio_detalhes_original || calc.ensaios_detalhes || []).find((e: any) => String(e.id) === String(u.id));
+          const responsavelObj = this.responsaveis.find(r =>
+            r.value === u.responsavel || r.value === u.responsavel || r.value === u.responsavel
+          );
+          return {
+            ...u,
+            valor: u.valor,
+            responsavel: responsavelObj || u.responsavel || null,
+            digitador: calcBanco?.digitador || this.digitador,
+            tempo_previsto: original?.tempo_previsto ?? null,
+            tipo_ensaio_detalhes: original?.tipo_ensaio_detalhes ?? null,
+            variavel: u.variavel || original?.variavel
+          };
+        })
+      : (calc.ensaios_detalhes || []);
+    return {
+      ...calc,
+      resultado: calcBanco?.resultados ?? calc.resultado,
+    };
+  });
+}
+
     this.analisesSimplificadas = [{
       amostraDataEntrada: analise.amostra_detalhes?.data_entrada,
       amostraDataColeta: analise.amostra_detalhes?.data_coleta,
@@ -399,12 +457,12 @@ loadAnalisePorId(analise: any) {
       estado: analise.estado,
       ordemNumero: analise.amostra_detalhes?.ordem_detalhes?.numero,
       ordemClassificacao: analise.amostra_detalhes?.ordem_detalhes?.classificacao,
-      ordemPlanoAnalise: analise.amostra_detalhes?.ordem_detalhes?.plano_detalhes?.descricao,
-      planoDetalhes: analise.amostra_detalhes?.ordem_detalhes?.plano_detalhes || [],
-      planoEnsaios: analise.amostra_detalhes?.ordem_detalhes?.plano_detalhes?.ensaio_detalhes,
-      //planoCalculos: analise.amostra_detalhes?.ordem_detalhes?.plano_detalhes?.calculo_ensaio_detalhes,
+      ordemPlanoAnalise: planoDetalhes[0]?.descricao,
+      planoDetalhes: planoDetalhes,
+      planoEnsaios: planoDetalhes[0]?.ensaio_detalhes,
+      planoCalculos: planoDetalhes[0]?.calculo_ensaio_detalhes,
     }];
-    console.log('Numero da Análise:', this.analisesSimplificadas[0].ordemNumero);
+    console.log('Numero da Análise:', planoDetalhes);
   } else {
     this.analisesSimplificadas = [];
   }
@@ -420,6 +478,8 @@ sincronizarValoresEnsaios(produto: any, calc: any) {
   });
 }
 
+
+
 calcular(calc: any, produto?: any) {
   if (produto) {
     this.sincronizarValoresEnsaios(produto, calc);
@@ -431,16 +491,21 @@ calcular(calc: any, produto?: any) {
 
   // 1. Descubra todos os varX usados na expressão
   const varMatches = (calc.funcao.match(/var\d+/g) || []);
-  const varList = Array.from(new Set(varMatches));
+  const varList = Array.from(new Set(varMatches)).filter((v): v is string => typeof v === 'string');
 
-  // 2. Monte safeVars usando o valor correto para cada varX
-  const safeVars: any = {};
+  // 2. Monte safeVars automaticamente
+ const safeVars: any = {};
+calc.ensaios_detalhes.forEach((ensaio: any) => {
+  if (ensaio.variavel) {
+    safeVars[ensaio.variavel] = Number(ensaio.valor) ?? 0;
+  }
+});
 
-  // Aqui, você precisa mapear var6 -> PNquimica %, var9 -> RE (reativ) %
-  // Se não tem esse mapeamento salvo, faça manualmente:
-  // Exemplo: supondo que ensaios_detalhes[0] é var6 e ensaios_detalhes[1] é var9
-  safeVars['var6'] = calc.ensaios_detalhes[0]?.valor ?? 0;
-  safeVars['var9'] = calc.ensaios_detalhes[1]?.valor ?? 0;
+  // Preenche variáveis faltantes com 0
+  
+ varList.forEach((v: string) => {
+  if (!(v in safeVars)) safeVars[v] = 0;
+});
 
   // 3. Avalie usando mathjs
   console.log('Função final para eval:', calc.funcao, safeVars);
@@ -503,10 +568,12 @@ salvarAnaliseResultados() {
 
 const ensaios = planoDetalhes.flatMap((plano: any) =>
   (plano.ensaio_detalhes || []).map((ensaio: any) => ({
-    id: ensaio.id,
+    ensaios: ensaio.id,
     descricao: ensaio.descricao,
     valores: ensaio.valor,
-    responsavel: ensaio.responsavel,
+    responsavel: typeof ensaio.responsavel === 'object' && ensaio.responsavel !== null
+      ? ensaio.responsavel.value // ou .nome
+      : ensaio.responsavel,
     digitador: this.digitador,
     tempo_previsto: ensaio.tempo_previsto,
     tipo: ensaio.tipo_ensaio_detalhes?.nome,
@@ -523,12 +590,15 @@ const calculos = planoDetalhes.flatMap((plano: any) =>
     calculos: calc.descricao,
     valores: (calc.ensaios_detalhes || []).map((e: any) => e.valor),
     resultados: calc.resultado,
-    responsavel: calc.responsavel,
     digitador: this.digitador,
     ensaios_utilizados: (calc.ensaios_detalhes || []).map((e: any) => ({
       id: e.id,
       descricao: e.descricao,
-      valor: e.valor
+      valor: e.valor,
+      variavel: e.variavel,
+      responsavel: typeof e.responsavel === 'object' && e.responsavel !== null
+        ? e.responsavel.value // ou .nome, conforme sua estrutura
+        : e.responsavel
     }))
   }))
 );
