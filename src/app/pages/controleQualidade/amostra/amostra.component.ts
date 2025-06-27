@@ -46,6 +46,8 @@ import { SpeedDial, SpeedDialModule } from 'primeng/speeddial';
 import { Ordem } from '../ordem/ordem.component';
 import { Analise } from '../analise/analise.component';
 import { evaluate } from 'mathjs';
+import { InplaceModule } from 'primeng/inplace';
+
 interface AmostraForm{
   dataColeta: FormControl,
   dataEntrada: FormControl,
@@ -118,7 +120,7 @@ interface Column {
     FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,
     ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,IconField,
     InputNumberModule,AutoCompleteModule,MultiSelectModule,DatePickerModule,StepperModule,
-    InputIcon,FieldsetModule,MenuModule,SplitButtonModule,DrawerModule,SpeedDialModule
+    InputIcon,FieldsetModule,MenuModule,SplitButtonModule,DrawerModule,SpeedDialModule, InplaceModule
   ],
   animations:[
     trigger('efeitoFade',[

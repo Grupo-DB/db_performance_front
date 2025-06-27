@@ -10,7 +10,7 @@
     margin-left: auto;
     margin-right: auto;
     border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    // box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
     .fg1{
         width: 100%;
         //margin-top: 10px;
@@ -85,7 +85,11 @@
 .tabela{
     border-radius: 10px;
     width: 100%;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+
+    border-radius: 10px;
+    margin: auto;
+
+    // box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
     th{
         font-size: 14px;
     }
@@ -93,6 +97,11 @@
         font-size:12px ;
     }
 }
+
+
+
+
+
 .flex{
     
     text-align: end;
@@ -101,13 +110,13 @@
     }
 }
 
-.tabela{
-    border-radius: 10px;
-    margin: auto;
-    
-    width: 99%;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-}
+// .tabela{
+//     border-radius: 10px;
+//     margin: auto;
+
+//     width: 99%;
+//     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+// }
 
 .td-acao{
     display: flex;
