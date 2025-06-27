@@ -1,0 +1,16 @@
+@import "primeicons/primeicons.css";
+.container{
+    max-width: 100%;
+}
+
+.tabela{
+    th{
+        background-color: #71AAE0;
+        color: #fff;
+    }
+}
+
+ :host ::ng-deep .p-fieldset-legend {
+    background-color: #71AAE0;
+    color: #fff;
+  }

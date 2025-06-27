@@ -41,6 +41,7 @@ import { Plano } from '../plano/plano.component';
 import { ProdutoAmostra } from '../produto-amostra/produto-amostra.component';
 import { Produto } from '../../baseOrcamentaria/dre/produto/produto.component';
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
+import { AvatarModule } from 'primeng/avatar';
 
 export interface Analise {
   id: number;
@@ -58,7 +59,7 @@ export interface Analise {
     FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,
     ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,IconField,
     InputNumberModule,AutoCompleteModule,MultiSelectModule,DatePickerModule,StepperModule,
-    InputIcon,FieldsetModule,MenuModule,SplitButtonModule,DrawerModule,SpeedDialModule
+    InputIcon,FieldsetModule,MenuModule,SplitButtonModule,DrawerModule,SpeedDialModule,AvatarModule
   ],
   animations: [
     trigger('efeitoFade',[
@@ -330,36 +331,39 @@ loadAnalisePorId(analise: any) {
   ) {
     const planoDetalhes = analise.amostra_detalhes.ordem_detalhes.plano_detalhes || [];
     // Ensaios
-    // if (
-    //   analise.ultimo_ensaio && 
-    //   analise.ultimo_ensaio.ensaios_utilizados && 
-    //   planoDetalhes[0]?.ensaio_detalhes
-    // ) {
-    //   const ultimoUtilizados = analise.ultimo_ensaio.ensaios_utilizados;
+    if (
+      analise.ultimo_ensaio && 
+      analise.ultimo_ensaio.ensaios_utilizados && 
+      planoDetalhes[0]?.ensaio_detalhes
+    ) {
+      const ultimoUtilizados = analise.ultimo_ensaio.ensaios_utilizados;
+      planoDetalhes[0].ensaio_detalhes = planoDetalhes[0].ensaio_detalhes.map((ensaio: any) => {
+        const valorRecente = ultimoUtilizados.find((u: any) => String(u.id) === String(ensaio.id));
+        //console.log('Procurando valor para', ensaio.descricao, 'ID:', ensaio.id, 'Encontrado:', valorRecente);
+        return {
+          ...ensaio,
+          valor: valorRecente ? valorRecente.valor : ensaio.valor,
+          responsavel: valorRecente ? analise.ultimo_ensaio.responsavel : ensaio.responsavel,
+          digitador: valorRecente ? analise.ultimo_ensaio.digitador : ensaio.digitador || this.digitador,
+        };
+      });
+    }
+
+    // if (planoDetalhes[0]?.ensaio_detalhes) {
+    //   const ultimoUtilizados = analise.ultimo_ensaio?.ensaios_utilizados || [];
     //   planoDetalhes[0].ensaio_detalhes = planoDetalhes[0].ensaio_detalhes.map((ensaio: any) => {
     //     const valorRecente = ultimoUtilizados.find((u: any) => String(u.id) === String(ensaio.id));
-    //     //console.log('Procurando valor para', ensaio.descricao, 'ID:', ensaio.id, 'Encontrado:', valorRecente);
+    //     const responsavelObj = this.responsaveis.find(r =>
+    //         r.value === valorRecente?.responsavel || r.value === ensaio.responsavel
+    //       );
     //     return {
     //       ...ensaio,
-    //       valor: valorRecente ? valorRecente.valor : ensaio.valor,
-    //       responsavel: valorRecente ? analise.ultimo_ensaio.responsavel : ensaio.responsavel,
-    //       digitador: valorRecente ? analise.ultimo_ensaio.digitador : ensaio.digitador || this.digitador,
+    //       valor: valorRecente ? valorRecente.valor : ensaio.valor ?? null,
+    //       responsavel: responsavelObj || ensaio.responsavel || null,
+    //       digitador: valorRecente ? valorRecente.digitador : ensaio.digitador || this.digitador,
     //     };
     //   });
     // }
-
-    if (planoDetalhes[0]?.ensaio_detalhes) {
-  const ultimoUtilizados = analise.ultimo_ensaio?.ensaios_utilizados || [];
-  planoDetalhes[0].ensaio_detalhes = planoDetalhes[0].ensaio_detalhes.map((ensaio: any) => {
-    const valorRecente = ultimoUtilizados.find((u: any) => String(u.id) === String(ensaio.id));
-    return {
-      ...ensaio,
-      valor: valorRecente ? valorRecente.valor : ensaio.valor ?? null,
-      responsavel: valorRecente ? valorRecente.responsavel : ensaio.responsavel ?? null,
-      digitador: valorRecente ? valorRecente.digitador : ensaio.digitador || this.digitador,
-    };
-  });
-}
 
     console.log('ultimo_calculo:', analise.ultimo_calculo);
     console.log('ultimo_calculo.ensaios_utilizados:', analise.ultimo_calculo?.ensaios_utilizados);
@@ -422,7 +426,8 @@ if (planoDetalhes[0]?.calculo_ensaio_detalhes) {
             digitador: calcBanco?.digitador || this.digitador,
             tempo_previsto: original?.tempo_previsto ?? null,
             tipo_ensaio_detalhes: original?.tipo_ensaio_detalhes ?? null,
-            variavel: u.variavel || original?.variavel
+            variavel: u.variavel || original?.variavel,
+            //calculos: original?.calculos ?? null,
           };
         })
       : (calc.ensaios_detalhes || []);

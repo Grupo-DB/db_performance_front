@@ -14,7 +14,6 @@
             <div class="flex flex-column w-12 lg:flex-row">
                 <div class="text-left w-4 ">    
                     <p><b>Data de Coleta:</b> {{ analise.amostra_detalhes?.data_coleta }}</p>
-
                     <p><b>Digitador:</b> {{ analise.amostra_detalhes?.digitador }}</p>
                 </div>
             </div>
@@ -27,16 +26,21 @@
         <p-divider align="left" type="solid">
             Plano de Análise: <b> {{ plano.descricao }}</b>
         </p-divider>
-                                
+                  
+        <p-divider align="center" type="dashed">
+                <b>Ensaios</b>
+        </p-divider>
+
         <!-- Tabela para cada ensaio fixo (fora dos cálculos) -->
         <ng-container *ngFor="let ensaio of plano.ensaio_detalhes">
-            <p-divider align="right" type="dashed">
-                <b>Ensaios</b>
-            </p-divider>
+            
 
-            <p-table [value]="[ensaio]">
+            <p-table
+                 
+                [value]="[ensaio]"
+            >
                 <ng-template pTemplate="header">
-                    <tr>
+                    <tr class="tabela">
                         <th>Ensaio</th>
                         <th>Responsável</th>
                         <th>Digitador</th>
@@ -90,7 +94,8 @@
                                 <td>{{ ensaio.tempo_previsto }}</td>
                                 <td>{{ ensaio.tipo_ensaio_detalhes?.nome }}</td>
                                 <td>
-                                    <input type="number" [(ngModel)]="e.valor" style="width: 80px;" />
+                                    <!-- <input type="number" [(ngModel)]="e.valor" style="width: 80px;" /> -->
+                                    <p-inputnumber [(ngModel)]="e.valor" [showButtons]="true"></p-inputnumber>
                                 </td>
                             </tr>
                 </ng-template>
@@ -98,17 +103,21 @@
         </ng-container>
                                 
 
-                            <!-- Tabela para cada cálculo (com seus ensaios) -->
-                                <ng-container *ngFor="let calc of plano.calculo_ensaio_detalhes">
-                                    <div class="w-12 mt-8">
-                                      <p-divider align="right" type="dashed">
-                                       <b>Cálculos</b>
-                                    </p-divider>
-                                    </div>
-                                
+                            
+                            <div class="w-12 mt-8">
+                                <p-divider align="left" type="solid">
+                                    <b>Cálculos</b>
+                                </p-divider>
+                            </div>    
+                            <ng-container *ngFor="let calc of plano.calculo_ensaio_detalhes">
+                                    <div class="w-12 ">
+                                <p-divider align="center" type="dashed">
+                                    <b>{{ calc.descricao }}</b>
+                                </p-divider>
+                            </div>  
                                     <p-table [value]="calc.ensaios_detalhes">
                                     <ng-template pTemplate="header">
-                                        <tr>
+                                        <tr class="tabela">
                                         <th>Ensaio</th>
                                         <th>Responsável</th>
                                         <th>Digitador</th>
@@ -162,7 +171,8 @@
                                         <td>{{ e.tempo_previsto }}</td>
                                         <td>{{ e.tipo_ensaio_detalhes?.nome }}</td>
                                         <td>
-                                            <input type="number" [(ngModel)]="e.valor" (ngModelChange)="calcular(calc, plano)" style="width: 80px;" />
+                                            <p-inputnumber [(ngModel)]="e.valor" [showButtons]="true" (ngModelChange)="calcular(calc, plano)"></p-inputnumber>
+                                            <!-- <input type="number" [(ngModel)]="e.valor" (ngModelChange)="calcular(calc, plano)" style="width: 80px;" /> -->
                                         </td>
                                         </tr>
                                     </ng-template>
@@ -175,7 +185,7 @@
                                             <td style="font-size: 15px;" class="text-left font-bold pr-6 ">Resultado</td>
                                             <td>
                                                 <div class="text-xl" *ngIf="calc.resultado !== undefined">
-                                                    <b>{{ calc.resultado }}</b>
+                                                    <span class="font-bold">{{ calc.resultado }}</span>
                                                 </div>
                                             </td>
                                         </tr>   
