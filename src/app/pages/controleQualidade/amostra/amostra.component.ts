@@ -823,6 +823,10 @@ loadAnalises(){
   );
 }
 
+osExpressa(){
+  //TEM QUE IMPLEMENTAR A FUNÇÃO
+}
+
 loadUltimaAnalise(){
   this.getDigitadorInfo();
   this.analiseService.getAnalises().subscribe(

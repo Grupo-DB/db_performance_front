@@ -372,10 +372,15 @@
                                         </div>
                                         
                                     </div>
+
                                     <div class="flex flex-column w-12 gap-3 mb-3 justify-content-end lg:w-11 lg:flex-row">
-                                        
-                                        <p-button (onClick)="activateCallback(2);loadAnalises()" label="Abrir OS" severity="info" icon="pi pi-arrow-right" iconPos="right" />
-                                        <p-button (onClick)="submitAmostra()" label="Salvar Amostra" severity="success" icon="pi pi-check" iconPos="right" />
+                                        <div class="w-6 text-left">
+                                            <p-button title="Abrir OS expressa" label="OS Expressa" severity="danger" icon="pi pi-book" (onClick)="osExpressa()"/>
+                                        </div>
+                                        <div class=" flex w-6 gap-3 justify-content-end text-right">
+                                            <p-button (onClick)="activateCallback(2);loadAnalises()" title="Abrir OS" label="Abrir OS" severity="info" icon="pi pi-arrow-right" iconPos="right" />
+                                            <p-button (onClick)="submitAmostra()" label="Salvar Amostra" severity="success" icon="pi pi-check" iconPos="right" />
+                                        </div>
                                     
                                     </div>    
                                 </div>
@@ -388,7 +393,7 @@
                                 <p-confirmDialog />
                                 <p-inplace closable="true" closeIcon="pi pi-angle-up">
                                     <ng-template pTemplate="display">
-                                        <p-button label="Expandir">
+                                        <p-button label="Amostras">
                                             <div class="inline-flex align-items-center">
                                                 <span><i class="pi pi-angle-down"></i></span>
                                             </div>
@@ -608,13 +613,13 @@
                                     </div>
                                 </div>
                                 <div class="flex flex-column w-12 gap-3 mb-3 justify-content-end lg:w-11 lg:flex-row">
-                                        <div class="w-6 text-left">
-                                            <p-button label="Voltar" severity="contrast" icon="pi pi-arrow-left" (onClick)="activateCallback(1)" />
-                                        </div>
-                                        <div class=" flex w-6 gap-3 justify-content-end text-right">
-                                            <p-button label="Avançar" severity="info" icon="pi pi-arrow-right" iconPos="right" (onClick)="activateCallback(3);loadUltimaAnalise()" />
-                                            <p-button label="Gerar OS" severity="success" icon="pi pi-check" iconPos="right" (onClick)="salvarOrdemEAmostra()" />
-                                        </div>
+                                    <div class="w-6 text-left">
+                                        <p-button title="Voltar" label="Voltar" severity="contrast" icon="pi pi-arrow-left" (onClick)="activateCallback(1)" />
+                                    </div>
+                                    <div class=" flex w-6 gap-3 justify-content-end text-right">
+                                        <p-button title="Avançar" label="Avançar" severity="info" icon="pi pi-arrow-right" iconPos="right" (onClick)="activateCallback(3);loadUltimaAnalise()" />
+                                        <p-button label="Gerar OS" label="Gerar OS" severity="success" icon="pi pi-check" iconPos="right" (onClick)="salvarOrdemEAmostra()" />
+                                    </div>
                                 </div>
                             </div>    
                         </form>
@@ -626,7 +631,7 @@
 
                                 <p-inplace closable="true" closeIcon="pi pi-angle-up">
                                     <ng-template pTemplate="display">
-                                        <p-button label="Expandir">
+                                        <p-button label="OS">
                                             <div class="inline-flex align-items-center">
                                                 <span><i class="pi pi-angle-down"></i></span>
                                             </div>
@@ -935,10 +940,10 @@
 
                             <div class="flex flex-column w-12 gap-3 mt-5 mb-5 justify-content-end lg:w-10 lg:flex-row">
                                 <div class="w-6 text-left">
-                                    <p-button label="Voltar" severity="contrast" icon="pi pi-arrow-left" (onClick)="activateCallback(2)" />
+                                    <p-button title="Voltar" label="Voltar" severity="contrast" icon="pi pi-arrow-left" (onClick)="activateCallback(2)" />
                                 </div>
                                 <div class="w-6 text-right">
-                                    <p-button label="Salvar Resultados" severity="success" icon="pi pi-check" iconPos="right" (onClick)="salvarAnaliseResultados()" />
+                                    <p-button title="Salvar Resultados" label="Salvar Resultados" severity="success" icon="pi pi-check" iconPos="right" (onClick)="salvarAnaliseResultados()" />
                                 </div>
                             </div>
 
