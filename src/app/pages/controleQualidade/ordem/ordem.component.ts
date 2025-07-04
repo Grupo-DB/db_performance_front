@@ -1,6 +1,6 @@
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
@@ -22,7 +22,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 
 
@@ -103,6 +103,9 @@ export interface Ordem {
 })
 export class OrdemComponent implements OnInit {
 
+  @ViewChild('dt1') dt1!: Table;
+  inputValue: string = '';
+
   ordens: Ordem[]=[];
   constructor(
     private loginService: LoginService,
@@ -128,7 +131,13 @@ export class OrdemComponent implements OnInit {
     )
   }
 
-
+  clear(table: Table) {
+    table.clear();
+  }
+  filterTable() {
+    console.log(this.dt1);
+    this.dt1.filterGlobal(this.inputValue,'contains');
+  }
 
   hasGroup(groups: string[]): boolean {
     return this.loginService.hasAnyGroup(groups);
