@@ -30,6 +30,10 @@
         </li>
 
         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/ordem">Ordens de Serviço</a>
+        </li>
+
+        <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
             <a style="font-size: 13px;">Banco de Análises</a>
         </li>
 
