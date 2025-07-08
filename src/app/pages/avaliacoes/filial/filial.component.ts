@@ -193,9 +193,6 @@ export class FilialComponent implements OnInit {
     return empresa ? empresa.nome : 'Empresa não encontrada';
   }
   
-clear(table: Table) {
-  table.clear();
-}
 clearForm() {
   this.registerfilialForm.reset();
 }

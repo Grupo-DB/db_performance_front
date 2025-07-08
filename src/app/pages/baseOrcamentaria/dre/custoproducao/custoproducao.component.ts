@@ -191,9 +191,6 @@ export class CustoproducaoComponent implements OnInit{
     return this.loginService.hasAnyGroup(groups);
   }
   
-  clear(table: Table) {
-    table.clear();
-  }
   clearForm() {
     this.registerForm.reset();
   }

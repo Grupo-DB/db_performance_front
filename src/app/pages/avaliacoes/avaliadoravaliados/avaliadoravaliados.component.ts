@@ -222,12 +222,6 @@ export class AvaliadorAvaliadosComponent implements OnInit {
       );
     }
     
-    clear(dt1: any): void {
-      this.inputValue = ''; // Limpa o campo de entrada
-      this.avaliadores = [...this.avaliadoresOriginais]; // Restaura os dados originais
-      dt1.reset(); // Reseta o estado da tabela
-    }
-    
     submit() {
       this.registerassociacaoForm.patchValue({
         avaliado: this.targetAvaliados

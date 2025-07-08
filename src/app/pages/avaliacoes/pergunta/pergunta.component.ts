@@ -134,26 +134,22 @@ export class PerguntaComponent implements OnInit{
  ngOnInit(): void {
 
 this.perguntaService.getPerguntas().subscribe(response => {
-  this.perguntas = response;
-});
+    this.perguntas = response;
+  });
 }
 sanitizeHtml(legenda: string): SafeHtml {
   return this.sanitizer.bypassSecurityTrustHtml(legenda);
-  
-  }
+}
 
- clear(table: Table) {
-   table.clear();
- }
+clearForm() {
+  this.registerperguntaForm.reset();
+}
  
- clearForm() {
- this.registerperguntaForm.reset();
- }
- 
- filterTable() {
- this.dt1.filterGlobal(this.inputValue, 'contains');
- }
- cleareditForm() {
+filterTable() {
+  this.dt1.filterGlobal(this.inputValue, 'contains');
+}
+
+cleareditForm() {
   this.editForm.reset();
 }
 abrirModalEdicao(pergunta: Pergunta) {
