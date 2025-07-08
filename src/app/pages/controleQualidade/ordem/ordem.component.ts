@@ -24,11 +24,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
 import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-
-
 import { SpeedDial, SpeedDialModule } from 'primeng/speeddial';
-
-
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { OrdemService } from '../../../services/controleQualidade/ordem.service';
 
@@ -115,7 +111,6 @@ export class OrdemComponent implements OnInit {
 
   }
 
-  
   ngOnInit() {
     this.loadOrdens();
   }
@@ -131,11 +126,8 @@ export class OrdemComponent implements OnInit {
     )
   }
 
-  clear(table: Table) {
-    table.clear();
-  }
   filterTable() {
-    console.log(this.dt1);
+    console.log(this.dt1);//tem que apagar
     this.dt1.filterGlobal(this.inputValue,'contains');
   }
 

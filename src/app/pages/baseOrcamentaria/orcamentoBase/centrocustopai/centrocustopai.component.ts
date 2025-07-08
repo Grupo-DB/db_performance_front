@@ -398,9 +398,6 @@ export class CentrocustopaiComponent implements OnInit {
     return setor ? setor.nome: 'Setor não encontrado'
   }
 
-  clear(table: Table) {
-    table.clear();
-  }
   clearForm() {
     this.registercentrocustopaiForm.reset();
   }

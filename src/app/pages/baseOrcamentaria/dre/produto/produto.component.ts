@@ -135,9 +135,6 @@ export class ProdutoComponent implements OnInit{
     )
   }
 
-  clear(table: Table) {
-    table.clear();
-  }
   clearForm() {
     this.registerForm.reset();
   }

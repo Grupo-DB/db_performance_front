@@ -692,17 +692,12 @@ onCargoSelecionado(cargo: any): void {
   }
 }
 
- 
-clear(table: Table) {
-  table.clear();
-}
-
 clearForm() {
-this.registercolaboradorForm.reset();
+  this.registercolaboradorForm.reset();
 }
 
 filterTable() {
-this.dt1.filterGlobal(this.inputValue, 'contains');
+  this.dt1.filterGlobal(this.inputValue, 'contains');
 }
 cleareditForm() {
   this.editForm.reset();

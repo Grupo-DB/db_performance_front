@@ -426,7 +426,7 @@
             <div class="flex flex-row md: justify-content-end">
                 <p-floatlabel variant="on">
                     <p-iconfield>
-                        <p-inputicon class="pi pi-search" />
+                        <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
                         <input
                             variant="filled"
                             [(ngModel)] = "inputValue"
@@ -434,12 +434,12 @@
                             pInputText id="on_label"
                             autocomplete="off"
                             type="text"
+                            (keyup)="filterTable()"
+                            style="border-color:#1b91ff;"
                         />
                     </p-iconfield>
-                    <label for="on_label">Palavra-Chave</label>
+                    <label for="on_label" style="color: #1b91ff">Pesquisar</label>
                 </p-floatlabel>
-                <button size="small" class="ml-2" pButton [rounded]="true" label="Pesquisar" severity="info"  (click)="filterTable()"></button>
-                <button size="small" class="ml-2" pButton [rounded]="true" label="Limpar" severity="info" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
                 <p-floatlabel variant="on">
                     <p-iconfield>
                         <input

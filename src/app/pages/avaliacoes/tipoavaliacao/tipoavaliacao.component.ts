@@ -137,9 +137,7 @@ hasGroup(groups: string[]): boolean {
   },
 );
  }
-clear(table: Table) {
-  table.clear();
-}
+
 cleareditForm() {
   this.editForm.reset();
 }

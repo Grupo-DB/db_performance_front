@@ -208,9 +208,6 @@ export class CentrocustoComponent implements OnInit{
     return 'Gestor não encontrado ou estrutura inválida';
   }
 
-  clear(table: Table) {
-    table.clear();
-  }
   clearForm() {
     this.registercentrocustoForm.reset();
   }
