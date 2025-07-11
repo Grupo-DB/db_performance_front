@@ -47,6 +47,13 @@ import { Ordem } from '../ordem/ordem.component';
 import { Analise } from '../analise/analise.component';
 import { evaluate } from 'mathjs';
 import { InplaceModule } from 'primeng/inplace';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
+
+import { AvaliadorService } from '../../../services/avaliacoesServices/avaliadores/registeravaliador.service';
+import { Avaliador } from '../../avaliacoes/avaliador/avaliador.component';
+
 
 interface AmostraForm{
   dataColeta: FormControl,
@@ -128,42 +135,42 @@ interface Column {
                                               style({ opacity: 0 }),
                                               animate('2s', style({ opacity:1 }))
                                             ])
-                                          ]),
-                                          trigger('efeitoZoom', [
-                                            transition(':enter', [
-                                              style({ transform: 'scale(0)' }),
-                                              animate('2s', style({ transform: 'scale(1)' })),
-                                            ]),
-                                          ]),
-                                          trigger('bounceAnimation', [
-                                            transition(':enter', [
-                                              animate('4.5s ease-out', keyframes([
-                                                style({ transform: 'scale(0.5)', offset: 0 }),
-                                                style({ transform: 'scale(1.2)', offset: 0.5 }),
-                                                style({ transform: 'scale(1)', offset: 1 }),
-                                              ])),
-                                            ]),
-                                          ]),
-                                          trigger('swipeAnimation', [
-                                            transition(':enter', [
-                                              style({ transform: 'translateX(-100%)' }),
-                                              animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
-                                            ]),
-                                            transition(':leave', [
-                                              style({ transform: 'translateX(0)' }),
-                                              animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
-                                            ]),
-                                          ]),
-                                          trigger('swipeAnimationReverse', [
-                                            transition(':enter', [
-                                              style({ transform: 'translateX(100%)' }),
-                                              animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
-                                            ]),
-                                            transition(':leave', [
-                                              style({ transform: 'translateX(0)' }),
-                                              animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
-                                            ]),
-            ]),
+    ]),
+    trigger('efeitoZoom', [
+      transition(':enter', [
+        style({ transform: 'scale(0)' }),
+        animate('2s', style({ transform: 'scale(1)' })),
+      ]),
+    ]),
+    trigger('bounceAnimation', [
+      transition(':enter', [
+        animate('4.5s ease-out', keyframes([
+          style({ transform: 'scale(0.5)', offset: 0 }),
+          style({ transform: 'scale(1.2)', offset: 0.5 }),
+          style({ transform: 'scale(1)', offset: 1 }),
+        ])),
+      ]),
+    ]),
+    trigger('swipeAnimation', [
+      transition(':enter', [
+        style({ transform: 'translateX(-100%)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+      ]),
+    ]),
+    trigger('swipeAnimationReverse', [
+      transition(':enter', [
+        style({ transform: 'translateX(100%)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+      ]),
+    ]),
   ],
   providers:[
     MessageService,ConfirmationService,DatePipe
@@ -173,6 +180,7 @@ interface Column {
 })
 export class AmostraComponent implements OnInit {
 
+  avaliadores: Avaliador [] | undefined;
 cols!: Column[];
 selectedColumns!: Column[];  
 amostras: Amostra[] = [];
@@ -287,7 +295,8 @@ constructor(
     private colaboradorService: ColaboradorService,
     private datePipe: DatePipe,
     private analiseService: AnaliseService,
-    private cd: ChangeDetectorRef 
+    private cd: ChangeDetectorRef,
+    private avaliadorService: AvaliadorService,
 )
 {
   this.registerForm = new FormGroup<AmostraForm>({
@@ -341,6 +350,15 @@ constructor(
     this.ordemService.getProximoNumero().subscribe(numero => {
     this.registerOrdemForm.get('numero')?.setValue(numero);
     console.log('Número da ordem de serviço gerado:', numero);
+
+    this.avaliadorService.getAvaliadores().subscribe(
+      avaliadores => {
+        this.avaliadores = avaliadores;
+      },
+      error => {
+        console.error('Error fetching users:',error);
+      }
+    );
     
   });
 
@@ -1029,5 +1047,66 @@ salvarAnaliseResultados() {
   });
 }
 
+  downloadPdf() {
+
+    let dataEntradaFormatada = '';
+    let dataDescarteFormatada = '';
+    const dataEntradaValue = this.registerForm.value.dataEntrada;
+    if (dataEntradaValue instanceof Date && !isNaN(dataEntradaValue.getTime())) {
+    
+      const dataDescarteValue = new Date(dataEntradaValue);
+      dataDescarteValue.setDate(dataDescarteValue.getDate() + 60);
+
+      dataEntradaFormatada = formatDate(dataEntradaValue, 'dd/MM/yy', 'en-US');
+      dataDescarteFormatada = formatDate(dataDescarteValue, 'dd/MM/yy', 'en-US');
+    }
+
+    let auxMaterialNome = this.materiais.find(m => m.id === this.registerForm.value.material);
+    let materialNome = auxMaterialNome?.nome;
+   
+    let material = this.registerForm.value.material;
+    let numero = this.registerForm.value.numero;
+    let localColeta = this.registerForm.value.localColeta;
+    let produtoAmostra = this.registerForm.value.produtoAmostra;
+   
+    let auxprodutoAmostra = this.produtosAmostra.find(p => p.id === this.registerForm.value.produtoAmostra);
+    let produtoAmostraNome = auxprodutoAmostra?.nome;
+
+    const doc = new jsPDF({
+      orientation: "landscape",
+      unit: "mm",
+      format: "a4"
+    });
+
+    // Cabeçalho
+    doc.setFontSize(20);
+    doc.rect(10, 10, 280, 45); // borda total
+
+    let y = 20;
+
+    const linhas = [
+      [numero ? numero : 'Numero', produtoAmostra ? produtoAmostraNome : 'produtoAmostra', "Entrada "+dataEntradaFormatada],
+      [material ? materialNome : 'material', localColeta ? localColeta : 'localColeta', "Periodo"],
+      ["Reter", "", "Descarte "+dataDescarteFormatada]
+    ];
+
+    linhas.forEach(linha => {
+      doc.text(linha[0], 15, y);
+      doc.text(linha[1], 130, y);
+      doc.text(linha[2], 200, y);
+      y += 15;
+    });
+
+    // Cria uma URL temporária para pré-visualizar
+    const blobUrl = doc.output("bloburl");
+
+    // Abre em nova aba/janela
+    // window.open(blobUrl, "_blank");
+
+    doc.save("Etiqueta.pdf");
+
+
+
+  }
 
 }

@@ -2,6 +2,25 @@
 .container{
     max-width: 100%;
 }
+
+.button-imprimir{
+
+    display: flex;
+    justify-content: center;
+    margin: auto;
+    margin-top: 5%;
+    background-color: #444959;
+    color: #ffffffee;
+    height: 150px;
+    width: 450px;
+    
+    cursor: pointer;
+    border-radius: 45px;
+    p{
+        font-size: 30px;
+        padding: 65px;
+    }
+}
 .titulo{
     font-size: 22px;
 }
