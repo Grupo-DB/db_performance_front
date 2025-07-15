@@ -516,6 +516,7 @@ onMaterialChange(materialId: number) {
     )
   }
   
+  
 gerarNumero(materialNome: string, sequencial: number): string {
   const ano = new Date().getFullYear().toString().slice(-2); // Ex: '25'
   const sequencialFormatado = sequencial.toString().padStart(6, '0'); // Ex: '000008'
