@@ -2,7 +2,7 @@ import { trigger, transition, style, animate, keyframes } from '@angular/animati
 import { CommonModule, DatePipe, formatDate } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { MessageService, ConfirmationService, MenuItem } from 'primeng/api';
 import { AutoCompleteModule } from 'primeng/autocomplete';
@@ -32,7 +32,7 @@ import { AmostraService } from '../../../services/controleQualidade/amostra.serv
 import { TipoAmostra } from '../tipo-amostra/tipo-amostra.component';
 import { ProdutoAmostra } from '../produto-amostra/produto-amostra.component';
 import { StepperModule } from 'primeng/stepper';
-import { ToggleButton } from 'primeng/togglebutton';
+import { ToggleButton, ToggleButtonModule } from 'primeng/togglebutton';
 import { OrdemService } from '../../../services/controleQualidade/ordem.service';
 import { EnsaioService } from '../../../services/controleQualidade/ensaio.service';
 import { Plano } from '../plano/plano.component';
@@ -42,13 +42,34 @@ import { AnaliseService } from '../../../services/controleQualidade/analise.serv
 import { FieldsetModule } from 'primeng/fieldset';
 import { MenuModule } from 'primeng/menu';
 import { SplitButtonModule } from 'primeng/splitbutton';
-import { SpeedDial, SpeedDialModule } from 'primeng/speeddial';
+import { SpeedDialModule } from 'primeng/speeddial';
 import { Ordem } from '../ordem/ordem.component';
 import { Analise } from '../analise/analise.component';
 import { evaluate } from 'mathjs';
 import { InplaceModule } from 'primeng/inplace';
+import { CardModule } from 'primeng/card';
+import { CdkDragPlaceholder } from "@angular/cdk/drag-drop";
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzUploadChangeParam, NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
+interface FileWithInfo {
+  file: File;
+  descricao: string;
+}
 interface AmostraForm{
+  especie: FormControl,
+  finalidade: FormControl,
+  numeroSac: FormControl,
+  dataEnvio: FormControl,
+  destinoEnvio: FormControl,
+  dataRecebimento: FormControl,
+  reter: FormControl,
+  registroEp: FormControl,
+  registroProduto: FormControl,
+  numeroLote: FormControl,
   dataColeta: FormControl,
   dataEntrada: FormControl,
   material:FormControl,
@@ -60,9 +81,11 @@ interface AmostraForm{
   periodoTurno: FormControl,
   tipoAmostragem: FormControl,
   localColeta: FormControl,
+  fornecedor: FormControl,
   representatividadeLote: FormControl,
   identificacaoComplementar: FormControl,
   complemento: FormControl,
+  observacoes: FormControl,
   ordem: FormControl,
   digitador: FormControl,
   status: FormControl
@@ -85,6 +108,10 @@ interface AnaliseForm{
 export interface Amostra {
   id: number;
   nome: string;
+}
+
+export interface Especie{
+  value: string;
 }
 
 export interface Fornecedor {
@@ -115,13 +142,14 @@ interface Column {
 @Component({
   selector: 'app-amostra',
   imports: [
-    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,
-    InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,
-    FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,
-    ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,IconField,
-    InputNumberModule,AutoCompleteModule,MultiSelectModule,DatePickerModule,StepperModule,
-    InputIcon,FieldsetModule,MenuModule,SplitButtonModule,DrawerModule,SpeedDialModule, InplaceModule
-  ],
+    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule,
+    InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule, CardModule,
+    FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,
+    ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,
+    InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,
+    InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule,
+    CdkDragPlaceholder,NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule
+],
   animations:[
     trigger('efeitoFade',[
                                             transition(':enter',[
@@ -191,10 +219,39 @@ digitador: any;
 idUltimaAanalise: any;
 responsavelEnsaio: any;
 responsavelCalculo: any;
+checked: boolean = true;
+// upload das imagens
+uploadedFilesWithInfo: FileWithInfo[] = [];
+amostraId: any;
+// Propriedades para visualização de imagens
+modalImagensVisible: boolean = false;
+imagensAmostra: any[] = [];
+amostraImagensSelecionada: any = null;
+imagemAtualIndex: number = 0;
+
 @ViewChild('dt1') dt1!: Table;
 inputValue: string = '';
-
+modalImagens: boolean = false;
 modalVisualizar: boolean = false;
+tipos = [
+  { value: 'Media' },
+  { value: 'Pontual' }
+]
+
+especies = [
+  { value: 'Aditivos' },
+  { value: 'Areia' },
+  { value: 'Argamassa' },
+  { value: 'Cal' },
+  { value: 'Calcário' },
+  { value: 'Cimento' },
+  { value: 'Cinza Pozolana' },
+  { value: 'Fertilizante' },
+  { value: 'Finaliza' },
+  { value: 'Aditivos' },
+  { value: 'Mineração' },
+  
+]
 
 fornecedores = [
   { id: 0, nome:'Cibracal' },
@@ -249,7 +306,7 @@ status = [
   { id: 5, nome: 'Finalizada' },
 ]
 
-classificacoes = [
+finalidades = [
   { id: 0, nome: 'Controle de Qualidade' },
   { id: 1, nome: 'SAC' },
   { id: 2, nome: 'Desenvolvimento de Produtos' },
@@ -287,10 +344,21 @@ constructor(
     private colaboradorService: ColaboradorService,
     private datePipe: DatePipe,
     private analiseService: AnaliseService,
-    private cd: ChangeDetectorRef 
+    private cd: ChangeDetectorRef,
+    private router: Router 
 )
 {
   this.registerForm = new FormGroup<AmostraForm>({
+    especie: new FormControl('',[Validators.required]),
+    finalidade: new FormControl('',[Validators.required]),
+    numeroSac: new FormControl('',),
+    dataEnvio: new FormControl('',),
+    destinoEnvio: new FormControl('',),
+    dataRecebimento: new FormControl('',),
+    reter: new FormControl('',),
+    registroEp: new FormControl('',),
+    registroProduto: new FormControl('',),
+    numeroLote: new FormControl('',[Validators.required]),
     dataColeta: new FormControl('',[Validators.required]),
     dataEntrada: new FormControl('',[Validators.required]),
     material: new FormControl('',[Validators.required]),
@@ -302,9 +370,11 @@ constructor(
     periodoTurno: new FormControl(''),
     tipoAmostragem: new FormControl('',[Validators.required]),
     localColeta: new FormControl('',[Validators.required]),
+    fornecedor: new FormControl('',[Validators.required]),
     representatividadeLote: new FormControl('',[Validators.required]),
     identificacaoComplementar: new FormControl(''),
     complemento: new FormControl(''),
+    observacoes: new FormControl(''),
     ordem: new FormControl(''),
     digitador: new FormControl(''),
     status: new FormControl('',[Validators.required])
@@ -317,12 +387,7 @@ constructor(
     digitador: new FormControl('',[Validators.required]),
     classificacao: new FormControl('',[Validators.required])
   });
-  // this.items = [
-  //   {
-  //     label:'Visualizar',
-  //     icon:'pi pi-eye',
-  //     command: () => this.visualizar()
-  // }];
+  
  
 }
   hasGroup(groups: string[]): boolean {
@@ -341,6 +406,7 @@ constructor(
     this.ordemService.getProximoNumero().subscribe(numero => {
     this.registerOrdemForm.get('numero')?.setValue(numero);
     console.log('Número da ordem de serviço gerado:', numero);
+  
     
   });
 
@@ -351,25 +417,6 @@ constructor(
 
     // Configuração das colunas da tabela
     this.cols = [
-      //{ field: 'amostraDataEntrada', header: 'Data de Entrada' },
-      //{ field: 'amostraDataColeta', header: 'Data de Coleta' },
-      //{ field: 'amostraDigitador', header: 'Digitador' },
-      //{ field: 'amostraFornecedor', header: 'Fornecedor' },
-      //{ field: 'amostraIdentificacaoComplementar', header: 'Identificação Complementar' },
-      //{ field: 'amostraLocalColeta', header: 'Local de Coleta' },
-      //{ field: 'amostraMaterial', header: 'Material' },
-      //{ field: 'amostraNumero', header: 'Número da Amostra' },
-      //{ field: 'amostraPeriodoHora', header: 'Período Hora' },
-      //{ field: 'amostraPeriodoTurno', header: 'Período Turno' },
-      //{ field: 'amostraRepresentatividadeLote', header: 'Representatividade do Lote' },
-      //{ field: 'amostraStatus', header: 'Status' },
-      //{ field: 'amostraSubtipo', header: 'Subtipo' },
-      //{ field: 'amostraTipoAmostra', header: 'Tipo de Amostra' },
-      //{ field: 'amostraTipoAmostragem', header: 'Tipo de Amostragem' },
-      //{ field: 'estado', header: 'Estado' },
-      //{ field: 'ordemNumero', header: 'Número da Ordem' },
-      //{ field: 'ordemClassificacao', header: 'Classificação da Ordem' },
-      //{ field: 'ordemPlanoAnalise', header: 'Plano de Análise' },
       { field: 'planoEnsaios', header: 'Ensaios do Plano' },
     ];
     // Inicializa as colunas selecionadas com todas as colunas
@@ -422,20 +469,40 @@ constructor(
       this.registerOrdemForm.get('digitador')?.setValue(data.nome);
       this.registerForm.get('digitador')?.setValue(data.nome);
 
-      // Preencher o campo digitador em todos os ensaios já carregados
-      this.analisesSimplificadas[0].planoDetalhes.forEach((plano: any) => {
-        plano.ensaio_detalhes?.forEach((ensaio: any) => {
-          ensaio.digitador = this.digitador;
-          console.log('Digitador do ensaio:', ensaio.digitador);
+      // Verificar se existe análises simplificadas e plano detalhes antes de acessar
+      if (this.analisesSimplificadas && 
+          this.analisesSimplificadas.length > 0 && 
+          this.analisesSimplificadas[0] && 
+          this.analisesSimplificadas[0].planoDetalhes) {
+        
+        console.log('Preenchendo digitador nos ensaios já carregados...');
+        
+        this.analisesSimplificadas[0].planoDetalhes.forEach((plano: any) => {
+          // Verificar se existem ensaios antes de iterar
+          if (plano.ensaio_detalhes && Array.isArray(plano.ensaio_detalhes)) {
+            plano.ensaio_detalhes.forEach((ensaio: any) => {
+              ensaio.digitador = this.digitador;
+              console.log('Digitador do ensaio:', ensaio.digitador);
+            });
+          }
+          
+          // Verificar se existem cálculos antes de iterar
+          if (plano.calculo_ensaio_detalhes && Array.isArray(plano.calculo_ensaio_detalhes)) {
+            plano.calculo_ensaio_detalhes.forEach((calc: any) => {
+              calc.digitador = this.digitador;
+              
+              // Se quiser mostrar também nos ensaios de cálculo:
+              if (calc.ensaios_detalhes && Array.isArray(calc.ensaios_detalhes)) {
+                calc.ensaios_detalhes.forEach((ensaioCalc: any) => {
+                  ensaioCalc.digitador = this.digitador;
+                });
+              }
+            });
+          }
         });
-        plano.calculo_ensaio_detalhes?.forEach((calc: any) => {
-          calc.digitador = this.digitador;
-          // Se quiser mostrar também nos ensaios de cálculo:
-          calc.ensaios_detalhes?.forEach((calc: any) => {
-            calc.digitador = this.digitador;
-          });
-        });
-      });
+      } else {
+        console.log('Nenhuma análise simplificada carregada ainda. Digitador será preenchido quando as análises forem carregadas.');
+      }
     },
     error => {
       console.error('Erro ao obter informações do colaborador:', error);
@@ -508,12 +575,12 @@ onMaterialChange(materialId: number) {
   }
   
   gerarNumero(materialNome: string, sequencial: number): string {
-  const ano = new Date().getFullYear().toString().slice(-2); // Ex: '25'
+  //const ano = new Date().getFullYear().toString().slice(-2); // 
   const sequencialFormatado = sequencial.toString().padStart(6, '0'); // Ex: '000008'
-  // Formata como 08.392 (você pode ajustar conforme a lógica do seu sequencial)
+  // Formata como 08.392 
   const parte1 = sequencialFormatado.slice(0, 2); // '08'
-  const parte2 = sequencialFormatado.slice(2);    // '0008' -> '392' se quiser os 3 últimos
-  return `${materialNome}${ano} ${parte1}.${parte2}`;
+  const parte2 = sequencialFormatado.slice(2);    // '0008' 
+  return `${materialNome} ${parte1}.${parte2}`;
 }
 
 onCamposRelevantesChange() {
@@ -531,7 +598,9 @@ getMenuItems(analise: any) {
     { label: 'Abrir OS', icon: 'pi pi-folder-open', command: () => this.abrirOS(analise) },
     { label: 'Editar', icon: 'pi pi-pencil', command: () => this.editar(analise) },
     { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluir(analise) },
+    { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise) },
     {
+    
       label: 'Link Externo',
       icon: 'pi pi-link',
       //routerLink: ['/welcome/controleQualidade/analise', analise.id]
@@ -548,7 +617,7 @@ irLinkExterno(analise: any) {
 visualizar(amostra: any) {
   this.amostraSelecionada = amostra;
   this.modalVisualizar = true;
-  console.log('Drawer deve abrir', amostra); // Adicione para depuração
+  console.log('Drawer deve abrir', amostra); 
 }
 abrirOS(amostra: any) {
   this.amostraSelecionada = amostra;
@@ -579,8 +648,7 @@ consultarProducao() {
   if (materialId && dataColeta) {
     this.amostraService.getRrepresentatividade(dataColeta).subscribe({
       next: (producao) => {
-        this.producaoLote = producao; // Salva o resultado
-        // Se quiser, pode também preencher o form:
+        this.producaoLote = producao; 
         this.registerForm.get('representatividadeLote')?.setValue(producao.total);
       },
       error: () => {
@@ -608,6 +676,18 @@ isDate(value: string): boolean {
   return !isNaN(Date.parse(value));
 }
 
+// Método para quando o produto de amostra for selecionado
+onProdutoAmostraChange(produtoId: number) {
+  const produtoSelecionado = this.produtosAmostra.find(produto => produto.id === produtoId);
+  
+  if (produtoSelecionado) {
+    // Preenche os campos do formulário com os dados do produto
+    this.registerForm.patchValue({
+      registroEp: produtoSelecionado.registro_empresa,
+      registroProduto: produtoSelecionado.registro_produto
+    });
+  }
+}
 
 submitOrdem(){ 
   const formData = new FormData();
@@ -655,19 +735,41 @@ submitOrdem(){
 submitAmostra() {
   const formData = new FormData();
 
-  let dataColetaFormatada = '';
+  let dataColetaFormatada = null;
   const dataColetaValue = this.registerForm.value.dataColeta;
   if (dataColetaValue instanceof Date && !isNaN(dataColetaValue.getTime())) {
     dataColetaFormatada = formatDate(dataColetaValue, 'yyyy-MM-dd', 'en-US');
   }
 
-  let dataEntradaFormatada = '';
+  let dataEntradaFormatada = null;
   const dataEntradaValue = this.registerForm.value.dataEntrada;
   if (dataEntradaValue instanceof Date && !isNaN(dataEntradaValue.getTime())) {
     dataEntradaFormatada = formatDate(dataEntradaValue, 'yyyy-MM-dd', 'en-US');
   }
 
-  this.amostraService.registerAmostra( 
+  let dataEnvioFormatada = null;
+  const dataEnvioValue = this.registerForm.value.dataEnvio;
+  if (dataEnvioValue instanceof Date && !isNaN(dataEnvioValue.getTime())) {
+    dataEnvioFormatada = formatDate(dataEnvioValue, 'yyyy-MM-dd', 'en-US');
+  }
+
+  let dataRecebimentoFormatada = null;
+  const dataRecebimentoValue = this.registerForm.value.dataRecebimento;
+  if (dataRecebimentoValue instanceof Date && !isNaN(dataRecebimentoValue.getTime())) {
+    dataRecebimentoFormatada = formatDate(dataRecebimentoValue, 'yyyy-MM-dd', 'en-US');
+  }
+
+  this.amostraService.registerAmostra(
+    this.registerForm.value.especie,
+    this.registerForm.value.finalidade,
+    this.registerForm.value.numeroSac,
+    dataEnvioFormatada,
+    this.registerForm.value.destinoEnvio,
+    dataRecebimentoFormatada,
+    this.registerForm.value.reter,
+    this.registerForm.value.registroEp,
+    this.registerForm.value.registroProduto,
+    this.registerForm.value.numeroLote,
     dataColetaFormatada,
     dataEntradaFormatada,
     this.registerForm.value.material,
@@ -679,34 +781,207 @@ submitAmostra() {
     this.registerForm.value.periodoTurno,
     this.registerForm.value.tipoAmostragem,
     this.registerForm.value.localColeta,
+    this.registerForm.value.fornecedor,
     this.registerForm.value.representatividadeLote,
     this.registerForm.value.identificacaoComplementar,
     this.registerForm.value.complemento,
+    this.registerForm.value.observacoes,
     this.registerForm.value.ordem,
+    null,
     this.registerForm.value.digitador,
     this.registerForm.value.status
-    
   ).subscribe({
-      next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Amostra registrada com sucesso.' });
-        this.activeStep = 3; // Avança para o próximo passo
-        //this.router.navigate(['/amostras']);
-      },
-      error: (err) => {
-        console.error('Erro ao registrar amostra:', err);
-        if (err.status === 401) {
-          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
-        } else if (err.status === 403) {
-          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
-        } else if (err.status === 400) {
-          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
-        } else {
-          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
-        }
+    next: (amostraCriada) => {
+      console.log('Amostra criada:', amostraCriada);
+      this.amostraId = amostraCriada.id; // Armazena o ID da amostra criada
+      
+      this.messageService.add({ 
+        severity: 'success', 
+        summary: 'Sucesso', 
+        detail: 'Amostra registrada com sucesso.' 
+      });
+      
+      // Faz upload das imagens se houver 
+      if (this.uploadedFilesWithInfo.length > 0) {
+        this.uploadImages();
+      } else {
+        this.activeStep = 3; // Avança para o próximo passo se não há imagens
       }
-
-  })
+    },
+    error: (err) => {
+      console.error('Erro ao registrar amostra:', err);
+      if (err.status === 401) {
+        this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+      } else if (err.status === 403) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+      } else if (err.status === 400) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+      } else {
+        this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+      }
+    }
+  });
 }
+
+// Método para fazer upload das imagens
+uploadImages(): void {
+    if (!this.amostraId || this.uploadedFilesWithInfo.length === 0) {
+      console.log('Sem amostra ID ou arquivos para upload');
+      this.activeStep = 3;
+      return;
+    }
+
+    // Verificar estado dos arquivos antes do upload
+    this.verificarEstadoArquivos();
+
+    const formData = new FormData();
+    
+    // Adiciona arquivos com suas descrições
+    this.uploadedFilesWithInfo.forEach((fileInfo, index) => {
+      formData.append('images', fileInfo.file, fileInfo.file.name);
+      // Garante que a descrição não seja undefined ou null
+      const descricao = fileInfo.descricao || '';
+      formData.append(`descricao_${index}`, descricao);
+      
+      // verificar o que está sendo enviado
+      console.log(`Arquivo ${index}: ${fileInfo.file.name}`);
+      console.log(`Descrição ${index}: "${descricao}"`);
+    });
+
+    console.log('Fazendo upload de', this.uploadedFilesWithInfo.length, 'arquivos para amostra', this.amostraId);
+
+    this.amostraService.uploadImagens(this.amostraId, formData).subscribe({
+      next: (response) => {
+        console.log('Imagens enviadas com sucesso:', response);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: `${this.uploadedFilesWithInfo.length} imagem(ns) enviada(s) com sucesso!`
+        });
+        
+        this.uploadedFilesWithInfo = [];
+        this.activeStep = 3;
+      },
+      error: (error) => {
+        console.error('Erro ao enviar imagens:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao enviar imagens. A amostra foi salva, mas as imagens não foram anexadas.'
+        });
+        this.activeStep = 3;
+      }
+    });
+  }
+
+// Método para remover arquivo da lista antes do envio
+removeFile(index: number): void {
+    this.uploadedFilesWithInfo.splice(index, 1);
+  }
+
+// Previne o upload automático
+beforeUpload = (file: NzUploadFile, fileList: NzUploadFile[]): boolean => {
+  console.log('Arquivo selecionado:', file.name);
+  return false; // Retorna false para não fazer upload automático
+};
+
+navegarParaExpressa() {
+  const formData = this.registerForm.value;
+  const dadosEnriquecidos = this.enriquecerDadosFormulario(formData);
+  
+  // Adiciona as imagens aos dados enriquecidos
+  dadosEnriquecidos.imagens = this.uploadedFilesWithInfo.map(fileInfo => ({
+    file: fileInfo.file,
+    descricao: fileInfo.descricao,
+    nome: fileInfo.file.name,
+    tamanho: fileInfo.file.size,
+    tipo: fileInfo.file.type
+  }));
+  
+  // Debug
+  // console.log('Estado do formulário antes de navegar:', formData);
+  // console.log('Dados enriquecidos com imagens:', dadosEnriquecidos);
+  // console.log('Número de imagens:', this.uploadedFilesWithInfo.length);
+  // console.log('Formulário válido?', this.registerForm.valid);
+  // console.log('Formulário pristine?', this.registerForm.pristine);
+  
+  // Salva no sessionStorage como backup (sem as imagens por limitação de tamanho)
+  const dadosSemImagens = { ...dadosEnriquecidos };
+  delete dadosSemImagens.imagens;
+  sessionStorage.setItem('amostraData', JSON.stringify(dadosSemImagens));
+  
+  console.log('Enviando dados para expressa:', dadosEnriquecidos);
+  
+  // Navega para a rota expressa passando os dados via state
+  this.router.navigate(['/welcome/controleQualidade/expressa'], {
+    state: { amostraData: dadosEnriquecidos }
+  });
+}
+
+// Método para preencher os dados do formulário
+enriquecerDadosFormulario(formData: any): any {
+  const dadosEnriquecidos = { ...formData };
+  
+  if (formData.material && this.materiais.length > 0) {
+    const materialSelecionado = this.materiais.find(m => m.id === formData.material);
+    dadosEnriquecidos.materialInfo = {
+      id: formData.material,
+      nome: materialSelecionado?.nome || 'Material não encontrado'
+    };
+  }
+  
+  if (formData.tipoAmostra && this.tiposAmostra.length > 0) {
+    const tipoSelecionado = this.tiposAmostra.find(t => t.id === formData.tipoAmostra);
+    dadosEnriquecidos.tipoAmostraInfo = {
+      id: formData.tipoAmostra,
+      nome: tipoSelecionado?.nome || 'Tipo não encontrado'
+    };
+  }
+  
+  if (formData.produtoAmostra && this.produtosAmostra.length > 0) {
+    const produtoSelecionado = this.produtosAmostra.find(p => p.id === formData.produtoAmostra);
+    dadosEnriquecidos.produtoAmostraInfo = {
+      id: formData.produtoAmostra,
+      nome: produtoSelecionado?.nome || 'Produto não encontrado'
+    };
+  }
+  
+  if (formData.periodoTurno !== null && formData.periodoTurno !== undefined) {
+    const periodoSelecionado = this.periodos.find(p => p.id === formData.periodoTurno);
+    dadosEnriquecidos.periodoTurnoInfo = {
+      id: formData.periodoTurno,
+      nome: periodoSelecionado?.nome || 'Período não encontrado'
+    };
+  }
+  
+  // CAMPOS QUE JÁ SÃO NOMES (optionValue="nome") - não precisam enriquecimento
+  if (formData.fornecedores) {
+    dadosEnriquecidos.fornecedorInfo = {
+      nome: formData.fornecedor
+    };
+  }
+  
+  if (formData.locaisColeta) {
+    dadosEnriquecidos.localColetaInfo = {
+      nome: formData.localColeta
+    };
+  }
+  
+  if (formData.status) {
+    dadosEnriquecidos.statusInfo = {
+      nome: formData.status
+    };
+  }
+  
+  if (formData.classificacao) {
+    dadosEnriquecidos.classificacaoInfo = {
+      nome: formData.classificacao
+    };
+  }
+    
+  return dadosEnriquecidos;
+}
+
 
 montarAnalise(){
   this.activeStep = 3;
@@ -736,7 +1011,7 @@ salvarOrdemEAmostra() {
     });
   }
 
-  // 1. Formate a data da ordem
+  // 1. Formata a data da ordem
   let dataFormatada = '';
   const dataValue = this.registerOrdemForm.value.data;
   if (dataValue instanceof Date && !isNaN(dataValue.getTime())) {
@@ -753,10 +1028,10 @@ salvarOrdemEAmostra() {
     this.registerOrdemForm.value.classificacao
   ).subscribe({
     next: (ordemSalva) => {
-      // 3. Pegue o número ou ID da ordem salva
-      const numeroOrdem = ordemSalva.numero; // ou ordemSalva.id, conforme seu backend
+      // 3. Pegua o número ou ID da ordem salva
+      const numeroOrdem = ordemSalva.numero; // ou ordemSalva.id
 
-      // 4. Formate as datas da amostra
+      // 4. Formata as datas da amostra
       let dataColetaFormatada = '';
       const dataColetaValue = this.registerForm.value.dataColeta;
       if (dataColetaValue instanceof Date && !isNaN(dataColetaValue.getTime())) {
@@ -768,8 +1043,31 @@ salvarOrdemEAmostra() {
         dataEntradaFormatada = formatDate(dataEntradaValue, 'yyyy-MM-dd', 'en-US');
       }
 
-      // 5. Salve a amostra vinculando à ordem
+      let dataEnvioFormatada = '';
+      const dataEnvioValue = this.registerForm.value.dataEnvio;
+      if (dataEnvioValue instanceof Date && !isNaN(dataEnvioValue.getTime())) {
+        dataEnvioFormatada = formatDate(dataEnvioValue, 'yyyy-MM-dd', 'en-US');
+      }
+
+      let dataRecebimentoFormatada = '';
+      const dataRecebimentoValue = this.registerForm.value.dataRecebimento;
+      if (dataRecebimentoValue instanceof Date && !isNaN(dataRecebimentoValue.getTime())) {
+        dataRecebimentoFormatada = formatDate(dataRecebimentoValue, 'yyyy-MM-dd', 'en-US');
+      }
+
+
+      // 5. Salva a amostra vinculando à ordem
       this.amostraService.registerAmostra(
+        this.registerForm.value.especie,
+        this.registerForm.value.finalidade,
+        this.registerForm.value.numeroSac,
+        dataEnvioFormatada,
+        this.registerForm.value.destinoEnvio,
+        dataRecebimentoFormatada,
+        this.registerForm.value.reter,
+        this.registerForm.value.registroEp,
+        this.registerForm.value.registroProduto,
+        this.registerForm.value.numeroLote, 
         dataColetaFormatada,
         dataEntradaFormatada,
         this.registerForm.value.material,
@@ -781,10 +1079,13 @@ salvarOrdemEAmostra() {
         this.registerForm.value.periodoTurno,
         this.registerForm.value.tipoAmostragem,
         this.registerForm.value.localColeta,
+        this.registerForm.value.fornecedor,
         this.registerForm.value.representatividadeLote,
         this.registerForm.value.identificacaoComplementar,
         this.registerForm.value.complemento,
-        numeroOrdem, // Aqui você passa o número/id da ordem recém salva!
+        this.registerForm.value.observacoes,
+        numeroOrdem,
+        null, 
         this.registerForm.value.digitador,
         this.registerForm.value.status
       ).subscribe({
@@ -895,20 +1196,18 @@ calcular(calc: any, produto?: any) {
     return;
   }
 
-  // 1. Descubra todos os varX usados na expressão
+  // Descobre todos os varX usados na expressão
   const varMatches = (calc.funcao.match(/var\d+/g) || []);
   const varList = Array.from(new Set(varMatches));
 
-  // 2. Monte safeVars usando o valor correto para cada varX
+  // Monta safeVars usando o valor correto para cada varX
   const safeVars: any = {};
 
-  // Aqui, você precisa mapear var6 -> PNquimica %, var9 -> RE (reativ) %
-  // Se não tem esse mapeamento salvo, faça manualmente:
-  // Exemplo: supondo que ensaios_detalhes[0] é var6 e ensaios_detalhes[1] é var9
+  // safe var6 -> PNquimica %, var9 -> RE (reativ) %
   safeVars['var6'] = calc.ensaios_detalhes[0]?.valor ?? 0;
   safeVars['var9'] = calc.ensaios_detalhes[1]?.valor ?? 0;
 
-  // 3. Avalie usando mathjs
+  // Avaliação
   console.log('Função final para eval:', calc.funcao, safeVars);
   try {
     calc.resultado = evaluate(calc.funcao, safeVars);
@@ -964,7 +1263,7 @@ calcularTodosCalculosDoPlano(plano: any) {
 
 salvarAnaliseResultados() {
   this.getDigitadorInfo();
-  // Monte os arrays de ensaios e cálculos a partir dos dados do seu formulário ou do seu objeto de análise
+  // Monta os arrays de ensaios e cálculos a partir dos dados do formulário ou do seu objeto de análise
   const ensaios = this.analisesSimplificadas[0].planoDetalhes
   .flatMap((plano: { ensaio_detalhes: any[]; }) =>
     plano.ensaio_detalhes?.map((ensaio: any) => ({
@@ -1030,6 +1329,316 @@ salvarAnaliseResultados() {
         this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
       }
     }
+  });
+}
+
+// Método para criar amostra normal- sem criar ordem
+criarAmostraNormal(): void {
+  console.log('🚀 Criando amostra normal (sem ordem)');
+  
+  // Validar se o formulário está válido
+  if (!this.registerForm.valid) {
+    this.messageService.add({ 
+      severity: 'error', 
+      summary: 'Erro', 
+      detail: 'Preencha todos os campos obrigatórios' 
+    });
+    return;
+  }
+
+  // Formatar datas para o backend
+  let dataColetaFormatada = '';
+  const dataColetaValue = this.registerForm.value.dataColeta;
+  if (dataColetaValue instanceof Date && !isNaN(dataColetaValue.getTime())) {
+    dataColetaFormatada = formatDate(dataColetaValue, 'yyyy-MM-dd', 'en-US');
+  }
+
+  let dataEntradaFormatada = '';
+  const dataEntradaValue = this.registerForm.value.dataEntrada;
+  if (dataEntradaValue instanceof Date && !isNaN(dataEntradaValue.getTime())) {
+    dataEntradaFormatada = formatDate(dataEntradaValue, 'yyyy-MM-dd', 'en-US');
+  }
+
+  let dataEnvioFormatada = '';
+  const dataEnvioValue = this.registerForm.value.dataEnvio;
+  if (dataEnvioValue instanceof Date && !isNaN(dataEnvioValue.getTime())) {
+    dataEnvioFormatada = formatDate(dataEnvioValue, 'yyyy-MM-dd', 'en-US');
+  }
+
+  let dataRecebimentoFormatada = '';
+  const dataRecebimentoValue = this.registerForm.value.dataRecebimento;
+  if (dataRecebimentoValue instanceof Date && !isNaN(dataRecebimentoValue.getTime())) {
+    dataRecebimentoFormatada = formatDate(dataRecebimentoValue, 'yyyy-MM-dd', 'en-US');
+  }
+
+  console.log('📝 Criando amostra normal...');
+  
+  // Criar amostra normal (sem ordem)
+  this.amostraService.registerAmostra(
+    this.registerForm.value.especie,
+    this.registerForm.value.finalidade,
+    this.registerForm.value.numeroSac,
+    dataEnvioFormatada,
+    this.registerForm.value.destinoEnvio,
+    dataRecebimentoFormatada,
+    this.registerForm.value.reter,
+    this.registerForm.value.registroEp,
+    this.registerForm.value.registroProduto,
+    this.registerForm.value.numeroLote, 
+    dataColetaFormatada,
+    dataEntradaFormatada,
+    this.registerForm.value.material,
+    this.registerForm.value.numero,
+    this.registerForm.value.tipoAmostra,
+    this.registerForm.value.subtipo,
+    this.registerForm.value.produtoAmostra,
+    this.registerForm.value.periodoHora,
+    this.registerForm.value.periodoTurno,
+    this.registerForm.value.tipoAmostragem,
+    this.registerForm.value.localColeta,
+    this.registerForm.value.fornecedor,
+    this.registerForm.value.representatividadeLote,
+    this.registerForm.value.identificacaoComplementar,
+    this.registerForm.value.complemento,
+    this.registerForm.value.observacoes,
+    null, // Sem ordem para amostra normal
+    null,
+    this.registerForm.value.digitador,
+    this.registerForm.value.status
+  ).subscribe({
+    next: (amostraCriada) => {
+      console.log('✅ Amostra normal criada:', amostraCriada);
+      
+      this.messageService.add({ 
+        severity: 'success', 
+        summary: 'Sucesso', 
+        detail: 'Amostra normal criada com sucesso!'
+      });
+      
+    },
+    error: (error) => {
+      console.error('❌ Erro ao criar amostra normal:', error);
+      this.messageService.add({ 
+        severity: 'error', 
+        summary: 'Erro', 
+        detail: 'Erro ao criar amostra normal: ' + (error.error?.detail || error.message)
+      });
+    }
+  });
+
+}
+
+//----------------------------IMAGES---------------------------
+handleChange(info: any): void {
+  const fileList = info.fileList;
+  
+  // Converter para FileWithInfo com inicialização explícita
+  this.uploadedFilesWithInfo = fileList
+    .filter((file: any) => file.status !== 'error' && file.originFileObj)
+    .map((file: any) => ({
+      file: file.originFileObj as File,
+      descricao: '' // Descrição inicial vazia
+    }));
+  
+  console.log('Arquivos processados:', this.uploadedFilesWithInfo);
+  this.validateFiles();
+}
+
+validateFiles(): void {
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    
+    const validFiles: FileWithInfo[] = [];
+    
+    this.uploadedFilesWithInfo.forEach(fileInfo => {
+      if (!fileInfo.file) return;
+      
+      if (!allowedTypes.includes(fileInfo.file.type)) {
+        console.warn(`Tipo de arquivo não permitido: ${fileInfo.file.type}`);
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Arquivo inválido',
+          detail: `Tipo de arquivo não permitido: ${fileInfo.file.name}`
+        });
+        return;
+      }
+      
+      if (fileInfo.file.size > maxSize) {
+        console.warn(`Arquivo muito grande: ${fileInfo.file.name}`);
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Arquivo muito grande',
+          detail: `${fileInfo.file.name} excede o tamanho máximo de 5MB`
+        });
+        return;
+      }
+      
+      validFiles.push(fileInfo);
+    });
+    
+    this.uploadedFilesWithInfo = validFiles;
+    console.log('Arquivos válidos:', this.uploadedFilesWithInfo);
+  }
+
+// Método para interceptar requisições e não fazer upload automático
+customRequest = (item: any): any => {
+  // Marca como sucesso imediatamente sem afetar a UI
+  setTimeout(() => {
+    item.onSuccess({}, item.file, {});
+  }, 0);
+  
+  return { unsubscribe: () => {} };
+};
+
+visualizarImagens(amostra: any): void {
+  this.amostraImagensSelecionada = amostra;
+  this.carregarImagensAmostra(amostra.id);
+}
+
+carregarImagensAmostra(amostraId: number): void {
+  this.amostraService.getImagensAmostra(amostraId).subscribe({
+    next: (imagens) => {
+      // Usar image_url em vez de image para ter a URL completa
+      this.imagensAmostra = imagens.map((img: { image_url: any; image: any; }) => ({
+        ...img,
+        image: img.image_url || img.image // Usar image_url se disponível, senão fallback para image
+      }));
+      this.imagemAtualIndex = 0;
+      this.modalImagensVisible = true;
+      
+      if (imagens.length === 0) {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Informação',
+          detail: 'Esta amostra não possui imagens anexadas.'
+        });
+      }
+    },
+    error: (error) => {
+      console.error('Erro ao carregar imagens:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Erro ao carregar imagens da amostra.'
+      });
+    }
+  });
+}
+
+// Métodos para navegação entre imagens
+proximaImagem(): void {
+  if (this.imagemAtualIndex < this.imagensAmostra.length - 1) {
+    this.imagemAtualIndex++;
+  }
+}
+
+imagemAnterior(): void {
+  if (this.imagemAtualIndex > 0) {
+    this.imagemAtualIndex--;
+  }
+}
+
+// Método para ir para uma imagem específica
+irParaImagem(index: number): void {
+  this.imagemAtualIndex = index;
+}
+
+// Método para deletar uma imagem
+deletarImagem(imageId: number): void {
+  this.confirmationService.confirm({
+    message: 'Tem certeza que deseja deletar esta imagem?',
+    header: 'Confirmação',
+    icon: 'pi pi-exclamation-triangle',
+    accept: () => {
+      this.amostraService.deleteImagem(this.amostraImagensSelecionada.id, imageId).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: 'Imagem deletada com sucesso!'
+          });
+          
+          
+          this.carregarImagensAmostra(this.amostraImagensSelecionada.id);
+        },
+        error: (error) => {
+          console.error('Erro ao deletar imagem:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Erro ao deletar imagem.'
+          });
+        }
+      });
+    }
+  });
+}
+
+downloadImagem(imagem: any): void {
+  const link = document.createElement('a');
+  link.href = imagem.image;
+  link.download = `amostra_${this.amostraImagensSelecionada.numero}_imagem_${imagem.id}`;
+  link.target = '_blank';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+onDescricaoChange(imagem: any): void {
+  // Debounce para não fazer muitas requisições
+  if (this.descricaoTimeout) {
+    clearTimeout(this.descricaoTimeout);
+  }
+  
+  this.descricaoTimeout = setTimeout(() => {
+    this.salvarDescricaoImagem(imagem);
+  }, 3000); // Salva após 3 segundos sem alterações
+}
+
+private descricaoTimeout: any;
+
+salvarDescricaoImagem(imagem: any): void {
+  // método no service para atualizar descrição
+  this.amostraService.atualizarDescricaoImagem(imagem.id, imagem.descricao).subscribe({
+    next: () => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Sucesso',
+        detail: 'Descrição atualizada com sucesso!'
+      });
+    },
+    error: (error) => {
+      console.error('Erro ao atualizar descrição:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Erro ao atualizar descrição da imagem.'
+      });
+    }
+  });
+}
+
+// Método para capturar mudanças na descrição durante o upload
+onDescricaoInput(index: number, event: Event): void {
+  const target = event.target as HTMLInputElement;
+  const descricao = target.value;
+  
+  if (this.uploadedFilesWithInfo[index]) {
+    this.uploadedFilesWithInfo[index].descricao = descricao;
+    console.log(`Descrição atualizada para arquivo ${index}: "${descricao}"`);
+    console.log('Estado atual dos arquivos:', this.uploadedFilesWithInfo);
+  }
+}
+
+// Método para verificar o estado antes do upload
+verificarEstadoArquivos(): void {
+  console.log('Estado final dos arquivos antes do upload:');
+  this.uploadedFilesWithInfo.forEach((fileInfo, index) => {
+    console.log(`Arquivo ${index}:`, {
+      nome: fileInfo.file.name,
+      descricao: fileInfo.descricao,
+      tamanho: fileInfo.file.size
+    });
   });
 }
 

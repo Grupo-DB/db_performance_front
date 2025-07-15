@@ -1,0 +1,222 @@
+@import "primeicons/primeicons.css";
+.container{
+    max-width: 100%;
+    position: relative;
+}
+.titulo{
+    font-size: 22px;
+}
+.form-geral{
+    width: 98%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 8px;
+    // box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    .fg1{
+        width: 100%;
+        //margin-top: 10px;
+        //margin-bottom: 25px;
+        p{
+            margin-left: 20px;
+        }
+        .form1{
+           margin-top: 16px; 
+        }
+        .form2{
+            margin-top: 16px;
+        } 
+    }
+    .fg2{
+        width: 100%;
+        //margin-top: 10px;
+        //margin-bottom: 25px;
+        p{
+            margin-left: 20px;
+        }
+        .form2{
+            margin-top: 16px;
+            
+        } 
+    }
+    .fg3{
+        width: 100%;
+        //margin-top: 10px;
+        margin-bottom: 25px;
+        p{
+            margin-left: 20px;
+        }
+        .form2{
+            margin-top: 16px;
+            
+        }
+    }
+}   
+.botoes-form{
+    display: flex;
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto; 
+    justify-content: center;
+}
+.btnpri{
+    cursor: pointer;
+    background-color: #444959;
+    color: #fff;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    margin-left: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}   
+.btnsec{
+    cursor: pointer;
+    background-color: #e3e3f3;
+    color: #444959;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}
+.tabela{
+    border-radius: 10px;
+    width: 100%;
+
+    border-radius: 10px;
+    margin: auto;
+
+    // box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    th{
+        font-size: 14px;
+    }
+    td{
+        font-size:12px ;
+    }
+}
+
+.flex{
+    
+    text-align: end;
+    button{
+        margin-left: 1%;
+    }
+}
+
+.td-acao{
+    display: flex;
+    button{
+        margin-left: 2px;
+    }
+}
+.raizEd{
+    width: 99%;
+    margin-top: 7%;
+   
+}
+.editGeral{
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    .fg1edit{
+        width: 50%;
+        margin-top: 10px;
+        .form2{
+            margin-top: 25px;
+        }
+    }
+    .fg2edit{
+        width: 50%;
+        margin-top: 10px;
+        .form2{
+            margin-top: 25px;
+        }
+    }
+    .fg3edit{
+        width: 50%;
+        margin-top: 10px;
+        .form2{
+            margin-top: 25px;
+            margin-bottom: 20px;;
+        }
+    }
+}
+
+.blocos-scroll {
+    height: 100%;
+    overflow-y: auto;
+  }
+  
+  .expressao-container {
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+  }
+  
+  .expressao {
+    position: sticky; // ou remova se não quiser fixa no topo
+    top: 0;
+    width: 100%;
+    font-size: 24px;
+    font-style: italic;
+    font-weight: 500;
+    padding: 1rem 0;
+    background: #fff;
+    text-align: center;
+    z-index: 2;
+  }
+
+
+.drawer-footer {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start; 
+    padding: 1rem;
+    background: #fff;
+    border-top: 1px solid #eee;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+  }
+  :host ::ng-deep .p-fieldset-legend {
+    background-color: #444959;
+    color: #fff;
+  }
+
+
+:host ::ng-deep {
+    .p-speeddial-action{ 
+        background-color: #444959 !important;
+        color: white !important;
+    }
+ 
+    .speeddial-linear-demo {
+        .p-speeddial-direction-up {
+            left: calc(50% - 2rem);
+            bottom: 0;
+        }
+
+        .p-speeddial-direction-down {
+            left: calc(50% - 2rem);
+            top: 0;
+        }
+
+        .p-speeddial-direction-left {
+            right: 0;
+            top: calc(50% - 2rem);
+        }
+
+        .p-speeddial-direction-right {
+            left: 0;
+            top: calc(50% - 2rem);
+        }
+    }
+}

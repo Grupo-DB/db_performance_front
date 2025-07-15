@@ -2,12 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { Ordem } from '../../pages/controleQualidade/ordem/ordem.component';
+import { Expressa } from '../../pages/controleQualidade/expressa/expressa.component';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrdemService {
-  private ordemUrl = 'http://172.50.10.79:8008/ordem/ordem/';
+  private ordemUrl = 'http://localhost:8000/ordem/ordem/';
+  private expressaUrl = 'http://localhost:8000/ordem/expressa/';
 
   constructor(
     private httpClient: HttpClient
@@ -49,4 +51,48 @@ export class OrdemService {
     return this.httpClient.get<any[]>(`${this.ordemUrl}${ordemId}historico/`);
   }
 
+///-------------------------ORDEM EXPRESSA----------------------------
+  getExpresssas(): Observable<any>{
+    return this.httpClient.get<any[]>(this.expressaUrl);
+  }
+
+  getProximoNumeroExpressa(): Observable<number> {
+  return this.httpClient.get<{numero: number}>(`${this.expressaUrl}proximo-numero/`)
+    .pipe(map(res => res.numero));
 }
+
+  editExpressa(id:number, dadosAtualizados: Partial<Expressa>): Observable<any>{
+    const url = `${this.expressaUrl}${id}/`;
+    return this.httpClient.patch<any>(url, dadosAtualizados);
+  }
+
+  deleteExpressa(id: number): Observable<any> {
+    const url = `${this.expressaUrl}${id}/`;
+    return this.httpClient.delete(url);
+  }
+
+  registerExpressa(
+    data: any, 
+    numero: number,
+    ensaios: number[], // Array de IDs dos ensaios
+    calculos_ensaio: number[], // Array de IDs dos cálculos
+    responsavel: string, 
+    digitador: string, 
+    classificacao: string
+  ){
+    const payload = {
+      data: data,
+      numero: numero,
+      ensaios: ensaios,
+      calculos_ensaio: calculos_ensaio,
+      responsavel: responsavel,
+      digitador: digitador,
+      classificacao: classificacao
+    };
+    
+    console.log('📤 Payload enviado para registerExpressa:', payload);
+    
+    return this.httpClient.post<Expressa>(this.expressaUrl, payload);
+  }
+
+}  
