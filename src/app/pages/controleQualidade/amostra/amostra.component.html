@@ -568,17 +568,33 @@
                                                     <!-- <td style="text-align: center;">{{ analise.amostra_detalhes.subtipo }}</td> -->
                                                     <td style="text-align: center;">{{ amostra.status }}</td>
                                                     <td style="text-align: center;">{{ amostra.local_coleta }}</td>
-                                                    <td style="vertical-align: middle; text-align: center;">
-                                                        <div
-                                                            style="display: flex; justify-content: end; align-items: center; height: 60px;">
-                                                            <div style="position: relative;">
-                                                                <p-speeddial showIcon="pi pi-bars" hideIcon="pi pi-times"
-                                                                    [model]="getMenuItems(amostra)" [radius]="80"
-                                                                    direction="left"
-                                                                    [style]="{ position: 'absolute', top: 'calc(0% - 1rem)', right: 0 }"
-                                                                    [buttonProps]="{ severity: 'info', rounded: true }"
-                                                                    [tooltipOptions]="{ tooltipPosition: 'left' }" />
-                                                            </div>
+                                                    <td style="text-align: center;">
+                                                        <div style="display: flex; justify-content: end;">
+                                                            <p-speeddial 
+                                                                showIcon="pi pi-bars" hideIcon="pi pi-times"
+                                                                [model]="getMenuItems(amostra)"
+                                                                [radius]="80"
+                                                                [visible]= "true"
+                                                                type="quarter-circle" direction="up-left"
+                                                                [style]="{ position: 'relative', top: '0', right: 0 }" 
+                                                                [buttonProps]="{ severity: 'info', rounded: true }"
+                                                                [tooltipOptions]="{ tooltipPosition: 'left' }"
+                                                            ></p-speeddial>
+                                                            <p-button
+                                                                icon="pi pi-arrow-right"
+                                                                [rounded]="true"
+                                                                class="ml-1"
+                                                                tooltipPosition="top"
+                                                                pTooltip="Abrir OS"
+                                                            ></p-button>
+                                                            <p-button 
+                                                                icon="pi pi-book" 
+                                                                [rounded]="true"
+                                                                severity="danger"
+                                                                class="ml-2"
+                                                                tooltipPosition="top"
+                                                                pTooltip="OS Expressa"
+                                                            ></p-button>
                                                         </div>
                                                     </td>
                                                 </tr>
