@@ -157,9 +157,7 @@ export class RegisterCompanyComponent implements OnInit {
   }
 );
   }
-  clear(table: Table) {
-    table.clear();
-}
+
 clearForm() {
   this.registercompanyForm.reset();
 }

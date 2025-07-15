@@ -188,10 +188,6 @@ getTipoAvaliacaoNome(id: number): string {
   return tipoavaliacao ? tipoavaliacao.nome : 'Tipo de Avaliação não encontrado';
 }
 
-clear(table: Table) {
-  table.clear();
-}
-
 clearForm() {
 this.registerformularioForm.reset();
 }

@@ -347,10 +347,6 @@ export class AmbienteComponent implements OnInit {
     this.editForm.reset();
   }
   
-  clear(table: Table) {
-    table.clear();
-  }
-  
   clearForm() {
   this.registerambienteForm.reset();
   }

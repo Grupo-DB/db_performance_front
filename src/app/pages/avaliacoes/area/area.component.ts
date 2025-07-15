@@ -223,11 +223,6 @@ export class AreaComponent implements OnInit {
     return filial ? filial.nome : 'Filial não encontrada';
   }
 
-
-clear(table: Table) {
-  table.clear();
-}
-
 clearForm() {
   this.registerareaForm.reset();
 }

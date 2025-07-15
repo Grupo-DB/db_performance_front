@@ -67,7 +67,8 @@
                     </ng-template>
                 </p-step>
     
-                <p-step [value]="2">
+                <p-step [value]="2">imprimir Etiqueta</p-step>
+                    <p-step [value]="3">
                     <ng-template #content let-activateCallback="activateCallback" let-value="value">
                         <button pButton size="large" severity="info" [rounded]="true" (click)="activateCallback()">
                             <span [ngClass]="{
@@ -80,7 +81,7 @@
                     </ng-template>
                 </p-step>
     
-                <p-step [value]="3">
+                <p-step [value]="4">
                     <ng-template #content let-activateCallback="activateCallback" let-value="value">
                         <button pButton size="large" severity="info" [rounded]="true" (click)="activateCallback()">
                             <span [ngClass]="{
@@ -522,7 +523,7 @@
                                                                 [style]="{'width':'100%'}" pInputText id="on_label"
                                                                 autocomplete="off" type="text" />
                                                         </p-iconfield>
-                                                        <label for="on_label">Pesquisar</label>
+                                                        <label for="on_label" style="color: #1b91ff">Pesquisar</label>
                                                     </p-floatlabel>
                                                     <button size="small" class="ml-2" pButton [rounded]="true"
                                                         label="Pesquisar" severity="info" (click)="filterTable()"></button>

@@ -212,10 +212,6 @@ export class EnsaioComponent implements OnInit{
     )
   }
 
-
-  clear(table: Table) {
-    table.clear();
-  }
   filterTable() {
     this.dt1.filterGlobal(this.inputValue,'contains');
   }

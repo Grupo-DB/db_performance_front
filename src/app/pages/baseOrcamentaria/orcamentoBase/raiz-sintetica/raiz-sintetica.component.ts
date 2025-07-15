@@ -164,9 +164,6 @@ export class RaizSinteticaComponent implements OnInit{
     return cc ? `${cc.codigo} - ${cc.nome}` : 'CC não encontrado';
   }
 
-  clear(table: Table) {
-    table.clear();
-  }
   clearForm() {
     this.registerForm.reset();
   }

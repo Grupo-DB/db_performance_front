@@ -150,9 +150,6 @@ hasGroup(groups: string[]): boolean {
     return gestor ? gestor.nome : 'Gestor não encontrado';
   }
 
-  clear(table: Table) {
-    table.clear();
-  }
   clearForm() {
     this.registerForm.reset();
   }

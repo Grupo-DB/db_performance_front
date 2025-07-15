@@ -188,11 +188,6 @@ getPerguntaTexto(id: number): string {
   return pergunta ? pergunta.texto : 'Empresa não encontrada';
 }
 
-
-clear(table: Table) {
-  table.clear();
-}
-
 clearForm() {
 this.registerquestionarioForm.reset();
 }

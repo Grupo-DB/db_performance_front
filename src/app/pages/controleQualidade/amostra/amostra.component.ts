@@ -58,7 +58,16 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 interface FileWithInfo {
   file: File;
   descricao: string;
-}
+}import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { TooltipModule } from 'primeng/tooltip';
+
+
+
+import { AvaliadorService } from '../../../services/avaliacoesServices/avaliadores/registeravaliador.service';
+import { Avaliador } from '../../avaliacoes/avaliador/avaliador.component';
+
+
 interface AmostraForm{
   especie: FormControl,
   finalidade: FormControl,
@@ -148,7 +157,7 @@ interface Column {
     ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,
     InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,
     InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule,
-    CdkDragPlaceholder,NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule
+    CdkDragPlaceholder,NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule
 ],
   animations:[
     trigger('efeitoFade',[
@@ -156,42 +165,42 @@ interface Column {
                                               style({ opacity: 0 }),
                                               animate('2s', style({ opacity:1 }))
                                             ])
-                                          ]),
-                                          trigger('efeitoZoom', [
-                                            transition(':enter', [
-                                              style({ transform: 'scale(0)' }),
-                                              animate('2s', style({ transform: 'scale(1)' })),
-                                            ]),
-                                          ]),
-                                          trigger('bounceAnimation', [
-                                            transition(':enter', [
-                                              animate('4.5s ease-out', keyframes([
-                                                style({ transform: 'scale(0.5)', offset: 0 }),
-                                                style({ transform: 'scale(1.2)', offset: 0.5 }),
-                                                style({ transform: 'scale(1)', offset: 1 }),
-                                              ])),
-                                            ]),
-                                          ]),
-                                          trigger('swipeAnimation', [
-                                            transition(':enter', [
-                                              style({ transform: 'translateX(-100%)' }),
-                                              animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
-                                            ]),
-                                            transition(':leave', [
-                                              style({ transform: 'translateX(0)' }),
-                                              animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
-                                            ]),
-                                          ]),
-                                          trigger('swipeAnimationReverse', [
-                                            transition(':enter', [
-                                              style({ transform: 'translateX(100%)' }),
-                                              animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
-                                            ]),
-                                            transition(':leave', [
-                                              style({ transform: 'translateX(0)' }),
-                                              animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
-                                            ]),
-            ]),
+    ]),
+    trigger('efeitoZoom', [
+      transition(':enter', [
+        style({ transform: 'scale(0)' }),
+        animate('2s', style({ transform: 'scale(1)' })),
+      ]),
+    ]),
+    trigger('bounceAnimation', [
+      transition(':enter', [
+        animate('4.5s ease-out', keyframes([
+          style({ transform: 'scale(0.5)', offset: 0 }),
+          style({ transform: 'scale(1.2)', offset: 0.5 }),
+          style({ transform: 'scale(1)', offset: 1 }),
+        ])),
+      ]),
+    ]),
+    trigger('swipeAnimation', [
+      transition(':enter', [
+        style({ transform: 'translateX(-100%)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+      ]),
+    ]),
+    trigger('swipeAnimationReverse', [
+      transition(':enter', [
+        style({ transform: 'translateX(100%)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+      ]),
+    ]),
   ],
   providers:[
     MessageService,ConfirmationService,DatePipe
@@ -201,24 +210,25 @@ interface Column {
 })
 export class AmostraComponent implements OnInit {
 
-cols!: Column[];
-selectedColumns!: Column[];  
-amostras: Amostra[] = [];
-registerForm!: FormGroup<AmostraForm>;
-registerOrdemForm!: FormGroup<OrdemForm>;
-materiais: Produto[] = [];
-tiposAmostra: TipoAmostra[] = [];
-produtosAmostra: ProdutoAmostra[] = [];
-planosAnalise: Plano[] = [];
-ordens: Ordem[] = [];
-analises:Analise[] = [];
-producaoLote: any = null;
-activeStep: number = 1;
-analisesSimplificadas: any[] = [];
-digitador: any;
-idUltimaAanalise: any;
-responsavelEnsaio: any;
-responsavelCalculo: any;
+  avaliadores: Avaliador [] | undefined;
+  cols!: Column[];
+  selectedColumns!: Column[];  
+  amostras: Amostra[] = [];
+  registerForm!: FormGroup<AmostraForm>;
+  registerOrdemForm!: FormGroup<OrdemForm>;
+  materiais: Produto[] = [];
+  tiposAmostra: TipoAmostra[] = [];
+  produtosAmostra: ProdutoAmostra[] = [];
+  planosAnalise: Plano[] = [];
+  ordens: Ordem[] = [];
+  analises:Analise[] = [];
+  producaoLote: any = null;
+  activeStep: number = 1;
+  analisesSimplificadas: any[] = [];
+  digitador: any;
+  idUltimaAanalise: any;
+  responsavelEnsaio: any;
+  responsavelCalculo: any;
 checked: boolean = true;
 // upload das imagens
 uploadedFilesWithInfo: FileWithInfo[] = [];
@@ -229,10 +239,10 @@ imagensAmostra: any[] = [];
 amostraImagensSelecionada: any = null;
 imagemAtualIndex: number = 0;
 
-@ViewChild('dt1') dt1!: Table;
-inputValue: string = '';
+  @ViewChild('dt1') dt1!: Table;
+  inputValue: string = '';
 modalImagens: boolean = false;
-modalVisualizar: boolean = false;
+  modalVisualizar: boolean = false;
 tipos = [
   { value: 'Media' },
   { value: 'Pontual' }
@@ -253,66 +263,66 @@ especies = [
   
 ]
 
-fornecedores = [
-  { id: 0, nome:'Cibracal' },
-  { id: 1, nome:'Cliente' },
-  { id: 2, nome:'Coradassi' },
-  { id: 3, nome:'Cotrisul' },
-  { id: 4, nome:'DB' },
-  { id: 5, nome:'DB ATM' },
-  { id: 6, nome:'Felinto' },
-  { id: 7, nome:'Fida'  },
-  { id: 8, nome:'Garay' },
-];
+  fornecedores = [
+    { id: 0, nome:'Cibracal' },
+    { id: 1, nome:'Cliente' },
+    { id: 2, nome:'Coradassi' },
+    { id: 3, nome:'Cotrisul' },
+    { id: 4, nome:'DB' },
+    { id: 5, nome:'DB ATM' },
+    { id: 6, nome:'Felinto' },
+    { id: 7, nome:'Fida'  },
+    { id: 8, nome:'Garay' },
+  ];
 
-periodos = [
-  { id: 0, nome: 'Manhã' },
-  { id: 1, nome: 'Tarde' },
-  { id: 2, nome: 'Noite' },
-  { id: 3, nome: 'Pontual' },
-  { id: 4, nome: 'Diário' },
-]
+  periodos = [
+    { id: 0, nome: 'Manhã' },
+    { id: 1, nome: 'Tarde' },
+    { id: 2, nome: 'Noite' },
+    { id: 3, nome: 'Pontual' },
+    { id: 4, nome: 'Diário' },
+  ]
 
-locaisColeta = [
-  { id: 0, nome: '1 hora na estufa' },
-  { id: 1, nome: '30 minutos na estufa' },
-  { id: 2, nome: 'Área da Indústria' },
-  { id: 3, nome: 'Argamassa' },
-  { id: 4, nome: 'Arroio Grande' },
-  { id: 5, nome: 'Bag Cliente' },
-  { id: 6, nome: 'Big Bag' },
-  { id: 7, nome: 'Britagem' },
-  { id: 8, nome: 'Cascalho Britagem' },
-  { id: 9, nome: 'Cliente' },
-  { id: 10, nome: 'Cliente do Everton' },
-  { id: 11, nome: 'Cliente Lavoura' },
-  { id: 12, nome: 'Cliente/Lavoura' },
-  { id: 13, nome: 'CT-10' },
-  { id: 14, nome: 'CT-09' },
-  { id: 15, nome: 'Despoeiramento CT-16' },
-  { id: 16, nome: 'Estoque' },
-  { id: 17, nome: 'FAB' },
-  { id: 18, nome: 'FAB I' },
-  { id: 19, nome: 'FAB I Carregamento' },
-  { id: 20, nome: 'FAB II' },
-  { id: 21, nome: 'Saco' },
-]
-status = [
-  { id: 0, nome: 'Pendente' },
-  { id: 1, nome: 'Em Análise' },
-  { id: 2, nome: 'Aprovada' },
-  { id: 3, nome: 'Reprovada' },
-  { id: 4, nome: 'Cancelada' },
-  { id: 5, nome: 'Finalizada' },
-]
+  locaisColeta = [
+    { id: 0, nome: '1 hora na estufa' },
+    { id: 1, nome: '30 minutos na estufa' },
+    { id: 2, nome: 'Área da Indústria' },
+    { id: 3, nome: 'Argamassa' },
+    { id: 4, nome: 'Arroio Grande' },
+    { id: 5, nome: 'Bag Cliente' },
+    { id: 6, nome: 'Big Bag' },
+    { id: 7, nome: 'Britagem' },
+    { id: 8, nome: 'Cascalho Britagem' },
+    { id: 9, nome: 'Cliente' },
+    { id: 10, nome: 'Cliente do Everton' },
+    { id: 11, nome: 'Cliente Lavoura' },
+    { id: 12, nome: 'Cliente/Lavoura' },
+    { id: 13, nome: 'CT-10' },
+    { id: 14, nome: 'CT-09' },
+    { id: 15, nome: 'Despoeiramento CT-16' },
+    { id: 16, nome: 'Estoque' },
+    { id: 17, nome: 'FAB' },
+    { id: 18, nome: 'FAB I' },
+    { id: 19, nome: 'FAB I Carregamento' },
+    { id: 20, nome: 'FAB II' },
+    { id: 21, nome: 'Saco' },
+  ]
+  status = [
+    { id: 0, nome: 'Pendente' },
+    { id: 1, nome: 'Em Análise' },
+    { id: 2, nome: 'Aprovada' },
+    { id: 3, nome: 'Reprovada' },
+    { id: 4, nome: 'Cancelada' },
+    { id: 5, nome: 'Finalizada' },
+  ]
 
-finalidades = [
-  { id: 0, nome: 'Controle de Qualidade' },
-  { id: 1, nome: 'SAC' },
-  { id: 2, nome: 'Desenvolvimento de Produtos' },
-]
+  finalidades = [
+    { id: 0, nome: 'Controle de Qualidade' },
+    { id: 1, nome: 'SAC' },
+    { id: 2, nome: 'Desenvolvimento de Produtos' },
+  ]
 
-responsaveis = [
+  responsaveis = [
     { value: 'Antonio Carlos Vargas Sito' },
     { value: 'Fabiula Bueno' },
     { value: 'Janice Castro de Oliveira'},
@@ -333,7 +343,7 @@ responsaveis = [
   analiseSelecionada: any;
   amostraSelecionada: any;
   
-constructor(
+  constructor(
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private loginService: LoginService,
@@ -407,13 +417,15 @@ constructor(
     this.registerOrdemForm.get('numero')?.setValue(numero);
     console.log('Número da ordem de serviço gerado:', numero);
   
+
+    
     
   });
 
-     // Chama sempre que algum campo relevante mudar
-    this.registerForm.get('material')?.valueChanges.subscribe(() => this.onCamposRelevantesChange());
-    this.registerForm.get('tipoAmostragem')?.valueChanges.subscribe(() => this.onCamposRelevantesChange());
-    this.registerForm.get('dataColeta')?.valueChanges.subscribe(() => this.onCamposRelevantesChange());
+    // Chama sempre que algum campo relevante mudar
+  this.registerForm.get('material')?.valueChanges.subscribe(() => this.onCamposRelevantesChange());
+  this.registerForm.get('tipoAmostragem')?.valueChanges.subscribe(() => this.onCamposRelevantesChange());
+  this.registerForm.get('dataColeta')?.valueChanges.subscribe(() => this.onCamposRelevantesChange());
 
     // Configuração das colunas da tabela
     this.cols = [
@@ -448,12 +460,11 @@ constructor(
     );
   }
 
-
-  clear(table: Table) {
-    table.clear();
-  }
   filterTable() {
     this.dt1.filterGlobal(this.inputValue,'contains');
+  }
+  clear(table: Table) {
+    table.clear();
   }
   clearForm(){
     this.registerForm.reset();
@@ -574,7 +585,7 @@ onMaterialChange(materialId: number) {
     )
   }
   
-  gerarNumero(materialNome: string, sequencial: number): string {
+gerarNumero(materialNome: string, sequencial: number): string {
   //const ano = new Date().getFullYear().toString().slice(-2); // 
   const sequencialFormatado = sequencial.toString().padStart(6, '0'); // Ex: '000008'
   // Formata como 08.392 
@@ -613,19 +624,21 @@ irLinkExterno(analise: any) {
   window.open(`/welcome/controleQualidade/analise`, analise.id);
 }
 
-
 visualizar(amostra: any) {
   this.amostraSelecionada = amostra;
   this.modalVisualizar = true;
   console.log('Drawer deve abrir', amostra); 
 }
+
 abrirOS(amostra: any) {
   this.amostraSelecionada = amostra;
   this.activeStep = 2;
 }
+
 editar(amostra: any) {
   // lógica para editar
 }
+
 excluir(amostra: any) {
   // lógica para excluir
 }
@@ -1215,7 +1228,6 @@ calcular(calc: any, produto?: any) {
     calc.resultado = 'Erro no cálculo';
   }
 }
-
 
 private normalize(str: string): string {
   if (!str) return '';
