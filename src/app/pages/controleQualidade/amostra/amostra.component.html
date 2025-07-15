@@ -381,10 +381,10 @@
                                     <div class="flex flex-column w-12 gap-3 mb-3 justify-content-end lg:w-11 lg:flex-row">
                                         <div class="w-6 text-left">
                                             <!-- <p-button title="Abrir OS expressa" label="OS Expressa" severity="danger" icon="pi pi-book" (onClick)="osExpressa()"/> -->
-                                            <p-button title="Abrir OS expressa" label="Meu teste" severity="danger" icon="pi pi-book" (onClick)="activateCallback(3);loadAnalises()"/>
+                                            <p-button title="Abrir OS expressa" label="OS Expressa" severity="danger" icon="pi pi-book" (onClick)="activateCallback(3);loadAnalises()" />
                                         </div>
                                         <div class=" flex w-6 gap-3 justify-content-end text-right">
-                                            <p-button (onClick)="activateCallback(2);loadAnalises()" title="Imprimir Etiqueta" label="Imprimir Etiqueta" severity="info" icon="pi pi-arrow-right" iconPos="right" />
+                                            <p-button (onClick)="activateCallback(3);loadAnalises()" title="Abrir OS" label="Abrir OS" icon="pi pi-arrow-right" iconPos="right" />
                                             <p-button (onClick)="submitAmostra()" label="Salvar Amostra" severity="success" icon="pi pi-check" iconPos="right" />
                                         </div>
                                     
@@ -449,33 +449,47 @@
                                                     <!-- <th style="width: 25%; text-align: center;" type="text" field="calcsEnsaios" display="menu">Subtipo</th> -->
                                                     <th style="width: 10%; text-align: center;" type="text" field="calcsEnsaios" display="menu">Status</th>
                                                     <th style="width: 15%; text-align: center;" type="text" field="calcsEnsaios" display="menu">Local de Coleta</th>
-                                                    <th style="width: 10%; text-align: end;" type="text" field="acoes" display="menu">Ações</th>
+                                                    <th style="text-align: center;">Ações</th>
                                                 </tr>
                                             </ng-template>
                                             <ng-template pTemplate="body" let-amostra>
                                                 <tr>
                                                     <td style="text-align: center;">{{ amostra.data_entrada }}</td>
                                                     <td style="text-align: center;">{{ amostra.data_coleta }}</td>
-                                                    <td style="text-align: center;">{{ amostra.produto_amostra_detalhes.nome }}</td>
+                                                    <td style="text-align: center;">{{ amostra.produto_amostra_detalhes?.nome }}</td>
                                                     <td style="text-align: center;">{{ amostra.numero }}</td>
-                                                    <td style="text-align: center;">{{ amostra.material_detalhes.nome }}</td>
-                                                    <td style="text-align: center;">{{ amostra.tipo_amostra_detalhes.nome }}</td>
+                                                    <td style="text-align: center;">{{ amostra.material_detalhes?.nome }}</td>
+                                                    <td style="text-align: center;">{{ amostra.tipo_amostra_detalhes?.nome }}</td>
                                                     <!-- <td style="text-align: center;">{{ analise.amostra_detalhes.subtipo }}</td> -->
                                                     <td style="text-align: center;">{{ amostra.status }}</td>
                                                     <td style="text-align: center;">{{ amostra.local_coleta }}</td>
-                                                    <td style="vertical-align: middle; text-align: center;">
-                                                        <div style="display: flex; justify-content: end; align-items: center; height: 60px;">
-                                                            <div style="position: relative;">
-                                                                <p-speeddial 
-                                                                    showIcon="pi pi-bars" hideIcon="pi pi-times"
-                                                                    [model]="getMenuItems(amostra)"
-                                                                    [radius]="80"
-                                                                    direction="left" 
-                                                                    [style]="{ position: 'absolute', top: 'calc(0% - 1rem)', right: 0 }" 
-                                                                    [buttonProps]="{ severity: 'info', rounded: true }"
-                                                                    [tooltipOptions]="{ tooltipPosition: 'left' }"
-                                                                    />
-                                                            </div>
+                                                    <td style="text-align: center;">
+                                                        <div style="display: flex; justify-content: end;">
+                                                            <p-speeddial 
+                                                                showIcon="pi pi-bars" hideIcon="pi pi-times"
+                                                                [model]="getMenuItems(amostra)"
+                                                                [radius]="80"
+                                                                [visible]= "true"
+                                                                type="quarter-circle" direction="up-left"
+                                                                [style]="{ position: 'relative', top: '0', right: 0 }" 
+                                                                [buttonProps]="{ severity: 'info', rounded: true }"
+                                                                [tooltipOptions]="{ tooltipPosition: 'left' }"
+                                                            ></p-speeddial>
+                                                            <p-button
+                                                                icon="pi pi-arrow-right"
+                                                                [rounded]="true"
+                                                                class="ml-1"
+                                                                tooltipPosition="top"
+                                                                pTooltip="Abrir OS"
+                                                            ></p-button>
+                                                            <p-button 
+                                                                icon="pi pi-book" 
+                                                                [rounded]="true"
+                                                                severity="danger"
+                                                                class="ml-2"
+                                                                tooltipPosition="top"
+                                                                pTooltip="OS Expressa"
+                                                            ></p-button>
                                                         </div>
                                                     </td>
                                                 </tr>
