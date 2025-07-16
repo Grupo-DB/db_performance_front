@@ -10,10 +10,10 @@ import { Plano } from '../../pages/controleQualidade/plano/plano.component';
   providedIn: 'root'
 })
 export class EnsaioService {
-  private apiUrl = 'http://localhost:8000/ensaio/tipos_ensaio/';
-  private apiUrlEnsaio = 'http://localhost:8000/ensaio/ensaio/';
-  private apiUrlCalculoEnsaio = 'http://localhost:8000/calculosEnsaio/calculoEnsaio/';
-  private apiUrlPlano = 'http://localhost:8000/plano/planoAnalise/';
+  private apiUrl = 'http://172.50.10.79:8008/ensaio/tipos_ensaio/';
+  private apiUrlEnsaio = 'http://172.50.10.79:8008/ensaio/ensaio/';
+  private apiUrlCalculoEnsaio = 'http://172.50.10.79:8008/calculosEnsaio/calculoEnsaio/';
+  private apiUrlPlano = 'http://172.50.10.79:8008/plano/planoAnalise/';
   constructor(
     private http: HttpClient,
   ) { }
