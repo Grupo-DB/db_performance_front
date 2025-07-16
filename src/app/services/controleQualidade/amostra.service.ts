@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { TipoAmostra } from '../../pages/controleQualidade/tipo-amostra/tipo-amostra.component';
@@ -15,7 +15,11 @@ export class AmostraService {
   private produtoUrl = 'http://localhost:8000/amostra/produto/';
   private sequencialUrl = 'http://localhost:8000/amostra/amostra/proximo-sequencial/';
   private representatividadeUrl = 'http://localhost:8000/cal/representatividade/';
-  
+  private httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json'
+    })
+  };
   constructor(
     private http: HttpClient
   ) { }
@@ -35,6 +39,8 @@ export class AmostraService {
   registerTipoAmostra(nome: string, natureza: string){
     return this.http.post<TipoAmostra>(this.tipoAmostraUrl,{ nome: nome, natureza: natureza });
   }
+
+
 
   ///upload imagens
   // ...existing code...
@@ -76,6 +82,10 @@ atualizarDescricaoImagem(imagemId: number, descricao: string): Observable<any> {
   getAmostras(): Observable<any>{
     return this.http.get<any[]>(this.amostraUrl);
   }
+  getAmostraById(amostraId: number): Observable<any> {
+  const url = `${this.amostraUrl}${amostraId}/`;
+  return this.http.get(url, this.httpOptions);
+}
   editAmostra(id: number, dadosAtualizados: Partial<Amostra>): Observable<any>{
     const url = `${this.amostraUrl}${id}/`;
     return this.http.patch<any>(url, dadosAtualizados);
@@ -185,6 +195,16 @@ atualizarDescricaoImagem(imagemId: number, descricao: string): Observable<any> {
       ensaios_selecionados: dadosAmostraExpressa.ensaiosSelecionados || [],
       calculos_selecionados: dadosAmostraExpressa.calculosSelecionados || []
     });
+  }
+
+   updateAmostra(amostraId: number, dadosAtualizacao: any): Observable<any> {
+    const url = `${this.amostraUrl}${amostraId}/`;
+    return this.http.patch(url, dadosAtualizacao, this.httpOptions);
+  }
+
+  associarAmostraAOrdem(amostraId: number, ordemId: number): Observable<any> {
+    const url = `${this.amostraUrl}${amostraId}/`;
+    return this.http.patch(url, { ordem: ordemId }, this.httpOptions);
   }
 
   getProximoSequencial(materialId: number): Observable<number> {

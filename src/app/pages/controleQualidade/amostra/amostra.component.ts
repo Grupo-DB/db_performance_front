@@ -1000,39 +1000,156 @@ enriquecerDadosFormulario(formData: any): any {
 montarAnalise(){
   this.activeStep = 3;
 }
+//////////////////////////////////////////////OS EXPRESSA APARTIR DA TABELA //////////////////
+criarExpressaDeAmostra(amostra: any) {
+  console.log('Criando expressa a partir da amostra:', amostra);
 
-salvarOrdemEAmostra() {
-  // Se houver uma análise selecionada, preencha o formulário de amostra com seus dados
-  if (this.amostraSelecionada ) {
-    const a = this.amostraSelecionada;
-    this.registerForm.patchValue({
-      dataColeta: a.data_coleta ? new Date(a.data_coleta) : '',
-      dataEntrada: a.data_entrada ? new Date(a.data_entrada) : '',
-      material: a.material_detalhes?.id || '',
-      numero: a.numero || '',
-      tipoAmostra: a.tipo_amostra_detalhes?.id || '',
-      subtipo: a.subtipo || '',
-      produtoAmostra: a.produto_amostra_detalhes?.id || '',
-      periodoHora: a.periodo_hora || '',
-      periodoTurno: a.periodo_turno || '',
-      tipoAmostragem: a.tipo_amostragem || '',
-      localColeta: a.local_coleta || '',
-      representatividadeLote: a.representatividade_lote || '',
-      identificacaoComplementar: a.identificacao_complementar || '',
-      complemento: a.complemento || '',
-      digitador: a.digitador || '',
-      status: a.status || ''
+  // Converter os dados da amostra para o formato esperado pela expressa
+  const dadosAmostraParaExpressa = this.converterAmostraSalvaParaFormulario(amostra);
+  //enriquecer dados
+  const dadosEnriquecidos = this.enriquecerDadosFormulario(dadosAmostraParaExpressa);
+  //carregar imagens se tiver
+  this.carregarImagensParaExpressa(amostra.id, dadosEnriquecidos);
+}
+
+// Método para converter amostra salva para formato do formulário
+converterAmostraSalvaParaFormulario(amostra: any): any {
+  return {
+    especie: amostra.especie || '',
+    finalidade: amostra.finalidade || '',
+    numeroSac: amostra.numero_sac || '',
+    dataEnvio: amostra.data_envio ? new Date(amostra.data_envio) : null,
+    destinoEnvio: amostra.destino_envio || '',
+    dataRecebimento: amostra.data_recebimento ? new Date(amostra.data_recebimento) : null,
+    reter: amostra.reter || false,
+    registroEp: amostra.registro_ep || '',
+    registroProduto: amostra.registro_produto || '',
+    numeroLote: amostra.numero_lote || '',
+    dataColeta: amostra.data_coleta ? new Date(amostra.data_coleta) : null,
+    dataEntrada: amostra.data_entrada ? new Date(amostra.data_entrada) : null,
+    material: amostra.material_detalhes?.id || amostra.material,
+    numero: amostra.numero || '',
+    tipoAmostra: amostra.tipo_amostra_detalhes?.id || amostra.tipo_amostra,
+    subtipo: amostra.subtipo || '',
+    produtoAmostra: amostra.produto_amostra_detalhes?.id || amostra.produto_amostra,
+    periodoHora: amostra.periodo_hora || '',
+    periodoTurno: amostra.periodo_turno || '',
+    tipoAmostragem: amostra.tipo_amostragem || '',
+    localColeta: amostra.local_coleta || '',
+    fornecedor: amostra.fornecedor || '',
+    representatividadeLote: amostra.representatividade_lote || '',
+    identificacaoComplementar: amostra.identificacao_complementar || '',
+    complemento: amostra.complemento || '',
+    observacoes: amostra.observacoes || '',
+    digitador: amostra.digitador || '',
+    status: amostra.status || ''
+  };
+}
+
+// Método para carregar imagens da amostra 
+carregarImagensParaExpressa(amostraId: number, dadosEnriquecidos: any) {
+  this.amostraService.getImagensAmostra(amostraId).subscribe({
+    next: (imagens) => {
+      // Adicionar imagens aos dados enriquecidos
+      if (imagens && imagens.length > 0) {
+        dadosEnriquecidos.imagensExistentes = imagens.map((img: any) => ({
+          id: img.id,
+          url: img.image_url || img.image,
+          descricao: img.descricao || '',
+          nome: `imagem_${img.id}`,
+          // Para imagens existentes, 
+          isExistente: true
+        }));
+        console.log('Imagens carregadas para expressa:', dadosEnriquecidos.imagensExistentes);
+      }
+      
+      this.navegarParaExpressaComDados(dadosEnriquecidos);
+    },
+    error: (error) => {
+      console.warn('Erro ao carregar imagens, mas continuando:', error);
+      // Mesmo se houver erro ao carregar imagens, continua para a expressa
+      this.navegarParaExpressaComDados(dadosEnriquecidos);
+    }
+  });
+}
+
+// Método para navegar para expressa com dados preparados
+navegarParaExpressaComDados(dadosEnriquecidos: any) {
+  // Salvar no sessionStorage como backup
+  const dadosSemImagens = { ...dadosEnriquecidos };
+  delete dadosSemImagens.imagens;
+  delete dadosSemImagens.imagensExistentes;
+  sessionStorage.setItem('amostraData', JSON.stringify(dadosSemImagens));
+  
+  console.log('Navegando para expressa com dados da amostra salva:', dadosEnriquecidos);
+  
+  // Navegar para a rota expressa passando os dados via state
+  this.router.navigate(['/welcome/controleQualidade/expressa'], {
+    state: { amostraData: dadosEnriquecidos }
+  });
+}
+
+//////////////////////////END OS EXPRESSA APARTIR DA TABELA //////////////////
+
+////////////////////////ORDEM DE SERVIÇO COM PLANO DE ANÁLISE //////////////////
+
+criarOrdemServico(amostra: any){  
+  this.amostraSelecionada = amostra;
+
+  // Preenche automaticamente alguns campos da OS baseados na amost
+  this.preencherFormularioOSComAmostra(amostra);
+  this.activeStep = 3;
+  this.messageService.add({
+    severity: 'info',
+    summary: 'Amostra Selecionada',
+    detail: `Amostra ${amostra.numero} selecionada. Configure a Ordem de Serviço.`
+  });
+}
+
+preencherFormularioOSComAmostra(amostra: any) {
+  console.log('Preenchendo formulário OS com dados da amostra:', amostra);
+  
+  // Busca o próximo número de OS
+  this.ordemService.getProximoNumero().subscribe(numero => {
+    this.registerOrdemForm.patchValue({
+      numero: numero,
+      data: new Date(), // Data atual
+      digitador: this.digitador,
+      classificacao: amostra.finalidade || 'Controle de Qualidade'
     });
+  });
+  
+}
+
+salvarOrdemEAssociarAmostra() {
+  if (!this.amostraSelecionada) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Erro',
+      detail: 'Nenhuma amostra foi selecionada.'
+    });
+    return;
   }
 
-  // 1. Formata a data da ordem
+  if (!this.registerOrdemForm.valid) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Erro',
+      detail: 'Preencha todos os campos obrigatórios da Ordem de Serviço.'
+    });
+    return;
+  }
+
+  // Formatar a data da ordem
   let dataFormatada = '';
   const dataValue = this.registerOrdemForm.value.data;
   if (dataValue instanceof Date && !isNaN(dataValue.getTime())) {
     dataFormatada = formatDate(dataValue, 'yyyy-MM-dd', 'en-US');
   }
 
-  // 2. Salve a ordem
+  console.log('🚀 Iniciando criação de OS para amostra existente:', this.amostraSelecionada.id);
+
+  // Criar a ordem de serviço
   this.ordemService.registerOrdem(
     dataFormatada,
     this.registerOrdemForm.value.numero,
@@ -1042,89 +1159,334 @@ salvarOrdemEAmostra() {
     this.registerOrdemForm.value.classificacao
   ).subscribe({
     next: (ordemSalva) => {
-      // 3. Pegua o número ou ID da ordem salva
-      const numeroOrdem = ordemSalva.numero; // ou ordemSalva.id
+      console.log('✅ Ordem criada:', ordemSalva);
+      
+      // Associar a amostra existente à ordem criada
+      this.associarAmostraAOrdem(this.amostraSelecionada.id, ordemSalva.id);
+    },
+    error: (err) => {
+      console.error('❌ Erro ao criar ordem:', err);
+      this.tratarErroOperacao(err, 'criar ordem de serviço');
+    }
+  });
+}
 
-      // 4. Formata as datas da amostra
-      let dataColetaFormatada = '';
-      const dataColetaValue = this.registerForm.value.dataColeta;
-      if (dataColetaValue instanceof Date && !isNaN(dataColetaValue.getTime())) {
-        dataColetaFormatada = formatDate(dataColetaValue, 'yyyy-MM-dd', 'en-US');
+associarAmostraAOrdem(amostraId: number, ordemId: number) {
+  console.log(`🔗 Associando amostra ${amostraId} à ordem ${ordemId}`);
+  
+  // Atualizar a amostra para incluir a referência da ordem
+  this.amostraService.associarAmostraAOrdem(amostraId, ordemId).subscribe({
+    next: (amostraAtualizada) => {
+      console.log('✅ Amostra associada à ordem:', amostraAtualizada);
+      
+      // Criar análise para a amostra
+      this.criarAnaliseParaAmostra(amostraId);
+    },
+    error: (err) => {
+      console.error('❌ Erro ao associar amostra à ordem:', err);
+      
+      // Se o serviço não existe, tenta atualizar diretamente
+      this.atualizarAmostraComOrdem(amostraId, ordemId);
+    }
+  });
+}
+
+atualizarAmostraComOrdem(amostraId: number, ordemId: number) {
+  console.log(`🔄 Atualizando amostra ${amostraId} com ordem ${ordemId} (método alternativo)`);
+  
+  // Preparar dados para atualização
+  const dadosAtualizacao = {
+    ordem: ordemId
+  };
+  
+  // Se você tem um método de update na amostra service
+  this.amostraService.updateAmostra(amostraId, dadosAtualizacao).subscribe({
+    next: (amostraAtualizada) => {
+      console.log('✅ Amostra atualizada com ordem:', amostraAtualizada);
+      
+      // Criar análise para a amostra
+      this.criarAnaliseParaAmostra(amostraId);
+    },
+    error: (err) => {
+      console.error('❌ Erro ao atualizar amostra:', err);
+      
+      // Mesmo se der erro na associação, tenta criar a análise
+      this.criarAnaliseParaAmostra(amostraId);
+    }
+  });
+}
+
+criarAnaliseParaAmostra(amostraId: number) {
+  console.log(`📊 Criando análise para amostra ${amostraId}`);
+  
+  // Buscar a amostra atualizada para garantir que tem a ordem associada
+  this.amostraService.getAmostraById(amostraId).subscribe({
+    next: (amostraAtualizada) => {
+      console.log('📋 Amostra recuperada:', amostraAtualizada);
+      
+      // Verificar se a amostra tem ordem associada
+      if (!amostraAtualizada.ordem && !amostraAtualizada.ordem_detalhes) {
+        console.warn('⚠️ Amostra não tem ordem associada');
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Atenção',
+          detail: 'A amostra foi associada, mas não foi possível recuperar a ordem. Verifique manualmente.'
+        });
+        return;
       }
-      let dataEntradaFormatada = '';
-      const dataEntradaValue = this.registerForm.value.dataEntrada;
-      if (dataEntradaValue instanceof Date && !isNaN(dataEntradaValue.getTime())) {
-        dataEntradaFormatada = formatDate(dataEntradaValue, 'yyyy-MM-dd', 'en-US');
-      }
-
-      let dataEnvioFormatada = '';
-      const dataEnvioValue = this.registerForm.value.dataEnvio;
-      if (dataEnvioValue instanceof Date && !isNaN(dataEnvioValue.getTime())) {
-        dataEnvioFormatada = formatDate(dataEnvioValue, 'yyyy-MM-dd', 'en-US');
-      }
-
-      let dataRecebimentoFormatada = '';
-      const dataRecebimentoValue = this.registerForm.value.dataRecebimento;
-      if (dataRecebimentoValue instanceof Date && !isNaN(dataRecebimentoValue.getTime())) {
-        dataRecebimentoFormatada = formatDate(dataRecebimentoValue, 'yyyy-MM-dd', 'en-US');
-      }
-
-
-      // 5. Salva a amostra vinculando à ordem
-      this.amostraService.registerAmostra(
-        this.registerForm.value.especie,
-        this.registerForm.value.finalidade,
-        this.registerForm.value.numeroSac,
-        dataEnvioFormatada,
-        this.registerForm.value.destinoEnvio,
-        dataRecebimentoFormatada,
-        this.registerForm.value.reter,
-        this.registerForm.value.registroEp,
-        this.registerForm.value.registroProduto,
-        this.registerForm.value.numeroLote, 
-        dataColetaFormatada,
-        dataEntradaFormatada,
-        this.registerForm.value.material,
-        this.registerForm.value.numero,
-        this.registerForm.value.tipoAmostra,
-        this.registerForm.value.subtipo,
-        this.registerForm.value.produtoAmostra,
-        this.registerForm.value.periodoHora,
-        this.registerForm.value.periodoTurno,
-        this.registerForm.value.tipoAmostragem,
-        this.registerForm.value.localColeta,
-        this.registerForm.value.fornecedor,
-        this.registerForm.value.representatividadeLote,
-        this.registerForm.value.identificacaoComplementar,
-        this.registerForm.value.complemento,
-        this.registerForm.value.observacoes,
-        numeroOrdem,
-        null, 
-        this.registerForm.value.digitador,
-        this.registerForm.value.status
-      ).subscribe({
-        next: (amostraCriada) => {
-          // 6. Crie a análise vinculada à amostra recém-criada
-          this.analiseService.registerAnalise(amostraCriada.id, 'PENDENTE').subscribe({
-            next: () => {
-              this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Amostra, ordem e análise registradas com sucesso.' });
-              this.activeStep = 4; // Avança para o próximo passo, se houver
-            },
-            error: () => {
-              this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Amostra e ordem salvas, mas erro ao criar análise.' });
-            }
+      
+      // Criar análise com a amostra e ordem
+      const ordemId = amostraAtualizada.ordem || amostraAtualizada.ordem_detalhes?.id;
+      console.log(`🔗 Criando análise para amostra ${amostraId} com ordem ${ordemId}`);
+      
+      this.analiseService.registerAnalise(amostraId, 'PENDENTE').subscribe({
+        next: (analiseCriada) => {
+          console.log('✅ Análise criada:', analiseCriada);
+          
+          // Atualizar a lista de amostras para refletir as mudanças
+          this.loadAmostras();
+          
+          // Limpar seleção e resetar formulários
+          this.limparSelecaoEFormularios();
+          
+          // Voltar para o step 1
+          this.activeStep = 1;
+          
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: `Ordem de Serviço criada e associada à amostra ${this.amostraSelecionada.numero}. Análise criada com sucesso!`
           });
         },
         error: (err) => {
-          this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao salvar a amostra.' });
+          console.error('❌ Erro ao criar análise:', err);
+          
+          // Mesmo se der erro na análise, a ordem foi criada
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Atenção',
+            detail: 'Ordem criada e associada, mas houve erro ao criar a análise. Verifique manualmente.'
+          });
+          
+          this.limparSelecaoEFormularios();
+          this.activeStep = 1;
         }
       });
     },
     error: (err) => {
-      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao salvar a ordem.' });
+      console.error('❌ Erro ao recuperar amostra atualizada:', err);
+      
+      // Se não conseguir recuperar a amostra, tenta criar análise só com amostraId
+      console.log('🔄 Tentando criar análise apenas com amostraId como fallback');
+      this.analiseService.registerAnalise(amostraId, 'PENDENTE').subscribe({
+        next: (analiseCriada) => {
+          console.log('✅ Análise criada (fallback):', analiseCriada);
+          
+          this.loadAmostras();
+          this.limparSelecaoEFormularios();
+          this.activeStep = 1;
+          
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: `Ordem criada e análise criada para amostra ${this.amostraSelecionada.numero}!`
+          });
+        },
+        error: (fallbackErr) => {
+          console.error('❌ Erro no fallback:', fallbackErr);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Ordem criada, mas não foi possível criar a análise. Verifique manualmente.'
+          });
+          
+          this.limparSelecaoEFormularios();
+          this.activeStep = 1;
+        }
+      });
     }
   });
 }
+
+limparSelecaoEFormularios() {
+  this.amostraSelecionada = null;
+  this.registerOrdemForm.reset();
+  
+  // Recarregar próximo número de OS para o formulário limpo
+  this.ordemService.getProximoNumero().subscribe(numero => {
+    this.registerOrdemForm.get('numero')?.setValue(numero);
+  });
+  
+  // Restaurar digitador
+  this.registerOrdemForm.get('digitador')?.setValue(this.digitador);
+}
+
+tratarErroOperacao(err: any, operacao: string) {
+  console.error(`Erro ao ${operacao}:`, err);
+  
+  if (err.status === 401) {
+    this.messageService.add({ 
+      severity: 'error', 
+      summary: 'Timeout!', 
+      detail: 'Sessão expirada! Por favor faça o login novamente.' 
+    });
+  } else if (err.status === 403) {
+    this.messageService.add({ 
+      severity: 'error', 
+      summary: 'Erro!', 
+      detail: 'Acesso negado! Você não tem autorização para esta operação.' 
+    });
+  } else if (err.status === 400) {
+    this.messageService.add({ 
+      severity: 'error', 
+      summary: 'Erro!', 
+      detail: 'Dados inválidos. Verifique o preenchimento e tente novamente.' 
+    });
+  } else {
+    this.messageService.add({ 
+      severity: 'error', 
+      summary: 'Falha!', 
+      detail: `Erro interno ao ${operacao}. Comunicar o administrador.` 
+    });
+  }
+}
+
+//////////////////////////END ORDEM DE SERVIÇO COM PLANO DE ANÁLISE //////////////////
+
+
+
+
+
+
+
+
+
+
+
+// salvarOrdemEAmostra() {
+//   // Se houver uma análise selecionada, preencha o formulário de amostra com seus dados
+//   if (this.amostraSelecionada ) {
+//     const a = this.amostraSelecionada;
+//     this.registerForm.patchValue({
+//       dataColeta: a.data_coleta ? new Date(a.data_coleta) : '',
+//       dataEntrada: a.data_entrada ? new Date(a.data_entrada) : '',
+//       material: a.material_detalhes?.id || '',
+//       numero: a.numero || '',
+//       tipoAmostra: a.tipo_amostra_detalhes?.id || '',
+//       subtipo: a.subtipo || '',
+//       produtoAmostra: a.produto_amostra_detalhes?.id || '',
+//       periodoHora: a.periodo_hora || '',
+//       periodoTurno: a.periodo_turno || '',
+//       tipoAmostragem: a.tipo_amostragem || '',
+//       localColeta: a.local_coleta || '',
+//       representatividadeLote: a.representatividade_lote || '',
+//       identificacaoComplementar: a.identificacao_complementar || '',
+//       complemento: a.complemento || '',
+//       digitador: a.digitador || '',
+//       status: a.status || ''
+//     });
+//   }
+
+//   // 1. Formata a data da ordem
+//   let dataFormatada = '';
+//   const dataValue = this.registerOrdemForm.value.data;
+//   if (dataValue instanceof Date && !isNaN(dataValue.getTime())) {
+//     dataFormatada = formatDate(dataValue, 'yyyy-MM-dd', 'en-US');
+//   }
+
+//   // 2. Salve a ordem
+//   this.ordemService.registerOrdem(
+//     dataFormatada,
+//     this.registerOrdemForm.value.numero,
+//     this.registerOrdemForm.value.planoAnalise,
+//     this.registerOrdemForm.value.responsavel,
+//     this.registerOrdemForm.value.digitador,
+//     this.registerOrdemForm.value.classificacao
+//   ).subscribe({
+//     next: (ordemSalva) => {
+//       // 3. Pegua o número ou ID da ordem salva
+//       const numeroOrdem = ordemSalva.numero; // ou ordemSalva.id
+
+//       // 4. Formata as datas da amostra
+//       let dataColetaFormatada = '';
+//       const dataColetaValue = this.registerForm.value.dataColeta;
+//       if (dataColetaValue instanceof Date && !isNaN(dataColetaValue.getTime())) {
+//         dataColetaFormatada = formatDate(dataColetaValue, 'yyyy-MM-dd', 'en-US');
+//       }
+//       let dataEntradaFormatada = '';
+//       const dataEntradaValue = this.registerForm.value.dataEntrada;
+//       if (dataEntradaValue instanceof Date && !isNaN(dataEntradaValue.getTime())) {
+//         dataEntradaFormatada = formatDate(dataEntradaValue, 'yyyy-MM-dd', 'en-US');
+//       }
+
+//       let dataEnvioFormatada = '';
+//       const dataEnvioValue = this.registerForm.value.dataEnvio;
+//       if (dataEnvioValue instanceof Date && !isNaN(dataEnvioValue.getTime())) {
+//         dataEnvioFormatada = formatDate(dataEnvioValue, 'yyyy-MM-dd', 'en-US');
+//       }
+
+//       let dataRecebimentoFormatada = '';
+//       const dataRecebimentoValue = this.registerForm.value.dataRecebimento;
+//       if (dataRecebimentoValue instanceof Date && !isNaN(dataRecebimentoValue.getTime())) {
+//         dataRecebimentoFormatada = formatDate(dataRecebimentoValue, 'yyyy-MM-dd', 'en-US');
+//       }
+
+
+//       // 5. Salva a amostra vinculando à ordem
+//       this.amostraService.registerAmostra(
+//         this.registerForm.value.especie,
+//         this.registerForm.value.finalidade,
+//         this.registerForm.value.numeroSac,
+//         dataEnvioFormatada,
+//         this.registerForm.value.destinoEnvio,
+//         dataRecebimentoFormatada,
+//         this.registerForm.value.reter,
+//         this.registerForm.value.registroEp,
+//         this.registerForm.value.registroProduto,
+//         this.registerForm.value.numeroLote, 
+//         dataColetaFormatada,
+//         dataEntradaFormatada,
+//         this.registerForm.value.material,
+//         this.registerForm.value.numero,
+//         this.registerForm.value.tipoAmostra,
+//         this.registerForm.value.subtipo,
+//         this.registerForm.value.produtoAmostra,
+//         this.registerForm.value.periodoHora,
+//         this.registerForm.value.periodoTurno,
+//         this.registerForm.value.tipoAmostragem,
+//         this.registerForm.value.localColeta,
+//         this.registerForm.value.fornecedor,
+//         this.registerForm.value.representatividadeLote,
+//         this.registerForm.value.identificacaoComplementar,
+//         this.registerForm.value.complemento,
+//         this.registerForm.value.observacoes,
+//         numeroOrdem,
+//         null, 
+//         this.registerForm.value.digitador,
+//         this.registerForm.value.status
+//       ).subscribe({
+//         next: (amostraCriada) => {
+//           // 6. Crie a análise vinculada à amostra recém-criada
+//           this.analiseService.registerAnalise(amostraCriada.id, 'PENDENTE').subscribe({
+//             next: () => {
+//               this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Amostra, ordem e análise registradas com sucesso.' });
+//               this.activeStep = 4; // Avança para o próximo passo, se houver
+//             },
+//             error: () => {
+//               this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Amostra e ordem salvas, mas erro ao criar análise.' });
+//             }
+//           });
+//         },
+//         error: (err) => {
+//           this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao salvar a amostra.' });
+//         }
+//       });
+//     },
+//     error: (err) => {
+//       this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao salvar a ordem.' });
+//     }
+//   });
+// }
 
 loadAnalises(){
   this.analiseService.getAnalises().subscribe(

@@ -148,7 +148,7 @@ export class ExpressaComponent implements OnInit, OnDestroy {
   // Propriedade para armazenar os dados da amostra recebidos
   amostraData: any = null;
   amostraId: any;
-
+   imagensExistentes: any[] = [];
   amostraExpressaForm?: FormGroup<AmostraExpressaForm>;
   expressaForm!: FormGroup<ExpressaForm>;
 
@@ -221,14 +221,14 @@ responsaveis = [
     this.loadCalculos();
   }
 
-  receberDadosAmostra(): void {
-  // history.state (funciona após a navegação)
-  console.log('Window history state:', window.history.state);
+receberDadosAmostra(): void {
+  // ...existing code...
+  
   if (window.history.state && window.history.state.amostraData) {
     this.amostraData = window.history.state.amostraData;
     console.log('✅ Dados da amostra recebidos via history.state:', this.amostraData);
     
-    // Extrair as imagens dos dados recebidos
+    // Lidar com imagens novas (do formulário)
     if (this.amostraData.imagens && this.amostraData.imagens.length > 0) {
       console.log('📸 Extraindo imagens dos dados recebidos:', this.amostraData.imagens);
       this.uploadedFilesWithInfo = this.amostraData.imagens.map((imagem: any) => ({
@@ -236,6 +236,13 @@ responsaveis = [
         descricao: imagem.descricao || ''
       }));
       console.log('📸 Imagens carregadas no uploadedFilesWithInfo:', this.uploadedFilesWithInfo);
+    }
+    
+    // Lidar com imagens existentes (de amostra salva)
+    if (this.amostraData.imagensExistentes && this.amostraData.imagensExistentes.length > 0) {
+      console.log('📸 Imagens existentes encontradas:', this.amostraData.imagensExistentes);
+      // Você pode criar uma propriedade separada para exibir essas imagens
+      this.imagensExistentes = this.amostraData.imagensExistentes;
     }
     
     this.preencherFormularioComDadosAmostra();

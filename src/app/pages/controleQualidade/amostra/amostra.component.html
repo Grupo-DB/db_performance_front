@@ -585,6 +585,7 @@
                                                                 [rounded]="true"
                                                                 class="ml-1"
                                                                 tooltipPosition="top"
+                                                                (onClick)="criarOrdemServico(amostra)"
                                                                 pTooltip="Abrir OS"
                                                             ></p-button>
                                                             <p-button 
@@ -592,6 +593,7 @@
                                                                 [rounded]="true"
                                                                 severity="danger"
                                                                 class="ml-2"
+                                                                (onClick)="criarExpressaDeAmostra(amostra)"
                                                                 tooltipPosition="top"
                                                                 pTooltip="OS Expressa"
                                                             ></p-button>
@@ -610,7 +612,7 @@
                 </p-step-panel>
     
     
-                <p-step-panel [value]="2">
+                <p-step-panel [value]="3">
                     <ng-template #content let-activateCallback="activateCallback">
                         <form [formGroup]="registerOrdemForm" title="Cadastrar nova Ordem de Serviço"
                             class="flex flex-column gap-4">
@@ -700,7 +702,7 @@
                                         <p-button title="Avançar" label="Avançar" severity="info" icon="pi pi-arrow-right"
                                             iconPos="right" (onClick)="activateCallback(3);loadUltimaAnalise()" />
                                         <p-button label="Gerar OS" severity="success" icon="pi pi-check" iconPos="right"
-                                            (onClick)="salvarOrdemEAmostra()" />
+                                            (onClick)="salvarOrdemEAssociarAmostra()" />
                                     </div>
                                 </div>
                             </div>
@@ -1028,7 +1030,7 @@
 
 <p-drawer header="Visualizar Amostra" [(visible)]="modalVisualizar" position="full">
   <div *ngIf="amostraSelecionada">
-    <p><b>Número:</b> {{ amostraSelecionada.amostra_detalhes.numero }}</p>
+    <p><b>Número:</b> {{ amostraSelecionada.amostra_detalhes?.numero }}</p>
     <!-- Outros campos -->
   </div>
 </p-drawer>
