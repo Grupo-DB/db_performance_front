@@ -42,7 +42,7 @@ import { AnaliseService } from '../../../services/controleQualidade/analise.serv
 import { FieldsetModule } from 'primeng/fieldset';
 import { MenuModule } from 'primeng/menu';
 import { SplitButtonModule } from 'primeng/splitbutton';
-import { SpeedDialModule } from 'primeng/speeddial';
+import { SpeedDial, SpeedDialModule } from 'primeng/speeddial';
 import { Ordem } from '../ordem/ordem.component';
 import { Analise } from '../analise/analise.component';
 import { evaluate } from 'mathjs';
@@ -466,6 +466,7 @@ especies = [
   filterTable() {
     this.dt1.filterGlobal(this.inputValue,'contains');
   }
+  
   clear(table: Table) {
     table.clear();
   }
@@ -614,13 +615,6 @@ getMenuItems(analise: any) {
     { label: 'Editar', icon: 'pi pi-pencil', command: () => this.editar(analise) },
     { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluir(analise) },
     { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise) },
-    {
-    
-      label: 'Link Externo',
-      icon: 'pi pi-link',
-      //routerLink: ['/welcome/controleQualidade/analise', analise.id]
-      command: () => window.open(`/welcome/controleQualidade/analise`)
-    }
   ];
 }
 
