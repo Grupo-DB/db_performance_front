@@ -148,7 +148,7 @@ export class ExpressaComponent implements OnInit, OnDestroy {
   // Propriedade para armazenar os dados da amostra recebidos
   amostraData: any = null;
   amostraId: any;
-   imagensExistentes: any[] = [];
+  imagensExistentes: any[] = [];
   amostraExpressaForm?: FormGroup<AmostraExpressaForm>;
   expressaForm!: FormGroup<ExpressaForm>;
 
@@ -222,7 +222,6 @@ responsaveis = [
   }
 
 receberDadosAmostra(): void {
-  // ...existing code...
   
   if (window.history.state && window.history.state.amostraData) {
     this.amostraData = window.history.state.amostraData;

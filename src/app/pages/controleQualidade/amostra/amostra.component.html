@@ -50,9 +50,7 @@
         </p-divider>
     </div>
     <div class="containerInterno w-12">
-    
         <p-stepper [(value)]="activeStep" [linear]="true">
-    
             <p-step-list>
                 <p-step [value]="1">
                     <ng-template #content let-activateCallback="activateCallback" let-value="value">
@@ -67,8 +65,20 @@
                     </ng-template>
                 </p-step>
     
-                <p-step [value]="2">imprimir Etiqueta</p-step>
-                    <p-step [value]="3">
+                <p-step [value]="2">
+                    <ng-template #content let-activateCallback="activateCallback" let-value="value">
+                        <button pButton size="large" severity="info" [rounded]="true" (click)="activateCallback()">
+                            <span [ngClass]="{
+                                                'bg-primary text-primary-contrast border-primary': value <= activeStep,
+                                                'border-surface': value > activeStep
+                                            }">
+                                <i class="pi pi-print"></i>
+                            </span>
+                        </button>
+                    </ng-template>
+                </p-step>
+
+                <p-step [value]="3">
                     <ng-template #content let-activateCallback="activateCallback" let-value="value">
                         <button pButton size="large" severity="info" [rounded]="true" (click)="activateCallback()">
                             <span [ngClass]="{
@@ -94,7 +104,7 @@
                     </ng-template>
                 </p-step>
             </p-step-list>
-    
+
             <p-step-panels>
                 <p-step-panel [value]="1">
                     <ng-template #content let-activateCallback="activateCallback">
@@ -104,7 +114,7 @@
     
                                     <p-card class="card w-4">
                                         <ng-template #header>
-                                            <div class="header text-left">
+                                            <div class="header w-full text-center">
                                                 <h2>Amostra</h2>
                                             </div>
                                         </ng-template>
@@ -177,7 +187,7 @@
                                                 </p-floatlabel>
                                             </div>
     
-                                            <div class="w-12  text-left">
+                                            <div class="w-12 text-left">
                                                 <p-floatLabel variant="on">
                                                     <p-select inputId="float-label" [style]="{'width':'100%'}"
                                                         [options]="status" formControlName="status" optionLabel="nome"
@@ -275,13 +285,13 @@
     
                                     <p-card class="card w-4">
                                         <ng-template #header>
-                                            <div class="header w-full text-left">
+                                            <div class="header w-full text-center">
                                                 <h2>Amostra</h2>
                                             </div>
                                         </ng-template>
                                         <ng-template #title>Material</ng-template>
                                         <div class="flex flex-column w-12 gap-3">
-                                            <div class="w-12  text-left">
+                                            <div class="w-12 text-left">
                                                 <p-floatLabel variant="on">
                                                     <p-select inputId="float-label" [style]="{'width':'100%'}"
                                                         [options]="materiais" formControlName="material" optionLabel="nome"
@@ -384,7 +394,7 @@
     
                                     <p-card class="card w-4">
                                         <ng-template #header>
-                                            <div class="header w-full text-left">
+                                            <div class="header w-full text-center">
                                                 <h2>Amostra</h2>
                                             </div>
                                         </ng-template>
@@ -468,13 +478,15 @@
                                                     <label>Observações</label>
                                                 </p-floatLabel>
                                             </div>
-                                            <div class="w-12 text-left flex">
-                                                <p-toggleswitch [(ngModel)]="checked" formControlName="reter">
-                                                    <ng-template #handle let-checked="checked">
-                                                        <i
-                                                            [ngClass]="['!text-xs', 'pi', checked ? 'pi-check' : 'pi-times']"></i>
-                                                    </ng-template>
-                                                </p-toggleswitch>
+                                            <div class="w-12 text-left">
+                                                <p-floatLabel variant="on">
+                                                    <p-select inputId="float-label" [style]="{'width':'100%'}"
+                                                        [options]="reter" formControlName="reter" optionLabel="nome"
+                                                        optionValue="nome" appendTo="body" [filter]="true" filterBy="value"
+                                                        [showClear]="true">
+                                                    </p-select>
+                                                    <label for="float-label">Reter</label>
+                                                </p-floatLabel>
                                             </div>
                                         </div>
                                     </p-card>
@@ -485,11 +497,21 @@
     
                         <div class="step1 flex flex-column w-12 gap-3 mb-5 mt-5 justify-content-end lg:w-12 lg:flex-row">
                             <div class="w-6 text-left">
-                                <p-button (onClick)="navegarParaExpressa()" severity="danger" label="Ordem Expressa" />
+                                <p-button 
+                                    (onClick)="navegarParaExpressa();downloadPdf()" 
+                                    severity="danger" 
+                                    label="Ordem Expressa"
+                                    icon="pi pi-book" 
+                                />
                             </div>
                             <div class=" flex w-6 gap-3 justify-content-end text-right">
-                                <p-button (onClick)="activateCallback(2);loadAnalises()" title="Abrir OS" label="Abrir OS"
-                                    severity="info" icon="pi pi-arrow-right" iconPos="right" />
+                                <p-button 
+                                    (onClick)="downloadPdf();navegarParaOs()" 
+                                    title="Abrir OS" 
+                                    label="Abrir OS"
+                                    icon="pi pi-arrow-right" 
+                                    iconPos="right" 
+                                />
                                 <p-button (onClick)="submitAmostra()" label="Salvar Amostra" severity="success"
                                     icon="pi pi-check" iconPos="right" />
                             </div>
@@ -508,66 +530,70 @@
     
                                     </ng-template>
                                     <ng-template pTemplate="content">
-                                        <p-table [value]="amostras" [paginator]="true" [rows]="20"
+                                        <p-table 
+                                            [value]="amostras" 
+                                            [paginator]="true" [rows]="10"
                                             [rowsPerPageOptions]="[10, 20, 50]"
-                                            [globalFilterFields]="['descricao','ensaios','calcsEnsaios']"
+                                            [globalFilterFields]="['data_entrada','data_coleta','produto_amostra','numero','material','tipo_amostra','status','local_coleta']"
                                             [showCurrentPageReport]="true"
                                             currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Ordens"
-                                            scrollable="true">
+                                            scrollable="true"                
+                                            #dt1
+                                        >
                                             <ng-template pTemplate="caption">
                                                 <div class="flex flex-row md: justify-content-end">
                                                     <p-floatlabel variant="on">
                                                         <p-iconfield>
-                                                            <p-inputicon class="pi pi-search" />
-                                                            <input variant="filled" [(ngModel)]="inputValue"
-                                                                [style]="{'width':'100%'}" pInputText id="on_label"
-                                                                autocomplete="off" type="text" />
+                                                            <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
+                                                            <input 
+                                                            variant="filled" 
+                                                            [(ngModel)]="inputValue"
+                                                            [style]="{'width':'100%'}" 
+                                                            pInputText id="on_label"
+                                                            autocomplete="off" 
+                                                            type="text" 
+                                                            (keyup)="filterTable()"
+                                                            />
                                                         </p-iconfield>
                                                         <label for="on_label" style="color: #1b91ff">Pesquisar</label>
                                                     </p-floatlabel>
-                                                    <button size="small" class="ml-2" pButton [rounded]="true"
-                                                        label="Pesquisar" severity="info" (click)="filterTable()"></button>
-                                                    <button size="small" class="ml-2" pButton [rounded]="true"
-                                                        label="Limpar" severity="info" icon="pi pi-filter-slash"
-                                                        (click)="clear(dt1)"></button>
                                                 </div>
                                             </ng-template>
                                             <ng-template pTemplate="header">
                                                 <tr>
                                                     <th style="width: 10%; text-align: center;" type="text"
-                                                        field="descricao" display="menu">Data Entrada</th>
-                                                    <th style="width: 10%; text-align: center;" type="text" field="ensaios"
+                                                        field="data_entrada" display="menu">Data Entrada</th>
+                                                    <th style="width: 10%; text-align: center;" type="text" field="data_coleta"
                                                         display="menu">Data Coleta</th>
-                                                    <th style="width: 10%; text-align: center;" type="text"
-                                                        field="calcsEnsaios" display="menu">Produto Amostra</th>
+                                                    <th style="width: 10%; text-align: center;" type="text" field="produto_amostra" display="menu">Produto Amostra</th>
                                                     <th style="width: 15%; text-align: center;" type="text"
-                                                        field="calcsEnsaios" display="menu">Número</th>
+                                                        field="numero" display="menu">Número</th>
                                                     <th style="width: 10%; text-align: center;" type="text"
-                                                        field="calcsEnsaios" display="menu">Material</th>
+                                                        field="material" display="menu">Material</th>
                                                     <th style="width: 15%; text-align: center;" type="text"
-                                                        field="calcsEnsaios" display="menu">Tipo Amostra</th>
+                                                        field="tipo_amostra" display="menu">Tipo Amostra</th>
                                                     <!-- <th style="width: 25%; text-align: center;" type="text" field="calcsEnsaios" display="menu">Subtipo</th> -->
                                                     <th style="width: 10%; text-align: center;" type="text"
-                                                        field="calcsEnsaios" display="menu">Status</th>
+                                                        field="status" display="menu">Status</th>
                                                     <th style="width: 15%; text-align: center;" type="text"
-                                                        field="calcsEnsaios" display="menu">Local de Coleta</th>
+                                                        field="local_coleta" display="menu">Local de Coleta</th>
                                                     <th style="width: 10%; text-align: end;" type="text" field="acoes"
                                                         display="menu">Ações</th>
                                                 </tr>
                                             </ng-template>
                                             <ng-template pTemplate="body" let-amostra>
                                                 <tr>
-                                                    <td style="text-align: center;">{{ amostra.data_entrada }}</td>
-                                                    <td style="text-align: center;">{{ amostra.data_coleta }}</td>
+                                                    <td style="text-align: center;">{{ amostra?.data_entrada }}</td>
+                                                    <td style="text-align: center;">{{ amostra?.data_coleta }}</td>
     
-                                                    <td style="text-align: center;">{{ amostra.numero }}</td>
-                                                    <td style="text-align: center;">{{ amostra.material_detalhes?.nome }}
+                                                    <td style="text-align: center;">{{ amostra?.numero }}</td>
+                                                    <td style="text-align: center;">{{ amostra?.material_detalhes?.nome }}
                                                     </td>
-                                                    <td style="text-align: center;">{{ amostra.tipo_amostra_detalhes?.nome
+                                                    <td style="text-align: center;">{{ amostra?.tipo_amostra_detalhes?.nome
                                                         }}</td>
                                                     <!-- <td style="text-align: center;">{{ analise.amostra_detalhes.subtipo }}</td> -->
-                                                    <td style="text-align: center;">{{ amostra.status }}</td>
-                                                    <td style="text-align: center;">{{ amostra.local_coleta }}</td>
+                                                    <td style="text-align: center;">{{ amostra?.status }}</td>
+                                                    <td style="text-align: center;">{{ amostra?.local_coleta }}</td>
                                                     <td style="text-align: center;">
                                                         <div style="display: flex; justify-content: end;">
                                                             <p-speeddial 
@@ -595,7 +621,7 @@
                                                                 class="ml-2"
                                                                 (onClick)="criarExpressaDeAmostra(amostra)"
                                                                 tooltipPosition="top"
-                                                                pTooltip="OS Expressa"
+                                                                pTooltip="Ordem Expressa"
                                                             ></p-button>
                                                         </div>
                                                     </td>
@@ -610,8 +636,31 @@
                         </div>
                     </ng-template>
                 </p-step-panel>
-    
-    
+                
+                <p-step-panel [value]="2">
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="form-geral mb-6 flex flex-column align-items-center">
+                            <div class="button-imprimir flex flex-wrap mt-6 mb-6 md:flex-row justify-content-around" (click)="downloadPdf()">
+                                <!-- <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" routerLink="../feedback"> -->
+                                <div *ngIf="hasGroup(['Admin','Master','RHGestor'])">
+                                    <p> Imprimir Etiqueta </p>
+                                </div>  
+                            </div>    
+                        </div>
+                        <div class="flex flex-column w-12 gap-3 mb-3 justify-content-end lg:w-12 lg:flex-row">
+                        <div class="w-6 text-left">
+                            <p-button title="Voltar" label="Voltar" severity="info" icon="pi pi-arrow-left"
+                                (onClick)="activateCallback(1)" />
+                        </div>
+                        <div class=" flex w-6 gap-3 justify-content-end text-right">
+                            <p-button title="Avançar" label="Avançar" severity="info" icon="pi pi-arrow-right" iconPos="right"
+                                (onClick)="receberDadosAmostra()" />
+                        </div>
+                    
+                    </div> 
+                    </ng-template>
+                </p-step-panel>
+
                 <p-step-panel [value]="3">
                     <ng-template #content let-activateCallback="activateCallback">
                         <form [formGroup]="registerOrdemForm" title="Cadastrar nova Ordem de Serviço"
@@ -675,7 +724,7 @@
                                     <div class="w-6 text-left mb-3">
                                         <p-floatLabel variant="on">
                                             <p-select inputId="float-label" [style]="{'width':'100%'}"
-                                                [options]="finalidades" formControlName="finalidade" optionLabel="nome"
+                                                [options]="finalidades" formControlName="classificacao" optionLabel="nome"
                                                 optionValue="nome" appendTo="body" [filter]="true" filterBy="nome"
                                                 [showClear]="true" (onChange)="onMaterialChange($event.value)">
                                             </p-select>
@@ -687,7 +736,7 @@
                                             <p-select inputId="float-label" [style]="{'width':'100%'}"
                                                 [options]="responsaveis" formControlName="responsavel" optionLabel="value"
                                                 optionValue="value" appendTo="body" [filter]="true" filterBy="value"
-                                                [showClear]="true" [disabled]="true">
+                                                [showClear]="true">
                                             </p-select>
                                             <label for="float-label">Selecione o Responsável</label>
                                         </p-floatLabel>
@@ -696,13 +745,13 @@
                                 <div class="flex flex-column w-12 gap-3 mb-3 justify-content-end lg:w-11 lg:flex-row">
                                     <div class="w-6 text-left">
                                         <p-button title="Voltar" label="Voltar" severity="contrast" icon="pi pi-arrow-left"
-                                            (onClick)="activateCallback(1)" />
+                                            (onClick)="voltarParaStep1()" />
                                     </div>
                                     <div class=" flex w-6 gap-3 justify-content-end text-right">
-                                        <p-button title="Avançar" label="Avançar" severity="info" icon="pi pi-arrow-right"
-                                            iconPos="right" (onClick)="activateCallback(3);loadUltimaAnalise()" />
+                                        <!-- <p-button title="Avançar" label="Avançar" severity="info" icon="pi pi-arrow-right"
+                                            iconPos="right" (onClick)="activateCallback(3);loadUltimaAnalise()" /> -->
                                         <p-button label="Gerar OS" severity="success" icon="pi pi-check" iconPos="right"
-                                            (onClick)="salvarOrdemEAssociarAmostra()" />
+                                            (onClick)="criarOSDoFormulario()" />
                                     </div>
                                 </div>
                             </div>
@@ -723,40 +772,49 @@
     
                                     </ng-template>
                                     <ng-template pTemplate="content">
-                                        <p-table [value]="analises" [paginator]="true" [rows]="10"
+                                        <p-table 
+                                            [value]="analises" 
+                                            [paginator]="true" 
+                                            [rows]="10"
                                             [rowsPerPageOptions]="[10, 20, 50]"
-                                            [globalFilterFields]="['numero','data','planoAnalise','classificacao']"
+                                            [globalFilterFields]="['data_entrada','data_coleta', 'fornecedor', 'numero']"
                                             [showCurrentPageReport]="true"
                                             currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Ordens"
-                                            scrollable="true" stripedRows>
+                                            scrollable="true" 
+                                            stripedRows
+                                            #dt2
+                                        >
                                             <ng-template pTemplate="caption">
                                                 <div class="flex flex-row md: justify-content-end">
                                                     <p-floatlabel variant="on">
                                                         <p-iconfield>
-                                                            <p-inputicon class="pi pi-search" />
-                                                            <input variant="filled" [(ngModel)]="inputValue"
-                                                                [style]="{'width':'100%'}" pInputText id="on_label"
-                                                                autocomplete="off" type="text" />
+                                                            <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
+                                                            <input 
+                                                            variant="filled" 
+                                                            [(ngModel)]="inputValue"
+                                                            [style]="{'width':'100%'}" 
+                                                            pInputText 
+                                                            id="on_label"
+                                                            autocomplete="off" 
+                                                            type="text" 
+                                                            (keyup)="filterTable()"
+                                                            style="border-color:#1b91ff;"
+                                                            />
                                                         </p-iconfield>
-                                                        <label for="on_label">Pesquisar</label>
+                                                        <label for="on_label" style="color: #1b91ff">Pesquisar</label>
                                                     </p-floatlabel>
-                                                    <button size="small" class="ml-2" pButton [rounded]="true"
-                                                        label="Pesquisar" severity="info" (click)="filterTable()"></button>
-                                                    <button size="small" class="ml-2" pButton [rounded]="true"
-                                                        label="Limpar" severity="info" icon="pi pi-filter-slash"
-                                                        (click)="clear(dt1)"></button>
                                                 </div>
                                             </ng-template>
                                             <ng-template pTemplate="header">
                                                 <tr>
                                                     <th style="width: 10%; text-align: center;" type="text"
-                                                        field="descricao" display="menu">Data Entrada</th>
-                                                    <th style="width: 10%; text-align: center;" type="text" field="ensaios"
+                                                        field="data_entrada" display="menu">Data Entrada</th>
+                                                    <th style="width: 10%; text-align: center;" type="text" field="data_coleta"
                                                         display="menu">Data Coleta</th>
                                                     <th style="width: 10%; text-align: center;" type="text"
-                                                        field="calcsEnsaios" display="menu">Fornecedor</th>
+                                                        field="fornecedor" display="menu">Fornecedor</th>
                                                     <th style="width: 15%; text-align: center;" type="text"
-                                                        field="calcsEnsaios" display="menu">Número</th>
+                                                        field="numero" display="menu">Número</th>
     
                                                     <th style="width: 10%; text-align: end;" type="text" field="acoes"
                                                         display="menu">Ações</th>
@@ -805,7 +863,7 @@
                 </p-step-panel>
     
                 <!-------------------------------------------------- Etapa 3------------------------------------------- -->
-                <p-step-panel [value]="3">
+                <p-step-panel [value]="5">
                     <ng-template #content let-activateCallback="activateCallback">
                         <div class="form-geral flex flex-column align-items-center" @swipeAnimation>
                             <div class="w-11 mt-3">

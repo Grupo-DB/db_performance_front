@@ -68,7 +68,7 @@
 
 
             <div class="w-11 mt-4">
-                <div *ngFor="let plano of analisesSimplificadas[0].planoDetalhes">
+                <div *ngFor="let plano of analisesSimplificadas[0]?.planoDetalhes">
                     <p-divider align="left" type="solid">
                         Plano de Análise: <b> {{ plano.descricao }}</b>
                     </p-divider>
