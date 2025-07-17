@@ -69,6 +69,7 @@ import { ProdutoAmostraComponent } from './pages/controleQualidade/produto-amost
 import { AmostraComponent } from './pages/controleQualidade/amostra/amostra.component';
 import { AnaliseComponent } from './pages/controleQualidade/analise/analise.component';
 import { ExpressaComponent } from './pages/controleQualidade/expressa/expressa.component';
+import { VariavelComponent } from './pages/controleQualidade/variavel/variavel.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -141,7 +142,8 @@ export const routes: Routes = [
       { path: 'controleQualidade/produtoAmostra', component: ProdutoAmostraComponent },
       { path: 'controleQualidade/amostra', component: AmostraComponent },
       { path: 'controleQualidade/analise/:id', component: AnaliseComponent },
-      { path: 'controleQualidade/expressa', component: ExpressaComponent}
+      { path: 'controleQualidade/expressa', component: ExpressaComponent },
+      { path: 'controleQualidade/variavel', component: VariavelComponent },
     ],
   },
   

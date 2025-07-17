@@ -5,6 +5,7 @@ import { TipoEnsaio } from '../../pages/controleQualidade/tipo-ensaio/tipo-ensai
 import { CalculoEnsaio } from '../../pages/controleQualidade/calculo-ensaio/calculo-ensaio.component';
 import { Ensaio } from '../../pages/controleQualidade/ensaio/ensaio.component';
 import { Plano } from '../../pages/controleQualidade/plano/plano.component';
+import { Variavel } from '../../pages/controleQualidade/variavel/variavel.component';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ import { Plano } from '../../pages/controleQualidade/plano/plano.component';
 export class EnsaioService {
   private apiUrl = 'http://localhost:8000/ensaio/tipos_ensaio/';
   private apiUrlEnsaio = 'http://localhost:8000/ensaio/ensaio/';
+  private apiUrlVariaveisEnsaio = 'http://localhost:8000/ensaio/variavel/';
   private apiUrlCalculoEnsaio = 'http://localhost:8000/calculosEnsaio/calculoEnsaio/';
   private apiUrlPlano = 'http://localhost:8000/plano/planoAnalise/';
   constructor(
@@ -45,8 +47,8 @@ export class EnsaioService {
     const url = `${this.apiUrlEnsaio}${id}/`;
     return this.http.delete(url);
   }
-  registerEnsaio(descricao: string, responsavel: string, valor: number, tipoEnsaio: any, tempoPrevisto: any){
-    return this.http.post<Ensaio>(this.apiUrlEnsaio, { descricao: descricao, responsavel: responsavel, valor: valor, tipo_ensaio: tipoEnsaio, tempo_previsto: tempoPrevisto });
+  registerEnsaio(descricao: string, responsavel: string, valor: number, tipoEnsaio: any, tempoPrevisto: any, variavel: any, funcao: any){
+    return this.http.post<Ensaio>(this.apiUrlEnsaio, { descricao: descricao, responsavel: responsavel, valor: valor, tipo_ensaio: tipoEnsaio, tempo_previsto: tempoPrevisto, variavel: variavel, funcao: funcao });
   }
 
   //Calculo Ensaio
@@ -80,6 +82,22 @@ export class EnsaioService {
   }
   registerPlanoAnalise(descricao: string, ensaios: any, calculosEnsaio: any){
     return this.http.post<Plano>(this.apiUrlPlano, { descricao: descricao, ensaios: ensaios, calculos_ensaio: calculosEnsaio });
+  }
+
+//Variáveis de ensaios
+  getVariaveis(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrlVariaveisEnsaio);
+  }
+  editVariavel(id: number, dadosAtualizados: Partial<Variavel>): Observable<any> {
+    const url = `${this.apiUrlVariaveisEnsaio}${id}/`;
+    return this.http.patch(url, dadosAtualizados); 
+  }
+  deleteVariavel(id: number): Observable<any>{
+    const url = `${this.apiUrlVariaveisEnsaio}${id}/`;
+    return this.http.delete(url);
+  }
+  registerVariavel(nome: string, valor: any){
+    return this.http.post<Variavel>(this.apiUrlVariaveisEnsaio, { nome: nome, valor: valor });
   }
 
 }
