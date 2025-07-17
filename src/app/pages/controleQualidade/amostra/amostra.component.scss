@@ -2,9 +2,60 @@
 .container{
     max-width: 100%;
 }
+.containerInterno{
+    background-color: #ffffff;
+    border: 10px solid #ffffff;
+    border-radius: 20px;
+    padding: 20px;
+    //box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.step1{
+    background-color: #F7F8FA;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.button-imprimir{
+
+    display: flex;
+    justify-content: center;
+    margin: auto;
+    margin-top: 5%;
+    background-color: #444959;
+    color: #ffffffee;
+    height: 150px;
+    width: 450px;
+    
+    cursor: pointer;
+    border-radius: 45px;
+    p{
+        font-size: 30px;
+        padding: 65px;
+    }
+}
 .titulo{
     font-size: 22px;
+    //background-color: #4A90E2;
+    background-color: #ffffff;
+    border: 20px solid #ffffff;
 }
+
+.card{
+    .header{
+        background-color: #4A90E2;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        
+        h2{
+            color: #ffffff;
+            font-weight: 700;
+        }
+    }
+}
+
 .form-geral{
     width: 98%;
     margin-left: auto;
@@ -85,7 +136,7 @@
 .tabela{
     border-radius: 10px;
     width: 100%;
-
+   
     border-radius: 10px;
     margin: auto;
 
@@ -186,16 +237,24 @@
     z-index: 10;
   }
   :host ::ng-deep .p-fieldset-legend {
-    background-color: #444959;
+    background-color: #0ea5e9;
     color: #fff;
   }
+:host ::ng-deep .stepper.stepNumber.active {
+  background-color: #444959 !important;
+}
 
+
+
+  
 
 :host ::ng-deep {
     .p-speeddial-action{ 
-        background-color: #444959 !important;
+        background-color: #0ea5e9 !important;
         color: white !important;
     }
+
+
  
     .speeddial-linear-demo {
         .p-speeddial-direction-up {
@@ -218,4 +277,66 @@
             top: calc(50% - 2rem);
         }
     }
+
+::ng-deep .p-drawer .ant-upload.ant-upload-drag,
+::ng-deep .ant-upload.ant-upload-drag {
+  background-color: white !important;
+  border: 2px dashed #d9d9d9 !important;
+  height: 200px !important;
+  min-height: 200px !important;
+  max-height: 200px !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
+
+::ng-deep .p-drawer .ant-upload.ant-upload-drag:hover,
+::ng-deep .ant-upload.ant-upload-drag:hover {
+  border-color: #1890ff !important;
+  background-color: #fafafa !important;
+}
+
+::ng-deep .p-drawer .ant-upload-drag-container,
+::ng-deep .ant-upload-drag-container {
+  background-color: white !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  height: 100% !important;
+  width: 100% !important;
+}
+
+// Esconder lista interna específicamente no drawer
+::ng-deep .p-drawer .ant-upload-list,
+::ng-deep .ant-upload-list {
+  display: none !important;
+}
+
+::ng-deep .p-drawer .ant-upload-list-item,
+::ng-deep .ant-upload-list-item {
+  display: none !important;
+}
+
+// Estilos para a lista customizada de arquivos
+.custom-file-list {
+  h4 {
+    color: #1890ff;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  
+  .file-item {
+    transition: all 0.3s ease;
+    background: white;
+    border: 1px solid #e0e0e0;
+    
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+      transform: translateY(-1px);
+    }
+  }
+}
+
+
+
 }

@@ -341,7 +341,7 @@ export class FeedbackComponent implements OnInit{
     this.avaliacaoService.updateFeedback(avaliacaoId).subscribe(
       response => {
         if (response.status === 'success') {
-          // Atualize a interface do usuário conforme necessário
+          // Atualiza a interface do usuário conforme necessário
           this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Feedback finalizado com sucesso!' });
           setTimeout(() => {
             window.location.reload(); // Atualiza a página após a exclusão
@@ -455,7 +455,7 @@ export class FeedbackComponent implements OnInit{
         const img = new Image();
         img.src = logoUrl;
         img.onload = () => {
-            doc.addImage(img, 'PNG', 120, 10, 80, 20); // Ajuste as coordenadas e o tamanho conforme necessário
+            doc.addImage(img, 'PNG', 120, 10, 80, 20); // Ajusta as coordenadas e o tamanho 
             callback();
         };
         img.onerror = () => {
