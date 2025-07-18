@@ -357,9 +357,17 @@
                                                 <p-floatlabel variant="on">
                                                     <p-iconfield>
                                                         <p-inputicon class="pi pi-file-edit" />
-                                                        <input variant="filled" [style]="{'width':'100%'}" pInputText
-                                                            id="on_label" autocomplete="off" formControlName="periodoHora"
-                                                            type="text" />
+                                                        <input 
+                                                            variant="filled" 
+                                                            [style]="{'width':'100%'}" 
+                                                            pInputText
+                                                            id="on_label" 
+                                                            autocomplete="off" formControlName="periodoHora"
+                                                            type="time" 
+                                                            min="00:00"
+                                                            max="23:59"
+                                                            value="00:00"
+                                                        />
                                                     </p-iconfield>
                                                     <label for="on_label">Digite o Período Hora</label>
                                                 </p-floatlabel>
