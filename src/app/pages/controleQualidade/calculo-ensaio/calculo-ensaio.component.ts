@@ -105,6 +105,7 @@ export interface CalculoEnsaio{
   templateUrl: './calculo-ensaio.component.html',
   styleUrl: './calculo-ensaio.component.scss'
 })
+
 export class CalculoEnsaioComponent implements OnInit {
   caculosEnsaio: any[] = [];
   ensaios: Ensaio[] = [];
@@ -150,8 +151,8 @@ export class CalculoEnsaioComponent implements OnInit {
   ];
   condicionais = [
     { label: 'condição verdadeira', value: '?' },
-    { label: 'condição falsa', value: ':' },
-    
+    { label: 'se não', value: ':' },
+
   ];
   delimitadores = [
     { label: '(', value: '(' },
@@ -181,7 +182,7 @@ export class CalculoEnsaioComponent implements OnInit {
     { label: 'maior ou igual a', value: '>=' },
     { label: 'recebe', value: '=' },
   ];
-  
+
   expressaoDinamica: { tipo?: string, valor?: string }[] = [
     { tipo: '', valor: '' }
   ];
@@ -218,7 +219,7 @@ export class CalculoEnsaioComponent implements OnInit {
       responsavel: new FormControl(''),
       valor: new FormControl(0)
     });
-   
+
     this.editForm = this.fb.group({
       id: [''],
       descricao: [''],
@@ -244,9 +245,9 @@ export class CalculoEnsaioComponent implements OnInit {
         '(', ')', '[', ']', 'if', 'else', 'while'
       ];
     }, 500);
-   
+
   }
-  
+
 
 // Gera nomes seguros
 
@@ -261,13 +262,13 @@ export class CalculoEnsaioComponent implements OnInit {
       default: return [];
     }
   }
-  
+
   adicionarBloco() {
     this.expressaoDinamica.push({ tipo: '', valor: '' });
     this.registerForm.get('funcao')?.setValue(this.getExpressaoString());
     this.atualizarEnsaiosDoForm();
   }
-  
+
   removerBloco(i: number) {
     if (this.expressaoDinamica.length > 1) {
       this.expressaoDinamica.splice(i, 1);
@@ -286,8 +287,8 @@ export class CalculoEnsaioComponent implements OnInit {
 gerarNomesSegurosComValoresAtuais() {
   this.safeVars = {};
   this.nameMap = {};
-  this.ensaios.forEach((ensaio: any) => {
-    const safeName = ensaio.variavel; // Usa o campo variavel do ensaio
+  this.ensaios.forEach((ensaio: any, i: number) => {
+    const safeName = 'var' + i;
     // Busca o valor digitado para este ensaio
     const resultado = this.resultados.find(r => r.ensaioId === ensaio.id);
     this.safeVars[safeName] = resultado ? resultado.valor : 0;
@@ -295,7 +296,7 @@ gerarNomesSegurosComValoresAtuais() {
   });
 }
 
-
+// Monta a expressão substituindo nomes de ensaio por nomes seguros
 
 getExpressaoString() {
   this.gerarNomesSegurosComValoresAtuais();
@@ -311,17 +312,17 @@ getExpressaoString() {
 }
 
 converterExpressaoParaNomes(expr: string): string {
- 
+  // Inverte o nameMap para buscar pelo valor
   const reverseMap = Object.fromEntries(
     Object.entries(this.nameMap).map(([k, v]) => [v, k])
   );
-  
+  // Substitui todos os varX pelo nome do ensaio
   return expr.replace(/var\d+/g, (match) => reverseMap[match] || match);
 }
 // Avalia a expressão usando math.js e os valores dos ensaios
 avaliarExpressao() {
   const expressao = this.registerForm.get('funcao')?.value;
-  this.gerarNomesSegurosComValoresAtuais();
+  this.gerarNomesSegurosComValoresAtuais(); // <-- agora pega os valores digitados
   try {
     const resultado = evaluate(expressao, this.safeVars);
     return resultado;
@@ -374,7 +375,7 @@ avaliarExpressao() {
       }
     )
   }
-   
+
   montarFormula(){
     this.montarFormulaVisivel = true
   }
@@ -454,7 +455,7 @@ salvarFormulaEditada() {
       },
       error: (err) => {
         console.error('Login error:', err); 
-      
+
         if (err.status === 401) {
           this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
         } else if (err.status === 403) {
@@ -468,7 +469,7 @@ salvarFormulaEditada() {
       }
     });
   }
-   
+
   excluirCalculoEnsaio(id: number){
     this.confirmationService.confirm({
       message: 'Você tem certeza que deseja excluir esse cálculo de ensaio?',
@@ -488,7 +489,7 @@ salvarFormulaEditada() {
           },
           error: (err) => {
             console.error('Login error:', err); 
-          
+
             if (err.status === 401) {
               this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
             } else if (err.status === 403) {
@@ -536,7 +537,7 @@ salvarFormulaEditada() {
 
       error: (err) => {
         console.error('Login error:', err); 
-      
+
         if (err.status === 401) {
           this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
         } else if (err.status === 403) {
@@ -547,7 +548,9 @@ salvarFormulaEditada() {
 
     })
   }
-
+  clear(table: Table) {
+    table.clear();
+  }
   filterTable() {
     this.dt1.filterGlobal(this.inputValue,'contains');
   }

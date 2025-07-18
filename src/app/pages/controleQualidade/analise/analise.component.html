@@ -79,17 +79,16 @@
 
                     <!-- Tabela para cada ensaio fixo (fora dos cálculos) -->
                     <ng-container *ngFor="let ensaio of plano.ensaio_detalhes">
-
-
                         <p-table [value]="[ensaio]">
                             <ng-template pTemplate="header">
                                 <tr class="tabela">
                                     <th>Ensaio</th>
                                     <th>Responsável</th>
-                                    <th>Digitador</th>
+                                    <th>Função</th>
+                                    <th>Variáveis</th>
                                     <th>Tempo Previsto</th>
                                     <th>Tipo</th>
-                                    <th>Valor</th>
+                                    <th>Valor (Resultado)</th>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-e>
@@ -98,33 +97,73 @@
                                     <td>
                                         <div class="form2 w-10 mb-3 mt-3 text-left">
                                             <p-floatLabel variant="on">
-                                                <p-select inputId="float-label" [style]="{'width':'100%'}"
-                                                    [options]="responsaveis" optionLabel="value" optionValue="value"
-                                                    [(ngModel)]="ensaio.responsavel" appendTo="body" [filter]="true"
-                                                    filterBy="value" [showClear]="true">
+                                                <p-select inputId="float-label" [style]="{'width':'100%'}" [options]="responsaveis"
+                                                    optionLabel="value" optionValue="value" [(ngModel)]="ensaio.responsavel" appendTo="body"
+                                                    [filter]="true" filterBy="value" [showClear]="true">
                                                 </p-select>
                                                 <label for="float-label">Selecione o Responsável</label>
                                             </p-floatLabel>
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="form2 w-10 mb-3 mt-3">
+                                        <div class="form-2">
                                             <p-floatlabel variant="on">
                                                 <p-iconfield>
-                                                    <p-inputicon class="pi pi-file-edit" />
-                                                    <input variant="filled" [style]="{'width':'100%'}" pInputText
-                                                        id="on_label" autocomplete="off" [(ngModel)]="ensaio.digitador"
-                                                        type="text" readonly />
+                                                    <p-inputicon class="pi pi-calculator" />
+                                                    <input 
+                                                        variant="filled" 
+                                                        [style]="{'width':'100%'}" 
+                                                        pInputText id="funcao_ensaio"
+                                                        autocomplete="off" 
+                                                        [(ngModel)]="ensaio.funcao" 
+                                                        type="text" 
+                                                        readonly 
+                                                    />
                                                 </p-iconfield>
-                                                <label for="on_label">Digitador</label>
+                                                <label for="funcao_ensaio">Função</label>
                                             </p-floatlabel>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <!-- Exibir variáveis do ensaio direto -->
+                                        <div *ngIf="ensaio.variavel_detalhes && ensaio.variavel_detalhes.length > 0">
+                                            <div *ngFor="let variavel of ensaio.variavel_detalhes" class="variable-item">
+                                                <p-floatlabel variant="on">
+                                                    <p-iconfield>
+                                                    <p-inputicon class="pi pi-calculator" />
+                                                    <input
+                                                        variant="filled" 
+                                                        [style]="{'width':'100%'}" 
+                                                        pInputText 
+                                                        id="variavel"
+                                                        autocomplete="off"
+                                                        type="number" 
+                                                        [(ngModel)]="variavel.valor"
+                                                        (ngModelChange)="atualizarVariavelEnsaio(ensaio, variavel, $event)"    
+                                                    />
+                                                    </p-iconfield>
+                                                    <label for="variavel">{{ variavel.nome }}</label>
+                                                </p-floatlabel>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Para ensaios simples (sem variavel_detalhes) -->
+                                        <div *ngIf="!ensaio.variavel_detalhes || ensaio.variavel_detalhes.length === 0">
+                                            <div class="variable-item">
+                                                <label>{{ ensaio.descricao }}</label>
+                                                <input type="number" [(ngModel)]="ensaio.valor" class="form-control" step="0.0001" placeholder="Digite o valor">
+                                            </div>
                                         </div>
                                     </td>
                                     <td>{{ ensaio.tempo_previsto }}</td>
                                     <td>{{ ensaio.tipo_ensaio_detalhes?.nome }}</td>
                                     <td>
-                                        <!-- <input type="number" [(ngModel)]="e.valor" style="width: 80px;" /> -->
-                                        <p-inputnumber [(ngModel)]="e.valor" [showButtons]="true"></p-inputnumber>
+                                        <div class="flex align-items-center gap-2">
+                                            <span class="text-lg font-bold text-green-600">{{ ensaio.valor || 0 }}</span>
+                                            <p-button icon="pi pi-refresh" size="small" severity="secondary"
+                                                (onClick)="calcularEnsaioDireto(ensaio)" pTooltip="Recalcular">
+                                            </p-button>
+                                        </div>
                                     </td>
                                 </tr>
                             </ng-template>

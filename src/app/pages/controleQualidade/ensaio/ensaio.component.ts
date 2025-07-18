@@ -131,7 +131,7 @@ export class EnsaioComponent implements OnInit{
 
   filteredVariaveis: any[] = [];
   tipos = [
-   { label: 'Variavel', value: 'Ensaio' }, 
+   { label: 'Variavel', value: 'Variavel' }, 
    { label: 'Operador', value:'Operador' }, 
    { label: 'Condicional', value:'Condicional' }, 
    { label: 'Delimitador', value:'Delimitador' }, 
@@ -213,7 +213,9 @@ export class EnsaioComponent implements OnInit{
 
   safeVars: any = {};
   nameMap: any = {};
-  resultados: { ensaioId: number, valor: number }[] = [];
+  resultados: {
+    variavelId: any; ensaioId: number, valor: number 
+}[] = [];
   constructor(
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
@@ -255,13 +257,7 @@ export class EnsaioComponent implements OnInit{
     this.loadEnsaios();
     this.loadTiposEnsaio();
     this.loadVariaveis();
-    // Preenche elementos após carregar variaveis
-    setTimeout(() => {
-      this.elementos = [
-        ...this.variaveis.map(v => v.nome),
-        '(', ')', '[', ']', 'if', 'else', 'while'
-      ];
-    }, 500);
+    
   }
 
   loadEnsaios() {
@@ -284,20 +280,38 @@ export class EnsaioComponent implements OnInit{
     )
   }
 
+//   loadVariaveis() {
+//   this.ensaioService.getVariaveis().subscribe(
+//     response => {
+//       this.variaveis = response;
+//     }, error => {
+//       console.error('Erro ao carregar as variáveis:', error);
+//     }
+//   )
+// }
+
   loadVariaveis() {
   this.ensaioService.getVariaveis().subscribe(
     response => {
       this.variaveis = response;
+      console.log('Variáveis carregadas:', this.variaveis);
+      
+      // Verificar se todas as variáveis têm ID numérico
+      const variaveisComIdInvalido = this.variaveis.filter(v => typeof v.id !== 'number' || isNaN(v.id));
+      if (variaveisComIdInvalido.length > 0) {
+        console.error('Variáveis com ID inválido:', variaveisComIdInvalido);
+      }
     }, error => {
       console.error('Erro ao carregar as variáveis:', error);
     }
   )
 }
 
+
   // Gera nomes seguros
   getValoresPorTipo(tipo: string): any[] {
   switch (tipo) {
-    case 'Ensaio': return this.variaveis.map(v => ({ label: v.nome, value: v.nome })); // Corrigido aqui
+    case 'Variavel': return this.variaveis.map(v => ({ label: v.nome, value: v.nome })); 
     case 'Operador': return this.operadores;
     case 'Condicional': return this.condicionais;
     case 'Delimitador': return this.delimitadores;
@@ -307,27 +321,39 @@ export class EnsaioComponent implements OnInit{
   }
 }
 
- adicionarBloco() {
-  this.expressaoDinamica.push({ tipo: '', valor: '' });
-  this.registerForm.get('funcao')?.setValue(this.getExpressaoString());
-  this.atualizarVariaveisDoForm();
-}
-
-// Atualiza o método removerBloco
-removerBloco(i: number) {
-  if (this.expressaoDinamica.length > 1) {
-    this.expressaoDinamica.splice(i, 1);
+adicionarBloco() {
+    this.expressaoDinamica.push({ tipo: '', valor: '' });
     this.registerForm.get('funcao')?.setValue(this.getExpressaoString());
-    this.atualizarVariaveisDoForm();
+    this.atualizarEnsaiosDoForm();
   }
-}
 
+  removerBloco(i: number) {
+    if (this.expressaoDinamica.length > 1) {
+      this.expressaoDinamica.splice(i, 1);
+      this.registerForm.get('funcao')?.setValue(this.getExpressaoString());
+      this.atualizarEnsaiosDoForm();
+    }
+  }
+
+  private atualizarVariaveisDoForm() {
+  const nomes = this.variaveis.map(v => v.nome);
+
+  // Pegua os ensaios usados na expressão, sem duplicatas
+  const usados = this.expressaoDinamica
+    .filter(b => b.tipo === 'Variavel' && nomes.includes(b.valor || ''))
+    .map(b => b.valor)
+    .filter((valor, idx, arr) => arr.indexOf(valor) === idx) // elimina duplicatas
+    .map(valor => this.variaveis.find(v => v.nome === valor))
+    .filter(v => !!v);
+
+  this.registerForm.get('variavel')?.setValue(usados.map(v => v.id));
+}
 
 getExpressaoString() {
   this.gerarNomesSegurosComValoresAtuais();
   return this.expressaoDinamica
     .map(b => {
-      if (b.tipo === 'Ensaio' && b.valor !== undefined && this.nameMap[b.valor]) {
+      if (b.tipo === 'Variavel' && b.valor !== undefined && this.nameMap[b.valor]) {
         return this.nameMap[b.valor];
       }
       return b.valor;
@@ -336,37 +362,58 @@ getExpressaoString() {
     .join(' ');
 }
 
+private atualizarEnsaiosDoForm() {
+  const nomes = this.variaveis.map(e => e.nome);
 
-private atualizarVariaveisDoForm() {
-  const nomes = this.variaveis.map(v => v.nome);
-
-  // Pega as variáveis usadas na expressão, sem duplicatas
-  const usadas = this.expressaoDinamica
-    .filter(b => b.tipo === 'Ensaio' && nomes.includes(b.valor || ''))
+  // Pegua os ensaios usados na expressão, sem duplicatas
+  const usados = this.expressaoDinamica
+    .filter(b => b.tipo === 'Variavel' && nomes.includes(b.valor || ''))
     .map(b => b.valor)
     .filter((valor, idx, arr) => arr.indexOf(valor) === idx) // elimina duplicatas
-    .map(valor => this.variaveis.find(v => v.nome === valor))
-    .filter(v => !!v);
+    .map(valor => this.variaveis.find(e => e.nome === valor))
+    .filter(e => !!e);
 
-  this.registerForm.get('variavel')?.setValue(usadas.map(v => v.id));
+  this.registerForm.get('variavel')?.setValue(usados.map(e => e.id));
+}
+
+
+onBlocoChange(index: number) {
+  console.log(`Bloco ${index} alterado:`, this.expressaoDinamica[index]);
+  
+  // Limpar o valor quando o tipo mudar
+  if (this.expressaoDinamica[index].tipo !== 'Valor') {
+    // Se mudou o tipo, limpar o valor para forçar nova seleção
+    this.expressaoDinamica[index].valor = '';
+  }
 }
 
 gerarNomesSegurosComValoresAtuais() {
   this.safeVars = {};
   this.nameMap = {};
-  this.variaveis.forEach((variavel: any, index: number) => {
-    const safeName = `var${index + 1}`;
-    // Para variáveis, você pode usar um valor padrão ou buscar de outra fonte
-    this.safeVars[safeName] = variavel.valor || 0;
+  this.variaveis.forEach((variavel: any, i: number) => {
+    const safeName = 'var' + i;
+    // Busca o valor digitado para este ensaio
+    const resultado = this.resultados.find(r => r.variavelId === variavel.id);
+    this.safeVars[safeName] = resultado ? resultado.valor : 0;
     this.nameMap[variavel.nome] = safeName;
   });
 }
 
 avaliarExpressao() {
   const expressao = this.registerForm.get('funcao')?.value;
+  if (!expressao) return null;
+  
   this.gerarNomesSegurosComValoresAtuais();
+  
+  // Converte a expressão original para usar nomes seguros
+  let exprSegura = expressao;
+  Object.keys(this.nameMap).forEach(origName => {
+    const regex = new RegExp(origName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+    exprSegura = exprSegura.replace(regex, this.nameMap[origName]);
+  });
+  
   try {
-    const resultado = evaluate(expressao, this.safeVars);
+    const resultado = evaluate(exprSegura, this.safeVars);
     return resultado;
   } catch (e) {
     this.messageService.add({
@@ -379,27 +426,18 @@ avaliarExpressao() {
   }
 }
 
+////////////-------------------------Montagem de Fórmula-------------------------////////////
 montarFormula(){
     this.montarFormulaVisivel = true
   }
-
-editarFormula(){
+ editarFormula(){
     // Converte a string da função em blocos para edição
   const funcao = this.editForm.get('funcao')?.value || '';
   const funcaoComNomes = this.converterExpressaoParaNomes(funcao);
   this.expressaoDinamica = this.converterFuncaoParaBlocos(funcaoComNomes);
   this.editarFormulaVisivel = true;
   }
-
-  converterExpressaoParaNomes(expr: string): string {
- 
-  const reverseMap = Object.fromEntries(
-    Object.entries(this.nameMap).map(([k, v]) => [v, k])
-  );
-  
-  return expr.replace(/var\d+/g, (match) => reverseMap[match] || match);
-}
-// O método converterFuncaoParaBlocos pode ficar igual
+// O método converterFuncaoParaBlocos pode ficar igual, pois agora recebe nomes de ensaio
 converterFuncaoParaBlocos(funcao: string): { tipo: string, valor: string }[] {
   const tokens = funcao.split(' ');
   return tokens.map(token => {
@@ -411,6 +449,14 @@ converterFuncaoParaBlocos(funcao: string): { tipo: string, valor: string }[] {
       return { tipo: 'Ensaio', valor: token };
     }
   });
+}
+
+converterExpressaoParaNomes(expr: string): string { 
+  const reverseMap = Object.fromEntries(
+    Object.entries(this.nameMap).map(([k, v]) => [v, k])
+  );
+
+  return expr.replace(/var\d+/g, (match) => reverseMap[match] || match);
 }
 
 validarExpressaoComValores(expr: string): boolean {
@@ -454,9 +500,112 @@ salvarFormula() {
   this.montarFormulaVisivel = false;
 }
 
+// Crie um método específico para buscar variáveis na expressão
+private buscarVariaveisNaExpressao(expressao: string) {
+  console.log('=== BUSCANDO VARIÁVEIS NA EXPRESSÃO ===');
+  console.log('Expressão recebida:', expressao);
+  console.log('Variáveis disponíveis:', this.variaveis);
+  
+  if (!expressao || expressao.trim() === '') {
+    console.log('Expressão vazia, definindo array vazio');
+    this.registerForm.get('variavel')?.setValue([]);
+    return;
+  }
+  
+  // Separar a expressão em palavras, removendo operadores
+  const palavras = expressao.split(/[\s\+\-\*\/\(\)]+/).filter(p => p.trim() !== '');
+  console.log('Palavras extraídas da expressão:', palavras);
+  
+  // Buscar variáveis que correspondem às palavras
+  const variaveisEncontradas = [];
+  
+  for (const palavra of palavras) {
+    console.log(`Procurando variável com nome: "${palavra}"`);
+    const variavel = this.variaveis.find(v => v.nome === palavra);
+    console.log(`Variável encontrada:`, variavel);
+    
+    if (variavel) {
+      variaveisEncontradas.push(variavel);
+    }
+  }
+  
+  console.log('Todas as variáveis encontradas:', variaveisEncontradas);
+  
+  // Remover duplicatas
+  const variaveisUnicas = variaveisEncontradas.filter((v, index, arr) => 
+    arr.findIndex(item => item.id === v.id) === index
+  );
+  
+  console.log('Variáveis únicas:', variaveisUnicas);
+  
+  // Extrair os IDs
+  const ids = variaveisUnicas.map(v => {
+    console.log(`Extraindo ID da variável ${v.nome}: ${v.id} (tipo: ${typeof v.id})`);
+    return v.id;
+  });
+  
+  console.log('IDs extraídos:', ids);
+  
+  // Verificar se todos os IDs são válidos
+  const idsValidos = ids.every(id => {
+    const isValid = typeof id === 'number' && !isNaN(id);
+    console.log(`ID ${id} é válido? ${isValid}`);
+    return isValid;
+  });
+  
+  console.log('Todos os IDs são válidos?', idsValidos);
+  
+  if (idsValidos && ids.length > 0) {
+    console.log('Definindo IDs no formulário:', ids);
+    this.registerForm.get('variavel')?.setValue(ids);
+  } else {
+    console.log('IDs inválidos ou array vazio, definindo array vazio');
+    this.registerForm.get('variavel')?.setValue([]);
+  }
+  
+  // Verificar o valor final definido no formulário
+  const valorFinal = this.registerForm.get('variavel')?.value;
+  console.log('Valor final definido no formulário:', valorFinal);
+}
+
+// Crie um método específico para atualizar as variáveis baseado na expressão
+private atualizarVariaveisComExpressao(expressao: string) {
+  if (!expressao || expressao.trim() === '') {
+    this.registerForm.get('variavel')?.setValue([]);
+    return;
+  }
+  
+  const nomes = this.variaveis.map(v => v.nome);
+  const palavras = expressao.split(' ').filter(p => p.trim() !== '');
+  
+  // Encontrar palavras que correspondem a nomes de variáveis
+  const variaveisUsadas = palavras
+    .filter(palavra => nomes.includes(palavra))
+    .filter((palavra, index, arr) => arr.indexOf(palavra) === index) // remover duplicatas
+    .map(palavra => this.variaveis.find(v => v.nome === palavra))
+    .filter(v => v !== undefined);
+  
+  console.log('Variáveis encontradas na expressão:', variaveisUsadas);
+  
+  const variaveisIds = variaveisUsadas.map(v => v.id);
+  
+  // Verificar se todos os IDs são válidos
+  const idsValidos = variaveisIds.every(id => typeof id === 'number' && !isNaN(id));
+  
+  if (idsValidos) {
+    this.registerForm.get('variavel')?.setValue(variaveisIds);
+    console.log('IDs das variáveis definidos:', variaveisIds);
+  } else {
+    console.error('IDs inválidos:', variaveisIds);
+    this.registerForm.get('variavel')?.setValue([]);
+  }
+}
+
+// Modifique o método salvarFormulaEditada também
 salvarFormulaEditada() {
-  const novaExpressao = this.getExpressaoString(); // monta a expressão a partir dos blocos
+  const novaExpressao = this.getExpressaoString(); // usa nomes originais
   this.editForm.get('funcao')?.setValue(novaExpressao);
+  this.atualizarVariaveisDoForm();
   this.editarFormulaVisivel = false;
 }
 
@@ -590,37 +739,41 @@ filterVariaveis(event: any) {
     });
   }
 
-  submit(){
-  const expressao = this.registerForm.get('funcao')?.value;
+submit() {
+  const expressao = this.getExpressaoString();
 
-  if (expressao && expressao.trim() !== '') {
-    if (!this.validarExpressaoComValores(expressao)) {
-      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Expressão inválida!' });
-      return;
-    }
+  if (!expressao || expressao.trim() === '') {
+    this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'A expressão não pode estar vazia.' });
+    return;
   }
 
-  const tipoEnsaio = this.registerForm.value.tipoEnsaio;
-  const tempoPrevisto = `${this.registerForm.value.tempoPrevistoValor} ${this.registerForm.value.tempoPrevistoUnidade}`;
-  const variavel = this.registerForm.value.variavel;
-  const funcao = this.registerForm.value.funcao;
+  if (!this.validarExpressaoComValores(expressao)) {
+    this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Expressão inválida!' });
+    return;
+  }
 
+  const variaveis = Array.isArray(this.registerForm.value.variavel)  
+    ? this.registerForm.value.variavel
+    : [this.registerForm.value.variavel];
+    console.log('Enviando VVVVVV:', variaveis);
   this.ensaioService.registerEnsaio(
     this.registerForm.value.descricao,
     this.registerForm.value.responsavel,
     this.registerForm.value.valor,
-    tipoEnsaio,
-    tempoPrevisto,
-    variavel,
-    funcao
+    this.registerForm.value.tipoEnsaio,
+    `${this.registerForm.value.tempoPrevistoValor} ${this.registerForm.value.tempoPrevistoUnidade}`,
+    variaveis,
+    this.registerForm.value.funcao,
   ).subscribe({
     next: () => {
       this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Ensaio cadastrado com sucesso!!', life: 1000 });
       this.loadEnsaios();
+      this.clearForm();
     },
     error: (err) => {
-      console.error('Login error:', err); 
-    
+      console.error('Erro completo:', err);
+      console.error('Resposta do servidor:', err.error);
+      
       if (err.status === 401) {
         this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
       } else if (err.status === 403) {
@@ -634,5 +787,6 @@ filterVariaveis(event: any) {
     }
   });
 }
+
 
 }
