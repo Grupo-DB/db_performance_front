@@ -44,7 +44,8 @@
     </ul>
 </div>
 <div class="container flex flex-column align-items-center">
-     <div class="titulo mt-2 mb-0 w-12 text-2xl">
+    
+    <div class="titulo mt-2 mb-0 w-12 text-2xl">
         <p-divider align="left" type="solid">
             <b>Amostras e Ordens de Serviço</b>
         </p-divider>
@@ -506,7 +507,7 @@
                         <div class="step1 flex flex-column w-12 gap-3 mb-5 mt-5 justify-content-end lg:w-12 lg:flex-row">
                             <div class="w-6 text-left">
                                 <p-button 
-                                    (onClick)="navegarParaExpressa();downloadPdf()" 
+                                    (onClick)="navegarParaExpressa();" 
                                     severity="danger" 
                                     label="OS Expressa"
                                     icon="pi pi-book" 
@@ -517,7 +518,7 @@
                             </div>
                             <div class=" flex w-6 gap-3 justify-content-end text-right">
                                 <p-button 
-                                    (onClick)="downloadPdf();navegarParaOs()" 
+                                    (onClick)="navegarParaOs()" 
                                     title="Abrir OS" 
                                     label="Abrir OS"
                                     icon="pi pi-arrow-right" 

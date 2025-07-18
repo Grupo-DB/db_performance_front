@@ -27,6 +27,10 @@ import { ToastModule } from 'primeng/toast';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { AmostraService } from '../../../services/controleQualidade/amostra.service';
 
+
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
+
 interface ProdutoAmostraForm {
   nome: FormControl,
   registroEmpresa: FormControl,
@@ -47,7 +51,7 @@ export interface ProdutoAmostra {
     InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,
     FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,
     ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,
-    InputNumberModule,AutoCompleteModule,MultiSelectModule
+    InputNumberModule,AutoCompleteModule,MultiSelectModule, CardModule, InplaceModule
   ],
   animations:[
   trigger('efeitoFade',[
@@ -162,11 +166,12 @@ export class ProdutoAmostraComponent implements OnInit {
   abrirModalEdicao(produtoAmostra: ProdutoAmostra){
     this.editFormVisible = true;
     this.editForm.patchValue({
-      id: produtoAmostra.id,
-      nome: produtoAmostra.nome,
-      registro_empresa: produtoAmostra.registro_empresa,
-      registro_produto: produtoAmostra.registro_produto
+      id: produtoAmostra?.id,
+      nome: produtoAmostra?.nome,
+      registro_empresa: produtoAmostra?.registro_empresa,
+      registro_produto: produtoAmostra?.registro_produto
     });
+    console.log(this.editForm);
   }
 
   saveEdit(){
@@ -200,7 +205,7 @@ export class ProdutoAmostraComponent implements OnInit {
 
   excluirProdutoAmostra(id: number){
     this.confirmationService.confirm({
-      message: 'Você tem certexa que deseja excluir este produto de amostra?',
+      message: 'Você tem certeza que deseja excluir este produto de amostra?',
       header: 'Confirmação',
       icon: 'pi pi-exclamation-triangle',
       acceptIcon: 'pi pi-check',

@@ -25,6 +25,10 @@ import { DrawerModule } from 'primeng/drawer';
 import { RouterLink } from '@angular/router';
 
 
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
+
+
 interface RegisterTipoEnsaioForm {
   nome: FormControl,
 }
@@ -40,7 +44,7 @@ export interface TipoEnsaio {
     ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,
     InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,
     FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,
-    ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink
+    ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink, CardModule, InplaceModule
   ],
   providers:[
     MessageService,ConfirmationService
