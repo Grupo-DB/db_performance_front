@@ -54,20 +54,20 @@
     <div class="containerInterno w-12">
 
 
-        <div class="background-form">
+        <div class="background-form" @swipeAnimation>
 
             <form
                 [formGroup]="registerForm" title="Cadastrar novo Tipo de Ensaio" class="flex flex-column gap-4" 
                 
             >
-                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row" @swipeAnimation>
+                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
 
                     <div class="fg1 flex flex-column w-12 align-items-center">
 
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
                                 <div class="header w-full text-center">
-                                    <h2>Inserir Nova</h2>
+                                    <h2>Inserir Novo</h2>
                                 </div>
                             </ng-template>
                             <div class="flex flex-column w-12 gap-3">
@@ -115,7 +115,7 @@
 
         </div>
 
-        <div class="background-form mt-4 w-12">
+        <div class="background-form mt-4 w-12" @swipeAnimation>
             <div class="tabela text-left w-12">
                 <p-toast />
                 <p-confirmDialog />
@@ -179,7 +179,7 @@
                                                 label = "Editar"
                                                 class="ml-1"
                                                 tooltipPosition="top"
-                                                pTooltip="Abrir OS"
+                                                pTooltip="Editar"
                                                 (onClick)="abrirModalEdicao(tiposEnsaio)"
                                             ></p-button>
                                             <p-button 
@@ -187,7 +187,7 @@
                                                 severity="danger"
                                                 class="ml-2"
                                                 tooltipPosition="top"
-                                                pTooltip="OS Expressa"
+                                                pTooltip="Excluir"
                                                 (onClick)="excluirTipoEnsaio(tiposEnsaio.id)"
                                             ></p-button>
                                         </div>
@@ -210,8 +210,6 @@
     </div>
     
 </div>
-
-
 
 <!---------------------------------Modal Edição---------------------------------------------->
 
@@ -271,7 +269,7 @@
                                     icon="pi pi-check" 
                                     iconPos="right" 
                                     tooltipPosition="top"
-                                    pTooltip="Salvar Amostra"
+                                    pTooltip="Salvar"
                                 />
                             </div>
                         </p-card>

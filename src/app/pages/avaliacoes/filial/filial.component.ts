@@ -24,6 +24,11 @@ import { SelectModule } from 'primeng/select';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 
+
+import { DrawerModule } from 'primeng/drawer';
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
+
 interface RegisterFilialForm{
   empresa: FormControl,
   nome: FormControl,
@@ -51,10 +56,7 @@ export interface Filial {
     templateUrl: './filial.component.html',
     styleUrl: './filial.component.scss',
     imports: [
-        ReactiveFormsModule,FormsModule,CommonModule,DividerModule,
-        InputMaskModule,DialogModule,ConfirmDialogModule,
-        IconFieldModule,InputIconModule,SelectModule,FloatLabelModule,
-        TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,ToastModule
+        ReactiveFormsModule,FormsModule,CommonModule,DividerModule, InputMaskModule,DialogModule,ConfirmDialogModule,IconFieldModule,InputIconModule,SelectModule,FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,ToastModule, DrawerModule, CardModule, InplaceModule
     ],
     providers:[
       FilialService,
@@ -62,48 +64,48 @@ export interface Filial {
       RegisterCompanyService,GetFilialService
     ],
     animations:[
-            trigger('efeitoFade',[
-                    transition(':enter',[
-                      style({ opacity: 0 }),
-                      animate('2s', style({ opacity:1 }))
-                    ])
-                  ]),
-                  trigger('efeitoZoom', [
-                    transition(':enter', [
-                      style({ transform: 'scale(0)' }),
-                      animate('2s', style({ transform: 'scale(1)' })),
-                    ]),
-                  ]),
-                  trigger('bounceAnimation', [
-                    transition(':enter', [
-                      animate('4.5s ease-out', keyframes([
-                        style({ transform: 'scale(0.5)', offset: 0 }),
-                        style({ transform: 'scale(1.2)', offset: 0.5 }),
-                        style({ transform: 'scale(1)', offset: 1 }),
-                      ])),
-                    ]),
-                  ]),
-                  trigger('swipeAnimation', [
-                    transition(':enter', [
-                      style({ transform: 'translateX(-100%)' }),
-                      animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
-                    ]),
-                    transition(':leave', [
-                      style({ transform: 'translateX(0)' }),
-                      animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
-                    ]),
-                  ]),
-                  trigger('swipeAnimationReverse', [
-                    transition(':enter', [
-                      style({ transform: 'translateX(100%)' }),
-                      animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
-                    ]),
-                    transition(':leave', [
-                      style({ transform: 'translateX(0)' }),
-                      animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
-                    ]),
-                  ]),
-          ],
+      trigger('efeitoFade',[
+        transition(':enter',[
+          style({ opacity: 0 }),
+          animate('2s', style({ opacity:1 }))
+        ])
+      ]),
+      trigger('efeitoZoom', [
+        transition(':enter', [
+          style({ transform: 'scale(0)' }),
+          animate('2s', style({ transform: 'scale(1)' })),
+        ]),
+      ]),
+      trigger('bounceAnimation', [
+        transition(':enter', [
+          animate('4.5s ease-out', keyframes([
+            style({ transform: 'scale(0.5)', offset: 0 }),
+            style({ transform: 'scale(1.2)', offset: 0.5 }),
+            style({ transform: 'scale(1)', offset: 1 }),
+          ])),
+        ]),
+      ]),
+      trigger('swipeAnimation', [
+        transition(':enter', [
+          style({ transform: 'translateX(-100%)' }),
+          animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+        ]),
+        transition(':leave', [
+          style({ transform: 'translateX(0)' }),
+          animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+        ]),
+      ]),
+      trigger('swipeAnimationReverse', [
+        transition(':enter', [
+          style({ transform: 'translateX(100%)' }),
+          animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+        ]),
+        transition(':leave', [
+          style({ transform: 'translateX(0)' }),
+          animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+        ]),
+      ]),
+    ],
 })
 export class FilialComponent implements OnInit {
   filiais: any[] = [];

@@ -54,12 +54,12 @@
     <div class="containerInterno w-12">
 
 
-        <div class="background-form">
+        <div class="background-form" @swipeAnimation>
 
             <form
                 [formGroup]="registerForm" title="Cadastrar nova amostra" class="flex flex-column gap-4" 
             >
-                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row" @swipeAnimation>
+                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
 
                     <div class="fg1 flex flex-column w-12 align-items-center">
 
@@ -147,7 +147,7 @@
 
         </div>
 
-        <div class="background-form mt-4 w-12">
+        <div class="background-form mt-4 w-12" @swipeAnimation>
             <div class="tabela text-left w-12">
                 <p-toast />
                 <p-confirmDialog />

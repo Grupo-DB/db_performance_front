@@ -8,15 +8,44 @@
     
 }
 
+.containerInterno{
+    background-color: #ffffff;
+    border: 10px solid #ffffff;
+    border-radius: 20px;
+    padding: 10px;
+    //box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.titulo{
+    font-size: 22px;
+    //background-color: #4A90E2;
+    background-color: #ffffff;
+    border: 20px solid #ffffff;
+}
+
+.card{
+    .header{
+        background-color: #4A90E2;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        
+        h2{
+            color: #ffffff;
+            font-weight: 700;
+        }
+    }
+}
+
 .form-geral{
-    width: 90%;
+    width: 98%;
     margin-left: auto;
     margin-right: auto;
     border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    // box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
     .fg1{
         width: 100%;
-        margin-top: 10px;
+        //margin-top: 10px;
         //margin-bottom: 25px;
         p{
             margin-left: 20px;
@@ -29,9 +58,9 @@
         } 
     }
     .fg2{
-        //width: 100%;
-        margin-top: 10px;
-        margin-bottom: 25px;
+        width: 100%;
+        //margin-top: 10px;
+        //margin-bottom: 25px;
         p{
             margin-left: 20px;
         }
@@ -40,38 +69,25 @@
             
         } 
     }
-}
-
-.editGeral{
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-    .fg1edit{
-        width: 50%;
-        margin-top: 10px;
+    .fg3{
+        width: 100%;
+        //margin-top: 10px;
+        margin-bottom: 25px;
+        p{
+            margin-left: 20px;
+        }
         .form2{
-            margin-top: 25px;
+            margin-top: 16px;
+            
         }
     }
-    .fg2edit{
-        width: 50%;
-        margin-top: 10px;
-        .form2{
-            margin-top: 25px;
-        }
-    }
-}
+}   
 
-
-
-.titulo{
-    justify-content: center;
-    text-align: center;
-    h2{
-        color:slategrey;
-    }
+.background-form{
+    background-color: #F7F8FA;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
 }
  
 .botoes-form{
@@ -100,7 +116,6 @@
 .tabela{
     border-radius: 10px;
     width: 100%;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
     th{
         font-size: 14px;
     }
