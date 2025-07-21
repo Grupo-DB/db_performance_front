@@ -21,6 +21,9 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { SelectModule } from 'primeng/select';
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
+import { DrawerModule } from 'primeng/drawer';
 
 interface RegisterContaContabilForm{
   nivel1Conta: FormControl;
@@ -57,10 +60,7 @@ export interface ContaContabil{
   selector: 'app-conta-contabil',
   standalone: true,
   imports: [
-    CommonModule,RouterLink,DividerModule,NzMenuModule,InputGroupModule,
-    InputGroupAddonModule,IconFieldModule,InputIconModule,
-    DropdownModule,FormsModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,
-    ConfirmDialogModule,ToastModule,ButtonModule,FloatLabelModule,SelectModule,
+    CommonModule,RouterLink,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,IconFieldModule,InputIconModule,DropdownModule,FormsModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,ConfirmDialogModule,ToastModule,ButtonModule,FloatLabelModule,SelectModule, CardModule, InplaceModule, DrawerModule
   ],
   animations:[
     trigger('efeitoFade',[

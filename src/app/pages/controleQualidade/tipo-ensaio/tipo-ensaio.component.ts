@@ -21,12 +21,12 @@ import { ToastModule } from 'primeng/toast';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { EnsaioService } from '../../../services/controleQualidade/ensaio.service';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
-import { DrawerModule } from 'primeng/drawer';
 import { RouterLink } from '@angular/router';
 
 
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
+import { DrawerModule } from 'primeng/drawer';
 
 
 interface RegisterTipoEnsaioForm {

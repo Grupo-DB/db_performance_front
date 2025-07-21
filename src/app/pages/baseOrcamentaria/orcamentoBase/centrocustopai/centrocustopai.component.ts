@@ -31,6 +31,9 @@ import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
+import { DrawerModule } from 'primeng/drawer';
 
 interface RegisterCentroCustoPaiForm {
   nome: FormControl,
@@ -61,8 +64,7 @@ export interface CentroCustoPai {
   imports: [
     CommonModule,RouterLink,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
     DropdownModule,FormsModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,
-    ConfirmDialogModule,ToastModule,IconFieldModule,InputIconModule, 
-    FloatLabelModule,ButtonModule,FloatLabelModule,SelectModule
+    ConfirmDialogModule,ToastModule,IconFieldModule,InputIconModule, FloatLabelModule,ButtonModule,FloatLabelModule,SelectModule, CardModule, InplaceModule, DrawerModule
   ],
   providers: [
     MessageService,ConfirmationService
@@ -408,7 +410,7 @@ export class CentrocustopaiComponent implements OnInit {
     this.dt1.filterGlobal(this.inputValue, 'contains');
   }
 
-  abirModalEdicao(centroCustoPai: CentroCustoPai){
+  abrirModalEdicao(centroCustoPai: CentroCustoPai){
     this.editFormVisible = true;
     this.editForm.patchValue({
       id: centroCustoPai.id,
