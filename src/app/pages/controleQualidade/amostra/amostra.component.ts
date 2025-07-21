@@ -54,19 +54,19 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadChangeParam, NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { TagModule } from 'primeng/tag';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { TooltipModule } from 'primeng/tooltip';
+import { AvaliadorService } from '../../../services/avaliacoesServices/avaliadores/registeravaliador.service';
+import { Avaliador } from '../../avaliacoes/avaliador/avaliador.component';
+import { id } from 'date-fns/locale';
+
 
 interface FileWithInfo {
   file: File;
   descricao: string;
-}import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import { TooltipModule } from 'primeng/tooltip';
-
-
-
-import { AvaliadorService } from '../../../services/avaliacoesServices/avaliadores/registeravaliador.service';
-import { Avaliador } from '../../avaliacoes/avaliador/avaliador.component';
-
+}
 
 interface AmostraForm{
   especie: FormControl,
@@ -156,7 +156,9 @@ interface Column {
     FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,
     ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,
     InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,
-    InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule, CdkDragPlaceholder,NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule
+    InputIcon, FieldsetModule, MenuModule, SplitButtonModule, TagModule,
+    DrawerModule, SpeedDialModule, InplaceModule, CdkDragPlaceholder, 
+    NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule
 ],
   animations:[
     trigger('efeitoFade',[
@@ -244,6 +246,7 @@ export class AmostraComponent implements OnInit {
   inputValue: string = '';
   modalImagens: boolean = false;
   modalVisualizar: boolean = false;
+  materiaisFiltro: any[] = [];
 
 tipos = [
   { value: 'Media' },
@@ -439,8 +442,26 @@ especies = [
   
   }
 
+  getSeverity(materialNome: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | undefined {
+  if (!materialNome) {
+    return 'secondary';
+  }
+
+  switch (materialNome.toLowerCase()) {
+    case 'calcário':
+      return 'warn';
+    case 'acabamento':
+      return 'success';
+    case 'argamassa':
+      return 'info';
+    default:
+      return 'secondary';
+  }
+
+}
+  
   loadAmostras(): void {
-    this.amostraService.getAmostras().subscribe(
+    this.amostraService.getAmostrasSemOrdem().subscribe(
       response => {
         this.amostras = response;
         console.log('Amostras carregadas:', this.amostras);
@@ -541,6 +562,11 @@ especies = [
     this.produtoLinhaService.getProdutos().subscribe(
       response => {
         this.materiais = response;
+        this.materiaisFiltro = response.map(produto => ({
+          label: produto.nome,
+          value: produto.nome
+        }));
+        console.log('Materiais carregados:', this.materiais);
       },
       error => {
         console.log('Erro ao carregar produtos', error);
@@ -1001,6 +1027,7 @@ criarExpressaDeAmostra(amostra: any) {
 // Método para converter amostra salva para formato do formulário
 converterAmostraSalvaParaFormulario(amostra: any): any {
   return {
+    id: amostra.id,
     especie: amostra.especie || '',
     finalidade: amostra.finalidade || '',
     numeroSac: amostra.numero_sac || '',
@@ -1076,6 +1103,61 @@ navegarParaExpressaComDados(dadosEnriquecidos: any) {
 }
 
 //////////////////////////END OS EXPRESSA APARTIR DA TABELA //////////////////
+
+//////////////////OS COM PLANO APARTIR DA AMOSTRA SELECIONADA DA TABELA //////////////
+criarOrdemDeAmostra(amostra: any) {
+  console.log('Criando ordem a partir da amostra:', amostra);
+
+  // Converter os dados da amostra para o formato esperado pela ordem
+  const dadosAmostraParaOrdem = this.converterAmostraSalvaParaFormulario(amostra);
+  //enriquecer dados
+  const dadosEnriquecidos = this.enriquecerDadosFormulario(dadosAmostraParaOrdem);
+  //carregar imagens se tiver
+  this.carregarImagensParaOrdemNormal(amostra.id, dadosEnriquecidos);
+}
+
+// Método para carregar imagens da amostra para ordem normal
+carregarImagensParaOrdemNormal(amostraId: number, dadosEnriquecidos: any) {
+  this.amostraService.getImagensAmostra(amostraId).subscribe({
+    next: (imagens) => {
+      // Adicionar imagens aos dados enriquecidos
+      if (imagens && imagens.length > 0) {
+        dadosEnriquecidos.imagensExistentes = imagens.map((img: any) => ({
+          id: img.id,
+          url: img.image_url || img.image,
+          descricao: img.descricao || '',
+          nome: `imagem_${img.id}`,
+          isExistente: true
+        }));
+        console.log('Imagens carregadas para ordem normal:', dadosEnriquecidos.imagensExistentes);
+      }
+      
+      this.navegarParaOrdemComDados(dadosEnriquecidos);
+    },
+    error: (error) => {
+      console.warn('Erro ao carregar imagens, mas continuando:', error);
+      // Mesmo se houver erro ao carregar imagens, continua para a ordem normal
+      this.navegarParaOrdemComDados(dadosEnriquecidos);
+    }
+  });
+}
+
+// Método para navegar para ordem normal com dados preparados
+navegarParaOrdemComDados(dadosEnriquecidos: any) {
+  // Salvar no sessionStorage como backup
+  const dadosSemImagens = { ...dadosEnriquecidos };
+  delete dadosSemImagens.imagens;
+  delete dadosSemImagens.imagensExistentes;
+  sessionStorage.setItem('amostraData', JSON.stringify(dadosSemImagens));
+  
+  console.log('Navegando para ordem normal com dados da amostra salva:', dadosEnriquecidos);
+  
+  // Navegar para a rota ordem passando os dados via state
+  this.router.navigate(['/welcome/controleQualidade/ordem'], {
+    state: { amostraData: dadosEnriquecidos }
+  });
+}
+///////////////////////////////////////////////////////////////////////////END OS COM PLANO APARTIR DA AMOSTRA SELECIONADA DA TABELA //////////////////
 
 ////////////////////////ORDEM DE SERVIÇO COM PLANO DE ANÁLISE //////////////////
 

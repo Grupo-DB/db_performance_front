@@ -82,6 +82,10 @@ atualizarDescricaoImagem(imagemId: number, descricao: string): Observable<any> {
   getAmostras(): Observable<any>{
     return this.http.get<any[]>(this.amostraUrl);
   }
+  getAmostrasSemOrdem(): Observable<any> {
+    const url = `${this.amostraUrl}sem_ordem/`;
+    return this.http.get<any[]>(url);
+  }
   getAmostraById(amostraId: number): Observable<any> {
   const url = `${this.amostraUrl}${amostraId}/`;
   return this.http.get(url, this.httpOptions);

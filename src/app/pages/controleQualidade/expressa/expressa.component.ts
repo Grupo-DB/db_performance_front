@@ -44,8 +44,6 @@ import { AnaliseService } from '../../../services/controleQualidade/analise.serv
 interface ExpressaForm {
   data: FormControl,
   numero: FormControl,
-  //ensaios: FormControl,
-  //calculos_ensaio: FormControl,
   responsavel: FormControl,
   digitador: FormControl,
   classificacao: FormControl,
@@ -92,47 +90,47 @@ export interface Expressa {
     MessageService,ConfirmationService,DatePipe
   ],
   animations: [
-    trigger('efeitoFade',[
-                                                transition(':enter',[
-                                                  style({ opacity: 0 }),
-                                                  animate('2s', style({ opacity:1 }))
-                                                ])
-                                              ]),
-                                              trigger('efeitoZoom', [
-                                                transition(':enter', [
-                                                  style({ transform: 'scale(0)' }),
-                                                  animate('2s', style({ transform: 'scale(1)' })),
-                                                ]),
-                                              ]),
-                                              trigger('bounceAnimation', [
-                                                transition(':enter', [
-                                                  animate('4.5s ease-out', keyframes([
-                                                    style({ transform: 'scale(0.5)', offset: 0 }),
-                                                    style({ transform: 'scale(1.2)', offset: 0.5 }),
-                                                    style({ transform: 'scale(1)', offset: 1 }),
-                                                  ])),
-                                                ]),
-                                              ]),
-                                              trigger('swipeAnimation', [
-                                                transition(':enter', [
-                                                  style({ transform: 'translateX(-100%)' }),
-                                                  animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
-                                                ]),
-                                                transition(':leave', [
-                                                  style({ transform: 'translateX(0)' }),
-                                                  animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
-                                                ]),
-                                              ]),
-                                              trigger('swipeAnimationReverse', [
-                                                transition(':enter', [
-                                                  style({ transform: 'translateX(100%)' }),
-                                                  animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
-                                                ]),
-                                                transition(':leave', [
-                                                  style({ transform: 'translateX(0)' }),
-                                                  animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
-                                                ]),
-                ]),
+    trigger('efeitoFade', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('2s', style({ opacity: 1 }))
+      ])
+    ]),
+    trigger('efeitoZoom', [
+      transition(':enter', [
+        style({ transform: 'scale(0)' }),
+        animate('2s', style({ transform: 'scale(1)' })),
+      ]),
+    ]),
+    trigger('bounceAnimation', [
+      transition(':enter', [
+        animate('4.5s ease-out', keyframes([
+          style({ transform: 'scale(0.5)', offset: 0 }),
+          style({ transform: 'scale(1.2)', offset: 0.5 }),
+          style({ transform: 'scale(1)', offset: 1 }),
+        ])),
+      ]),
+    ]),
+    trigger('swipeAnimation', [
+      transition(':enter', [
+        style({ transform: 'translateX(-100%)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+      ]),
+    ]),
+    trigger('swipeAnimationReverse', [
+      transition(':enter', [
+        style({ transform: 'translateX(100%)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+      ]),
+    ]),
   ],
   templateUrl: './expressa.component.html',
   styleUrl: './expressa.component.scss'
@@ -358,104 +356,144 @@ receberDadosAmostra(): void {
   }
 
   criarAmostra(): void {
-    if (!this.amostraData) {
-      this.messageService.add({ 
-        severity: 'error', 
-        summary: 'Erro', 
-        detail: 'Nenhum dado da amostra foi recebido' 
-      });
-      return;
-    }
-
-    // Validar se o formulário está válido
-    if (!this.expressaForm.valid) {
-      this.messageService.add({ 
-        severity: 'error', 
-        summary: 'Erro', 
-        detail: 'Preencha todos os campos obrigatórios' 
-      });
-      return;
-    }
-
-    // Validar se pelo menos um ensaio ou cálculo foi selecionado
-    if (this.targetEnsaios.length === 0 && this.targetCalculos.length === 0) {
-      this.messageService.add({ 
-        severity: 'warn', 
-        summary: 'Atenção', 
-        detail: 'Selecione pelo menos um ensaio ou cálculo para a análise expressa' 
-      });
-      return;
-    }
-
-    // Validar estrutura dos dados
-    if (!this.validarDadosEnvio()) {
-      this.messageService.add({ 
-        severity: 'error', 
-        summary: 'Erro', 
-        detail: 'Dados inválidos nos ensaios ou cálculos selecionados' 
-      });
-      return;
-    }
-
-    console.log('🚀 Iniciando criação da amostra expressa - Fluxo: Ordem → Amostra → Análise');
-
-    //Criar ordem expressa
-    let dataFormatada = '';
-    const dataValue = this.expressaForm.value.data;
-    if (dataValue instanceof Date && !isNaN(dataValue.getTime())) {
-      dataFormatada = formatDate(dataValue, 'yyyy-MM-dd', 'en-US');
-    }
-
-    console.log('📝 Criando ordem expressa...');
-    
-    // Preparar os IDs dos ensaios e cálculos selecionados
-    const ensaiosSelecionados = this.targetEnsaios
-      .map(ensaio => ensaio.id)
-      .filter(id => id != null && !isNaN(Number(id)))
-      .map(id => Number(id));
-      
-    const calculosSelecionados = this.targetCalculos
-      .map(calculo => calculo.id)
-      .filter(id => id != null && !isNaN(Number(id)))
-      .map(id => Number(id));
-    
-    console.log('🔢 IDs dos ensaios selecionados (números):', ensaiosSelecionados);
-    console.log('🔢 IDs dos cálculos selecionados (números):', calculosSelecionados);
-    
-    // Verificação adicional
-    if (ensaiosSelecionados.length !== this.targetEnsaios.length) {
-      console.warn('⚠️ Alguns ensaios têm IDs inválidos!');
-    }
-    if (calculosSelecionados.length !== this.targetCalculos.length) {
-      console.warn('⚠️ Alguns cálculos têm IDs inválidos!');
-    }
-    
-    this.ordemService.registerExpressa(
-      dataFormatada,
-      this.expressaForm.value.numero,
-      ensaiosSelecionados,
-      calculosSelecionados,
-      this.expressaForm.value.responsavel,
-      this.expressaForm.value.digitador,
-      this.expressaForm.value.classificacao
-    ).subscribe({
-      next: (ordemSalva) => {
-        console.log('✅ Ordem expressa criada:', ordemSalva);
-        const idOrdem = ordemSalva.id;
-        
-        // Criar amostra vinculada à ordem
-        this.criarAmostraVinculada(idOrdem);
-      },
-      error: (error) => {
-        console.error('❌ Erro ao criar ordem expressa:', error);
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'Erro', 
-          detail: 'Erro ao criar ordem expressa: ' + (error.error?.detail || error.message)
-        });
-      }
+  if (!this.amostraData) {
+    this.messageService.add({ 
+      severity: 'error', 
+      summary: 'Erro', 
+      detail: 'Nenhum dado da amostra foi recebido' 
     });
+    return;
   }
+
+  // Validar se o formulário está válido
+  if (!this.expressaForm.valid) {
+    this.messageService.add({ 
+      severity: 'error', 
+      summary: 'Erro', 
+      detail: 'Preencha todos os campos obrigatórios' 
+    });
+    return;
+  }
+
+  // Validar se pelo menos um ensaio ou cálculo foi selecionado
+  if (this.targetEnsaios.length === 0 && this.targetCalculos.length === 0) {
+    this.messageService.add({ 
+      severity: 'warn', 
+      summary: 'Atenção', 
+      detail: 'Selecione pelo menos um ensaio ou cálculo para a análise expressa' 
+    });
+    return;
+  }
+
+  // Validar estrutura dos dados
+  if (!this.validarDadosEnvio()) {
+    this.messageService.add({ 
+      severity: 'error', 
+      summary: 'Erro', 
+      detail: 'Dados inválidos nos ensaios ou cálculos selecionados' 
+    });
+    return;
+  }
+
+  // Verificar se é amostra EXISTENTE (vem da tabela) ou NOVA (do formulário)
+  const isAmostraExistente = this.amostraData.id != null;
+  
+  if (isAmostraExistente) {
+    console.log('🔗 Amostra EXISTENTE detectada - Fluxo: Ordem → Vincular Amostra → Análise');
+    console.log('📋 ID da amostra existente:', this.amostraData.id);
+  } else {
+    console.log('🆕 Amostra NOVA detectada - Fluxo: Ordem → Criar Amostra → Análise');
+  }
+
+  // Preparar dados da ordem
+  let dataFormatada = '';
+  const dataValue = this.expressaForm.value.data;
+  if (dataValue instanceof Date && !isNaN(dataValue.getTime())) {
+    dataFormatada = formatDate(dataValue, 'yyyy-MM-dd', 'en-US');
+  }
+
+  console.log('📝 Criando ordem expressa...');
+  
+  // Preparar os IDs dos ensaios e cálculos selecionados
+  const ensaiosSelecionados = this.targetEnsaios
+    .map(ensaio => ensaio.id)
+    .filter(id => id != null && !isNaN(Number(id)))
+    .map(id => Number(id));
+    
+  const calculosSelecionados = this.targetCalculos
+    .map(calculo => calculo.id)
+    .filter(id => id != null && !isNaN(Number(id)))
+    .map(id => Number(id));
+  
+  console.log('🔢 IDs dos ensaios selecionados:', ensaiosSelecionados);
+  console.log('🔢 IDs dos cálculos selecionados:', calculosSelecionados);
+  
+  // Criar ordem expressa
+  this.ordemService.registerExpressa(
+    dataFormatada,
+    this.expressaForm.value.numero,
+    ensaiosSelecionados,
+    calculosSelecionados,
+    this.expressaForm.value.responsavel,
+    this.expressaForm.value.digitador,
+    this.expressaForm.value.classificacao
+  ).subscribe({
+    next: (ordemSalva) => {
+      console.log('✅ Ordem expressa criada:', ordemSalva);
+      
+      if (isAmostraExistente) {
+        // Vincular amostra EXISTENTE à ordem
+        this.vincularAmostraExistenteAOrdem(ordemSalva.id);
+      } else {
+        // Criar amostra NOVA vinculada à ordem
+        this.criarAmostraVinculada(ordemSalva.id);
+      }
+    },
+    error: (error) => {
+      console.error('❌ Erro ao criar ordem expressa:', error);
+      this.messageService.add({ 
+        severity: 'error', 
+        summary: 'Erro', 
+        detail: 'Erro ao criar ordem expressa: ' + (error.error?.detail || error.message)
+      });
+    }
+  });
+}
+  private vincularAmostraExistenteAOrdem(idOrdem: string | number): void {
+  console.log('🔗 Vinculando amostra EXISTENTE à ordem:', idOrdem);
+  console.log('📋 ID da amostra existente:', this.amostraData.id);
+
+  // Atualizar amostra existente para incluir referência da ordem expressa
+  const dadosAtualizacao = {
+    expressa: idOrdem  // Vincular à ordem expressa
+  };
+  
+  this.amostraService.updateAmostra(this.amostraData.id, dadosAtualizacao).subscribe({
+    next: (amostraAtualizada) => {
+      console.log('✅ Amostra existente vinculada à ordem expressa:', amostraAtualizada);
+      
+      // Definir o ID da amostra para possível upload de imagens
+      this.amostraId = amostraAtualizada.id;
+      
+      // Upload de imagens se houver arquivos novos
+      if (this.uploadedFilesWithInfo.length > 0) {
+        console.log('📸 Fazendo upload de imagens adicionais...');
+        this.uploadImages();
+      }
+      
+      // Criar análise vinculada à amostra existente
+      this.criarAnaliseVinculada(amostraAtualizada.id);
+    },
+    error: (error) => {
+      console.error('❌ Erro ao vincular amostra existente:', error);
+      this.messageService.add({ 
+        severity: 'error', 
+        summary: 'Erro', 
+        detail: 'Ordem criada, mas erro ao vincular amostra existente: ' + (error.error?.detail || error.message)
+      });
+    }
+  });
+}
 
   // Método auxiliar para criar amostra vinculada à ordem
   private criarAmostraVinculada(idOrdem: string | number): void {

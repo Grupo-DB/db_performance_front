@@ -50,77 +50,222 @@
         </p-divider>
     </div>
 
-    <div class="form-geral mt-4 ml-4 mr-4">
-        <div class="tabela w-12"@swipeAnimation >
-            <p-table
-                #dt1
-                [value]="ordens"
-                [paginator]="true"
-                [rows]="10"
-                [rowsPerPageOptions]="[10, 20, 50]"
-                [globalFilterFields]="['numero','data','responsavel','digitador','classificacao', 'descricao']"
-                [showCurrentPageReport]="true"
-                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} de Ordens"
-                scrollable="true"
-                stripedRows
+    <div class="w-12 mt-3 mb-0 text-2xl">
+                <p-divider align="left" type="solid">
+                    <b>Dados Complementares</b>
+                </p-divider>
+            </div>
+
+            <form
+                [formGroup]="registerOrdemForm"
+                title="Cadastrar nova ordem de serviço"    
             >
-                <ng-template pTemplate="caption">
-                    <div class="flex flex-row md: justify-content-end">
+                
+            <div class="w-12 flex flex-column lg:flex-row">
+                <div class="flex flex-column w-12 gap-2  lg:w-12">
+                    <div class="w-6 text-left mb-3 mt-3">
+                        <p-floatLabel variant="on">
+                            <p-datepicker variant="filled" [style]="{'width':'100%'}" id="da" formControlName="data" dateFormat="dd/mm/yy"
+                                inputId="float-label" [showIcon]="true">
+                            </p-datepicker>
+                            <label for="float-label">Data de Abertura</label>
+                        </p-floatLabel>
+                    </div>
+
+                    <div class="w-6 text-left mb-3 mt-3">
+                        <p-floatLabel variant="on">
+                            <p-multiselect inputId="float-label" [style]="{'width':'100%'}" [options]="planosAnalise"
+                                formControlName="planoAnalise" optionLabel="descricao" optionValue="id" appendTo="body" [filter]="true"
+                                filterBy="nome" [showClear]="true">
+                            </p-multiselect>
+                            <label for="float-label">Selecione o Plano de Análise</label>
+                        </p-floatLabel>
+                    </div>
+
+                    <div class="w-11 text-left mb-3">
+                        <p-floatLabel variant="on">
+                            <p-select 
+                                inputId="float-label" 
+                                [style]="{'width':'100%'}" 
+                                [options]="classificacoes"
+                                formControlName="classificacao" 
+                                optionLabel="nome" 
+                                optionValue="nome" 
+                                appendTo="body" 
+                                [filter]="true"
+                                filterBy="nome" 
+                                [showClear]="true" 
+                            >
+                            </p-select>
+                            <label for="float-label">Selecione a Classificação</label>
+                        </p-floatLabel>
+                    </div>
+
+                    <div class="w-11 text-left mb-3">
                         <p-floatlabel variant="on">
                             <p-iconfield>
-                                <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
-                                <input
-                                    variant="filled"
-                                    [(ngModel)] = "inputValue"
-                                    [style]="{'width':'100%'}"
-                                    pInputText id="on_label"
+                                <p-inputicon class="pi pi-file-edit" />
+                                <input 
+                                    variant="filled" 
+                                    [style]="{'width':'100%'}" 
+                                    pInputText 
+                                    id="on_label" 
                                     autocomplete="off"
-                                    type="text"
-                                    (keyup)="filterTable()"
-                                    style="border-color:#1b91ff;"
+                                    formControlName="numero" 
+                                    type="text" 
                                 />
                             </p-iconfield>
-                            <label for="on_label" style="color: #1b91ff">Pesquisar</label>
+                            <label for="on_label">Número</label>
                         </p-floatlabel>
                     </div>
-                </ng-template>
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th style="width: 10%; text-align: center;" type="text" field="descricao" display="menu">Plano Detalhes</th>
-                        <th style="width: 10%; text-align: center;" type="text" field="numero" display="menu">Número</th>
-                        <th style="width: 15%; text-align: center;" type="text" field="data" display="menu">Data</th>
-                        <th style="width: 15%; text-align: center;" type="text" field="responsavel" display="menu">Responsável</th>
-                        <th style="width: 15%; text-align: center;" type="text" field="digitador" display="menu">Digitador</th>
-                        <th style="width: 15%; text-align: center;" type="text" field="classificacao" display="menu">Classificação</th>
+                </div>
 
-                        <th style="width: 10%; text-align: end;" type="text" display="menu">Ações</th>
-                    
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-ordem>
-                    <tr>
-                        <td style="text-align: center;">{{ ordem.plano_detalhes[0].descricao }}</td>
-                        <td style="text-align: center;">{{ ordem.numero }}</td>
-                        <td style="text-align: center;">{{ ordem.data | date:"dd/MM/yyyy" }}</td>
-                        <td style="text-align: center;">{{ ordem.responsavel }}</td>
-                        <td style="text-align: center;">{{ ordem.digitador }}</td>
-                        <td style="text-align: center;">{{ ordem.classificacao }}</td>
+                <div class="flex flex-column w-12 gap-2 lg:w-12">                    
+                    <div class="w-11 text-left mb-3">
+                        <p-floatLabel variant="on">
+                            <p-select 
+                                inputId="float-label" 
+                                [style]="{'width':'100%'}" 
+                                [options]="responsaveis"
+                                formControlName="responsavel" 
+                                optionLabel="value" 
+                                optionValue="value" 
+                                appendTo="body" 
+                                [filter]="true"
+                                filterBy="value" 
+                                [showClear]="true" 
+                                
+                            >
+                            </p-select>
+                            <label for="float-label">Selecione o Responsável</label>
+                        </p-floatLabel>
+                    </div>
+                    <div class="w-11 text-left mb-3">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
+                                <input 
+                                    variant="filled" 
+                                    [style]="{'width':'100%'}" 
+                                    pInputText 
+                                    id="on_label" 
+                                    autocomplete="off"
+                                    formControlName="digitador" 
+                                    type="text" 
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Digitador</label>
+                        </p-floatlabel>
+                    </div>
+                    <div class="w-1">
+                        <p-button label="Gravar" (onClick)="criarOrdemComAmostra()" severity="success" icon="pi pi-check" iconPos="right" />
+                    </div>
+                </div>
+            </div>
+             </form>
+            <p-divider />    
+        </div>    
+   
 
-                        <td style="vertical-align: middle; text-align: center;">
-                            <div style="display: flex; justify-content: end; align-items: center; height: 60px;">
-                            
-                                <div style="position: relative;">
-                                    <a type="button" class="ml-2">
-                                        <p-button icon="pi pi-book" [rounded]="true"/>
-                                    </a>
-                                </div>
+        <div class="form-geral mt-4">
+                            <div class="tabela w-12" @swipeAnimation>
+                                <p-toast />
+                                <p-confirmDialog />
+    
+                                <p-inplace closable="true" closeIcon="pi pi-angle-up">
+                                    <ng-template pTemplate="display">
+                                        <p-button label="OS">
+                                            <div class="inline-flex align-items-center">
+                                                <span><i class="pi pi-angle-down"></i></span>
+                                            </div>
+                                        </p-button>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="content">
+                                        <p-table 
+                                            [value]="analises" 
+                                            [paginator]="true" 
+                                            [rows]="10"
+                                            [rowsPerPageOptions]="[10, 20, 50]"
+                                            [globalFilterFields]="['data_entrada','data_coleta', 'fornecedor', 'numero']"
+                                            [showCurrentPageReport]="true"
+                                            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Ordens"
+                                            scrollable="true" 
+                                            stripedRows
+                                            #dt2
+                                        >
+                                            <ng-template pTemplate="caption">
+                                                <div class="flex flex-row md: justify-content-end">
+                                                    <p-floatlabel variant="on">
+                                                        <p-iconfield>
+                                                            <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
+                                                            <input 
+                                                            variant="filled" 
+                                                            [(ngModel)]="inputValue"
+                                                            [style]="{'width':'100%'}" 
+                                                            pInputText 
+                                                            id="on_label"
+                                                            autocomplete="off" 
+                                                            type="text" 
+                                                            (keyup)="filterTable()"
+                                                            style="border-color:#1b91ff;"
+                                                            />
+                                                        </p-iconfield>
+                                                        <label for="on_label" style="color: #1b91ff">Pesquisar</label>
+                                                    </p-floatlabel>
+                                                </div>
+                                            </ng-template>
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <th style="width: 10%; text-align: center;" type="text"
+                                                        field="data_entrada" display="menu">Data Entrada</th>
+                                                    <th style="width: 10%; text-align: center;" type="text" field="data_coleta"
+                                                        display="menu">Data Coleta</th>
+                                                    <th style="width: 10%; text-align: center;" type="text"
+                                                        field="fornecedor" display="menu">Fornecedor</th>
+                                                    <th style="width: 15%; text-align: center;" type="text"
+                                                        field="numero" display="menu">Número</th>
+    
+                                                    <th style="width: 10%; text-align: end;" type="text" field="acoes"
+                                                        display="menu">Ações</th>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-analise>
+                                                <tr>
+                                                    <td style="text-align: center;">{{ analise.amostra_detalhes.data_entrada
+                                                        }}</td>
+                                                    <td style="text-align: center;">{{ analise.amostra_detalhes.data_coleta
+                                                        }}</td>
+                                                    <td style="text-align: center;">{{ analise.amostra_detalhes.fornecedor
+                                                        }}</td>
+                                                    <td style="text-align: center;">{{ analise.amostra_detalhes.numero }}
+                                                    </td>
+    
+                                                    <td style="vertical-align: middle; text-align: center;">
+                                                        <div
+                                                            style="display: flex; justify-content: end; align-items: center; height: 60px;">
+                                                            <div style="position: relative;">
+                                                                <p-speeddial [radius]="90"
+                                                                    direction="left"
+                                                                    [style]="{ position: 'relative', top: 'calc(50% - 1rem)', right: 0 }"
+                                                                    [buttonProps]="{ severity: 'info', rounded: true }"
+                                                                    showIcon="pi pi-bars" hideIcon="pi pi-times" />
+                                                            </div>
+                                                            <div style="position: relative;">
+                                                                <a type="button" class="ml-2"
+                                                                    [routerLink]="['/welcome/controleQualidade/analise', analise.id]">
+                                                                    <p-button icon="pi pi-book" [rounded]="true" />
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </ng-template>
+                                        </p-table>
+                                    </ng-template>
+                                </p-inplace>
                             </div>
-                        </td>
+                        </div>
 
-                    </tr>
-                </ng-template>
-            </p-table>
-        </div>
-    </div>
+   
 
-</div>

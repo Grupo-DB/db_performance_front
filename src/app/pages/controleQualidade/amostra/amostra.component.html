@@ -506,7 +506,7 @@
                         <div class="step1 flex flex-column w-12 gap-3 mb-5 mt-5 justify-content-end lg:w-12 lg:flex-row">
                             <div class="w-6 text-left">
                                 <p-button 
-                                    (onClick)="navegarParaExpressa();downloadPdf()" 
+                                    (onClick)="navegarParaExpressa()" 
                                     severity="danger" 
                                     label="OS Expressa"
                                     icon="pi pi-book" 
@@ -517,7 +517,7 @@
                             </div>
                             <div class=" flex w-6 gap-3 justify-content-end text-right">
                                 <p-button 
-                                    (onClick)="downloadPdf();navegarParaOs()" 
+                                    (onClick)="navegarParaOs()" 
                                     title="Abrir OS" 
                                     label="Abrir OS"
                                     icon="pi pi-arrow-right" 
@@ -585,8 +585,46 @@
                                             </ng-template>
                                             <ng-template pTemplate="header">
                                                 <tr>
-                                                    <th style="width: 10%; text-align: center;" type="text"
-                                                        field="data_entrada" display="menu">Data Entrada</th>
+                                                    <th>
+                                                        <p-columnFilter field="material_detalhes.nome" matchMode="in" [showMenu]="false">
+                                                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                                <p-multiselect 
+                                                                    [ngModel]="value" 
+                                                                    [options]="materiaisFiltro" 
+                                                                    (onChange)="filter($event.value)" 
+                                                                    placeholder="Filtrar o Material" 
+                                                                    [showClear]="true" 
+                                                                    optionLabel="label"
+                                                                    optionValue="value"
+                                                                    [maxSelectedLabels]="3"
+                                                                    appendTo="body"
+                                                                >
+                                                                    <ng-template pTemplate="selectedItems" let-selectedOptions>
+                                                                        <div class="flex gap-1 flex-wrap">
+                                                                            <p-tag 
+                                                                                *ngFor="let option of selectedOptions" 
+                                                                                [value]="option.label" 
+                                                                                [severity]="getSeverity(option.value)" />
+                                                                        </div>
+                                                                    </ng-template>
+                                                                    <ng-template pTemplate="item" let-option>
+                                                                        <p-tag [value]="option.label" [severity]="getSeverity(option.value)" />
+                                                                    </ng-template>
+                                                                </p-multiselect>
+                                                            </ng-template>
+                                                        </p-columnFilter>
+                                                    </th>
+                                                    
+                                                    <th pSortableColumn="data_entrada" style="min-width: 10rem">
+                                                        <div class="flex justify-between items-center">
+                                                            Data Entrada
+                                                            <p-sortIcon field="data_entrada" />
+                                                            <p-columnFilter type="date" field="data_entrada" display="menu"  class="ml-auto" showMenu="false" />
+                                                        </div>
+                                                    </th>
+
+                                                    <!-- <th style="width: 10%; text-align: center;" type="text"
+                                                        field="data_entrada" display="menu">Data Entrada</th> -->
                                                     <th style="width: 10%; text-align: center;" type="text" field="data_coleta"
                                                         display="menu">Data Coleta</th>
                                                     <th style="width: 10%; text-align: center;" type="text" field="produto_amostra" display="menu">Produto Amostra</th>
@@ -604,9 +642,46 @@
                                                     <th style="width: 10%; text-align: center;" type="text" field="acoes"
                                                         display="menu">Opções</th>
                                                 </tr>
+                                                <!-- <tr>
+                                                    <th>
+                                                        <p-columnFilter field="material_detalhes.nome" matchMode="in" [showMenu]="false">
+                                                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                                <p-multiselect 
+                                                                    [ngModel]="value" 
+                                                                    [options]="materiaisFiltro" 
+                                                                    (onChange)="filter($event.value)" 
+                                                                    placeholder="Filtrar Materiais" 
+                                                                    [showClear]="true" 
+                                                                    optionLabel="label"
+                                                                    optionValue="value"
+                                                                    [maxSelectedLabels]="3"
+                                                                    appendTo="body"
+                                                                >
+                                                                    <ng-template pTemplate="selectedItems" let-selectedOptions>
+                                                                        <div class="flex gap-1 flex-wrap">
+                                                                            <p-tag 
+                                                                                *ngFor="let option of selectedOptions" 
+                                                                                [value]="option.label" 
+                                                                                [severity]="getSeverity(option.value)" />
+                                                                        </div>
+                                                                    </ng-template>
+                                                                    <ng-template pTemplate="item" let-option>
+                                                                        <p-tag [value]="option.label" [severity]="getSeverity(option.value)" />
+                                                                    </ng-template>
+                                                                </p-multiselect>
+                                                            </ng-template>
+                                                        </p-columnFilter>
+                                                    </th>
+                                                </tr> -->
                                             </ng-template>
                                             <ng-template pTemplate="body" let-amostra>
                                                 <tr>
+                                                    <td style="text-align: center;">
+                                                        <p-tag 
+                                                            [value]="amostra?.material_detalhes?.nome"
+                                                            [severity]="getSeverity(amostra?.material_detalhes?.nome)"
+                                                        />
+                                                    </td>
                                                     <td style="text-align: center;">{{ amostra?.data_entrada | date:'dd/MM/yyyy' }}</td>
                                                     <td style="text-align: center;">{{ amostra?.data_coleta | date:'dd/MM/yyyy' }}</td>   
                                                     <td style="text-align: center;">{{ amostra?.numero }}</td>
@@ -616,7 +691,7 @@
                                                         }}</td>
                                                     <!-- <td style="text-align: center;">{{ analise.amostra_detalhes.subtipo }}</td> -->
                                                     <td style="text-align: center;">{{ amostra?.status }}</td>
-                                                    <td style="text-align: center;"></td>
+                                                    
                                                     <td style="text-align: center;">{{ amostra?.local_coleta }}</td>
                                                     <td style="text-align: center;">
                                                         <div style="display: flex; justify-content: end;">
@@ -635,7 +710,7 @@
                                                                 [rounded]="true"
                                                                 class="ml-1"
                                                                 tooltipPosition="top"
-                                                                (onClick)="criarOrdemServico(amostra)"
+                                                                (onClick)="criarOrdemDeAmostra(amostra)"
                                                                 pTooltip="Abrir OS"
                                                             ></p-button>
                                                             <p-button 
@@ -736,7 +811,7 @@
                                                 [options]="planosAnalise" formControlName="planoAnalise"
                                                 optionLabel="descricao" optionValue="id" appendTo="body" [filter]="true"
                                                 filterBy="nome" [showClear]="true"
-                                                (onChange)="onMaterialChange($event.value)">
+                                            >
                                             </p-multiselect>
                                             <label for="float-label">Selecione o Plano de Análise</label>
                                         </p-floatLabel>

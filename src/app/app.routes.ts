@@ -70,6 +70,7 @@ import { AmostraComponent } from './pages/controleQualidade/amostra/amostra.comp
 import { AnaliseComponent } from './pages/controleQualidade/analise/analise.component';
 import { ExpressaComponent } from './pages/controleQualidade/expressa/expressa.component';
 import { VariavelComponent } from './pages/controleQualidade/variavel/variavel.component';
+import { OrdemComponent } from './pages/controleQualidade/ordem/ordem.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -144,6 +145,7 @@ export const routes: Routes = [
       { path: 'controleQualidade/analise/:id', component: AnaliseComponent },
       { path: 'controleQualidade/expressa', component: ExpressaComponent },
       { path: 'controleQualidade/variavel', component: VariavelComponent },
+      { path: 'controleQualidade/ordem', component: OrdemComponent },
     ],
   },
   
