@@ -44,6 +44,8 @@ import { trigger, transition, style, animate, keyframes } from '@angular/animati
 import { AvatarModule } from 'primeng/avatar';
 import { CardModule } from 'primeng/card';
 import { CdkDragPlaceholder } from "@angular/cdk/drag-drop";
+import { Inplace } from "primeng/inplace";
+import { PopoverModule } from 'primeng/popover';
 
 export interface Analise {
   id: number;
@@ -62,7 +64,7 @@ export interface Analise {
     ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,
     InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,
     InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, AvatarModule,
-    CdkDragPlaceholder
+    CdkDragPlaceholder,PopoverModule,Inplace
 ],
   animations: [
     trigger('efeitoFade', [
