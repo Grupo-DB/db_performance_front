@@ -27,6 +27,10 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { SelectModule } from 'primeng/select';
 
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
+import { DrawerModule } from 'primeng/drawer';
+
 interface RegisterTipoAvaliacaoForm{
   nome: FormControl,
   
@@ -41,9 +45,7 @@ export interface TipoAvaliacao{
   selector: 'app-tipoavaliacao',
   standalone: true,
   imports: [ 
-    ReactiveFormsModule,FormsModule,TabMenuModule,DividerModule,NzIconModule,NzLayoutModule,NzMenuModule,
-    InputMaskModule,DialogModule,ConfirmDialogModule,CommonModule,IconFieldModule,InputIconModule,SelectModule,FloatLabelModule,
-    RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
+    ReactiveFormsModule,FormsModule,TabMenuModule,DividerModule,NzIconModule,NzLayoutModule,NzMenuModule,InputMaskModule,DialogModule,ConfirmDialogModule,CommonModule,IconFieldModule,InputIconModule,SelectModule,FloatLabelModule,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule, CardModule, InplaceModule, DrawerModule
   ],
   providers: [
     MessageService,ConfirmationService,FormularioService

@@ -29,6 +29,9 @@ import { SelectModule } from 'primeng/select';
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 
 
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
+import { DrawerModule } from 'primeng/drawer';
 
 interface RegisterPerguntaForm{
   texto: FormControl,
@@ -43,10 +46,7 @@ export interface Pergunta{
   selector: 'app-pergunta',
   standalone: true,
   imports: [ 
-    NzIconModule,NzLayoutModule,NzMenuModule,TabMenuModule,InputTextModule,
-    ReactiveFormsModule,FormsModule,CommonModule,EditorModule,InputTextModule,
-    InputMaskModule,DialogModule,ConfirmDialogModule,DividerModule,IconFieldModule,InputIconModule,SelectModule,FloatLabelModule,
-    RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
+    NzIconModule,NzLayoutModule,NzMenuModule,TabMenuModule,InputTextModule,ReactiveFormsModule,FormsModule,CommonModule,EditorModule,InputTextModule,InputMaskModule,DialogModule,ConfirmDialogModule,DividerModule,IconFieldModule,InputIconModule,SelectModule,FloatLabelModule,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule, CardModule, InplaceModule, DrawerModule
   ],
   providers: [
     MessageService,PerguntaService,ConfirmationService,

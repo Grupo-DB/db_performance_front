@@ -60,136 +60,202 @@
         </li> 
         
     </ul>
-  </div>
+</div>
 
+<div class="container flex flex-column align-items-center mb-4">
 
-<div  class="container">
-    <div class="titulo mt-6 mb-6 text-2xl">
+    <div class="titulo mt-2 mb-0 w-12 text-2xl">
         <p-divider align="left" type="solid">
             <b>Associar Avaliados a um Formulário</b>
         </p-divider>
     </div>
-    
-        <form 
-            [formGroup]="registerassociacaoForm"
-            title="Montar novo Formulario"
-            primaryBtnText="Cadastrar"
-            (submit)="submit()"
-        >
 
-            <div class="form-geral flex flex-column"@swipeAnimation>
-                <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
-                    <div class="form2 w-10 mt-5">
-                        <p-floatlabel variant="on">
-                            <p-select 
-                                variant="filled"
-                                [style]="{'width':'100%'}"
-                                [options]="formularios" 
-                                formControlName="formulario"
-                                optionLabel="nome"
-                            >
-                            </p-select>
-                            <label for="nome">Formulário</label>
-                        </p-floatlabel>
-                    </div>
-                </div> 
+    <div class="containerInterno w-12">
 
-            
-                <div class="flex  w-10  md:w-11 justify-content-center m-4 lg:md:w-11 justify-content-center m-4">
-                    <p-pickList 
-                        [source]="avaliados" 
-                        [target]="targetAvaliados" 
-                        sourceHeader="Avaliados" 
-                        targetHeader="Selecionados" 
-                        dragdrop="true"
-                        [responsive]="true" 
-                        [sourceStyle]="{ height: '20rem' }"
-                        [targetStyle]="{ height: '20rem' }" 
-                        filterBy="nome" 
-                        sourceFilterPlaceholder="Pesquisa por nome" 
-                        targetFilterPlaceholder="Pesquisa por nome" 
-                        breakpoint="412px"
-                        formControlName="pergunta"
-                    >
-                        <ng-template let-avaliado pTemplate="item">
-                            <div class="flex flex-wrap p-2 align-items-center gap-3">
-                                <div class="flex-1 flex flex-column gap-2">
-                                    <span class="font-bold">{{ avaliado.nome }}</span>
-                                    <div class="flex align-products-center gap-2">
-                                    </div>
+
+        <div class="background-form" @swipeAnimation>
+
+            <form
+                [formGroup]="registerassociacaoForm"
+                title="Montar novo Formulario"
+                class="flex flex-column gap-4" 
+            >
+                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+
+                    <div class="fg1 flex flex-column w-12 align-items-center">
+
+                        <p-card class="card w-12 text-center">
+                            <ng-template #header>
+                                <div class="header w-full text-center">
+                                    <h2>Associar</h2>
                                 </div>
+                            </ng-template>
+                            <div class="flex flex-column w-12 gap-3">
+
+                                <div class="w-12 text-left">
+                                    <p-floatlabel variant="on">
+                                        <p-select 
+                                            variant="filled"
+                                            [style]="{'width':'100%'}"
+                                            [options]="formularios" 
+                                            formControlName="formulario"
+                                            optionLabel="nome"
+                                        >
+                                        </p-select>
+                                        <label for="nome">Formulário</label>
+                                    </p-floatlabel>
+                                </div>
+
+                                <div class="w-12 text-left">
+                                    <p-pickList 
+                                        [source]="avaliados" 
+                                        [target]="targetAvaliados" 
+                                        sourceHeader="Avaliados" 
+                                        targetHeader="Selecionados" 
+                                        dragdrop="true"
+                                        [responsive]="true" 
+                                        [sourceStyle]="{ height: '20rem' }"
+                                        [targetStyle]="{ height: '20rem' }" 
+                                        filterBy="nome" 
+                                        sourceFilterPlaceholder="Pesquisa por nome" 
+                                        targetFilterPlaceholder="Pesquisa por nome" 
+                                        breakpoint="412px"
+                                        formControlName="pergunta"
+                                    >
+                                        <ng-template let-avaliado pTemplate="item">
+                                            <div class="flex flex-wrap p-2 align-items-center gap-3">
+                                                <div class="flex-1 flex flex-column gap-2">
+                                                    <span class="font-bold">{{ avaliado.nome }}</span>
+                                                    <div class="flex align-products-center gap-2">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                    </p-pickList>
+                                </div>
+                           
                             </div>
-                        </ng-template>
-                    </p-pickList>
+                            <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                                <p-button 
+                                    (onClick)="clearForm()" 
+                                    label="Limpar"
+                                    iconPos="right"  
+                                    tooltipPosition="top"
+                                    pTooltip="Limpar"
+                                />
+                                <p-button 
+                                    (onClick)="submit()" 
+                                    label="Salvar" 
+                                    severity="success"
+                                    icon="pi pi-check" 
+                                    iconPos="right" 
+                                    tooltipPosition="top"
+                                    pTooltip="Salvar"
+                                />
+                            </div>
+                        </p-card>
+                    </div>    
                 </div>
-            </div>         
-        </form>
+            </form>
 
-        <div class="flex m-5 justify-content-center"@efeitoFade>
-            <p-toast></p-toast>
-            <div class="btnsec" (click)="clearForm()">
-                <p>Limpar</p>
-            </div>
-            <div class="btnpri" (click)="submit()">
-                <p>Salvar</p>            
-            </div>
-        </div> 
-
-        <div  class="tabela"@swipeAnimationReverse>
-            <p-toast />
-            <p-table 
-                #dt1
-                [value]="formularios" 
-                [tableStyle]="{'min-width': '70rem'}" 
-                rowGroupMode="subheader" 
-                groupRowsBy="nome" 
-                dataKey="nome"
-                sortMode="single"
-                sortField="nome"
-                [globalFilterFields]="['avaliado.nome']"
-                stripedRows
-                scrollable="true"
-    >
-
-        <ng-template pTemplate="header">
-            <tr>
-                <th style="width:33%">Nome do Formulário</th>
-                <th style="width:33%">Avaliados</th>
-                <th style="width:33%">Remover</th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="groupheader" let-formulario let-rowIndex="rowIndex" let-expanded="expanded">
-            <tr>
-                <td colspan="3">
-                    <button 
-                        type="button" 
-                        pButton 
-                        pRipple 
-                        [pRowToggler]="formulario" 
-                        class="p-button-text p-button-rounded p-button-plain mr-2" 
-                        [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
-                    >
-                    </button>
-                    <span class="font-bold ml-2">{{formulario.nome}}</span>
-                </td>
-            </tr>
-        </ng-template>
-
-        <ng-template pTemplate="expandedrow" let-formulario>
-            <tr *ngFor="let avaliado of formulario.avaliados">
-                <td></td>
-                <td>
-                    <div class="avaliado">
-                        {{ avaliado.nome }}
-                    </div>
-                </td>
-                <td>
-                    <div class="btnprit" (click)="removeAvaliado(formulario, avaliado)">
-                        <p>-</p>
-                    </div>
-                </td>
-            </tr>
-        </ng-template>
-    </p-table>
         </div>
+
+        <div class="background-form mt-4 w-12" @swipeAnimation>
+            <div class="tabela text-left w-12">
+                <p-toast />
+                <!-- <p-confirmDialog /> -->
+                <p-inplace closable="true" closeIcon="pi pi-angle-up">
+                    <ng-template pTemplate="display">
+                        <p-button 
+                            label="Formulários Associados" 
+                            tooltipPosition="top"
+                            pTooltip="Exibir Formulários Associados"      
+                        >
+                            <div class="inline-flex align-items-center">
+                                <span><i class="pi pi-angle-down"></i></span>
+                            </div>
+                        </p-button>
+
+                    </ng-template>
+                    <ng-template pTemplate="content">
+                        <p-table
+                            #dt1
+                            [value]="formularios" 
+                            [tableStyle]="{'min-width': '70rem'}" 
+                            rowGroupMode="subheader" 
+                            groupRowsBy="nome" 
+                            dataKey="nome"
+                            sortMode="single"
+                            sortField="nome"
+                            [globalFilterFields]="['avaliado.nome']"
+                            stripedRows
+                            scrollable="true"
+                        >
+                            <ng-template pTemplate="caption">
+                                <div class="flex flex-row md: justify-content-end">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
+                                                <input 
+                                                variant="filled" 
+                                                [(ngModel)]="inputValue"
+                                                [style]="{'width':'100%'}" 
+                                                pInputText id="on_label"
+                                                autocomplete="off" 
+                                                type="text" 
+                                                (keydown)="filterTable()"
+                                                />
+                                        </p-iconfield>
+                                        <label for="on_label" style="color: #1b91ff">Pesquisar</label>
+                                    </p-floatlabel>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="width:33%">Nome do Formulário</th>
+                                    <th style="width:33%">Avaliados</th>
+                                    <th style="width:33%">Remover</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="groupheader" let-formulario let-rowIndex="rowIndex" let-expanded="expanded">
+                                <tr>
+                                    <td colspan="3">
+                                        <button 
+                                            type="button" 
+                                            pButton 
+                                            pRipple 
+                                            [pRowToggler]="formulario" 
+                                            class="p-button-text p-button-rounded p-button-plain mr-2" 
+                                            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+                                        >
+                                        </button>
+                                        <span class="font-bold ml-2">{{formulario.nome}}</span>
+                                    </td>
+                                </tr>
+                            </ng-template>
+
+                            <ng-template pTemplate="expandedrow" let-formulario>
+                                <tr *ngFor="let avaliado of formulario.avaliados">
+                                    <td></td>
+                                    <td>
+                                        <div class="avaliado">
+                                            {{ avaliado.nome }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="btnprit" (click)="removeAvaliado(formulario, avaliado)">
+                                            <p>-</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+
+                    </ng-template>
+                </p-inplace>
+            </div>
+        </div>
+
+    </div>
+    
 </div>
