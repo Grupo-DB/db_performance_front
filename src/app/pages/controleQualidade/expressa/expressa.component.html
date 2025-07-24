@@ -58,16 +58,15 @@
         class=" flex flex-column align-items-center"
     >
         
-        <div 
+        <p-card 
             *ngIf="amostraData" 
-            class="w-11 p-4 mb-4 " 
-            style="background-color: #dfebfc; border-radius: 8px; border-left: 16px solid #4972B0;"
+            class="card w-11 p-4 mb-4 " 
         >
-            <h3 
-                class="text-lg text-left font-semibold mb-3 text-primary"
-            >
-                Dados Recebidos da Amostra
-            </h3>
+            <ng-template #header>
+                <div class="header w-full text-center">
+                    <h2>Dados da Amostra</h2>
+                </div>
+            </ng-template>
             <div class="grid">
                 <div class="text-left col-12 md:col-6 lg:col-4">
                     <strong>Número:</strong> {{ amostraData.numero || 'N/A' }}
@@ -115,7 +114,7 @@
                     <strong>Digitador:</strong> {{ amostraData.digitador || 'N/A' }}
                 </div>
             </div>
-        </div>
+        </p-card>
 
         <div class="flex flex-column align-items-center m-4 w-11 gap-5">
             <div class="w-12 mb-5">

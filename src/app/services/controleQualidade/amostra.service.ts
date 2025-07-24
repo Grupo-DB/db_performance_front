@@ -66,6 +66,11 @@ atualizarDescricaoImagem(imagemId: number, descricao: string): Observable<any> {
   getProdutos(): Observable<any>{
     return this.http.get<any[]>(this.produtoUrl);
   }
+
+  getProdutosPorMaterial(materialNome: string): Observable<any[]> {
+  const nomeEncoded = encodeURIComponent(materialNome);
+  return this.http.get<any[]>(`${this.produtoUrl}produtos-por-material/${nomeEncoded}/`);
+}
   editProduto(id: number, dadosAtualizados: Partial<Produto>): Observable<any>{
     const url = `${this.produtoUrl}${id}/`;
     return this.http.patch<any>(url, dadosAtualizados);
@@ -74,8 +79,8 @@ atualizarDescricaoImagem(imagemId: number, descricao: string): Observable<any> {
     const url = `${this.produtoUrl}${id}/`;
     return this.http.delete(url);
   }
-  registerProduto(nome:string, registroEmpresa: string, registroProduto: string){
-    return this.http.post<Produto>(this.produtoUrl,{ nome:nome, registro_empresa: registroEmpresa, registro_produto: registroProduto })
+  registerProduto(nome:string, registroEmpresa: string, registroProduto: string, material: string): Observable<Produto> {
+    return this.http.post<Produto>(this.produtoUrl,{ nome:nome, registro_empresa: registroEmpresa, registro_produto: registroProduto, material: material })
   }
 
   //////////Amostras
@@ -99,7 +104,7 @@ atualizarDescricaoImagem(imagemId: number, descricao: string): Observable<any> {
     return this.http.delete(url);
   }
   registerAmostra(
-    especie: any,
+    material: any,
     finalidade: any,
     numeroSac: any,
     dataEnvio: any,
@@ -111,7 +116,6 @@ atualizarDescricaoImagem(imagemId: number, descricao: string): Observable<any> {
     numeroLote: any,
     dataColeta: any,
     dataEntrada: any,
-    material: any,
     numero: any,
     tipoAmostra: any,
     subtipo: any,
@@ -132,7 +136,7 @@ atualizarDescricaoImagem(imagemId: number, descricao: string): Observable<any> {
   )
   {
     return this.http.post<Amostra>(this.amostraUrl, {
-      especie: especie,
+      material: material,
       finalidade: finalidade,
       numero_sac: numeroSac,
       data_envio: dataEnvio,
@@ -144,7 +148,6 @@ atualizarDescricaoImagem(imagemId: number, descricao: string): Observable<any> {
       numero_lote: numeroLote, 
       data_coleta: dataColeta,
       data_entrada: dataEntrada,
-      material: material,
       numero: numero,
       tipo_amostra: tipoAmostra,
       subtipo: subtipo,
@@ -215,6 +218,10 @@ atualizarDescricaoImagem(imagemId: number, descricao: string): Observable<any> {
     // Ajuste a URL para o endpoint correto da sua API
     return this.http.get<number>(`${this.sequencialUrl}${materialId}/`);
   }
+
+ getProximoSequencialPorNome(materialNome: string): Observable<number> {
+  return this.http.get<number>(`${this.amostraUrl}proximo-sequencial-nome/${encodeURIComponent(materialNome)}/`);
+}
 
   //////////Representatividade
   getRrepresentatividade(data: any){

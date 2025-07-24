@@ -344,7 +344,7 @@ export class FeedbackComponent implements OnInit{
           // Atualiza a interface do usuário conforme necessário
           this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Feedback finalizado com sucesso!' });
           setTimeout(() => {
-            window.location.reload(); // Atualiza a página após a exclusão
+            this.avaliacaoService.getAvaliacoes(); // Atualiza a página após a exclusão
            }, 2000);
         } else {
           this.messageService.add({ severity: 'error', summary: 'Erro!', detail: `Erro ao finalizar o feedback: ${response.message}` });

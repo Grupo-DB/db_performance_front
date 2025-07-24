@@ -283,10 +283,6 @@
                                                             </div>
                                                         </ng-template>
                                                     </p-inplace>
-
-        
-  
-        
                                                 </div>    
                                                 
                                             </div>
@@ -302,10 +298,9 @@
                                         <div class="flex flex-column w-12 gap-3">
                                             <div class="w-12 text-left">
                                                 <p-floatLabel variant="on">
-                                                    <p-select inputId="float-label" [style]="{'width':'100%'}"
-                                                        [options]="materiais" formControlName="material" optionLabel="nome"
-                                                        optionValue="id" appendTo="body" [filter]="true" filterBy="nome"
-                                                        [showClear]="true" (onChange)="onMaterialChange($event.value)">
+                                                    <p-select inputId="float-label" [style]="{'width':'100%'}" [options]="materiais" formControlName="especie"
+                                                        optionLabel="value" optionValue="value" appendTo="body" [filter]="true" filterBy="value" [showClear]="true"
+                                                        (onChange)="onMaterialChange($event.value)">
                                                     </p-select>
                                                     <label for="float-label">Selecione o Material</label>
                                                 </p-floatLabel>
@@ -334,7 +329,7 @@
                                             <div class="w-12 text-left">
                                                 <p-floatLabel variant="on">
                                                     <p-select inputId="float-label" [style]="{'width':'100%'}"
-                                                        [options]="produtosAmostra" formControlName="produtoAmostra"
+                                                        [options]="produtosFiltrados" formControlName="produtoAmostra"
                                                         optionLabel="nome" optionValue="id" appendTo="body" [filter]="true"
                                                         filterBy="value" [showClear]="true"
                                                         (onChange)="onProdutoAmostraChange($event.value)">
@@ -586,7 +581,7 @@
                                             <ng-template pTemplate="header">
                                                 <tr>
                                                     <th>
-                                                        <p-columnFilter field="material_detalhes.nome" matchMode="in" [showMenu]="false">
+                                                        <p-columnFilter field="material" matchMode="in" [showMenu]="false">
                                                             <ng-template pTemplate="filter" let-value let-filter="filterCallback">
                                                                 <p-multiselect 
                                                                     [ngModel]="value" 
@@ -622,77 +617,38 @@
                                                             <p-columnFilter type="date" field="data_entrada" display="menu"  class="ml-auto" showMenu="false" />
                                                         </div>
                                                     </th>
-
-                                                    <!-- <th style="width: 10%; text-align: center;" type="text"
-                                                        field="data_entrada" display="menu">Data Entrada</th> -->
-                                                    <th style="width: 10%; text-align: center;" type="text" field="data_coleta"
-                                                        display="menu">Data Coleta</th>
-                                                    <th style="width: 10%; text-align: center;" type="text" field="produto_amostra" display="menu">Produto Amostra</th>
-                                                    <th style="width: 15%; text-align: center;" type="text"
-                                                        field="numero" display="menu">Número</th>
-                                                    <th style="width: 10%; text-align: center;" type="text"
-                                                        field="material" display="menu">Material</th>
-                                                    <th style="width: 15%; text-align: center;" type="text"
-                                                        field="tipo_amostra" display="menu">Tipo Amostra</th>
-                                                    <!-- <th style="width: 25%; text-align: center;" type="text" field="calcsEnsaios" display="menu">Subtipo</th> -->
-                                                    <th style="width: 10%; text-align: center;" type="text"
-                                                        field="status" display="menu">Status</th>
-                                                    <th style="width: 15%; text-align: center;" type="text"
-                                                        field="local_coleta" display="menu">Local de Coleta</th>
-                                                    <th style="width: 10%; text-align: center;" type="text" field="acoes"
-                                                        display="menu">Opções</th>
-                                                </tr>
-                                                <!-- <tr>
-                                                    <th>
-                                                        <p-columnFilter field="material_detalhes.nome" matchMode="in" [showMenu]="false">
-                                                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                                                <p-multiselect 
-                                                                    [ngModel]="value" 
-                                                                    [options]="materiaisFiltro" 
-                                                                    (onChange)="filter($event.value)" 
-                                                                    placeholder="Filtrar Materiais" 
-                                                                    [showClear]="true" 
-                                                                    optionLabel="label"
-                                                                    optionValue="value"
-                                                                    [maxSelectedLabels]="3"
-                                                                    appendTo="body"
-                                                                >
-                                                                    <ng-template pTemplate="selectedItems" let-selectedOptions>
-                                                                        <div class="flex gap-1 flex-wrap">
-                                                                            <p-tag 
-                                                                                *ngFor="let option of selectedOptions" 
-                                                                                [value]="option.label" 
-                                                                                [severity]="getSeverity(option.value)" />
-                                                                        </div>
-                                                                    </ng-template>
-                                                                    <ng-template pTemplate="item" let-option>
-                                                                        <p-tag [value]="option.label" [severity]="getSeverity(option.value)" />
-                                                                    </ng-template>
-                                                                </p-multiselect>
-                                                            </ng-template>
-                                                        </p-columnFilter>
+                                                    <th pSortableColumn="data_coleta" style="min-width: 10rem">
+                                                        <div class="flex justify-between items-center">
+                                                            Data Coleta
+                                                            <p-sortIcon field="data_coleta" />
+                                                            <p-columnFilter type="date" field="data_coleta" display="menu"  class="ml-auto" showMenu="false" />
+                                                        </div>
                                                     </th>
-                                                </tr> -->
+                                                    <th style="width: 15%; text-align: center;" type="text" field="numero" display="menu">Número</th>
+                                                    <th style="width: 10%; text-align: center;" type="text" field="finalidade" display="finalidade">Finalidade</th>
+                                                    <th style="width: 10%; text-align: center;" type="text" field="produto_amostra" display="menu">Produto Amostra</th>
+                                                    <th style="width: 15%; text-align: center;" type="text"field="fornecedor" display="menu">Fornecedor</th>
+                                                    <th style="width: 15%; text-align: center;" type="text"field="local_coleta" display="menu">Local de Coleta</th>
+                                                    <th style="width: 10%; text-align: center;" type="text"field="status" display="menu">Status</th>
+                                                    <th style="width: 10%; text-align: center;" type="text" field="acoes"display="menu">Opções</th>
+                                                </tr>
                                             </ng-template>
                                             <ng-template pTemplate="body" let-amostra>
                                                 <tr>
                                                     <td style="text-align: center;">
                                                         <p-tag 
-                                                            [value]="amostra?.material_detalhes?.nome"
-                                                            [severity]="getSeverity(amostra?.material_detalhes?.nome)"
+                                                            [value]="amostra?.material"
+                                                            [severity]="getSeverity(amostra?.material)"
                                                         />
                                                     </td>
                                                     <td style="text-align: center;">{{ amostra?.data_entrada | date:'dd/MM/yyyy' }}</td>
                                                     <td style="text-align: center;">{{ amostra?.data_coleta | date:'dd/MM/yyyy' }}</td>   
                                                     <td style="text-align: center;">{{ amostra?.numero }}</td>
-                                                    <td style="text-align: center;">{{ amostra?.material_detalhes?.nome }}
-                                                    </td>
-                                                    <td style="text-align: center;">{{ amostra?.tipo_amostra_detalhes?.nome
-                                                        }}</td>
-                                                    <!-- <td style="text-align: center;">{{ analise.amostra_detalhes.subtipo }}</td> -->
-                                                    <td style="text-align: center;">{{ amostra?.status }}</td>
-                                                    
+                                                    <td style="text-align: center;">{{ amostra?.finalidade }}</td>
+                                                    <td style="text-align: center;">{{ amostra?.produto_amostra_detalhes?.nome }}</td>
+                                                    <td style="text-align: center;">{{ amostra?.fornecedor }}</td>
                                                     <td style="text-align: center;">{{ amostra?.local_coleta }}</td>
+                                                    <td style="text-align: center;">{{ amostra?.status }}</td>
                                                     <td style="text-align: center;">
                                                         <div style="display: flex; justify-content: end;">
                                                             <p-speeddial 

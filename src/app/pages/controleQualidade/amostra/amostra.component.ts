@@ -69,7 +69,7 @@ interface FileWithInfo {
 }
 
 interface AmostraForm{
-  especie: FormControl,
+  material: FormControl,
   finalidade: FormControl,
   numeroSac: FormControl,
   dataEnvio: FormControl,
@@ -81,7 +81,6 @@ interface AmostraForm{
   numeroLote: FormControl,
   dataColeta: FormControl,
   dataEntrada: FormControl,
-  material:FormControl,
   numero:FormControl,
   tipoAmostra: FormControl,
   subtipo: FormControl,
@@ -217,9 +216,9 @@ export class AmostraComponent implements OnInit {
   amostras: Amostra[] = [];
   registerForm!: FormGroup<AmostraForm>;
   registerOrdemForm!: FormGroup<OrdemForm>;
-  materiais: Produto[] = [];
   tiposAmostra: TipoAmostra[] = [];
   produtosAmostra: ProdutoAmostra[] = [];
+  produtosFiltrados: any[] = [];
   planosAnalise: Plano[] = [];
   ordens: Ordem[] = [];
   analises:Analise[] = [];
@@ -253,7 +252,7 @@ tipos = [
   { value: 'Pontual' }
 ]
 
-especies = [
+materiais: any[] = [
   { value: 'Aditivos' },
   { value: 'Areia' },
   { value: 'Argamassa' },
@@ -370,7 +369,7 @@ especies = [
 )
 {
   this.registerForm = new FormGroup<AmostraForm>({
-    especie: new FormControl('',[Validators.required]),
+    material: new FormControl('',[Validators.required]),
     finalidade: new FormControl('',[Validators.required]),
     numeroSac: new FormControl('',),
     dataEnvio: new FormControl('',),
@@ -382,7 +381,6 @@ especies = [
     numeroLote: new FormControl('',[Validators.required]),
     dataColeta: new FormControl('',[Validators.required]),
     dataEntrada: new FormControl('',[Validators.required]),
-    material: new FormControl('',[Validators.required]),
     numero: new FormControl(''),
     tipoAmostra: new FormControl('',[Validators.required]),
     subtipo: new FormControl(''),
@@ -414,7 +412,6 @@ especies = [
     return this.loginService.hasAnyGroup(groups);
   }
   ngOnInit(): void {
-    this.loadLinhaProdutos();
     this.loadTiposAmostra();
     this.loadProdutosAmostra();
     this.loadPlanosAnalise();
@@ -422,6 +419,7 @@ especies = [
     this.loadAnalises();
     this.loadAmostras();
     this.cd.markForCheck();
+
     //número da OS
     this.ordemService.getProximoNumero().subscribe(numero => {
     this.registerOrdemForm.get('numero')?.setValue(numero);
@@ -442,18 +440,23 @@ especies = [
   
   }
 
+
   getSeverity(materialNome: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | undefined {
   if (!materialNome) {
     return 'secondary';
   }
 
   switch (materialNome.toLowerCase()) {
-    case 'calcário':
+    case 'calcario':
       return 'warn';
     case 'acabamento':
       return 'success';
     case 'argamassa':
       return 'info';
+    case 'cal':
+      return 'danger';
+    case 'mineracao':
+      return 'contrast';
     default:
       return 'secondary';
   }
@@ -464,6 +467,10 @@ especies = [
     this.amostraService.getAmostrasSemOrdem().subscribe(
       response => {
         this.amostras = response;
+        this.materiaisFiltro = response.map((amostra: { material: any; }) => ({
+          label: amostra.material,
+          value: amostra.material
+        }));
         console.log('Amostras carregadas:', this.amostras);
       },
       error => {
@@ -558,39 +565,51 @@ especies = [
     );
   }
 
-  loadLinhaProdutos(){
-    this.produtoLinhaService.getProdutos().subscribe(
-      response => {
-        this.materiais = response;
-        this.materiaisFiltro = response.map(produto => ({
-          label: produto.nome,
-          value: produto.nome
-        }));
-        console.log('Materiais carregados:', this.materiais);
-      },
-      error => {
-        console.log('Erro ao carregar produtos', error);
-      }
-    );
-  }
-
-onMaterialChange(materialId: number) {
-  console.log('Material selecionado:', materialId);
-  const material = this.materiais.find(m => m.id === materialId);
-  if (material) {
-    // Chama o service para buscar o próximo sequencial do backend
-    this.amostraService.getProximoSequencial(material.id).subscribe({
+onMaterialChange(materialNome: string) {
+  console.log('Material selecionado:', materialNome);
+  
+  if (materialNome) {
+    // Normaliza o nome e atualiza o formulário
+    const materialNormalizado = this.normalize(materialNome);
+    console.log('Material normalizado:', materialNormalizado);
+    
+    // Atualiza o valor no formulário com a versão normalizada
+    this.registerForm.get('material')?.setValue(materialNormalizado, { emitEvent: false });
+    
+    // Usa a versão normalizada para todas as operações
+    this.amostraService.getProximoSequencialPorNome(materialNormalizado).subscribe({
       next: (sequencial) => {
         console.log('Sequencial recebido do backend:', sequencial);
-        const numero = this.gerarNumero(material.nome, sequencial);
+        const numero = this.gerarNumero(materialNormalizado, sequencial);
         this.registerForm.get('numero')?.setValue(numero);
         console.log('Número da amostra gerado:', numero);
+        this.loadProdutosPorMaterial(materialNormalizado);
       },
       error: (err) => {
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Não foi possível gerar o número da amostra.' });
+        console.error('Erro ao buscar sequencial:', err);
+        const sequencialFallback = this.gerarSequencialFallback(materialNormalizado);
+        const numero = this.gerarNumero(materialNormalizado, sequencialFallback);
+        this.registerForm.get('numero')?.setValue(numero);
+        this.messageService.add({ 
+          severity: 'warn', 
+          summary: 'Aviso', 
+          detail: 'Usando numeração local. Verifique a conectividade.' 
+        });
       }
     });
   }
+}
+
+private gerarSequencialFallback(materialNome: string): number {
+  // Você pode usar timestamp + hash do nome do material
+  const timestamp = Date.now();
+  const hash = materialNome.split('').reduce((a, b) => {
+    a = ((a << 5) - a) + b.charCodeAt(0);
+    return a & a;
+  }, 0);
+  
+  // Combina timestamp com hash para gerar um número único
+  return Math.abs((timestamp + hash) % 999999) + 1;
 }
 
   loadTiposAmostra() {
@@ -614,7 +633,41 @@ onMaterialChange(materialId: number) {
       }
     )
   }
+
+  loadProdutosPorMaterial(materialNome: string): void {
+    if (!materialNome) {
+      this.produtosFiltrados = [];
+      return;
+    }
+
+    this.amostraService.getProdutosPorMaterial(materialNome).subscribe({
+      next: (response) => {
+        this.produtosFiltrados = response;
+        console.log('Produtos filtrados por material:', this.produtosFiltrados);
+      },
+      error: (err) => {
+        console.error('Erro ao carregar produtos por material:', err);
+        this.produtosFiltrados = [];
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Erro', 
+          detail: 'Erro ao carregar produtos para o material selecionado.' 
+        });
+      }
+    });
+  }
+
+  mostrarTodosProdutos(): void {
+    this.produtosFiltrados = [...this.produtosAmostra];
+  }
   
+  toggleFiltroMaterial(materialNome: string | null): void {
+    if (materialNome) {
+      this.loadProdutosPorMaterial(materialNome);
+    } else {
+      this.mostrarTodosProdutos();
+    }
+  }
   
 gerarNumero(materialNome: string, sequencial: number): string {
   //const ano = new Date().getFullYear().toString().slice(-2); // 
@@ -667,14 +720,15 @@ excluir(amostra: any) {
   // lógica para excluir
 }
 
-  exibirRepresentatividadeLote(): boolean {
-  const materialId = this.registerForm.get('material')?.value;
+exibirRepresentatividadeLote(): boolean {
+  const materialNome = this.registerForm.get('material')?.value;
   const tipoAmostragem = this.registerForm.get('tipoAmostragem')?.value?.toLowerCase();
-  const material = this.materiais.find(m => m.id === materialId);
-  if (!material || !tipoAmostragem) return false;
-  const nomeMaterial = this.normalize(material.nome);
+  
+  if (!materialNome || !tipoAmostragem) return false;
+  
+  const nomeMaterialNormalizado = this.normalize(materialNome);
   return (
-    (nomeMaterial === 'calcario' || nomeMaterial === 'finaliza') &&
+    (nomeMaterialNormalizado === 'calcario' || nomeMaterialNormalizado === 'finaliza') &&
     tipoAmostragem === 'media'
   );
 }
@@ -797,7 +851,7 @@ submitAmostra() {
   }
 
   this.amostraService.registerAmostra(
-    this.registerForm.value.especie,
+    this.registerForm.value.material,
     this.registerForm.value.finalidade,
     this.registerForm.value.numeroSac,
     dataEnvioFormatada,
@@ -809,7 +863,6 @@ submitAmostra() {
     this.registerForm.value.numeroLote,
     dataColetaFormatada,
     dataEntradaFormatada,
-    this.registerForm.value.material,
     this.registerForm.value.numero,
     this.registerForm.value.tipoAmostra,
     this.registerForm.value.subtipo,
@@ -952,14 +1005,6 @@ navegarParaExpressa() {
 enriquecerDadosFormulario(formData: any): any {
   const dadosEnriquecidos = { ...formData };
   
-  if (formData.material && this.materiais.length > 0) {
-    const materialSelecionado = this.materiais.find(m => m.id === formData.material);
-    dadosEnriquecidos.materialInfo = {
-      id: formData.material,
-      nome: materialSelecionado?.nome || 'Material não encontrado'
-    };
-  }
-  
   if (formData.tipoAmostra && this.tiposAmostra.length > 0) {
     const tipoSelecionado = this.tiposAmostra.find(t => t.id === formData.tipoAmostra);
     dadosEnriquecidos.tipoAmostraInfo = {
@@ -985,6 +1030,11 @@ enriquecerDadosFormulario(formData: any): any {
   }
   
   // CAMPOS QUE JÁ SÃO NOMES (optionValue="nome") - não precisam enriquecimento
+  if (formData.material) {
+    dadosEnriquecidos.materialInfo = {
+      nome: formData.material
+    };
+  }
   if (formData.fornecedores) {
     dadosEnriquecidos.fornecedorInfo = {
       nome: formData.fornecedor
@@ -1028,7 +1078,7 @@ criarExpressaDeAmostra(amostra: any) {
 converterAmostraSalvaParaFormulario(amostra: any): any {
   return {
     id: amostra.id,
-    especie: amostra.especie || '',
+    material: amostra.material || '',
     finalidade: amostra.finalidade || '',
     numeroSac: amostra.numero_sac || '',
     dataEnvio: amostra.data_envio ? new Date(amostra.data_envio) : null,
@@ -1040,7 +1090,6 @@ converterAmostraSalvaParaFormulario(amostra: any): any {
     numeroLote: amostra.numero_lote || '',
     dataColeta: amostra.data_coleta ? new Date(amostra.data_coleta) : null,
     dataEntrada: amostra.data_entrada ? new Date(amostra.data_entrada) : null,
-    material: amostra.material_detalhes?.id || amostra.material,
     numero: amostra.numero || '',
     tipoAmostra: amostra.tipo_amostra_detalhes?.id || amostra.tipo_amostra,
     subtipo: amostra.subtipo || '',
@@ -1683,7 +1732,7 @@ limparDadosFormulario() {
 
     // Criar amostra vinculada à ordem
     this.amostraService.registerAmostra(
-      this.amostraData.especieInfo?.id || this.amostraData.especie,
+      this.amostraData.materialInfo?.id || this.amostraData.material,
       this.amostraData.finalidadeInfo?.id || this.amostraData.finalidade,
       this.amostraData.numeroSac,
       dataEnvioFormatada,
@@ -1695,7 +1744,7 @@ limparDadosFormulario() {
       this.amostraData.numeroLote,
       dataColetaFormatada,
       dataEntradaFormatada,
-      this.amostraData.materialInfo?.id || this.amostraData.material,
+      //this.amostraData.materialInfo?.id || this.amostraData.material,
       this.amostraData.numero,
       this.amostraData.tipoAmostraInfo?.id || this.amostraData.tipoAmostra,
       this.amostraData.subtipo,
@@ -2055,7 +2104,7 @@ criarAmostraNormal(): void {
   
   // Criar amostra normal (sem ordem)
   this.amostraService.registerAmostra(
-    this.registerForm.value.especie,
+    this.registerForm.value.material,
     this.registerForm.value.finalidade,
     this.registerForm.value.numeroSac,
     dataEnvioFormatada,
@@ -2067,7 +2116,6 @@ criarAmostraNormal(): void {
     this.registerForm.value.numeroLote, 
     dataColetaFormatada,
     dataEntradaFormatada,
-    this.registerForm.value.material,
     this.registerForm.value.numero,
     this.registerForm.value.tipoAmostra,
     this.registerForm.value.subtipo,
@@ -2331,15 +2379,12 @@ downloadPdf() {
 
   const dataEntradaValue = this.registerForm.value.dataEntrada;
   if (dataEntradaValue instanceof Date && !isNaN(dataEntradaValue.getTime())) {
-    const dataDescarteValue = new Date(dataEntradaValue);
-    dataDescarteValue.setDate(dataDescarteValue.getDate() + 60);
-    dataEntradaFormatada = formatDate(dataEntradaValue, 'dd/MM/yy', 'en-US');
-    dataDescarteFormatada = formatDate(dataDescarteValue, 'dd/MM/yy', 'en-US');
-  }
-
-  let auxMaterialNome = this.materiais.find(m => m.id === this.registerForm.value.material);
-  let materialNome = auxMaterialNome?.nome;
-  
+  const dataDescarteValue = new Date(dataEntradaValue);
+  dataDescarteValue.setDate(dataDescarteValue.getDate() + 60);
+  dataEntradaFormatada = formatDate(dataEntradaValue, 'dd/MM/yy', 'en-US');
+  dataDescarteFormatada = formatDate(dataDescarteValue, 'dd/MM/yy', 'en-US');
+} 
+  let materialNome = this.registerForm.value.material;
   let material = this.registerForm.value.material;
   let numero = this.registerForm.value.numero;
   let localColeta = this.registerForm.value.localColeta;

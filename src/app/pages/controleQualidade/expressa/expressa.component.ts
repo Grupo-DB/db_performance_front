@@ -40,6 +40,7 @@ import { LoginService } from '../../../services/avaliacoesServices/login/login.s
 import { AmostraService } from '../../../services/controleQualidade/amostra.service';
 import { OrdemService } from '../../../services/controleQualidade/ordem.service';
 import { AnaliseService } from '../../../services/controleQualidade/analise.service';
+import { CardModule } from 'primeng/card';
 
 interface ExpressaForm {
   data: FormControl,
@@ -80,7 +81,7 @@ export interface Expressa {
   selector: 'app-expressa',
   imports: [
     ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,PickListModule,
-    InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,
+    InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,CardModule,
     FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,
     ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,IconField,
     InputNumberModule,AutoCompleteModule,MultiSelectModule,DatePickerModule,StepperModule,
@@ -530,7 +531,7 @@ receberDadosAmostra(): void {
 
     // Criar amostra vinculada à ordem
     this.amostraService.registerAmostra(
-      this.amostraData.especieInfo?.id || this.amostraData.especie,
+      this.amostraData.materialInfo?.id || this.amostraData.material,
       this.amostraData.finalidadeInfo?.id || this.amostraData.finalidade,
       this.amostraData.numeroSac,
       dataEnvioFormatada,
@@ -542,7 +543,7 @@ receberDadosAmostra(): void {
       this.amostraData.numeroLote,
       dataColetaFormatada,
       dataEntradaFormatada,
-      this.amostraData.materialInfo?.id || this.amostraData.material,
+      //this.amostraData.materialInfo?.id || this.amostraData.material,
       this.amostraData.numero,
       this.amostraData.tipoAmostraInfo?.id || this.amostraData.tipoAmostra,
       this.amostraData.subtipo,

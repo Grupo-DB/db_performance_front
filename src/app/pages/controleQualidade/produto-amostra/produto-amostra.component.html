@@ -107,6 +107,15 @@
                         <label for="on_label">Digite o registro de produto</label>
                     </p-floatlabel>
                 </div>
+                <div class="form2 w-10 mb-5 mt-3 text-left">
+                    <p-floatLabel variant="on">
+                        <p-select inputId="float-label" [style]="{'width':'100%'}" [options]="materiais" formControlName="material"
+                            optionLabel="display" optionValue="value" appendTo="body" [filter]="true" filterBy="value" [showClear]="true" (onChange)="onMaterialChange($event.value, 'register')"
+                            >
+                        </p-select>
+                        <label for="float-label">Selecione o Material</label>
+                    </p-floatLabel>
+                </div>
             </div>    
         </div>
     </form>
@@ -261,6 +270,16 @@
                         </p-iconfield>
                         <label for="on_label">Digite o registro de produto</label>
                     </p-floatlabel>
+                </div>
+                <div class="form2 w-10 mb-5 mt-5 text-left">
+                    <p-floatLabel variant="on">
+                        <p-select inputId="float-label" [style]="{'width':'100%'}" [options]="materiais" formControlName="material"
+                            optionLabel="display" optionValue="value" appendTo="body" [filter]="true" filterBy="value" [showClear]="true"
+                            (onChange)="onMaterialChange($event.value, 'edit')"
+                            >
+                        </p-select>
+                        <label for="float-label">Selecione o Material</label>
+                    </p-floatLabel>
                 </div>
             </div>
         </div>
