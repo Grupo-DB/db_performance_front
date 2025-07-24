@@ -162,7 +162,7 @@
   }
   
   .expressao {
-    position: sticky; // ou remova se não quiser fixa no topo
+    position: sticky;
     top: 0;
     width: 100%;
     font-size: 24px;
@@ -178,6 +178,14 @@
     border-radius: 20px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
+}
+
+.containerInterno{
+    background-color: #ffffff;
+    border: 10px solid #ffffff;
+    border-radius: 20px;
+    padding: 20px;
+    //box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
 .card{
@@ -236,6 +244,101 @@
         .p-speeddial-direction-right {
             left: 0;
             top: calc(50% - 2rem);
+        }
+    }
+}
+//Picklist
+:host ::ng-deep {
+    .p-picklist {
+        .p-picklist-source-controls,
+        .p-picklist-target-controls {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            
+            .p-button {
+                margin: 0.25rem 0;
+                background-color: #4A90E2;
+                color: white;
+                border-color: #4A90E2;
+                
+                &:hover {
+                    background-color: #3578d1;
+                    border-color: #3578d1;
+                }
+            }
+        }
+        
+        .p-picklist-transfer-controls {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            
+            .p-button {
+                margin: 0.25rem 0;
+                background-color: #4A90E2;
+                color: white;
+                border-color: #3578d1;
+                
+                &:hover {
+                    background-color: #3578d1;
+                    border-color: #3578d1;
+                }
+                
+                &:disabled {
+                    background-color: #e9ecef;
+                    color: #6c757d;
+                    border-color: #e9ecef;
+                }
+            }
+        }
+        
+        .p-picklist-source-list-container,
+        .p-picklist-target-list-container {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            
+            .p-picklist-header {
+                background-color: #4A90E2;
+                color: white;
+                padding: 1rem;
+                font-weight: 600;
+            }
+            
+            .p-picklist-list {
+                max-height: 300px;
+                
+                .p-picklist-item {
+                    padding: 0.75rem 1rem;
+                    border-bottom: 1px solid #f1f3f4;
+                    background-color: #8d1616 !important;
+                    color: #333333;
+                    
+                    &:hover {
+                        background-color: #d1ecf1 !important;
+                        color: #0066cc !important;
+                        cursor: pointer;
+                    }
+                    
+                    &.p-highlight {
+                        background-color: #4A90E2 !important;
+                        color: white !important;
+                        
+                        &:hover {
+                            background-color: #3578d1 !important;
+                        }
+                    }
+                    
+                    &:nth-child(even):not(.p-highlight) {
+                        background-color: #f8f9fa !important;
+                        
+                        &:hover {
+                            background-color: #d1ecf1 !important;
+                            color: #0066cc !important;
+                        }
+                    }
+                }
+            }
         }
     }
 }

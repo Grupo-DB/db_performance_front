@@ -72,14 +72,20 @@
                     <p-divider align="left" type="solid">
                         Plano de Análise: <b> {{ plano.descricao }}</b>
                     </p-divider>
-
-                    <p-divider align="center" type="dashed">
-                        <b>Ensaios</b>
-                    </p-divider>
-
                     <!-- Tabela para cada ensaio fixo (fora dos cálculos) -->
-                    <ng-container *ngFor="let ensaio of plano.ensaio_detalhes">
-                        <p-table [value]="[ensaio]">
+                    <div class="step1">
+                    <p-card
+                        class="card" 
+                        *ngFor="let ensaio of plano.ensaio_detalhes"
+                    >
+                    <ng-template #header>
+                        <div class="header w-full text-left">
+                            <h2>Ensaios Diretos</h2>
+                        </div>
+                    </ng-template>
+                        <p-table 
+                            [value]="[ensaio]" 
+                        >
                             <ng-template pTemplate="header">
                                 <tr class="tabela">
                                     <th>Ensaio</th>
@@ -126,23 +132,16 @@
                                     </td>
                                     <td>
                                         <!-- Exibir variáveis do ensaio direto -->
-                                        <div *ngIf="ensaio.variavel_detalhes && ensaio.variavel_detalhes.length > 0">
+                                        <div *ngIf="ensaio.variavel_detalhes && ensaio.variavel_detalhes.length > 0" class="flex flex-row gap-2 flex-wrap">
                                             <div *ngFor="let variavel of ensaio.variavel_detalhes" class="variable-item">
                                                 <p-floatlabel variant="on">
                                                     <p-iconfield>
-                                                    <p-inputicon class="pi pi-calculator" />
-                                                    <input
-                                                        variant="filled" 
-                                                        [style]="{'width':'100%'}" 
-                                                        pInputText 
-                                                        id="variavel"
-                                                        autocomplete="off"
-                                                        type="number" 
-                                                        [(ngModel)]="variavel.valor"
-                                                        (ngModelChange)="atualizarVariavelEnsaio(ensaio, variavel, $event)"    
-                                                    />
+                                                        <p-inputicon class="pi pi-calculator" />
+                                                        <input variant="filled" [style]="{'width':'100%'}" pInputText
+                                                            id="variavel_{{variavel.id || variavel.nome}}" autocomplete="off" type="number"
+                                                            [(ngModel)]="variavel.valor" (ngModelChange)="atualizarVariavelEnsaio(ensaio, variavel, $event)" />
                                                     </p-iconfield>
-                                                    <label for="variavel">{{ variavel.nome }}</label>
+                                                    <label for="variavel_{{variavel.id || variavel.nome}}">{{ variavel.nome }}</label>
                                                 </p-floatlabel>
                                             </div>
                                         </div>
@@ -168,8 +167,8 @@
                                 </tr>
                             </ng-template>
                         </p-table>
-                    </ng-container>
-
+                    </p-card>
+                    </div>
 
 
                     <div class="w-12 mt-8">

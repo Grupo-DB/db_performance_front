@@ -42,6 +42,8 @@ import { ProdutoAmostra } from '../produto-amostra/produto-amostra.component';
 import { Produto } from '../../baseOrcamentaria/dre/produto/produto.component';
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 import { AvatarModule } from 'primeng/avatar';
+import { CardModule } from 'primeng/card';
+import { CdkDragPlaceholder } from "@angular/cdk/drag-drop";
 
 export interface Analise {
   id: number;
@@ -54,13 +56,14 @@ export interface Analise {
 @Component({
   selector: 'app-analise',
   imports: [
-    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,
-    InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,
-    FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,
-    ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,IconField,
-    InputNumberModule,AutoCompleteModule,MultiSelectModule,DatePickerModule,StepperModule,
-    InputIcon,FieldsetModule,MenuModule,SplitButtonModule,DrawerModule,SpeedDialModule,AvatarModule
-  ],
+    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule, CardModule,
+    InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule,
+    FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,
+    ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,
+    InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,
+    InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, AvatarModule,
+    CdkDragPlaceholder
+],
   animations: [
     trigger('efeitoFade', [
       transition(':enter', [
