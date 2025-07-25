@@ -29,6 +29,9 @@ import { AutoComplete, AutoCompleteModule } from 'primeng/autocomplete';
 import { evaluate } from 'mathjs';
 import { id } from 'date-fns/locale';
 
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
+
 interface RegisterCalculoEnsaioForm{
   descricao: FormControl;
   funcao: FormControl;
@@ -50,57 +53,53 @@ export interface CalculoEnsaio{
 @Component({
   selector: 'app-calculo-ensaio',
   imports: [
-    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,
-    InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,
-    FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,
-    ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,
-    InputNumberModule,AutoCompleteModule
+    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,InputNumberModule,AutoCompleteModule, CardModule, InplaceModule
   ],
   providers: [
     MessageService,ConfirmationService
   ],
   animations:[
-     trigger('efeitoFade',[
-                                transition(':enter',[
-                                  style({ opacity: 0 }),
-                                  animate('2s', style({ opacity:1 }))
-                                ])
-                              ]),
-                              trigger('efeitoZoom', [
-                                transition(':enter', [
-                                  style({ transform: 'scale(0)' }),
-                                  animate('2s', style({ transform: 'scale(1)' })),
-                                ]),
-                              ]),
-                              trigger('bounceAnimation', [
-                                transition(':enter', [
-                                  animate('4.5s ease-out', keyframes([
-                                    style({ transform: 'scale(0.5)', offset: 0 }),
-                                    style({ transform: 'scale(1.2)', offset: 0.5 }),
-                                    style({ transform: 'scale(1)', offset: 1 }),
-                                  ])),
-                                ]),
-                              ]),
-                              trigger('swipeAnimation', [
-                                transition(':enter', [
-                                  style({ transform: 'translateX(-100%)' }),
-                                  animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
-                                ]),
-                                transition(':leave', [
-                                  style({ transform: 'translateX(0)' }),
-                                  animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
-                                ]),
-                              ]),
-                              trigger('swipeAnimationReverse', [
-                                transition(':enter', [
-                                  style({ transform: 'translateX(100%)' }),
-                                  animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
-                                ]),
-                                transition(':leave', [
-                                  style({ transform: 'translateX(0)' }),
-                                  animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
-                                ]),
-                              ]),
+    trigger('efeitoFade',[
+      transition(':enter',[
+        style({ opacity: 0 }),
+        animate('2s', style({ opacity:1 }))
+      ])
+    ]),
+    trigger('efeitoZoom', [
+      transition(':enter', [
+        style({ transform: 'scale(0)' }),
+        animate('2s', style({ transform: 'scale(1)' })),
+      ]),
+    ]),
+    trigger('bounceAnimation', [
+      transition(':enter', [
+        animate('4.5s ease-out', keyframes([
+          style({ transform: 'scale(0.5)', offset: 0 }),
+          style({ transform: 'scale(1.2)', offset: 0.5 }),
+          style({ transform: 'scale(1)', offset: 1 }),
+        ])),
+      ]),
+    ]),
+    trigger('swipeAnimation', [
+      transition(':enter', [
+        style({ transform: 'translateX(-100%)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+      ]),
+    ]),
+    trigger('swipeAnimationReverse', [
+      transition(':enter', [
+        style({ transform: 'translateX(100%)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+      ]),
+    ]),
   ],
   templateUrl: './calculo-ensaio.component.html',
   styleUrl: './calculo-ensaio.component.scss'
