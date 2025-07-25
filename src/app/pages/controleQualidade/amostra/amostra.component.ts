@@ -312,12 +312,9 @@ materiais: any[] = [
     { id: 21, nome: 'Saco' },
   ]
   status = [
-    { id: 0, nome: 'Pendente' },
-    { id: 1, nome: 'Em Análise' },
-    { id: 2, nome: 'Aprovada' },
-    { id: 3, nome: 'Reprovada' },
-    { id: 4, nome: 'Cancelada' },
-    { id: 5, nome: 'Finalizada' },
+    { id: 0, nome: 'Sem OS' },
+    { id: 1, nome: 'Arquivada' },
+    { id: 2, nome: 'Laudo' },
   ]
 
   finalidades = [

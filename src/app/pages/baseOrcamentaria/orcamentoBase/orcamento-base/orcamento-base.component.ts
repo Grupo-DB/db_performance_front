@@ -36,6 +36,10 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ButtonModule } from 'primeng/button';
 
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
+import { DrawerModule } from 'primeng/drawer';
+
 interface RegisterOrcamentoBaseForm{
   ccPai: FormControl;
   centroCusto: FormControl;
@@ -102,11 +106,7 @@ export interface OrcamentoBase{
   selector: 'app-orcamento-base',
   standalone: true,
   imports: [
-    CommonModule,RouterLink,DividerModule,NzMenuModule,InputIconModule,IconFieldModule,
-    InputGroupModule,InputGroupAddonModule,MatFormFieldModule,MatSelectModule,
-    DropdownModule,FormsModule,FloatLabelModule,SelectModule,MultiSelectModule,ButtonModule,
-    ReactiveFormsModule,InputTextModule,TableModule,DialogModule,ToggleSwitchModule,
-    ConfirmDialogModule,ToastModule,MultiSelectModule,InputSwitchModule,InputNumberModule,FloatLabelModule
+    CommonModule,RouterLink,DividerModule,NzMenuModule,InputIconModule,IconFieldModule,InputGroupModule,InputGroupAddonModule,MatFormFieldModule,MatSelectModule,DropdownModule,FormsModule,FloatLabelModule,SelectModule,MultiSelectModule,ButtonModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,ToggleSwitchModule,ConfirmDialogModule,ToastModule,MultiSelectModule,InputSwitchModule,InputNumberModule,FloatLabelModule, CardModule, InplaceModule, DrawerModule
   ],
   providers: [
     MessageService,ConfirmationService,CurrencyPipe

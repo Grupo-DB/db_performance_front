@@ -26,6 +26,10 @@ import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { FloatLabelModule } from 'primeng/floatlabel';
 
+import { DrawerModule } from 'primeng/drawer';
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
+
 interface RegisterAreaForm{
   empresa: FormControl,
   filial: FormControl
@@ -45,9 +49,7 @@ export interface Area {
   templateUrl: './area.component.html',
   styleUrl: './area.component.scss',
   imports: [
-    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,
-    InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,FloatLabelModule,
-    TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
+    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule, DrawerModule, CardModule, InplaceModule
   ],
   providers:[
     MessageService,AreaService,ConfirmationService,

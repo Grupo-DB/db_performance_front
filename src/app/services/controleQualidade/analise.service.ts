@@ -7,7 +7,7 @@ import { Analise } from '../../pages/controleQualidade/analise/analise.component
   providedIn: 'root'
 })
 export class AnaliseService {
-  private analiseUrl = 'http://localhost:8000/analise/analise/';
+  private analiseUrl = 'http://172.50.10.79:8008/analise/analise/';
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'

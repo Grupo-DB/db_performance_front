@@ -31,6 +31,12 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { SelectModule } from 'primeng/select';
 
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
+import { DrawerModule } from 'primeng/drawer';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
+
 interface RegisterQuestionarioForm{
   formulario: FormControl,
   pergunta: FormControl,
@@ -39,57 +45,54 @@ interface RegisterQuestionarioForm{
   selector: 'app-questionario',
   standalone: true,
   imports: [
-    NzIconModule,NzLayoutModule,NzMenuModule,TabMenuModule,CommonModule,
-    ReactiveFormsModule,FormsModule,PickListModule,
-    InputMaskModule,DividerModule,IconFieldModule,InputIconModule,SelectModule,FloatLabelModule,
-    RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
+    NzIconModule,NzLayoutModule,NzMenuModule,TabMenuModule,CommonModule,ReactiveFormsModule,FormsModule,PickListModule,InputMaskModule,DividerModule,IconFieldModule,InputIconModule,SelectModule,FloatLabelModule,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule, CardModule, InplaceModule, DrawerModule, ConfirmDialogModule, DialogModule
   ],
   providers:[
     MessageService,
   ],
   animations:[
-                  trigger('efeitoFade',[
-                          transition(':enter',[
-                            style({ opacity: 0 }),
-                            animate('2s', style({ opacity:1 }))
-                          ])
-                        ]),
-                        trigger('efeitoZoom', [
-                          transition(':enter', [
-                            style({ transform: 'scale(0)' }),
-                            animate('2s', style({ transform: 'scale(1)' })),
-                          ]),
-                        ]),
-                        trigger('bounceAnimation', [
-                          transition(':enter', [
-                            animate('4.5s ease-out', keyframes([
-                              style({ transform: 'scale(0.5)', offset: 0 }),
-                              style({ transform: 'scale(1.2)', offset: 0.5 }),
-                              style({ transform: 'scale(1)', offset: 1 }),
-                            ])),
-                          ]),
-                        ]),
-                        trigger('swipeAnimation', [
-                          transition(':enter', [
-                            style({ transform: 'translateX(-100%)' }),
-                            animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
-                          ]),
-                          transition(':leave', [
-                            style({ transform: 'translateX(0)' }),
-                            animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
-                          ]),
-                        ]),
-                        trigger('swipeAnimationReverse', [
-                          transition(':enter', [
-                            style({ transform: 'translateX(100%)' }),
-                            animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
-                          ]),
-                          transition(':leave', [
-                            style({ transform: 'translateX(0)' }),
-                            animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
-                          ]),
-                        ]),
-                ],
+    trigger('efeitoFade',[
+      transition(':enter',[
+        style({ opacity: 0 }),
+        animate('2s', style({ opacity:1 }))
+      ])
+    ]),
+    trigger('efeitoZoom', [
+      transition(':enter', [
+        style({ transform: 'scale(0)' }),
+        animate('2s', style({ transform: 'scale(1)' })),
+      ]),
+    ]),
+    trigger('bounceAnimation', [
+      transition(':enter', [
+        animate('4.5s ease-out', keyframes([
+          style({ transform: 'scale(0.5)', offset: 0 }),
+          style({ transform: 'scale(1.2)', offset: 0.5 }),
+          style({ transform: 'scale(1)', offset: 1 }),
+        ])),
+      ]),
+    ]),
+    trigger('swipeAnimation', [
+      transition(':enter', [
+        style({ transform: 'translateX(-100%)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+      ]),
+    ]),
+    trigger('swipeAnimationReverse', [
+      transition(':enter', [
+        style({ transform: 'translateX(100%)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+      ]),
+    ]),
+  ],
   templateUrl: './questionario.component.html',
   styleUrl: './questionario.component.scss'
 })

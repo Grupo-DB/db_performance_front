@@ -27,6 +27,8 @@ import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { AmostraService } from '../../../services/controleQualidade/amostra.service';
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
 
 interface TipoAmostraForm{
   nome: FormControl,
@@ -46,7 +48,7 @@ export interface TipoAmostra {
     InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,
     FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,
     ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,
-    InputNumberModule,AutoCompleteModule,MultiSelectModule
+    InputNumberModule,AutoCompleteModule,MultiSelectModule, CardModule, InplaceModule
   ],
   animations: [
     trigger('efeitoFade', [

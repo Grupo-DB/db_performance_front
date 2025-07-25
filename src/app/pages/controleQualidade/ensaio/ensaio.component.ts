@@ -227,7 +227,7 @@ export class EnsaioComponent implements OnInit{
     this.registerForm = new FormGroup({
       descricao: new FormControl('',[Validators.required, Validators.minLength(3)]),
       responsavel: new FormControl(''),
-      valor: new FormControl(0),
+      valor: new FormControl({ value: 0, disabled: true }),
       tipoEnsaio: new FormControl(''),
       tempoPrevistoValor: new FormControl('', Validators.required),
       tempoPrevistoUnidade: new FormControl('', Validators.required),

@@ -1,24 +1,42 @@
 @import "primeicons/primeicons.css";
-
 .container{
-    display: flex;
-    flex-flow: column wrap;
+    max-width: 100%;
+}
+.containerInterno{
+    background-color: #ffffff;
+    border: 10px solid #ffffff;
+    border-radius: 20px;
+    padding: 10px;
+    //box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
 .titulo{
-    justify-content: center;
-    text-align: center;
-    h2{
-        color:slategrey;
+    font-size: 22px;
+    //background-color: #4A90E2;
+    background-color: #ffffff;
+    border: 20px solid #ffffff;
+}
+
+.card{
+    .header{
+        background-color: #4A90E2;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        
+        h2{
+            color: #ffffff;
+            font-weight: 700;
+        }
     }
 }
 
 .form-geral{
-    width: 90%;
+    width: 98%;
     margin-left: auto;
     margin-right: auto;
     border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    // box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
     .fg1{
         width: 100%;
         //margin-top: 10px;
@@ -57,49 +75,20 @@
             
         }
     }
-}
-.fg1{
-    width: 50%;
-}
+}   
 
-.form1{
-    width: 100%;
+.background-form{
+    background-color: #F7F8FA;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
 }
-
-.flex{
-    
-    text-align: end;
-    button{
-        margin-left: 1%;
-    }
-}
-
-.tabela{
-    border-radius: 10px;
-    width: 100%;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-    th{
-        font-size: 14px;
-    }
-    td{
-        font-size:12px ;
-    }
-    .td-acao{
-        display: flex;
-        margin-top: 50px;
-        button{
-            margin-left: 2px;
-        }
-    
-    
-    }
-}
-
-.td-acao{
+.botoes-form{
     display: flex;
-    button{
-        margin-left: 2px;
-    }
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto; 
+    justify-content: center;
 }
 .btnpri{
     cursor: pointer;
@@ -126,49 +115,44 @@
         margin-top: 10px;
     }
 }
-.menu{
-    position:static;
-     //transform: translate(-1%, -180%);
-     
-     width: 100%;
- }
-
- .fg1ed{
-    justify-content: center;
-    width: 80%;
-}
-
-.form1ed{
-    width: 100%;    
-    margin-left: 50px;
-
-    p{
-        
-        margin-left: 20px;
+.tabela{
+    border-radius: 10px;
+    width: 100%;
+    // box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    th{
+        font-size: 14px;
     }
-
-}
-.form2ed{
-    width: 100%;    
-    margin-left: 50px;
-
-    p{
-        
-        margin-left: 20px;
+    td{
+        font-size:12px ;
     }
-
+}
+.flex{
+    
+    text-align: end;
+    button{
+        margin-left: 1%;
+    }
 }
 
- .botoes-formed{
-    width: 80%;
-    margin-bottom: 2%;
-    margin-top: 15px;
-    margin-left: 37px;
+.tabela{
+    border-radius: 10px;
+    margin: auto;
+    
+    width: 99%;
+    // box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+.td-acao{
     display: flex;
-    justify-content: end;
-
+    button{
+        margin-left: 2px;
+    }
 }
-
+.raizEd{
+    width: 99%;
+    margin-top: 7%;
+   
+}
 .editGeral{
     width: 100%;
     margin-left: auto;

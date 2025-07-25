@@ -25,6 +25,9 @@ import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { SelectModule } from 'primeng/select';
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
+import { DrawerModule } from 'primeng/drawer';
 
 interface RegisterCentroCustoForm{
   codigo: FormControl;
@@ -47,9 +50,7 @@ export interface CentroCusto{
   standalone: true,
   imports: [
     CommonModule,RouterLink,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
-    DropdownModule,FormsModule,ReactiveFormsModule,IconFieldModule,InputIconModule, 
-    InputTextModule,TableModule,DialogModule,SelectModule,
-    ConfirmDialogModule,ToastModule,FloatLabelModule,ButtonModule
+    DropdownModule,FormsModule,ReactiveFormsModule,IconFieldModule,InputIconModule, InputTextModule,TableModule,DialogModule,SelectModule,ConfirmDialogModule,ToastModule,FloatLabelModule,ButtonModule, CardModule, InplaceModule, DrawerModule
   ],
   providers: [
     MessageService,ConfirmationService

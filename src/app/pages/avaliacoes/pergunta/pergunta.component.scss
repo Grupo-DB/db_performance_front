@@ -1,42 +1,42 @@
 @import "primeicons/primeicons.css";
-// import Quill styles in styles.scss
-@import "../../../../../node_modules/quill/dist/quill.core.css";
-@import "../../../../../node_modules/quill/dist/quill.snow.css";
-
 .container{
-    display: flex;
-    flex-flow: column wrap;    
+    max-width: 100%;
+}
+.containerInterno{
+    background-color: #ffffff;
+    border: 10px solid #ffffff;
+    border-radius: 20px;
+    padding: 10px;
+    //box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-.form-geral{
-    margin-top: 20px;
-    margin-left: 20px;
-    width: 100%;
-    border-radius: 10px;
-    
-    .form1{
-        padding: 20px;
-        width: 630px;
-        .lg{
-            margin-left: 18px;
+.titulo{
+    font-size: 22px;
+    //background-color: #4A90E2;
+    background-color: #ffffff;
+    border: 20px solid #ffffff;
+}
+
+.card{
+    .header{
+        background-color: #4A90E2;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        
+        h2{
+            color: #ffffff;
+            font-weight: 700;
         }
     }
-    
 }
-.titulo{
-    margin-top: 10px;
-    margin-left: 30px;
-    text-align: start;
-    h2{
-        color:slategrey;
-    }
-}
+
 .form-geral{
-    width: 90%;
+    width: 98%;
     margin-left: auto;
     margin-right: auto;
     border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    // box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
     .fg1{
         width: 100%;
         //margin-top: 10px;
@@ -75,10 +75,30 @@
             
         }
     }
+}   
+
+.background-form{
+    background-color: #F7F8FA;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
 }
  
+ .botoes-form{
+    width: 37%;
+    margin-bottom: 2%;
+    margin-top: 1%;
+    display: flex;
+    justify-content: end;
+    
+    p-button{
+        margin-right: 3%;
+        
+    }
+}
+
 .flex{
-    margin-top: 50px;;
+    
     text-align: end;
     button{
         margin-left: 1%;
@@ -88,7 +108,21 @@
 .tabela{
     border-radius: 10px;
     width: 100%;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    th{
+        font-size: 14px;
+    }
+    td{
+        font-size:12px ;
+    }
+    .td-acao{
+        display: flex;
+        margin-top: 50px;
+        button{
+            margin-left: 2px;
+        }
+    
+    
+    }
 }
 
 .td-acao{
@@ -123,38 +157,13 @@
         margin-top: 10px;
     }
 }
-
 .menu{
     position:static;
      //transform: translate(-1%, -180%);
      
      width: 100%;
  }
- .form1ed{
-    width: 70%;
-    margin-left: 5px;
- }
- .lged{
-    height: 120px;
-    margin-left: 20px;
- }
- .botoes-formed{
-    display: flex;
-    margin-left: 20px;
- }
- .tabela{
-    border-radius: 10px;
-    width: 100%;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-    th{
-        font-size: 14px;
-    }
-    td{
-        font-size:12px ;
-    }
-}
-
-.editGeral{
+ .editGeral{
     width: 100%;
     margin-left: auto;
     margin-right: auto;
@@ -182,4 +191,13 @@
             margin-bottom: 20px;;
         }
     }
+}
+
+ .botoes-formed{
+    width: 98%;
+    margin-bottom: 2%;
+    margin-top: 2%;
+    display: flex;
+    justify-content: end;
+    
 }

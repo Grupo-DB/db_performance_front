@@ -28,6 +28,9 @@ import { InputIconModule } from 'primeng/inputicon';
 import { SelectModule } from 'primeng/select';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
+import { DrawerModule } from 'primeng/drawer';
 
 interface RegisterSetorForm{
   empresa: FormControl,
@@ -47,9 +50,7 @@ export interface Setor {
   selector: 'app-setor',
   standalone: true,
   imports: [
-    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,FloatLabelModule,
-    InputMaskModule,DialogModule,ConfirmDialogModule,IconFieldModule,InputIconModule,SelectModule,
-    TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule
+    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,FloatLabelModule,InputMaskModule,DialogModule,ConfirmDialogModule,IconFieldModule,InputIconModule,SelectModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule, CardModule, InplaceModule, DrawerModule
   ],
   providers:[
     FilialService,
@@ -57,48 +58,48 @@ export interface Setor {
       RegisterCompanyService,GetFilialService
   ],
   animations:[
-                trigger('efeitoFade',[
-                        transition(':enter',[
-                          style({ opacity: 0 }),
-                          animate('2s', style({ opacity:1 }))
-                        ])
-                      ]),
-                      trigger('efeitoZoom', [
-                        transition(':enter', [
-                          style({ transform: 'scale(0)' }),
-                          animate('2s', style({ transform: 'scale(1)' })),
-                        ]),
-                      ]),
-                      trigger('bounceAnimation', [
-                        transition(':enter', [
-                          animate('4.5s ease-out', keyframes([
-                            style({ transform: 'scale(0.5)', offset: 0 }),
-                            style({ transform: 'scale(1.2)', offset: 0.5 }),
-                            style({ transform: 'scale(1)', offset: 1 }),
-                          ])),
-                        ]),
-                      ]),
-                      trigger('swipeAnimation', [
-                        transition(':enter', [
-                          style({ transform: 'translateX(-100%)' }),
-                          animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
-                        ]),
-                        transition(':leave', [
-                          style({ transform: 'translateX(0)' }),
-                          animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
-                        ]),
-                      ]),
-                      trigger('swipeAnimationReverse', [
-                        transition(':enter', [
-                          style({ transform: 'translateX(100%)' }),
-                          animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
-                        ]),
-                        transition(':leave', [
-                          style({ transform: 'translateX(0)' }),
-                          animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
-                        ]),
-                      ]),
-              ],
+    trigger('efeitoFade',[
+      transition(':enter',[
+        style({ opacity: 0 }),
+        animate('2s', style({ opacity:1 }))
+      ])
+    ]),
+    trigger('efeitoZoom', [
+      transition(':enter', [
+        style({ transform: 'scale(0)' }),
+        animate('2s', style({ transform: 'scale(1)' })),
+      ]),
+    ]),
+    trigger('bounceAnimation', [
+      transition(':enter', [
+        animate('4.5s ease-out', keyframes([
+          style({ transform: 'scale(0.5)', offset: 0 }),
+          style({ transform: 'scale(1.2)', offset: 0.5 }),
+          style({ transform: 'scale(1)', offset: 1 }),
+        ])),
+      ]),
+    ]),
+    trigger('swipeAnimation', [
+      transition(':enter', [
+        style({ transform: 'translateX(-100%)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+      ]),
+    ]),
+    trigger('swipeAnimationReverse', [
+      transition(':enter', [
+        style({ transform: 'translateX(100%)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+      ]),
+    ]),
+  ],
   templateUrl: './setor.component.html',
   styleUrl: './setor.component.scss'
 })

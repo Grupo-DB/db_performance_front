@@ -1,4 +1,15 @@
 @import "primeicons/primeicons.css";
+.container{
+    max-width: 100%;
+}
+.containerInterno{
+    background-color: #ffffff;
+    border: 10px solid #ffffff;
+    border-radius: 20px;
+    padding: 10px;
+    //box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
 .form3{
     margin-top: 50px;
     margin-left: 90px;
@@ -76,12 +87,24 @@
      
      width: 100%;
  }
- .titulo{
-    justify-content: center;
-    text-align: center;
-    margin-top: 50px;
-    h2{
-        color:slategrey;
+.titulo{
+    font-size: 22px;
+    //background-color: #4A90E2;
+    background-color: #ffffff;
+    border: 20px solid #ffffff;
+}
+
+.card{
+    .header{
+        background-color: #4A90E2;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        
+        h2{
+            color: #ffffff;
+            font-weight: 700;
+        }
     }
 }
 :host ::ng-deep .p-rowgroup-footer td {
@@ -98,12 +121,13 @@
         margin-right: .25rem;
     }
 }
+
 .form-geral{
-    width: 90%;
+    width: 98%;
     margin-left: auto;
     margin-right: auto;
     border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    // box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
     .fg1{
         width: 100%;
         //margin-top: 10px;
@@ -142,4 +166,10 @@
             
         }
     }
+}  
+.background-form{
+    background-color: #F7F8FA;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
 }

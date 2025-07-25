@@ -43,169 +43,240 @@
     </ul>
 </div>
 
-<div class="container">
+<div class="container flex flex-column align-items-center mb-4">
 
-    <div class="titulo mt-6 mb-6 text-2xl">
+    <div class="titulo mt-2 mb-0 w-12 text-2xl">
         <p-divider align="left" type="solid">
             <b>Tipos de Ensaio</b>
         </p-divider>
     </div>
 
-    <form
-        [formGroup]="registerForm"
-        title="Cadastrar novo Tipo de Ensaio"
-        (submit)="submit()"
+    <div class="containerInterno w-12">
 
-    >
-        <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation>
-            <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
-                <div class="form2 w-10 mb-5 mt-5">
-                    <p-floatlabel variant="on">
-                        <p-iconfield>
-                            <p-inputicon class="pi pi-file-edit" />
-                            <input
-                                variant="filled"
-                                [style]="{'width':'100%'}"
-                                pInputText id="on_label"
-                                autocomplete="off"
-                                formControlName="nome"
-                                type="text"
-                            />
-                        </p-iconfield>
-                        <label for="on_label">Digite o nome</label>
-                    </p-floatlabel>
-                </div>    
+
+        <div class="background-form" @swipeAnimation>
+
+            <form
+                [formGroup]="registerForm" title="Cadastrar novo Tipo de Ensaio" class="flex flex-column gap-4" 
+                
+            >
+                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+
+                    <div class="fg1 flex flex-column w-12 align-items-center">
+
+                        <p-card class="card w-12 text-center">
+                            <ng-template #header>
+                                <div class="header w-full text-center">
+                                    <h2>Inserir Novo</h2>
+                                </div>
+                            </ng-template>
+                            <div class="flex flex-column w-12 gap-3">
+
+                                <div class="w-12 text-left">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-file-edit" />
+                                            <input
+                                                variant="filled"
+                                                [style]="{'width':'100%'}"
+                                                pInputText id="on_label"
+                                                autocomplete="off"
+                                                formControlName="nome"
+                                                type="text"
+                                            />
+                                        </p-iconfield>
+                                        <label for="on_label">Digite o nome</label>
+                                    </p-floatlabel>
+                                </div>
+                           
+                            </div>
+                            <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                                <p-button 
+                                    (onClick)="clearForm()" 
+                                    label="Limpar"
+                                    iconPos="right"  
+                                    tooltipPosition="top"
+                                    pTooltip="Limpar"
+                                />
+                                <p-button 
+                                    (onClick)="submit()" 
+                                    label="Salvar Tipo de Ensaio" 
+                                    severity="success"
+                                    icon="pi pi-check" 
+                                    iconPos="right" 
+                                    tooltipPosition="top"
+                                    pTooltip="Salvar Tipo de Ensaio"
+                                />
+                            </div>
+                        </p-card>
+                    </div>    
+                </div>
+            </form>
+
+        </div>
+
+        <div class="background-form mt-4 w-12" @swipeAnimation>
+            <div class="tabela text-left w-12">
+                <p-toast />
+                <p-confirmDialog />
+                <p-inplace closable="true" closeIcon="pi pi-angle-up">
+                    <ng-template pTemplate="display">
+                        <p-button 
+                            label="Tipos de Ensaios" 
+                            tooltipPosition="top"
+                            pTooltip="Exibir Tipos de Ensaios"      
+                        >
+                            <div class="inline-flex align-items-center">
+                                <span><i class="pi pi-angle-down"></i></span>
+                            </div>
+                        </p-button>
+
+                    </ng-template>
+                    <ng-template pTemplate="content">
+                    <p-table
+                            #dt1
+                            [value]="tiposEnsaio"
+                            [paginator]="true"
+                            [rows]="10"
+                            [rowsPerPageOptions]="[10, 20, 50]"
+                            [globalFilterFields]="['nome']"
+                            [showCurrentPageReport]="true"
+                            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Tipos de Ensaio"
+                            scrollable="true"
+                            
+                        >
+                            <ng-template pTemplate="caption">
+                                <div class="flex flex-row md: justify-content-end">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
+                                                <input 
+                                                variant="filled" 
+                                                [(ngModel)]="inputValue"
+                                                [style]="{'width':'100%'}" 
+                                                pInputText id="on_label"
+                                                autocomplete="off" 
+                                                type="text" 
+                                                (keydown)="filterTable()"
+                                                />
+                                        </p-iconfield>
+                                        <label for="on_label" style="color: #1b91ff">Pesquisar</label>
+                                    </p-floatlabel>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="width: 70%; text-align: center;" type="text" field="nome" display="menu">Nome</th>
+                                    <th style="width: 30%; text-align: center;" type="text" field="acoes" display="menu">Ações</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-tiposEnsaio>
+                                <tr>
+                                    <td style="text-align: center;">{{ tiposEnsaio.nome }}</td>
+                                    <td style="text-align: center;">
+                                        <div style="display: flex; justify-content: center;">
+                                            <p-button
+                                                label = "Editar"
+                                                class="ml-1"
+                                                tooltipPosition="top"
+                                                pTooltip="Editar"
+                                                (onClick)="abrirModalEdicao(tiposEnsaio)"
+                                            ></p-button>
+                                            <p-button 
+                                                label = "Excluir"
+                                                severity="danger"
+                                                class="ml-2"
+                                                tooltipPosition="top"
+                                                pTooltip="Excluir"
+                                                (onClick)="excluirTipoEnsaio(tiposEnsaio.id)"
+                                            ></p-button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="paginatorleft">
+                                <p-button type="button"  styleClass="p-button-text"></p-button>
+                            </ng-template>
+                            <ng-template pTemplate="paginatorright">
+                                <p-button type="button"  styleClass="p-button-text"></p-button>
+                            </ng-template> 
+                        </p-table>
+
+                    </ng-template>
+                </p-inplace>
             </div>
         </div>
-    </form>
+
+    </div>
+    
 </div>
-<div class="container">
-    <div class="flex justify-content-center mb-5 mt-5"@efeitoFade>
-        <p-toast></p-toast>
-        <div class="btnsec" (click)="clearForm()">
-            <p>Limpar</p>
-        </div>
-        <div class="btnpri" (click)="submit()">
-            <p>Salvar</p>            
-        </div>
-
-    </div>
-
-    <div class="tabela w-11"@swipeAnimationReverse>
-        <p-toast />
-        <p-confirmDialog />
-        <p-table
-            #dt1
-            [value]="tiposEnsaio"
-            [paginator]="true"
-            [rows]="10"
-            [rowsPerPageOptions]="[10, 20, 50]"
-            [globalFilterFields]="['nome']"
-            [showCurrentPageReport]="true"
-            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Tipos de Ensaio"
-            scrollable="true"
-            stripedRows
-        >
-            <ng-template pTemplate="caption">
-                <div class="flex flex-row md: justify-content-end">
-                    <p-floatlabel variant="on">
-                        <p-iconfield>
-                            <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
-                            <input
-                                variant="filled"
-                                [(ngModel)] = "inputValue"
-                                [style]="{'width':'100%'}"
-                                pInputText id="on_label"
-                                autocomplete="off"
-                                type="text"
-                                (keyup)="filterTable()"
-                                style="border-color:#1b91ff;"
-                            />
-                        </p-iconfield>
-                        <label for="on_label" style="color: #1b91ff">Nome</label>
-                    </p-floatlabel>
-                </div>
-            </ng-template>
-            <ng-template pTemplate="header">
-                <tr>
-                    <th style="width: 50%; text-align: center;" type="text" field="nome" display="menu">Nome</th>
-                    <th style="width: 50%; text-align: center;" type="text" field="nome" display="menu">Ações</th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-tiposEnsaio>
-                <tr>
-                    <td style="text-align: center;">{{ tiposEnsaio.nome }}</td>
-                    <td class="flex justify-content-center">
-                        <div class="btnsec" (click)="abrirModalEdicao(tiposEnsaio)">
-                            <p>Editar</p>
-                        </div>
-                        
-                        <div class="btnpri" (click)="excluirTipoEnsaio(tiposEnsaio.id)">
-                            <p>Excluir</p>            
-                        </div>
-                    </td>
-                </tr>
-            </ng-template> 
-            <ng-template pTemplate="paginatorleft">
-                <p-button type="button"  styleClass="p-button-text"></p-button>
-            </ng-template>
-            <ng-template pTemplate="paginatorright">
-                <p-button type="button"  styleClass="p-button-text"></p-button>
-            </ng-template>
-        </p-table>
-    </div>
 
 <!---------------------------------Modal Edição---------------------------------------------->
 
-    <p-drawer
-        [(visible)]="editFormVisible"
-        position="right"
-        [style]="{ width: '20%' }"
-        styleClass="w-full md:w-10 lg:w-3"
-    >
-        <div class="titulo">
-            <p-divider align="left" type="solid">
-                <b>Editar Tipo de Ensaio</b>
-            </p-divider> 
-        </div>
+<p-drawer
+    [(visible)]="editFormVisible"
+    position="right"
+    [style]="{ width: '60vw' }"
+    styleClass="w-full md:w-12 lg:w-4"
+>
 
-        <form
-            [formGroup]="editForm"
-            title="Editar Tipo de Ensaio"
-        >
-            <div class="editGeral flex flex-column lg:flex-row">
-                <div class="fg1edit flex flex-column w-12 align-items-center lg:w-12">
-                    <div class="w-10 mb-5 mt-5">
-                        <p-floatlabel variant="on">
-                            <p-iconfield>
-                                <p-inputicon class="pi pi-file-edit" />
-                                <input
-                                    variant="filled"
-                                    [style]="{'width':'100%'}"
-                                    pInputText id="on_label"
-                                    autocomplete="off"
-                                    formControlName="nome"
-                                    type="text"
+    <div class="containerInterno w-12">
+        <div class="background-form">
+            <form
+                [formGroup]="editForm" title="Editar Tipo de Ensaio" class="flex flex-column gap-4" 
+            >
+                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                    <div class="fg1 flex flex-column w-12 align-items-center">
+
+                        <p-card class="card w-12 text-center">
+                            <ng-template #header>
+                                <div class="header w-full text-center">
+                                    <b>Editar Tipo de Ensaio</b>
+                                </div>
+                            </ng-template>
+                            <div class="flex flex-column w-12 gap-3">
+
+                                <div class="w-12 text-left">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-file-edit" />
+                                            <input
+                                                variant="filled"
+                                                [style]="{'width':'100%'}"
+                                                pInputText id="on_label"
+                                                autocomplete="off"
+                                                formControlName="nome"
+                                                type="text"
+                                            />
+                                        </p-iconfield>
+                                        <label for="on_label">Digite o nome</label>
+                                    </p-floatlabel>
+                                </div>
+
+                            </div>
+                            <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                                <p-button 
+                                    (onClick)="clearEditForm()" 
+                                    label="Limpar"
+                                    iconPos="right"  
+                                    tooltipPosition="top"
+                                    pTooltip="Limpar"
                                 />
-                            </p-iconfield>
-                            <label for="on_label">Informe o nome</label>
-                        </p-floatlabel>
-                    </div>
-                </div>    
-            </div>
-        </form>
-        <div class="flex justify-content-center mb-5 mt-5">
-            <div class="btnsec" (click)="clearEditForm()">
-                <p>Limpar</p>
-            </div>
-            
-            <div class="btnpri" (click)="saveEdit()">
-                <p>Salvar</p>            
-            </div>
+                                <p-button 
+                                    (onClick)="saveEdit()" 
+                                    label="Salvar" 
+                                    severity="success"
+                                    icon="pi pi-check" 
+                                    iconPos="right" 
+                                    tooltipPosition="top"
+                                    pTooltip="Salvar"
+                                />
+                            </div>
+                        </p-card>
+                    </div>    
+                </div>
+            </form>
         </div>
-
-    </p-drawer>
-
-
-</div>
-
+    </div>
+  
+</p-drawer>

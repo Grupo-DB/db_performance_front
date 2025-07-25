@@ -23,6 +23,9 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { SelectModule } from 'primeng/select';
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
+import { DrawerModule } from 'primeng/drawer';
 
 interface RegisterRaizSinteticaForm{
   raiz_contabil: FormControl;
@@ -44,9 +47,7 @@ export interface RaizSintetica{
   selector: 'app-raiz-sintetica',
   standalone: true,
   imports: [
-    CommonModule,RouterLink,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
-    DropdownModule,FormsModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,
-    ConfirmDialogModule,ToastModule,ButtonModule,IconFieldModule,InputIconModule,FloatLabelModule,SelectModule
+    CommonModule,RouterLink,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,DropdownModule,FormsModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,ConfirmDialogModule,ToastModule,ButtonModule,IconFieldModule,InputIconModule,FloatLabelModule,SelectModule, CardModule, InplaceModule, DrawerModule
   ],
   providers:[
     MessageService,ConfirmationService
