@@ -46,6 +46,7 @@ import { CardModule } from 'primeng/card';
 import { CdkDragPlaceholder } from "@angular/cdk/drag-drop";
 import { Inplace } from "primeng/inplace";
 import { PopoverModule } from 'primeng/popover';
+import { HttpClient } from '@angular/common/http';
 
 export interface Analise {
   id: number;
@@ -144,7 +145,11 @@ export class AnaliseComponent implements OnInit {
   planos: any;
   amostraNumero: any;
   planoDescricao: any;
-
+  /////////////////
+  resultadosAnteriores: any[] = [];
+  mostrandoResultadosAnteriores = false;
+  calculoSelecionadoParaPesquisa: any = null;
+  carregandoResultados = false;
 
 
   constructor(
@@ -160,6 +165,7 @@ export class AnaliseComponent implements OnInit {
     private ensaioService: EnsaioService,
     private cd: ChangeDetectorRef,
     private datePipe: DatePipe,
+    private httpClient: HttpClient
   ) { }
 
    hasGroup(groups: string[]): boolean {
@@ -1484,7 +1490,285 @@ salvarAnaliseResultados() {
   });
 }
 
+///--------------------------------CONSULTAR RESULTADOS-------------------------------///////
 
+// ...existing code...
+
+buscarResultadosAnteriores(calc: any) {
+  console.log('=== INICIANDO BUSCA DE RESULTADOS ANTERIORES ===');
+  console.log('Cálculo:', calc);
+  
+  if (!calc || !calc.ensaios_detalhes || calc.ensaios_detalhes.length === 0) {
+    console.error('ERRO: Nenhum ensaio encontrado');
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Aviso',
+      detail: 'Nenhum ensaio encontrado para pesquisar resultados anteriores.'
+    });
+    return;
+  }
+
+  this.calculoSelecionadoParaPesquisa = calc;
+  this.carregandoResultados = true;
+  this.mostrandoResultadosAnteriores = true;
+
+  const ensaioIds = calc.ensaios_detalhes.map((ensaio: any) => ensaio.id);
+
+  console.log('Parâmetros da busca:', {
+    calculoDescricao: calc.descricao,
+    ensaioIds: ensaioIds,
+    limit: 10
+  });
+
+  // USAR O SERVICE NORMALMENTE - IGUAL TODOS OS OUTROS ENDPOINTS
+  this.analiseService.getResultadosAnteriores(calc.descricao, ensaioIds, 10)
+    .subscribe({
+      next: (resultados: any[]) => {
+        console.log('✅ Resultados recebidos via service:', resultados);
+        this.processarResultadosAnteriores(resultados, calc);
+        this.carregandoResultados = false;
+
+        if (this.resultadosAnteriores.length === 0) {
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Informação',
+            detail: 'Nenhum resultado anterior encontrado para este cálculo.'
+          });
+        }
+      },
+      error: (error: any) => {
+        console.error('❌ Erro no service:', error);
+        this.carregandoResultados = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: `Erro ao buscar resultados: ${error.message}`
+        });
+      }
+    });
+}
+
+processarResultadosAnteriores(resultados: any[], calcAtual: any) {
+  console.log('=== PROCESSANDO RESULTADOS ANTERIORES ===');
+  console.log('Dados recebidos:', resultados);
+  console.log('Cálculo atual:', calcAtual);
+
+  if (!resultados || !Array.isArray(resultados) || resultados.length === 0) {
+    console.log('Nenhum dado para processar');
+    this.resultadosAnteriores = [];
+    return;
+  }
+
+  console.log(`📊 Processando ${resultados.length} itens...`);
+
+  // Agrupar por análise_id
+  const analiseMap = new Map();
+
+  resultados.forEach((item: any, index: number) => {
+    console.log(`📝 Processando item ${index + 1}:`, item);
+    
+    const analiseId = item.analise_id;
+    
+    if (!analiseMap.has(analiseId)) {
+      // Inicializar dados da análise
+      analiseMap.set(analiseId, {
+        analiseId: analiseId,
+        amostraNumero: item.amostra_numero || 'N/A',
+        dataAnalise: item.data_analise || new Date(),
+        dataFormatada: this.datePipe.transform(item.data_analise || new Date(), 'dd/MM/yyyy HH:mm') || 'Data não disponível',
+        responsavel: item.responsavel || 'N/A',
+        digitador: item.digitador || 'N/A',
+        resultadoCalculo: null,
+        ensaiosUtilizados: []
+      });
+    }
+
+    const analiseData = analiseMap.get(analiseId);
+
+    // Processar baseado no tipo
+    if (item.tipo === 'CALCULO' && item.resultado_calculo !== null) {
+      console.log(`📊 Resultado de cálculo encontrado: ${item.resultado_calculo}`);
+      analiseData.resultadoCalculo = item.resultado_calculo;
+    }
+
+    if (item.tipo === 'ENSAIO' && item.ensaio_descricao) {
+      console.log(`🧪 Processando ensaio: ${item.ensaio_descricao}`);
+      console.log('🧪 Valor ensaio (raw):', item.valor_ensaio);
+      
+      // CORREÇÃO AQUI: tratar valor_ensaio como array
+      if (item.valor_ensaio && Array.isArray(item.valor_ensaio)) {
+        item.valor_ensaio.forEach((valorItem: any) => {
+          console.log('🧪 Processando valor do array:', valorItem);
+          
+          // Verificar se este ensaio é usado no cálculo atual
+          const ensaioUsado = calcAtual.ensaios_detalhes?.some((e: any) => 
+            e.id === valorItem.id || 
+            e.descricao === valorItem.descricao ||
+            this.normalize(e.descricao) === this.normalize(valorItem.descricao)
+          );
+
+          console.log(`Ensaio ${valorItem.descricao} é usado no cálculo atual:`, ensaioUsado);
+
+          if (ensaioUsado) {
+            // Verificar se já existe este ensaio na lista
+            const ensaioExistente = analiseData.ensaiosUtilizados.find((e: any) => 
+              e.id === valorItem.id || e.descricao === valorItem.descricao
+            );
+
+            if (!ensaioExistente) {
+              analiseData.ensaiosUtilizados.push({
+                id: valorItem.id,
+                descricao: valorItem.descricao,
+                valor: valorItem.valor, // Usar o valor do objeto
+                responsavel: item.ensaio_responsavel || 'N/A'
+              });
+              console.log(`✅ Ensaio adicionado: ${valorItem.descricao} = ${valorItem.valor}`);
+            }
+          }
+        });
+      } else if (item.valor_ensaio) {
+        // Se não for array, tratar como valor simples (fallback)
+        console.log('🧪 Valor ensaio não é array, tratando como simples');
+        
+        const ensaioUsado = calcAtual.ensaios_detalhes?.some((e: any) => 
+          e.id === item.ensaio_id || 
+          e.descricao === item.ensaio_descricao ||
+          this.normalize(e.descricao) === this.normalize(item.ensaio_descricao)
+        );
+
+        if (ensaioUsado) {
+          const ensaioExistente = analiseData.ensaiosUtilizados.find((e: any) => 
+            e.id === item.ensaio_id || e.descricao === item.ensaio_descricao
+          );
+
+          if (!ensaioExistente) {
+            analiseData.ensaiosUtilizados.push({
+              id: item.ensaio_id,
+              descricao: item.ensaio_descricao,
+              valor: item.valor_ensaio,
+              responsavel: item.ensaio_responsavel || 'N/A'
+            });
+          }
+        }
+      }
+
+      // Atualizar dados básicos se não foram definidos
+      if (analiseData.responsavel === 'N/A' && item.ensaio_responsavel) {
+        analiseData.responsavel = item.ensaio_responsavel;
+      }
+    }
+  });
+
+  // Converter para array e filtrar apenas análises com resultado de cálculo
+  this.resultadosAnteriores = Array.from(analiseMap.values())
+    .filter((item: any) => {
+      const temResultado = item.resultadoCalculo !== null && item.resultadoCalculo !== undefined;
+      const temEnsaios = item.ensaiosUtilizados.length > 0;
+      
+      console.log(`📋 Análise ${item.analiseId}:`, {
+        temResultado,
+        resultado: item.resultadoCalculo,
+        temEnsaios,
+        qtdEnsaios: item.ensaiosUtilizados.length,
+        ensaios: item.ensaiosUtilizados.map((e: any) => `${e.descricao}=${e.valor}`).join(', ')
+      });
+      
+      return temResultado && temEnsaios;
+    })
+    .sort((a: any, b: any) => new Date(b.dataAnalise).getTime() - new Date(a.dataAnalise).getTime());
+
+  console.log('🎉 PROCESSAMENTO CONCLUÍDO!');
+  console.log(`📊 Total de resultados processados: ${this.resultadosAnteriores.length}`);
+  console.log('📋 Resultados finais:', this.resultadosAnteriores);
+}
+
+aplicarResultadosAnteriores(resultadoAnterior: any) {
+  console.log('Aplicando resultados anteriores:', resultadoAnterior);
+  
+  if (!this.analisesSimplificadas || this.analisesSimplificadas.length === 0) {
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Aviso',
+      detail: 'Nenhuma análise carregada para aplicar os valores.'
+    });
+    return;
+  }
+
+  const analiseData = this.analisesSimplificadas[0];
+  const planoDetalhes = analiseData?.planoDetalhes || [];
+
+  let valoresAplicados = 0;
+
+  planoDetalhes.forEach((plano: any) => {
+    // Aplicar nos cálculos
+    if (plano.calculo_ensaio_detalhes) {
+      plano.calculo_ensaio_detalhes.forEach((calc: any) => {
+        if (calc.descricao === this.calculoSelecionadoParaPesquisa?.descricao) {
+          console.log('Aplicando valores no cálculo:', calc.descricao);
+          
+          // Aplicar valores dos ensaios
+          if (calc.ensaios_detalhes && resultadoAnterior.ensaiosUtilizados) {
+            calc.ensaios_detalhes.forEach((ensaioCalc: any) => {
+              const ensaioAnterior = resultadoAnterior.ensaiosUtilizados.find((e: any) => 
+                e.id === ensaioCalc.id || e.descricao === ensaioCalc.descricao
+              );
+              
+              if (ensaioAnterior) {
+                console.log(`Aplicando valor: ${ensaioCalc.descricao} = ${ensaioAnterior.valor}`);
+                ensaioCalc.valor = ensaioAnterior.valor;
+                if (ensaioAnterior.responsavel) {
+                  ensaioCalc.responsavel = ensaioAnterior.responsavel;
+                }
+                valoresAplicados++;
+
+                // Sincronizar com ensaio direto se existir
+                const ensaioDireto = plano.ensaio_detalhes?.find((e: any) => 
+                  e.id === ensaioCalc.id || e.descricao === ensaioCalc.descricao
+                );
+                if (ensaioDireto) {
+                  ensaioDireto.valor = ensaioAnterior.valor;
+                  if (ensaioAnterior.responsavel) {
+                    ensaioDireto.responsavel = ensaioAnterior.responsavel;
+                  }
+                }
+              }
+            });
+          }
+
+          // Recalcular o cálculo com os novos valores
+          this.calcular(calc, plano);
+          console.log('Cálculo recalculado. Resultado:', calc.resultado);
+        }
+      });
+    }
+  });
+
+  if (valoresAplicados > 0) {
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: `${valoresAplicados} valores aplicados com sucesso. Cálculo atualizado.`
+    });
+    
+    // Fechar o dialog
+    this.fecharResultadosAnteriores();
+    
+    // Forçar detecção de mudanças
+    this.forcarDeteccaoMudancas();
+  } else {
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Aviso',
+      detail: 'Nenhum valor foi aplicado. Verifique se os ensaios correspondem.'
+    });
+  }
+}
+
+fecharResultadosAnteriores() {
+  this.mostrandoResultadosAnteriores = false;
+  this.resultadosAnteriores = [];
+  this.calculoSelecionadoParaPesquisa = null;
+}
 
 
 }

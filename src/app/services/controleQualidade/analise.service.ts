@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { Analise } from '../../pages/controleQualidade/analise/analise.component';
 
 @Injectable({
@@ -53,4 +53,20 @@ export class AnaliseService {
     return this.httpClient.delete(url);
   }
 
+  //---------------------RESULTADOS---------------------
+  // ...existing code...
+
+getResultadosAnteriores(calculoDescricao: string, ensaioIds: number[], limit: number = 10): Observable<any[]> {
+  const url = `http://localhost:8000/analise/analise/resultados-anteriores/`;
+  
+  // Corpo da requisição POST
+  const body = {
+    calculo: calculoDescricao,
+    ensaioIds: ensaioIds,
+    limit: limit
+  };
+  
+  return this.httpClient.post<any[]>(url, body);
+}
+  
 }
