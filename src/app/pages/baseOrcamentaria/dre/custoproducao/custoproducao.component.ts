@@ -27,6 +27,10 @@ import { CustoproducaoService } from '../../../../services/baseOrcamentariaServi
 import { CentrocustopaiService } from '../../../../services/baseOrcamentariaServices/orcamento/CentroCustoPai/centrocustopai.service';
 import { ProjecaoService } from '../../../../services/baseOrcamentariaServices/dre/projecao.service';
 
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
+import { DrawerModule } from 'primeng/drawer';
+
 interface RegisterCustoProducaoForm{
   produto: FormControl;
   ccPai: FormControl;
@@ -48,15 +52,10 @@ export interface CustoProducao{
   centro_custo_pai_detalhes: any;
 }
 
-
-
 @Component({
   selector: 'app-custoproducao',
   imports: [
-    CommonModule,ReactiveFormsModule,RouterLink,FormsModule,DividerModule,NzMenuModule,
-    InputGroupModule,InputGroupAddonModule,
-    DropdownModule,InputTextModule,TableModule,DialogModule,ButtonModule,InputNumberModule,
-    ConfirmDialogModule,ToastModule,FloatLabelModule,SelectModule,IconFieldModule,InputIconModule 
+    CommonModule,ReactiveFormsModule,RouterLink,FormsModule,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,DropdownModule,InputTextModule,TableModule,DialogModule,ButtonModule,InputNumberModule,ConfirmDialogModule,ToastModule,FloatLabelModule,SelectModule,IconFieldModule,InputIconModule, CardModule, InplaceModule, DrawerModule
   ],
   providers:[
     MessageService,ConfirmationService,

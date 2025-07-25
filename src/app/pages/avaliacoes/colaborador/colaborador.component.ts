@@ -44,6 +44,14 @@ import { SelectModule } from 'primeng/select';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { DatePickerModule } from 'primeng/datepicker';
 
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
+import { DrawerModule } from 'primeng/drawer';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+interface FileWithInfo {
+  file: File;
+  descricao: string;
+}
 interface RegisterColaboradorForm {
   empresa: FormControl;
   filial: FormControl;
@@ -118,7 +126,7 @@ export interface Colaborador{
   sgg_id: number;
   tornar_avaliador: boolean;
   tornar_avaliado: boolean;
-  tornar_gestor: boolean;
+  tornar_gestor: boolean; // upload das imagens
 
 }
 interface Genero{
@@ -143,10 +151,7 @@ interface TipoContrato{
   selector: 'app-colaborador',
   standalone: true,
   imports: [
-    ReactiveFormsModule,FormsModule,NzUploadModule,CommonModule,DialogModule,InputNumberModule,InputSwitchModule,BooleanToStatusPipe,
-    InputMaskModule,CalendarModule,CheckboxModule,ConfirmDialogModule,DividerModule,
-    FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,ToastModule,
-    IconFieldModule,InputIconModule,SelectModule,ToggleSwitchModule,DatePickerModule
+    ReactiveFormsModule,FormsModule,NzUploadModule,CommonModule,DialogModule,InputNumberModule,InputSwitchModule,BooleanToStatusPipe,InputMaskModule,CalendarModule,CheckboxModule,ConfirmDialogModule,DividerModule,FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,ToastModule,IconFieldModule,InputIconModule,SelectModule,ToggleSwitchModule,DatePickerModule, CardModule, InplaceModule, DrawerModule, NzIconModule
   ],
   providers:[
     MessageService,SetorService,ColaboradorService,ColaboradorService,AmbienteService,TipoContratoService,
@@ -228,11 +233,23 @@ export class ColaboradorComponent implements OnInit {
   setorSelecionadoId: number | null = null;
   ambienteSelecionadoId: number | null = null;
   cargoSelecionadoId: number | null = null;
-  colaboradorDetalhes:any;
+  colaboradorDetalhes:any;    uploadedFilesWithInfo: FileWithInfo[] = [];
+    amostraId: any;
+    amostraData: any = null;
+    imagensExistentes: any[] = [];
+    // Propriedades para visualização de imagens
+    modalImagensVisible: boolean = false;
+    imagensAmostra: any[] = [];
+    amostraImagensSelecionada: any = null;
+    imagemAtualIndex: number = 0;
+    amostraDoFormulario: any = null;
 
   registercolaboradorForm!: FormGroup<RegisterColaboradorForm>;
   @ViewChild('RegisterfilialForm') RegisterColaboradorForm: any;
   @ViewChild('dt1') dt1!: Table;
+      modalImagens: boolean = false;
+    modalVisualizar: boolean = false;
+
   inputValue: string = '';
 
 
@@ -502,6 +519,22 @@ mapCargos() {
   this.loading = false;
 }
 
+// Método para remover arquivo da lista antes do envio
+removeFile(index: number): void {
+  this.uploadedFilesWithInfo.splice(index, 1);
+}
+
+// Método para capturar mudanças na descrição durante o upload
+onDescricaoInput(index: number, event: Event): void {
+  const target = event.target as HTMLInputElement;
+  const descricao = target.value;
+  
+  if (this.uploadedFilesWithInfo[index]) {
+    this.uploadedFilesWithInfo[index].descricao = descricao;
+    console.log(`Descrição atualizada para arquivo ${index}: "${descricao}"`);
+    console.log('Estado atual dos arquivos:', this.uploadedFilesWithInfo);
+  }
+}
 
 getNomeEmpresa(id: number): string {
   const empresa = this.empresas?.find(emp => emp.id === id);
@@ -937,7 +970,14 @@ excluirColaborador(id: number) {
     }
   });
 }
-
+customRequest = (item: any): any => {
+  // Marca como sucesso imediatamente sem afetar a UI
+  setTimeout(() => {
+    item.onSuccess({}, item.file, {});
+  }, 0);
+  
+  return { unsubscribe: () => {} };
+};
 submit() {
   if (this.registercolaboradorForm.valid) {
     const empresaId = this.registercolaboradorForm.value.empresa.id;

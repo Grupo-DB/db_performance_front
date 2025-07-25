@@ -25,6 +25,11 @@ import { SelectModule } from 'primeng/select';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
+import { DrawerModule } from 'primeng/drawer';
+
+
 interface RegisterProjecaoForm{
   produto: FormControl;
   aliquota: FormControl;
@@ -51,10 +56,7 @@ export interface Projecao{
   selector: 'app-projecao',
   standalone: true,
   imports: [
-    CommonModule,ReactiveFormsModule,RouterLink,FormsModule,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
-    DropdownModule,InputTextModule,TableModule,FloatLabelModule,
-    DialogModule,ButtonModule,MessagesModule,SelectModule,IconFieldModule,InputIconModule,
-    ConfirmDialogModule,ToastModule,FloatLabelModule,InputNumberModule,ButtonModule
+    CommonModule,ReactiveFormsModule,RouterLink,FormsModule,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,DropdownModule,InputTextModule,TableModule,FloatLabelModule,DialogModule,ButtonModule,MessagesModule,SelectModule,IconFieldModule,InputIconModule,ConfirmDialogModule,ToastModule,FloatLabelModule,InputNumberModule,ButtonModule, CardModule, InplaceModule, DrawerModule
   ],
   providers: [
     MessageService,ConfirmationService,

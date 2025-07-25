@@ -55,308 +55,379 @@
     </ul>
 </div>
 
+<div class="container flex flex-column align-items-center mb-4">
 
-<div class="titulo mb-6 mt-6">
-    <p-divider align="left" type="solid">
-        <b>Cadastro de Projeções de Vendas</b>
-    </p-divider>
-</div>
-
-<div class="container">
-
-        <div class="tabela"@swipeAnimation>
-            <p-table 
-                [value]="linhas.controls"
-                [tableStyle]="{ 'min-width': '100rem' }"
-                stripedRows
-                scrollable="true"
-            >
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th style="width:40%" field="nome" display="menu">Produto</th>
-                        <th style="width:10%" field="nome" display="menu">Custo Médio Variável</th>
-                        <th style="width:10%" field="nome" display="menu">Preço Médio</th>
-                        <th style="width:10%" field="nome" display="menu">Período</th>
-                        <th style="width:10%" field="nome" display="menu">Ano</th>
-                        <th style="width:10%" field="nome" display="menu">Quant. Carregada</th>
-                        <th style="width:10%">Ações</th>  
-                    </tr>
-                </ng-template>
-
-                <ng-template pTemplate="body" let-linha let-index="rowIndex">
-                    <tr [formGroup]="linha">
-                        <td>
-                            <p-select
-                                [style]="{'width':'100%'}"
-                                id="empresa"
-                                inputId="float-label"
-                                [options]="produtos"
-                                optionValue="id"
-                                formControlName="produto"
-                                optionLabel="nome"
-                                [filter]="true"
-                                filterBy="nome"
-                                [appendTo]="'body'"
-                                (onChange)="onProdutoSelecionado($event.value)">
-                            </p-select>
-                        </td>
-
-                         <td>
-                            <p-inputnumber
-                                id="sal"
-                                formControlName="custo_medio_variavel"
-                                mode="currency"
-                                currency="BRL"
-                                locale="pt-BR" />
-                        </td>
-
-                        <td>
-                            <p-inputNumber
-                                [style]="{'width':'20%'}"
-                                id="sal"
-                                formControlName="preco_medio_venda"
-                                mode="currency"
-                                currency="BRL"
-                                locale="pt-BR" />
-                        </td>
-
-                        <td>
-                            <p-select
-                                [style]="{'width':'100%'}"
-                                [options]="meses"
-                                formControlName="periodo"
-                                optionLabel="value"
-                                optionValue="key"
-                                [appendTo]="'body'">
-                            </p-select>
-                        </td>
-
-                        <td>
-                            <p-inputNumber
-                              
-                                mode="decimal"
-                                formControlName="ano"
-                                [showButtons]="true"
-                                inputId="ano"
-                                [min]="2024"
-                                [max]="2999"
-                                [useGrouping]="false" />
-                        </td>
-
-                        <td>
-                            <p-inputnumber
-                                locale="pt-BR"
-                                mode="decimal"
-                                formControlName="quantidade_carregada"
-                                inputId="quantidade_carregada"
-                                [useGrouping]="true" />
-                        </td>
-
-                        <td>
-                            <button size="small" severity="info" label="Remover" pButton [rounded]="true" (click)="removeLinha(index)" ></button>
-                        </td>
-                    </tr>
-                </ng-template>
-            </p-table>
-
-        </div>
-        <div class="botoes-form mt-5 mb-5"@efeitoFade>
-            <p-toast></p-toast>
-            <div class="btnsec" (click)="addLinha()" >
-                <p>Adicionar Linha</p>
-            </div>
-            <div class="btnpri" (click)="onSubmit()">
-                <p>Salvar</p>
-            </div>
-        </div>
-
-<!-------------------------------------------------Tabela de Listagem----------------------------------------------------------------------->
-
-    <div class="tabela"@swipeAnimationReverse>
-        <p-toast />
-        <p-confirmDialog />
-        <p-table
-            #dt1
-            [value]="projecoes"
-            [paginator]="true"
-            [rows]="5"
-            [showCurrentPageReport]="true"
-            [tableStyle]="{ 'min-width': '50rem' }"
-            currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
-            [rowsPerPageOptions]="[5, 10, 20]"
-            [globalFilterFields]="[ 'nome','aliquota']"
-            stripedRows
-            scrollable="true"
-        >
-            <ng-template pTemplate="caption">
-                <div class="flex flex-row md: justify-content-end">
-                    <p-floatlabel variant="on">
-                        <p-iconfield>
-                            <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
-                            <input
-                                variant="filled"
-                                [(ngModel)] = "inputValue"
-                                [style]="{'width':'100%'}"
-                                pInputText id="on_label"
-                                autocomplete="off"
-                                type="text"
-                                (keyup)="filterTable()"
-                                style="border-color:#1b91ff;"
-                            />
-                        </p-iconfield>
-                        <label for="on_label" style="color: #1b91ff">Nome</label>
-                    </p-floatlabel>
-                </div>
-            </ng-template>  
-            <ng-template pTemplate="header">
-                <tr>
-                    <th style="width:10%" type="text" field="nome" display="menu">
-                        Produto
-                    </th>
-                    <th style="width:5%" type="text" field="aliquota" display="menu">
-                        Aliquota
-                    </th>
-                    <th style="width:20%" type="text"  display="menu">
-                        Preço Médio Venda
-                    </th>
-                    <th style="width:20%" type="text"  display="menu">
-                        Custo Médio Variável
-                    </th>
-                    <th style="width:5%" type="text"  display="menu">
-                        Mês
-                    </th>
-                    <th style="width:15%" type="text"  display="menu">
-                        Ano
-                    </th>
-                    <th style="width:20%" type="text"  display="menu">
-                        Quantidade Carregada
-                    </th>
-                    <th style="width: 50%; text-align: center;">Ações</th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-projecao>
-                <tr>
-                    <td>{{ projecao.produto_detalhes.nome }}</td>
-                    <td>{{ projecao.produto_detalhes.aliquota }}</td>
-                    <td>{{ projecao.preco_medio_venda }}</td>
-                    <td>{{ projecao.custo_medio_variavel }}</td>
-                    <td>{{ projecao.periodo }}</td>
-                    <td>{{ projecao.ano }}</td>
-                    <td>{{ projecao.quantidade_carregada }}</td>
-
-                    <td class="td-acao">
-                        <div class="btnsec" (click)="abrirModalEdicao(projecao)">
-                            <p>Editar</p>
-                        </div>
-
-                        <div class="btnpri" (click)="excluirLinha(projecao.id)">
-                            <p>Excluir</p>
-                        </div>
-                    </td>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="paginatorleft">
-                <p-button type="button"  styleClass="p-button-text"></p-button>
-            </ng-template>
-            <ng-template pTemplate="paginatorright">
-                <p-button type="button"  styleClass="p-button-text"></p-button>
-            </ng-template>
-        </p-table>
+    <div class="titulo mt-2 mb-0 w-12 text-2xl">
+        <p-divider align="left" type="solid">
+            <b>Cadastro de Projeções de Vendas</b>
+        </p-divider>
     </div>
 
+    <div class="containerInterno w-12">
 
-<!------------------------------------Modal de Edição-------------------------------------------------------------------->
 
-    <p-dialog
-        [modal]="true"
-        [(visible)]="editFormVisible"
-        [style]="{ width: '65rem' }"
-    >
-        <div class="titulo">
-            <p-divider align="left" type="solid">
-                <b>Editar Projeção</b>
-            </p-divider>
-        </div>
- 
-                <form
-                    [formGroup]="editForm"
-                    title="Editar Projeção"
-                >
-                <div class="editGeral flex flex-column lg:flex-row">
-                    <div class="fg1edit flex flex-column w-12 align-items-center lg:w-6">
-                            <div class="form2 mt-3 text-left w-10">
-                               <p-floatlabel variant="on">
-                                <p-select
-                                    variant="filled"
-                                    [style]="{'width':'50%'}"
-                                    [options]="produtos"
-                                    optionValue="id"
-                                    formControlName="produto"
-                                    optionLabel="nome"
-                                    [filter]="true"
-                                    filterBy="nome"
-                                    appendTo="body"
+        <div class="background-form" @swipeAnimation>
+
+            <form
+                [formGroup]="registerForm" 
+                title="Cadastrar novo Tipo de Ensaio" 
+                class="flex flex-column gap-4" 
+            >
+                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+
+                    <div class="fg1 flex flex-column w-12 align-items-center">
+
+                        <p-card class="card w-12 text-center">
+                            <ng-template #header>
+                                <div class="header w-full text-center">
+                                    <h2>Inserir Nova</h2>
+                                </div>
+                            </ng-template>
+                            <div class="flex flex-column w-12 gap-3">
+
+                                <p-table 
+                                    [value]="linhas.controls"
+                                    [tableStyle]="{ 'min-width': '100rem' }"
+                                    stripedRows
+                                    scrollable="true"
                                 >
-                                </p-select>
-                                <label for="me">Produto</label>
-                               </p-floatlabel>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:40%" field="nome" display="menu">Produto</th>
+                                            <th style="width:10%" field="nome" display="menu">Custo Médio Variável</th>
+                                            <th style="width:10%" field="nome" display="menu">Preço Médio</th>
+                                            <th style="width:10%" field="nome" display="menu">Período</th>
+                                            <th style="width:10%" field="nome" display="menu">Ano</th>
+                                            <th style="width:10%" field="nome" display="menu">Quant. Carregada</th>
+                                            <th style="width:10%">Ações</th>  
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="body" let-linha let-index="rowIndex">
+                                        <tr [formGroup]="linha">
+                                            <td>
+                                                <p-select
+                                                    [style]="{'width':'100%'}"
+                                                    id="empresa"
+                                                    inputId="float-label"
+                                                    [options]="produtos"
+                                                    optionValue="id"
+                                                    formControlName="produto"
+                                                    optionLabel="nome"
+                                                    [filter]="true"
+                                                    filterBy="nome"
+                                                    [appendTo]="'body'"
+                                                    (onChange)="onProdutoSelecionado($event.value)">
+                                                </p-select>
+                                            </td>
+
+                                            <td>
+                                                <p-inputnumber
+                                                    id="sal"
+                                                    formControlName="custo_medio_variavel"
+                                                    mode="currency"
+                                                    currency="BRL"
+                                                    locale="pt-BR" />
+                                            </td>
+
+                                            <td>
+                                                <p-inputNumber
+                                                    [style]="{'width':'20%'}"
+                                                    id="sal"
+                                                    formControlName="preco_medio_venda"
+                                                    mode="currency"
+                                                    currency="BRL"
+                                                    locale="pt-BR" />
+                                            </td>
+
+                                            <td>
+                                                <p-select
+                                                    [style]="{'width':'100%'}"
+                                                    [options]="meses"
+                                                    formControlName="periodo"
+                                                    optionLabel="value"
+                                                    optionValue="key"
+                                                    [appendTo]="'body'">
+                                                </p-select>
+                                            </td>
+
+                                            <td>
+                                                <p-inputNumber
+                                                
+                                                    mode="decimal"
+                                                    formControlName="ano"
+                                                    [showButtons]="true"
+                                                    inputId="ano"
+                                                    [min]="2024"
+                                                    [max]="2999"
+                                                    [useGrouping]="false" />
+                                            </td>
+
+                                            <td>
+                                                <p-inputnumber
+                                                    locale="pt-BR"
+                                                    mode="decimal"
+                                                    formControlName="quantidade_carregada"
+                                                    inputId="quantidade_carregada"
+                                                    [useGrouping]="true" />
+                                            </td>
+
+                                            <td>
+                                                <button size="small" severity="info" label="Remover" pButton [rounded]="true" (click)="removeLinha(index)" ></button>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                           
                             </div>
-                            <div class="form2 mt-3 text-left w-10">
-                                <p-floatlabel variant="on">
-                                <p-inputNumber
-                                    variant="filled"
-                                    [style]="{'width':'900px'}"
-                                    formControlName="preco_medio_venda"
-                                    inputId="currency-us"
-                                    mode="currency"
-                                    currency="BRL"
-                                    locale="pt-BR"
-                                    [minFractionDigits]="2"
-                                    [maxFractionDigits]="2"
+                            <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                                <p-button 
+                                    (onClick)="addLinha()" 
+                                    label="Adicionar Linha"
+                                    iconPos="right"  
+                                    tooltipPosition="top"
+                                    pTooltip="Adicionar Linha"
                                 />
-                                <label for="me">Preco Médio Venda</label>
-                                </p-floatlabel>
+                                <p-button 
+                                    (onClick)="onSubmit()" 
+                                    label="Salvar" 
+                                    severity="success"
+                                    icon="pi pi-check" 
+                                    iconPos="right" 
+                                    tooltipPosition="top"
+                                    pTooltip="Salvar"
+                                />
                             </div>
-                            <div class="form2 mt-3 text-left w-10">
-                                <p-floatlabel variant="on">
+                        </p-card>
+                    </div>    
+                </div>
+            </form>
+
+        </div>
+
+        <div class="background-form mt-4 w-12" @swipeAnimation>
+            <div class="tabela text-left w-12">
+                <p-toast />
+                <p-confirmDialog />
+                <p-inplace closable="true" closeIcon="pi pi-angle-up">
+                    <ng-template pTemplate="display">
+                        <p-button 
+                            label="Projeções de Vendas" 
+                            tooltipPosition="top"
+                            pTooltip="Exibir Projeções de Vendas"      
+                        >
+                            <div class="inline-flex align-items-center">
+                                <span><i class="pi pi-angle-down"></i></span>
+                            </div>
+                        </p-button>
+
+                    </ng-template>
+                    <ng-template pTemplate="content">
+                        <p-table
+                           #dt1
+                            [value]="projecoes"
+                            [paginator]="true"
+                            [rows]="5"
+                            [showCurrentPageReport]="true"
+                            [tableStyle]="{ 'min-width': '50rem' }"
+                            currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
+                            [rowsPerPageOptions]="[5, 10, 20]"
+                            [globalFilterFields]="[ 'nome','aliquota']"
+                            stripedRows
+                            scrollable="true"
+                            
+                        >
+                            <ng-template pTemplate="caption">
+                                <div class="flex flex-row md: justify-content-end">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
+                                                <input 
+                                                variant="filled" 
+                                                [(ngModel)]="inputValue"
+                                                [style]="{'width':'100%'}" 
+                                                pInputText id="on_label"
+                                                autocomplete="off" 
+                                                type="text" 
+                                                (keydown)="filterTable()"
+                                                />
+                                        </p-iconfield>
+                                        <label for="on_label" style="color: #1b91ff">Nome</label>
+                                    </p-floatlabel>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="width:10%" type="text" field="nome" display="menu">
+                                        Produto
+                                    </th>
+                                    <th style="width:5%" type="text" field="aliquota" display="menu">
+                                        Aliquota
+                                    </th>
+                                    <th style="width:20%" type="text"  display="menu">
+                                        Preço Médio Venda
+                                    </th>
+                                    <th style="width:20%" type="text"  display="menu">
+                                        Custo Médio Variável
+                                    </th>
+                                    <th style="width:5%" type="text"  display="menu">
+                                        Mês
+                                    </th>
+                                    <th style="width:15%" type="text"  display="menu">
+                                        Ano
+                                    </th>
+                                    <th style="width:20%" type="text"  display="menu">
+                                        Quantidade Carregada
+                                    </th>
+                                    <th style="width: 50%; text-align: center;">Ações</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-projecao>
+                                <tr>
+                                    <td>{{ projecao.produto_detalhes.nome }}</td>
+                                    <td>{{ projecao.produto_detalhes.aliquota }}</td>
+                                    <td>{{ projecao.preco_medio_venda }}</td>
+                                    <td>{{ projecao.custo_medio_variavel }}</td>
+                                    <td>{{ projecao.periodo }}</td>
+                                    <td>{{ projecao.ano }}</td>
+                                    <td>{{ projecao.quantidade_carregada }}</td>
+                                    <td style="text-align: center;">
+                                        <div style="display: flex; justify-content: center;">
+                                            <p-button
+                                                label = "Editar"
+                                                class="ml-1"
+                                                tooltipPosition="top"
+                                                pTooltip="Editar"
+                                                (onClick)="abrirModalEdicao(projecao)"
+                                            ></p-button>
+                                            <p-button 
+                                                label = "Excluir"
+                                                severity="danger"
+                                                class="ml-2"
+                                                tooltipPosition="top"
+                                                pTooltip="Excluir"
+                                                (onClick)="excluirLinha(projecao.id)"
+                                            ></p-button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="paginatorleft">
+                                <p-button type="button"  styleClass="p-button-text"></p-button>
+                            </ng-template>
+                            <ng-template pTemplate="paginatorright">
+                                <p-button type="button"  styleClass="p-button-text"></p-button>
+                            </ng-template> 
+                        </p-table>
+
+                    </ng-template>
+                </p-inplace>
+            </div>
+        </div>
+
+    </div>
+    
+</div>
+
+<p-drawer
+    [(visible)]="editFormVisible"
+    position="right"
+    [style]="{ width: '60vw' }"
+    styleClass="w-full md:w-12 lg:w-4"
+>
+
+    <div class="containerInterno w-12">
+        <div class="background-form">
+            <form
+                [formGroup]="editForm" title="Editar Tipo de Ensaio" class="flex flex-column gap-4" 
+            >
+                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                    <div class="fg1 flex flex-column w-12 align-items-center">
+
+                        <p-card class="card w-12 text-center">
+                            <ng-template #header>
+                                <div class="header w-full text-center">
+                                    <b>Editar Projeção</b>
+                                </div>
+                            </ng-template>
+                            <div class="flex flex-column w-12 gap-3">
+
+                                <div class="w-12 text-left">
+                                    <p-floatlabel variant="on">
+                                        <p-select
+                                            variant="filled"
+                                            [style]="{'width':'50%'}"
+                                            [options]="produtos"
+                                            optionValue="id"
+                                            formControlName="produto"
+                                            optionLabel="nome"
+                                            [filter]="true"
+                                            filterBy="nome"
+                                            appendTo="body"
+                                        >
+                                        </p-select>
+                                        <label for="me">Produto</label>
+                                    </p-floatlabel>
+                                </div>
+
+                                <div class="w-12 text-left">
+                                    <p-floatlabel variant="on">
+                                        <p-inputNumber
+                                            variant="filled"
+                                            [style]="{'width':'900px'}"
+                                            formControlName="preco_medio_venda"
+                                            inputId="currency-us"
+                                            mode="currency"
+                                            currency="BRL"
+                                            locale="pt-BR"
+                                            [minFractionDigits]="2"
+                                            [maxFractionDigits]="2"
+                                        />
+                                        <label for="me">Preco Médio Venda</label>
+                                    </p-floatlabel>
+                                </div>
+
+                                <div class="w-12 text-left">
+                                    <p-floatlabel variant="on">
                                         <p-inputNumber  
                                             variant="filled"
                                             [style]="{'width':'420px'}"
                                             formControlName="ano"
                                             useGrouping="false"
                                         />
-                                    <label for="ano">Ano</label>
-                                </p-floatlabel>
-                            </div>
-                        </div>
-                        <div class="fg1edit flex flex-column w-12 align-items-center lg:w-6">
-                            <div class="form2 mt-3 text-left w-10">
-                                <p-floatlabel variant="on">
-                                <p-inputNumber
-                                    variant="filled"
-                                    [style]="{'width':'420px'}"
-                                    formControlName="custo_medio_variavel"
-                                    inputId="currency-us"
-                                    mode="currency"
-                                    currency="BRL"
-                                    locale="pt-BR"
-                                />
-                                <label for="me">Custo Médio Variável</label>
-                                </p-floatlabel>
-                            </div>
-                            <div class="form2 mt-3 text-left w-10">
-                                <p-floatlabel variant="on">
+                                        <label for="ano">Ano</label>
+                                    </p-floatlabel>
+                                </div>
+
+                                <div class="w-12 text-left">
+                                    <p-floatlabel variant="on">
+                                        <p-inputNumber
+                                            variant="filled"
+                                            [style]="{'width':'420px'}"
+                                            formControlName="custo_medio_variavel"
+                                            inputId="currency-us"
+                                            mode="currency"
+                                            currency="BRL"
+                                            locale="pt-BR"
+                                        />
+                                        <label for="me">Custo Médio Variável</label>
+                                    </p-floatlabel>
+                                </div>
+
+                                <div class="w-12 text-left">
+                                    <p-floatlabel variant="on">
                                         <p-inputNumber
                                             variant="filled"
                                             [style]="{'width':'420px'}"
                                             formControlName="periodo"
                                             mode="decimal"
                                         />
-                                    <label for="mes">Mês</label>
-                                </p-floatlabel>
-                            </div>
-                            <div class="form2 mt-3 mb-3 text-left w-10">
-                                <p-floatlabel variant="on">
+                                        <label for="mes">Mês</label>
+                                    </p-floatlabel>
+                                </div>
+
+                                <div class="w-12 text-left">
+                                    <p-floatlabel variant="on">
                                         <p-inputNumber
                                             variant="filled"
                                             [style]="{'width':'420px'}"
@@ -365,23 +436,33 @@
                                             mode="decimal"
                                             locale="pt-BR"
                                         />
-                                    <label for="ano">Quantidade Carregada</label>
-                                </p-floatlabel>
+                                        <label for="ano">Quantidade Carregada</label>
+                                    </p-floatlabel>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </form>
-                <div class="botoes-form">
-                    <div class="btnsec" (click)="clearEditForm()">
-                        <p>Limpar</p>
-                    </div>
-
-                    <div class="btnpri" (click)="saveEdit()">
-                        <p>Salvar</p>
-                    </div>
+                            <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                                <p-button 
+                                    (onClick)="clearEditForm()" 
+                                    label="Limpar"
+                                    iconPos="right"  
+                                    tooltipPosition="top"
+                                    pTooltip="Limpar"
+                                />
+                                <p-button 
+                                    (onClick)="saveEdit()" 
+                                    label="Salvar" 
+                                    severity="success"
+                                    icon="pi pi-check" 
+                                    iconPos="right" 
+                                    tooltipPosition="top"
+                                    pTooltip="Salvar"
+                                />
+                            </div>
+                        </p-card>
+                    </div>    
                 </div>
-
-    </p-dialog>
-
-</div>
-
+            </form>
+        </div>
+    </div>
+  
+</p-drawer>
