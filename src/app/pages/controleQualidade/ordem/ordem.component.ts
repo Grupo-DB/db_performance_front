@@ -44,6 +44,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TooltipModule } from 'primeng/tooltip';
 import { AnaliseService } from '../../../services/controleQualidade/analise.service';
 import { AmostraService } from '../../../services/controleQualidade/amostra.service';
+import { TagModule } from 'primeng/tag';
 
 
 interface OrdemForm {
@@ -74,12 +75,7 @@ export interface Ordem {
 @Component({
   selector: 'app-ordem',
   imports: [
-     ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule,
-    InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule, CardModule,
-    FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,
-    ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,
-    InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,
-    InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule, CdkDragPlaceholder,NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule
+    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule, CardModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule,NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule, TagModule
   ],
   animations: [
     trigger('efeitoFade',[
@@ -235,8 +231,39 @@ responsaveis = [
     )
   }
 
+  getMenuItems() {
+    return [
+      { label: 'Visualizar', icon: 'pi pi-eye'},
+      { label: 'Abrir OS', icon: 'pi pi-folder-open'},
+      { label: 'Editar', icon: 'pi pi-pencil'},
+      { label: 'Excluir', icon: 'pi pi-trash'},
+      { label: 'Imagens', icon: 'pi pi-image'},
+    ];
+  }
+  getSeverity(materialNome: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | undefined {
+    if (!materialNome) {
+      return 'secondary';
+    }
+
+    switch (materialNome.toLowerCase()) {
+      case 'calcario':
+        return 'warn';
+      case 'acabamento':
+        return 'success';
+      case 'argamassa':
+        return 'info';
+      case 'cal':
+        return 'danger';
+      case 'mineracao':
+        return 'contrast';
+      default:
+        return 'secondary';
+    }
+
+  }
+
   filterTable() {
-    console.log(this.dt1);//tem que apagar
+    console.log(this.dt1.filterGlobal(this.inputValue,'contains'));//tem que apagar
     this.dt1.filterGlobal(this.inputValue,'contains');
   }
 
