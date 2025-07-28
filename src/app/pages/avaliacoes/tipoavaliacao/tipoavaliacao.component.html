@@ -190,7 +190,7 @@
                             </ng-template>
                             <ng-template pTemplate="body" let-tipoavaliacao>
                                 <tr>
-                                    <td style="text-align: center;">{{ tipoavaliacao.nome }}</td>
+                                    <td style="text-align: center;">{{ tipoavaliacao.nome | titlecase }}</td>
                                     <td style="text-align: center;">
                                         <div style="display: flex; justify-content: center;">
                                             <p-button

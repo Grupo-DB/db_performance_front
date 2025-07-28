@@ -27,6 +27,8 @@ import { EnsaioService } from '../../../services/controleQualidade/ensaio.servic
 import { InputNumberModule } from 'primeng/inputnumber';
 import { evaluate } from 'mathjs';
 import { Variavel } from '../variavel/variavel.component';
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
 
 interface RegisterEnsaioForm {
   descricao:FormControl;
@@ -63,11 +65,7 @@ export interface Unidades {
 @Component({
   selector: 'app-ensaio',
   imports: [
-    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,
-    InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,
-    FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,
-    ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,
-    InputNumberModule
+    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink, InputNumberModule, CardModule, InplaceModule
   ],
   providers:[
      MessageService,ConfirmationService

@@ -64,14 +64,15 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { TabMenuModule } from 'primeng/tabmenu';
 import jsPDF from 'jspdf';
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
+import { DrawerModule } from 'primeng/drawer';
 
 @Component({
   selector: 'app-feedback',
   standalone: true,
   imports: [
-    ReactiveFormsModule,NzMenuModule,TabMenuModule,FormsModule,StepperModule,CommonModule,MatStepperModule,MatFormFieldModule,CalendarModule,MatRadioModule,DividerModule,DialogModule,
-    InputMaskModule,StepsModule,NzStepsModule,MatInputModule,MatButtonModule,MatSelectModule,RadioButtonModule,InputTextModule,MultiSelectModule,
-    RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,IconFieldModule,InputIconModule
+    ReactiveFormsModule,NzMenuModule,TabMenuModule,FormsModule,StepperModule,CommonModule,MatStepperModule,MatFormFieldModule,CalendarModule,MatRadioModule,DividerModule,DialogModule,InputMaskModule,StepsModule,NzStepsModule,MatInputModule,MatButtonModule,MatSelectModule,RadioButtonModule,InputTextModule,MultiSelectModule,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,IconFieldModule,InputIconModule, CardModule, InplaceModule, DrawerModule
   ],
   providers:[
     MessageService,GetSetorService,TipoContratoService,PerguntasService,TipoAvaliacaoService,

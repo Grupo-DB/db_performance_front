@@ -125,7 +125,7 @@
                                         <ng-template let-avaliado pTemplate="item">
                                             <div class="flex flex-wrap p-2 align-items-center gap-3">
                                                 <div class="flex-1 flex flex-column gap-2">
-                                                    <span class="font-bold">{{ avaliado.nome }}</span>
+                                                    <span class="font-bold">{{ avaliado.nome | titlecase}}</span>
                                                     <div class="flex align-products-center gap-2">
                                                     </div>
                                                 </div>
@@ -239,7 +239,7 @@
                                     <td></td>
                                     <td>
                                         <div class="avaliado">
-                                            {{ avaliado.nome }}
+                                            {{ avaliado.nome | titlecase}}
                                         </div>
                                     </td>
                                     <td>

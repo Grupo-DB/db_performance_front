@@ -90,7 +90,7 @@
             Cargo: <br>
           </div>
           <div class="w-10 ml-4">
-            <strong>{{ avaliador.nome }}</strong><br>
+            <strong>{{ avaliador.nome  | titlecase}}</strong><br>
             <strong> {{ getNomeEmpresa(avaliador.empresa) }}</strong><br>
             <strong> {{ getNomeFilial(avaliador.filial) }}</strong><br>
             <strong> {{ getNomeArea(avaliador.area) }}</strong><br>
@@ -116,7 +116,7 @@
                       Cargo:<br>
                     </div>
                     <div class="w-10 ml-4">
-                      <strong>{{ avaliadoDetalhes.nome }} </strong><br>
+                      <strong>{{ avaliadoDetalhes.nome | titlecase }} </strong><br>
                       <strong> {{ getNomeEmpresa(avaliadoDetalhes.empresa) }}</strong><br>
                       <strong> {{ getNomeFilial(avaliadoDetalhes.filial) }}</strong><br>
                       <strong> {{ getNomeArea(avaliadoDetalhes.area) }}</strong><br>
@@ -141,18 +141,23 @@
         <div class="dp2 w-10 md:w-6">  
           <p-floatlabel variant="on">
             <p-select
-                variant="filled"
-                [style]="{'width':'100%'}"
-                id="ava" 
-                [options]="avaliadosSA"
-                formControlName="avaliado" 
-                optionLabel="nome"
-                [filter]="true"
-                filterBy="nome"
-                [showClear]="true"
-                (onChange)="onAvaliadoSelecionado($event.value)"
+              variant="filled"
+              [style]="{'width':'100%'}"
+              id="ava" 
+              [options]="avaliadosSA"
+              formControlName="avaliado" 
+              optionLabel="nome"
+              [filter]="true"
+              filterBy="nome"
+              [showClear]="true"
+              (onChange)="onAvaliadoSelecionado($event.value)"
             >   
+            <!-- Title case no select -->
+              <ng-template let-item pTemplate="item">
+                {{ item.nome | titlecase }}
+              </ng-template>
             </p-select>
+
             <label for="ava">Avaliado</label>
           </p-floatlabel>
         </div> 
