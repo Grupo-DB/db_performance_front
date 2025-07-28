@@ -67,15 +67,15 @@ import { Select, SelectModule } from 'primeng/select';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { DatePickerModule } from 'primeng/datepicker';
 
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
+import { DrawerModule } from 'primeng/drawer';
 
 @Component({
   selector: 'app-historico',
   standalone: true,
   imports: [
-    ReactiveFormsModule,FormsModule,StepperModule,CommonModule,MatStepperModule,MatFormFieldModule,CalendarModule,MatRadioModule,DividerModule,DialogModule,
-    InputMaskModule,StepsModule,NzStepsModule,MatInputModule,MatButtonModule,MatSelectModule,RadioButtonModule,InputTextModule,MultiSelectModule,
-    RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,IconFieldModule,InputIconModule,
-    NzMenuModule,TabMenuModule,SelectModule,FloatLabelModule,DatePickerModule,MultiSelectModule
+    ReactiveFormsModule,FormsModule,StepperModule,CommonModule,MatStepperModule,MatFormFieldModule,CalendarModule,MatRadioModule,DividerModule,DialogModule,InputMaskModule,StepsModule,NzStepsModule,MatInputModule,MatButtonModule,MatSelectModule,RadioButtonModule,InputTextModule,MultiSelectModule,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,IconFieldModule,InputIconModule,NzMenuModule,TabMenuModule,SelectModule,FloatLabelModule,DatePickerModule,MultiSelectModule, CardModule, InplaceModule, DrawerModule
   ],
   providers:[
     MessageService,GetSetorService,TipoContratoService,PerguntasService,TipoAvaliacaoService,

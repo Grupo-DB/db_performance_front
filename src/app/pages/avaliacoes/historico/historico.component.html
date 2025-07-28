@@ -60,144 +60,188 @@
         </li> 
         
     </ul>
-  </div>
+</div>
       
-<div class="container">
-    <div class="titulo mt-6 mb-6 text-2xl">
+<div class="container flex flex-column align-items-center mb-4">
+
+    <div class="titulo mt-2 mb-0 w-12 text-2xl">
         <p-divider align="left" type="solid">
             <b>Histórico de Avaliações</b>
         </p-divider>
     </div>
-        <div class="card">
-            <p-table
-                #dt2
-                [value]="avaliacoes"
-                dataKey="id"
-                [rows]="10"
-                [rowsPerPageOptions]="[10, 25, 50]"
-                [loading]="loading"
-                [paginator]="true"
-                [globalFilterFields]="['avaliadoNome','avaliadorNome']"
-                [tableStyle]="{ 'min-width': '75rem' }"
-                stripedRows
-                scrollable="true"
-            >
-            <ng-template pTemplate="header">
-                <tr>
-                    <th style="width:22%">Período</th>
-                    <th style="width:22%">Avaliado</th>
-                    <th style="width:22%">Avaliador</th>
-                    <th style="width:22%">Tipo</th>
-                    <th style="width:22%">Status</th>
 
-                    <th style="width: 42%;">Realizado</th>
-                    <th style="width: 22%;">Ações</th>
-                </tr>
-                <tr>
-                    <th>
-                        <p-columnFilter
+    <div class="containerInterno w-12">
+        <div class="background-form" @swipeAnimation>
 
-                            type="text"
-                            field="periodo"
-                            placeholder="Pesquisa "
-                            ariaLabel="Filter Periodo" />
-                    </th>
-                    <th>
-                        <p-columnFilter
+            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
 
-                            type="text"
-                            field="avaliadoNome"
-                            placeholder="Pesquisa "
-                            ariaLabel="Filter Avaliado" />
-                    </th>
+                <div class="fg1 flex flex-column w-12 align-items-center">
 
-                    <th>
-                        <p-columnFilter
-                            type="text"
-                            field="avaliadorNome"
-                            placeholder="Pesquisa"
-                            ariaLabel="Filter Avaliador" />
-                    </th>
-                    <th>
-                        <p-columnFilter
-                            type="text"
-                            field="tipoavaliacaoNome"
-                            placeholder="Pesquisa"
-                            ariaLabel="Filter TipoAvaliacao" />
-                    </th>
-                    <th>
-                        <p-columnFilter type="boolean" field="feedback" [showMenu]="false">
-                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                <p-dropdown
-                                    [options]="feedbackOptions"
-                                    placeholder="Feedback"
-                                    (onChange)="filter($event.value)">
-                                </p-dropdown>
+                    <p-card class="card w-12 text-center">
+                        <ng-template #header>
+                            <div class="header w-full text-center">
+                                <h2>Avaliações</h2>
+                            </div>
+                        </ng-template>
+                        <div class="flex flex-column w-12 gap-3">
+
+                            <p-table
+                                #dt2
+                                [value]="avaliacoes"
+                                dataKey="id"
+                                [rows]="10"
+                                [rowsPerPageOptions]="[10, 25, 50]"
+                                [loading]="loading"
+                                [paginator]="true"
+                                [globalFilterFields]="['avaliadoNome','avaliadorNome']"
+                                [tableStyle]="{ 'min-width': '75rem' }"
+                                stripedRows
+                                scrollable="true"
+                            >
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="width:22%">Período</th>
+                                    <th style="width:22%">Avaliado</th>
+                                    <th style="width:22%">Avaliador</th>
+                                    <th style="width:22%">Tipo</th>
+                                    <th style="width:22%">Status</th>
+
+                                    <th style="width: 42%;">Realizado</th>
+                                    <th style="width: 22%; text-align: center;">Ações</th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <p-columnFilter
+
+                                            type="text"
+                                            field="periodo"
+                                            placeholder="Pesquisa "
+                                            ariaLabel="Filter Periodo" />
+                                    </th>
+                                    <th>
+                                        <p-columnFilter
+
+                                            type="text"
+                                            field="avaliadoNome"
+                                            placeholder="Pesquisa "
+                                            ariaLabel="Filter Avaliado" />
+                                    </th>
+
+                                    <th>
+                                        <p-columnFilter
+                                            type="text"
+                                            field="avaliadorNome"
+                                            placeholder="Pesquisa"
+                                            ariaLabel="Filter Avaliador" />
+                                    </th>
+                                    <th>
+                                        <p-columnFilter
+                                            type="text"
+                                            field="tipoavaliacaoNome"
+                                            placeholder="Pesquisa"
+                                            ariaLabel="Filter TipoAvaliacao" />
+                                    </th>
+                                    <th>
+                                        <p-columnFilter type="boolean" field="feedback" [showMenu]="false">
+                                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                                <p-dropdown
+                                                    [options]="feedbackOptions"
+                                                    placeholder="Feedback"
+                                                    (onChange)="filter($event.value)">
+                                                </p-dropdown>
+                                            </ng-template>
+                                        </p-columnFilter>
+                                        <!-- <p-columnFilter type="boolean" field="feedback" /> -->
+                                    </th>
+                                    <th></th>
+                                    <th></th>
+
+                                </tr>
                             </ng-template>
-                        </p-columnFilter>
-                        <!-- <p-columnFilter type="boolean" field="feedback" /> -->
-                    </th>
-                    <th></th>
-                    <th></th>
+                            <ng-template pTemplate="body" let-avaliacao>
+                                <tr>
 
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-avaliacao>
-                <tr>
+                                    <td>
+                                        {{ avaliacao.periodo }}
+                                    </td>
+                                    <td>
+                                        {{ getNomeAvaliado(avaliacao.avaliado) | titlecase }}
+                                    </td>
+                                    <td>
+                                        {{ getNomeAvaliador(avaliacao.avaliador) | titlecase }}
+                                    </td>
+                                    <td>
+                                        {{ avaliacao.tipo }}
+                                    </td>
+                                    <td>
+                                        <i class="pi" [ngClass]="{ 'text-green-500 pi-check-circle': avaliacao.feedback, 'text-red-500 pi-times-circle': !avaliacao.feedback }"></i>
+                                    </td>
+                                    <td>{{avaliacao.finished_at | date:'dd/MM/yy'}}</td>
+                                    <td style="text-align: center;">
+                                        <div style="display: flex; justify-content: center;">
+                                            <p-button
+                                                label = "Visualizar"
+                                                class="ml-1"
+                                                tooltipPosition="top"
+                                                pTooltip="Visualizar"
+                                                (onClick)="abrirModalEdicao(avaliacao.id,avaliacao)"
+                                            ></p-button>
+                                           
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
 
-                    <td>
-                        {{ avaliacao.periodo }}
-                    </td>
-                    <td>
-                        {{ getNomeAvaliado(avaliacao.avaliado) | titlecase }}
-                    </td>
-                    <td>
-                        {{ getNomeAvaliador(avaliacao.avaliador) | titlecase }}
-                    </td>
-                    <td>
-                        {{ avaliacao.tipo }}
-                    </td>
-                    <td>
-                        <i class="pi" [ngClass]="{ 'text-green-500 pi-check-circle': avaliacao.feedback, 'text-red-500 pi-times-circle': !avaliacao.feedback }"></i>
-                    </td>
-                    <td>{{avaliacao.finished_at}}</td>
-                    <td>
-                        <div class="btnpri" (click)="abrirModalEdicao(avaliacao.id,avaliacao)">
-                            <p>Visualizar</p>
+                            </p-table>
+                        
                         </div>
-                    </td>
-                </tr>
-            </ng-template>
-
-            </p-table>
-        </div>
-
-        <p-dialog
-
-            [modal]="true"
-            [(visible)]="visible"
-            [style]="{ width: '50rem' }"
-            [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
-        >
-        <div class="geral">
-            <p-divider align="left" type="solid">
-
-                <b>Feedback</b>
-            </p-divider>
-
-            <div *ngIf="avaliacaoDetalhe">
-                <h2>Detalhes da Avaliação</h2>
-                <p>Período: <strong>{{ avaliacaoDetalhe.periodo }}</strong></p>
-                <p>Avaliado: <strong>{{ getNomeAvaliado(avaliacaoDetalhe.avaliado) | titlecase  }}</strong></p>
-                <p>Avaliador:<strong> {{ getNomeAvaliador(avaliacaoDetalhe.avaliador) | titlecase  }}</strong></p>
-                <p>Tipo de Avaliação:<strong> {{ avaliacaoDetalhe.tipo }}</strong></p>
-                <p-divider></p-divider>
-                <pre>{{perguntasRespostasFormatada}}</pre>
+                    </p-card>
+                </div>    
             </div>
-            <p-divider></p-divider>
+
         </div>
-        </p-dialog>
-
-
+    </div>
+    
 </div>
 
+<p-drawer
+    [(visible)]="visible"
+    position="top"
+    styleClass="w-full w-12 h-full"
+>
+
+    <div class="containerInterno w-12">
+        <div class="background-form">
+          
+            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                <div class="fg1 flex flex-column w-12 align-items-center">
+
+                    <p-card class="card w-12 text-center">
+                        <ng-template #header>
+                            <div class="header w-full text-center">
+                                <b>Feedback</b>
+                            </div>
+                        </ng-template>
+                        <div class="flex flex-column w-12 gap-3">
+
+                            <div class="w-12 text-left">
+                                <div *ngIf="avaliacaoDetalhe">
+                                    <h2>Detalhes da Avaliação</h2>
+                                    <p>Período: <strong>{{ avaliacaoDetalhe.periodo }}</strong></p>
+                                    <p>Avaliado: <strong>{{ getNomeAvaliado(avaliacaoDetalhe.avaliado) | titlecase  }}</strong></p>
+                                    <p>Avaliador:<strong> {{ getNomeAvaliador(avaliacaoDetalhe.avaliador) | titlecase  }}</strong></p>
+                                    <p>Tipo de Avaliação:<strong> {{ avaliacaoDetalhe.tipo }}</strong></p>
+                                    <p-divider></p-divider>
+                                    <pre>{{perguntasRespostasFormatada}}</pre>
+                                </div>
+                            </div>
+
+                        </div>
+                    </p-card>
+                </div>    
+            </div>
+            
+        </div>
+    </div>
+  
+</p-drawer>
