@@ -340,8 +340,8 @@ materiais: any[] = [
   ]
 
   reter = [
-    { id: 1, nome: 'Sim' },
-    { id: 2, nome: 'Não' },
+    { value: true, nome: 'Sim' },
+    { value: false, nome: 'Não' },
   ]
 
   //analises: any;
