@@ -546,7 +546,7 @@
                             </ng-template>
                             <ng-template pTemplate="body" let-colaborador>
                                 <tr>
-                                    <td>{{ colaborador.nome }}</td>
+                                    <td>{{ colaborador.nome | titlecase}}</td>
                                     <td>{{ colaborador.empresa_detalhes.nome }}</td>
                                     <td>{{ colaborador.filial_detalhes.nome }}</td>
                                     <td>{{ colaborador.area_detalhes.nome }}</td>

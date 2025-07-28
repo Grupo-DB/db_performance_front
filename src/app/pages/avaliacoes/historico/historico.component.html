@@ -149,10 +149,10 @@
                         {{ avaliacao.periodo }}
                     </td>
                     <td>
-                        {{ getNomeAvaliado(avaliacao.avaliado) }}
+                        {{ getNomeAvaliado(avaliacao.avaliado) | titlecase }}
                     </td>
                     <td>
-                        {{ getNomeAvaliador(avaliacao.avaliador) }}
+                        {{ getNomeAvaliador(avaliacao.avaliador) | titlecase }}
                     </td>
                     <td>
                         {{ avaliacao.tipo }}
@@ -188,8 +188,8 @@
             <div *ngIf="avaliacaoDetalhe">
                 <h2>Detalhes da Avaliação</h2>
                 <p>Período: <strong>{{ avaliacaoDetalhe.periodo }}</strong></p>
-                <p>Avaliado: <strong>{{ getNomeAvaliado(avaliacaoDetalhe.avaliado) }}</strong></p>
-                <p>Avaliador:<strong> {{ getNomeAvaliador(avaliacaoDetalhe.avaliador) }}</strong></p>
+                <p>Avaliado: <strong>{{ getNomeAvaliado(avaliacaoDetalhe.avaliado) | titlecase  }}</strong></p>
+                <p>Avaliador:<strong> {{ getNomeAvaliador(avaliacaoDetalhe.avaliador) | titlecase  }}</strong></p>
                 <p>Tipo de Avaliação:<strong> {{ avaliacaoDetalhe.tipo }}</strong></p>
                 <p-divider></p-divider>
                 <pre>{{perguntasRespostasFormatada}}</pre>
