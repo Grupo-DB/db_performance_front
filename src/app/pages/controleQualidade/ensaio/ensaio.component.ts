@@ -1,3 +1,4 @@
+
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component, input, OnInit, ViewChild } from '@angular/core';
@@ -53,6 +54,7 @@ export interface Ensaio {
   tempo_previsto: any;
   variavel: any;
   funcao: any;
+  ensaioTecnico?: string;
 }
 
 export interface Responsaveis {
@@ -80,16 +82,7 @@ export interface Unidades {
     trigger('efeitoZoom', [
       transition(':enter', [
         style({ transform: 'scale(0)' }),
-        animate('2s', style({ transform: 'scale(1)' })),
-      ]),
-    ]),
-    trigger('bounceAnimation', [
-      transition(':enter', [
-        animate('4.5s ease-out', keyframes([
-          style({ transform: 'scale(0.5)', offset: 0 }),
-          style({ transform: 'scale(1.2)', offset: 0.5 }),
-          style({ transform: 'scale(1)', offset: 1 }),
-        ])),
+        animate('0.5s ease-out', style({ transform: 'scale(1)' })),
       ]),
     ]),
     trigger('swipeAnimation', [
@@ -117,8 +110,7 @@ export interface Unidades {
   styleUrl: './ensaio.component.scss'
 })
 export class EnsaioComponent implements OnInit{
-  // Variáveis e métodos do componente EnsaioComponent
-  ensaios: any[] = [];
+  ensaios: Ensaio[] = [];
   tiposEnsaio: TipoEnsaio[] = [];
   variaveis: Variavel[] = [];
   editForm!: FormGroup;
@@ -255,7 +247,68 @@ export class EnsaioComponent implements OnInit{
     this.loadEnsaios();
     this.loadTiposEnsaio();
     this.loadVariaveis();
-    
+  }
+
+  async gerarEnsaioTecnico(): Promise<string> {
+    // Busca o maior número já utilizado em ensaioTecnico ou tecnica (ex: ensaio01, ensaio02, ...) a partir do backend
+    let max = 0;
+    try {
+      const ensaiosBackend = await new Promise<any[]>(resolve => {
+        this.ensaioService.getEnsaios().subscribe(resolve, () => resolve([]));
+      });
+      ensaiosBackend.forEach(e => {
+        // Considera tanto ensaioTecnico quanto tecnica, se existir
+        const tecnicasPossiveis = [e.ensaioTecnico, (e as any).tecnica];
+        tecnicasPossiveis.forEach(tecnica => {
+          if (tecnica) {
+            const match = tecnica.match(/ensaio(\d+)/);
+            if (match) {
+              const num = parseInt(match[1], 10);
+              if (!isNaN(num) && num > max) max = num;
+            }
+          }
+        });
+      });
+    } catch (e) {
+      // fallback para lista local
+      this.ensaios.forEach(e => {
+        const tecnicasPossiveis = [e.ensaioTecnico, (e as any).tecnica];
+        tecnicasPossiveis.forEach(tecnica => {
+          if (tecnica) {
+            const match = tecnica.match(/ensaio(\d+)/);
+            if (match) {
+              const num = parseInt(match[1], 10);
+              if (!isNaN(num) && num > max) max = num;
+            }
+          }
+        });
+      });
+    }
+    const next = max + 1;
+    return 'ensaio' + next.toString().padStart(2, '0');
+  }
+
+  getExpressaoStringAmigavel(): string {
+    return this.expressaoDinamica
+      .map(b => {
+        if (b.tipo === 'Variavel') {
+          // Busca a variável pelo tecnica (se já for tecnica) ou pelo nome
+          const tecnica = this.getExpressaoStringTokenTecnica(b);
+          const v = this.variaveis.find(v => v.tecnica === tecnica);
+          return v && v.nome ? v.nome : b.valor;
+        }
+        return b.valor;
+      })
+      .filter(v => !!v)
+      .join(' ');
+  }
+
+  private getExpressaoStringTokenTecnica(bloco: any): string {
+    if (this.variaveis.some(v => v.tecnica === bloco.valor)) {
+      return bloco.valor;
+    }
+    const v = this.variaveis.find(v => v.nome === bloco.valor);
+    return v && v.tecnica ? v.tecnica : bloco.valor;
   }
 
   loadEnsaios() {
@@ -278,16 +331,6 @@ export class EnsaioComponent implements OnInit{
     )
   }
 
-//   loadVariaveis() {
-//   this.ensaioService.getVariaveis().subscribe(
-//     response => {
-//       this.variaveis = response;
-//     }, error => {
-//       console.error('Erro ao carregar as variáveis:', error);
-//     }
-//   )
-// }
-
   loadVariaveis() {
   this.ensaioService.getVariaveis().subscribe(
     response => {
@@ -307,9 +350,9 @@ export class EnsaioComponent implements OnInit{
 
 
   // Gera nomes seguros
-  getValoresPorTipo(tipo: string): any[] {
+getValoresPorTipo(tipo: string): any[] {
   switch (tipo) {
-    case 'Variavel': return this.variaveis.map(v => ({ label: v.nome, value: v.nome })); 
+    case 'Variavel': return this.variaveis.map(v => ({ label: v.nome, value: v.tecnica }));
     case 'Operador': return this.operadores;
     case 'Condicional': return this.condicionais;
     case 'Delimitador': return this.delimitadores;
@@ -334,28 +377,21 @@ adicionarBloco() {
   }
 
   private atualizarVariaveisDoForm() {
-  const nomes = this.variaveis.map(v => v.nome);
-
-  // Pegua os ensaios usados na expressão, sem duplicatas
-  const usados = this.expressaoDinamica
-    .filter(b => b.tipo === 'Variavel' && nomes.includes(b.valor || ''))
-    .map(b => b.valor)
-    .filter((valor, idx, arr) => arr.indexOf(valor) === idx) // elimina duplicatas
-    .map(valor => this.variaveis.find(v => v.nome === valor))
-    .filter(v => !!v);
-
-  this.registerForm.get('variavel')?.setValue(usados.map(v => v.id));
-}
+    // Busca todos os tokens da expressão que são nomes técnicos (varX)
+    const expr = this.getExpressaoString();
+    const tecnicaMatches = (expr.match(/var\d+/g) || []);
+    const tecnicasUnicas = Array.from(new Set(tecnicaMatches));
+    // Associa os IDs das variáveis cujos tecnica aparecem na expressão
+    const usados = tecnicasUnicas
+      .map(tecnica => this.variaveis.find(v => v.tecnica === tecnica))
+      .filter(v => !!v);
+    this.registerForm.get('variavel')?.setValue(usados.map(v => v.id));
+  }
 
 getExpressaoString() {
-  this.gerarNomesSegurosComValoresAtuais();
+  this.gerarSafeVarsPorTecnica();
   return this.expressaoDinamica
-    .map(b => {
-      if (b.tipo === 'Variavel' && b.valor !== undefined && this.nameMap[b.valor]) {
-        return this.nameMap[b.valor];
-      }
-      return b.valor;
-    })
+    .map(b => b.valor)
     .filter(v => !!v)
     .join(' ');
 }
@@ -385,33 +421,28 @@ onBlocoChange(index: number) {
   }
 }
 
-gerarNomesSegurosComValoresAtuais() {
+
+// Agora usa diretamente o campo tecnica das variáveis
+gerarSafeVarsPorTecnica() {
   this.safeVars = {};
-  this.nameMap = {};
-  this.variaveis.forEach((variavel: any, i: number) => {
-    const safeName = 'var' + i;
-    // Busca o valor digitado para este ensaio
-    const resultado = this.resultados.find(r => r.variavelId === variavel.id);
-    this.safeVars[safeName] = resultado ? resultado.valor : 0;
-    this.nameMap[variavel.nome] = safeName;
+  this.variaveis.forEach((variavel: any) => {
+    if (variavel.tecnica) {
+      const resultado = this.resultados.find(r => r.variavelId === variavel.id);
+      this.safeVars[variavel.tecnica] = resultado ? resultado.valor : 0;
+    }
   });
 }
+
 
 avaliarExpressao() {
   const expressao = this.registerForm.get('funcao')?.value;
   if (!expressao) return null;
-  
-  this.gerarNomesSegurosComValoresAtuais();
-  
-  // Converte a expressão original para usar nomes seguros
-  let exprSegura = expressao;
-  Object.keys(this.nameMap).forEach(origName => {
-    const regex = new RegExp(origName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-    exprSegura = exprSegura.replace(regex, this.nameMap[origName]);
-  });
-  
+
+  // Agora a expressão já deve estar usando os nomes do campo tecnica
+  this.gerarSafeVarsPorTecnica();
+
   try {
-    const resultado = evaluate(exprSegura, this.safeVars);
+    const resultado = evaluate(expressao, this.safeVars);
     return resultado;
   } catch (e) {
     this.messageService.add({
@@ -428,48 +459,45 @@ avaliarExpressao() {
 montarFormula(){
     this.montarFormulaVisivel = true
   }
- editarFormula(){
-    // Converte a string da função em blocos para edição
+
+editarFormula(){
+  // Converte a string da função em blocos para edição
   const funcao = this.editForm.get('funcao')?.value || '';
-  const funcaoComNomes = this.converterExpressaoParaNomes(funcao);
-  this.expressaoDinamica = this.converterFuncaoParaBlocos(funcaoComNomes);
+  this.expressaoDinamica = this.converterFuncaoParaBlocos(funcao);
   this.editarFormulaVisivel = true;
-  }
-// O método converterFuncaoParaBlocos pode ficar igual, pois agora recebe nomes de ensaio
+}
+
+// O método converterFuncaoParaBlocos agora trata nomes tecnicos diretamente
 converterFuncaoParaBlocos(funcao: string): { tipo: string, valor: string }[] {
   const tokens = funcao.split(' ');
   return tokens.map(token => {
-    if (['+', '-', '*', '/'].includes(token)) {
+    if (["+", "-", "*", "/"].includes(token)) {
       return { tipo: 'Operador', valor: token };
     } else if (!isNaN(Number(token))) {
       return { tipo: 'Valor', valor: token };
     } else {
-      return { tipo: 'Ensaio', valor: token };
+      // Se o token for um tecnica conhecido, marca como Variavel, senão Ensaio
+      const isTecnica = this.variaveis.some(v => v.tecnica === token);
+      return { tipo: isTecnica ? 'Variavel' : 'Ensaio', valor: token };
     }
   });
 }
 
-converterExpressaoParaNomes(expr: string): string { 
-  const reverseMap = Object.fromEntries(
-    Object.entries(this.nameMap).map(([k, v]) => [v, k])
-  );
+// Não é mais necessário converter nomes técnicos para nomes amigáveis
 
-  return expr.replace(/var\d+/g, (match) => reverseMap[match] || match);
-}
 
 validarExpressaoComValores(expr: string): boolean {
   try {
-    // Gere nomes seguros e substitua na expressão
-    this.gerarNomesSegurosComValoresAtuais();
-    let exprSegura = expr;
-    Object.keys(this.nameMap).forEach(origName => {
-      // Substitui todas as ocorrências do nome original por nome seguro
-      const regex = new RegExp(origName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-      exprSegura = exprSegura.replace(regex, this.nameMap[origName]);
+    // Gere safeVars usando tecnica
+    this.gerarSafeVarsPorTecnica();
+    // Substitua todas as variáveis (tecnica) por 1 para validar sintaxe
+    let fakeExpr = expr;
+    this.variaveis.forEach(v => {
+      if (v.tecnica) {
+        const regex = new RegExp(v.tecnica.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+        fakeExpr = fakeExpr.replace(regex, '1');
+      }
     });
-
-    // Agora substitua nomes seguros por 1
-    let fakeExpr = exprSegura.replace(/var\d+/g, '1');
     fakeExpr = fakeExpr.replace(/\s+/g, ' ');
     fakeExpr = fakeExpr.replace(/1\s+1/g, '1');
     console.log('Expressão para validação:', fakeExpr);
@@ -737,54 +765,58 @@ filterVariaveis(event: any) {
     });
   }
 
-submit() {
-  const expressao = this.getExpressaoString();
-
-  if (!expressao || expressao.trim() === '') {
-    this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'A expressão não pode estar vazia.' });
-    return;
-  }
-
-  if (!this.validarExpressaoComValores(expressao)) {
-    this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Expressão inválida!' });
-    return;
-  }
-
-  const variaveis = Array.isArray(this.registerForm.value.variavel)  
-    ? this.registerForm.value.variavel
-    : [this.registerForm.value.variavel];
-    console.log('Enviando VVVVVV:', variaveis);
-  this.ensaioService.registerEnsaio(
-    this.registerForm.value.descricao,
-    this.registerForm.value.responsavel,
-    this.registerForm.value.valor,
-    this.registerForm.value.tipoEnsaio,
-    `${this.registerForm.value.tempoPrevistoValor} ${this.registerForm.value.tempoPrevistoUnidade}`,
-    variaveis,
-    this.registerForm.value.funcao,
-  ).subscribe({
-    next: () => {
-      this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Ensaio cadastrado com sucesso!!', life: 1000 });
-      this.loadEnsaios();
-      this.clearForm();
-    },
-    error: (err) => {
-      console.error('Erro completo:', err);
-      console.error('Resposta do servidor:', err.error);
-      
-      if (err.status === 401) {
-        this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
-      } else if (err.status === 403) {
-        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
-      } else if (err.status === 400) {
-        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
-      }
-      else {
-        this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
-      } 
+  async submit() {
+    const expressao = this.getExpressaoString();
+    if (!expressao || expressao.trim() === '') {
+      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'A expressão não pode estar vazia.' });
+      return;
     }
-  });
-}
+
+    if (!this.validarExpressaoComValores(expressao)) {
+      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Expressão inválida!' });
+      return;
+    }
+
+    // Atualiza o campo variavel do formulário com base na expressão antes de enviar
+    this.atualizarVariaveisDoForm();
+    const variaveis = Array.isArray(this.registerForm.value.variavel)  
+      ? this.registerForm.value.variavel
+      : [this.registerForm.value.variavel];
+
+    // Gera o nome técnico de forma única consultando o backend
+    const ensaioTecnico = await this.gerarEnsaioTecnico();
+    console.log('Enviando VVVVVV:', variaveis, 'Ensaio técnico:', ensaioTecnico);
+    this.ensaioService.registerEnsaio(
+      this.registerForm.value.descricao,
+      this.registerForm.value.responsavel,
+      this.registerForm.value.valor,
+      this.registerForm.value.tipoEnsaio,
+      `${this.registerForm.value.tempoPrevistoValor} ${this.registerForm.value.tempoPrevistoUnidade}`,
+      variaveis,
+      this.registerForm.value.funcao,
+      ensaioTecnico
+    ).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Ensaio cadastrado com sucesso!!', life: 1000 });
+        this.loadEnsaios();
+        this.clearForm();
+      },
+      error: (err) => {
+        console.error('Erro completo:', err);
+        console.error('Resposta do servidor:', err.error);
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });
+  }
 
 
 }

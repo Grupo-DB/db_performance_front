@@ -120,6 +120,9 @@ export class CalculoEnsaioComponent implements OnInit {
   inputValue: string = '';
   @ViewChild('autoComp') autoComp!: AutoComplete;
 
+  // Armazena o mapeamento de variáveis técnicas (nome amigável <-> tecnica)
+  variaveisTecnicas: { id: any, nome: string, tecnica: string }[] = [];
+
 
   safeVars: any = {};
   nameMap: any = {};
@@ -283,17 +286,23 @@ export class CalculoEnsaioComponent implements OnInit {
     );
   }
 
-gerarNomesSegurosComValoresAtuais() {
-  this.safeVars = {};
-  this.nameMap = {};
-  this.ensaios.forEach((ensaio: any, i: number) => {
-    const safeName = 'var' + i;
-    // Busca o valor digitado para este ensaio
-    const resultado = this.resultados.find(r => r.ensaioId === ensaio.id);
-    this.safeVars[safeName] = resultado ? resultado.valor : 0;
-    this.nameMap[ensaio.descricao] = safeName;
-  });
-}
+  gerarNomesSegurosComValoresAtuais() {
+    this.safeVars = {};
+    this.nameMap = {};
+    // Usa o campo técnico real do ensaio (ensaioTecnico ou tecnica)
+    this.ensaios.forEach((ensaio: any) => {
+      // Busca o campo técnico real do backend
+      let tecnica = ensaio.ensaioTecnico || ensaio.tecnica;
+      // Se não existir, gera um nome seguro temporário
+      if (!tecnica) {
+        tecnica = 'ens' + ensaio.id;
+      }
+      // Busca o valor digitado para este ensaio
+      const resultado = this.resultados.find(r => r.ensaioId === ensaio.id);
+      this.safeVars[tecnica] = resultado ? resultado.valor : 0;
+      this.nameMap[ensaio.descricao] = tecnica;
+    });
+  }
 
 // Monta a expressão substituindo nomes de ensaio por nomes seguros
 
@@ -301,6 +310,7 @@ getExpressaoString() {
   this.gerarNomesSegurosComValoresAtuais();
   return this.expressaoDinamica
     .map(b => {
+      // Se for tipo Ensaio, substitui pelo nome técnico real
       if (b.tipo === 'Ensaio' && b.valor !== undefined && this.nameMap[b.valor]) {
         return this.nameMap[b.valor];
       }
@@ -316,7 +326,7 @@ converterExpressaoParaNomes(expr: string): string {
     Object.entries(this.nameMap).map(([k, v]) => [v, k])
   );
   // Substitui todos os varX pelo nome do ensaio
-  return expr.replace(/var\d+/g, (match) => reverseMap[match] || match);
+  return expr.replace(/ens\d+/g, (match) => reverseMap[match] || match);
 }
 // Avalia a expressão usando math.js e os valores dos ensaios
 avaliarExpressao() {
@@ -508,44 +518,66 @@ salvarFormulaEditada() {
   submit(){
     const expressao = this.getExpressaoString();
 
-  if (!expressao || expressao.trim() === '') {
-    this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'A expressão não pode estar vazia.' });
-    return;
-  }
+    if (!expressao || expressao.trim() === '') {
+      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'A expressão não pode estar vazia.' });
+      return;
+    }
 
-  if (!this.validarExpressaoComValores(expressao)) {
-    this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Expressão inválida!' });
-    return;
-  }
+    if (!this.validarExpressaoComValores(expressao)) {
+      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Expressão inválida!' });
+      return;
+    }
 
-    const ensaios = Array.isArray(this.registerForm.value.ensaios)
-  ? this.registerForm.value.ensaios
-  : [this.registerForm.value.ensaios];
-    console.log('Enviando ensaios:', ensaios);
+    // Gera o mapeamento nome amigável <-> tecnica (varX)
+    this.gerarNomesSegurosComValoresAtuais();
+    const ensaiosSelecionados = Array.isArray(this.registerForm.value.ensaios)
+      ? this.registerForm.value.ensaios
+      : [this.registerForm.value.ensaios];
+
+    // Preenche o campo tecnica em uma estrutura auxiliar para uso futuro
+    this.variaveisTecnicas = ensaiosSelecionados.map((ensaioId: any, idx: number) => {
+      const ensaio = this.ensaios.find(e => e.id === ensaioId);
+      const nome = ensaio ? ensaio.descricao : `ens${(idx+1).toString().padStart(2, '0')}`;
+      const tecnica = this.nameMap[nome] || `ens${(idx+1).toString().padStart(2, '0')}`;
+      return {
+        id: ensaioId,
+        nome,
+        tecnica
+      };
+    });
+
+    // O backend espera apenas os IDs dos ensaios
+    const payload = {
+      descricao: this.registerForm.value.descricao,
+      funcao: this.registerForm.value.funcao,
+      ensaios: ensaiosSelecionados,
+      responsavel: this.registerForm.value.responsavel,
+      valor: this.registerForm.value.valor
+    };
+
+    console.log('Enviando cálculo de ensaio:', payload);
+    console.log('Variáveis técnicas (frontend):', this.variaveisTecnicas);
     this.ensaioService.registerCalculoEnsaio(
-      this.registerForm.value.descricao,
-      this.registerForm.value.funcao,
-      ensaios,
-      this.registerForm.value.responsavel,
-      this.registerForm.value.valor
+      payload.descricao,
+      payload.funcao,
+      payload.ensaios,
+      payload.responsavel,
+      payload.valor
     ).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Cálculo de ensaio cadastrado com sucesso!!', life: 1000 });
         this.loadCalculosEnsaio();
       },
-
       error: (err) => {
         console.error('Login error:', err); 
-
         if (err.status === 401) {
           this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
         } else if (err.status === 403) {
           this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Vocês não tem autorização para realizar essa operação.' });
         } else if (err.status === 400) {
-    }
+        }
       }
-
-    })
+    });
   }
   clear(table: Table) {
     table.clear();
@@ -572,8 +604,8 @@ validarExpressaoComValores(expr: string): boolean {
       exprSegura = exprSegura.replace(regex, this.nameMap[origName]);
     });
 
-    // Agora substitua nomes seguros por 1
-    let fakeExpr = exprSegura.replace(/var\d+/g, '1');
+    // Substitui nomes técnicos do tipo ensXX ou ensaioXX por 1
+    let fakeExpr = exprSegura.replace(/ens\d+|ensaio\d+/g, '1');
     fakeExpr = fakeExpr.replace(/\s+/g, ' ');
     fakeExpr = fakeExpr.replace(/1\s+1/g, '1');
     console.log('Expressão para validação:', fakeExpr);

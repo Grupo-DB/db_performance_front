@@ -32,6 +32,7 @@ export interface Variavel{
   id: number;
   nome: string;
   valor: any;
+  tecnica?: string;
 }
 @Component({
   selector: 'app-variavel',
@@ -119,15 +120,50 @@ export class VariavelComponent implements OnInit {
       id: [''],
       nome: [''],
       valor: [{value: 0, disabled: true}],
+      variavelTecnica: [''],
     });
   }
+  
+  ngOnInit(): void {
+    this.loadVariaveis();
+  }
 
-  hasGroup(groups: string[]): boolean {
+    hasGroup(groups: string[]): boolean {
     return this.loginService.hasAnyGroup(groups);
   }
 
-  ngOnInit(): void {
-    this.loadVariaveis();
+  async gerarVariavelTecnica(): Promise<string> {
+    // Busca o maior número já utilizado em variavelTecnica ou tecnica consultando o backend
+    let max = 0;
+    try {
+      const variaveisBackend = await new Promise<any[]>(resolve => {
+        this.ensaioService.getVariaveis().subscribe(resolve, () => resolve([]));
+      });
+      variaveisBackend.forEach(v => {
+        const tecnica = v.variavelTecnica || v.tecnica;
+        if (tecnica) {
+          const match = tecnica.match(/var(\d+)/);
+          if (match) {
+            const num = parseInt(match[1], 10);
+            if (!isNaN(num) && num > max) max = num;
+          }
+        }
+      });
+    } catch (e) {
+      // fallback para lista local
+      this.variaveis.forEach(v => {
+        const tecnica = v.variavelTecnica || v.tecnica;
+        if (tecnica) {
+          const match = tecnica.match(/var(\d+)/);
+          if (match) {
+            const num = parseInt(match[1], 10);
+            if (!isNaN(num) && num > max) max = num;
+          }
+        }
+      });
+    }
+    const next = max + 1;
+    return 'var' + next.toString().padStart(2, '0');
   }
 
   loadVariaveis(): void{
@@ -225,30 +261,32 @@ export class VariavelComponent implements OnInit {
       })
     }
 
-    submit(){
-      this.ensaioService.registerVariavel(
-        this.registerForm.value.nome,
-        this.registerForm.value.valor
-      ).subscribe({
-        next: () => {
-          this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Variável registrada com sucesso!!', life: 1000 });
-          this.loadVariaveis();
-        },
-        error: (err) => {
-          console.error('Login error:', err);
-
-          if (err.status === 401) {
-            this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
-          } else if (err.status === 403) {
-            this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
-          } else if (err.status === 400) {
-            this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
-          }
-          else {
-            this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
-          }
+  async submit(){
+    // Gera o nome técnico automaticamente consultando o backend
+    const variavelTecnica = await this.gerarVariavelTecnica();
+    this.ensaioService.registerVariavel(
+      this.registerForm.value.nome,
+      this.registerForm.value.valor,
+      variavelTecnica
+    ).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Variável registrada com sucesso!!', life: 1000 });
+        this.loadVariaveis();
+      },
+      error: (err) => {
+        console.error('Login error:', err);
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
         }
-      });
-    }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        }
+      }
+    });
+  }
 
 }

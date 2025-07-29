@@ -147,6 +147,94 @@ export class AnaliseComponent implements OnInit {
   planoDescricao: any;
   /////////////////
   resultadosAnteriores: any[] = [];
+  // Propriedade para armazenar o último resultado gravado
+  public ultimoResultadoGravado: any = null;
+
+  // Método para carregar o último resultado gravado da análise atual
+  public carregarUltimoResultadoGravado(): void {
+    if (!this.analiseId) {
+      this.messageService?.add({ severity: 'warn', summary: 'Aviso', detail: 'Nenhuma análise selecionada.' });
+      return;
+    }
+
+    // Buscar o primeiro cálculo e os ids dos ensaios relacionados
+    let calculoNome = '';
+    let ensaioIds: any[] = [];
+    if (this.analisesSimplificadas.length > 0) {
+      const planoDetalhes = this.analisesSimplificadas[0]?.planoDetalhes || [];
+      if (planoDetalhes.length > 0 && planoDetalhes[0].calculo_ensaio_detalhes?.length > 0) {
+        const calc = planoDetalhes[0].calculo_ensaio_detalhes[0];
+        calculoNome = calc.descricao || '';
+        ensaioIds = (calc.ensaios_detalhes || []).map((e: any) => e.id);
+      }
+    }
+
+    if (!calculoNome || !Array.isArray(ensaioIds) || ensaioIds.length === 0) {
+      this.messageService?.add({ severity: 'warn', summary: 'Aviso', detail: 'Não foi possível identificar cálculo e ensaios para buscar resultados anteriores.' });
+      return;
+    }
+
+    this.analiseService?.getResultadosAnteriores(calculoNome, ensaioIds, this.analiseId).subscribe({
+      next: (resultados: any[]) => {
+        this.processarResultadosAnteriores(resultados, { ensaios_detalhes: [] });
+        if (Array.isArray(this.resultadosAnteriores) && this.resultadosAnteriores.length > 0) {
+          this.ultimoResultadoGravado = this.resultadosAnteriores[0];
+          console.log('Último resultado gravado carregado:', this.ultimoResultadoGravado);
+          this.aplicarUltimoResultadoGravado();
+        } else {
+          this.ultimoResultadoGravado = null;
+          this.messageService?.add({ severity: 'info', summary: 'Info', detail: 'Nenhum resultado gravado encontrado.' });
+        }
+      },
+      error: (err: any) => {
+        this.ultimoResultadoGravado = null;
+        this.messageService?.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao buscar resultados anteriores.' });
+        console.error('Erro ao buscar resultados anteriores:', err);
+      }
+    });
+  }
+
+  // Aplica os valores do último resultado gravado nos ensaios e variáveis do modelo
+  public aplicarUltimoResultadoGravado(): void {
+    if (!this.ultimoResultadoGravado || !this.analisesSimplificadas.length) return;
+    const planoDetalhes = this.analisesSimplificadas[0]?.planoDetalhes || [];
+    // Atualiza ensaios
+    planoDetalhes.forEach((plano: any) => {
+      if (plano.ensaio_detalhes) {
+        plano.ensaio_detalhes.forEach((ensaio: any) => {
+          const ensaioSalvo = this.ultimoResultadoGravado.ensaiosUtilizados?.find((e: any) => String(e.id) === String(ensaio.id));
+          if (ensaioSalvo) {
+            // Sempre aplica o valor do ensaio salvo
+            ensaio.valor = ensaioSalvo.valor;
+            // Atualiza variáveis se existirem
+            if (Array.isArray(ensaio.variavel_detalhes)) {
+              // Sempre preenche todas as variáveis do ensaio com o valor salvo
+              if (Array.isArray(ensaioSalvo.variaveis_utilizadas) && ensaioSalvo.variaveis_utilizadas.length > 0) {
+                ensaioSalvo.variaveis_utilizadas.forEach((vSalva: any, idx: number) => {
+                  // Atualiza por nome ou por ordem
+                  let vAtual = ensaio.variavel_detalhes.find((v: any) => v.nome === vSalva.nome);
+                  if (!vAtual && ensaio.variavel_detalhes[idx]) vAtual = ensaio.variavel_detalhes[idx];
+                  if (vAtual) vAtual.valor = vSalva.valor;
+                });
+                // Se houver variáveis extras no array, preenche com o valor do ensaio salvo
+                ensaio.variavel_detalhes.forEach((v: any) => {
+                  if (typeof v.valor === 'undefined' || v.valor === null) v.valor = ensaioSalvo.valor;
+                });
+              } else {
+                // Sempre aplica o valor do ensaio salvo em todas as variáveis
+                ensaio.variavel_detalhes.forEach((v: any) => { v.valor = ensaioSalvo.valor; });
+              }
+            }
+          }
+        });
+      }
+    });
+    // Processa os ensaios diretos com os valores restaurados
+    this.processarTodosEnsaiosDiretos();
+    // Força atualização dos cálculos e da tela
+    this.recalcularTodosCalculos();
+    this.cd.detectChanges();
+  }
   mostrandoResultadosAnteriores = false;
   calculoSelecionadoParaPesquisa: any = null;
   carregandoResultados = false;
@@ -176,8 +264,8 @@ export class AnaliseComponent implements OnInit {
     this.analiseId = Number(this.route.snapshot.paramMap.get('id'));
     this.getDigitadorInfo();
     this.getAnalise();
-    this.mapearEnsaiosParaCalculos();
-    this.recalcularTodosCalculos();
+    //this.mapearEnsaiosParaCalculos();
+    //this.recalcularTodosCalculos();
   }
 
   getAnalise(): void {
@@ -187,6 +275,7 @@ export class AnaliseComponent implements OnInit {
           this.analise = analise;
           this.idAnalise = analise.id;
           this.loadAnalisePorId(analise);
+          // Removido: carregarUltimoResultadoGravado() será chamado após inicialização dos ensaios/cálculos
         },
         (error) => {
           console.error('Erro ao buscar análise:', error);
@@ -205,7 +294,7 @@ export class AnaliseComponent implements OnInit {
       this.analisesSimplificadas[0]?.planoDetalhes.forEach((plano: any) => {
         plano.ensaio_detalhes?.forEach((ensaio: any) => {
           ensaio.digitador = this.digitador;
-          console.log('Digitador do ensaio:', ensaio.digitador);
+          //console.log('Digitador do ensaio:', ensaio.digitador);
         });
         plano.calculo_ensaio_detalhes?.forEach((calc: any) => {
           calc.digitador = this.digitador;
@@ -223,486 +312,7 @@ export class AnaliseComponent implements OnInit {
   );
 }
 
-  loadPlanosAnalise() {
-    this.ensaioService.getPlanoAnalise().subscribe(
-      response => {
-        this.planosAnalise = response;
-      },
-      error => {
-        console.log('Erro ao carregar planos de análise', error);
-      }
-    );
-  }
-
-  loadLinhaProdutos(){
-    this.produtoLinhaService.getProdutos().subscribe(
-      response => {
-        this.materiais = response;
-      },
-      error => {
-        console.log('Erro ao carregar produtos', error);
-      }
-    );
-  }
-
-
-
-  loadProdutosAmostra(): void{
-    this.amostraService.getProdutos().subscribe(
-      response => {
-        this.produtosAmostra = response;
-      }
-      , error => {
-        console.log('Erro ao carregar produtos de amostra', error);
-      }
-    )
-  }
-  
-  gerarNumero(materialNome: string, sequencial: number): string {
-  const ano = new Date().getFullYear().toString().slice(-2); // Ex: '25'
-  const sequencialFormatado = sequencial.toString().padStart(6, '0'); // Ex: '000008'
-  // Formata como 08.392 (você pode ajustar conforme a lógica do seu sequencial)
-  const parte1 = sequencialFormatado.slice(0, 2); // '08'
-  const parte2 = sequencialFormatado.slice(2);    // '0008' -> '392' se quiser os 3 últimos
-  return `${materialNome}${ano} ${parte1}.${parte2}`;
-}
-
-
-
-formatarDatas(obj: any) {
-  for (const key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      const value = obj[key];
-      if (typeof value === 'string' && this.isDate(value)) {
-        obj[key] = this.datePipe.transform(value, 'dd/MM/yyyy');
-      } else if (typeof value === 'object' && value !== null) {
-        this.formatarDatas(value); // Formatar objetos aninhados recursivamente
-      }
-    }
-  }
-}
-
-isDate(value: string): boolean {
-  return !isNaN(Date.parse(value));
-}
-
-// Método auxiliar para verificar tipo de ordem
-isOrdemExpressa(analise: any): boolean {
-  return analise?.amostra_detalhes?.expressa_detalhes !== null;
-}
-
-// Método auxiliar para verificar tipo de ordem normal
-isOrdemNormal(analise: any): boolean {
-  return analise?.amostra_detalhes?.ordem_detalhes !== null;
-}
-
-// Método auxiliar para obter dados da ordem (normal ou expressa)
-getOrdemData(analise: any): any {
-  if (this.isOrdemExpressa(analise)) {
-    return {
-      detalhes: analise.amostra_detalhes.expressa_detalhes,
-      tipo: 'EXPRESSA'
-    };
-  } else if (this.isOrdemNormal(analise)) {
-    return {
-      detalhes: analise.amostra_detalhes.ordem_detalhes,
-      tipo: 'NORMAL'
-    };
-  }
-  return null;
-}
-
-sincronizarValoresEnsaios(produto: any, calc: any) {
-  if (!produto.planoEnsaios || !calc.ensaios_detalhes) return;
-  calc.ensaios_detalhes.forEach((ensaioCalc: any) => {
-    const ensaioPlano = produto.planoEnsaios.find((e: any) => e.descricao === ensaioCalc.descricao);
-    if (ensaioPlano) {
-      ensaioCalc.valor = ensaioPlano.valor;
-    }
-  });
-}
-
-mapearEnsaiosParaCalculos() {
-  if (!this.analisesSimplificadas || this.analisesSimplificadas.length === 0) return;
-  const analiseData = this.analisesSimplificadas[0];
-  const planoDetalhes = analiseData?.planoDetalhes || [];
-  planoDetalhes.forEach((plano: any) => {
-    if (plano.calculo_ensaio_detalhes) {
-      plano.calculo_ensaio_detalhes.forEach((calc: any) => {
-        const varMatches = (calc.funcao.match(/var\d+/g) || []);
-        const variaveisNecessarias: string[] = Array.from(new Set(varMatches));
-        if (!calc.ensaios_detalhes) calc.ensaios_detalhes = [];
-        variaveisNecessarias.forEach((varNecessaria: string) => {
-          let ensaio = calc.ensaios_detalhes.find((e: any) => e.variavel === varNecessaria);
-          // Só adiciona se existir correspondente descritivo no plano
-          if (!ensaio) {
-            // Tenta encontrar no plano.ensaio_detalhes por id, variavel ou nome
-            let ensaioPlano = plano.ensaio_detalhes?.find((e: any) => e.variavel === varNecessaria || e.nome === varNecessaria);
-            if (!ensaioPlano) {
-              // Tenta por ordem (var0 = idx 0, etc)
-              const idx = Number(varNecessaria.replace('var', ''));
-              ensaioPlano = plano.ensaio_detalhes && plano.ensaio_detalhes[idx] ? plano.ensaio_detalhes[idx] : null;
-            }
-            if (ensaioPlano) {
-              // Evita duplicidade: só adiciona se não existir ensaio com mesmo id ou descricao
-              const jaExiste = calc.ensaios_detalhes.some((e: any) =>
-                (e.id !== null && ensaioPlano.id !== null && e.id === ensaioPlano.id) ||
-                (e.descricao && ensaioPlano.descricao && e.descricao === ensaioPlano.descricao)
-              );
-              if (!jaExiste) {
-                ensaio = {
-                  id: ensaioPlano.id,
-                  descricao: ensaioPlano.descricao,
-                  variavel: ensaioPlano.variavel || varNecessaria,
-                  valor: ensaioPlano.valor,
-                  responsavel: ensaioPlano.responsavel,
-                  digitador: this.digitador
-                };
-                calc.ensaios_detalhes.push(ensaio);
-              }
-            }
-            // Se não encontrar correspondente, NÃO cria ensaio para varX
-          }
-        });
-        // Garante que todos os valores não sejam null
-        calc.ensaios_detalhes.forEach((e: any) => {
-          if (e.valor === null || e.valor === undefined) e.valor = 0;
-        });
-      });
-    }
-  });
-}
-
-calcular(calc: any, produto?: any) {
-  console.log('=== MÉTODO CALCULAR INICIADO ===');
-  console.log('Cálculo:', calc.descricao);
-  console.log('Função:', calc.funcao);
-
-  if (produto) {
-    this.sincronizarValoresEnsaios(produto, calc);
-  }
-
-  if (!calc.ensaios_detalhes || !Array.isArray(calc.ensaios_detalhes)) {
-    calc.resultado = 'Sem ensaios para calcular';
-    console.log('Resultado: Sem ensaios para calcular');
-    return;
-  }
-
-  // 1. Descubra todos os varX usados na expressão
-  const varMatches = (calc.funcao.match(/var\d+/g) || []);
-const varList = Array.from(new Set(varMatches)) as string[];
-console.log('Variáveis encontradas na função:', varList);
-
-  // 2. Monte safeVars usando as variáveis EXATAS da função
-  const safeVars: any = {};
-
-  // Tenta mapear cada varX da função para o ensaio correspondente
-  varList.forEach((varName: string, idx: number) => {
-    // Procura um ensaio que tenha exatamente essa variável
-    let ensaio = calc.ensaios_detalhes.find((e: any) => e.variavel === varName);
-
-    // Se não encontrar, tenta pelo índice (caso a ordem bata)
-    if (!ensaio && calc.ensaios_detalhes[idx]) {
-      ensaio = calc.ensaios_detalhes[idx];
-    }
-
-    // Se ainda não encontrar, tenta por nome do campo (caso tenha um campo nome igual ao varName)
-    if (!ensaio) {
-      ensaio = calc.ensaios_detalhes.find((e: any) => e.nome === varName);
-    }
-
-    // Se encontrou, usa o valor; senão, 0
-    if (ensaio) {
-      const valor = Number(ensaio.valor) || 0;
-      safeVars[varName] = valor;
-      console.log(`Mapeamento: ${varName} = ${valor} (de ${ensaio.descricao || ensaio.nome || 'sem descrição'})`);
-    } else {
-      safeVars[varName] = 0;
-      console.warn(`Variável ${varName} não encontrada em nenhum ensaio, usando 0`);
-    }
-  });
-
-  console.log('SafeVars final para avaliação:', safeVars);
-
-  // 3. Avalie usando mathjs
-  try {
-    const resultado = evaluate(calc.funcao, safeVars);
-    calc.resultado = Number(resultado.toFixed(4));
-    console.log(`✓ Resultado calculado: ${calc.resultado}`);
-  } catch (e) {
-    calc.resultado = 'Erro no cálculo';
-    console.error('Erro no cálculo:', e);
-  }
-
-  console.log('=== MÉTODO CALCULAR FINALIZADO ===\n');
-}
-
-
-
-
-private normalize(str: string): string {
-  if (!str) return '';
-  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
-}
-
-recalcularTodosCalculos() {
-  if (!this.analisesSimplificadas || this.analisesSimplificadas.length === 0) return;
-
-  console.log('=== INICIANDO RECÁLCULO DE TODOS OS CÁLCULOS ===');
-  
-  const analiseData = this.analisesSimplificadas[0];
-  const planoDetalhes = analiseData?.planoDetalhes || [];
-
-  planoDetalhes.forEach((plano: any) => {
-    console.log('Processando plano:', plano.descricao);
-    
-    if (plano.calculo_ensaio_detalhes) {
-      plano.calculo_ensaio_detalhes.forEach((calc: any) => {
-        console.log('=== PROCESSANDO CÁLCULO:', calc.descricao, '===');
-        console.log('Ensaios do cálculo ANTES da sincronização:', calc.ensaios_detalhes);
-        
-        // SINCRONIZAR valores dos ensaios antes de calcular
-        if (calc.ensaios_detalhes && plano.ensaio_detalhes) {
-          calc.ensaios_detalhes.forEach((ensaioCalc: any) => {
-            // Buscar pelo ID primeiro, depois pela descrição, depois pela variável
-            let ensaioPlano = plano.ensaio_detalhes.find((e: any) => e.id === ensaioCalc.id);
-
-            if (!ensaioPlano) {
-              ensaioPlano = plano.ensaio_detalhes.find((e: any) => e.descricao === ensaioCalc.descricao);
-            }
-
-            if (!ensaioPlano && ensaioCalc.variavel) {
-              ensaioPlano = plano.ensaio_detalhes.find((e: any) => e.variavel === ensaioCalc.variavel || e.nome === ensaioCalc.variavel);
-            }
-
-            if (ensaioPlano) {
-              const valorAntigo = ensaioCalc.valor;
-              ensaioCalc.valor = ensaioPlano.valor;
-              console.log(`✓ Sincronizado ${ensaioCalc.descricao || ensaioCalc.variavel}: ${valorAntigo} → ${ensaioPlano.valor}`);
-            } else {
-              console.warn(`✗ Ensaio ${ensaioCalc.descricao || ensaioCalc.variavel} (ID: ${ensaioCalc.id}, VAR: ${ensaioCalc.variavel}) não encontrado no plano`);
-              console.log('Ensaios disponíveis no plano:', plano.ensaio_detalhes.map((e: any) => ({
-                id: e.id,
-                descricao: e.descricao,
-                valor: e.valor,
-                variavel: e.variavel,
-                nome: e.nome
-              })));
-            }
-          });
-        }
-        
-        console.log('Ensaios do cálculo APÓS sincronização:', calc.ensaios_detalhes);
-        
-        // Agora calcular com os valores atualizados
-        this.calcular(calc, plano);
-        console.log(`✓ Cálculo ${calc.descricao} resultado FINAL: ${calc.resultado}`);
-        console.log('=== FIM CÁLCULO:', calc.descricao, '===\n');
-      });
-    }
-  });
-  
-  console.log('=== FIM RECÁLCULO DE TODOS OS CÁLCULOS ===');
-}
-
-calcularEnsaios(ensaios: any[], produto: any) {
-  const planoCalculos = produto.planoCalculos || [];
-  if (!planoCalculos.length) {
-    produto.resultado = 'Sem função';
-    return;
-  }
-
-  planoCalculos.forEach((calc: { funcao: any; ensaios_detalhes: any[]; resultado: string; }) => {
-    let funcaoSubstituida = calc.funcao;
-    calc.ensaios_detalhes.forEach((ensaio: any) => {
-      const valor = ensaio.valor !== undefined && ensaio.valor !== null ? ensaio.valor : 0;
-      funcaoSubstituida = funcaoSubstituida.replace(
-        new RegExp('\\b' + ensaio.descricao + '\\b', 'gi'),
-        valor
-      );
-    });
-    console.log('Função final para eval:', funcaoSubstituida);
-    try {
-      calc.resultado = eval(funcaoSubstituida);
-    } catch (e) {
-      calc.resultado = 'Erro no cálculo';
-    }
-  });
-
-  produto.resultado = planoCalculos[0]?.resultado;
-}
-
-calcularTodosCalculosDoPlano(plano: any) {
-  if (plano && plano.calculo_ensaio_detalhes) {
-    plano.calculo_ensaio_detalhes.forEach((calc: any) => this.calcular(calc, plano));
-  }
-}
-
-
-//////////////////////////////////////////////Nova Versão////////////////////////////////////////////////////
-atualizarVariavelEnsaio(ensaio: any, variavel: any, novoValor: any) {
-  // Atualiza o valor na lista de variáveis descritivas (garante referência correta)
-  const idx = ensaio.variavel_detalhes.findIndex((v: any) => v === variavel || v.nome === variavel.nome);
-  const valorNum = parseFloat(novoValor) || 0;
-  if (idx !== -1) {
-    ensaio.variavel_detalhes[idx].valor = valorNum;
-  }
-  variavel.valor = valorNum;
-  console.log(`Variável ${variavel.nome} atualizada para: ${valorNum}`);
-  // Recalcular o ensaio direto
-  this.calcularEnsaioDireto(ensaio);
-}
-
-forcarDeteccaoMudancas() {
-  this.cd.detectChanges();
-}
-
-calcularEnsaioDireto(ensaio: any) {
-  if (!ensaio.funcao) {
-    ensaio.valor = 0;
-    return;
-  }
-
-  try {
-    // Verificar se todas as variáveis necessárias na função estão presentes
-    const varMatches = (ensaio.funcao.match(/var\d+/g) || []);
-    const uniqueVarList = Array.from(new Set(varMatches)) as string[];
-
-    // Não criar nem manter nenhum campo varX em ensaio.variavel_detalhes
-    if (!ensaio.variavel_detalhes) {
-      ensaio.variavel_detalhes = [];
-    }
-    // Manter apenas variáveis descritivas (não técnicas)
-    ensaio.variavel_detalhes = ensaio.variavel_detalhes.filter((v: any) => !/^var\d+$/.test(v.nome));
-    const variaveisDescritivas = ensaio.variavel_detalhes;
-
-    // Mapeamento: varX -> variável descritiva por id, nome ou ordem
-    const safeVars: any = {};
-    uniqueVarList.forEach((varTecnica: string) => {
-      const match = varTecnica.match(/^var(\d+)$/);
-      let valor = 0;
-      if (match) {
-        const idx = Number(match[1]);
-        // 1. Tenta encontrar variável cujo id === idx
-        let varById = variaveisDescritivas.find((v: any) => v.id === idx);
-        // 2. Se não encontrar, tenta por nome contendo o índice
-        let varByName = !varById ? variaveisDescritivas.find((v: any) => v.nome && v.nome.match(new RegExp(`\\b${idx}\\b`))) : null;
-        // 3. Se não encontrar, tenta por ordem
-        let varByOrder = !varById && !varByName && variaveisDescritivas[idx] ? variaveisDescritivas[idx] : null;
-        const varFinal = varById || varByName || varByOrder;
-        if (varFinal && typeof varFinal.valor !== 'undefined') {
-          valor = parseFloat(varFinal.valor);
-          if (isNaN(valor)) valor = 0;
-        }
-      }
-      safeVars[varTecnica] = valor;
-    });
-
-    // Verificar se temos variáveis para calcular
-    if (Object.keys(safeVars).length === 0) {
-      ensaio.valor = 0;
-      return;
-    }
-
-    // Calcular usando mathjs
-    const resultado = evaluate(ensaio.funcao, safeVars);
-
-    // Verificar se o resultado é válido
-    if (isNaN(resultado) || !isFinite(resultado)) {
-      ensaio.valor = 0;
-    } else {
-      ensaio.valor = Number(resultado.toFixed(4)); // Limitar a 4 casas decimais
-    }
-
-    // Após calcular o ensaio direto, recalcular TODOS os cálculos
-    this.recalcularTodosCalculos();
-    this.forcarDeteccaoMudancas();
-  } catch (error) {
-    ensaio.valor = 0;
-  }
-}
-
-recalcularCalculosDependentes(ensaioAlterado: any) {
-  if (!this.analisesSimplificadas || this.analisesSimplificadas.length === 0) return;
-
-  const analiseData = this.analisesSimplificadas[0];
-  const planoDetalhes = analiseData?.planoDetalhes || [];
-
-  planoDetalhes.forEach((plano: any) => {
-    if (plano.calculo_ensaio_detalhes) {
-      plano.calculo_ensaio_detalhes.forEach((calc: any) => {
-        console.log('Verificando cálculo:', calc.descricao);
-        console.log('Ensaios do cálculo:', calc.ensaios_detalhes);
-        console.log('Ensaio alterado:', ensaioAlterado);
-
-        // Verificar se este cálculo usa o ensaio alterado
-        const usaEnsaio = calc.ensaios_detalhes?.some((e: any) => {
-          const comparaId = e.id === ensaioAlterado.id;
-          const comparaDescricao = e.descricao === ensaioAlterado.descricao;
-          
-          console.log(`Comparando: ${e.id} === ${ensaioAlterado.id} = ${comparaId}`);
-          console.log(`Comparando: "${e.descricao}" === "${ensaioAlterado.descricao}" = ${comparaDescricao}`);
-          
-          return comparaId || comparaDescricao;
-        });
-
-        console.log('Usa ensaio:', usaEnsaio);
-
-        if (usaEnsaio) {
-          console.log('Recalculando cálculo:', calc.descricao);
-          
-          // Sincronizar o valor do ensaio alterado no cálculo
-          calc.ensaios_detalhes.forEach((ensaioCalc: any) => {
-            if (ensaioCalc.id === ensaioAlterado.id || ensaioCalc.descricao === ensaioAlterado.descricao) {
-              console.log(`Atualizando valor de ${ensaioCalc.descricao} de ${ensaioCalc.valor} para ${ensaioAlterado.valor}`);
-              ensaioCalc.valor = ensaioAlterado.valor;
-            }
-          });
-
-          // Recalcular o cálculo
-          this.calcular(calc, plano);
-          console.log('Resultado do cálculo:', calc.resultado);
-        }
-      });
-    }
-  });
-}
-
-recalcularTodosEnsaiosDirectos(plano: any) {
-  if (plano && plano.ensaio_detalhes) {
-    plano.ensaio_detalhes.forEach((ensaio: any) => {
-      if (ensaio.funcao) {
-        this.calcularEnsaioDireto(ensaio);
-      }
-    });
-  }
-}
-
-inicializarVariaveisEnsaios() {
-  if (!this.analisesSimplificadas || this.analisesSimplificadas.length === 0) return;
-
-  const analiseData = this.analisesSimplificadas[0];
-  const planoDetalhes = analiseData?.planoDetalhes || [];
-
-  planoDetalhes.forEach((plano: any) => {
-    if (plano.ensaio_detalhes) {
-      plano.ensaio_detalhes.forEach((ensaio: any) => {
-        if (ensaio.funcao && (!ensaio.variavel_detalhes || ensaio.variavel_detalhes.length === 0)) {
-          // Extrair variáveis da função
-          const varMatches = (ensaio.funcao.match(/var\d+/g) || []);
-          const varList: string[] = Array.from(new Set(varMatches));
-
-          ensaio.variavel_detalhes = varList.map((varName: string) => ({
-            nome: varName,
-            valor: 0
-          }));
-        }
-      });
-    }
-  });
-}
-
-
+//==================================PASSO 1 - GET ANÁLISE POR ID ===========================
 loadAnalisePorId(analise: any) {
   if (!analise || !analise.amostra_detalhes) {
     this.analisesSimplificadas = [];
@@ -745,7 +355,7 @@ loadAnalisePorId(analise: any) {
   } else if (isOrdemNormal) {
     // Processar dados da ordem normal
     const ordemDetalhes = analise.amostra_detalhes.ordem_detalhes;
-    const planoDetalhes = ordemDetalhes.plano_detalhes || [];
+    planoDetalhes = ordemDetalhes.plano_detalhes || [];
 
     detalhesOrdem = {
       id: ordemDetalhes.id,
@@ -916,13 +526,627 @@ loadAnalisePorId(analise: any) {
 
   // Após processar todos os dados, inicializar variáveis dos ensaios diretos (só se não foram carregadas do banco)
   setTimeout(() => {
-    this.inicializarVariaveisEnsaios();
-    this.mapearEnsaiosParaCalculos();
-    // Recalcular os cálculos com os valores carregados
-    this.recalcularTodosCalculos();
+      this.inicializarVariaveisEnsaios();
+      this.mapearEnsaiosParaCalculos();
+      // Agora sim, carregar o último resultado gravado para sobrescrever os valores corretamente
+      this.carregarUltimoResultadoGravado();
+      // O processamento dos ensaios diretos e recálculo dos cálculos deve acontecer após aplicar os valores restaurados
+      // Isso é feito dentro de aplicarUltimoResultadoGravado()
   }, 1000);
 }
 
+  // Método para mapear ensaios para cálculos (garante que cada cálculo tenha os ensaios corretos associados)
+  mapearEnsaiosParaCalculos() {
+    if (!this.analisesSimplificadas || this.analisesSimplificadas.length === 0) return;
+    const analiseData = this.analisesSimplificadas[0];
+    const planoDetalhes = analiseData?.planoDetalhes || [];
+    planoDetalhes.forEach((plano: any) => {
+      if (plano.calculo_ensaio_detalhes && plano.ensaio_detalhes) {
+        plano.calculo_ensaio_detalhes.forEach((calculo: any) => {
+          // Se o cálculo não tem ensaios associados, associa todos os ensaios do plano
+          if (!Array.isArray(calculo.ensaios_detalhes) || calculo.ensaios_detalhes.length === 0) {
+            calculo.ensaios_detalhes = plano.ensaio_detalhes.map((e: any) => ({ ...e }));
+          }
+        });
+      }
+    });
+  }
+
+//----------------------------------SEGUNDO PASSO - INICIALIZAÇÃO DE VARIÁVEIS DOS ENSAIOS DIRETOS-------------------
+inicializarVariaveisEnsaios() {
+  if (!this.analisesSimplificadas || this.analisesSimplificadas.length === 0) return;
+
+  const analiseData = this.analisesSimplificadas[0];
+  const planoDetalhes = analiseData?.planoDetalhes || [];
+
+  // Função auxiliar para criar variavel_detalhes a partir dos varX da função
+  function criarVariaveisPorFuncao(funcao: string) {
+    const varMatches = (funcao.match(/var\d+/g) || []);
+    const varList: string[] = Array.from(new Set(varMatches));
+    return varList.map(varName => ({
+      nome: varName,
+      tecnica: varName,
+      valor: 0,
+      varTecnica: varName
+    }));
+  }
+
+  planoDetalhes.forEach((plano: any, planoIdx: number) => {
+    if (plano.ensaio_detalhes) {
+      plano.ensaio_detalhes.forEach((ensaio: any, ensaioIdx: number) => {
+        if (ensaio.funcao) {
+          // Só inicializa variáveis se variavel_detalhes não existir (nem vazio, nem preenchido)
+          if (!Array.isArray(ensaio.variavel_detalhes)) {
+            ensaio.variavel_detalhes = criarVariaveisPorFuncao(ensaio.funcao);
+            console.log(`Preenchendo variavel_detalhes do ensaio '${ensaio.descricao}' automaticamente:`, ensaio.variavel_detalhes);
+          }
+          // Se a função não contém nenhum varX, mas contém nomes amigáveis, converte para nomes técnicos
+          const varMatches = (ensaio.funcao.match(/var\d+/g) || []);
+          const varList: string[] = Array.from(new Set(varMatches));
+          if (varList.length === 0 && Array.isArray(ensaio.variavel_detalhes)) {
+            let funcaoConvertida = ensaio.funcao;
+            ensaio.variavel_detalhes.forEach((variavel: any) => {
+              if (variavel.nome && variavel.tecnica) {
+                // Substitui todas as ocorrências do nome amigável pelo nome técnico
+                const regex = new RegExp(variavel.nome, 'g');
+                funcaoConvertida = funcaoConvertida.replace(regex, variavel.tecnica);
+              }
+            });
+            // Se converteu pelo menos um nome, atualiza a função
+            if (funcaoConvertida !== ensaio.funcao) {
+              console.log(`Convertendo funcao do ensaio '${ensaio.descricao}' para nomes técnicos: '${ensaio.funcao}' -> '${funcaoConvertida}'`);
+              ensaio.funcao = funcaoConvertida;
+            }
+          }
+        }
+        if (ensaio.funcao) {
+          console.log(`Plano[${planoIdx}] Ensaio[${ensaioIdx}] (${ensaio.descricao}): variavel_detalhes final:`, ensaio.variavel_detalhes);
+        }
+      });
+    }
+  });
+}
+
+  // Função corrigida para garantir o mapeamento correto
+  calcularEnsaioDiretoCorrigido(ensaio: any) {
+  if (!ensaio || !ensaio.funcao || !Array.isArray(ensaio.variavel_detalhes)) return;
+  const varMatches = (ensaio.funcao.match(/var\d+/g) || []);
+  const varList: string[] = Array.from(new Set(varMatches));
+  const safeVars: any = {};
+
+  // Log detalhado das variáveis antes do cálculo
+  console.log('--- Variáveis do ensaio antes do cálculo ---');
+  ensaio.variavel_detalhes.forEach((v: any, idx: number) => {
+    console.log(`variavel_detalhes[${idx}]: nome=${v.nome}, valor=${v.valor}, tipo=${typeof v.valor}`);
+  });
+
+  // Para cada varX, associa ao valor da variável descritiva pelo índice
+  varList.forEach((varName) => {
+    const idx = parseInt(varName.replace('var', ''), 10);
+    let valor = 0;
+    if (ensaio.variavel_detalhes[idx] && typeof ensaio.variavel_detalhes[idx].valor !== 'undefined') {
+      valor = Number(ensaio.variavel_detalhes[idx].valor);
+    }
+    safeVars[varName] = valor;
+    console.log(`SafeVars mapeado: ${varName} = ${valor}`);
+  });
+
+  console.log('SafeVars final para avaliação (corrigido):', safeVars);
+  try {
+    const resultado = evaluate(ensaio.funcao, safeVars);
+    ensaio.valor = Number(resultado.toFixed(4));
+    console.log(`✓ Resultado calculado (corrigido): ${ensaio.valor}`);
+  } catch (e) {
+    ensaio.valor = 'Erro no cálculo';
+    console.error('Erro no cálculo (corrigido):', e);
+  }
+}
+
+  processarTodosEnsaiosDiretos() {
+    if (!this.analisesSimplificadas || this.analisesSimplificadas.length === 0) return;
+
+    const analiseData = this.analisesSimplificadas[0];
+    const planoDetalhes = analiseData?.planoDetalhes || [];
+
+    console.log('=== INICIANDO O PROCESSAMENTO DE TODOS OS ENSAIOS DIRETOS ===');
+    planoDetalhes.forEach((plano: any) => {
+      console.log('Processando plano (ensaios diretos):', plano.descricao);
+      if (plano.ensaio_detalhes) {
+        plano.ensaio_detalhes.forEach((ensaio: any) => {
+          if (ensaio.funcao) {
+            this.calcularEnsaioDiretoCorrigido(ensaio);
+          }
+        });
+      }
+    });
+    console.log('=== FIM RECÁLCULO DE TODOS OS ENSAIOS DIRETOS ===');
+  }
+
+  loadPlanosAnalise() {
+    this.ensaioService.getPlanoAnalise().subscribe(
+      response => {
+        this.planosAnalise = response;
+      },
+      error => {
+        console.log('Erro ao carregar planos de análise', error);
+      }
+    );
+  }
+
+  loadLinhaProdutos(){
+    this.produtoLinhaService.getProdutos().subscribe(
+      response => {
+        this.materiais = response;
+      },
+      error => {
+        console.log('Erro ao carregar produtos', error);
+      }
+    );
+  }
+
+
+
+  loadProdutosAmostra(): void{
+    this.amostraService.getProdutos().subscribe(
+      response => {
+        this.produtosAmostra = response;
+      }
+      , error => {
+        console.log('Erro ao carregar produtos de amostra', error);
+      }
+    )
+  }
+  
+  gerarNumero(materialNome: string, sequencial: number): string {
+  const ano = new Date().getFullYear().toString().slice(-2); // Ex: '25'
+  const sequencialFormatado = sequencial.toString().padStart(6, '0'); // Ex: '000008'
+  // Formata como 08.392 (você pode ajustar conforme a lógica do seu sequencial)
+  const parte1 = sequencialFormatado.slice(0, 2); // '08'
+  const parte2 = sequencialFormatado.slice(2);    // '0008' -> '392' se quiser os 3 últimos
+  return `${materialNome}${ano} ${parte1}.${parte2}`;
+}
+
+
+formatarDatas(obj: any) {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      const value = obj[key];
+      if (typeof value === 'string' && this.isDate(value)) {
+        obj[key] = this.datePipe.transform(value, 'dd/MM/yyyy');
+      } else if (typeof value === 'object' && value !== null) {
+        this.formatarDatas(value); // Formatar objetos aninhados recursivamente
+      }
+    }
+  }
+}
+
+isDate(value: string): boolean {
+  return !isNaN(Date.parse(value));
+}
+
+// Método auxiliar para verificar tipo de ordem
+isOrdemExpressa(analise: any): boolean {
+  return analise?.amostra_detalhes?.expressa_detalhes !== null;
+}
+
+// Método auxiliar para verificar tipo de ordem normal
+isOrdemNormal(analise: any): boolean {
+  return analise?.amostra_detalhes?.ordem_detalhes !== null;
+}
+
+// Método auxiliar para obter dados da ordem (normal ou expressa)
+getOrdemData(analise: any): any {
+  if (this.isOrdemExpressa(analise)) {
+    return {
+      detalhes: analise.amostra_detalhes.expressa_detalhes,
+      tipo: 'EXPRESSA'
+    };
+  } else if (this.isOrdemNormal(analise)) {
+    return {
+      detalhes: analise.amostra_detalhes.ordem_detalhes,
+      tipo: 'NORMAL'
+    };
+  }
+  return null;
+}
+
+sincronizarValoresEnsaios(produto: any, calc: any) {
+  if (!produto.planoEnsaios || !calc.ensaios_detalhes) return;
+  calc.ensaios_detalhes.forEach((ensaioCalc: any) => {
+    const ensaioPlano = produto.planoEnsaios.find((e: any) => e.descricao === ensaioCalc.descricao);
+    if (ensaioPlano) {
+      ensaioCalc.valor = ensaioPlano.valor;
+    }
+  });
+}
+
+
+
+calcular(calc: any, produto?: any) {
+  console.log('=== MÉTODO CALCULAR INICIADO ===');
+  console.log('Cálculo:', calc.descricao);
+  console.log('Função:', calc.funcao);
+
+  if (produto) {
+    this.sincronizarValoresEnsaios(produto, calc);
+  }
+
+  if (!calc.ensaios_detalhes || !Array.isArray(calc.ensaios_detalhes)) {
+    calc.resultado = 'Sem ensaios para calcular';
+    console.log('Resultado: Sem ensaios para calcular');
+    return;
+  }
+
+
+  // 1. Descubra todos os varX e ensaioXX usados na expressão
+  const varMatches = (calc.funcao.match(/\b(var\d+|ensaio\d+)\b/g) || []);
+  const varList = Array.from(new Set(varMatches)) as string[];
+  console.log('Variáveis encontradas na função:', varList);
+
+  // 2. Monte safeVars usando as variáveis EXATAS da função
+  const safeVars: any = {};
+
+  // Tenta mapear cada varX ou ensaioXX da função para o ensaio/cálculo correspondente
+  varList.forEach((varName: string, idx: number) => {
+    // Procura por campo variavel, ensaioTecnico ou tecnica
+    let ensaio = calc.ensaios_detalhes.find((e: any) =>
+      e.variavel === varName ||
+      e.ensaioTecnico === varName ||
+      e.tecnica === varName
+    );
+
+    // Se não encontrar, tenta pelo índice (caso a ordem bata)
+    if (!ensaio && calc.ensaios_detalhes[idx]) {
+      ensaio = calc.ensaios_detalhes[idx];
+    }
+
+    // Se ainda não encontrar, tenta por nome do campo (caso tenha um campo nome igual ao varName)
+    if (!ensaio) {
+      ensaio = calc.ensaios_detalhes.find((e: any) => e.nome === varName);
+    }
+
+    // Se encontrou, usa o valor; senão, 0
+    if (ensaio) {
+      const valor = Number(ensaio.valor) || 0;
+      safeVars[varName] = valor;
+      console.log(`Mapeamento: ${varName} = ${valor} (de ${ensaio.descricao || ensaio.nome || 'sem descrição'})`);
+    } else {
+      safeVars[varName] = 0;
+      console.warn(`Variável ${varName} não encontrada em nenhum ensaio, usando 0`);
+    }
+  });
+
+  console.log('SafeVars final para avaliação:', safeVars);
+
+  // 3. Avalie usando mathjs
+  try {
+    const resultado = evaluate(calc.funcao, safeVars);
+    calc.resultado = Number(resultado.toFixed(4));
+    console.log(`✓ Resultado calculado: ${calc.resultado}`);
+  } catch (e) {
+    calc.resultado = 'Erro no cálculo';
+    console.error('Erro no cálculo:', e);
+  }
+
+  console.log('=== MÉTODO CALCULAR FINALIZADO ===\n');
+}
+
+
+
+
+private normalize(str: string): string {
+  if (!str) return '';
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+
+recalcularTodosCalculos() {
+  if (!this.analisesSimplificadas || this.analisesSimplificadas.length === 0) return;
+
+  console.log('=== INICIANDO RECÁLCULO DE TODOS OS CÁLCULOS ===');
+  
+  const analiseData = this.analisesSimplificadas[0];
+  const planoDetalhes = analiseData?.planoDetalhes || [];
+
+  planoDetalhes.forEach((plano: any) => {
+    console.log('Processando plano:', plano.descricao);
+    
+    if (plano.calculo_ensaio_detalhes) {
+      plano.calculo_ensaio_detalhes.forEach((calc: any) => {
+        console.log('=== PROCESSANDO CÁLCULO:', calc.descricao, '===');
+        console.log('Ensaios do cálculo ANTES da sincronização:', calc.ensaios_detalhes);
+        
+        // SINCRONIZAR valores dos ensaios antes de calcular
+        if (calc.ensaios_detalhes && plano.ensaio_detalhes) {
+          calc.ensaios_detalhes.forEach((ensaioCalc: any) => {
+            // Buscar pelo ID primeiro, depois pela descrição, depois pela variável
+            let ensaioPlano = plano.ensaio_detalhes.find((e: any) => e.id === ensaioCalc.id);
+
+            if (!ensaioPlano) {
+              ensaioPlano = plano.ensaio_detalhes.find((e: any) => e.descricao === ensaioCalc.descricao);
+            }
+
+            if (!ensaioPlano && ensaioCalc.variavel) {
+              ensaioPlano = plano.ensaio_detalhes.find((e: any) => e.variavel === ensaioCalc.variavel || e.nome === ensaioCalc.variavel);
+            }
+
+            if (ensaioPlano) {
+              const valorAntigo = ensaioCalc.valor;
+              ensaioCalc.valor = ensaioPlano.valor;
+              console.log(`✓ Sincronizado ${ensaioCalc.descricao || ensaioCalc.variavel}: ${valorAntigo} → ${ensaioPlano.valor}`);
+            } else {
+              console.warn(`✗ Ensaio ${ensaioCalc.descricao || ensaioCalc.variavel} (ID: ${ensaioCalc.id}, VAR: ${ensaioCalc.variavel}) não encontrado no plano`);
+              console.log('Ensaios disponíveis no plano:', plano.ensaio_detalhes.map((e: any) => ({
+                id: e.id,
+                descricao: e.descricao,
+                valor: e.valor,
+                variavel: e.variavel,
+                nome: e.nome
+              })));
+            }
+          });
+        }
+        
+        console.log('Ensaios do cálculo APÓS sincronização:', calc.ensaios_detalhes);
+        
+        // Agora calcular com os valores atualizados
+        this.calcular(calc, plano);
+        console.log(`✓ Cálculo ${calc.descricao} resultado FINAL: ${calc.resultado}`);
+        console.log('=== FIM CÁLCULO:', calc.descricao, '===\n');
+      });
+    }
+  });
+  
+  console.log('=== FIM RECÁLCULO DE TODOS OS CÁLCULOS ===');
+}
+
+calcularEnsaios(ensaios: any[], produto: any) {
+  const planoCalculos = produto.planoCalculos || [];
+  if (!planoCalculos.length) {
+    produto.resultado = 'Sem função';
+    return;
+  }
+
+  planoCalculos.forEach((calc: { funcao: any; ensaios_detalhes: any[]; resultado: string; }) => {
+    let funcaoSubstituida = calc.funcao;
+    calc.ensaios_detalhes.forEach((ensaio: any) => {
+      const valor = ensaio.valor !== undefined && ensaio.valor !== null ? ensaio.valor : 0;
+      funcaoSubstituida = funcaoSubstituida.replace(
+        new RegExp('\\b' + ensaio.descricao + '\\b', 'gi'),
+        valor
+      );
+    });
+    console.log('Função final para eval:', funcaoSubstituida);
+    try {
+      calc.resultado = eval(funcaoSubstituida);
+    } catch (e) {
+      calc.resultado = 'Erro no cálculo';
+    }
+  });
+
+  produto.resultado = planoCalculos[0]?.resultado;
+}
+
+calcularTodosCalculosDoPlano(plano: any) {
+  if (plano && plano.calculo_ensaio_detalhes) {
+    plano.calculo_ensaio_detalhes.forEach((calc: any) => this.calcular(calc, plano));
+  }
+}
+
+
+//////////////////////////////////////////////Nova Versão////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+atualizarVariavelEnsaio(ensaio: any, variavel: any, novoValor: any) {
+  // Atualiza o valor na lista de variáveis descritivas (garante referência correta)
+  const idx = ensaio.variavel_detalhes.findIndex((v: any) => v === variavel || v.nome === variavel.nome);
+  const valorNum = parseFloat(novoValor) || 0;
+  if (idx !== -1) {
+    ensaio.variavel_detalhes[idx].valor = valorNum;
+  }
+  variavel.valor = valorNum;
+  // Sincronizar valor para variável técnica (varX) correspondente, se existir
+  if (variavel.nome && !/^var\d+$/.test(variavel.nome)) {
+    // Procurar se existe uma variável técnica (varX) que deve receber esse valor
+    const varTecnica = ensaio.variavel_detalhes.find((v: any) => /^var\d+$/.test(v.nome) && (variavel.nome.includes(v.nome) || v.nome.includes(variavel.nome)));
+    if (varTecnica) {
+      varTecnica.valor = valorNum;
+      console.log(`Sincronizado valor ${valorNum} para variável técnica ${varTecnica.nome}`);
+    }
+  }
+  console.log(`Variável ${variavel.nome} atualizada para: ${valorNum}`);
+  // Recalcular o ensaio direto
+  this.calcularEnsaioDireto(ensaio);
+}
+
+forcarDeteccaoMudancas() {
+  this.cd.detectChanges();
+}
+
+  calcularEnsaioDireto(ensaio: any) {
+    if (!ensaio.funcao) {
+      ensaio.valor = 0;
+      return;
+    }
+
+    try {
+      // === PROCESSANDO ENSAIO DIRETO: <descricao> ===
+      console.log('=== PROCESSANDO ENSAIO DIRETO:', ensaio.descricao, '===');
+      console.log('Função:', ensaio.funcao);
+      // Extrair as variáveis técnicas da função (var0, var1, ...)
+      const varMatches = (ensaio.funcao.match(/var\d+/g) || []);
+      const uniqueVarList = Array.from(new Set(varMatches)) as string[];
+
+      if (!ensaio.variavel_detalhes) {
+        ensaio.variavel_detalhes = [];
+      }
+      // Não filtra mais variáveis técnicas, mantém apenas as descritivas já existentes
+      const variaveisDescritivas = ensaio.variavel_detalhes;
+
+      // Só associar automaticamente se a quantidade de variáveis descritivas for igual à de varX
+      if (variaveisDescritivas.length === uniqueVarList.length) {
+        uniqueVarList.forEach((varTecnica, idx) => {
+          if (variaveisDescritivas[idx] && !variaveisDescritivas[idx].varTecnica) {
+            variaveisDescritivas[idx].varTecnica = varTecnica;
+          }
+        });
+      }
+
+      // Sincronizar valores das variáveis descritivas com os campos de input (se houver)
+      variaveisDescritivas.forEach((v: any, idx: number) => {
+        if (typeof v.valor === 'undefined' || v.valor === null) {
+          v.valor = 0;
+        }
+        console.log(`Variável descritiva [${idx}]: ${v.nome} = ${v.valor}, varTecnica = ${v.varTecnica}`);
+      });
+
+      // Mapeamento: varX -> variável descritiva por nome (contendo varX), depois por ordem, depois última disponível
+      const safeVars: any = {};
+      console.log('Variáveis descritivas disponíveis:', variaveisDescritivas.map((v: any, i: number) => `[${i}] ${v.nome} = ${v.valor}`));
+      uniqueVarList.forEach((varTecnica: string) => {
+        const match = varTecnica.match(/^var(\d+)$/);
+        let valor = 0;
+        let varByName = null;
+        // 0. Tenta encontrar por campo varTecnica
+        let varByVarTecnica = variaveisDescritivas.find((v: any) => v.varTecnica === varTecnica);
+        if (varByVarTecnica && typeof varByVarTecnica.valor !== 'undefined') {
+          valor = parseFloat(varByVarTecnica.valor);
+          if (isNaN(valor)) valor = 0;
+          console.log(`Mapeamento por varTecnica: ${varTecnica} => ${varByVarTecnica.nome} = ${valor}`);
+        } else if (match) {
+          // 1. Tenta encontrar variável cujo nome contém o nome técnico (ex: "(var3)")
+          varByName = variaveisDescritivas.find((v: any) => v.nome && v.nome.includes(varTecnica));
+          if (varByName && typeof varByName.valor !== 'undefined') {
+            valor = parseFloat(varByName.valor);
+            if (isNaN(valor)) valor = 0;
+            console.log(`Mapeamento por nome: ${varTecnica} => ${varByName.nome} = ${valor}`);
+          } else {
+            // 2. Se não encontrar, tenta por ordem
+            const idx = Number(match[1]);
+            if (variaveisDescritivas[idx] && typeof variaveisDescritivas[idx].valor !== 'undefined') {
+              valor = parseFloat(variaveisDescritivas[idx].valor);
+              if (isNaN(valor)) valor = 0;
+              console.log(`Mapeamento por ordem: ${varTecnica} => [${idx}] ${variaveisDescritivas[idx].nome} = ${valor}`);
+            } else if (variaveisDescritivas.length > 0) {
+              // 3. Se não encontrar, usa a última variável descritiva disponível
+              const ultima = variaveisDescritivas[variaveisDescritivas.length - 1];
+              valor = parseFloat(ultima.valor);
+              if (isNaN(valor)) valor = 0;
+              console.log(`Mapeamento fallback: ${varTecnica} => última (${ultima.nome}) = ${valor}`);
+            } else {
+              valor = 0;
+              console.log(`Mapeamento: ${varTecnica} não encontrado, valor 0`);
+            }
+          }
+        }
+        safeVars[varTecnica] = valor;
+        console.log(`Mapeamento final: ${varTecnica} = ${valor}`);
+      });
+
+      // Se não houver variáveis, resultado é 0
+      if (Object.keys(safeVars).length === 0) {
+        ensaio.valor = 0;
+        console.log('Resultado: 0 (sem variáveis)');
+        return;
+      }
+
+      // Calcular usando mathjs
+      const resultado = evaluate(ensaio.funcao, safeVars);
+
+      // Verificar se o resultado é válido
+      if (isNaN(resultado) || !isFinite(resultado)) {
+        ensaio.valor = 0;
+        console.log('Resultado: 0 (inválido)');
+      } else {
+        ensaio.valor = Number(resultado.toFixed(4));
+        console.log(`✓ Resultado calculado: ${ensaio.valor}`);
+      }
+
+      // Após calcular o ensaio direto, recalcular TODOS os cálculos
+      this.recalcularTodosCalculos();
+      this.forcarDeteccaoMudancas();
+      console.log('=== FIM ENSAIO DIRETO:', ensaio.descricao, '===\n');
+    } catch (error) {
+      ensaio.valor = 0;
+      console.error('Erro no cálculo do ensaio direto:', error);
+    }
+  }
+
+
+
+
+recalcularCalculosDependentes(ensaioAlterado: any) {
+  if (!this.analisesSimplificadas || this.analisesSimplificadas.length === 0) return;
+
+  const analiseData = this.analisesSimplificadas[0];
+  const planoDetalhes = analiseData?.planoDetalhes || [];
+
+  planoDetalhes.forEach((plano: any) => {
+    if (plano.calculo_ensaio_detalhes) {
+      plano.calculo_ensaio_detalhes.forEach((calc: any) => {
+        console.log('Verificando cálculo:', calc.descricao);
+        console.log('Ensaios do cálculo:', calc.ensaios_detalhes);
+        console.log('Ensaio alterado:', ensaioAlterado);
+
+        // Verificar se este cálculo usa o ensaio alterado
+        const usaEnsaio = calc.ensaios_detalhes?.some((e: any) => {
+          const comparaId = e.id === ensaioAlterado.id;
+          const comparaDescricao = e.descricao === ensaioAlterado.descricao;
+          
+          console.log(`Comparando: ${e.id} === ${ensaioAlterado.id} = ${comparaId}`);
+          console.log(`Comparando: "${e.descricao}" === "${ensaioAlterado.descricao}" = ${comparaDescricao}`);
+          
+          return comparaId || comparaDescricao;
+        });
+
+        console.log('Usa ensaio:', usaEnsaio);
+
+        if (usaEnsaio) {
+          console.log('Recalculando cálculo:', calc.descricao);
+          
+          // Sincronizar o valor do ensaio alterado no cálculo
+          calc.ensaios_detalhes.forEach((ensaioCalc: any) => {
+            if (ensaioCalc.id === ensaioAlterado.id || ensaioCalc.descricao === ensaioAlterado.descricao) {
+              console.log(`Atualizando valor de ${ensaioCalc.descricao} de ${ensaioCalc.valor} para ${ensaioAlterado.valor}`);
+              ensaioCalc.valor = ensaioAlterado.valor;
+            }
+          });
+
+          // Recalcular o cálculo
+          this.calcular(calc, plano);
+          console.log('Resultado do cálculo:', calc.resultado);
+        }
+      });
+    }
+  });
+}
+
+recalcularTodosEnsaiosDirectos(plano: any) {
+  if (plano && plano.ensaio_detalhes) {
+    plano.ensaio_detalhes.forEach((ensaio: any) => {
+      if (ensaio.funcao) {
+        this.calcularEnsaioDireto(ensaio);
+      }
+    });
+  }
+}
 
 
 salvarAnaliseResultados() {
@@ -1010,95 +1234,17 @@ salvarAnaliseResultados() {
     calculos: calculos
   };
 
-  console.log('Payload completo para análise:', {
-    idAnalise,
-    tipoOrdem: analiseData.ordemTipo,
-    totalEnsaios: ensaios.length,
-    totalCalculos: calculos.length,
-    ensaiosDetalhados: ensaios,
-    calculosDetalhados: calculos,
-    payload
-  });
-
+  // Chamada para salvar a análise no backend
   this.analiseService.registerAnaliseResultados(idAnalise, payload).subscribe({
     next: () => {
-      this.messageService.add({ 
-        severity: 'success', 
-        summary: 'Sucesso', 
-        detail: `Análise ${analiseData.ordemTipo?.toLowerCase() || 'processada'} registrada com sucesso.` 
-      });
+      this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Análise salva com sucesso!' });
+      // Aqui você pode recarregar dados ou navegar, se desejar
     },
     error: (err) => {
-      console.error('Erro ao registrar análise:', err);
-      if (err.status === 401) {
-        this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
-      } else if (err.status === 403) {
-        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
-      } else if (err.status === 400) {
-        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
-      } else {
-        this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
-      }
+      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao salvar análise.' });
+      console.error('Erro ao salvar análise:', err);
     }
   });
-}
-
-///--------------------------------CONSULTAR RESULTADOS-------------------------------///////
-
-// ...existing code...
-
-buscarResultadosAnteriores(calc: any) {
-  console.log('=== INICIANDO BUSCA DE RESULTADOS ANTERIORES ===');
-  console.log('Cálculo:', calc);
-  
-  if (!calc || !calc.ensaios_detalhes || calc.ensaios_detalhes.length === 0) {
-    console.error('ERRO: Nenhum ensaio encontrado');
-    this.messageService.add({
-      severity: 'warn',
-      summary: 'Aviso',
-      detail: 'Nenhum ensaio encontrado para pesquisar resultados anteriores.'
-    });
-    return;
-  }
-
-  this.calculoSelecionadoParaPesquisa = calc;
-  this.carregandoResultados = true;
-  this.mostrandoResultadosAnteriores = true;
-
-  const ensaioIds = calc.ensaios_detalhes.map((ensaio: any) => ensaio.id);
-
-  console.log('Parâmetros da busca:', {
-    calculoDescricao: calc.descricao,
-    ensaioIds: ensaioIds,
-    limit: 10
-  });
-
-  // USAR O SERVICE NORMALMENTE - IGUAL TODOS OS OUTROS ENDPOINTS
-  this.analiseService.getResultadosAnteriores(calc.descricao, ensaioIds, 10)
-    .subscribe({
-      next: (resultados: any[]) => {
-        console.log('✅ Resultados recebidos via service:', resultados);
-        this.processarResultadosAnteriores(resultados, calc);
-        this.carregandoResultados = false;
-
-        if (this.resultadosAnteriores.length === 0) {
-          this.messageService.add({
-            severity: 'info',
-            summary: 'Informação',
-            detail: 'Nenhum resultado anterior encontrado para este cálculo.'
-          });
-        }
-      },
-      error: (error: any) => {
-        console.error('❌ Erro no service:', error);
-        this.carregandoResultados = false;
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erro',
-          detail: `Erro ao buscar resultados: ${error.message}`
-        });
-      }
-    });
 }
 
 processarResultadosAnteriores(resultados: any[], calcAtual: any) {
