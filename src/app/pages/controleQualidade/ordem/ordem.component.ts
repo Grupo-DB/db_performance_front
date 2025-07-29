@@ -45,6 +45,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { AnaliseService } from '../../../services/controleQualidade/analise.service';
 import { AmostraService } from '../../../services/controleQualidade/amostra.service';
 import { TagModule } from 'primeng/tag';
+import { Amostra } from '../amostra/amostra.component';
 
 
 interface OrdemForm {
@@ -131,6 +132,9 @@ export class OrdemComponent implements OnInit {
   @ViewChild('dt1') dt1!: Table;
   inputValue: string = '';
 
+  materiaisFiltro: any[] = [];
+  amostras: Amostra[] = [];
+
   ordens: Ordem[]=[];
   analises: any[] = [];
   uploadedFilesWithInfo: FileWithInfo[] = [];
@@ -142,6 +146,13 @@ export class OrdemComponent implements OnInit {
   planosAnalise: any[] = [];
   digitador: string = '';
 
+
+
+  teste: any[] = [];
+
+
+
+
   isCreatingOrdem: boolean = false;
   isCreatingAnalise: boolean = false;
   registerOrdemForm!: FormGroup<OrdemForm>;
@@ -152,7 +163,7 @@ export class OrdemComponent implements OnInit {
   { id: 2, nome: 'Desenvolvimento de Produtos' },
 ]
 
-responsaveis = [
+  responsaveis = [
     { value: 'Antonio Carlos Vargas Sito' },
     { value: 'Fabiula Bueno' },
     { value: 'Janice Castro de Oliveira'},
@@ -166,6 +177,21 @@ responsaveis = [
     { value: 'Sâmella de Campos Moreira'},
     { value: 'David Weslei Sprada'},
     { value: 'Camila Vitoria Carneiro Alves Santos'},
+  ]
+
+  materiais: any[] = [
+    { value: 'Aditivos' },
+    { value: 'Acabamento' },
+    { value: 'Areia' },
+    { value: 'Argamassa' },
+    { value: 'Cal' },
+    { value: 'Calcario' },
+    { value: 'Cimento' },
+    { value: 'Cinza Pozolana' },
+    { value: 'Fertilizante' },
+    { value: 'Finaliza' },
+    { value: 'Mineracao' },
+    { value: 'Areia' },
   ]
   
   router: any;
@@ -208,11 +234,57 @@ responsaveis = [
     this.loadAnalises();
     this.loadPlanosAnalise();
     this.configurarFormularioInicial();
+    // this.loadAmostras();
   }
+
+  // loadAmostras(): void {
+  //   this.amostraService.getAmostras().subscribe(
+  //     response => {
+  //       this.amostras = response;
+  //       console.log('fdf');
+  //       this.materiaisFiltro = response.map((amostra: { material: any; }) => ({
+  //         label: amostra.material,
+  //         value: amostra.material
+  //       }));
+  //               console.log(response);
+
+  //       console.log('Amostras carregadas:', this.amostras);
+  //     },
+  //     error => {
+  //       console.error('Erro ao carregar amostras:', error);
+  //     }
+  //   );
+  // }
+
+
+
   loadAnalises(): void {
     this.analiseService.getAnalises().subscribe(
       response => {
         this.analises = response;
+
+        // const unicos = new Set<string>();
+
+        // this.materiaisFiltro = response
+        //   .filter((analise: any) => {
+        //     const material = analise.amostra_detalhes.material;
+        //     if (unicos.has(material)) return false;
+        //     unicos.add(material);
+        //     return true;
+        //   })
+        //   .map((analise: any) => ({
+        //     label: analise.amostra_detalhes.material, // texto exibido
+        //     value: analise.amostra_detalhes.material  // valor único para o filtro
+        //   }));
+
+        console.log('AQUI');
+        // this.materiaisFiltro = response.map((analise: any) => ({
+        //   label: analise.amostra_detalhes.material, 
+        //   value: analise.amostra_detalhes.material                         
+        // }));
+        console.log(this.materiaisFiltro);
+
+
         console.log("Resposta: ", this.analises);
       }, error => {
         console.log('Mensagem', error);
@@ -240,6 +312,7 @@ responsaveis = [
       { label: 'Imagens', icon: 'pi pi-image'},
     ];
   }
+  
   getSeverity(materialNome: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | undefined {
     if (!materialNome) {
       return 'secondary';
@@ -263,6 +336,7 @@ responsaveis = [
   }
 
   filterTable() {
+    console.log('TESTE');//tem que apagar
     console.log(this.dt1.filterGlobal(this.inputValue,'contains'));//tem que apagar
     this.dt1.filterGlobal(this.inputValue,'contains');
   }

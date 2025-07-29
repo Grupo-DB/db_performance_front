@@ -299,8 +299,17 @@
                                         <div class="flex flex-column w-12 gap-3">
                                             <div class="w-12 text-left">
                                                 <p-floatLabel variant="on">
-                                                    <p-select inputId="float-label" [style]="{'width':'100%'}" [options]="materiais" formControlName="material"
-                                                        optionLabel="value" optionValue="value" appendTo="body" [filter]="true" filterBy="value" [showClear]="true"
+                                                    <p-select 
+                                                        inputId="float-label" 
+                                                        [style]="{'width':'100%'}" 
+                                                        [options]="materiais" 
+                                                        formControlName="material"
+                                                        optionLabel="value" 
+                                                        optionValue="value" 
+                                                        appendTo="body" 
+                                                        [filter]="true" 
+                                                        filterBy="value" 
+                                                        [showClear]="true"
                                                         (onChange)="onMaterialChange($event.value)">
                                                     </p-select>
                                                     <label for="float-label">Selecione o Material</label>

@@ -108,6 +108,7 @@
                                                     <ng-template pTemplate="filter" let-value let-filter="filterCallback">
                                                         <p-multiselect 
                                                             [ngModel]="value" 
+                                                            [options]="materiaisFiltro" 
                                                             (onChange)="filter($event.value)" 
                                                             placeholder="Filtrar o Material" 
                                                             [showClear]="true" 
@@ -120,12 +121,12 @@
                                                                 <div class="flex gap-1 flex-wrap">
                                                                     <p-tag 
                                                                         *ngFor="let option of selectedOptions" 
-                                                                        [value]="option.label" 
+                                                                        [value]="option.value" 
                                                                         [severity]="getSeverity(option.value)" />
                                                                 </div>
                                                             </ng-template>
                                                             <ng-template pTemplate="item" let-option>
-                                                                <p-tag [value]="option.label" [severity]="getSeverity(option.value)" />
+                                                                <p-tag [value]="option.value" [severity]="getSeverity(option.value)" />
                                                             </ng-template>
                                                         </p-multiselect>
                                                     </ng-template>
@@ -164,7 +165,7 @@
                                             <td style="text-align: center;">{{ analise.amostra_detalhes.data_coleta | date:'dd/MM/yy'}}</td>
                                             <td style="text-align: center;">{{ analise.amostra_detalhes.fornecedor }}</td>
                                             <td style="text-align: center;">{{ analise.amostra_detalhes.numero }}</td>
-                                            <td style="text-align: center;">{{ analise.amostra_detalhes.expressa_detalhes.responsavel }}</td>
+                                            <td style="text-align: center;">{{ analise.amostra_detalhes.expressa_detalhes?.responsavel }}</td>
                                             <td style="text-align: center;">{{ analise.amostra_detalhes.status }}</td>
 
                                             <td style="vertical-align: middle; text-align: center;">
