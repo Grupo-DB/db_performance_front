@@ -132,6 +132,7 @@ export class OrdemComponent implements OnInit {
   @ViewChild('dt1') dt1!: Table;
   inputValue: string = '';
 
+  produtosFiltrados: any[] = [];
   materiaisFiltro: any[] = [];
   amostras: Amostra[] = [];
 
@@ -193,6 +194,12 @@ export class OrdemComponent implements OnInit {
     { value: 'Mineracao' },
     { value: 'Areia' },
   ]
+
+  finalidades = [
+    { id: 0, nome: 'Controle de Qualidade' },
+    { id: 1, nome: 'SAC' },
+    { id: 2, nome: 'Desenvolvimento de Produtos' },
+  ]
   
   router: any;
   constructor(
@@ -204,6 +211,7 @@ export class OrdemComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private amostraService: AmostraService
   )
+  
   {
     this.registerOrdemForm = new FormGroup<OrdemForm>({
       data: new FormControl('', [Validators.required]),
@@ -236,6 +244,92 @@ export class OrdemComponent implements OnInit {
     this.configurarFormularioInicial();
     // this.loadAmostras();
   }
+
+onMaterialChange(materialNome: string) {
+  console.log('Material selecionado:', materialNome);
+  
+  if (materialNome) {
+    // Normaliza o nome e atualiza o formulário
+    const materialNormalizado = this.normalize(materialNome);
+    console.log('Material normalizado:', materialNormalizado);
+    
+    // Atualiza o valor no formulário com a versão normalizada
+    // this.registerOrdemForm.get('material')?.setValue(materialNormalizado, { emitEvent: false });
+    
+    // Usa a versão normalizada para todas as operações
+    this.amostraService.getProximoSequencialPorNome(materialNormalizado).subscribe({
+      next: (sequencial) => {
+        console.log('Sequencial recebido do backend:', sequencial);
+        const numero = this.gerarNumero(materialNormalizado, sequencial);
+        this.registerOrdemForm.get('numero')?.setValue(numero);
+        console.log('Número da amostra gerado:', numero);
+        this.loadProdutosPorMaterial(materialNormalizado);
+      },
+      error: (err) => {
+        console.error('Erro ao buscar sequencial:', err);
+        const sequencialFallback = this.gerarSequencialFallback(materialNormalizado);
+        const numero = this.gerarNumero(materialNormalizado, sequencialFallback);
+        this.registerOrdemForm.get('numero')?.setValue(numero);
+        this.messageService.add({ 
+          severity: 'warn', 
+          summary: 'Aviso', 
+          detail: 'Usando numeração local. Verifique a conectividade.' 
+        });
+      }
+    });
+  }
+}
+
+private gerarSequencialFallback(materialNome: string): number {
+  // Você pode usar timestamp + hash do nome do material
+  const timestamp = Date.now();
+  const hash = materialNome.split('').reduce((a, b) => {
+    a = ((a << 5) - a) + b.charCodeAt(0);
+    return a & a;
+  }, 0);
+  
+  // Combina timestamp com hash para gerar um número único
+  return Math.abs((timestamp + hash) % 999999) + 1;
+}
+
+loadProdutosPorMaterial(materialNome: string): void {
+  if (!materialNome) {
+    this.produtosFiltrados = [];
+    return;
+  }
+
+  this.amostraService.getProdutosPorMaterial(materialNome).subscribe({
+    next: (response) => {
+      this.produtosFiltrados = response;
+      console.log('Produtos filtrados por material:', this.produtosFiltrados);
+    },
+    error: (err) => {
+      console.error('Erro ao carregar produtos por material:', err);
+      this.produtosFiltrados = [];
+      this.messageService.add({ 
+        severity: 'error', 
+        summary: 'Erro', 
+        detail: 'Erro ao carregar produtos para o material selecionado.' 
+      });
+    }
+  });
+}
+
+gerarNumero(materialNome: string, sequencial: number): string {
+  //const ano = new Date().getFullYear().toString().slice(-2); // 
+  const sequencialFormatado = sequencial.toString().padStart(6, '0'); // Ex: '000008'
+  // Formata como 08.392 
+  const parte1 = sequencialFormatado.slice(0, 2); // '08'
+  const parte2 = sequencialFormatado.slice(2);    // '0008' 
+  return `${materialNome} ${parte1}.${parte2}`;
+}
+
+private normalize(str: string): string {
+  if (!str) return '';
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+
+
 
   analisesFiltradas: any[] = []; // array para exibir na tabela
   materiaisSelecionados: string[] = []; // valores escolhidos no multiselect
@@ -532,7 +626,20 @@ export class OrdemComponent implements OnInit {
     }
   });
 }
+criarOSDoFormulario() {
+  console.log('🚀 Iniciando criação de OS do formulário');
 
+  // Validação para campos  mínimos
+  const camposEssenciais = {
+    'material': 'Material',
+    'tipoAmostra': 'Tipo de Amostra', 
+    'dataColeta': 'Data de Coleta',
+    'dataEntrada': 'Data de Entrada',
+    'finalidade': 'Finalidade',
+    'fornecedor': 'Fornecedor',
+    'status': 'Status'
+  };
+}
 
    private buscarAmostraPorIdAlternativo(ordemId: number): void {
     console.log('🔍 Buscando amostra por método alternativo...');
