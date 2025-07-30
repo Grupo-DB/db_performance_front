@@ -237,59 +237,59 @@ export class OrdemComponent implements OnInit {
     // this.loadAmostras();
   }
 
-  // loadAmostras(): void {
-  //   this.amostraService.getAmostras().subscribe(
-  //     response => {
-  //       this.amostras = response;
-  //       console.log('fdf');
-  //       this.materiaisFiltro = response.map((amostra: { material: any; }) => ({
-  //         label: amostra.material,
-  //         value: amostra.material
-  //       }));
-  //               console.log(response);
-
-  //       console.log('Amostras carregadas:', this.amostras);
-  //     },
-  //     error => {
-  //       console.error('Erro ao carregar amostras:', error);
-  //     }
-  //   );
-  // }
-
-
-
+  analisesFiltradas: any[] = []; // array para exibir na tabela
+  materiaisSelecionados: string[] = []; // valores escolhidos no multiselect
   loadAnalises(): void {
     this.analiseService.getAnalises().subscribe(
-      response => {
-        this.analises = response;
+      (response: any[]) => {
+        // Mapeia e cria campos "planos" para facilitar o filtro global
+        this.analises = response.map((analise: any) => ({
+          ...analise,
+          material: analise.amostra_detalhes?.material ?? '',
+          fornecedor: analise.amostra_detalhes?.fornecedor ?? '',
+          numero: analise.amostra_detalhes?.numero ?? '',
+          status: analise.amostra_detalhes?.status ?? '',
+          responsavel: analise.amostra_detalhes?.expressa_detalhes?.responsavel ?? '',
+          data_entrada: analise.amostra_detalhes?.data_entrada ?? '',
+          data_coleta: analise.amostra_detalhes?.data_coleta ?? ''
+        }));
 
-        // const unicos = new Set<string>();
+        // Inicializa a lista filtrada
+        this.analisesFiltradas = [...this.analises];
 
-        // this.materiaisFiltro = response
-        //   .filter((analise: any) => {
-        //     const material = analise.amostra_detalhes.material;
-        //     if (unicos.has(material)) return false;
-        //     unicos.add(material);
-        //     return true;
-        //   })
-        //   .map((analise: any) => ({
-        //     label: analise.amostra_detalhes.material, // texto exibido
-        //     value: analise.amostra_detalhes.material  // valor único para o filtro
-        //   }));
-
-        console.log('AQUI');
-        // this.materiaisFiltro = response.map((analise: any) => ({
-        //   label: analise.amostra_detalhes.material, 
-        //   value: analise.amostra_detalhes.material                         
-        // }));
-        console.log(this.materiaisFiltro);
-
-
-        console.log("Resposta: ", this.analises);
-      }, error => {
-        console.log('Mensagem', error);
+        // Cria opções únicas para o MultiSelect
+        this.materiaisFiltro = this.analises
+          .map((analise) => ({
+            label: analise.material,
+            value: analise.material
+          }))
+          .filter(
+            (item, index, self) =>
+              index === self.findIndex((opt) => opt.value === item.value)
+          );
+      },
+      (error) => {
+        console.error('Erro ao carregar análises', error);
       }
-    )
+    );
+  }
+
+  // Filtro Global
+  filterTable(): void {
+    if (this.dt1) {
+      this.dt1.filterGlobal(this.inputValue, 'contains');
+    }
+  }
+
+  // Filtro pelo MultiSelect
+  filtrarPorMateriais(): void {
+    if (this.materiaisSelecionados.length === 0) {
+      this.analisesFiltradas = [...this.analises];
+    } else {
+      this.analisesFiltradas = this.analises.filter((analise) =>
+        this.materiaisSelecionados.includes(analise.material)
+      );
+    }
   }
 
   loadOrdens():void{
@@ -335,11 +335,7 @@ export class OrdemComponent implements OnInit {
 
   }
 
-  filterTable() {
-    console.log('TESTE');//tem que apagar
-    console.log(this.dt1.filterGlobal(this.inputValue,'contains'));//tem que apagar
-    this.dt1.filterGlobal(this.inputValue,'contains');
-  }
+
 
   hasGroup(groups: string[]): boolean {
     return this.loginService.hasAnyGroup(groups);
