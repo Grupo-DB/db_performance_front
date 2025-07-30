@@ -272,16 +272,16 @@
                                         <!-- <input type="number" [(ngModel)]="e.valor" (ngModelChange)="calcular(calc, plano)" style="width: 80px;" /> -->
                                     </td>
                                     <td>
-                                        <div class="calculo-actions" style="margin-top: 10px; display: flex; gap: 10px; justify-content: flex-end;">
-                                            <p-button 
-                                            icon="pi pi-history" 
-                                            label="Histórico"
-                                            severity="info"
-                                            size="small"
-                                            (onClick)="processarResultadosAnteriores(calc, plano)"
-                                            [loading]="carregandoResultados && calculoSelecionadoParaPesquisa?.descricao === calc.descricao">
-                                            </p-button>
-                                        </div>
+                <div class="calculo-actions" style="margin-top: 10px; display: flex; gap: 10px; justify-content: flex-end;">
+                    <p-button 
+                    icon="pi pi-history" 
+                    label="Histórico"
+                    severity="info"
+                    size="small"
+                    (onClick)="abrirDrawerResultados(calc, plano)"
+                    [loading]="carregandoResultados && calculoSelecionadoParaPesquisa?.descricao === calc.descricao">
+                    </p-button>
+                </div>
                                         
 
                                     </td>
@@ -321,33 +321,34 @@
         </div>
     </div>
 
-    <p-dialog 
-  header="Resultados Anteriores - {{ calculoSelecionadoParaPesquisa?.descricao }}"
-  [(visible)]="mostrandoResultadosAnteriores"
+
+<p-drawer 
+  [visible]="drawerResultadosVisivel"
   [modal]="true"
-  [style]="{ width: '90vw', maxWidth: '1200px' }"
-  [closable]="true"
-  (onHide)="fecharResultadosAnteriores()">
-  
+  [dismissible]="true"
+  position="right"
+  [style]="{ width: '500px', maxWidth: '90vw' }"
+  (onHide)="fecharDrawerResultados()">
+  <ng-template pTemplate="header">
+    Resultados Anteriores - {{ calculoSelecionadoParaPesquisa?.descricao }}
+  </ng-template>
   <div *ngIf="carregandoResultados" class="text-center p-4">
     <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
     <p>Carregando histórico...</p>
   </div>
-
   <div *ngIf="!carregandoResultados && resultadosAnteriores.length > 0">
     <p-table [value]="resultadosAnteriores" [scrollable]="true" scrollHeight="400px">
       <ng-template pTemplate="header">
         <tr>
           <th>Data</th>
           <th>Amostra</th>
-          <th>Resultado do Cálculo</th>
-          <th>Ensaios Utilizados</th>
+          <th>Resultado</th>
+          <th>Ensaios</th>
           <th>Responsável</th>
           <th>Digitador</th>
           <th>Ação</th>
         </tr>
       </ng-template>
-      
       <ng-template pTemplate="body" let-resultado>
         <tr>
           <td>{{ resultado.dataFormatada }}</td>
@@ -375,17 +376,15 @@
       </ng-template>
     </p-table>
   </div>
-
   <div *ngIf="!carregandoResultados && resultadosAnteriores.length === 0" class="text-center p-4">
     <i class="pi pi-info-circle" style="font-size: 2rem; color: #2196F3;"></i>
     <p>Nenhum resultado anterior encontrado para este cálculo.</p>
   </div>
-
   <ng-template pTemplate="footer">
     <p-button 
       label="Fechar" 
       icon="pi pi-times" 
-      (onClick)="fecharResultadosAnteriores()">
+      (onClick)="fecharDrawerResultados()">
     </p-button>
   </ng-template>
-</p-dialog>
+</p-drawer>
