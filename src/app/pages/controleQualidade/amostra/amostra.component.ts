@@ -280,11 +280,11 @@ materiais: any[] = [
   ];
 
   periodos = [
-    { id: 0, nome: 'Manhã' },
-    { id: 1, nome: 'Tarde' },
-    { id: 2, nome: 'Noite' },
-    { id: 3, nome: 'Pontual' },
-    { id: 4, nome: 'Diário' },
+    { id: 0, nome: 'Diário' },
+    { id: 1, nome: 'Pontual' },
+    { id: 2, nome: 'Semanal' },
+    { id: 3, nome: 'Mensal' },
+    { id: 4, nome: 'Anual' },
   ]
 
   locaisColeta = [
@@ -1022,7 +1022,7 @@ enriquecerDadosFormulario(formData: any): any {
     const periodoSelecionado = this.periodos.find(p => p.id === formData.periodoTurno);
     dadosEnriquecidos.periodoTurnoInfo = {
       id: formData.periodoTurno,
-      nome: periodoSelecionado?.nome || 'Período não encontrado'
+      nome: periodoSelecionado?.nome || 'Periodicidade não encontrada'
     };
   }
   
