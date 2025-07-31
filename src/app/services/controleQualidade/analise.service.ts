@@ -68,5 +68,18 @@ getResultadosAnteriores(calculoDescricao: string, ensaioIds: number[], limit: nu
   
   return this.httpClient.post<any[]>(url, body);
 }
+
+getResultadosAnterioresEnsaios(ensaioDescricao: string, ensaioIds: number[], limit: number = 10): Observable<any[]> {
+  const url = `http://localhost:8000/analise/analise/resultados-anteriores/`;
+  
+  // Corpo da requisição POST
+  const body = {
+    ensaio_nome: ensaioDescricao,
+    ensaioIds: ensaioIds,
+    limit: limit
+  };
+  
+  return this.httpClient.post<any[]>(url, body);
+}
   
 }

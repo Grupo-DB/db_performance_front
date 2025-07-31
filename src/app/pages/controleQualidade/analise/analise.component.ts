@@ -148,9 +148,12 @@ export class AnaliseComponent implements OnInit {
   ///
   public ultimoResultadoGravado: any = null;
   mostrandoResultadosAnteriores = false;
+  mostrandoEnsaiosAnteriores = false;
   calculoSelecionadoParaPesquisa: any = null;
+  ensaioSelecionadoParaPesquisa: any = null;
   carregandoResultados = false;
   drawerResultadosVisivel = false;
+  drawerResultadosEnsaioVisivel = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -1248,6 +1251,7 @@ fecharResultadosAnteriores() {
   this.mostrandoResultadosAnteriores = false;
   this.resultadosAnteriores = [];
   this.calculoSelecionadoParaPesquisa = null;
+  this.ensaioSelecionadoParaPesquisa = null;
   }
 
   abrirDrawerResultados(calc: any, plano: any) {
@@ -1260,6 +1264,7 @@ fecharResultadosAnteriores() {
     console.log('Buscando resultados anteriores:', { calculoNome, ensaioIds, analiseId: this.analiseId });
     this.analiseService?.getResultadosAnteriores(calculoNome, ensaioIds, this.analiseId).subscribe({
       next: (resultados: any[]) => {
+         console.log('Resultados recebidos:kkkkkkkkkkkkkkkkkkkkk', resultados);
   this.processarResultadosAnteriores(resultados, calc);
   this.carregandoResultados = false;
 },
@@ -1277,4 +1282,155 @@ fecharResultadosAnteriores() {
     this.resultadosAnteriores = [];
   }
 
+ abrirDrawerResultadosEnsaios(ensaio: any) {
+    this.ensaioSelecionadoParaPesquisa = ensaio;
+    this.carregandoResultados = true;
+    this.drawerResultadosEnsaioVisivel = true;
+    // Parâmetros obrigatórios para a API
+    const ensaioNome = ensaio.descricao || '';
+    const ensaioIds = [ensaio.id];
+    console.log('Buscando resultados anteriores:', { ensaioNome, ensaioIds, analiseId: this.analiseId });
+    this.analiseService?.getResultadosAnterioresEnsaios(ensaioNome, ensaioIds, this.analiseId).subscribe({
+      next: (resultados: any[]) => {
+        console.log('Resultados recebidos:kkkkkkkkkkkkkkkkkkkkk', resultados);
+  this.processarResultadosAnterioresEnsaios(resultados, ensaio);
+  this.carregandoResultados = false;
+},
+      error: (err: any) => {
+        this.carregandoResultados = false;
+        this.messageService?.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao buscar resultados anteriores.' });
+        console.error('Erro ao buscar resultados anteriores:', err);
+      }
+    });
+  }
+
+fecharDrawerResultadosEnsaios() {
+    this.drawerResultadosEnsaioVisivel = false;
+    this.ensaioSelecionadoParaPesquisa = null;
+    this.resultadosAnteriores = [];
+  }
+
+
+
+  processarResultadosAnterioresEnsaios(resultados: any[], contextoAtual: any) {
+  console.log('=== PROCESSANDO RESULTADOS ANTERIORES ===');
+  console.log('Dados recebidos:', resultados);
+  console.log('Contexto atual:', contextoAtual);
+
+  if (!resultados || !Array.isArray(resultados) || resultados.length === 0) {
+    this.resultadosAnteriores = [];
+    return;
+  }
+
+  const analiseMap = new Map();
+  resultados.forEach((item: any, index: number) => {
+    const analiseId = item.analise_id;
+    if (!analiseMap.has(analiseId)) {
+      analiseMap.set(analiseId, {
+        analiseId: analiseId,
+        amostraNumero: item.amostra_numero || 'N/A',
+        dataAnalise: item.data_analise || new Date(),
+        dataFormatada: this.datePipe.transform(item.data_analise || new Date(), 'dd/MM/yyyy HH:mm') || 'Data não disponível',
+        responsavel: item.responsavel || item.ensaio_responsavel || 'N/A',
+        digitador: item.digitador || 'N/A',
+        resultadoCalculo: null,
+        ensaiosUtilizados: []
+      });
+    }
+    const analiseData = analiseMap.get(analiseId);
+
+    // Processa resultado de cálculo, se houver
+    if (item.tipo === 'CALCULO' && item.resultado_calculo !== null) {
+      analiseData.resultadoCalculo = item.resultado_calculo;
+    }
+
+    // Processa ensaios (direto ou de cálculo)
+    if (item.tipo === 'ENSAIO' && item.ensaio_descricao) {
+      if (item.valor_ensaio && Array.isArray(item.valor_ensaio)) {
+        item.valor_ensaio.forEach((valorItem: any) => {
+          // Para drawer de ensaio direto, sempre adiciona; para cálculo, verifica se faz parte do cálculo
+          let adicionar = true;
+          if (contextoAtual.ensaios_detalhes) {
+            adicionar = contextoAtual.ensaios_detalhes.some((e: any) =>
+              e.id === valorItem.id ||
+              e.descricao === valorItem.descricao ||
+              this.normalize(e.descricao) === this.normalize(valorItem.descricao)
+            );
+          } else if (contextoAtual.id) {
+            adicionar = valorItem.id === contextoAtual.id ||
+                        valorItem.descricao === contextoAtual.descricao;
+          }
+          if (adicionar) {
+            const jaExiste = analiseData.ensaiosUtilizados.find((e: any) =>
+              e.id === valorItem.id || e.descricao === valorItem.descricao
+            );
+            if (!jaExiste) {
+              analiseData.ensaiosUtilizados.push({
+                id: valorItem.id,
+                descricao: valorItem.descricao,
+                valor: valorItem.valor,
+                responsavel: item.ensaio_responsavel || 'N/A'
+              });
+            }
+          }
+        });
+      } else if (item.valor_ensaio) {
+        let adicionar = true;
+        if (contextoAtual.ensaios_detalhes) {
+          adicionar = contextoAtual.ensaios_detalhes.some((e: any) =>
+            e.id === item.ensaio_id ||
+            e.descricao === item.ensaio_descricao ||
+            this.normalize(e.descricao) === this.normalize(item.ensaio_descricao)
+          );
+        } else if (contextoAtual.id) {
+          adicionar = item.ensaio_id === contextoAtual.id ||
+                      item.ensaio_descricao === contextoAtual.descricao;
+        }
+        if (adicionar) {
+          const jaExiste = analiseData.ensaiosUtilizados.find((e: any) =>
+            e.id === item.ensaio_id || e.descricao === item.ensaio_descricao
+          );
+          if (!jaExiste) {
+            analiseData.ensaiosUtilizados.push({
+              id: item.ensaio_id,
+              descricao: item.ensaio_descricao,
+              valor: item.valor_ensaio,
+              responsavel: item.ensaio_responsavel || 'N/A'
+            });
+          }
+        }
+      }
+      if (analiseData.responsavel === 'N/A' && item.ensaio_responsavel) {
+        analiseData.responsavel = item.ensaio_responsavel;
+      }
+    }
+  });
+
+  // Exibe históricos de cálculo OU ensaio direto
+  this.resultadosAnteriores = Array.from(analiseMap.values())
+    .filter((item: any) => item.ensaiosUtilizados.length > 0)
+    .sort((a: any, b: any) => new Date(b.dataAnalise).getTime() - new Date(a.dataAnalise).getTime());
+
+  console.log('🎉 PROCESSAMENTO CONCLUÍDO!');
+  console.log(`📊 Total de resultados processados: ${this.resultadosAnteriores.length}`);
+  console.log('📋 Resultados finais:', this.resultadosAnteriores);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
 }

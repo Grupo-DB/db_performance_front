@@ -6,8 +6,11 @@
 
 .tabela{
     th{
-        background-color: #F7F8FA;
+        background-color: #eef3fa;
         font-weight: 800;
+    }
+    tr{
+        border-bottom: 16px solid transparent; 
     }
 }
 
@@ -39,8 +42,19 @@
         }
     }
 }
+.valor-result{
+    font-size: 25px;
+    font-weight: 900;
+    text-align: end;
+}
 
  :host ::ng-deep .p-fieldset-legend {
     background-color: #71AAE0;
     color: #fff;
   }
+.ensaio-table-spacing {
+  margin-bottom: 32px; 
+}
+.tabela-ensaio-wrap {
+  margin-bottom: 32px; 
+}
