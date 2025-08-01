@@ -50,7 +50,8 @@
             <b>Ordens de Serviço</b>
         </p-divider>
     </div>
-
+<!-- <p-button label="PDFFFFFFFFFFFF" 
+(onClick)="imprimirCalculoPDF()" /> -->
     <div class="containerInterno w-12">
 
 
@@ -157,8 +158,6 @@
                                         <div class="flex flex-column w-12 mb-3 justify-content-end lg:flex-row">
                                             
                                             <div class=" flex w-6 gap-3 justify-content-end text-right">
-                                                <!-- <p-button title="Avançar" label="Avançar" severity="info" icon="pi pi-arrow-right"
-                                                    iconPos="right" (onClick)="activateCallback(3);loadUltimaAnalise()" /> -->
                                                 <p-button label="Gerar OS" severity="success" icon="pi pi-check" iconPos="right"
                                                     (onClick)="criarOSDoFormulario()" />
                                             </div>
@@ -290,7 +289,7 @@
                                             <div style="display: flex; justify-content: end;">
                                                 <p-speeddial 
                                                     showIcon="pi pi-bars" hideIcon="pi pi-times"
-                                                    [model]="getMenuItems()"
+                                                    [model]="getMenuItems(analise.amostra_detalhes)"
                                                     [radius]="80"
                                                     type="quarter-circle" direction="up-left"
                                                     [style]="{ position: 'relative', top: '0', right: 0 }" 

@@ -48,6 +48,10 @@ import { TagModule } from 'primeng/tag';
 import { Amostra } from '../amostra/amostra.component';
 
 
+import jsPDF from 'jspdf';
+import autoTable, { CellInput } from "jspdf-autotable";
+
+
 interface OrdemForm {
   data: FormControl,
   numero: FormControl,
@@ -397,9 +401,170 @@ private normalize(str: string): string {
     )
   }
 
-  getMenuItems() {
+
+
+  imprimirCalculoPDF(analise: any) {
+
+  console.log("Aquiddd");
+  console.log(analise);
+
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  let contadorLinhas = 45;
+  autoTable(doc, {
+    startY: 10,
+    body: [
+      [
+        { content: "Ordem de Serviço", styles: { halign: "left", fontStyle: "bold" } },
+        { content: analise.numero, styles: { halign: "left", fontStyle: "bold" } },
+        { content: "Data de Entrada: "+analise.data_entrada, styles: { halign: "left" } },
+      ],
+      [
+        { content: "Material da Amostra: "+analise.material, colSpan: 2, styles: { halign: "left" } },
+        { content: "Data de Amostra: "+analise.data_coleta, styles: { halign: "left" } }
+      ],
+      [
+        { content: "Tipo: "+analise?.tipo_amostragem, styles: { halign: "left" } },
+        { content: "Sub-tipo: "+analise?.subtipo, styles: { halign: "left" } },
+        { content: "Data de Conclusão: ", styles: { halign: "left" } }
+      ],
+      [
+        { content: "Local da Coleta: "+analise.local_coleta, colSpan: 2, styles: { halign: "left" } },
+        { content: "Data de Descarte: ", styles: { halign: "left", fontStyle: "bold" } }
+      ]
+    ],
+    theme: "grid",
+    styles: {
+      fontSize: 9,
+      cellPadding: 2
+    }
+  });
+
+  if(analise.expressa_detalhes){
+    
+    analise.expressa_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
+      // monta a linha de forma dinâmica
+      const body: any[] = [];
+      const linha: any[] = [];
+      const linhaVazia: any[] = [];
+
+      // primeira célula: descrição
+      linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
+      linha.push({ content: 'Técnico', styles: { halign: "center" } });
+
+      linhaVazia.push({ content: '', styles: { halign: "center" } });
+      linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+      // adiciona cada variável como coluna
+      ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
+        linha.push({ content: variavel_detalhes.nome, styles: { halign: "center",  } });
+        linhaVazia.push({ content: '', styles: { halign: "center" } });
+      });
+
+      // última célula: descrição novamente (ou resultado final)
+      linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold" } });
+      linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+      // adiciona a linha no body
+      body.push(linha);
+      body.push(linhaVazia);
+      // gera a tabela
+      autoTable(doc, {
+        startY: contadorLinhas,
+        body,
+        theme: "grid",
+        styles: { fontSize: 8, cellPadding: 2 }
+      });
+      contadorLinhas+=20;
+    });
+
+  }else{
+    
+    analise.ordem_detalhes.plano_detalhes.forEach((plano_detalhes: any) => {
+            
+      //aqui é o ennsaio_detalhes
+      plano_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
+        const body: any[] = [];
+        const linha: any[] = [];
+        const linhaVazia: any[] = [];
+        
+        linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
+        linha.push({ content: 'Técnico', styles: { halign: "center" } });
+
+        linhaVazia.push({ content: '', styles: { halign: "center" } });
+        linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+          ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
+            console.log('2')
+            console.log(variavel_detalhes)
+            linha.push({ content: variavel_detalhes.nome, styles: { halign: "center",  } });
+            linhaVazia.push({ content: '', styles: { halign: "center" } });
+          });    
+
+        linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
+        linhaVazia.push({ content: '', styles: { halign: "center" } });
+        
+        body.push(linha);
+        body.push(linhaVazia);
+
+        autoTable(doc, {
+          startY: contadorLinhas,
+          body,
+          theme: "grid",
+          styles: { fontSize: 8, cellPadding: 2 }
+        });
+
+        contadorLinhas+=20;
+      });
+
+        
+      plano_detalhes.calculo_ensaio_detalhes.forEach((calculo_ensaio_detalhes: any) => {
+        calculo_ensaio_detalhes.ensaios_detalhes.forEach((ensaio_detalhes: any) => {
+          const body: any[] = [];
+          const linha: any[] = [];
+          const linhaVazia: any[] = [];
+
+          linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
+          linha.push({ content: 'Técnico', styles: { halign: "center" } });
+
+          linhaVazia.push({ content: '', styles: { halign: "center" } });
+          linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+          ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
+            linha.push({ content: variavel_detalhes.nome, styles: { halign: "center",  } });
+            linhaVazia.push({ content: '', styles: { halign: "center" } });
+          });
+
+          linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
+          linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+          body.push(linha);
+          body.push(linhaVazia);
+      
+          autoTable(doc, {
+            startY: contadorLinhas,
+            body,
+            theme: "grid",
+            styles: { fontSize: 8, cellPadding: 2 }
+          });
+
+          contadorLinhas+=20;
+        });
+        
+      });
+    });
+  }
+
+  
+    const blobUrl = doc.output("bloburl");
+    window.open(blobUrl, "_blank");
+  
+  //   // doc.save("Etiqueta.pdf");
+  }
+
+  getMenuItems(analise: any) {
     return [
-      { label: 'Visualizar', icon: 'pi pi-eye'},
+      // { label: 'Visualizar', icon: 'pi pi-eye'},
+      { label: 'IMPRIMIR', icon: 'pi pi-eye', command: () => this.imprimirCalculoPDF(analise) },
       { label: 'Abrir OS', icon: 'pi pi-folder-open'},
       { label: 'Editar', icon: 'pi pi-pencil'},
       { label: 'Excluir', icon: 'pi pi-trash'},
@@ -428,8 +593,6 @@ private normalize(str: string): string {
     }
 
   }
-
-
 
   hasGroup(groups: string[]): boolean {
     return this.loginService.hasAnyGroup(groups);
