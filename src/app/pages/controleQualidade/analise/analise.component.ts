@@ -1091,7 +1091,7 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
         dataAnalise: item.data_analise || new Date(),
         dataFormatada: this.datePipe.transform(item.data_analise || new Date(), 'dd/MM/yyyy HH:mm') || 'Data não disponível',
         responsavel: item.responsavel || 'N/A',
-        digitador: item.digitador || 'N/A',
+        digitador: item.responsavel ||  item.ensaio_responsavel || 'T/A',
         resultadoCalculo: null,
         ensaiosUtilizados: []
       });
@@ -1126,7 +1126,8 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
                 id: valorItem.id,
                 descricao: valorItem.descricao,
                 valor: valorItem.valor, // Usar o valor do objeto
-                responsavel: item.ensaio_responsavel || 'N/A'
+                responsavel: item.ensaio_responsavel || 'N/A',
+                digitador: item.ensaio_digitador || 'N/A'
               });
               console.log(`✅ Ensaio adicionado: ${valorItem.descricao} = ${valorItem.valor}`);
             }
@@ -1149,7 +1150,8 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
               id: item.ensaio_id,
               descricao: item.ensaio_descricao,
               valor: item.valor_ensaio,
-              responsavel: item.ensaio_responsavel || 'N/A'
+              responsavel: item.ensaio_responsavel || 'N/A',
+              digitador: item.ensaio_digitador || 'N/A'
             });
           }
         }
@@ -1332,7 +1334,7 @@ fecharDrawerResultadosEnsaios() {
         dataAnalise: item.data_analise || new Date(),
         dataFormatada: this.datePipe.transform(item.data_analise || new Date(), 'dd/MM/yyyy HH:mm') || 'Data não disponível',
         responsavel: item.responsavel || item.ensaio_responsavel || 'N/A',
-        digitador: item.digitador || 'N/A',
+        digitador: item.digitador || item.ensaio_digitador || 'N/A',
         resultadoCalculo: null,
         ensaiosUtilizados: []
       });
@@ -1369,7 +1371,8 @@ fecharDrawerResultadosEnsaios() {
                 id: valorItem.id,
                 descricao: valorItem.descricao,
                 valor: valorItem.valor,
-                responsavel: item.ensaio_responsavel || 'N/A'
+                responsavel: item.ensaio_responsavel || 'N/A',
+                digitador: item.ensaio_digitador || 'N/A'
               });
             }
           }
@@ -1395,7 +1398,8 @@ fecharDrawerResultadosEnsaios() {
               id: item.ensaio_id,
               descricao: item.ensaio_descricao,
               valor: item.valor_ensaio,
-              responsavel: item.ensaio_responsavel || 'N/A'
+              responsavel: item.ensaio_responsavel || 'N/A',
+              digitador: item.ensaio_digitador || 'N/A'
             });
           }
         }
