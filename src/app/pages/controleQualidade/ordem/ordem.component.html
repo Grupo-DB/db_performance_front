@@ -297,13 +297,11 @@
                                                     tooltipPosition="top"
                                                     pTooltip="Ações"
                                                 ></p-speeddial>
-                                                <p-button 
-                                                    icon="pi pi-book" 
-                                                    [rounded]="true"
-                                                    class="ml-2"
-                                                    tooltipPosition="top"
-                                                    pTooltip="ALGUMA COISA"
-                                                ></p-button>
+                                                <div style="position: relative;">
+                                                    <a type="button" class="ml-2" [routerLink]="['/welcome/controleQualidade/analise', analise.id]">
+                                                        <p-button icon="pi pi-book" [rounded]="true" />
+                                                    </a>
+                                                </div>
                                             </div>
 
                                         </td>
