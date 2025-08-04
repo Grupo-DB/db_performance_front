@@ -249,6 +249,74 @@ export class OrdemComponent implements OnInit {
     // this.loadAmostras();
   }
 
+receberDadosAmostra(): void {
+    // Tentar receber via navigation state
+    if (window.history.state && window.history.state.amostraData) {
+      this.amostraData = window.history.state.amostraData;
+      console.log('✅ Dados da amostra recebidos via history.state:', this.amostraData);
+      
+      // Carregar imagens existentes se houver
+      if (this.amostraData.imagensExistentes && this.amostraData.imagensExistentes.length > 0) {
+        console.log('📸 Imagens existentes encontradas:', this.amostraData.imagensExistentes);
+        this.imagensExistentes = this.amostraData.imagensExistentes;
+      }
+      
+      this.preencherFormularioComDadosAmostra();
+      return;
+    }
+
+    // Tentar receber via sessionStorage como fallback
+    const amostraDataSession = sessionStorage.getItem('amostraData');
+    if (amostraDataSession) {
+      try {
+        this.amostraData = JSON.parse(amostraDataSession);
+        console.log('✅ Dados da amostra recebidos via sessionStorage:', this.amostraData);
+        this.preencherFormularioComDadosAmostra();
+        // Limpar sessionStorage após uso
+        sessionStorage.removeItem('amostraData');
+        return;
+      } catch (error) {
+        console.error('❌ Erro ao processar dados do sessionStorage:', error);
+      }
+    }
+
+    console.log('ℹ️ Nenhum dado da amostra foi recebido - criando ordem normal sem amostra pré-existente');
+  }
+
+  loadPlanosAnalise() {
+    this.ensaioService.getPlanoAnalise().subscribe(
+      response => {
+        this.planosAnalise = response;
+      },
+      error => {
+        console.log('Erro ao carregar planos de análise', error);
+      }
+    );
+  }
+
+
+   configurarFormularioInicial(): void {
+    // Buscar próximo número de ordem
+    this.ordemService.getProximoNumero().subscribe({
+      next: (numero) => {
+        this.registerOrdemForm.patchValue({
+          numero: numero,
+          digitador: this.digitador,
+          data: new Date(),
+          classificacao: 'Controle de Qualidade'
+        });
+      },
+      error: (error) => {
+        console.error('Erro ao buscar próximo número:', error);
+      }
+    });
+  }
+
+
+
+
+
+
 onMaterialChange(materialNome: string) {
   console.log('Material selecionado:', materialNome);
   
@@ -598,69 +666,6 @@ private normalize(str: string): string {
     return this.loginService.hasAnyGroup(groups);
   } 
 
-  receberDadosAmostra(): void {
-    // Tentar receber via navigation state
-    if (window.history.state && window.history.state.amostraData) {
-      this.amostraData = window.history.state.amostraData;
-      console.log('✅ Dados da amostra recebidos via history.state:', this.amostraData);
-      
-      // Carregar imagens existentes se houver
-      if (this.amostraData.imagensExistentes && this.amostraData.imagensExistentes.length > 0) {
-        console.log('📸 Imagens existentes encontradas:', this.amostraData.imagensExistentes);
-        this.imagensExistentes = this.amostraData.imagensExistentes;
-      }
-      
-      this.preencherFormularioComDadosAmostra();
-      return;
-    }
-
-    // Tentar receber via sessionStorage como fallback
-    const amostraDataSession = sessionStorage.getItem('amostraData');
-    if (amostraDataSession) {
-      try {
-        this.amostraData = JSON.parse(amostraDataSession);
-        console.log('✅ Dados da amostra recebidos via sessionStorage:', this.amostraData);
-        this.preencherFormularioComDadosAmostra();
-        // Limpar sessionStorage após uso
-        sessionStorage.removeItem('amostraData');
-        return;
-      } catch (error) {
-        console.error('❌ Erro ao processar dados do sessionStorage:', error);
-      }
-    }
-
-    console.log('ℹ️ Nenhum dado da amostra foi recebido - criando ordem normal sem amostra pré-existente');
-  }
-
- loadPlanosAnalise() {
-    this.ensaioService.getPlanoAnalise().subscribe(
-      response => {
-        this.planosAnalise = response;
-      },
-      error => {
-        console.log('Erro ao carregar planos de análise', error);
-      }
-    );
-  }
-
-
-   configurarFormularioInicial(): void {
-    // Buscar próximo número de ordem
-    this.ordemService.getProximoNumero().subscribe({
-      next: (numero) => {
-        this.registerOrdemForm.patchValue({
-          numero: numero,
-          digitador: this.digitador,
-          data: new Date(),
-          classificacao: 'Controle de Qualidade'
-        });
-      },
-      error: (error) => {
-        console.error('Erro ao buscar próximo número:', error);
-      }
-    });
-  }
-
   // Método para preencher formulário com dados da amostra
   preencherFormularioComDadosAmostra(): void {
     if (this.amostraData) {
@@ -684,7 +689,7 @@ private normalize(str: string): string {
     }
   }
 
-  // Método principal para criar ordem e vincular amostra
+// Método principal para criar ordem e vincular amostra
   criarOrdemComAmostra(): void {
    if (!this.amostraData) {
       this.messageService.add({ 
@@ -704,16 +709,6 @@ private normalize(str: string): string {
       });
       return;
     }
-
-    // Validar estrutura dos dados
-    // if (!this.validarDadosEnvio()) {
-    //   this.messageService.add({ 
-    //     severity: 'error', 
-    //     summary: 'Erro', 
-    //     detail: 'Dados inválidos nos ensaios ou cálculos selecionados' 
-    //   });
-    //   return;
-    // }
 
     console.log('🚀 Iniciando criação da ordem - Fluxo: Ordem → Amostra → Análise');
 
@@ -757,7 +752,7 @@ private normalize(str: string): string {
     });
   }
 
-   private vincularAmostraExistenteAOrdem(ordemId: number): void {
+  private vincularAmostraExistenteAOrdem(ordemId: number): void {
   console.log('🔗 Vinculando amostra EXISTENTE à ordem:', ordemId);
   console.log('📋 Dados da amostra para vincular:', this.amostraData);
 
@@ -788,23 +783,9 @@ private normalize(str: string): string {
       this.finalizarComErro('Erro ao vincular amostra à ordem');
     }
   });
-}
-criarOSDoFormulario() {
-  console.log('🚀 Iniciando criação de OS do formulário');
+} 
 
-  // Validação para campos  mínimos
-  const camposEssenciais = {
-    'material': 'Material',
-    'tipoAmostra': 'Tipo de Amostra', 
-    'dataColeta': 'Data de Coleta',
-    'dataEntrada': 'Data de Entrada',
-    'finalidade': 'Finalidade',
-    'fornecedor': 'Fornecedor',
-    'status': 'Status'
-  };
-}
-
-   private buscarAmostraPorIdAlternativo(ordemId: number): void {
+private buscarAmostraPorIdAlternativo(ordemId: number): void {
     console.log('🔍 Buscando amostra por método alternativo...');
     
     // Se você tiver o ID da amostra nos dados recebidos
@@ -866,9 +847,22 @@ criarOSDoFormulario() {
       });
     }
   }
+criarOSDoFormulario() {
+  console.log('🚀 Iniciando criação de OS do formulário');
 
+  // Validação para campos  mínimos
+  const camposEssenciais = {
+    'material': 'Material',
+    'tipoAmostra': 'Tipo de Amostra', 
+    'dataColeta': 'Data de Coleta',
+    'dataEntrada': 'Data de Entrada',
+    'finalidade': 'Finalidade',
+    'fornecedor': 'Fornecedor',
+    'status': 'Status'
+  };
+}
 
-  private criarAnaliseParaAmostra(amostraId: number): void {
+private criarAnaliseParaAmostra(amostraId: number): void {
     console.log('📊 Criando análise para amostra:', amostraId);
     
     this.isCreatingAnalise = true;
