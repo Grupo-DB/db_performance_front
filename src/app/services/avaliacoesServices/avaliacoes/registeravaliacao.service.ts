@@ -8,7 +8,7 @@ import { AvaliacaoResponse } from '../../../types/avaliacoes/avaliacao-response'
   providedIn: 'root'
 })
 export class RegisterAvaliacaoService {
-  private apiUrl = 'http://localhost:8000/management/registeravaliacao/';
+  private apiUrl = 'http://172.50.10.79:8008/management/registeravaliacao/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
   registeravaliacao(
