@@ -36,6 +36,7 @@ interface RegisterEnsaioForm {
   responsavel: FormControl;
   valor: FormControl;
   tipoEnsaio: FormControl;
+  unidade: FormControl;
   tempoPrevistoValor: FormControl;
   tempoPrevistoUnidade: FormControl;
   variavel: FormControl;
@@ -48,6 +49,7 @@ export interface Ensaio {
   responsavel: string;
   valor: number;
   tipoEnsaio: any;
+  unidade: any;
   tempoPrevisto: any;
   tipo_ensaio_detalhes: any;
   tipo_ensaio: any;
@@ -219,6 +221,7 @@ export class EnsaioComponent implements OnInit{
       responsavel: new FormControl(''),
       valor: new FormControl({ value: 0, disabled: true }),
       tipoEnsaio: new FormControl(''),
+      unidade: new FormControl(''),
       tempoPrevistoValor: new FormControl('', Validators.required),
       tempoPrevistoUnidade: new FormControl('', Validators.required),
       variavel: new FormControl(''),
@@ -230,6 +233,7 @@ export class EnsaioComponent implements OnInit{
       responsavel: [''],
       valor: [''],
       tipo_ensaio: [''],
+      unidade: [''],
       tempoPrevistoValor: [''],
       tempoPrevistoUnidade: [''],
       variavel: [''],
@@ -678,6 +682,7 @@ filterVariaveis(event: any) {
     responsavel: ensaio.responsavel,
     valor: ensaio.valor,
     tipo_ensaio: ensaio.tipo_ensaio_detalhes.id,
+    unidade: ensaio.unidade,
     tempoPrevistoValor: tempoPrevistoValor,
     tempoPrevistoUnidade: tempoPrevistoUnidade,
     variavel: ensaio.variavel,
@@ -703,6 +708,7 @@ filterVariaveis(event: any) {
     valor: this.editForm.value.valor,
     tempo_previsto: tempo_previsto,
     tipo_ensaio: tipo_ensaio,
+    unidade: this.editForm.value.unidade,
     variavel: this.editForm.value.variavel,
     funcao: this.editForm.value.funcao
   };
@@ -792,6 +798,7 @@ filterVariaveis(event: any) {
       this.registerForm.value.valor,
       this.registerForm.value.tipoEnsaio,
       `${this.registerForm.value.tempoPrevistoValor} ${this.registerForm.value.tempoPrevistoUnidade}`,
+      this.registerForm.value.unidade,
       variaveis,
       this.registerForm.value.funcao,
       ensaioTecnico

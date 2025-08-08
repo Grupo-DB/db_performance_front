@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AnaliseService } from '../../../services/controleQualidade/analise.service';
 import { CommonModule, DatePipe, formatDate } from '@angular/common';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormGroup } from '@angular/forms';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
@@ -43,10 +43,9 @@ import { Produto } from '../../baseOrcamentaria/dre/produto/produto.component';
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 import { AvatarModule } from 'primeng/avatar';
 import { CardModule } from 'primeng/card';
-import { CdkDragPlaceholder } from "@angular/cdk/drag-drop";
-import { Inplace } from "primeng/inplace";
 import { PopoverModule } from 'primeng/popover';
 import { HttpClient } from '@angular/common/http';
+import { id } from 'date-fns/locale';
 
 export interface Analise {
   id: number;
@@ -54,7 +53,10 @@ export interface Analise {
   amostra: any;
   estado: string;
 }
-
+interface FileWithInfo {
+  file: File;
+  descricao: string;
+}
 @Component({
   selector: 'app-analise',
   imports: [
@@ -64,7 +66,7 @@ export interface Analise {
     ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,
     InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,
     InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, AvatarModule,
-    CdkDragPlaceholder,PopoverModule,Inplace
+    PopoverModule
 ],
   animations: [
     trigger('efeitoFade', [
@@ -116,6 +118,15 @@ export interface Analise {
   styleUrl: './analise.component.scss'
 })
 export class AnaliseComponent implements OnInit {
+  ensaioSelecionado: any;
+  modalOrdemVariaveisVisible: any;
+
+  /**
+   * Atualiza nomes das variáveis ao editar a descrição do ensaio
+   */
+  onDescricaoEnsaioChange(ensaio: any): void {
+    this.atualizarNomesVariaveisEnsaio(ensaio);
+  }
   analiseId: number | undefined;
   analiseAndamento: any;
   digitador: any;
@@ -125,7 +136,7 @@ export class AnaliseComponent implements OnInit {
   analise: any;
   idAnalise: any;
   analisesSimplificadas: any[] = [];
-
+  amostraImagensSelecionada: any;
   responsaveis = [
     { value: 'Antonio Carlos Vargas Sito' },
     { value: 'Fabiula Bueno' },
@@ -145,6 +156,10 @@ export class AnaliseComponent implements OnInit {
   amostraNumero: any;
   planoDescricao: any;
   resultadosAnteriores: any[] = [];
+  imagensAmostra: any[] = [];
+  imagemAtualIndex: number = 0;
+  modalImagensVisible = false;
+  uploadedFilesWithInfo: FileWithInfo[] = [];
   ///
   public ultimoResultadoGravado: any = null;
   mostrandoResultadosAnteriores = false;
@@ -154,7 +169,17 @@ export class AnaliseComponent implements OnInit {
   carregandoResultados = false;
   drawerResultadosVisivel = false;
   drawerResultadosEnsaioVisivel = false;
-
+  amostraId: any;
+  //
+  planoEnsaioId: any;
+  editFormVisible = false;
+  ensaiosDisponiveis: any[] = [];
+  calculosDisponiveis: any[] = [];
+  // Novos campos para adicionar/remover ensaios e cálculos
+  modalAdicionarEnsaioVisible = false;
+  modalAdicionarCalculoVisible = false;
+  ensaiosSelecionadosParaAdicionar: any[] = [];
+  calculosSelecionadosParaAdicionar: any[] = [];
   constructor(
     private route: ActivatedRoute,
     private analiseService: AnaliseService,
@@ -169,8 +194,7 @@ export class AnaliseComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private datePipe: DatePipe,
     private httpClient: HttpClient
-  ) { }
-  
+  ) {}
 
    hasGroup(groups: string[]): boolean {
     return this.loginService.hasAnyGroup(groups);
@@ -184,6 +208,7 @@ export class AnaliseComponent implements OnInit {
     this.analiseId = Number(this.route.snapshot.paramMap.get('id'));
     this.getDigitadorInfo();
     this.getAnalise();
+    this.carregarEnsaiosECalculosDisponiveis();
   }
   getAnalise(): void {
     if (this.analiseId !== undefined) {
@@ -192,6 +217,14 @@ export class AnaliseComponent implements OnInit {
           this.analise = analise;
           this.idAnalise = analise.id;
           this.loadAnalisePorId(analise);
+          // Forçar detecção de mudanças após atualização dos dados
+          this.cd.detectChanges();
+          this.cd.markForCheck();
+          // Caso loadAnalisePorId seja assíncrona, garantir detecção após ela também
+          setTimeout(() => {
+            this.cd.detectChanges();
+            this.cd.markForCheck();
+          }, 0);
         },
         (error) => {
           console.error('Erro ao buscar análise:', error);
@@ -287,7 +320,149 @@ getOrdemData(analise: any): any {
     };
   }
   return null;
-}  
+}
+
+visualizarImagens(amostraId: any): void {
+  console.log('Visualizando imagens da amostra:', amostraId);
+  this.amostraImagensSelecionada = amostraId;
+  this.carregarImagensAmostra(amostraId);
+}
+
+carregarImagensAmostra(amostraId: number): void {
+  this.amostraService.getImagensAmostra(amostraId).subscribe({
+    next: (imagens) => {
+      // Usar image_url em vez de image para ter a URL completa
+      this.imagensAmostra = imagens.map((img: { image_url: any; image: any; }) => ({
+        ...img,
+        image: img.image_url || img.image // Usar image_url se disponível, senão fallback para image
+      }));
+      this.imagemAtualIndex = 0;
+      this.modalImagensVisible = true;
+      
+      if (imagens.length === 0) {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Informação',
+          detail: 'Esta amostra não possui imagens anexadas.'
+        });
+      }
+    },
+    error: (error) => {
+      console.error('Erro ao carregar imagens:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Erro ao carregar imagens da amostra.'
+      });
+    }
+  });
+}
+
+// Métodos para navegação entre imagens
+proximaImagem(): void {
+  if (this.imagemAtualIndex < this.imagensAmostra.length - 1) {
+    this.imagemAtualIndex++;
+  }
+}
+
+imagemAnterior(): void {
+  if (this.imagemAtualIndex > 0) {
+    this.imagemAtualIndex--;
+  }
+}
+
+// Método para ir para uma imagem específica
+irParaImagem(index: number): void {
+  this.imagemAtualIndex = index;
+}
+
+// Método para deletar uma imagem
+deletarImagem(imageId: number): void {
+  this.confirmationService.confirm({
+    message: 'Tem certeza que deseja deletar esta imagem?',
+    header: 'Confirmação',
+    icon: 'pi pi-exclamation-triangle',
+    accept: () => {
+      this.amostraService.deleteImagem(this.amostraImagensSelecionada.id, imageId).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: 'Imagem deletada com sucesso!'
+          });
+          
+          
+          this.carregarImagensAmostra(this.amostraImagensSelecionada.id);
+        },
+        error: (error) => {
+          console.error('Erro ao deletar imagem:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Erro ao deletar imagem.'
+          });
+        }
+      });
+    }
+  });
+}
+
+downloadImagem(imagem: any): void {
+  const link = document.createElement('a');
+  link.href = imagem.image;
+  link.download = `amostra_${this.amostraImagensSelecionada.numero}_imagem_${imagem.id}`;
+  link.target = '_blank';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+onDescricaoChange(imagem: any): void {
+  // Debounce para não fazer muitas requisições
+  if (this.descricaoTimeout) {
+    clearTimeout(this.descricaoTimeout);
+  }
+  
+  this.descricaoTimeout = setTimeout(() => {
+    this.salvarDescricaoImagem(imagem);
+  }, 3000); // Salva após 3 segundos sem alterações
+}
+
+private descricaoTimeout: any;
+
+salvarDescricaoImagem(imagem: any): void {
+  // método no service para atualizar descrição
+  this.amostraService.atualizarDescricaoImagem(imagem.id, imagem.descricao).subscribe({
+    next: () => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Sucesso',
+        detail: 'Descrição atualizada com sucesso!'
+      });
+    },
+    error: (error) => {
+      console.error('Erro ao atualizar descrição:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Erro ao atualizar descrição da imagem.'
+      });
+    }
+  });
+}
+
+// Método para capturar mudanças na descrição durante o upload
+onDescricaoInput(index: number, event: Event): void {
+  const target = event.target as HTMLInputElement;
+  const descricao = target.value;
+  
+  if (this.uploadedFilesWithInfo[index]) {
+    this.uploadedFilesWithInfo[index].descricao = descricao;
+    console.log(`Descrição atualizada para arquivo ${index}: "${descricao}"`);
+    console.log('Estado atual dos arquivos:', this.uploadedFilesWithInfo);
+  }
+}
+
 //==================================PASSO 1 - GET ANÁLISE POR ID ===========================
 loadAnalisePorId(analise: any) {
   if (!analise || !analise.amostra_detalhes) {
@@ -320,6 +495,7 @@ loadAnalisePorId(analise: any) {
     };
     ensaioDetalhes = expressaDetalhes.ensaio_detalhes || [];
     calculoDetalhes = expressaDetalhes.calculo_ensaio_detalhes || [];
+    this.planoEnsaioId = null;
   } else if (isOrdemNormal) {
     // Processar dados da ordem normal
     const ordemDetalhes = analise.amostra_detalhes.ordem_detalhes;
@@ -332,10 +508,12 @@ loadAnalisePorId(analise: any) {
       digitador: ordemDetalhes.digitador,
       classificacao: ordemDetalhes.classificacao,
       planoAnalise: planoDetalhes[0]?.descricao,
+      planoId: planoDetalhes[0]?.id,
       tipo: 'NORMAL'
     };
     ensaioDetalhes = planoDetalhes[0]?.ensaio_detalhes || [];
     calculoDetalhes = planoDetalhes[0]?.calculo_ensaio_detalhes || [];
+    this.planoEnsaioId = planoDetalhes[0]?.id || null;
   } else {
     console.error('Tipo de ordem não identificado');
     this.analisesSimplificadas = [];
@@ -421,11 +599,13 @@ loadAnalisePorId(analise: any) {
   // Monta estrutura final unificada
   this.analisesSimplificadas = [{
     // Dados da amostra (comum para ambos os tipos)
+    amostraId: analise.amostra_detalhes?.id,
     amostraDataEntrada: analise.amostra_detalhes?.data_entrada,
     amostraDataColeta: analise.amostra_detalhes?.data_coleta,
     amostraDigitador: analise.amostra_detalhes?.digitador,
     amostraFornecedor: analise.amostra_detalhes?.fornecedor,
     amostraIdentificacaoComplementar: analise.amostra_detalhes?.identificacao_complementar,
+    amostraImagens: analise.amostra_detalhes?.image,
     amostraComplemento: analise.amostra_detalhes?.complemento,
     amostraLocalColeta: analise.amostra_detalhes?.local_coleta,
     amostraMaterial: analise.amostra_detalhes?.material_detalhes?.nome,
@@ -461,7 +641,8 @@ loadAnalisePorId(analise: any) {
       descricao: detalhesOrdem.planoAnalise || 'ORDEM EXPRESSA',
       ensaio_detalhes: ensaioDetalhes,
       calculo_ensaio_detalhes: calculoDetalhes,
-      tipo: detalhesOrdem.tipo
+      tipo: detalhesOrdem.tipo,
+      idPlano: detalhesOrdem.planoId || null,
     }]
   }];
   console.log('Análise processada:', {
@@ -494,14 +675,15 @@ inicializarVariaveisEnsaios() {
   const analiseData = this.analisesSimplificadas[0];
   const planoDetalhes = analiseData?.planoDetalhes || [];
   // Função auxiliar para criar variavel_detalhes a partir dos varX da função
-  function criarVariaveisPorFuncao(funcao: string) {
+  function criarVariaveisPorFuncao(funcao: string, ensaioDescricao: string) {
     const varMatches = (funcao.match(/var\d+/g) || []);
     const varList: string[] = Array.from(new Set(varMatches));
-    return varList.map(varName => ({
-      nome: varName,
+    return varList.map((varName, index) => ({
+      nome: `${varName} (${ensaioDescricao})`, // Nome descritivo incluindo o ensaio
       tecnica: varName,
       valor: 0,
-      varTecnica: varName
+      varTecnica: varName,
+      id: `${ensaioDescricao}_${varName}` // ID único
     }));
   }
   planoDetalhes.forEach((plano: any, planoIdx: number) => {
@@ -510,8 +692,18 @@ inicializarVariaveisEnsaios() {
         if (ensaio.funcao) {
           // Só inicializa variáveis se variavel_detalhes não existir ou está vazia
           if (!Array.isArray(ensaio.variavel_detalhes) || ensaio.variavel_detalhes.length === 0) {
-            ensaio.variavel_detalhes = criarVariaveisPorFuncao(ensaio.funcao);
+            ensaio.variavel_detalhes = criarVariaveisPorFuncao(ensaio.funcao, ensaio.descricao);
             console.log(`Preenchendo variavel_detalhes do ensaio '${ensaio.descricao}' automaticamente:`, ensaio.variavel_detalhes);
+          } else {
+            // Se já existem variáveis, verificar se têm nomes descritivos adequados
+            ensaio.variavel_detalhes.forEach((variavel: any, index: number) => {
+              if (!variavel.nome || variavel.nome === variavel.tecnica) {
+                variavel.nome = `${variavel.tecnica} (${ensaio.descricao})`;
+              }
+              if (!variavel.id) {
+                variavel.id = `${ensaio.id}_${variavel.tecnica}`;
+              }
+            });
           }
           // Se a função não contém nenhum varX, mas contém nomes amigáveis, converte para nomes técnicos
           const varMatches = (ensaio.funcao.match(/var\d+/g) || []);
@@ -1068,6 +1260,56 @@ salvarAnaliseResultados() {
     }
   });
 }
+
+
+
+/**
+ * Valida os dados antes de enviar para o backend
+ */
+private validarDadosParaSalvar(payload: any): { valido: boolean; erros: string[] } {
+  const erros: string[] = [];
+
+  // Validar ensaios
+  payload.ensaios.forEach((ensaio: any, idx: number) => {
+    if (!ensaio.descricao) {
+      erros.push(`Ensaio ${idx + 1}: descrição obrigatória`);
+    }
+    if (ensaio.valores === null || ensaio.valores === undefined) {
+      erros.push(`Ensaio ${idx + 1}: valor resultado obrigatório`);
+    }
+    
+    // Validar variáveis utilizadas se o ensaio tem função
+    if (ensaio.funcao && ensaio.variaveis_utilizadas.length === 0) {
+      erros.push(`Ensaio ${idx + 1}: ensaio com função deve ter variáveis utilizadas`);
+    }
+    
+    // Validar cada variável utilizada
+    ensaio.variaveis_utilizadas.forEach((v: any, vIdx: number) => {
+      if (!v.nome && !v.tecnica) {
+        erros.push(`Ensaio ${idx + 1}, Variável ${vIdx + 1}: nome/técnica obrigatório`);
+      }
+      if (v.valor === null || v.valor === undefined) {
+        erros.push(`Ensaio ${idx + 1}, Variável ${vIdx + 1}: valor obrigatório`);
+      }
+    });
+  });
+
+  // Validar cálculos
+  payload.calculos.forEach((calc: any, idx: number) => {
+    if (!calc.calculos) {
+      erros.push(`Cálculo ${idx + 1}: descrição obrigatória`);
+    }
+    if (calc.valores.length === 0) {
+      erros.push(`Cálculo ${idx + 1}: deve ter pelo menos um ensaio`);
+    }
+  });
+
+  return {
+    valido: erros.length === 0,
+    erros: erros
+  };
+}
+
 processarResultadosAnteriores(resultados: any[], calcAtual: any) {
   console.log('=== PROCESSANDO RESULTADOS ANTERIORES ===');
   console.log('Dados recebidos:', resultados);
@@ -1420,21 +1662,594 @@ fecharDrawerResultadosEnsaios() {
   console.log('📋 Resultados finais:', this.resultadosAnteriores);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  // ============================= MÉTODOS PARA ADICIONAR/REMOVER ENSAIOS E CÁLCULOS =============================
   
+  /**
+   * Carrega os ensaios e cálculos disponíveis do backend
+   */
+  carregarEnsaiosECalculosDisponiveis(): void {
+    // Carregar ensaios disponíveis
+    this.ensaioService.getEnsaios().subscribe({
+      next: (ensaios) => {
+        this.ensaiosDisponiveis = ensaios;
+        console.log('Ensaios disponíveis carregados:', this.ensaiosDisponiveis.length);
+      },
+      error: (error) => {
+        console.error('Erro ao carregar ensaios disponíveis:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao carregar ensaios disponíveis.'
+        });
+      }
+    });
+
+    // Carregar cálculos disponíveis
+    this.ensaioService.getCalculoEnsaio().subscribe({
+      next: (calculos) => {
+        this.calculosDisponiveis = calculos;
+        console.log('Cálculos disponíveis carregados:', this.calculosDisponiveis.length);
+      },
+      error: (error) => {
+        console.error('Erro ao carregar cálculos disponíveis:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao carregar cálculos disponíveis.'
+        });
+      }
+    });
+  }
+
+  /**
+   * Abre o modal para adicionar novos ensaios à análise
+   */
+  abrirModalAdicionarEnsaios(): void {
+    if (!this.ensaiosDisponiveis.length) {
+      this.carregarEnsaiosECalculosDisponiveis();
+    }
+    this.ensaiosSelecionadosParaAdicionar = [];
+    this.modalAdicionarEnsaioVisible = true;
+  }
+
+  /**
+   * Abre o modal para adicionar novos cálculos à análise
+   */
+  abrirModalAdicionarCalculos(): void {
+    if (!this.calculosDisponiveis.length) {
+      this.carregarEnsaiosECalculosDisponiveis();
+    }
+    this.calculosSelecionadosParaAdicionar = [];
+    this.modalAdicionarCalculoVisible = true;
+  }
+
+  /**
+   * Adiciona os ensaios selecionados à análise atual
+   */
+  adicionarEnsaios(): void {
+    if (!this.ensaiosSelecionadosParaAdicionar.length) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Aviso',
+        detail: 'Selecione pelo menos um ensaio para adicionar.'
+      });
+      return;
+    }
+
+    if (!this.analisesSimplificadas || !this.analisesSimplificadas.length) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Nenhuma análise carregada.'
+      });
+      return;
+    }
+
+    const analiseData = this.analisesSimplificadas[0];
+    const planoDetalhes = analiseData?.planoDetalhes || [];
+
+    if (!planoDetalhes.length) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Estrutura da análise inválida.'
+      });
+      return;
+    }
+
+    const plano = planoDetalhes[0];
+    if (!plano.ensaio_detalhes) {
+      plano.ensaio_detalhes = [];
+    }
+
+    // Filtrar ensaios que já não estão na análise
+    const ensaiosExistentesIds = plano.ensaio_detalhes.map((e: any) => e.id);
+    const novosEnsaios = this.ensaiosSelecionadosParaAdicionar.filter(
+      ensaio => !ensaiosExistentesIds.includes(ensaio.id)
+    );
+
+    if (!novosEnsaios.length) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Aviso',
+        detail: 'Todos os ensaios selecionados já estão na análise.'
+      });
+      return;
+    }
+
+    // Adicionar novos ensaios com estrutura padrão
+    novosEnsaios.forEach(ensaio => {
+      const novoEnsaio = {
+        ...ensaio,
+        valor: ensaio.valor || 0,
+        responsavel: ensaio.responsavel || null,
+        digitador: this.digitador || '',
+        // Inicializar variáveis se for ensaio direto (com função)
+        variavel_detalhes: ensaio.funcao ? this.criarVariaveisParaEnsaio(ensaio) : []
+      };
+      
+      plano.ensaio_detalhes.push(novoEnsaio);
+    });
+
+    // Atualizar referências nos cálculos se necessário
+    this.mapearEnsaiosParaCalculos();
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: `${novosEnsaios.length} ensaio(s) adicionado(s) com sucesso.`
+    });
+
+    this.modalAdicionarEnsaioVisible = false;
+    this.ensaiosSelecionadosParaAdicionar = [];
+    
+    // Sincronizar com a ordem expressa se for análise expressa
+    if (this.isAnaliseExpressa()) {
+      this.sincronizarComOrdemExpressa();
+    }
+    // Recarregar toda a análise para forçar atualização total da página
+    this.getAnalise();
+  }
+
+  /**
+   * Adiciona um novo ensaio diretamente ao plano, se ordem for EXPRESSA
+   * @param planoIdx índice do plano em planoDetalhes
+   * @param ensaio objeto do novo ensaio (pode ser vazio para template)
+   */
+  adicionarEnsaioDireto(planoIdx: number, ensaio?: any): void {
+    const analiseData = this.analisesSimplificadas[0];
+    if (!analiseData || analiseData.ordemTipo !== 'EXPRESSA') return;
+    const planoDetalhes = analiseData.planoDetalhes || [];
+    if (!planoDetalhes[planoIdx]) return;
+    if (!planoDetalhes[planoIdx].ensaio_detalhes) planoDetalhes[planoIdx].ensaio_detalhes = [];
+    const novoEnsaio = ensaio || {
+      id: Date.now(),
+      descricao: '',
+      valor: null,
+      responsavel: this.digitador || '',
+      variavel_detalhes: [],
+      funcao: '',
+      tipo_ensaio_detalhes: { nome: 'EXPRESSA' }
+    };
+    planoDetalhes[planoIdx].ensaio_detalhes.push(novoEnsaio);
+    window.location.reload();
+  }
+
+  /**
+   * Remove um ensaio do plano, se ordem for EXPRESSA
+   * @param planoIdx índice do plano em planoDetalhes
+   * @param ensaioIdx índice do ensaio em ensaio_detalhes
+   */
+  removerEnsaioDireto(planoIdx: number, ensaioIdx: number): void {
+    const analiseData = this.analisesSimplificadas[0];
+    if (!analiseData || analiseData.ordemTipo !== 'EXPRESSA') return;
+    const planoDetalhes = analiseData.planoDetalhes || [];
+    if (!planoDetalhes[planoIdx] || !planoDetalhes[planoIdx].ensaio_detalhes) return;
+    planoDetalhes[planoIdx].ensaio_detalhes.splice(ensaioIdx, 1);
+    window.location.reload();
+  }
+  /**
+   * Adiciona os cálculos selecionados à análise atual
+   */
+  adicionarCalculos(): void {
+    if (!this.calculosSelecionadosParaAdicionar.length) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Aviso',
+        detail: 'Selecione pelo menos um cálculo para adicionar.'
+      });
+      return;
+    }
+
+    if (!this.analisesSimplificadas || !this.analisesSimplificadas.length) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Nenhuma análise carregada.'
+      });
+      return;
+    }
+
+    const analiseData = this.analisesSimplificadas[0];
+    const planoDetalhes = analiseData?.planoDetalhes || [];
+
+    if (!planoDetalhes.length) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Estrutura da análise inválida.'
+      });
+      return;
+    }
+
+    const plano = planoDetalhes[0];
+    if (!plano.calculo_ensaio_detalhes) {
+      plano.calculo_ensaio_detalhes = [];
+    }
+
+    // Filtrar cálculos que já não estão na análise
+    const calculosExistentesIds = plano.calculo_ensaio_detalhes.map((c: any) => c.id);
+    const novosCalculos = this.calculosSelecionadosParaAdicionar.filter(
+      calculo => !calculosExistentesIds.includes(calculo.id)
+    );
+
+    if (!novosCalculos.length) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Aviso',
+        detail: 'Todos os cálculos selecionados já estão na análise.'
+      });
+      return;
+    }
+
+    // Adicionar novos cálculos com estrutura padrão
+    novosCalculos.forEach(calculo => {
+      const novoCalculo = {
+        ...calculo,
+        resultado: null,
+        responsavel: calculo.responsavel || null,
+        digitador: this.digitador || '',
+        // Associar os ensaios disponíveis na análise se o cálculo não tem ensaios específicos
+        ensaios_detalhes: calculo.ensaios_detalhes && calculo.ensaios_detalhes.length > 0
+          ? calculo.ensaios_detalhes
+          : (plano.ensaio_detalhes || []).map((e: any) => ({ ...e }))
+      };
+      
+      plano.calculo_ensaio_detalhes.push(novoCalculo);
+    });
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: `${novosCalculos.length} cálculo(s) adicionado(s) com sucesso.`
+    });
+
+    this.modalAdicionarCalculoVisible = false;
+    this.calculosSelecionadosParaAdicionar = [];
+    
+    // Sincronizar com a ordem expressa se for análise expressa
+    if (this.isAnaliseExpressa()) {
+      this.sincronizarComOrdemExpressa();
+    }
+    
+    // Recarregar toda a análise para forçar atualização total da página
+    this.getAnalise();
+  }
+
+  /**
+   * Remove um ensaio da análise
+   */
+  removerEnsaio(ensaio: any, plano: any): void {
+    console.log('removerEnsaio chamado:', { ensaio, plano });
+    console.log('podeEditarEnsaiosCalculos():', this.podeEditarEnsaiosCalculos());
+    
+    this.confirmationService.confirm({
+      message: `Tem certeza que deseja remover o ensaio "${ensaio.descricao}" da análise?`,
+      header: 'Confirmação',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Cancelar',
+      accept: () => {
+        console.log('Usuário confirmou remoção do ensaio');
+        if (!plano.ensaio_detalhes) {
+          console.log('plano.ensaio_detalhes não existe');
+          return;
+        }
+
+        const index = plano.ensaio_detalhes.findIndex((e: any) => e.id === ensaio.id);
+        console.log('Index encontrado:', index);
+        if (index !== -1) {
+          plano.ensaio_detalhes.splice(index, 1);
+          console.log('Ensaio removido do array');
+
+          // Remover referências deste ensaio dos cálculos
+          if (plano.calculo_ensaio_detalhes) {
+            plano.calculo_ensaio_detalhes.forEach((calc: any) => {
+              if (calc.ensaios_detalhes) {
+                calc.ensaios_detalhes = calc.ensaios_detalhes.filter((e: any) => e.id !== ensaio.id);
+              }
+            });
+            console.log('Referências do ensaio removidas dos cálculos');
+          }
+
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: `Ensaio "${ensaio.descricao}" removido com sucesso.`
+          });
+
+          // Sincronizar com a ordem expressa se for análise expressa
+          if (this.isAnaliseExpressa()) {
+            console.log('Sincronizando com ordem expressa...');
+            this.sincronizarComOrdemExpressa();
+          }
+
+          this.cd.detectChanges();
+        }
+      }
+    });
+  }
+
+  /**
+   * Remove um cálculo da análise
+   */
+  removerCalculo(calculo: any, plano: any): void {
+    console.log('removerCalculo chamado:', { calculo, plano });
+    console.log('podeEditarEnsaiosCalculos():', this.podeEditarEnsaiosCalculos());
+    
+    this.confirmationService.confirm({
+      message: `Tem certeza que deseja remover o cálculo "${calculo.descricao}" da análise?`,
+      header: 'Confirmação',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Cancelar',
+      accept: () => {
+        console.log('Usuário confirmou remoção do cálculo');
+        if (!plano.calculo_ensaio_detalhes) {
+          console.log('plano.calculo_ensaio_detalhes não existe');
+          return;
+        }
+
+        const index = plano.calculo_ensaio_detalhes.findIndex((c: any) => c.id === calculo.id);
+        console.log('Index encontrado:', index);
+        if (index !== -1) {
+          plano.calculo_ensaio_detalhes.splice(index, 1);
+          console.log('Cálculo removido do array');
+
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: `Cálculo "${calculo.descricao}" removido com sucesso.`
+          });
+
+          // Sincronizar com a ordem expressa se for análise expressa
+          if (this.isAnaliseExpressa()) {
+            console.log('Sincronizando com ordem expressa...');
+            this.sincronizarComOrdemExpressa();
+          }
+
+          this.cd.detectChanges();
+        }
+      }
+    });
+  }
+
+  /**
+   * Verifica se a análise é do tipo expressa (pode adicionar/remover ensaios e cálculos)
+   */
+  isAnaliseExpressa(): boolean {
+    if (!this.analisesSimplificadas || !this.analisesSimplificadas.length) return false;
+    const analiseData = this.analisesSimplificadas[0];
+    return analiseData?.ordemTipo === 'EXPRESSA';
+  }
+
+  /**
+   * Verifica se a análise permite edição (apenas para análises expressas)
+   */
+  podeEditarEnsaiosCalculos(): boolean {
+    const isExpressa = this.isAnaliseExpressa();
+    const hasPermission = this.hasGroup(['Admin', 'Master', 'Analista']);
+    
+    // console.log('podeEditarEnsaiosCalculos debug:', {
+    //   isExpressa,
+    //   hasPermission,
+    //   analisesSimplificadas: this.analisesSimplificadas,
+    //   ordemTipo: this.analisesSimplificadas?.[0]?.ordemTipo
+    // });
+    
+    return isExpressa && hasPermission;
+  }
+
+  /**
+   * Cria variáveis iniciais para um ensaio com função
+   */
+  private criarVariaveisParaEnsaio(ensaio: any): any[] {
+    if (!ensaio.funcao) return [];
+
+    const varMatches = (ensaio.funcao.match(/var\d+/g) || []);
+    const varList: string[] = Array.from(new Set(varMatches));
+    
+    const descricao = ensaio.descricao || '';
+    return varList.map((varName, index) => ({
+      nome: descricao ? `${varName} (${descricao})` : varName,
+      tecnica: varName,
+      valor: 0,
+      varTecnica: varName,
+      id: `${ensaio.id}_${varName}`
+    }));
+  }
+
+  /**
+   * Atualiza os nomes das variáveis de um ensaio quando a descrição muda
+   */
+  atualizarNomesVariaveisEnsaio(ensaio: any): void {
+    if (!ensaio || !Array.isArray(ensaio.variavel_detalhes)) return;
+    const descricao = ensaio.descricao || '';
+    ensaio.variavel_detalhes.forEach((v: any) => {
+      v.nome = descricao ? `${v.tecnica} (${descricao})` : v.tecnica;
+    });
+  }
+
+  /**
+   * Obtém o nome de exibição amigável para uma variável
+   */
+  getVariavelDisplayName(variavel: any, ensaio: any): string {
+    if (!variavel.nome || variavel.nome === variavel.tecnica) {
+      // Se o nome não existe ou é igual ao técnico, criar um nome amigável
+      return `${variavel.tecnica} (${ensaio.descricao})`;
+    }
+    return variavel.nome;
+  }
+
+  /**
+   * Obtém ensaios disponíveis para adicionar (exclui os já presentes na análise)
+   */
+  getEnsaiosDisponiveis(): any[] {
+    if (!this.analisesSimplificadas || !this.analisesSimplificadas.length) {
+      return this.ensaiosDisponiveis;
+    }
+
+    const analiseData = this.analisesSimplificadas[0];
+    const planoDetalhes = analiseData?.planoDetalhes || [];
+    const ensaiosExistentesIds = planoDetalhes.flatMap((plano: any) => 
+      (plano.ensaio_detalhes || []).map((e: any) => e.id)
+    );
+
+    return this.ensaiosDisponiveis.filter(ensaio => 
+      !ensaiosExistentesIds.includes(ensaio.id)
+    );
+  }
+
+  /**
+   * Obtém cálculos disponíveis para adicionar (exclui os já presentes na análise)
+   */
+  getCalculosDisponiveis(): any[] {
+    if (!this.analisesSimplificadas || !this.analisesSimplificadas.length) {
+      return this.calculosDisponiveis;
+    }
+
+    const analiseData = this.analisesSimplificadas[0];
+    const planoDetalhes = analiseData?.planoDetalhes || [];
+    const calculosExistentesIds = planoDetalhes.flatMap((plano: any) => 
+      (plano.calculo_ensaio_detalhes || []).map((c: any) => c.id)
+    );
+
+    return this.calculosDisponiveis.filter(calculo => 
+      !calculosExistentesIds.includes(calculo.id)
+    );
+  }
+
+  /**
+   * Fecha o modal de adicionar ensaios
+   */
+  fecharModalAdicionarEnsaios(): void {
+    this.modalAdicionarEnsaioVisible = false;
+    this.ensaiosSelecionadosParaAdicionar = [];
+  }
+
+  /**
+   * Sincroniza ensaios e cálculos adicionados manualmente com a ordem expressa
+   */
+  private sincronizarComOrdemExpressa(): void {
+    if (!this.isAnaliseExpressa() || !this.analisesSimplificadas.length) {
+      return;
+    }
+
+    const analiseData = this.analisesSimplificadas[0];
+    const planoDetalhes = analiseData?.planoDetalhes || [];
+    
+    if (!planoDetalhes.length) return;
+
+    const plano = planoDetalhes[0];
+    const ordemExpressaId = analiseData.ordemId;
+
+    // Preparar IDs dos ensaios e cálculos atuais
+    const ensaiosIds = (plano.ensaio_detalhes || []).map((e: any) => e.id).filter((id: any) => id);
+    const calculosIds = (plano.calculo_ensaio_detalhes || []).map((c: any) => c.id).filter((id: any) => id);
+
+    // Chamar o backend para atualizar a ordem expressa
+    this.ordemService.atualizarEnsaiosCalculosExpressa(ordemExpressaId, ensaiosIds, calculosIds).subscribe({
+      next: (response: any) => {
+        // ...
+      },
+      error: (error: any) => {
+        // ...
+      }
+    });
+    window.location.reload();
+  }
+
+atualizarOrdemVariavel(variavel: any, novaOrdem: number): void {
+  variavel.ordem = novaOrdem;
+  // Reordenar array baseado na nova ordem
+  this.ensaioSelecionado.variavel_detalhes.sort((a: { ordem: any; }, b: { ordem: any; }) => (a.ordem || 0) - (b.ordem || 0));
+}
+
+/**
+ * Obtém as variáveis ordenadas de um ensaio
+ */
+getVariaveisOrdenadas(variaveis: any[]): any[] {
+  if (!variaveis) return [];
+  
+  return variaveis.sort((a, b) => {
+    // Se tem campo ordem definido, usa ele
+    if (a.ordem !== undefined && b.ordem !== undefined) {
+      return a.ordem - b.ordem;
+    }
+    
+    // Caso contrário, ordena por nome
+    if (a.nome && b.nome) {
+      return a.nome.localeCompare(b.nome);
+    }
+    
+    // Fallback por ID se existir
+    if (a.id && b.id) {
+      return a.id - b.id;
+    }
+    
+    return 0;
+  });
+}
+
+/**
+ * Abre o modal para ordenar variáveis de um ensaio
+ */
+abrirModalOrdemVariaveis(ensaio: any): void {
+  this.ensaioSelecionado = ensaio;
+  
+  // Inicializar campo ordem se não existir
+  if (ensaio.variavel_detalhes && ensaio.variavel_detalhes.length > 0) {
+    ensaio.variavel_detalhes.forEach((variavel: any, index: number) => {
+      if (variavel.ordem === undefined || variavel.ordem === null) {
+        variavel.ordem = index + 1;
+      }
+    });
+  }
+  
+  this.modalOrdemVariaveisVisible = true;
+}
+
+/**
+ * Move uma variável para cima ou para baixo na lista
+ */
+moverVariavelPara(direcao: 'cima' | 'baixo', index: number): void {
+  if (!this.ensaioSelecionado?.variavel_detalhes) return;
+  
+  const variaveis = this.ensaioSelecionado.variavel_detalhes;
+  
+  if (direcao === 'cima' && index > 0) {
+    [variaveis[index], variaveis[index - 1]] = [variaveis[index - 1], variaveis[index]];
+  } else if (direcao === 'baixo' && index < variaveis.length - 1) {
+    [variaveis[index], variaveis[index + 1]] = [variaveis[index + 1], variaveis[index]];
+  }
+  
+  // Atualizar campo ordem baseado na nova posição
+  variaveis.forEach((variavel: any, i: number) => {
+    variavel.ordem = i + 1;
+  });
+}
+
+
+
+
 }

@@ -47,8 +47,8 @@ export class EnsaioService {
     const url = `${this.apiUrlEnsaio}${id}/`;
     return this.http.delete(url);
   }
-  registerEnsaio(descricao: string, responsavel: string, valor: number, tipoEnsaio: any, tempoPrevisto: any, variavel: any, funcao: any, tecnica: any){
-    return this.http.post<Ensaio>(this.apiUrlEnsaio, { descricao: descricao, responsavel: responsavel, valor: valor, tipo_ensaio: tipoEnsaio, tempo_previsto: tempoPrevisto, variavel: variavel, funcao: funcao, tecnica: tecnica });
+  registerEnsaio(descricao: string, responsavel: string, valor: number, tipoEnsaio: any, tempoPrevisto: any, unidade:any, variavel: any, funcao: any, tecnica: any){
+    return this.http.post<Ensaio>(this.apiUrlEnsaio, { descricao: descricao, responsavel: responsavel, valor: valor, tipo_ensaio: tipoEnsaio, tempo_previsto: tempoPrevisto, unidade: unidade, variavel: variavel, funcao: funcao, tecnica: tecnica });
   }
 
   //Calculo Ensaio
@@ -64,8 +64,8 @@ export class EnsaioService {
     const url = `${this.apiUrlCalculoEnsaio}${id}/`;
     return this.http.delete(url);
   }
-  registerCalculoEnsaio(descricao: string, funcao: any, ensaios: any, responsavel: string, valor: number){
-    return this.http.post<CalculoEnsaio>(this.apiUrlCalculoEnsaio, { descricao: descricao, funcao: funcao, ensaios: ensaios, responsavel: responsavel, valor: valor });
+  registerCalculoEnsaio(descricao: string, funcao: any, ensaios: any, responsavel: string, unidade: any, valor: number){
+    return this.http.post<CalculoEnsaio>(this.apiUrlCalculoEnsaio, { descricao: descricao, funcao: funcao, ensaios: ensaios, responsavel: responsavel, unidade: unidade, valor: valor });
   }
 
   //Plano de analise

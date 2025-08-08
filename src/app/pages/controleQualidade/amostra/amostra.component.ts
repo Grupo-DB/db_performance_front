@@ -564,16 +564,19 @@ materiais: any[] = [
 
 onMaterialChange(materialNome: string) {
   console.log('Material selecionado:', materialNome);
+  console.log('Valor atual no FormControl antes:', this.registerForm.get('material')?.value);
   
   if (materialNome) {
-    // Normaliza o nome e atualiza o formulário
+    // Normaliza o nome apenas para operações internas, mas mantém o valor original no form
     const materialNormalizado = this.normalize(materialNome);
     console.log('Material normalizado:', materialNormalizado);
+    console.log('Material original para form:', materialNome);
+    console.log('Valor atual no FormControl depois:', this.registerForm.get('material')?.value);
     
-    // Atualiza o valor no formulário com a versão normalizada
-    this.registerForm.get('material')?.setValue(materialNormalizado, { emitEvent: false });
+    // Mantém o valor original no formulário para que o p-select funcione corretamente
+    // Não precisamos usar setValue aqui pois o FormControl já foi atualizado pelo p-select
     
-    // Usa a versão normalizada para todas as operações
+    // Usa a versão normalizada para todas as operações de backend
     this.amostraService.getProximoSequencialPorNome(materialNormalizado).subscribe({
       next: (sequencial) => {
         console.log('Sequencial recebido do backend:', sequencial);

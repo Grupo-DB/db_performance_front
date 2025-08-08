@@ -45,6 +45,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { AnaliseService } from '../../../services/controleQualidade/analise.service';
 import { AmostraService } from '../../../services/controleQualidade/amostra.service';
 import { TagModule } from 'primeng/tag';
+import { CheckboxModule } from 'primeng/checkbox';
 import { Amostra } from '../amostra/amostra.component';
 
 
@@ -80,7 +81,7 @@ export interface Ordem {
 @Component({
   selector: 'app-ordem',
   imports: [
-    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule, CardModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule,NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule, TagModule
+    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule, CardModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule,NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule, TagModule, CheckboxModule
   ],
   animations: [
     trigger('efeitoFade',[
@@ -151,7 +152,14 @@ export class OrdemComponent implements OnInit {
   planosAnalise: any[] = [];
   digitador: string = '';
 
-
+  // Propriedades para ordem expressa
+  isOrdemExpressa: boolean = false;
+  ensaiosDisponiveis: any[] = [];
+  calculosDisponiveis: any[] = [];
+  ensaiosSelecionados: any[] = [];
+  calculosSelecionados: any[] = [];
+  modalEnsaiosVisible: boolean = false;
+  modalCalculosVisible: boolean = false;
 
   teste: any[] = [];
 
@@ -245,6 +253,7 @@ export class OrdemComponent implements OnInit {
     this.loadOrdens();
     this.loadAnalises();
     this.loadPlanosAnalise();
+    this.carregarEnsaiosECalculosDisponiveis();
     this.configurarFormularioInicial();
     // this.loadAmostras();
   }
@@ -292,6 +301,49 @@ receberDadosAmostra(): void {
         console.log('Erro ao carregar planos de análise', error);
       }
     );
+  }
+
+  /**
+   * Carrega ensaios e cálculos disponíveis para ordem expressa
+   */
+  carregarEnsaiosECalculosDisponiveis() {
+    // Carregar ensaios
+    this.ensaioService.getEnsaios().subscribe({
+      next: (ensaios) => {
+        this.ensaiosDisponiveis = ensaios.map((ensaio: any) => ({
+          ...ensaio,
+          selecionado: false
+        }));
+        console.log('Ensaios carregados:', this.ensaiosDisponiveis);
+      },
+      error: (error) => {
+        console.error('Erro ao carregar ensaios:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao carregar lista de ensaios'
+        });
+      }
+    });
+
+    // Carregar cálculos
+    this.ensaioService.getCalculoEnsaio().subscribe({
+      next: (calculos: any) => {
+        this.calculosDisponiveis = calculos.map((calculo: any) => ({
+          ...calculo,
+          selecionado: false
+        }));
+        console.log('Cálculos carregados:', this.calculosDisponiveis);
+      },
+      error: (error: any) => {
+        console.error('Erro ao carregar cálculos:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao carregar lista de cálculos'
+        });
+      }
+    });
   }
 
 
@@ -630,14 +682,255 @@ private normalize(str: string): string {
   }
 
   getMenuItems(analise: any) {
-    return [
-      // { label: 'Visualizar', icon: 'pi pi-eye'},
-      { label: 'IMPRIMIR', icon: 'pi pi-eye', command: () => this.imprimirCalculoPDF(analise) },
-      { label: 'Abrir OS', icon: 'pi pi-folder-open'},
-      { label: 'Editar', icon: 'pi pi-pencil'},
-      { label: 'Excluir', icon: 'pi pi-trash'},
-      { label: 'Imagens', icon: 'pi pi-image'},
+    const menuItems = [
+      { label: 'IMPRIMIR', icon: 'pi pi-print', command: () => this.imprimirCalculoPDF(analise) },
+      { label: 'Editar', icon: 'pi pi-pencil', command: () => this.editarAnalise(analise) },
+      { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluirAnalise(analise) },
+      { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise) },
     ];
+
+    // Debug: verificar o valor da propriedade
+    //console.log('analise completa:', analise);
+    //console.log('analise.finalizada:', analise.finalizada, typeof analise.finalizada);
+
+    // Verificar se a análise está finalizada (aceitar boolean true ou number 1 ou string '1')
+    // if (analise && (
+    //     analise.finalizada === true || 
+    //     analise.finalizada === 1 || 
+    //     analise.finalizada === '1'
+    // )) {
+    //   menuItems.push({
+    //     label: 'Encaminhar para Laudo',
+    //     icon: 'pi pi-book',
+    //     command: () => this.laudoAnalise(analise)
+    //   });
+    // }
+
+    return menuItems;
+}
+
+getStatusIcon(status: boolean): string {
+  return status ? 'pi-check-circle' : 'pi-times-circle';
+}
+
+getStatusColor(status: boolean): string {
+  return status ? '#22c55e' : '#ef4444';
+}
+
+    
+  // ================ MÉTODOS DE AÇÕES DAS ANÁLISES ================
+
+  /**
+   * Abre a ordem de serviço para visualização
+   */
+  abrirOrdemServico(analise: any): void {
+    console.log('Abrindo ordem de serviço:', analise);
+    // Implementar navegação para detalhes da ordem
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Informação',
+      detail: 'Funcionalidade em desenvolvimento'
+    });
+  }
+
+  /**
+   * Edita uma análise
+   */
+  editarAnalise(analise: any): void {
+    console.log('Editando análise:', analise);
+    // Implementar edição da análise
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Informação',
+      detail: 'Funcionalidade em desenvolvimento'
+    });
+  }
+
+  /**
+   * Exclui uma análise
+   */
+  excluirAnalise(analise: any): void {
+    this.confirmationService.confirm({
+      message: `Tem certeza que deseja excluir a análise ${analise.id}?`,
+      header: 'Confirmar Exclusão',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Não',
+      accept: () => {
+        // Implementar exclusão
+        console.log('Excluindo análise:', analise);
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Informação',
+          detail: 'Funcionalidade em desenvolvimento'
+        });
+      }
+    });
+  }
+
+  /**
+   * Visualiza imagens da amostra
+   */
+  visualizarImagens(analise: any): void {
+    console.log('Visualizando imagens:', analise);
+    // Implementar visualização de imagens
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Informação',
+      detail: 'Funcionalidade em desenvolvimento'
+    });
+  }
+
+  /**
+   * Finaliza uma análise
+   */
+  finalizarAnalise(analise: any): void {
+    this.confirmationService.confirm({
+      message: `Tem certeza que deseja finalizar a análise da amostra ${analise.id}?`,
+      header: 'Finalizar Análise',
+      icon: 'pi pi-check-circle',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Não',
+      accept: () => {
+        this.analiseService.finalizarAnalise(analise.id).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Sucesso',
+              detail: 'Análise finalizada com sucesso!'
+            });
+             setTimeout(() => {
+             this.loadAnalises();
+          }, 1000);
+          },
+          error: (error) => {
+            console.error('Erro ao finalizar análise:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: 'Erro ao finalizar análise.'
+            });
+          } 
+        });
+      }
+    });
+  }
+
+  reabrirAnalise(analise: any): void {
+    this.confirmationService.confirm({
+      message: `Tem certeza que deseja reabrir a análise da amostra ${analise.id}?`,
+      header: 'Reabrir Análise',
+      icon: 'pi pi-check-circle',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Não',
+      accept: () => {
+        this.analiseService.reabrirAnalise(analise.id).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Sucesso',
+              detail: 'Análise reaberta com sucesso!'
+            });
+             setTimeout(() => {
+             this.loadAnalises();
+          }, 1000);
+          },
+          error: (error) => {
+            console.error('Erro ao reabrir análise:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: 'Erro ao reabrir análise.'
+            });
+          } 
+        });
+      }
+    });
+  }
+
+  laudoAnalise(analise: any): void {
+    this.confirmationService.confirm({
+      message: `Tem certeza que deseja encaminhar à análise ${analise.id} para laudo?`,
+      header: 'Encaminhar para Laudo',
+      icon: 'pi pi-file',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Não',
+      accept: () => {
+        this.analiseService.laudoAnalise(analise.id).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Sucesso',
+              detail: 'Análise encaminhada para laudo com sucesso!'
+            });
+             setTimeout(() => {
+             this.loadAnalises();
+          }, 1000);
+          },
+          error: (error) => {
+            console.error('Erro ao encaminhar análise para laudo:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: 'Erro ao reabrir análise.'
+            });
+          } 
+        });
+      }
+    });
+  }
+
+  aprovarAnalise(analise: any): void {
+    this.confirmationService.confirm({
+      message: `Tem certeza que deseja aprovar a análise ${analise.id}?`,
+      header: 'Aprovar Análise',
+      icon: 'pi pi-check',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Não',
+      accept: () => {
+        this.analiseService.aprovarAnalise(analise.id).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Sucesso',
+              detail: 'Análise aprovada para laudo com sucesso!'
+            });
+             setTimeout(() => {
+             this.loadAnalises();
+          }, 1000);
+          },
+          error: (error) => {
+            console.error('Erro ao aprovar análise para laudo:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: 'Erro ao aprovar análise.'
+            });
+          } 
+        });
+      }
+    });
+  }
+
+
+
+  gerarLaudo(analise: any): void {
+    console.log('Gerando laudo para análise:', analise);
+    
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Gerando Laudo',
+      detail: 'Preparando documento...'
+    });
+
+    // Implementar geração do laudo
+    setTimeout(() => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Laudo Gerado',
+        detail: 'Laudo gerado com sucesso!'
+      });
+    }, 2000);
   }
   
   getSeverity(materialNome: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | undefined {
@@ -660,6 +953,43 @@ private normalize(str: string): string {
         return 'secondary';
     }
 
+  }
+
+  /**
+   * Retorna o nome de exibição para o status da análise
+   */
+  getStatusDisplayName(estado: string): string {
+    const statusMap: { [key: string]: string } = {
+      'EM_ANDAMENTO': 'Em Andamento',
+      'PENDENTE': 'Pendente',
+      'FINALIZADA': 'Finalizada',
+      'APROVADA': 'Aprovada',
+      'CANCELADA': 'Cancelada',
+      'REJEITADA': 'Rejeitada'
+    };
+    
+    return statusMap[estado] || estado || 'Sem Status';
+  }
+
+  /**
+   * Retorna a severidade da tag para o status
+   */
+  getStatusSeverity(estado: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | undefined {
+    switch (estado) {
+      case 'APROVADA':
+        return 'success';
+      case 'FINALIZADA':
+        return 'info';
+      case 'EM_ANDAMENTO':
+        return 'warn';
+      case 'PENDENTE':
+        return 'secondary';
+      case 'CANCELADA':
+      case 'REJEITADA':
+        return 'danger';
+      default:
+        return 'contrast';
+    }
   }
 
   hasGroup(groups: string[]): boolean {
@@ -691,7 +1021,14 @@ private normalize(str: string): string {
 
 // Método principal para criar ordem e vincular amostra
   criarOrdemComAmostra(): void {
-   if (!this.amostraData) {
+    // Se for ordem expressa, usar método específico
+    if (this.isOrdemExpressa) {
+      this.criarOrdemExpressa();
+      return;
+    }
+
+    // Continuar com lógica de ordem normal
+    if (!this.amostraData) {
       this.messageService.add({ 
         severity: 'error', 
         summary: 'Erro', 
@@ -850,6 +1187,13 @@ private buscarAmostraPorIdAlternativo(ordemId: number): void {
 criarOSDoFormulario() {
   console.log('🚀 Iniciando criação de OS do formulário');
 
+  // Se for ordem expressa, usar método específico
+  if (this.isOrdemExpressa) {
+    this.criarOrdemExpressa();
+    return;
+  }
+
+  // Continuar com lógica de ordem normal
   // Validação para campos  mínimos
   const camposEssenciais = {
     'material': 'Material',
@@ -936,6 +1280,206 @@ private criarAnaliseParaAmostra(amostraId: number): void {
     // Resetar formulário
     this.registerOrdemForm.reset();
     this.configurarFormularioInicial();
+  }
+
+  // ================ MÉTODOS PARA ORDEM EXPRESSA ================
+
+  /**
+   * Alterna entre ordem normal e expressa
+   */
+  alternarTipoOrdem(): void {
+    this.isOrdemExpressa = !this.isOrdemExpressa;
+    console.log('Tipo de ordem alterado para:', this.isOrdemExpressa ? 'Expressa' : 'Normal');
+    
+    if (this.isOrdemExpressa) {
+      // Limpar seleções anteriores
+      this.ensaiosSelecionados = [];
+      this.calculosSelecionados = [];
+    }
+  }
+
+  /**
+   * Abre modal para seleção de ensaios
+   */
+  abrirModalEnsaios(): void {
+    this.modalEnsaiosVisible = true;
+  }
+
+  /**
+   * Abre modal para seleção de cálculos
+   */
+  abrirModalCalculos(): void {
+    this.modalCalculosVisible = true;
+  }
+
+  /**
+   * Fecha modal de ensaios
+   */
+  fecharModalEnsaios(): void {
+    this.modalEnsaiosVisible = false;
+  }
+
+  /**
+   * Fecha modal de cálculos
+   */
+  fecharModalCalculos(): void {
+    this.modalCalculosVisible = false;
+  }
+
+  /**
+   * Adiciona ensaios selecionados
+   */
+  adicionarEnsaiosSelecionados(): void {
+    const selecionados = this.ensaiosDisponiveis.filter(e => e.selecionado);
+    
+    selecionados.forEach(ensaio => {
+      // Verifica se já não está na lista
+      if (!this.ensaiosSelecionados.find(e => e.id === ensaio.id)) {
+        this.ensaiosSelecionados.push({ ...ensaio });
+      }
+      // Remove a seleção
+      ensaio.selecionado = false;
+    });
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: `${selecionados.length} ensaio(s) adicionado(s)`
+    });
+
+    this.fecharModalEnsaios();
+  }
+
+  /**
+   * Adiciona cálculos selecionados
+   */
+  adicionarCalculosSelecionados(): void {
+    const selecionados = this.calculosDisponiveis.filter(c => c.selecionado);
+    
+    selecionados.forEach(calculo => {
+      // Verifica se já não está na lista
+      if (!this.calculosSelecionados.find(c => c.id === calculo.id)) {
+        this.calculosSelecionados.push({ ...calculo });
+      }
+      // Remove a seleção
+      calculo.selecionado = false;
+    });
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: `${selecionados.length} cálculo(s) adicionado(s)`
+    });
+
+    this.fecharModalCalculos();
+  }
+
+  /**
+   * Remove ensaio da lista de selecionados
+   */
+  removerEnsaio(ensaio: any): void {
+    this.ensaiosSelecionados = this.ensaiosSelecionados.filter(e => e.id !== ensaio.id);
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Removido',
+      detail: `Ensaio "${ensaio.descricao}" removido`
+    });
+  }
+
+  /**
+   * Remove cálculo da lista de selecionados
+   */
+  removerCalculo(calculo: any): void {
+    this.calculosSelecionados = this.calculosSelecionados.filter(c => c.id !== calculo.id);
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Removido',
+      detail: `Cálculo "${calculo.descricao}" removido`
+    });
+  }
+
+  /**
+   * Cria uma ordem expressa
+   */
+  criarOrdemExpressa(): void {
+    // Validar se o formulário está válido
+    if (!this.registerOrdemForm.valid) {
+      this.messageService.add({ 
+        severity: 'error', 
+        summary: 'Erro', 
+        detail: 'Preencha todos os campos obrigatórios' 
+      });
+      return;
+    }
+
+    // Validar se há ensaios ou cálculos selecionados
+    if (this.ensaiosSelecionados.length === 0 && this.calculosSelecionados.length === 0) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Selecione pelo menos um ensaio ou cálculo para a ordem expressa'
+      });
+      return;
+    }
+
+    this.isCreatingOrdem = true;
+
+    // Formatar data
+    let dataFormatada = '';
+    const dataValue = this.registerOrdemForm.value.data;
+    if (dataValue instanceof Date && !isNaN(dataValue.getTime())) {
+      dataFormatada = formatDate(dataValue, 'yyyy-MM-dd', 'en-US');
+    }
+
+    // Extrair IDs dos ensaios e cálculos selecionados
+    const ensaiosIds = this.ensaiosSelecionados.map(e => e.id);
+    const calculosIds = this.calculosSelecionados.map(c => c.id);
+
+    console.log('🚀 Criando ordem expressa:', {
+      data: dataFormatada,
+      numero: this.registerOrdemForm.value.numero,
+      ensaios: ensaiosIds,
+      calculos: calculosIds,
+      responsavel: this.registerOrdemForm.value.responsavel,
+      digitador: this.registerOrdemForm.value.digitador,
+      classificacao: this.registerOrdemForm.value.classificacao
+    });
+
+    // Criar ordem expressa
+    this.ordemService.registerExpressa(
+      dataFormatada,
+      this.registerOrdemForm.value.numero,
+      ensaiosIds,
+      calculosIds,
+      this.registerOrdemForm.value.responsavel,
+      this.registerOrdemForm.value.digitador,
+      this.registerOrdemForm.value.classificacao
+    ).subscribe({
+      next: (ordemSalva) => {
+        console.log('✅ Ordem Expressa criada:', ordemSalva);
+        
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Ordem expressa criada com sucesso!'
+        });
+
+        // Limpar formulário e seleções
+        this.registerOrdemForm.reset();
+        this.ensaiosSelecionados = [];
+        this.calculosSelecionados = [];
+        this.isOrdemExpressa = false;
+        this.isCreatingOrdem = false;
+
+        // Recarregar lista de ordens
+        this.loadOrdens();
+      },
+      error: (err) => {
+        this.isCreatingOrdem = false;
+        console.error('❌ Erro ao criar ordem expressa:', err);
+        this.tratarErroOperacao(err, 'criar ordem expressa');
+      }
+    });
   }
 
   // Método auxiliar para formatar datas

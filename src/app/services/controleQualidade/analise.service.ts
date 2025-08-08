@@ -31,7 +31,21 @@ export class AnaliseService {
   registerAnalise(amostra: any, estado: string){
     return this.httpClient.post<Analise>(this.analiseUrl, { amostra: amostra, estado: estado });
   }
+  /////////////-----------------Ações individuais para ANALISES -----------------------------------------------
 
+  finalizarAnalise(analiseId: number): Observable<any> {
+    return this.httpClient.post(`${this.analiseUrl}${analiseId}/update_finalizada/`, {});
+  }
+  reabrirAnalise(analiseId: number): Observable<any> {
+    return this.httpClient.post(`${this.analiseUrl}${analiseId}/update_aberta/`, {});
+  }
+  laudoAnalise(analiseId: number): Observable<any> {
+    return this.httpClient.post(`${this.analiseUrl}${analiseId}/update_laudo/`, {});
+  }
+  aprovarAnalise(analiseId: number): Observable<any> {
+    return this.httpClient.post(`${this.analiseUrl}${analiseId}/update_aprovada/`, {});
+  }
+  //////
   registerAnaliseComOrdem(amostraId: number, ordemId: number, estado: string): Observable<any> {
   const payload = {
     amostra: amostraId,
@@ -54,7 +68,6 @@ export class AnaliseService {
   }
 
   //---------------------RESULTADOS---------------------
-  // ...existing code...
 
 getResultadosAnteriores(calculoDescricao: string, ensaioIds: number[], limit: number = 10): Observable<any[]> {
   const url = `http://localhost:8000/analise/analise/resultados-anteriores/`;

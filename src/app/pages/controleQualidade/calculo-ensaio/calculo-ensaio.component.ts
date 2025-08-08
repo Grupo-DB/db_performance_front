@@ -37,6 +37,7 @@ interface RegisterCalculoEnsaioForm{
   funcao: FormControl;
   ensaios: FormControl;
   responsavel: FormControl;
+  unidade: FormControl;
   valor: FormControl;
 }
 
@@ -47,6 +48,7 @@ export interface CalculoEnsaio{
   ensaios: any;
   ensaios_detalhes: any;
   responsavel: string;
+  unidade: string;
   valor: number;
 }
 
@@ -219,6 +221,7 @@ export class CalculoEnsaioComponent implements OnInit {
       funcao: new FormControl('', [Validators.required]),
       ensaios: new FormControl('', [Validators.required]),
       responsavel: new FormControl(''),
+      unidade: new FormControl(''),
       valor: new FormControl(0)
     });
 
@@ -228,6 +231,7 @@ export class CalculoEnsaioComponent implements OnInit {
       funcao: [''],
       ensaios: [''],
       responsavel: [''],
+      unidade: [''],
       valor: ['']
     });
   }
@@ -429,6 +433,7 @@ salvarFormulaEditada() {
       funcao: calculo.funcao,
       ensaios: calculo.ensaios_detalhes.descricao,
       responsavel: calculo.responsavel,
+      unidade: calculo.unidade,
       valor: calculo.valor
     });
   }
@@ -454,6 +459,7 @@ salvarFormulaEditada() {
       funcao: this.editForm.value.funcao,
       ensaios: ensaios,
       responsavel: this.editForm.value.responsavel,
+      unidade: this.editForm.value.unidade,
       valor: this.editForm.value.valor
     };
     this.ensaioService.editCalculoEnsaio(id, dadosAtualizados).subscribe({
@@ -552,6 +558,7 @@ salvarFormulaEditada() {
       funcao: this.registerForm.value.funcao,
       ensaios: ensaiosSelecionados,
       responsavel: this.registerForm.value.responsavel,
+      unidade: this.registerForm.value.unidade,
       valor: this.registerForm.value.valor
     };
 
@@ -562,6 +569,7 @@ salvarFormulaEditada() {
       payload.funcao,
       payload.ensaios,
       payload.responsavel,
+      payload.unidade,
       payload.valor
     ).subscribe({
       next: () => {

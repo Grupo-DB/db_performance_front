@@ -95,4 +95,25 @@ export class OrdemService {
     return this.httpClient.post<Expressa>(this.expressaUrl, payload);
   }
 
+  /**
+   * Atualiza ensaios e cálculos de uma ordem expressa existente
+   */
+  atualizarEnsaiosCalculosExpressa(ordemId: number, ensaiosIds: number[], calculosIds: number[]): Observable<any> {
+    const url = `${this.expressaUrl}${ordemId}/`;
+    const payload = {
+      ensaios: ensaiosIds,
+      calculos_ensaio: calculosIds
+    };
+    
+    console.log('📤 Atualizando ordem expressa:', {
+      ordemId,
+      ensaiosIds,
+      calculosIds,
+      url,
+      payload
+    });
+    
+    return this.httpClient.patch<any>(url, payload);
+  }
+
 }  
