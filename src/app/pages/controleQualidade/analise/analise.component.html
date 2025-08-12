@@ -109,7 +109,9 @@
                                         <tr class="tabela">
                                             <th style="width: 20%; text-align: center;">Ensaio</th>
                                             <th style="width: 1%;">Un</th>
-                                            <th style="width: 77%; text-align: center;">Variáveis</th>
+                                            <th style="width: 10%; text-align: center;">Técnico</th>
+                                            <th style="width: 1%; text-align: center;">N° Cadinho</th>
+                                            <th style="width: 66%; text-align: center;">Variáveis</th>
                                             <th style="width: 1%; text-align: center;">Histórico</th>
                                             <th style="width: 1%; text-align: center;" *ngIf="podeEditarEnsaiosCalculos()">Ações
                                             </th>
@@ -123,17 +125,31 @@
                                                     style="width: 100%; font-weight: bold;" />
                                             </td>
                                             <td>{{ ensaio.unidade }}</td>
-                                            <!-- <td>
-                                                                        <div class="form2 w-10 mb-3 mt-3 text-left">
-                                                                            <p-floatLabel variant="on">
-                                                                                <p-select inputId="float-label" [style]="{'width':'100%'}" [options]="responsaveis"
-                                                                                    optionLabel="value" optionValue="value" [(ngModel)]="ensaio.responsavel" appendTo="body"
-                                                                                    [filter]="true" filterBy="value" [showClear]="true">
-                                                                                </p-select>
-                                                                                <label for="float-label">Selecione o Responsável</label>
-                                                                            </p-floatLabel>
-                                                                        </div>
-                                                                    </td> -->
+                                            <td>
+                                                <div class="form2 w-10 mb-3 mt-3 text-left">
+                                                    <p-floatLabel variant="on">
+                                                        <p-select inputId="float-label" [style]="{'width':'100%'}" [options]="responsaveis" optionLabel="value"
+                                                            optionValue="value" [(ngModel)]="ensaio.responsavel" appendTo="body" [filter]="true" filterBy="value"
+                                                            [showClear]="true">
+                                                        </p-select>
+                                                        <label for="float-label">Selecione o Responsável</label>
+                                                    </p-floatLabel>
+                                                </div>
+                                            </td>
+                                            <!-- Nº Cadinho -->
+                                            <td style="text-align: center;">
+                                                <p-inputnumber [(ngModel)]="ensaio.numero_cadinho" 
+                                                    [showButtons]="true" 
+                                                    [min]="1" 
+                                                    [max]="9999"
+                                                    mode="decimal"
+                                                    [useGrouping]="false"
+                                                    placeholder="Nº Cadinho"
+                                                    class="form-control"
+                                                    
+                                                >
+                                                </p-inputnumber>
+                                            </td>
                                             <td>
                                                 <!-- ensaio direto -->
                                                 <div *ngIf="ensaio.variavel_detalhes && ensaio.variavel_detalhes.length > 0"
@@ -153,6 +169,8 @@
                                                         </p-floatlabel>
                                                     </div>
                                                 </div>
+
+                                                
                     
                                                 <!-- Para ensaios simples (sem variavel_detalhes) -->
                                                 <div *ngIf="!ensaio.variavel_detalhes || ensaio.variavel_detalhes.length === 0">
@@ -164,11 +182,11 @@
                                                     </div>
                                                 </div>
                                             </td>
-                    
+
+                                            
+    
                                             <!-- <td>{{ ensaio.tipo_ensaio_detalhes?.nome }}</td> -->
-                                            <td style="text-align: center;">
-                    
-                                                <p-button icon="pi pi-history" severity="info" size="small" [raised]="true"
+                                            <td style="text-align: center;">                                                <p-button icon="pi pi-history" severity="info" size="small" [raised]="true"
                                                     (onClick)="abrirDrawerResultadosEnsaios(ensaio)"
                                                     [loading]="carregandoResultados && ensaioSelecionadoParaPesquisa?.descricao === ensaio.descricao">
                                                 </p-button>
@@ -229,10 +247,21 @@
                                                     </ng-template>
                                                 </p-popover>
                                             </td>
-                                            <td *ngIf="podeEditarEnsaiosCalculos()"></td>
                                             <td>
-                                                    <p-button icon="pi pi-arrows-v" (click)="abrirModalOrdemVariaveis(ensaio)"></p-button>
-                                                </td>
+                                                <p-button 
+                                                    severity="warn"
+                                                    [text]="true"
+                                                    pTooltip="Alterar ordem das variáveis"
+                                                    tooltipPosition="top"
+                                                    size="small" 
+                                                    [raised]="true" 
+                                                    icon="pi pi-arrows-v" 
+                                                    (click)="abrirModalOrdemVariaveis(ensaio)">
+                                                </p-button>
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                            <td *ngIf="podeEditarEnsaiosCalculos()"></td>
                                             <td 
                                                 style="font-size: 15px;" 
                                                 class="text-right font-bold pr-6 "
@@ -271,10 +300,10 @@
                                 <p-table [value]="calc.ensaios_detalhes">
                                         <ng-template pTemplate="header">
                                             <tr class="tabela">
-                                                <th style="width: 20%; text-align: center;">Cálculo</th>
-                                                <th style="width: 1%; text-align: center;">Un</th>
-                                                <th style="width: 44%; text-align: center;">Ensaios</th>
-                                                <!-- <th style="width: 20%;">Responsável</th> -->
+                                                <th style="width: 20%; text-align: left;">Cálculo</th>
+                                                <th style="width: 1%; text-align: left;">Un</th>
+                                                
+                                                <th style="width: 44%; text-align: center;">Ensaios</th>                   
                                                 <th style="width: 20%; text-align: center;">Valor</th>
                                                 <th style="width: 10%; text-align: center;">Histórico</th>
                                                 <th style="width: 5%; text-align: center;" *ngIf="podeEditarEnsaiosCalculos()">Ações</th>
@@ -284,21 +313,12 @@
                                             <tr>
                                                 <td style="text-align: start;"><b>{{ calc.descricao }}</b></td>
                                                 <td style="text-align: center;"><b>{{ calc.unidade }}</b></td>
+                                                
                                                 <td style="text-align: center;"><b>{{ e.descricao }}</b></td>
-                                                <!-- <td>
-                                                    <div class="form2 w-10 mb-3 mt-3 text-left">
-                                                        <p-floatLabel variant="on">
-                                                            <p-select inputId="float-label" [style]="{'width':'100%'}"
-                                                                [options]="responsaveis" optionLabel="value" [(ngModel)]="e.responsavel"
-                                                                appendTo="body" [filter]="true" filterBy="value" [showClear]="true">
-                                                            </p-select>
-                                                            <label for="float-label">Selecione o Responsável</label>
-                                                        </p-floatLabel>
-                                                    </div>
-                                                </td> -->
+                                                
                     
                                                 <td style="text-align: center;">
-                                                    <p-inputnumber [(ngModel)]="e.valor" [showButtons]="true"
+                                                    <p-inputnumber [(ngModel)]="e.valor" [showButtons]="true" readonly="true"
                                                         (ngModelChange)="calcular(calc, plano)"></p-inputnumber>
                                                     <!-- <input type="number" [(ngModel)]="e.valor" (ngModelChange)="calcular(calc, plano)" style="width: 80px;" /> -->
                                                 </td>
@@ -364,6 +384,7 @@
                                                         </ng-template>
                                                     </p-popover>
                                                 </td>
+                                               <td></td>
                                                 <td></td>
                                                 <td *ngIf="podeEditarEnsaiosCalculos()"></td>
                                                 <td 
@@ -422,7 +443,7 @@
                         <th>Amostra</th>
                         <th>Resultado</th>
                         <th>Ensaios/Valores</th>
-                        <th>Responsável</th>
+                        
 
                     </tr>
                 </ng-template>
@@ -438,7 +459,8 @@
                                 </span>
                             </div>
                         </td>
-                        <td>{{ resultado.responsavel }}</td>
+                        
+                       
 
                     </tr>
                 </ng-template>
@@ -476,6 +498,7 @@
                         <th>Data</th>
                         <th>Amostra</th>
                         <th>Resultado</th>
+                        
                         <th>Responsável</th>
                         <th>Digitador</th>
                     </tr>
@@ -491,6 +514,7 @@
                                 </span>
                             </div>
                         </td>
+                        
                         <td>{{ resultado.responsavel }}</td>
                         <td>{{ resultado.digitador}}</td>
                     </tr>

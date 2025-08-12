@@ -69,7 +69,7 @@ export class AnaliseService {
 
   //---------------------RESULTADOS---------------------
 
-getResultadosAnteriores(calculoDescricao: string, ensaioIds: number[], limit: number = 10): Observable<any[]> {
+getResultadosAnteriores(calculoDescricao: string, ensaioIds: number[], limit: number = 5): Observable<any[]> {
   const url = `http://localhost:8000/analise/analise/resultados-anteriores/`;
   
   // Corpo da requisição POST
@@ -82,7 +82,7 @@ getResultadosAnteriores(calculoDescricao: string, ensaioIds: number[], limit: nu
   return this.httpClient.post<any[]>(url, body);
 }
 
-getResultadosAnterioresEnsaios(ensaioDescricao: string, ensaioIds: number[], limit: number = 10): Observable<any[]> {
+getResultadosAnterioresEnsaios(ensaioDescricao: string, ensaioIds: number[], limit: number = 5): Observable<any[]> {
   const url = `http://localhost:8000/analise/analise/resultados-anteriores/`;
   
   // Corpo da requisição POST

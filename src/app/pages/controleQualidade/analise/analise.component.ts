@@ -236,17 +236,38 @@ export class AnaliseComponent implements OnInit {
   this.colaboradorService.getColaboradorInfo().subscribe(
     data => {
       this.digitador = data.nome;
-      // Preencher o campo digitador em todos os ensaios já carregados
+      
+      // Verificar se o nome do usuário logado está na lista de responsáveis
+      const responsavelEncontrado = this.responsaveis.find(r => r.value === data.nome);
+      console.log('👤 Usuário logado:', data.nome);
+      console.log('🔍 Responsável encontrado na lista:', responsavelEncontrado);
+      
+      // Preencher o campo digitador e responsável em todos os ensaios já carregados
       this.analisesSimplificadas[0]?.planoDetalhes.forEach((plano: any) => {
         plano.ensaio_detalhes?.forEach((ensaio: any) => {
           ensaio.digitador = this.digitador;
+          // NOVO: Definir responsável automaticamente se não estiver definido
+          if (!ensaio.responsavel && responsavelEncontrado) {
+            ensaio.responsavel = responsavelEncontrado.value;
+            console.log(`✅ Responsável definido automaticamente para ensaio ${ensaio.descricao}: ${ensaio.responsavel}`);
+          }
           //console.log('Digitador do ensaio:', ensaio.digitador);
         });
         plano.calculo_ensaio_detalhes?.forEach((calc: any) => {
           calc.digitador = this.digitador;
+          // NOVO: Definir responsável automaticamente para cálculos se não estiver definido
+          if (!calc.responsavel && responsavelEncontrado) {
+            calc.responsavel = responsavelEncontrado.value;
+            console.log(`✅ Responsável definido automaticamente para cálculo ${calc.descricao}: ${calc.responsavel}`);
+          }
           // Se quiser mostrar também nos ensaios de cálculo:
           calc.ensaios_detalhes?.forEach((calc: any) => {
             calc.digitador = this.digitador;
+            // NOVO: Definir responsável automaticamente para ensaios de cálculo se não estiver definido
+            if (!calc.responsavel && responsavelEncontrado) {
+              calc.responsavel = responsavelEncontrado.value;
+              console.log(`✅ Responsável definido automaticamente para ensaio de cálculo ${calc.descricao}: ${calc.responsavel}`);
+            }
           });
         });
       });
@@ -257,6 +278,212 @@ export class AnaliseComponent implements OnInit {
     }
   );
 }
+
+/**
+ * Obtém o responsável padrão baseado primeiro nos ensaios_utilizados salvos, 
+ * depois no usuário logado como fallback
+ */
+private obterResponsavelPadrao(): string | null {
+  // 1. Tentar obter responsável dos ensaios_utilizados salvos
+  const responsavelDoHistorico = this.obterResponsavelDoHistorico();
+  if (responsavelDoHistorico) {
+    console.log(`✅ Responsável obtido do histórico: ${responsavelDoHistorico}`);
+    return responsavelDoHistorico;
+  }
+  
+  // 2. Fallback: usar o usuário logado
+  if (this.digitador) {
+    const responsavelEncontrado = this.responsaveis.find(r => r.value === this.digitador);
+    if (responsavelEncontrado) {
+      console.log(`✅ Responsável padrão definido (usuário logado): ${responsavelEncontrado.value}`);
+      return responsavelEncontrado.value;
+    }
+  }
+  
+  console.log('⚠️ Nenhum responsável padrão encontrado');
+  return null;
+}
+
+/**
+ * Busca responsável nos dados salvos (ultimo_ensaio ou ensaios_detalhes)
+ */
+private obterResponsavelDoHistorico(): string | null {
+  try {
+    console.log('🔍 === INICIANDO obterResponsavelDoHistorico ===');
+    
+    if (!this.analisesSimplificadas || this.analisesSimplificadas.length === 0) {
+      console.log('❌ Nenhuma análise simplificada disponível');
+      return null;
+    }
+    
+    const analise = this.analisesSimplificadas[0];
+    console.log('📊 Análise obtida:', {
+      temUltimoEnsaio: !!analise.ultimo_ensaio,
+      temEnsaiosDetalhes: !!analise.ensaios_detalhes,
+      ensaiosDetalhesLength: analise.ensaios_detalhes?.length
+    });
+    
+    let dadosSalvos: any[] = [];
+    
+    // Buscar em ultimo_ensaio.ensaios_utilizados primeiro
+    if (analise.ultimo_ensaio && analise.ultimo_ensaio.ensaios_utilizados) {
+      dadosSalvos = analise.ultimo_ensaio.ensaios_utilizados;
+      console.log('🔍 Usando ultimo_ensaio.ensaios_utilizados:', dadosSalvos);
+    } 
+    // Fallback: buscar em ensaios_detalhes
+    else if (analise.ensaios_detalhes && analise.ensaios_detalhes.length > 0) {
+      const ultimoEnsaioSalvo = analise.ensaios_detalhes
+        .sort((a: any, b: any) => b.id - a.id)[0];
+      
+      console.log('📝 Último ensaio salvo:', ultimoEnsaioSalvo);
+      
+      if (ultimoEnsaioSalvo && ultimoEnsaioSalvo.ensaios_utilizados) {
+        dadosSalvos = typeof ultimoEnsaioSalvo.ensaios_utilizados === 'string' 
+          ? JSON.parse(ultimoEnsaioSalvo.ensaios_utilizados)
+          : ultimoEnsaioSalvo.ensaios_utilizados;
+        console.log('🔍 Usando ensaios_detalhes (mais recente):', dadosSalvos);
+      }
+    }
+    
+    console.log('📋 Dados salvos encontrados:', {
+      tipo: Array.isArray(dadosSalvos) ? 'array' : typeof dadosSalvos,
+      length: dadosSalvos?.length,
+      dados: dadosSalvos
+    });
+    
+    // Procurar primeiro responsável válido nos dados salvos
+    if (Array.isArray(dadosSalvos)) {
+      for (let i = 0; i < dadosSalvos.length; i++) {
+        const ensaio = dadosSalvos[i];
+        console.log(`🔎 Verificando ensaio ${i}:`, {
+          id: ensaio.id,
+          descricao: ensaio.descricao,
+          responsavel: ensaio.responsavel,
+          responsavel1: ensaio.responsavel1, // NOVO: Verificar também responsavel1
+          temResponsavel: !!ensaio.responsavel,
+          temResponsavel1: !!ensaio.responsavel1, // NOVO
+          naoEhNA: ensaio.responsavel !== 'N/A',
+          naoEhVazio: ensaio.responsavel !== ''
+        });
+        
+        // Verificar responsavel primeiro
+        if (ensaio.responsavel && ensaio.responsavel !== 'N/A' && ensaio.responsavel !== '') {
+          console.log(`🎯 ✅ Responsável encontrado no histórico: ${ensaio.responsavel}`);
+          return ensaio.responsavel;
+        }
+        
+        // NOVO: Verificar responsavel1 como fallback
+        if (ensaio.responsavel1 && ensaio.responsavel1 !== 'N/A' && ensaio.responsavel1 !== '') {
+          console.log(`🎯 ✅ Responsável1 encontrado no histórico: ${ensaio.responsavel1}`);
+          return ensaio.responsavel1;
+        }
+      }
+    }
+    
+    console.log('📝 ❌ Nenhum responsável válido encontrado no histórico');
+    return null;
+    
+  } catch (error) {
+    console.error('❌ Erro ao buscar responsável no histórico:', error);
+    return null;
+  }
+}
+
+/**
+ * Aplica o responsável padrão em todos os ensaios e cálculos que não têm responsável definido
+ */
+aplicarResponsavelPadrao(): void {
+  console.log('=== INICIANDO aplicarResponsavelPadrao ===');
+  console.log('analisesSimplificadas existe?', !!this.analisesSimplificadas);
+  console.log('analisesSimplificadas.length:', this.analisesSimplificadas?.length);
+  
+  const responsavelPadrao = this.obterResponsavelPadrao();
+  console.log('responsavelPadrao obtido:', responsavelPadrao);
+  
+  if (!responsavelPadrao) {
+    console.log('❌ Não foi possível obter responsável padrão');
+    return;
+  }
+  
+  console.log(`📝 Aplicando responsável padrão: ${responsavelPadrao}`);
+  
+  if (!this.analisesSimplificadas || this.analisesSimplificadas.length === 0) {
+    console.log('❌ Nenhuma análise carregada');
+    return;
+  }
+  
+  const analiseData = this.analisesSimplificadas[0];
+  console.log('analiseData:', analiseData);
+  const planoDetalhes = analiseData?.planoDetalhes || [];
+  console.log('planoDetalhes.length:', planoDetalhes.length);
+  
+  // Aplicar responsável nos ensaios diretos
+  planoDetalhes.forEach((plano: any, planoIndex: number) => {
+    console.log(`📋 Processando plano ${planoIndex}: ${plano.descricao}`);
+    console.log('plano.ensaio_detalhes existe?', !!plano.ensaio_detalhes);
+    console.log('plano.ensaio_detalhes.length:', plano.ensaio_detalhes?.length);
+    
+    if (plano.ensaio_detalhes) {
+      plano.ensaio_detalhes.forEach((ensaio: any, ensaioIndex: number) => {
+        console.log(`  🧪 Ensaio ${ensaioIndex}: ${ensaio.descricao || ensaio.nome}`);
+        console.log(`    - Responsável atual: "${ensaio.responsavel}"`);
+        console.log(`    - Condições: !responsavel=${!ensaio.responsavel}, === 'N/A'=${ensaio.responsavel === 'N/A'}, === ''=${ensaio.responsavel === ''}, === null=${ensaio.responsavel === null}, === undefined=${ensaio.responsavel === undefined}`);
+        
+        if (!ensaio.responsavel || ensaio.responsavel === 'N/A' || ensaio.responsavel === '' || ensaio.responsavel === null || ensaio.responsavel === undefined) {
+          console.log(`    ⚡ ANTES: ensaio.responsavel = "${ensaio.responsavel}"`);
+          ensaio.responsavel = responsavelPadrao;
+          console.log(`    ✅ DEPOIS: ensaio.responsavel = "${ensaio.responsavel}"`);
+        } else {
+          console.log(`    ➡️  Responsável já definido, mantendo: ${ensaio.responsavel}`);
+        }
+      });
+    }
+    
+    console.log('plano.calculo_ensaio_detalhes existe?', !!plano.calculo_ensaio_detalhes);
+    console.log('plano.calculo_ensaio_detalhes.length:', plano.calculo_ensaio_detalhes?.length);
+    
+    // Aplicar responsável nos cálculos
+    if (plano.calculo_ensaio_detalhes) {
+      plano.calculo_ensaio_detalhes.forEach((calc: any, calcIndex: number) => {
+        console.log(`  🧮 Cálculo ${calcIndex}: ${calc.descricao}`);
+        console.log(`    - Responsável atual: "${calc.responsavel}"`);
+        
+        if (!calc.responsavel || calc.responsavel === 'N/A' || calc.responsavel === '' || calc.responsavel === null || calc.responsavel === undefined) {
+          console.log(`    ⚡ ANTES: calc.responsavel = "${calc.responsavel}"`);
+          calc.responsavel = responsavelPadrao;
+          console.log(`    ✅ DEPOIS: calc.responsavel = "${calc.responsavel}"`);
+        } else {
+          console.log(`    ➡️  Responsável já definido, mantendo: ${calc.responsavel}`);
+        }
+        
+        console.log('calc.ensaios_detalhes existe?', !!calc.ensaios_detalhes);
+        console.log('calc.ensaios_detalhes.length:', calc.ensaios_detalhes?.length);
+        
+        // Aplicar responsável nos ensaios dos cálculos
+        if (calc.ensaios_detalhes) {
+          calc.ensaios_detalhes.forEach((ensaioCalc: any, ensaioCalcIndex: number) => {
+            console.log(`    🔬 Ensaio do cálculo ${ensaioCalcIndex}: ${ensaioCalc.descricao || ensaioCalc.nome}`);
+            console.log(`      - Responsável atual: "${ensaioCalc.responsavel}"`);
+            
+            if (!ensaioCalc.responsavel || ensaioCalc.responsavel === 'N/A' || ensaioCalc.responsavel === '' || ensaioCalc.responsavel === null || ensaioCalc.responsavel === undefined) {
+              console.log(`      ⚡ ANTES: ensaioCalc.responsavel = "${ensaioCalc.responsavel}"`);
+              ensaioCalc.responsavel = responsavelPadrao;
+              console.log(`      ✅ DEPOIS: ensaioCalc.responsavel = "${ensaioCalc.responsavel}"`);
+            } else {
+              console.log(`      ➡️  Responsável já definido, mantendo: ${ensaioCalc.responsavel}`);
+            }
+          });
+        }
+      });
+    }
+  });
+  
+  console.log('=== FIM aplicarResponsavelPadrao ===');
+  
+  // Forçar detecção de mudanças
+  this.cd.detectChanges();
+}
+
  loadPlanosAnalise() {
     this.ensaioService.getPlanoAnalise().subscribe(
       response => {
@@ -520,48 +747,94 @@ loadAnalisePorId(analise: any) {
     return;
   }
   // 1. Processar ensaios - incluindo valores calculados salvos
-  if (analise.ultimo_ensaio && analise.ultimo_ensaio.ensaios_utilizados && ensaioDetalhes.length > 0) {
-    const ultimoUtilizados = analise.ultimo_ensaio.ensaios_utilizados;
+  console.log('🔍 DEBUG: Dados completos da análise recebida do banco:', analise);
+  console.log('🔍 DEBUG: ultimo_ensaio completo:', analise.ultimo_ensaio);
+  console.log('🔍 DEBUG: ensaios_detalhes completo:', analise.ensaios_detalhes);
+  
+  // CORREÇÃO: Buscar dados salvos tanto em ultimo_ensaio quanto em ensaios_detalhes
+  let dadosSalvos: any[] = [];
+  
+  if (analise.ultimo_ensaio && analise.ultimo_ensaio.ensaios_utilizados) {
+    dadosSalvos = analise.ultimo_ensaio.ensaios_utilizados;
+    console.log('📋 Usando dados de ultimo_ensaio.ensaios_utilizados');
+  } else if (analise.ensaios_detalhes && analise.ensaios_detalhes.length > 0) {
+    // Buscar o último registro de ensaios salvos
+    const ultimoEnsaioSalvo = analise.ensaios_detalhes
+      .sort((a: any, b: any) => b.id - a.id)[0]; // Pegar o mais recente
+    
+    if (ultimoEnsaioSalvo && ultimoEnsaioSalvo.ensaios_utilizados) {
+      // Parse do JSON se necessário
+      dadosSalvos = typeof ultimoEnsaioSalvo.ensaios_utilizados === 'string' 
+        ? JSON.parse(ultimoEnsaioSalvo.ensaios_utilizados)
+        : ultimoEnsaioSalvo.ensaios_utilizados;
+      console.log('📋 Usando dados de ensaios_detalhes (mais recente)');
+    }
+  }
+  
+  console.log('🔍 DEBUG: Dados salvos encontrados:', dadosSalvos);
+  
+  if (dadosSalvos.length > 0 && ensaioDetalhes.length > 0) {
+    const ultimoUtilizados = dadosSalvos;
     ensaioDetalhes = ensaioDetalhes.map((ensaio: any) => {
       const valorRecente = ultimoUtilizados.find((u: any) => String(u.id) === String(ensaio.id));
+      
+      // DEBUG: Log detalhado do que está sendo encontrado
+      console.log(`🔍 DEBUG: Processando ensaio ${ensaio.descricao} (ID: ${ensaio.id})`);
+      console.log(`  - Dados salvos encontrados:`, valorRecente);
+      console.log(`  - numero_cadinho no banco:`, valorRecente?.numero_cadinho);
+      console.log(`  - responsavel no banco:`, valorRecente?.responsavel); // NOVO: Log do responsável
+      
       // Se é um ensaio direto (tem função) e foi salvo, usar o valor salvo
       const valorFinal = valorRecente ? valorRecente.valor : ensaio.valor;
       console.log(`Carregando ensaio ${ensaio.descricao}:`, {
         temFuncao: !!ensaio.funcao,
         valorBanco: valorRecente?.valor,
         valorOriginal: ensaio.valor,
-        valorFinal: valorFinal
+        valorFinal: valorFinal,
+        numeroCadinho: valorRecente?.numero_cadinho, // NOVO: Log do número do cadinho
+        responsavelBanco: valorRecente?.responsavel, // NOVO: Log do responsável
+        responsavelOriginal: ensaio.responsavel
       });
       return {
         ...ensaio,
         valor: valorFinal, // Usa o valor salvo do banco
-        responsavel: valorRecente ? analise.ultimo_ensaio.responsavel : ensaio.responsavel,
+        numero_cadinho: valorRecente?.numero_cadinho || ensaio.numero_cadinho, // NOVO: Restaurar número do cadinho
+        responsavel: valorRecente?.responsavel || valorRecente?.responsavel1 || ensaio.responsavel, // CORRIGIDO: Usar responsável específico do ensaio, com fallback para responsavel1
         digitador: valorRecente ? analise.ultimo_ensaio.digitador : ensaio.digitador || this.digitador,
       };
     });
   }
   // 2. Se há dados de ensaios salvos, também carregar as variáveis dos ensaios diretos
-  if (analise.ultimo_ensaio && analise.ultimo_ensaio.ensaios_utilizados) {
-    analise.ultimo_ensaio.ensaios_utilizados.forEach((ensaioSalvo: any) => {
+  if (dadosSalvos.length > 0) {
+    dadosSalvos.forEach((ensaioSalvo: any) => {
       // Encontra o ensaio correspondente
       const ensaioOriginal = ensaioDetalhes.find((e: any) => String(e.id) === String(ensaioSalvo.id));
-      if (ensaioOriginal && ensaioOriginal.funcao && Array.isArray(ensaioSalvo.variaveis_utilizadas)) {
-        // Cria um mapa por tecnica para lookup rápido
-        const mapSalvas: Record<string, any> = {};
-        ensaioSalvo.variaveis_utilizadas.forEach((v: any) => {
-          if (v.tecnica) mapSalvas[v.tecnica] = v;
-        });
-        // Atualiza cada variável do ensaio pelo valor correspondente salvo, usando campo tecnica
-        ensaioOriginal.variavel_detalhes?.forEach((variavel: any) => {
-          if (mapSalvas[variavel.tecnica] !== undefined) {
-            variavel.valor = mapSalvas[variavel.tecnica].valor;
-          }
-        });
-        // Log detalhado
-        console.log('RESTORE DEBUG - Ensaio:', ensaioOriginal.descricao);
-        ensaioOriginal.variavel_detalhes.forEach((v: any, idx: number) => {
-          console.log(`  [${idx}] tecnica=${v.tecnica} valor=${v.valor}`);
-        });
+      if (ensaioOriginal) {
+        // NOVO: Restaurar número do cadinho mesmo para ensaios sem função
+        if (ensaioSalvo.numero_cadinho !== undefined && ensaioSalvo.numero_cadinho !== null) {
+          ensaioOriginal.numero_cadinho = ensaioSalvo.numero_cadinho;
+          console.log(`✅ Restaurado número do cadinho para ${ensaioOriginal.descricao}: ${ensaioSalvo.numero_cadinho}`);
+        }
+        
+        // Processar variáveis se for ensaio com função
+        if (ensaioOriginal.funcao && Array.isArray(ensaioSalvo.variaveis_utilizadas)) {
+          // Cria um mapa por tecnica para lookup rápido
+          const mapSalvas: Record<string, any> = {};
+          ensaioSalvo.variaveis_utilizadas.forEach((v: any) => {
+            if (v.tecnica) mapSalvas[v.tecnica] = v;
+          });
+          // Atualiza cada variável do ensaio pelo valor correspondente salvo, usando campo tecnica
+          ensaioOriginal.variavel_detalhes?.forEach((variavel: any) => {
+            if (mapSalvas[variavel.tecnica] !== undefined) {
+              variavel.valor = mapSalvas[variavel.tecnica].valor;
+            }
+          });
+          // Log detalhado
+          console.log('RESTORE DEBUG - Ensaio:', ensaioOriginal.descricao);
+          ensaioOriginal.variavel_detalhes.forEach((v: any, idx: number) => {
+            console.log(`  [${idx}] tecnica=${v.tecnica} valor=${v.valor}`);
+          });
+        }
       }
     });
   }
@@ -662,10 +935,15 @@ loadAnalisePorId(analise: any) {
 });
   // Após processar todos os dados, inicializa variáveis dos ensaios diretos (só se não foram carregadas do banco)
   setTimeout(() => {
+      console.log('🚀 === INICIANDO SEQUÊNCIA DE INICIALIZAÇÃO ===');
       this.inicializarVariaveisEnsaios();
       this.mapearEnsaiosParaCalculos();
       // Agora sim, carrega o último resultado gravado para sobrescrever os valores corretamente
       this.carregarUltimoResultadoGravado();
+      // Aplicar responsável padrão (primeiro do histórico, depois usuário logado)
+      console.log('🎯 Chamando aplicarResponsavelPadrao...');
+      this.aplicarResponsavelPadrao();
+      console.log('✅ === FIM DA SEQUÊNCIA DE INICIALIZAÇÃO ===');
       // O processamento dos ensaios diretos e recálculo dos cálculos deve acontecer após aplicar os valores restaurados
   }, 1000);
 }
@@ -1184,7 +1462,7 @@ salvarAnaliseResultados() {
     planoDetalhes: planoDetalhes
   });
   // Montar ensaios (incluindo valores calculados dos ensaios diretos)
-  const ensaios = planoDetalhes.flatMap((plano: any) =>
+  const todosEnsaios = planoDetalhes.flatMap((plano: any) =>
     (plano.ensaio_detalhes || []).map((ensaio: any) => {
       // Para ensaios diretos (com função), usar o valor calculado
       const valorFinal = ensaio.funcao ? ensaio.valor : ensaio.valor;
@@ -1198,32 +1476,77 @@ salvarAnaliseResultados() {
           }))
         : [];
 
-      console.log(`Salvando ensaio ${ensaio.descricao}:`, {
+      console.log(`Processando ensaio ${ensaio.descricao}:`, {
         temFuncao: !!ensaio.funcao,
         valorOriginal: ensaio.valor,
         valorFinal: valorFinal,
+        numeroCadinho: ensaio.numero_cadinho, // NOVO: Log do número do cadinho
         variaveis: ensaio.variavel_detalhes
       });
+
+      // Log específico das variáveis que serão enviadas
+      console.log(`📋 Variáveis do ensaio "${ensaio.descricao}":`, ensaio.variavel_detalhes);
+      
+      // Filtrar apenas as variáveis que são usadas na função deste ensaio específico
+      let variaveisDoEnsaio: any[] = [];
+      if (ensaio.funcao && ensaio.variavel_detalhes) {
+        // Extrair as variáveis mencionadas na função (var01, var02, etc.)
+        const variaveisNaFuncao = ensaio.funcao.match(/var\d+/g) || [];
+        console.log(`🔍 Variáveis encontradas na função "${ensaio.funcao}":`, variaveisNaFuncao);
+        
+        // Filtrar apenas as variáveis que estão na função
+        variaveisDoEnsaio = ensaio.variavel_detalhes.filter((v: any) => 
+          variaveisNaFuncao.includes(v.tecnica)
+        );
+        console.log(`✅ Variáveis filtradas para "${ensaio.descricao}":`, variaveisDoEnsaio);
+      }
+      
+      if (variaveisDoEnsaio.length > 0) {
+        variaveisDoEnsaio.forEach((v: any, idx: number) => {
+          console.log(`  [${idx + 1}] Nome: ${v.nome}, Valor: ${v.valor}, Técnica: ${v.tecnica}`);
+        });
+      } else {
+        console.log(`  ⚠️ Nenhuma variável específica encontrada para o ensaio "${ensaio.descricao}"`);
+      }
+
       return {
-        ensaios: ensaio.id,
+        id: ensaio.id,
         descricao: ensaio.descricao,
-        valores: valorFinal, // Usar o valor calculado
+        valor: valorFinal,
+        tecnica: ensaio.tecnica || `ensaio${String(ensaio.id).padStart(2, '0')}`,
+        tipo: 'ENSAIO',
         responsavel: typeof ensaio.responsavel === 'object' && ensaio.responsavel !== null
           ? ensaio.responsavel.value
           : ensaio.responsavel,
         digitador: this.digitador,
         tempo_previsto: ensaio.tempo_previsto,
-        tipo: ensaio.tipo_ensaio_detalhes?.nome,
+        tipo_ensaio: ensaio.tipo_ensaio_detalhes?.nome,
         funcao: ensaio.funcao || null,
+        numero_cadinho: ensaio.numero_cadinho || null, // NOVO: Adicionar número do cadinho
         variaveis_utilizadas: variaveisUtilizadas,
-        ensaios_utilizados: (plano.ensaio_detalhes || []).map((e: any) => ({
-          id: e.id,
-          descricao: e.descricao,
-          valor: e.valor
-        }))
+        variaveis: variaveisDoEnsaio.reduce((acc: any, v: any) => {
+          acc[v.tecnica] = {
+            descricao: v.nome,
+            valor: v.valor !== undefined && v.valor !== null ? Number(v.valor) : 0
+          };
+          return acc;
+        }, {})
       };
     })
   );
+
+  // Criar um único registro com todos os ensaios
+  const ensaios = [{
+    descricao: `Análise Completa - ${analiseData.ordemTipo}`,
+    valores: 'MULTIPLOS', // Indicar que há múltiplos valores
+    responsavel: this.digitador,
+    digitador: this.digitador,
+    tempo_previsto: '1 Hora',
+    tipo: 'ANALISE_COMPLETA',
+    funcao: null,
+    variaveis_utilizadas: [],
+    ensaios_utilizados: todosEnsaios
+  }];
   // Montar cálculos (funciona para ambos os tipos)
   const calculos = planoDetalhes.flatMap((plano: any) =>
     (plano.calculo_ensaio_detalhes || []).map((calc: any) => ({
@@ -1311,15 +1634,32 @@ private validarDadosParaSalvar(payload: any): { valido: boolean; erros: string[]
 }
 
 processarResultadosAnteriores(resultados: any[], calcAtual: any) {
+  console.log('🚨 MÉTODO ATUALIZADO PARA CÁLCULOS - VERSÃO 2.0 🚨');
   console.log('=== PROCESSANDO RESULTADOS ANTERIORES ===');
   console.log('Dados recebidos:', resultados);
   console.log('Cálculo atual:', calcAtual);
+  
   if (!resultados || !Array.isArray(resultados) || resultados.length === 0) {
-    console.log('Nenhum dado para processar');
+    console.log('❌ Nenhum dado para processar');
     this.resultadosAnteriores = [];
     return;
   }
+  
   console.log(`📊 Processando ${resultados.length} itens...`);
+  console.log('🔍 Analisando estrutura de cada item recebido:');
+  resultados.forEach((item: any, index: number) => {
+    console.log(`Item ${index}:`, {
+      analise_id: item.analise_id,
+      tipo: item.tipo,
+      ensaio_descricao: item.ensaio_descricao,
+      calculo_descricao: item.calculo_descricao,
+      valor_ensaio: item.valor_ensaio,
+      resultado_calculo: item.resultado_calculo,
+      todasAsPropriedades: Object.keys(item),
+      estruturaCompleta: item
+    });
+  });
+  
   // Agrupar por análise_id
   const analiseMap = new Map();
   resultados.forEach((item: any, index: number) => {
@@ -1339,10 +1679,40 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
       });
     }
     const analiseData = analiseMap.get(analiseId);
-    // Processar baseado no tipo
-    if (item.tipo === 'CALCULO' && item.resultado_calculo !== null) {
-      console.log(`📊 Resultado de cálculo encontrado: ${item.resultado_calculo}`);
+    console.log(`📝 Dados da análise ${analiseId}:`, analiseData);
+    
+    // Processar resultado de cálculo, se houver
+    console.log(`🔍 Verificando se é cálculo: tipo="${item.tipo}", resultado_calculo="${item.resultado_calculo}"`);
+    
+    // CORREÇÃO: Processar qualquer item que tenha resultado_calculo válido
+    if (item.resultado_calculo !== null && item.resultado_calculo !== undefined && item.resultado_calculo !== '') {
+      console.log(`🧮 Processando CÁLCULO (sem verificar tipo) - resultado: ${item.resultado_calculo}`);
       analiseData.resultadoCalculo = item.resultado_calculo;
+      
+      // Adicionar o próprio cálculo como "ensaio" para aparecer na lista
+      const descricaoCalculo = item.calculo_descricao || item.descricao || calcAtual.descricao || 'Cálculo';
+      console.log(`� Descrição do cálculo: "${descricaoCalculo}"`);
+      
+      const jaExisteCalculo = analiseData.ensaiosUtilizados.find((e: any) => 
+        e.tipo === 'CALCULO' && e.descricao === descricaoCalculo
+      );
+      
+      if (!jaExisteCalculo) {
+        const calculoItem = {
+          id: `calculo_${analiseId}`,
+          descricao: descricaoCalculo,
+          valor: item.resultado_calculo,
+          responsavel: item.responsavel || item.digitador || 'N/A',
+          digitador: item.digitador || 'N/A',
+          tipo: 'CALCULO'
+        };
+        analiseData.ensaiosUtilizados.push(calculoItem);
+        console.log(`✅ Cálculo adicionado:`, calculoItem);
+      } else {
+        console.log(`⚠️ Cálculo já existe: ${descricaoCalculo}`);
+      }
+    } else {
+      console.log(`❌ NÃO tem resultado_calculo válido - valor: ${item.resultado_calculo}`);
     }
     if (item.tipo === 'ENSAIO' && item.ensaio_descricao) {
       console.log(`🧪 Processando ensaio: ${item.ensaio_descricao}`);
@@ -1419,9 +1789,26 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
       return temResultado && temEnsaios;
     })
     .sort((a: any, b: any) => new Date(b.dataAnalise).getTime() - new Date(a.dataAnalise).getTime());
-  console.log('🎉 PROCESSAMENTO CONCLUÍDO!');
+    
+  console.log('🎉 PROCESSAMENTO DE CÁLCULOS CONCLUÍDO!');
   console.log(`📊 Total de resultados processados: ${this.resultadosAnteriores.length}`);
   console.log('📋 Resultados finais:', this.resultadosAnteriores);
+  
+  // DEBUG: Verificar se a variável está sendo atualizada
+  if (this.resultadosAnteriores.length > 0) {
+    console.log('✅ SUCESSO: Resultados anteriores de cálculos carregados para exibição');
+    this.resultadosAnteriores.forEach((resultado: any, idx: number) => {
+      console.log(`  Resultado ${idx + 1}:`, {
+        analiseId: resultado.analiseId,
+        descricao: resultado.amostraNumero,
+        qtdEnsaios: resultado.ensaiosUtilizados.length,
+        resultadoCalculo: resultado.resultadoCalculo,
+        ensaios: resultado.ensaiosUtilizados
+      });
+    });
+  } else {
+    console.log('❌ PROBLEMA: Nenhum resultado de cálculo foi adicionado à lista final');
+  }
 }
 aplicarResultadosAnteriores(resultadoAnterior: any) {
   console.log('Aplicando resultados anteriores:', resultadoAnterior);
@@ -1505,8 +1892,9 @@ fecharResultadosAnteriores() {
     // Parâmetros obrigatórios para a API
     const calculoNome = calc.descricao || '';
     const ensaioIds = (calc.ensaios_detalhes || []).map((e: any) => e.id);
-    console.log('Buscando resultados anteriores:', { calculoNome, ensaioIds, analiseId: this.analiseId });
-    this.analiseService?.getResultadosAnteriores(calculoNome, ensaioIds, this.analiseId).subscribe({
+    const limitResultados = 5; // Limitar a 5 resultados anteriores
+    console.log('Buscando resultados anteriores:', { calculoNome, ensaioIds, limit: limitResultados });
+    this.analiseService.getResultadosAnteriores(calculoNome, ensaioIds, limitResultados).subscribe({
       next: (resultados: any[]) => {
          console.log('Resultados recebidos:kkkkkkkkkkkkkkkkkkkkk', resultados);
   this.processarResultadosAnteriores(resultados, calc);
@@ -1533,10 +1921,18 @@ fecharResultadosAnteriores() {
     // Parâmetros obrigatórios para a API
     const ensaioNome = ensaio.descricao || '';
     const ensaioIds = [ensaio.id];
-    console.log('Buscando resultados anteriores:', { ensaioNome, ensaioIds, analiseId: this.analiseId });
-    this.analiseService?.getResultadosAnterioresEnsaios(ensaioNome, ensaioIds, this.analiseId).subscribe({
+    const limitResultados = 5; // Limitar a 5 resultados anteriores
+    console.log('Buscando resultados anteriores:', { ensaioNome, ensaioIds, limit: limitResultados });
+    this.analiseService.getResultadosAnterioresEnsaios(ensaioNome, ensaioIds, limitResultados).subscribe({
       next: (resultados: any[]) => {
-        console.log('Resultados recebidos:kkkkkkkkkkkkkkkkkkkkk', resultados);
+        console.log('🔍 RESULTADOS RECEBIDOS DO BACKEND:', resultados);
+        console.log('🔍 PRIMEIRO RESULTADO (estrutura completa):', JSON.stringify(resultados[0], null, 2));
+        resultados.forEach((resultado, index) => {
+          console.log(`🔍 Resultado ${index + 1} - numero_cadinho:`, resultado.numero_cadinho);
+          if (resultado.ensaios_utilizados) {
+            console.log(`🔍 Resultado ${index + 1} - ensaios_utilizados:`, resultado.ensaios_utilizados);
+          }
+        });
   this.processarResultadosAnterioresEnsaios(resultados, ensaio);
   this.carregandoResultados = false;
 },
@@ -1557,19 +1953,70 @@ fecharDrawerResultadosEnsaios() {
 
 
   processarResultadosAnterioresEnsaios(resultados: any[], contextoAtual: any) {
+  console.log('🎯 INICIANDO PROCESSAMENTO DE RESULTADOS ANTERIORES');
+  console.log('🔍 Total de resultados recebidos:', resultados.length);
+  console.log('🔍 Contexto atual:', contextoAtual);
+  
+  // Log detalhado de cada resultado
+  resultados.forEach((resultado, index) => {
+    console.log(`📋 Resultado ${index + 1}:`);
+    console.log(`  - ID: ${resultado.id}`);
+    console.log(`  - numero_cadinho: ${resultado.numero_cadinho}`);
+    console.log(`  - ensaios_utilizados:`, resultado.ensaios_utilizados);
+    console.log(`  - Estrutura completa:`, JSON.stringify(resultado, null, 2));
+  });
+  console.log('🚨 MÉTODO ATUALIZADO - VERSÃO 2.0 🚨');
   console.log('=== PROCESSANDO RESULTADOS ANTERIORES ===');
   console.log('Dados recebidos:', resultados);
   console.log('Contexto atual:', contextoAtual);
 
   if (!resultados || !Array.isArray(resultados) || resultados.length === 0) {
+    console.log('❌ Nenhum resultado para processar');
     this.resultadosAnteriores = [];
     return;
   }
 
+  console.log('🔍 Analisando estrutura de cada item recebido:');
+  resultados.forEach((item: any, index: number) => {
+    console.log(`Item ${index}:`, {
+      analise_id: item.analise_id,
+      tipo: item.tipo,
+      ensaio_descricao: item.ensaio_descricao,
+      calculo_descricao: item.calculo_descricao, // ADICIONADO
+      valor_ensaio: item.valor_ensaio,
+      resultado_calculo: item.resultado_calculo,
+      ensaios_utilizados_tipo: typeof item.ensaios_utilizados, // NOVO: Verificar tipo
+      ensaios_utilizados_valor: item.ensaios_utilizados, // NOVO: Ver o valor
+      todasAsPropriedades: Object.keys(item), // ADICIONADO: ver todas as propriedades
+      estruturaCompleta: item
+    });
+    
+    // NOVO: Fazer parse do ensaios_utilizados se for string
+    if (item.ensaios_utilizados && typeof item.ensaios_utilizados === 'string') {
+      try {
+        console.log(`🔄 Fazendo parse de ensaios_utilizados para item ${index}`);
+        item.ensaios_utilizados_parsed = JSON.parse(item.ensaios_utilizados);
+        console.log(`✅ Parse bem-sucedido:`, item.ensaios_utilizados_parsed);
+      } catch (error) {
+        console.error(`❌ Erro no parse de ensaios_utilizados para item ${index}:`, error);
+        item.ensaios_utilizados_parsed = [];
+      }
+    } else if (item.ensaios_utilizados && Array.isArray(item.ensaios_utilizados)) {
+      console.log(`✅ ensaios_utilizados já é array para item ${index}`);
+      item.ensaios_utilizados_parsed = item.ensaios_utilizados;
+    } else {
+      console.log(`⚠️ ensaios_utilizados não encontrado ou inválido para item ${index}`);
+      item.ensaios_utilizados_parsed = [];
+    }
+  });
+
   const analiseMap = new Map();
   resultados.forEach((item: any, index: number) => {
     const analiseId = item.analise_id;
+    console.log(`🔄 Processando item ${index} - analiseId: ${analiseId}`);
+    
     if (!analiseMap.has(analiseId)) {
+      console.log(`✨ Criando nova entrada para análise ${analiseId}`);
       analiseMap.set(analiseId, {
         analiseId: analiseId,
         amostraNumero: item.amostra_numero || 'N/A',
@@ -1582,14 +2029,45 @@ fecharDrawerResultadosEnsaios() {
       });
     }
     const analiseData = analiseMap.get(analiseId);
+    console.log(`📝 Dados da análise ${analiseId}:`, analiseData);
 
     // Processa resultado de cálculo, se houver
-    if (item.tipo === 'CALCULO' && item.resultado_calculo !== null) {
+    console.log(`🔍 Verificando se é cálculo: tipo="${item.tipo}", resultado_calculo="${item.resultado_calculo}", item completo:`, item);
+    
+    // TESTE: Processar qualquer item que tenha resultado_calculo válido
+    if (item.resultado_calculo !== null && item.resultado_calculo !== undefined && item.resultado_calculo !== '') {
+      console.log(`🧮 Processando CÁLCULO (sem verificar tipo) - resultado: ${item.resultado_calculo}`);
       analiseData.resultadoCalculo = item.resultado_calculo;
+      
+      // NOVO: Adicionar o próprio cálculo como "ensaio" para aparecer na lista
+      const descricaoCalculo = item.calculo_descricao || item.descricao || contextoAtual.descricao || 'Cálculo';
+      console.log(`📝 Descrição do cálculo: "${descricaoCalculo}"`);
+      
+      const jaExisteCalculo = analiseData.ensaiosUtilizados.find((e: any) => 
+        e.tipo === 'CALCULO' && e.descricao === descricaoCalculo
+      );
+      
+      if (!jaExisteCalculo) {
+        const calculoItem = {
+          id: `calculo_${analiseId}`,
+          descricao: descricaoCalculo,
+          valor: item.resultado_calculo,
+          responsavel: item.responsavel || item.digitador || 'N/A',
+          digitador: item.digitador || 'N/A',
+          tipo: 'CALCULO'
+        };
+        analiseData.ensaiosUtilizados.push(calculoItem);
+        console.log(`✅ Cálculo adicionado:`, calculoItem);
+      } else {
+        console.log(`⚠️ Cálculo já existe: ${descricaoCalculo}`);
+      }
+    } else {
+      console.log(`❌ NÃO tem resultado_calculo válido - valor: ${item.resultado_calculo}`);
     }
 
     // Processa ensaios (direto ou de cálculo)
     if (item.tipo === 'ENSAIO' && item.ensaio_descricao) {
+      console.log(`🔬 Processando ENSAIO - ${item.ensaio_descricao}, valor_ensaio:`, item.valor_ensaio);
       if (item.valor_ensaio && Array.isArray(item.valor_ensaio)) {
         item.valor_ensaio.forEach((valorItem: any) => {
           // Para drawer de ensaio direto, sempre adiciona; para cálculo, verifica se faz parte do cálculo
@@ -1609,12 +2087,14 @@ fecharDrawerResultadosEnsaios() {
               e.id === valorItem.id || e.descricao === valorItem.descricao
             );
             if (!jaExiste) {
+              console.log(`🔍 Adicionando ensaio - Descrição: ${valorItem.descricao}, Número Cadinho: ${item.numero_cadinho || valorItem.numero_cadinho || 'não encontrado'}`);
               analiseData.ensaiosUtilizados.push({
                 id: valorItem.id,
                 descricao: valorItem.descricao,
                 valor: valorItem.valor,
                 responsavel: item.ensaio_responsavel || 'N/A',
-                digitador: item.ensaio_digitador || 'N/A'
+                digitador: item.ensaio_digitador || 'N/A',
+                numero_cadinho: item.numero_cadinho || valorItem.numero_cadinho || null // NOVO: Número do cadinho
               });
             }
           }
@@ -1636,12 +2116,14 @@ fecharDrawerResultadosEnsaios() {
             e.id === item.ensaio_id || e.descricao === item.ensaio_descricao
           );
           if (!jaExiste) {
+            console.log(`🔍 Adicionando ensaio direto - Descrição: ${item.ensaio_descricao}, Número Cadinho: ${item.numero_cadinho || 'não encontrado'}`);
             analiseData.ensaiosUtilizados.push({
               id: item.ensaio_id,
               descricao: item.ensaio_descricao,
               valor: item.valor_ensaio,
               responsavel: item.ensaio_responsavel || 'N/A',
-              digitador: item.ensaio_digitador || 'N/A'
+              digitador: item.ensaio_digitador || 'N/A',
+              numero_cadinho: item.numero_cadinho || null // NOVO: Número do cadinho
             });
           }
         }
@@ -1650,16 +2132,92 @@ fecharDrawerResultadosEnsaios() {
         analiseData.responsavel = item.ensaio_responsavel;
       }
     }
+    
+    // NOVA SEÇÃO: Processar ensaios do campo ensaios_utilizados (JSON parseado)
+    if (item.ensaios_utilizados_parsed && Array.isArray(item.ensaios_utilizados_parsed)) {
+      console.log(`🔄 Processando ${item.ensaios_utilizados_parsed.length} ensaios parseados do JSON`);
+      
+      item.ensaios_utilizados_parsed.forEach((ensaioParsed: any, ensaioIndex: number) => {
+        console.log(`🔍 Ensaio parseado ${ensaioIndex + 1}:`, ensaioParsed);
+        
+        // Verificar se este ensaio deve ser incluído (baseado no contexto)
+        let adicionar = true;
+        if (contextoAtual.ensaios_detalhes) {
+          adicionar = contextoAtual.ensaios_detalhes.some((e: any) =>
+            e.id === ensaioParsed.id ||
+            e.descricao === ensaioParsed.descricao ||
+            this.normalize(e.descricao) === this.normalize(ensaioParsed.descricao)
+          );
+        } else if (contextoAtual.id) {
+          adicionar = ensaioParsed.id === contextoAtual.id ||
+                      ensaioParsed.descricao === contextoAtual.descricao;
+        }
+        
+        if (adicionar) {
+          const jaExiste = analiseData.ensaiosUtilizados.find((e: any) =>
+            e.id === ensaioParsed.id || e.descricao === ensaioParsed.descricao
+          );
+          
+          if (!jaExiste) {
+            console.log(`🔍 Adicionando ensaio parseado - Descrição: ${ensaioParsed.descricao}, Número Cadinho: ${ensaioParsed.numero_cadinho || 'não encontrado'}`);
+            analiseData.ensaiosUtilizados.push({
+              id: ensaioParsed.id,
+              descricao: ensaioParsed.descricao,
+              valor: ensaioParsed.valor,
+              responsavel: ensaioParsed.responsavel || 'N/A',
+              digitador: ensaioParsed.digitador || 'N/A',
+              numero_cadinho: ensaioParsed.numero_cadinho || null // NOVO: Número do cadinho do JSON parseado
+            });
+          } else {
+            console.log(`⚠️ Ensaio parseado já existe: ${ensaioParsed.descricao}`);
+          }
+        } else {
+          console.log(`❌ Ensaio parseado não deve ser adicionado: ${ensaioParsed.descricao}`);
+        }
+      });
+    }
   });
 
+  console.log('🗺️ Mapa de análises criado:', analiseMap);
+  console.log('📊 Total de análises no mapa:', analiseMap.size);
+
   // Exibe históricos de cálculo OU ensaio direto
-  this.resultadosAnteriores = Array.from(analiseMap.values())
-    .filter((item: any) => item.ensaiosUtilizados.length > 0)
+  const resultadosProcessados = Array.from(analiseMap.values());
+  console.log('🔄 Resultados antes do filtro:', resultadosProcessados);
+  
+  this.resultadosAnteriores = resultadosProcessados
+    .filter((item: any) => {
+      const temEnsaios = item.ensaiosUtilizados.length > 0;
+      console.log(`🔍 Análise ${item.analiseId} - Ensaios utilizados: ${item.ensaiosUtilizados.length}, Passa no filtro: ${temEnsaios}`);
+      return temEnsaios;
+    })
     .sort((a: any, b: any) => new Date(b.dataAnalise).getTime() - new Date(a.dataAnalise).getTime());
 
   console.log('🎉 PROCESSAMENTO CONCLUÍDO!');
   console.log(`📊 Total de resultados processados: ${this.resultadosAnteriores.length}`);
   console.log('📋 Resultados finais:', this.resultadosAnteriores);
+  
+  // DEBUG: Verificar se a variável está sendo atualizada
+  if (this.resultadosAnteriores.length > 0) {
+    console.log('✅ SUCESSO: Resultados anteriores carregados para exibição');
+    this.resultadosAnteriores.forEach((resultado: any, idx: number) => {
+      console.log(`  Resultado ${idx + 1}:`, {
+        analiseId: resultado.analiseId,
+        descricao: resultado.amostraNumero,
+        qtdEnsaios: resultado.ensaiosUtilizados.length,
+        resultadoCalculo: resultado.resultadoCalculo,
+        ensaios: resultado.ensaiosUtilizados
+      });
+      
+      // NOVO: Log específico dos números de cadinho
+      console.log(`  🔍 Números de cadinho no resultado ${idx + 1}:`);
+      resultado.ensaiosUtilizados.forEach((ensaio: any, ensaioIdx: number) => {
+        console.log(`    Ensaio ${ensaioIdx + 1}: ${ensaio.descricao} - Cadinho: ${ensaio.numero_cadinho || 'não encontrado'}`);
+      });
+    });
+  } else {
+    console.log('❌ PROBLEMA: Nenhum resultado foi adicionado à lista final');
+  }
 }
 
   // ============================= MÉTODOS PARA ADICIONAR/REMOVER ENSAIOS E CÁLCULOS =============================
@@ -1779,15 +2337,17 @@ fecharDrawerResultadosEnsaios() {
 
     // Adicionar novos ensaios com estrutura padrão
     novosEnsaios.forEach(ensaio => {
+      const responsavelPadrao = this.obterResponsavelPadrao();
       const novoEnsaio = {
         ...ensaio,
         valor: ensaio.valor || 0,
-        responsavel: ensaio.responsavel || null,
+        responsavel: ensaio.responsavel || responsavelPadrao, // NOVO: Usar responsável padrão
         digitador: this.digitador || '',
         // Inicializar variáveis se for ensaio direto (com função)
         variavel_detalhes: ensaio.funcao ? this.criarVariaveisParaEnsaio(ensaio) : []
       };
       
+      console.log(`✅ Ensaio adicionado com responsável: ${novoEnsaio.responsavel}`);
       plano.ensaio_detalhes.push(novoEnsaio);
     });
 
