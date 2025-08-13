@@ -795,15 +795,29 @@ private normalize(str: string): string {
     autoTable(doc, {
       body: [[this.teste]],
       startY: 220,
+      theme: 'grid',
       styles: {
         fontSize: 8,
         halign: 'left',
         cellPadding: 1,
+        fillColor: [255, 255, 255],
+        textColor: [0, 0, 0],
+        lineColor: [255, 255, 255],
+        lineWidth: 0
       },
+      bodyStyles: {
+        fillColor: [255, 255, 255],
+        textColor: [0, 0, 0],
+        lineColor: [255, 255, 255],
+        lineWidth: 0
+      },
+      alternateRowStyles: {
+        fillColor: [255, 255, 255]
+      }
     });
-    doc.rect(14, 215, 182, 20); //tabela dados amostra
+    doc.rect(14, 215, 182, 20); //tabela obs
 
-    //original assinando...
+    //original assinado...
     autoTable(doc, {
       body: [['Somente o original assinado tem valor de laudo. A representatividade da amostra é de responsabilidade do executor da coleta da mesma. Os resultados presentes referem-se unicamente a amostra analisada']],
       startY: 270,
