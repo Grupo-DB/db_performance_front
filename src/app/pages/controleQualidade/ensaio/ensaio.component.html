@@ -99,25 +99,6 @@
                     <button pButton type="button" icon="pi pi-plus" (click)="montarFormula()"></button> 
                 </div>
             </div>
-            <div class="form2 w-10 mb-3 mt-3 text-left">
-                <p-floatLabel variant="on"> 
-                    <p-select
-                        inputId="float-label"
-                        [style]="{'width':'100%'}"
-                        [options]="responsaveis" 
-                        formControlName="responsavel"
-                        optionLabel="value"
-                        optionValue="value"
-                        appendTo="body"
-                        [filter]="true" 
-                        filterBy="value"
-                        [showClear]="true"
-                        [disabled]="true"
-                    >
-                    </p-select>
-                    <label for="float-label">Selecione o Responsável</label>
-                </p-floatLabel> 
-            </div>
             <div class="form2 flex flex-column md:flex-row w-10 mb-3 mt-3">
                 <div class="w-6 text-left md:mb-3 lg:mr-1">
                     <p-floatLabel variant="on">
@@ -134,6 +115,22 @@
                                 <label for="tempo">Tempo Previsto</label>
                     </p-floatLabel>     
                 </div>
+                <div class="w-10 mb-3 mt-3">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
+                                <input
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="norma"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Digite a norma</label>
+                        </p-floatlabel>
+                    </div>
                 <div class="w-8 text-left">    
                     <p-floatLabel variant="on"> 
                         <p-select
@@ -264,9 +261,9 @@
             <ng-template pTemplate="header">
                 <tr>
                     <th style="width: 20%; text-align: center;" type="text" field="descricao" display="menu">Descrição</th>
-                    <th style="width: 20%; text-align: center;" type="text" field="responsavel" display="menu">Responsável</th>
                     <th style="width: 20%; text-align: center;" type="text" field="valor" display="menu">Unidade</th>
                     <th style="width: 20%; text-align: center;" type="text" field="tempo_previsto" display="menu">Tempo Previsto</th>
+                    <th style="width: 20%; text-align: center;" type="text" field="norma" display="menu">Norma</th>
                     <th style="width: 20%; text-align: center;" type="text" field="tipo_ensaio_detalhes.nome" display="menu">Tipo de Ensaio</th>
                     <th style="width: 20%; text-align: center;" type="text" field="acoes" display="menu">Ações</th>
                 </tr>
@@ -274,9 +271,9 @@
             <ng-template pTemplate="body" let-ensaios>
                 <tr>
                     <td style="text-align: center;">{{ ensaios.descricao }}</td>
-                    <td style="text-align: center;">{{ ensaios.responsavel }}</td>
                     <td style="text-align: center;">{{ ensaios.unidade }}</td>
                     <td style="text-align: center;">{{ ensaios.tempo_previsto }}</td>
+                    <td style="text-align: center;">{{ ensaios.norma }}</td>
                     <td style="text-align: center;">{{ ensaios.tipo_ensaio_detalhes.nome }}</td>
                     <td class="flex justify-content-center">
                         <div class="btnsec" (click)="abrirModalEdicao(ensaios)">
@@ -356,24 +353,6 @@
                             <button pButton icon="pi pi-plus" (click)="editarFormula()"></button> 
                         </div>
                     </div>
-                    <div class="w-10 mb-3 mt-3 text-left">
-                        <p-floatLabel variant="on"> 
-                            <p-select
-                                inputId="float-label"
-                                [style]="{'width':'100%'}"
-                                [options]="responsaveis" 
-                                formControlName="responsavel"
-                                optionLabel="value"
-                                optionValue="value"
-                                [filter]="true" 
-                                filterBy="value"
-                                [showClear]="true"
-                                appendTo="body"    
-                            >
-                            </p-select>
-                            <label for="float-label">Selecione o Responsável</label>
-                        </p-floatLabel>
-                    </div>
                     <div class="w-10 mb-3 mt-3">
                         <p-floatlabel variant="on">
                             <p-iconfield>
@@ -390,7 +369,22 @@
                             <label for="on_label">Digite o Valor</label>
                         </p-floatlabel>
                     </div>
-
+                    <div class="w-10 mb-3 mt-3">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
+                                <input
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="norma"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Digite a norma</label>
+                        </p-floatlabel>
+                    </div>
                     <div class="w-10 text-left md:mb-3 lg:mr-1">
                         <p-floatLabel variant="on">
                                     <p-inputNumber 

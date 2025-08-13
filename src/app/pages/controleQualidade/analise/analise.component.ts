@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AnaliseService } from '../../../services/controleQualidade/analise.service';
 import { CommonModule, DatePipe, formatDate } from '@angular/common';
@@ -42,6 +42,7 @@ import { ProdutoAmostra } from '../produto-amostra/produto-amostra.component';
 import { Produto } from '../../baseOrcamentaria/dre/produto/produto.component';
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 import { AvatarModule } from 'primeng/avatar';
+import { BadgeModule } from 'primeng/badge';
 import { CardModule } from 'primeng/card';
 import { PopoverModule } from 'primeng/popover';
 import { HttpClient } from '@angular/common/http';
@@ -66,7 +67,7 @@ interface FileWithInfo {
     ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,
     InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,
     InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, AvatarModule,
-    PopoverModule
+    PopoverModule, BadgeModule
 ],
   animations: [
     trigger('efeitoFade', [
@@ -117,7 +118,7 @@ interface FileWithInfo {
   templateUrl: './analise.component.html',
   styleUrl: './analise.component.scss'
 })
-export class AnaliseComponent implements OnInit {
+export class AnaliseComponent implements OnInit, OnDestroy {
   ensaioSelecionado: any;
   modalOrdemVariaveisVisible: any;
 
@@ -178,6 +179,20 @@ export class AnaliseComponent implements OnInit {
   // Novos campos para adicionar/remover ensaios e cálculos
   modalAdicionarEnsaioVisible = false;
   modalAdicionarCalculoVisible = false;
+  
+  // Sistema de alertas de rompimento
+  alertasRompimento: any[] = [];
+  intervaloPadrao = 60000; // 1 minuto para demonstração (use 300000 para 5 minutos em produção)
+  intervalId: any = null;
+  configAlerta = {
+    diasAviso: 1, // Avisar 1 dia antes
+    diasCritico: 0, // Crítico no dia
+    horarioVerificacao: '09:00', // Verificar às 9h
+    ativo: true
+  };
+  
+  // Expor Math para o template
+  Math = Math;
   ensaiosSelecionadosParaAdicionar: any[] = [];
   calculosSelecionadosParaAdicionar: any[] = [];
   constructor(
@@ -209,6 +224,9 @@ export class AnaliseComponent implements OnInit {
     this.getDigitadorInfo();
     this.getAnalise();
     this.carregarEnsaiosECalculosDisponiveis();
+    
+    // Inicializar sistema de alertas
+    this.iniciarSistemaAlertas();
   }
   getAnalise(): void {
     if (this.analiseId !== undefined) {
@@ -826,7 +844,36 @@ loadAnalisePorId(analise: any) {
           // Atualiza cada variável do ensaio pelo valor correspondente salvo, usando campo tecnica
           ensaioOriginal.variavel_detalhes?.forEach((variavel: any) => {
             if (mapSalvas[variavel.tecnica] !== undefined) {
-              variavel.valor = mapSalvas[variavel.tecnica].valor;
+              const valorSalvo = mapSalvas[variavel.tecnica].valor;
+              variavel.valor = valorSalvo;
+              
+              // Se for variável de data, inicializar objeto Date
+              if (this.isVariavelTipoData(variavel) && valorSalvo) {
+                try {
+                  let dataObj: Date | null = null;
+                  
+                  if (typeof valorSalvo === 'string') {
+                    if (valorSalvo.includes('/')) {
+                      // Formato brasileiro DD/MM/YYYY
+                      const [dia, mes, ano] = valorSalvo.split('/');
+                      dataObj = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
+                    } else {
+                      // Formato ISO ou outro
+                      dataObj = new Date(valorSalvo);
+                    }
+                  } else {
+                    dataObj = new Date(valorSalvo);
+                  }
+                  
+                  if (dataObj && !isNaN(dataObj.getTime())) {
+                    variavel.valorData = dataObj;
+                    variavel.valorTimestamp = dataObj.getTime();
+                    console.log(`🗓️ Data restaurada: ${variavel.nome} = ${dataObj.toLocaleDateString('pt-BR')}`);
+                  }
+                } catch (error) {
+                  console.error(`❌ Erro ao restaurar data para ${variavel.nome}:`, error);
+                }
+              }
             }
           });
           // Log detalhado
@@ -924,6 +971,12 @@ loadAnalisePorId(analise: any) {
     calculos: calculoDetalhes.length,
     estruturaFinal: this.analisesSimplificadas[0]
   });
+  
+  // Inicializar datas após carregar os dados
+  setTimeout(() => {
+    this.inicializarDatasVariaveis();
+  }, 100);
+  
   planoDetalhes.forEach((plano: any) => {
   if (plano.ensaio_detalhes) {
     plano.ensaio_detalhes.forEach((ensaio: any, idx: number) => {
@@ -1151,6 +1204,12 @@ inicializarVariaveisEnsaios() {
 
     // 3. Recalcula todos os cálculos
     this.recalcularTodosCalculos();
+    
+    // 4. Inicializar datas após aplicar resultados salvos
+    setTimeout(() => {
+      this.inicializarDatasVariaveis();
+    }, 100);
+    
     this.cd.detectChanges();
   }
 //----------------------------------------QUARTO PASSO - PROCESSAMENTO DE RESULTADOS ANTERIORES E REPROCESSAMENTO DE CÁLCULOS-------------------
@@ -1250,9 +1309,49 @@ recalcularTodosCalculos() {
       console.log(`tecnica=${varName} [${idx}]: valor=${valor}`);
     });
     console.log('SafeVars final para avaliação (usando tecnica):', safeVars);
+    
+    // Adicionar funções de data ao escopo
+    const funcoesDatas = {
+      adicionarDias: (data: string | number, dias: number) => {
+        let dataBase: Date;
+        if (typeof data === 'string') {
+          dataBase = new Date(data);
+        } else {
+          dataBase = new Date(data);
+        }
+        const novaData = new Date(dataBase);
+        novaData.setDate(novaData.getDate() + dias);
+        return novaData.getTime();
+      },
+      diasEntre: (data1: string | number, data2: string | number) => {
+        const d1 = new Date(data1);
+        const d2 = new Date(data2);
+        const diffTime = Math.abs(d2.getTime() - d1.getTime());
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      },
+      hoje: () => {
+        return new Date().getTime();
+      }
+    };
+    
+    const scope = { ...safeVars, ...funcoesDatas };
+    
     try {
-      const resultado = evaluate(ensaio.funcao, safeVars);
-      ensaio.valor = Number(resultado.toFixed(4));
+      const resultado = evaluate(ensaio.funcao, scope);
+      
+      // Se o resultado é um timestamp (resultado de função de data), converter para data legível
+      if (ensaio.funcao.includes('adicionarDias') || ensaio.funcao.includes('hoje')) {
+        if (typeof resultado === 'number' && resultado > 946684800000) {
+          const dataResultado = new Date(resultado);
+          ensaio.valor = dataResultado.toLocaleDateString('pt-BR');
+          ensaio.valorTimestamp = resultado;
+        } else {
+          ensaio.valor = resultado;
+        }
+      } else {
+        ensaio.valor = Number(resultado.toFixed(4));
+      }
+      
       console.log(`✓ Resultado calculado (usando tecnica): ${ensaio.valor}`);
     } catch (e) {
       ensaio.valor = 'Erro no cálculo';
@@ -1293,10 +1392,50 @@ calcular(calc: any, produto?: any) {
     console.log(`SafeVars mapeado: ${varName} = ${valor}`);
   });
   console.log('SafeVars final para avaliação:', safeVars);
+  
+  // Adicionar funções de data ao escopo
+  const funcoesDatas = {
+    adicionarDias: (data: string | number, dias: number) => {
+      let dataBase: Date;
+      if (typeof data === 'string') {
+        dataBase = new Date(data);
+      } else {
+        dataBase = new Date(data);
+      }
+      const novaData = new Date(dataBase);
+      novaData.setDate(novaData.getDate() + dias);
+      return novaData.getTime();
+    },
+    diasEntre: (data1: string | number, data2: string | number) => {
+      const d1 = new Date(data1);
+      const d2 = new Date(data2);
+      const diffTime = Math.abs(d2.getTime() - d1.getTime());
+      return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    },
+    hoje: () => {
+      return new Date().getTime();
+    }
+  };
+  
+  const scope = { ...safeVars, ...funcoesDatas };
+  
   // 3. AvaliA usando mathjs
   try {
-    const resultado = evaluate(calc.funcao, safeVars);
-    calc.resultado = Number(resultado.toFixed(4));
+    const resultado = evaluate(calc.funcao, scope);
+    
+    // Se o resultado é um timestamp (resultado de função de data), converter para data legível
+    if (calc.funcao.includes('adicionarDias') || calc.funcao.includes('hoje')) {
+      if (typeof resultado === 'number' && resultado > 946684800000) {
+        const dataResultado = new Date(resultado);
+        calc.resultado = dataResultado.toLocaleDateString('pt-BR');
+        calc.valorTimestamp = resultado;
+      } else {
+        calc.resultado = resultado;
+      }
+    } else {
+      calc.resultado = Number(resultado.toFixed(4));
+    }
+    
     console.log(`✓ Resultado calculado: ${calc.resultado}`);
   } catch (e) {
     calc.resultado = 'Erro no cálculo';
@@ -1366,6 +1505,168 @@ atualizarVariavelEnsaio(ensaio: any, variavel: any, novoValor: any) {
   // Recalcular o ensaio direto
   this.calcularEnsaioDireto(ensaio);
 }
+
+// Verificar se a variável é do tipo data
+isVariavelTipoData(variavel: any): boolean {
+  return variavel.tipo === 'data' || 
+         variavel.nome?.toLowerCase().includes('data') || 
+         variavel.tecnica?.toLowerCase().includes('data') ||
+         variavel.nome?.toLowerCase().includes('modelagem') ||
+         variavel.nome?.toLowerCase().includes('rompimento');
+}
+
+// Verificar se o ensaio tem pelo menos uma variável de data
+ensaioTemVariavelData(ensaio: any): boolean {
+  if (!ensaio || !ensaio.variavel_detalhes) return false;
+  return ensaio.variavel_detalhes.some((variavel: any) => this.isVariavelTipoData(variavel));
+}
+
+// Verificar se o plano tem pelo menos um ensaio com variável de data
+planoTemEnsaioComVariavelData(plano: any): boolean {
+  if (!plano || !plano.ensaio_detalhes) return false;
+  return plano.ensaio_detalhes.some((ensaio: any) => this.ensaioTemVariavelData(ensaio));
+}
+
+// Atualizar variável do tipo data
+atualizarVariavelData(ensaio: any, variavel: any, novaData: Date) {
+  console.log('Atualizando variável data:', variavel.nome, novaData);
+  
+  // Atualiza o valor da data
+  variavel.valorData = novaData;
+  
+  // Converte a data para string no formato ISO para armazenamento e timestamp para cálculos
+  if (novaData) {
+    variavel.valor = novaData.toISOString().split('T')[0]; // formato YYYY-MM-DD para backend
+    variavel.valorTimestamp = novaData.getTime(); // timestamp para cálculos matemáticos
+  } else {
+    variavel.valor = null;
+    variavel.valorTimestamp = null;
+  }
+  
+  // Sincronizar com variável técnica correspondente se existir
+  const idx = ensaio.variavel_detalhes.findIndex((v: any) => v === variavel || v.nome === variavel.nome);
+  if (idx !== -1) {
+    ensaio.variavel_detalhes[idx] = variavel;
+  }
+  
+  // Chama cálculos automáticos de data
+  this.calcularDatasAutomaticas(ensaio, variavel);
+  
+  // Recalcula o ensaio se necessário
+  this.calcularEnsaioDireto(ensaio);
+}
+
+// Calcular datas automáticas baseadas em outras datas
+calcularDatasAutomaticas(ensaio: any, variavelAlterada: any) {
+  // Exemplo: se dataModelagem foi alterada, calcular dataRompimento (+28 dias)
+  if (variavelAlterada.nome?.toLowerCase().includes('modelagem')) {
+    
+    const dataRompimentoVar = ensaio.variavel_detalhes?.find((v: any) => 
+      v.nome?.toLowerCase().includes('rompimento')
+    );
+    
+    if (dataRompimentoVar && variavelAlterada.valorData) {
+      const dataModelagem = new Date(variavelAlterada.valorData);
+      const dataRompimento = new Date(dataModelagem);
+      dataRompimento.setDate(dataRompimento.getDate() + 28);
+      
+      // Atualiza a data de rompimento automaticamente
+      dataRompimentoVar.valorData = dataRompimento;
+      dataRompimentoVar.valor = dataRompimento.toISOString().split('T')[0];
+      dataRompimentoVar.valorTimestamp = dataRompimento.getTime();
+      
+      console.log(`Data de rompimento calculada automaticamente: ${dataRompimento.toLocaleDateString()}`);
+      
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Data calculada!',
+        detail: `Data de rompimento definida automaticamente para ${dataRompimento.toLocaleDateString('pt-BR')}`,
+        life: 3000
+      });
+    }
+  }
+}
+
+// Inicializar datas nas variáveis
+inicializarDatasVariaveis() {
+  console.log('🗓️ Inicializando variáveis de data...');
+  
+  this.analisesSimplificadas?.forEach(analise => {
+    analise.planoDetalhes?.forEach((plano: any) => {
+      plano.ensaio_detalhes?.forEach((ensaio: any) => {
+        let hasDateVariables = false;
+        
+        ensaio.variavel_detalhes?.forEach((variavel: any) => {
+          if (this.isVariavelTipoData(variavel)) {
+            hasDateVariables = true;
+            console.log(`🗓️ Processando variável de data: ${variavel.nome}`, {
+              valor: variavel.valor,
+              tipo: typeof variavel.valor
+            });
+            
+            if (variavel.valor) {
+              let dataObj: Date | null = null;
+              
+              try {
+                // Tentar diferentes formatos de data
+                if (typeof variavel.valor === 'string') {
+                  // Se for string, pode ser ISO (YYYY-MM-DD) ou brasileiro (DD/MM/YYYY)
+                  if (variavel.valor.includes('/')) {
+                    // Formato brasileiro DD/MM/YYYY
+                    const [dia, mes, ano] = variavel.valor.split('/');
+                    dataObj = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
+                  } else if (variavel.valor.includes('-')) {
+                    // Formato ISO YYYY-MM-DD
+                    dataObj = new Date(variavel.valor);
+                  } else {
+                    // Tentar criar data diretamente
+                    dataObj = new Date(variavel.valor);
+                  }
+                } else if (typeof variavel.valor === 'number') {
+                  // Se for timestamp
+                  dataObj = new Date(variavel.valor);
+                } else {
+                  // Tentar criar data diretamente
+                  dataObj = new Date(variavel.valor);
+                }
+                
+                // Verificar se a data é válida
+                if (dataObj && !isNaN(dataObj.getTime())) {
+                  variavel.valorData = dataObj;
+                  variavel.valorTimestamp = dataObj.getTime();
+                  
+                  // Garantir que o valor está no formato ISO para o backend
+                  variavel.valor = dataObj.toISOString().split('T')[0];
+                  
+                  console.log(`✅ Data inicializada: ${variavel.nome} = ${dataObj.toLocaleDateString('pt-BR')}`);
+                } else {
+                  console.warn(`⚠️ Data inválida para variável ${variavel.nome}:`, variavel.valor);
+                }
+              } catch (error) {
+                console.error(`❌ Erro ao inicializar data para variável ${variavel.nome}:`, error, variavel.valor);
+              }
+            }
+          }
+        });
+        
+        // Se o ensaio tem variáveis de data e uma função, recalcular
+        if (hasDateVariables && ensaio.funcao) {
+          console.log(`🔄 Recalculando ensaio com datas: ${ensaio.descricao}`);
+          this.calcularEnsaioDireto(ensaio);
+        }
+      });
+    });
+  });
+  
+  // Forçar recálculo de todos os cálculos após inicializar as datas
+  setTimeout(() => {
+    this.recalcularTodosCalculos();
+    this.cd.detectChanges();
+  }, 200);
+  
+  console.log('🗓️ Inicialização de datas concluída');
+}
+
 forcarDeteccaoMudancas() {
   this.cd.detectChanges();
 }
@@ -1374,6 +1675,9 @@ forcarDeteccaoMudancas() {
     ensaio.valor = 0;
     return;
   }
+  
+  console.log(`🧮 Calculando ensaio: ${ensaio.descricao} com função: ${ensaio.funcao}`);
+  
   try {
     const varMatches = (ensaio.funcao.match(/var\d+/g) || []);
     const uniqueVarList = Array.from(new Set(varMatches)) as string[];
@@ -1382,21 +1686,110 @@ forcarDeteccaoMudancas() {
     const safeVars: any = {};
     uniqueVarList.forEach((varTecnica: string) => {
       const variavel = ensaio.variavel_detalhes?.find((v: any) => v.tecnica === varTecnica);
-      safeVars[varTecnica] = variavel && typeof variavel.valor !== 'undefined' ? Number(variavel.valor) : 0;
+      if (variavel) {
+        // Se é uma variável de data, usar o timestamp da data
+        if (this.isVariavelTipoData(variavel)) {
+          if (variavel.valorData) {
+            safeVars[varTecnica] = variavel.valorData.getTime();
+            console.log(`📅 Variável de data ${varTecnica}: ${variavel.valorData.toLocaleDateString('pt-BR')} = ${variavel.valorData.getTime()}`);
+          } else if (variavel.valorTimestamp) {
+            safeVars[varTecnica] = variavel.valorTimestamp;
+            console.log(`📅 Variável de data ${varTecnica} (timestamp): ${variavel.valorTimestamp}`);
+          } else if (variavel.valor) {
+            // Tentar converter o valor para timestamp
+            try {
+              const dataObj = new Date(variavel.valor);
+              if (!isNaN(dataObj.getTime())) {
+                safeVars[varTecnica] = dataObj.getTime();
+                console.log(`📅 Variável de data ${varTecnica} (convertida): ${dataObj.toLocaleDateString('pt-BR')} = ${dataObj.getTime()}`);
+              } else {
+                safeVars[varTecnica] = 0;
+                console.warn(`⚠️ Data inválida para ${varTecnica}: ${variavel.valor}`);
+              }
+            } catch (error) {
+              safeVars[varTecnica] = 0;
+              console.error(`❌ Erro ao converter data ${varTecnica}:`, error);
+            }
+          } else {
+            safeVars[varTecnica] = 0;
+            console.warn(`⚠️ Variável de data ${varTecnica} sem valor`);
+          }
+        } else {
+          safeVars[varTecnica] = typeof variavel.valor !== 'undefined' ? Number(variavel.valor) : 0;
+          console.log(`🔢 Variável numérica ${varTecnica}: ${safeVars[varTecnica]}`);
+        }
+      } else {
+        safeVars[varTecnica] = 0;
+      }
     });
+
+    // Adicionar funções de data ao escopo
+    const funcoesDatas = {
+      adicionarDias: (data: string | number, dias: number) => {
+        let dataBase: Date;
+        if (typeof data === 'string') {
+          dataBase = new Date(data);
+        } else {
+          dataBase = new Date(data); // timestamp
+        }
+        const novaData = new Date(dataBase);
+        novaData.setDate(novaData.getDate() + dias);
+        return novaData.getTime(); // retorna timestamp para cálculos
+      },
+      
+      diasEntre: (data1: string | number, data2: string | number) => {
+        const d1 = new Date(data1);
+        const d2 = new Date(data2);
+        const diffTime = Math.abs(d2.getTime() - d1.getTime());
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      },
+      
+      hoje: () => {
+        return new Date().getTime();
+      }
+    };
+
+    // Combinar variáveis e funções de data
+    const scope = {
+      ...safeVars,
+      ...funcoesDatas
+    };
 
     if (Object.keys(safeVars).length === 0) {
       ensaio.valor = 0;
       return;
     }
 
-    const resultado = evaluate(ensaio.funcao, safeVars);
-    ensaio.valor = isNaN(resultado) || !isFinite(resultado) ? 0 : Number(resultado.toFixed(4));
+    console.log(`🔧 Scope para avaliação:`, scope);
+    console.log(`📝 Função a ser avaliada: ${ensaio.funcao}`);
+
+    const resultado = evaluate(ensaio.funcao, scope);
+    console.log(`🎯 Resultado bruto da avaliação: ${resultado} (tipo: ${typeof resultado})`);
+    
+    // Se o resultado é um timestamp (resultado de função de data), converter para data legível
+    if (ensaio.funcao.includes('adicionarDias') || ensaio.funcao.includes('hoje') || ensaio.funcao.includes('diasEntre')) {
+      // Verificar se o resultado é um timestamp válido
+      if (typeof resultado === 'number' && resultado > 946684800000) { // timestamp após ano 2000
+        const dataResultado = new Date(resultado);
+        ensaio.valor = dataResultado.toLocaleDateString('pt-BR');
+        ensaio.valorTimestamp = resultado; // manter timestamp para cálculos
+        console.log(`📅 Resultado como data: ${ensaio.valor} (timestamp: ${resultado})`);
+      } else {
+        ensaio.valor = resultado;
+        console.log(`🔢 Resultado como número: ${ensaio.valor}`);
+      }
+    } else {
+      ensaio.valor = isNaN(resultado) || !isFinite(resultado) ? 0 : Number(resultado.toFixed(4));
+      console.log(`🔢 Resultado numérico: ${ensaio.valor}`);
+    }
+    
+    console.log(`✅ Ensaio ${ensaio.descricao} calculado com sucesso: ${ensaio.valor}`);
+    
     this.recalcularTodosCalculos();
     this.forcarDeteccaoMudancas();
   } catch (error) {
     ensaio.valor = 0;
-    console.error('Erro no cálculo do ensaio direto:', error);
+    console.error(`❌ Erro no cálculo do ensaio ${ensaio.descricao}:`, error);
   }
 }
 recalcularCalculosDependentes(ensaioAlterado: any) {
@@ -2807,6 +3200,193 @@ moverVariavelPara(direcao: 'cima' | 'baixo', index: number): void {
   variaveis.forEach((variavel: any, i: number) => {
     variavel.ordem = i + 1;
   });
+}
+
+// ====== SISTEMA DE ALERTAS DE ROMPIMENTO ======
+
+ngOnDestroy(): void {
+  this.pararSistemaAlertas();
+}
+
+/**
+ * Inicializa o sistema de alertas de rompimento
+ */
+iniciarSistemaAlertas(): void {
+  if (!this.configAlerta.ativo) return;
+  
+  console.log('🚨 Sistema de alertas iniciado');
+  
+  // Verificação inicial
+  setTimeout(() => {
+    this.verificarRompimentos();
+  }, 3000); // Aguarda 3 segundos para dados carregarem
+  
+  // Configurar verificações periódicas
+  this.intervalId = setInterval(() => {
+    this.verificarRompimentos();
+  }, this.intervaloPadrao);
+}
+
+/**
+ * Para o sistema de alertas
+ */
+pararSistemaAlertas(): void {
+  if (this.intervalId) {
+    clearInterval(this.intervalId);
+    this.intervalId = null;
+    console.log('🚨 Sistema de alertas parado');
+  }
+}
+
+/**
+ * Verifica todas as datas de rompimento e gera alertas
+ */
+verificarRompimentos(): void {
+  if (!this.analisesSimplificadas || this.analisesSimplificadas.length === 0) return;
+  
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+  
+  const novosAlertas: any[] = [];
+  
+  this.analisesSimplificadas.forEach(analise => {
+    analise.planoDetalhes?.forEach((plano: any) => {
+      plano.ensaio_detalhes?.forEach((ensaio: any) => {
+        if (this.ensaioTemVariavelData(ensaio) && ensaio.valor) {
+          const alerta = this.analisarDataRompimento(ensaio, hoje);
+          if (alerta) {
+            novosAlertas.push(alerta);
+          }
+        }
+      });
+    });
+  });
+  
+  // Atualizar alertas apenas se houver mudanças
+  if (JSON.stringify(novosAlertas) !== JSON.stringify(this.alertasRompimento)) {
+    this.alertasRompimento = novosAlertas;
+    this.processarAlertas(novosAlertas);
+  }
+}
+
+/**
+ * Analisa uma data de rompimento específica
+ */
+analisarDataRompimento(ensaio: any, hoje: Date): any | null {
+  try {
+    let dataRompimento: Date;
+    
+    // Tentar converter o valor do ensaio para data
+    if (typeof ensaio.valor === 'string') {
+      // Se for string no formato DD/MM/YYYY
+      if (ensaio.valor.includes('/')) {
+        const [dia, mes, ano] = ensaio.valor.split('/');
+        dataRompimento = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
+      } else {
+        dataRompimento = new Date(ensaio.valor);
+      }
+    } else {
+      dataRompimento = new Date(ensaio.valor);
+    }
+    
+    if (isNaN(dataRompimento.getTime())) return null;
+    
+    dataRompimento.setHours(0, 0, 0, 0);
+    
+    const diferencaDias = Math.ceil((dataRompimento.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));
+    
+    let tipo: 'critico' | 'aviso' | 'vencido' | null = null;
+    let mensagem = '';
+    
+    if (diferencaDias < 0) {
+      tipo = 'vencido';
+      mensagem = `Ensaio ${ensaio.descricao} VENCIDO há ${Math.abs(diferencaDias)} dia(s)!`;
+    } else if (diferencaDias <= this.configAlerta.diasCritico) {
+      tipo = 'critico';
+      mensagem = `Ensaio ${ensaio.descricao} deve ser rompido HOJE!`;
+    } else if (diferencaDias <= this.configAlerta.diasAviso) {
+      tipo = 'aviso';
+      mensagem = `Ensaio ${ensaio.descricao} deve ser rompido em ${diferencaDias} dia(s)`;
+    }
+    
+    if (tipo) {
+      return {
+        id: `${ensaio.id}_${dataRompimento.getTime()}`,
+        ensaio: ensaio.descricao,
+        dataRompimento: dataRompimento.toLocaleDateString('pt-BR'),
+        diasRestantes: diferencaDias,
+        tipo,
+        mensagem,
+        timestamp: new Date()
+      };
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Erro ao analisar data de rompimento:', error);
+    return null;
+  }
+}
+
+/**
+ * Processa e exibe os alertas
+ */
+processarAlertas(alertas: any[]): void {
+  alertas.forEach(alerta => {
+    this.exibirAlerta(alerta);
+  });
+  
+  if (alertas.length > 0) {
+    console.log(`🚨 ${alertas.length} alerta(s) de rompimento gerado(s):`, alertas);
+  }
+}
+
+/**
+ * Exibe um alerta usando PrimeNG Toast
+ */
+exibirAlerta(alerta: any): void {
+  if (!this.messageService) return;
+  
+  const severityMap: { [key: string]: string } = {
+    'vencido': 'error',
+    'critico': 'warn', 
+    'aviso': 'info'
+  };
+  
+  const titleMap: { [key: string]: string } = {
+    'vencido': 'VENCIDO',
+    'critico': 'CRÍTICO',
+    'aviso': 'AVISO'
+  };
+  
+  this.messageService.add({
+    severity: severityMap[alerta.tipo] as any,
+    summary: `Rompimento ${titleMap[alerta.tipo]}`,
+    detail: alerta.mensagem,
+    life: alerta.tipo === 'vencido' ? 0 : 10000, // Alertas vencidos ficam até serem fechados
+    sticky: alerta.tipo === 'vencido'
+  });
+}
+
+/**
+ * Conta alertas por tipo
+ */
+contarAlertas(tipo: string): number {
+  return this.alertasRompimento.filter(a => a.tipo === tipo).length;
+}
+
+/**
+ * Remove um alerta específico
+ */
+removerAlerta(alertaId: string): void {
+  this.alertasRompimento = this.alertasRompimento.filter(a => a.id !== alertaId);
+}
+
+/**
+ * Limpa todos os alertas
+ */
+limparTodosAlertas(): void {
+  this.alertasRompimento = [];
 }
 
 

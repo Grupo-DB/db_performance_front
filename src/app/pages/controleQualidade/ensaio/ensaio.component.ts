@@ -33,7 +33,6 @@ import { InplaceModule } from 'primeng/inplace';
 
 interface RegisterEnsaioForm {
   descricao:FormControl;
-  responsavel: FormControl;
   valor: FormControl;
   tipoEnsaio: FormControl;
   unidade: FormControl;
@@ -41,12 +40,12 @@ interface RegisterEnsaioForm {
   tempoPrevistoUnidade: FormControl;
   variavel: FormControl;
   funcao: FormControl;
+  norma: FormControl;
 }
 
 export interface Ensaio {
   id: number;
   descricao: string;
-  responsavel: string;
   valor: number;
   tipoEnsaio: any;
   unidade: any;
@@ -56,6 +55,7 @@ export interface Ensaio {
   tempo_previsto: any;
   variavel: any;
   funcao: any;
+  norma: any;
   ensaioTecnico?: string;
 }
 
@@ -128,24 +128,15 @@ export class EnsaioComponent implements OnInit{
    { label: 'Condicional', value:'Condicional' }, 
    { label: 'Delimitador', value:'Delimitador' }, 
    { label: 'Operador Lógico', value:'Operador Lógico' },
-   { label: 'Valor', value:'Valor' }
+   { label: 'Valor', value:'Valor' },
+   { label: 'Função Data', value:'Funcao Data' }
   ];
 
-  responsaveis = [
-    { value: 'Antonio Carlos Vargas Sito' },
-    { value: 'Fabiula Bueno' },
-    { value: 'Janice Castro de Oliveira'},
-    { value: 'Karine Urruth Kaizer'},
-    { value: 'Luciana de Oliveira' },
-    { value: 'Kaua Morales Silbershlach'},
-    { value: 'Marco Alan Lopes'},
-    { value: 'Maria Eduarda da Silva'},
-    { value: 'Monique Barcelos Moreira'},
-    { value: 'Renata Rodrigues Machado Pinto'},
-    { value: 'Sâmella de Campos Moreira'},
-    { value: 'David Weslei Sprada'},
-    { value: 'Camila Vitoria Carneiro Alves Santos'},
-  ]
+  funcoesData = [
+  { label: 'Adicionar dias', value: 'adicionarDias' },
+  { label: 'Dias entre datas', value: 'diasEntre' },
+  { label: 'Data atual', value: 'hoje' }
+];
   
   unidades = [
     { value: 'Segundos' },
@@ -191,7 +182,8 @@ export class EnsaioComponent implements OnInit{
     { label: '[', value: '[' },
     { label: ']', value: ']' },
     { label: '{', value: '{' },
-    { label: '}', value: '}' },  
+    { label: '}', value: '}' },
+    { label: ',', value: ',' },
   ];
   elementos: any[] = [];
   expressaoDinamica: { tipo?: string, valor?: string }[] = [
@@ -218,7 +210,6 @@ export class EnsaioComponent implements OnInit{
   {
     this.registerForm = new FormGroup({
       descricao: new FormControl('',[Validators.required, Validators.minLength(3)]),
-      responsavel: new FormControl(''),
       valor: new FormControl({ value: 0, disabled: true }),
       tipoEnsaio: new FormControl(''),
       unidade: new FormControl(''),
@@ -226,11 +217,11 @@ export class EnsaioComponent implements OnInit{
       tempoPrevistoUnidade: new FormControl('', Validators.required),
       variavel: new FormControl(''),
       funcao: new FormControl(''),
+      norma: new FormControl(''),
     });
     this.editForm = this.fb.group({
       id: [''],
       descricao: [''],
-      responsavel: [''],
       valor: [''],
       tipo_ensaio: [''],
       unidade: [''],
@@ -238,6 +229,7 @@ export class EnsaioComponent implements OnInit{
       tempoPrevistoUnidade: [''],
       variavel: [''],
       funcao: [''],
+      norma: [''],
     });
   }
 
@@ -362,10 +354,42 @@ getValoresPorTipo(tipo: string): any[] {
     case 'Delimitador': return this.delimitadores;
     case 'Operador Lógico': return this.operadoresLogicos;
     case 'Valor': return [];
+    case 'Funcao Data': return this.funcoesData;
     default: return [];
   }
 }
+///////////////////////////////////////////////////////////////////////////////////
 
+private funcoesDatas = {
+  adicionarDias: (data: string | number, dias: number) => {
+    let dataBase: Date;
+    if (typeof data === 'string') {
+      dataBase = new Date(data);
+    } else {
+      dataBase = new Date(data); // timestamp
+    }
+    const novaData = new Date(dataBase);
+    novaData.setDate(novaData.getDate() + dias);
+    return novaData.getTime(); // retorna timestamp para cálculos
+  },
+  
+  diasEntre: (data1: string | number, data2: string | number) => {
+    const d1 = new Date(data1);
+    const d2 = new Date(data2);
+    const diffTime = Math.abs(d2.getTime() - d1.getTime());
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  },
+  
+  hoje: () => {
+    return new Date().getTime();
+  },
+  
+  formatarData: (timestamp: number) => {
+    return new Date(timestamp).toLocaleDateString('pt-BR');
+  }
+};
+
+////////////////////////////////////////////////////////////////////////////////////
 adicionarBloco() {
     this.expressaoDinamica.push({ tipo: '', valor: '' });
     this.registerForm.get('funcao')?.setValue(this.getExpressaoString());
@@ -438,15 +462,41 @@ gerarSafeVarsPorTecnica() {
 }
 
 
+// avaliarExpressao() {
+//   const expressao = this.registerForm.get('funcao')?.value;
+//   if (!expressao) return null;
+
+//   // Agora a expressão já deve estar usando os nomes do campo tecnica
+//   this.gerarSafeVarsPorTecnica();
+
+//   try {
+//     const resultado = evaluate(expressao, this.safeVars);
+//     return resultado;
+//   } catch (e) {
+//     this.messageService.add({
+//       severity: 'error',
+//       summary: 'Erro ao calcular',
+//       detail: 'Expressão inválida ou erro de cálculo.',
+//       life: 5000
+//     });
+//     return null;
+//   }
+// }
+
 avaliarExpressao() {
   const expressao = this.registerForm.get('funcao')?.value;
   if (!expressao) return null;
 
-  // Agora a expressão já deve estar usando os nomes do campo tecnica
   this.gerarSafeVarsPorTecnica();
+  
+  // Combine variáveis normais com funções de data
+  const scope = {
+    ...this.safeVars,
+    ...this.funcoesDatas
+  };
 
   try {
-    const resultado = evaluate(expressao, this.safeVars);
+    const resultado = evaluate(expressao, scope);
     return resultado;
   } catch (e) {
     this.messageService.add({
@@ -458,6 +508,10 @@ avaliarExpressao() {
     return null;
   }
 }
+
+
+
+
 
 ////////////-------------------------Montagem de Fórmula-------------------------////////////
 montarFormula(){
@@ -490,30 +544,78 @@ converterFuncaoParaBlocos(funcao: string): { tipo: string, valor: string }[] {
 // Não é mais necessário converter nomes técnicos para nomes amigáveis
 
 
+// validarExpressaoComValores(expr: string): boolean {
+//   try {
+//     // Gere safeVars usando tecnica
+//     this.gerarSafeVarsPorTecnica();
+//     // Substitua todas as variáveis (tecnica) por 1 para validar sintaxe
+//     let fakeExpr = expr;
+//     this.variaveis.forEach(v => {
+//       if (v.tecnica) {
+//         const regex = new RegExp(v.tecnica.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+//         fakeExpr = fakeExpr.replace(regex, '1');
+//       }
+//     });
+//     fakeExpr = fakeExpr.replace(/\s+/g, ' ');
+//     fakeExpr = fakeExpr.replace(/1\s+1/g, '1');
+//     console.log('Expressão para validação:', fakeExpr);
+//     evaluate(fakeExpr);
+//     this.messageService.add({
+//       severity: 'info',
+//       summary: 'Expressão válida!',
+//       detail: `Expressão testada: ${fakeExpr}`,
+//       life: 5000
+//     });
+//     return true;
+//   } catch (error) {
+//     this.messageService.add({
+//       severity: 'error',
+//       summary: 'Expressão inválida!',
+//       detail: 'A expressão montada possui erro de sintaxe ou operadores inválidos.',
+//       life: 5000
+//     });
+//     return false;
+//   }
+// }
+
 validarExpressaoComValores(expr: string): boolean {
+  if (!expr || expr.trim() === '') {
+    return true; // Permite expressões vazias
+  }
+
   try {
-    // Gere safeVars usando tecnica
     this.gerarSafeVarsPorTecnica();
-    // Substitua todas as variáveis (tecnica) por 1 para validar sintaxe
+    
+    // Criar um escopo de teste com valores fictícios
     let fakeExpr = expr;
+    const scope: any = { ...this.funcoesDatas };
+    
+    // Substituir variáveis por valores de teste
     this.variaveis.forEach(v => {
       if (v.tecnica) {
         const regex = new RegExp(v.tecnica.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-        fakeExpr = fakeExpr.replace(regex, '1');
+        // Para variáveis de data, usar timestamp atual
+        const valorTeste = v.tipo === 'data' ? new Date().getTime() : 1;
+        fakeExpr = fakeExpr.replace(regex, valorTeste.toString());
+        scope[v.tecnica] = valorTeste;
       }
     });
-    fakeExpr = fakeExpr.replace(/\s+/g, ' ');
-    fakeExpr = fakeExpr.replace(/1\s+1/g, '1');
+    
     console.log('Expressão para validação:', fakeExpr);
-    evaluate(fakeExpr);
+    console.log('Escopo de teste:', scope);
+    
+    const resultado = evaluate(fakeExpr, scope);
+    console.log('Resultado da validação:', resultado);
+    
     this.messageService.add({
       severity: 'info',
       summary: 'Expressão válida!',
-      detail: `Expressão testada: ${fakeExpr}`,
-      life: 5000
+      detail: `Expressão testada com sucesso`,
+      life: 3000
     });
     return true;
   } catch (error) {
+    console.error('Erro na validação:', error);
     this.messageService.add({
       severity: 'error',
       summary: 'Expressão inválida!',
@@ -679,7 +781,6 @@ filterVariaveis(event: any) {
   this.editForm.patchValue({
     id: ensaio.id,
     descricao: ensaio.descricao,
-    responsavel: ensaio.responsavel,
     valor: ensaio.valor,
     tipo_ensaio: ensaio.tipo_ensaio_detalhes.id,
     unidade: ensaio.unidade,
@@ -687,6 +788,7 @@ filterVariaveis(event: any) {
     tempoPrevistoUnidade: tempoPrevistoUnidade,
     variavel: ensaio.variavel,
     funcao: ensaio.funcao,
+    norma: ensaio.norma,
   });
 }
  saveEdit(){
@@ -704,13 +806,13 @@ filterVariaveis(event: any) {
   const tempo_previsto = `${this.editForm.value.tempoPrevistoValor} ${this.editForm.value.tempoPrevistoUnidade}`;
   const dadosAtualizados: Partial<Ensaio> = {
     descricao: this.editForm.value.descricao,
-    responsavel: this.editForm.value.responsavel,
     valor: this.editForm.value.valor,
     tempo_previsto: tempo_previsto,
     tipo_ensaio: tipo_ensaio,
     unidade: this.editForm.value.unidade,
     variavel: this.editForm.value.variavel,
-    funcao: this.editForm.value.funcao
+    funcao: this.editForm.value.funcao,
+    norma: this.editForm.value.norma,
   };
   
   this.ensaioService.editEnsaio(id, dadosAtualizados).subscribe({
@@ -773,10 +875,10 @@ filterVariaveis(event: any) {
 
   async submit() {
     const expressao = this.getExpressaoString();
-    if (!expressao || expressao.trim() === '') {
-      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'A expressão não pode estar vazia.' });
-      return;
-    }
+    // if (!expressao || expressao.trim() === '') {
+    //   this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'A expressão não pode estar vazia.' });
+    //   return;
+    // }
 
     if (!this.validarExpressaoComValores(expressao)) {
       this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Expressão inválida!' });
@@ -794,13 +896,13 @@ filterVariaveis(event: any) {
     console.log('Enviando VVVVVV:', variaveis, 'Ensaio técnico:', ensaioTecnico);
     this.ensaioService.registerEnsaio(
       this.registerForm.value.descricao,
-      this.registerForm.value.responsavel,
       this.registerForm.value.valor,
       this.registerForm.value.tipoEnsaio,
       `${this.registerForm.value.tempoPrevistoValor} ${this.registerForm.value.tempoPrevistoUnidade}`,
       this.registerForm.value.unidade,
       variaveis,
       this.registerForm.value.funcao,
+      this.registerForm.value.norma,
       ensaioTecnico
     ).subscribe({
       next: () => {

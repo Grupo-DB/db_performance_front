@@ -27,11 +27,13 @@ import { EnsaioService } from '../../../services/controleQualidade/ensaio.servic
 interface RegisterVariavelForm {
   nome: FormControl;
   valor: FormControl;
+  tipo: FormControl;
 }
 export interface Variavel{
   id: number;
   nome: string;
   valor: any;
+  tipo: string;
   tecnica?: string;
 }
 @Component({
@@ -114,12 +116,14 @@ export class VariavelComponent implements OnInit {
     this.registerForm = new FormGroup<RegisterVariavelForm>({
       nome: new FormControl('', Validators.required),
       valor: new FormControl({value: 0, disabled: true}),
+      tipo: new FormControl('', Validators.required)
     });
 
     this.editForm = this.fb.group({
       id: [''],
       nome: [''],
       valor: [{value: 0, disabled: true}],
+      tipo: [''],
       variavelTecnica: [''],
     });
   }
@@ -192,7 +196,8 @@ export class VariavelComponent implements OnInit {
       this.editForm.patchValue({
         id: variavel.id,
         nome: variavel.nome,
-        valor: variavel.valor
+        valor: variavel.valor,
+        tipo: variavel.tipo
       });
     }
   
@@ -200,7 +205,8 @@ export class VariavelComponent implements OnInit {
       const id = this.editForm.value.id;
       const dadosAtualizados: Partial<Variavel> = {
         nome: this.editForm.value.nome,
-        valor: this.editForm.value.valor
+        valor: this.editForm.value.valor,
+        tipo: this.editForm.value.tipo
       };
   
       this.ensaioService.editVariavel(id, dadosAtualizados).subscribe({
@@ -266,8 +272,9 @@ export class VariavelComponent implements OnInit {
     const variavelTecnica = await this.gerarVariavelTecnica();
     this.ensaioService.registerVariavel(
       this.registerForm.value.nome,
-      this.registerForm.value.valor,
-      variavelTecnica
+      this.registerForm.value.valor, 
+      variavelTecnica,
+      this.registerForm.value.tipo,
     ).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Variável registrada com sucesso!!', life: 1000 });

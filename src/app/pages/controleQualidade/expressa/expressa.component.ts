@@ -634,7 +634,7 @@ receberDadosAmostra(): void {
       id: ensaio.id,
       descricao: ensaio.descricao,
       valor: null, // Será preenchido durante a análise
-      responsavel: ensaio.responsavel,
+
       digitador: this.expressaForm.value.digitador,
       tempo_previsto: ensaio.tempo_previsto,
       tipo: ensaio.tipo_ensaio_detalhes?.nome || ensaio.tipoEnsaio

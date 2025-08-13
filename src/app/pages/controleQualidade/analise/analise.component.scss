@@ -59,3 +59,106 @@
 .tabela-ensaio-wrap {
   margin-bottom: 32px; 
 }
+
+/* ===== ESTILOS PARA O SISTEMA DE ALERTAS DE ROMPIMENTO ===== */
+.alertas-rompimento-panel {
+  margin: 1rem;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alerta-item {
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Cores personalizadas para os diferentes tipos de alerta */
+.bg-red-50 {
+  background-color: #fef2f2;
+}
+
+.bg-orange-50 {
+  background-color: #fff7ed;
+}
+
+.bg-blue-50 {
+  background-color: #eff6ff;
+}
+
+.border-red-200 {
+  border-color: #fecaca;
+}
+
+.border-orange-200 {
+  border-color: #fed7aa;
+}
+
+.border-blue-200 {
+  border-color: #bfdbfe;
+}
+
+.text-red-600 {
+  color: #dc2626;
+}
+
+.text-orange-600 {
+  color: #ea580c;
+}
+
+.text-blue-600 {
+  color: #2563eb;
+}
+
+/* Animação para badges */
+:host ::ng-deep .p-badge {
+  animation: pulse 2s infinite;
+}
+
+:host ::ng-deep .p-badge.p-badge-danger {
+  animation: pulseDanger 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes pulseDanger {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+/* Responsividade para dispositivos móveis */
+@media (max-width: 768px) {
+  .alertas-rompimento-panel {
+    margin: 0.5rem;
+  }
+  
+  .grid .col-12 {
+    padding: 0.25rem;
+  }
+}

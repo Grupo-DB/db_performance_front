@@ -47,8 +47,8 @@ export class EnsaioService {
     const url = `${this.apiUrlEnsaio}${id}/`;
     return this.http.delete(url);
   }
-  registerEnsaio(descricao: string, responsavel: string, valor: number, tipoEnsaio: any, tempoPrevisto: any, unidade:any, variavel: any, funcao: any, tecnica: any){
-    return this.http.post<Ensaio>(this.apiUrlEnsaio, { descricao: descricao, responsavel: responsavel, valor: valor, tipo_ensaio: tipoEnsaio, tempo_previsto: tempoPrevisto, unidade: unidade, variavel: variavel, funcao: funcao, tecnica: tecnica });
+  registerEnsaio(descricao: string,  valor: number, tipoEnsaio: any, tempoPrevisto: any, unidade:any, variavel: any, funcao: any, norma: any, tecnica: any){
+    return this.http.post<Ensaio>(this.apiUrlEnsaio, { descricao: descricao, valor: valor, tipo_ensaio: tipoEnsaio, tempo_previsto: tempoPrevisto, unidade: unidade, variavel: variavel, funcao: funcao, norma: norma, tecnica: tecnica });
   }
 
   //Calculo Ensaio
@@ -96,8 +96,8 @@ export class EnsaioService {
     const url = `${this.apiUrlVariaveisEnsaio}${id}/`;
     return this.http.delete(url);
   }
-  registerVariavel(nome: string, valor: any, tecnica: any){
-    return this.http.post<Variavel>(this.apiUrlVariaveisEnsaio, { nome: nome, valor: valor, tecnica: tecnica });
+  registerVariavel(nome: string, valor: any, tecnica: any, tipo:any){
+    return this.http.post<Variavel>(this.apiUrlVariaveisEnsaio, { nome: nome, valor: valor, tecnica: tecnica, tipo: tipo });
   }
 
 }

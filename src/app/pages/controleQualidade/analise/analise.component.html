@@ -42,6 +42,73 @@
         </li>
     </ul>
 </div>
+
+<!-- Painel de Alertas de Rompimento -->
+<div *ngIf="alertasRompimento.length > 0" class="alertas-rompimento-panel">
+    <p-card class="mb-3">
+        <ng-template #header>
+            <div class="flex justify-content-between align-items-center p-3">
+                <div class="flex align-items-center gap-2">
+                    <i class="pi pi-exclamation-triangle text-orange-500"></i>
+                    <span class="font-bold text-lg">Alertas de Rompimento</span>
+                    <p-badge [value]="alertasRompimento.length" severity="warn"></p-badge>
+                </div>
+                <p-button 
+                    icon="pi pi-times" 
+                    severity="secondary" 
+                    [text]="true"
+                    size="small"
+                    (click)="limparTodosAlertas()"
+                    pTooltip="Limpar todos os alertas">
+                </p-button>
+            </div>
+        </ng-template>
+        
+        <div class="grid">
+            <div 
+                *ngFor="let alerta of alertasRompimento" 
+                class="col-12 md:col-6 lg:col-4 mb-2">
+                <div 
+                    class="p-3 border-round-md"
+                    [ngClass]="{
+                        'bg-red-50 border-red-200 border-1': alerta.tipo === 'vencido',
+                        'bg-orange-50 border-orange-200 border-1': alerta.tipo === 'critico',
+                        'bg-blue-50 border-blue-200 border-1': alerta.tipo === 'aviso'
+                    }">
+                    <div class="flex justify-content-between align-items-start mb-2">
+                        <p-badge 
+                            [value]="alerta.tipo.toUpperCase()" 
+                            [severity]="alerta.tipo === 'vencido' ? 'danger' : alerta.tipo === 'critico' ? 'warn' : 'info'">
+                        </p-badge>
+                        <p-button 
+                            icon="pi pi-times" 
+                            [text]="true"
+                            size="small"
+                            (click)="removerAlerta(alerta.id)"
+                            pTooltip="Remover alerta">
+                        </p-button>
+                    </div>
+                    <p class="m-0 mb-2 font-semibold">{{ alerta.ensaio }}</p>
+                    <p class="m-0 text-sm text-600">
+                        <i class="pi pi-calendar mr-1"></i>
+                        Rompimento: {{ alerta.dataRompimento }}
+                    </p>
+                    <p class="m-0 text-sm" 
+                       [ngClass]="{
+                         'text-red-600': alerta.tipo === 'vencido',
+                         'text-orange-600': alerta.tipo === 'critico',
+                         'text-blue-600': alerta.tipo === 'aviso'
+                       }">
+                        <i class="pi pi-clock mr-1"></i>
+                        {{ alerta.diasRestantes < 0 ? 'Vencido há ' + Math.abs(alerta.diasRestantes) + ' dia(s)' :
+                           alerta.diasRestantes === 0 ? 'Vence hoje!' :
+                           'Vence em ' + alerta.diasRestantes + ' dia(s)' }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </p-card>
+</div>
  
 <div class="containerWrap">
     <div class="container">
@@ -110,7 +177,10 @@
                                             <th style="width: 20%; text-align: center;">Ensaio</th>
                                             <th style="width: 1%;">Un</th>
                                             <th style="width: 10%; text-align: center;">Técnico</th>
-                                            <th style="width: 1%; text-align: center;">N° Cadinho</th>
+                                            <th style="width: 1%; text-align: center;" 
+                                                *ngIf="!planoTemEnsaioComVariavelData(plano)">
+                                                N° Cadinho
+                                            </th>
                                             <th style="width: 66%; text-align: center;">Variáveis</th>
                                             <th style="width: 1%; text-align: center;">Histórico</th>
                                             <th style="width: 1%; text-align: center;" *ngIf="podeEditarEnsaiosCalculos()">Ações
@@ -137,7 +207,8 @@
                                                 </div>
                                             </td>
                                             <!-- Nº Cadinho -->
-                                            <td style="text-align: center;">
+                                            <td style="text-align: center;" 
+                                                *ngIf="!planoTemEnsaioComVariavelData(plano)">
                                                 <p-inputnumber [(ngModel)]="ensaio.numero_cadinho" 
                                                     [showButtons]="true" 
                                                     [min]="1" 
@@ -157,9 +228,32 @@
                                                     <div *ngFor="let variavel of getVariaveisOrdenadas(ensaio.variavel_detalhes)">
                                                         <p-floatlabel variant="in">
                     
-                                                            <p-inputnumber mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="5"
-                                                                variant="filled" size="large" fluid="true"
-                                                                id="variavel_{{variavel.id || variavel.nome}}" showButtons="true"
+                                                            <!-- Input para data -->
+                                                            <p-datepicker 
+                                                                *ngIf="isVariavelTipoData(variavel)"
+                                                                [showIcon]="true"
+                                                                variant="filled" 
+                                                                size="small" 
+                                                            
+                                                                appendTo="body"
+                                                                id="variavel_{{variavel.id || variavel.nome}}"
+                                                                [(ngModel)]="variavel.valorData"
+                                                                (ngModelChange)="atualizarVariavelData(ensaio, variavel, $event)"
+                                                                dateFormat="dd/mm/yy"
+                                                                placeholder="Selecione a data">
+                                                            </p-datepicker>
+                    
+                                                            <!-- Input numérico (padrão) -->
+                                                            <p-inputnumber 
+                                                                *ngIf="!isVariavelTipoData(variavel)"
+                                                                mode="decimal" 
+                                                                [minFractionDigits]="2" 
+                                                                [maxFractionDigits]="5"
+                                                                variant="filled" 
+                                                                size="large" 
+                                                                fluid="true"
+                                                                id="variavel_{{variavel.id || variavel.nome}}" 
+                                                                showButtons="true"
                                                                 [(ngModel)]="variavel.valor"
                                                                 (ngModelChange)="atualizarVariavelEnsaio(ensaio, variavel, $event)" />
                     
@@ -259,13 +353,13 @@
                                                     (click)="abrirModalOrdemVariaveis(ensaio)">
                                                 </p-button>
                                             </td>
-                                            <td></td>
+                                            <td *ngIf="!planoTemEnsaioComVariavelData(plano)"></td>
                                             <td></td>
                                             <td *ngIf="podeEditarEnsaiosCalculos()"></td>
                                             <td 
                                                 style="font-size: 15px;" 
                                                 class="text-right font-bold pr-6 "
-                                            >Resultado
+                                            >{{ ensaioTemVariavelData(ensaio) ? 'Rompimento' : 'Resultado' }}
                                             </td>
                                             <td>
                                                 <div class="flex align-items-center gap-2">
