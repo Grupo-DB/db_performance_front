@@ -47,6 +47,7 @@ import { AmostraService } from '../../../services/controleQualidade/amostra.serv
 import { TagModule } from 'primeng/tag';
 import { Amostra } from '../amostra/amostra.component';
 import { CheckboxModule } from 'primeng/checkbox';
+import { TextareaModule } from 'primeng/textarea';
 
 
 import jsPDF from 'jspdf';
@@ -81,7 +82,7 @@ export interface Ordem {
 @Component({
   selector: 'app-ordem',
   imports: [
-    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule, CardModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule,NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule, TagModule, CheckboxModule
+    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule, CardModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule,NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule, TagModule, CheckboxModule, TextareaModule
   ],
   animations: [
     trigger('efeitoFade',[
@@ -668,11 +669,21 @@ private normalize(str: string): string {
 
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
-    doc.text('1ª Via', 46, 30);
+    doc.text(amostra_detalhes_selecionada.numero+' | 1ª Via', 46, 30);
     doc.rect(45, 26, 55, 7); // 1ª via
 
     const agora = new Date();
     const dataHoraFormatada = agora.toLocaleString('pt-BR'); // exemplo: 07/08/2025 13:35:22
+
+    const agora_validade = new Date();
+    agora_validade.setDate(agora_validade.getDate() + 60); // adiciona 60 dias
+    // Formata para dd/MM/yy
+    const dataFormatadaValidade = agora_validade.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit'
+    });
+
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
     doc.text('Data de Emissão: '+dataHoraFormatada, 105, 30);
@@ -685,13 +696,19 @@ private normalize(str: string): string {
     let y = 52;
 
     console.log(amostra_detalhes_selecionada);
+    const dataColetaFormatada = new Date(amostra_detalhes_selecionada.data_coleta);
+    const dataColetaFormatada2 = dataColetaFormatada.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit'
+    });
 
     //Dados amostra
     const linhas = [
       ['Material: '+amostra_detalhes_selecionada.material, "Tipo: "+amostra_detalhes_selecionada.tipo_amostragem, ""],
       ['Sub-Tipo: '+amostra_detalhes_selecionada.subtipo, "Local de Coleta: "+amostra_detalhes_selecionada.local_coleta, ""],
       ['Produto: '+amostra_detalhes_selecionada.produto_amostra_detalhes.nome, "", ""],
-      ['Fornecedor: '+amostra_detalhes_selecionada.fornecedor, "Amostragem:", "Data Coleta / Fabricação: "+amostra_detalhes_selecionada.data_coleta],
+      ['Fornecedor: '+amostra_detalhes_selecionada.fornecedor, "Amostragem: "+amostra_detalhes_selecionada.tipo_amostragem, "Data Coleta / Fabricação: "+dataColetaFormatada2],
       ['Registro EP: '+amostra_detalhes_selecionada.produto_amostra_detalhes.registro_empresa, "Registro do Produto: "+amostra_detalhes_selecionada.produto_amostra_detalhes.registro_produto, ""],
     ];
 
@@ -716,7 +733,7 @@ private normalize(str: string): string {
           if (selected.id === ensaio_detalhes.id) {
             const linha: any[] = [];
             linha.push({ content: ensaio_detalhes.descricao });
-            linha.push({ content: 'kg/m³' });
+            linha.push({ content: ensaio_detalhes?.unidade });
             linha.push({ content: 'N/D' });
             linha.push({ content: '-' });
             linha.push({ content: '-' });
@@ -756,7 +773,7 @@ private normalize(str: string): string {
             if (selected.id === ensaio_detalhes.id) {
               const linha: any[] = [];
               linha.push({ content: ensaio_detalhes.descricao });
-              linha.push({ content: 'kg/m³' });
+              linha.push({ content: ensaio_detalhes?.unidade });
               linha.push({ content: 'N/D' });
               linha.push({ content: '-' });
               linha.push({ content: '-' });
@@ -794,7 +811,7 @@ private normalize(str: string): string {
     doc.text('Observações', 84, 213);
     autoTable(doc, {
       body: [[this.teste]],
-      startY: 220,
+      startY: 216,
       theme: 'grid',
       styles: {
         fontSize: 8,
@@ -832,7 +849,7 @@ private normalize(str: string): string {
     //rodape
     doc.setFontSize(7);
     doc.setFont("helvetica", "normal");
-    doc.text('Validade do Laudo: ', 16, 281);
+    doc.text('Validade do Laudo: '+dataFormatadaValidade, 16, 281);
     doc.text("DB Calc Plan", 100, 281);
     doc.text("Vesão: 9.0", 180, 281);
 
