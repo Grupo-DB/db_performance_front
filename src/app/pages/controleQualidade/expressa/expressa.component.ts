@@ -548,6 +548,7 @@ receberDadosAmostra(): void {
       this.amostraData.tipoAmostraInfo?.id || this.amostraData.tipoAmostra,
       this.amostraData.subtipo,
       this.amostraData.produtoAmostraInfo?.id || this.amostraData.produtoAmostra,
+      this.amostraData.codDb,
       this.amostraData.periodoHora,
       this.amostraData.periodoTurno,
       this.amostraData.tipoAmostragem,

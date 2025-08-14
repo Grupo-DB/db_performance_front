@@ -85,6 +85,7 @@ interface AmostraForm{
   tipoAmostra: FormControl,
   subtipo: FormControl,
   produtoAmostra: FormControl,
+  codDb: FormControl,
   periodoHora: FormControl,
   periodoTurno: FormControl,
   tipoAmostragem: FormControl,
@@ -219,6 +220,7 @@ export class AmostraComponent implements OnInit {
   tiposAmostra: TipoAmostra[] = [];
   produtosAmostra: ProdutoAmostra[] = [];
   produtosFiltrados: any[] = [];
+  tiposFiltrados: any[] = [];
   planosAnalise: Plano[] = [];
   ordens: Ordem[] = [];
   analises:Analise[] = [];
@@ -382,6 +384,7 @@ materiais: any[] = [
     tipoAmostra: new FormControl('',[Validators.required]),
     subtipo: new FormControl(''),
     produtoAmostra: new FormControl(''),
+    codDb: new FormControl(''),
     periodoHora: new FormControl(''),
     periodoTurno: new FormControl(''),
     tipoAmostragem: new FormControl('',[Validators.required]),
@@ -584,6 +587,7 @@ onMaterialChange(materialNome: string) {
         this.registerForm.get('numero')?.setValue(numero);
         console.log('Número da amostra gerado:', numero);
         this.loadProdutosPorMaterial(materialNormalizado);
+        this.loadTiposAmostraPorMaterial(materialNormalizado);
       },
       error: (err) => {
         console.error('Erro ao buscar sequencial:', err);
@@ -656,6 +660,31 @@ private gerarSequencialFallback(materialNome: string): number {
       }
     });
   }
+
+  loadTiposAmostraPorMaterial(materialNome: string): void {
+    if (!materialNome) {
+      this.tiposFiltrados = [];
+      return;
+    }
+
+    this.amostraService.getTiposAmostraPorMaterial(materialNome).subscribe({
+      next: (response) => {
+        this.tiposFiltrados = response;
+        console.log('Tipos filtrados por material:', this.tiposFiltrados);
+      },
+      error: (err) => {
+        console.error('Erro ao carregar tipos por material:', err);
+        this.tiposFiltrados = [];
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Erro', 
+          detail: 'Erro ao carregar tipos para o material selecionado.' 
+        });
+      }
+    });
+  }
+
+
 
   mostrarTodosProdutos(): void {
     this.produtosFiltrados = [...this.produtosAmostra];
@@ -775,7 +804,8 @@ onProdutoAmostraChange(produtoId: number) {
     // Preenche os campos do formulário com os dados do produto
     this.registerForm.patchValue({
       registroEp: produtoSelecionado.registro_empresa,
-      registroProduto: produtoSelecionado.registro_produto
+      registroProduto: produtoSelecionado.registro_produto,
+      codDb: produtoSelecionado.cod_db
     });
   }
 }
@@ -867,6 +897,7 @@ submitAmostra() {
     this.registerForm.value.tipoAmostra,
     this.registerForm.value.subtipo,
     this.registerForm.value.produtoAmostra,
+    this.registerForm.value.codDb,
     this.registerForm.value.periodoHora,
     this.registerForm.value.periodoTurno,
     this.registerForm.value.tipoAmostragem,
@@ -1094,6 +1125,7 @@ converterAmostraSalvaParaFormulario(amostra: any): any {
     tipoAmostra: amostra.tipo_amostra_detalhes?.id || amostra.tipo_amostra,
     subtipo: amostra.subtipo || '',
     produtoAmostra: amostra.produto_amostra_detalhes?.id || amostra.produto_amostra,
+    codDb: amostra.cod_db || '',
     periodoHora: amostra.periodo_hora || '',
     periodoTurno: amostra.periodo_turno || '',
     tipoAmostragem: amostra.tipo_amostragem || '',
@@ -1749,6 +1781,7 @@ limparDadosFormulario() {
       this.amostraData.tipoAmostraInfo?.id || this.amostraData.tipoAmostra,
       this.amostraData.subtipo,
       this.amostraData.produtoAmostraInfo?.id || this.amostraData.produtoAmostra,
+      this.amostraData.codDb,
       this.amostraData.periodoHora,
       this.amostraData.periodoTurno,
       this.amostraData.tipoAmostragem,
@@ -2120,6 +2153,7 @@ criarAmostraNormal(): void {
     this.registerForm.value.tipoAmostra,
     this.registerForm.value.subtipo,
     this.registerForm.value.produtoAmostra,
+    this.registerForm.value.codDb,
     this.registerForm.value.periodoHora,
     this.registerForm.value.periodoTurno,
     this.registerForm.value.tipoAmostragem,

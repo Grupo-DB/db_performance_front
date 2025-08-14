@@ -193,7 +193,7 @@
                                                         optionValue="nome" appendTo="body" [filter]="true" filterBy="value"
                                                         [showClear]="true">
                                                     </p-select>
-                                                    <label for="float-label">Status</label>
+                                                    <label for="float-label">Classificação</label>
                                                 </p-floatLabel>
                                             </div>
                                             <div class="w-12 text-left">
@@ -318,9 +318,9 @@
                                             <div class="w-12 text-left">
                                                 <p-floatLabel variant="on">
                                                     <p-select inputId="float-label" [style]="{'width':'100%'}"
-                                                        [options]="tiposAmostra" formControlName="tipoAmostra"
+                                                        [options]="tiposFiltrados" formControlName="tipoAmostra"
                                                         optionLabel="nome" optionValue="id" appendTo="body" [filter]="true"
-                                                        filterBy="value" [showClear]="true">
+                                                        filterBy="value" [showClear]="true" >
                                                     </p-select>
                                                     <label for="float-label">Tipo de Amostra</label>
                                                 </p-floatLabel>
@@ -346,6 +346,22 @@
                                                     </p-select>
                                                     <label for="float-label">Produto de Amostra</label>
                                                 </p-floatLabel>
+                                            </div>
+                                            <div *ngIf="registerForm.get('material')?.value === 'Argamassa'" class="w-12 text-left">
+                                                <p-floatlabel variant="on">
+                                                    <p-iconfield>
+                                                        <p-inputicon class="pi pi-file-edit" />
+                                                        <input
+                                                            variant="filled"
+                                                            [style]="{'width':'100%'}"
+                                                            pInputText id="on_label"
+                                                            autocomplete="off"
+                                                            formControlName="codDb"
+                                                            type="text"
+                                                        />
+                                                    </p-iconfield>
+                                                    <label for="on_label">Digite o código DB</label>
+                                                </p-floatlabel>
                                             </div>
                                             <div class="w-12 text-left">
                                                 <p-floatLabel variant="on">

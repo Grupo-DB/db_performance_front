@@ -88,22 +88,15 @@
                                         <label for="on_label">Digite o nome</label>
                                     </p-floatlabel>
                                 </div>
-
                                 <div class="w-12 text-left">
-                                    <p-floatlabel variant="on">
-                                        <p-iconfield>
-                                            <p-inputicon class="pi pi-file-edit" />
-                                            <input
-                                                variant="filled"
-                                                [style]="{'width':'100%'}"
-                                                pInputText id="on_label"
-                                                autocomplete="off"
-                                                formControlName="natureza"
-                                                type="text"
-                                            />
-                                        </p-iconfield>
-                                        <label for="on_label">Digite a natureza</label>
-                                    </p-floatlabel>
+                                    <p-floatLabel variant="on">
+                                        <p-select inputId="float-label" [style]="{'width':'100%'}" [options]="materiais" formControlName="material"
+                                            optionLabel="display" optionValue="value" appendTo="body" [filter]="true" filterBy="value" [showClear]="true"
+                                            (onChange)="onMaterialChange($event.value, 'edit')"
+                                            >
+                                        </p-select>
+                                        <label for="float-label">Selecione o Material</label>
+                                    </p-floatLabel>
                                 </div>
                            
                             </div>
@@ -156,7 +149,7 @@
                             [paginator]="true"
                             [rows]="10"
                             [rowsPerPageOptions]="[10, 20, 50]"
-                            [globalFilterFields]="['nome']"
+                            [globalFilterFields]="['nome', 'natureza', 'material']"
                             [showCurrentPageReport]="true"
                             currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Tipos de Amostra"
                             scrollable="true"
@@ -183,15 +176,15 @@
                             </ng-template>
                             <ng-template pTemplate="header">
                                 <tr>
-                                    <th style="width: 35%; text-align: center;" type="text" field="nome" display="menu">Nome</th>
-                                    <th style="width: 35%; text-align: center;" type="text" field="nome" display="menu">Natureza</th>
-                                    <th style="width: 30%; text-align: center;" type="text" field="acoes" display="menu">Ações</th>
+                                    <th style="width: 33%; text-align: center;" type="text" field="nome" display="menu">Nome</th>
+                                    <th style="width: 33%; text-align: center;" type="text" field="material" display="menu">Material</th>
+                                    <th style="width: 33%; text-align: center;" type="text" field="acoes" display="menu">Ações</th>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-tiposAmostra>
                                 <tr>
                                     <td style="text-align: center;">{{ tiposAmostra.nome }}</td>
-                                    <td style="text-align: center;">{{ tiposAmostra.natureza }}</td>
+                                    <td style="text-align: center;">{{ tiposAmostra.material }}</td>
                                     <td style="text-align: center;">
                                         <div style="display: flex; justify-content: center;">
                                             <p-button
@@ -268,25 +261,19 @@
                                                 type="text"
                                             />
                                         </p-iconfield>
-                                        <label for="on_label">Digite a natureza</label>
+                                        <label for="on_label">Digite o nome</label>
                                     </p-floatlabel>
                                 </div>
 
                                 <div class="w-12 text-left">
-                                    <p-floatlabel variant="on">
-                                        <p-iconfield>
-                                            <p-inputicon class="pi pi-file-edit" />
-                                            <input
-                                                variant="filled"
-                                                [style]="{'width':'100%'}"
-                                                pInputText id="on_label"
-                                                autocomplete="off"
-                                                formControlName="natureza"
-                                                type="text"
-                                            />
-                                        </p-iconfield>
-                                        <label for="on_label">Digite o nome</label>
-                                    </p-floatlabel>
+                                    <p-floatLabel variant="on">
+                                        <p-select inputId="float-label" [style]="{'width':'100%'}" [options]="materiais" formControlName="material"
+                                            optionLabel="display" optionValue="value" appendTo="body" [filter]="true" filterBy="value" [showClear]="true"
+                                            (onChange)="onMaterialChange($event.value, 'edit')"
+                                            >
+                                        </p-select>
+                                        <label for="float-label">Selecione o Material</label>
+                                    </p-floatLabel>
                                 </div>
 
                             </div>

@@ -26,16 +26,16 @@ import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { AmostraService } from '../../../services/controleQualidade/amostra.service';
-
-
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
+import { CdkDragPlaceholder } from "@angular/cdk/drag-drop";
 
 interface ProdutoAmostraForm {
   nome: FormControl,
   registroEmpresa: FormControl,
   registroProduto: FormControl,
   material: FormControl,
+  codDb: FormControl
 }
 
 export interface ProdutoAmostra {
@@ -44,59 +44,61 @@ export interface ProdutoAmostra {
   registro_empresa: string;
   registro_produto: string;
   material: string;
+  cod_db: string;
 }
 
 @Component({
   selector: 'app-produto-amostra',
   imports: [
-    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,
-    InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,
-    FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,
-    ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,
-    InputNumberModule,AutoCompleteModule,MultiSelectModule, CardModule, InplaceModule
-  ],
+    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule,
+    InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule,
+    FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,
+    ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink,
+    InputNumberModule, AutoCompleteModule, MultiSelectModule, CardModule, InplaceModule,
+    CdkDragPlaceholder
+],
   animations:[
-  trigger('efeitoFade',[
-                                          transition(':enter',[
-                                            style({ opacity: 0 }),
-                                            animate('2s', style({ opacity:1 }))
-                                          ])
-                                        ]),
-                                        trigger('efeitoZoom', [
-                                          transition(':enter', [
-                                            style({ transform: 'scale(0)' }),
-                                            animate('2s', style({ transform: 'scale(1)' })),
-                                          ]),
-                                        ]),
-                                        trigger('bounceAnimation', [
-                                          transition(':enter', [
-                                            animate('4.5s ease-out', keyframes([
-                                              style({ transform: 'scale(0.5)', offset: 0 }),
-                                              style({ transform: 'scale(1.2)', offset: 0.5 }),
-                                              style({ transform: 'scale(1)', offset: 1 }),
-                                            ])),
-                                          ]),
-                                        ]),
-                                        trigger('swipeAnimation', [
-                                          transition(':enter', [
-                                            style({ transform: 'translateX(-100%)' }),
-                                            animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
-                                          ]),
-                                          transition(':leave', [
-                                            style({ transform: 'translateX(0)' }),
-                                            animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
-                                          ]),
-                                        ]),
-                                        trigger('swipeAnimationReverse', [
-                                          transition(':enter', [
-                                            style({ transform: 'translateX(100%)' }),
-                                            animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
-                                          ]),
-                                          transition(':leave', [
-                                            style({ transform: 'translateX(0)' }),
-                                            animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
-                                          ]),
-          ]),  
+    trigger('efeitoFade', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('2s', style({ opacity: 1 }))
+      ])
+    ]),
+    trigger('efeitoZoom', [
+      transition(':enter', [
+        style({ transform: 'scale(0)' }),
+        animate('2s', style({ transform: 'scale(1)' })),
+      ]),
+    ]),
+    trigger('bounceAnimation', [
+      transition(':enter', [
+        animate('4.5s ease-out', keyframes([
+          style({ transform: 'scale(0.5)', offset: 0 }),
+          style({ transform: 'scale(1.2)', offset: 0.5 }),
+          style({ transform: 'scale(1)', offset: 1 }),
+        ])),
+      ]),
+    ]),
+    trigger('swipeAnimation', [
+      transition(':enter', [
+        style({ transform: 'translateX(-100%)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+      ]),
+    ]),
+    trigger('swipeAnimationReverse', [
+      transition(':enter', [
+        style({ transform: 'translateX(100%)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+      ]),
+    ]),  
   ],
   providers:[
     MessageService,ConfirmationService
@@ -127,7 +129,6 @@ export class ProdutoAmostraComponent implements OnInit {
   { value: 'finaliza', display:'Finaliza' },
   { value: 'aditivos', display:'Aditivos' },
   { value: 'mineracaoo', display:'Mineração' },
-  
 ]
 
   constructor(
@@ -143,15 +144,17 @@ export class ProdutoAmostraComponent implements OnInit {
       nome: new FormControl('',[Validators.required, Validators.minLength(3)]),
       registroEmpresa: new FormControl('', ),
       registroProduto: new FormControl('',),
-      material: new FormControl('', [Validators.required])
+      material: new FormControl('', [Validators.required]),
+      codDb: new FormControl('',)
     });
     this.editForm = this.fb.group({
       id:[''],
       nome:[''],
       registro_empresa: [''],
       registro_produto: [''],
-      material: ['']
-    })
+      material: [''],
+      codDb: ['']
+    });
   }
   
   hasGroup(groups:string[]): boolean{
@@ -192,8 +195,6 @@ export class ProdutoAmostraComponent implements OnInit {
       }
     }
   }
-
-
   filterTable() {
     this.dt1.filterGlobal(this.inputValue,'contains');
   }
@@ -211,7 +212,8 @@ export class ProdutoAmostraComponent implements OnInit {
       nome: produtoAmostra?.nome,
       registro_empresa: produtoAmostra?.registro_empresa,
       registro_produto: produtoAmostra?.registro_produto,
-      material: produtoAmostra.material
+      material: produtoAmostra.material,
+      codDb: produtoAmostra.cod_db
     });
     console.log(this.editForm);
   }
@@ -222,7 +224,8 @@ export class ProdutoAmostraComponent implements OnInit {
       nome: this.editForm.value.nome,
       registro_empresa: this.editForm.value.registro_empresa,
       registro_produto: this.editForm.value.registro_produto,
-      material: this.editForm.value.material
+      material: this.editForm.value.material,
+      cod_db: this.editForm.value.codDb
     };
     this.amostraService.editProduto(id, dadosAtualizados).subscribe({
       next:() =>{
@@ -288,7 +291,8 @@ submit(){
     this.registerForm.value.nome,
     this.registerForm.value.registroEmpresa,
     this.registerForm.value.registroProduto,
-    this.registerForm.value.material
+    this.registerForm.value.material,
+    this.registerForm.value.codDb
   ).subscribe({
     next: () => {
       this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Produto de Amostra cadastrado com sucesso!!', life: 1000 });

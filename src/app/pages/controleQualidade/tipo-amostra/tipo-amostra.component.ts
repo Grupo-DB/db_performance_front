@@ -33,12 +33,14 @@ import { InplaceModule } from 'primeng/inplace';
 interface TipoAmostraForm{
   nome: FormControl,
   natureza: FormControl,
+  material: FormControl
 }
 
 export interface TipoAmostra {
   id: number;
   nome: string;
   natureza: string;
+  material: string;
 }
 
 @Component({
@@ -109,6 +111,21 @@ export class TipoAmostraComponent implements OnInit {
   @ViewChild('dt1') dt1!: Table;
   inputValue: string = '';
   editFormVisible: boolean = false;
+
+    materiais = [
+  { value: 'aditivos', display:'Aditivos' },
+  { value: 'areia', display:'Areia' },
+  { value: 'argamassa', display:'Argamassa' },
+  { value: 'cal', display:'Cal' },
+  { value: 'calcario', display:'Calcário' },
+  { value: 'cimento', display:'Cimento' },
+  { value: 'cinza pozolana', display:'Cinza Pozolana' },
+  { value: 'fertilizante', display:'Fertilizante' },
+  { value: 'finaliza', display:'Finaliza' },
+  { value: 'aditivos', display:'Aditivos' },
+  { value: 'mineracaoo', display:'Mineração' },
+]
+
   constructor(
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
@@ -119,12 +136,14 @@ export class TipoAmostraComponent implements OnInit {
   { 
     this.registerForm = new FormGroup({
       nome: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
-      natureza: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)])
+      natureza: new FormControl(''),
+      material: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
     });
     this.editForm = this.fb.group({
       id:[''],
       nome: [''],
-      natureza: ['']
+      natureza: [''],
+      material: ['']
     });
   }
 
@@ -146,6 +165,27 @@ export class TipoAmostraComponent implements OnInit {
     )
   }
 
+  private normalize(str: string): string {
+  if (!str) return '';
+  return str.normalize('NFD')
+           .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+           .toLowerCase() 
+           .trim(); // Remove espaços extras
+}  
+
+  onMaterialChange(materialValue: string, formType: 'register' | 'edit' = 'register'): void {
+    if (materialValue) {
+      const materialNormalizado = this.normalize(materialValue);
+      console.log('Material normalizado:', materialNormalizado);
+      
+      if (formType === 'register') {
+        this.registerForm.get('material')?.setValue(materialNormalizado, { emitEvent: false });
+      } else {
+        this.editForm.get('material')?.setValue(materialNormalizado, { emitEvent: false });
+      }
+    }
+  }
+
   filterTable() {
     this.dt1.filterGlobal(this.inputValue,'contains');
   }
@@ -161,7 +201,8 @@ export class TipoAmostraComponent implements OnInit {
     this.editForm.patchValue({
       id: tipoAmostra.id,
       nome: tipoAmostra.nome,
-      natureza: tipoAmostra.natureza
+      natureza: tipoAmostra.natureza,
+      material: tipoAmostra.material
     });
   }
   saveEdit(){
@@ -169,6 +210,7 @@ export class TipoAmostraComponent implements OnInit {
     const dadosAtualizados: Partial<TipoAmostra> = {
       nome: this.editForm.value.nome,
       natureza: this.editForm.value.natureza,
+      material: this.editForm.value.material
     };
     this.amostraService.editTipoAmostra(id, dadosAtualizados).subscribe({
       next:() =>{
@@ -232,7 +274,8 @@ export class TipoAmostraComponent implements OnInit {
   submit(){
     this.amostraService.registerTipoAmostra(
       this.registerForm.value.nome,
-      this.registerForm.value.natureza
+      this.registerForm.value.natureza,
+      this.registerForm.value.material
     ).subscribe({
       next:() => {
         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Tipo de Amostra cadastrado com sucesso!!', life: 1000 });
