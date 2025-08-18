@@ -504,13 +504,13 @@ private normalize(str: string): string {
 
   imprimirLaudoPDF(amostra_detalhes_selecionada: any, ensaios_laudo: any, ensaios_selecionados: any){
     if(amostra_detalhes_selecionada.material === 'argamassa'){
-      this.imprimirLaudoArgPDF(amostra_detalhes_selecionada, ensaios_laudo, ensaios_selecionados);
+      this.imprimirLaudoArgPDF(amostra_detalhes_selecionada);
     }else{
       this.imprimirLaudoCalcPDF(amostra_detalhes_selecionada);
     }
   }
 
-  imprimirLaudoArgPDF(amostra_detalhes_selecionada: any, ensaios_laudo: any, ensaios_selecionados: any) {
+  imprimirLaudoArgPDF(amostra_detalhes_selecionada: any) {
 
     const doc = new jsPDF({ 
       unit: "mm", 
@@ -528,12 +528,32 @@ private normalize(str: string): string {
 
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
-    doc.text('ARGAMASSA | 1ª Via', 46, 30);
+    doc.text(amostra_detalhes_selecionada.numero+' | 1ª Via', 46, 30);
     doc.rect(45, 26, 55, 7); // 1ª via
+
+    const agora = new Date();
+    const dataHoraFormatada = agora.toLocaleString('pt-BR'); // exemplo: 07/08/2025 13:35:22
+
+    const agora_validade = new Date();
+    agora_validade.setDate(agora_validade.getDate() + 60); // adiciona 60 dias
+    // Formata para dd/MM/yy
+    const dataFormatadaValidade = agora_validade.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit'
+    });
+
+    console.log(amostra_detalhes_selecionada);
+    const dataColetaFormatada = new Date(amostra_detalhes_selecionada.data_coleta);
+    const dataColetaFormatada2 = dataColetaFormatada.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit'
+    });
 
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
-    doc.text('Data de Emissão:', 105, 30);
+    doc.text('Data de Emissão: '+dataHoraFormatada, 105, 30);
     doc.rect(103, 26, 90, 7); // Data emissao
 
     doc.setFontSize(12);
@@ -544,11 +564,11 @@ private normalize(str: string): string {
 
     //Dados amostra
     const linhas = [
-      ['Material:', "Tipo:", ""],
-      ['Sub-Tipo:', "Local de Coleta:", ""],
-      ['Produto:', "", ""],
-      ['Fornecedor:', "Amostragem:", "Data Coleta / Fabricação"],
-      ['Registro EP:', "Registro do Produto:", ""],
+      ['Material: '+amostra_detalhes_selecionada.material, "Tipo: "+amostra_detalhes_selecionada.tipo_amostragem, ""],
+      ['Sub-Tipo: '+amostra_detalhes_selecionada.subtipo, "Fornecedor: "+amostra_detalhes_selecionada.fornecedor, ""],
+      ['Local de Coleta: '+amostra_detalhes_selecionada.local_coleta, "", "Data Coleta / Fabricação: "+dataColetaFormatada2],
+      ['Registro EP: '+amostra_detalhes_selecionada.registro_ep, "Registro do Produto: "+amostra_detalhes_selecionada.registro_produto, ""],
+      ['Identif. Complemento: '+amostra_detalhes_selecionada.identificacao_complementar, "", ""],
     ];
 
     doc.rect(15, 48, 182, 35); //tabela dados amostra
@@ -557,72 +577,124 @@ private normalize(str: string): string {
       doc.setFont("helvetica", "normal");
       doc.text(linha[0], 16, y);
       doc.text(linha[1], 86, y);
-      doc.text(linha[2], 155, y);
+      doc.text(linha[2], 140, y);
       y += 7;
     });
 
+    // doc.addPage();
+
     //tabela de ensaios
     let contadorLinhas = 88;
-    const head = [['Ensaio', 'Unid', 'Resultado', '', 'Garantia']];
+    const head = [['Ensaio', 'Unid', 'Resultado', 'Método']];
+    if(amostra_detalhes_selecionada.expressa_detalhes){
+      const body: any[] = [];
 
-    const body = [
-      ['Massa Específica', 'kg/m³', '#N/D', '-', '-'],
-      ['Densidade Aparente', 'kg/m³', '#N/D', '-', '-'],
-      ['Umidade', '%', '#N/D', '', 'max'],
-      ['Ri+SiO₂', '%', '#N/D', '-', '-'],
-      ['CaO', '%', '#N/D', '', 'min'],
-      ['MgO', '%', '#N/D', '', 'min'],
-      ['Soma de Óxidos (CaO+MgO)', '%', '#N/D', '', 'min'],
-      ['Perda ao Fogo', '%', '#N/D', '-', '-'],
-      ['CO₂', '%', '#N/D', '-', '-'],
-      ['PN (Equiv CaCO₃)', '%', '#N/D', '', 'min'],
-      ['PRNT', '%', '#N/D', '', 'min'],
-      ['RE', '%', '#N/D', '-', '-'],
-      ['RET Indiv #10 (2mm)	', '%', '#N/D', '-', '-'],
-      ['PASS Indiv #10 (2mm)', '%', '#N/D', '', 'min'],
-      ['RET Indiv #20 (0,84mm)', '%', '#N/D', '-', '-'],
-      ['PASS Indiv #20 (0,84mm)', '%', '#N/D', '', 'min'],
-      ['RET Indiv #50 (0,3mm)', '%', '#N/D', '-', '-'],
-      ['PAS Indiv #50 (0,3mm)', '%', '#N/D', '', 'min'],
-      ['RET ACUM #100 (0,150mm)	', '%', '#N/D', '-', '-'],
-      ['PAS ACUM #100 (0,150mm)', '%', '#N/D', '-', '-'],
-      ['RET ACUM #200 (0,075mm)', '%', '#N/D', '-', '-'],
-      ['Finos < #200 (0,075mm)', '%', '#N/D', '-', '-'],
-    ];
+      amostra_detalhes_selecionada.expressa_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
+        this.ensaios_selecionados.forEach((selected: any) => {
+          if (selected.id === ensaio_detalhes.id) {
+            const linha: any[] = [];
+            linha.push({ content: ensaio_detalhes.descricao });
+            linha.push({ content: ensaio_detalhes?.unidade });
+            linha.push({ content: 'N/D' });
+            linha.push({ content: ensaio_detalhes?.norma });
+            body.push(linha);
+          }
+        });
 
-    autoTable(doc, {
-      head: head,
-      body: body,
-      startY: contadorLinhas,
-      theme: 'grid',
-      styles: {
-        fontSize: 8,
-        halign: 'center',
-        cellPadding: 1,
-        
-      },
-       headStyles: {
-        halign: 'left', // <-- Alinha o cabeçalho à esquerda
-        fillColor: [200, 200, 200],
-        textColor: [0, 0, 0],
-        fontStyle: 'bold'
-      },
-      columnStyles: {
-        0: { halign: 'left' }, 
-        1: { halign: 'left' },
-        2: { halign: 'left' },
-        3: { halign: 'left' },
-        4: { halign: 'left' }
-      }
-    });
+      });
+        autoTable(doc, {
+          startY: contadorLinhas,
+          head: head,
+          body: body,
+          theme: "grid",
+          styles: {
+            fontSize: 8,
+            halign: 'left',
+            cellPadding: 1,
+            
+          },
+          headStyles: {
+            halign: 'left',
+            fillColor: [200, 200, 200],
+            textColor: [0, 0, 0],
+            fontStyle: 'bold'
+          },
+        });
+
+        contadorLinhas += 20;
+
+    }else{
+      amostra_detalhes_selecionada.ordem_detalhes.plano_detalhes.forEach((plano_detalhes: any) => {   
+        const body: any[] = [];
+
+        plano_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
+          this.ensaios_selecionados.forEach((selected: any) => {
+
+            if (selected.id === ensaio_detalhes.id) {
+              const linha: any[] = [];
+              linha.push({ content: ensaio_detalhes.descricao });
+              linha.push({ content: ensaio_detalhes?.unidade });
+              linha.push({ content: 'N/D' });
+              linha.push({ content: '-' });
+              linha.push({ content: '-' });
+              body.push(linha);
+            }
+          });
+        });
+
+        autoTable(doc, {
+          startY: contadorLinhas,
+          head: head,
+          body: body,
+          theme: "grid",
+          styles: {
+            fontSize: 8,
+            halign: 'left',
+            cellPadding: 1,
+            
+          },
+          headStyles: {
+            halign: 'left',
+            fillColor: [200, 200, 200],
+            textColor: [0, 0, 0],
+            fontStyle: 'bold'
+          },
+        });
+
+        contadorLinhas += 20;
+      });
+    }
 
     //observações
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.text('Observações', 84, 213)
-    doc.rect(14, 215, 182, 20); //tabela dados amostra
+    doc.text('Observações', 84, 213);
+    autoTable(doc, {
+      body: [[this.teste]],
+      startY: 216,
+      theme: 'grid',
+      styles: {
+        fontSize: 8,
+        halign: 'left',
+        cellPadding: 1,
+        fillColor: [255, 255, 255],
+        textColor: [0, 0, 0],
+        lineColor: [255, 255, 255],
+        lineWidth: 0
+      },
+      bodyStyles: {
+        fillColor: [255, 255, 255],
+        textColor: [0, 0, 0],
+        lineColor: [255, 255, 255],
+        lineWidth: 0
+      },
+      alternateRowStyles: {
+        fillColor: [255, 255, 255]
+      }
+    });
+    doc.rect(14, 215, 182, 20); //tabela obs
 
-    //original assinando...
+    //original assinado...
     autoTable(doc, {
       body: [['Somente o original assinado tem valor de laudo. A representatividade da amostra é de responsabilidade do executor da coleta da mesma. Os resultados presentes referem-se unicamente a amostra analisada']],
       startY: 270,
@@ -637,14 +709,91 @@ private normalize(str: string): string {
     //rodape
     doc.setFontSize(7);
     doc.setFont("helvetica", "normal");
-    doc.text('Validade do Laudo: ', 16, 281);
-    doc.text("DB Calc Plan", 100, 281);
+    doc.text('Validade do Laudo: '+dataFormatadaValidade, 16, 281);
+    doc.text("DB Arg Plan", 100, 281);
     doc.text("Vesão: 9.0", 180, 281);
 
     const logoAssinaturaBase64 = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4QL6RXhpZgAATU0AKgAAAAgABAE7AAIAAAAQAAABSodpAAQAAAABAAABWpydAAEAAAAgAAAC0uocAAcAAAEMAAAAPgAAAAAc6gAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATWF0aGV1cyBSaWNhbGRlAAAFkAMAAgAAABQAAAKokAQAAgAAABQAAAK8kpEAAgAAAAM1OQAAkpIAAgAAAAM1OQAA6hwABwAAAQwAAAGcAAAAABzqAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAyMDI1OjA4OjA1IDE2OjQ4OjE3ADIwMjU6MDg6MDUgMTY6NDg6MTcAAABNAGEAdABoAGUAdQBzACAAUgBpAGMAYQBsAGQAZQAAAP/hBCJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvADw/eHBhY2tldCBiZWdpbj0n77u/JyBpZD0nVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkJz8+DQo8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIj48cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPjxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSJ1dWlkOmZhZjViZGQ1LWJhM2QtMTFkYS1hZDMxLWQzM2Q3NTE4MmYxYiIgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIi8+PHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9InV1aWQ6ZmFmNWJkZDUtYmEzZC0xMWRhLWFkMzEtZDMzZDc1MTgyZjFiIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iPjx4bXA6Q3JlYXRlRGF0ZT4yMDI1LTA4LTA1VDE2OjQ4OjE3LjU5MDwveG1wOkNyZWF0ZURhdGU+PC9yZGY6RGVzY3JpcHRpb24+PHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9InV1aWQ6ZmFmNWJkZDUtYmEzZC0xMWRhLWFkMzEtZDMzZDc1MTgyZjFiIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iPjxkYzpjcmVhdG9yPjxyZGY6U2VxIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+PHJkZjpsaT5NYXRoZXVzIFJpY2FsZGU8L3JkZjpsaT48L3JkZjpTZXE+DQoJCQk8L2RjOmNyZWF0b3I+PC9yZGY6RGVzY3JpcHRpb24+PC9yZGY6UkRGPjwveDp4bXBtZXRhPg0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDw/eHBhY2tldCBlbmQ9J3cnPz7/2wBDAAcFBQYFBAcGBQYIBwcIChELCgkJChUPEAwRGBUaGRgVGBcbHichGx0lHRcYIi4iJSgpKywrGiAvMy8qMicqKyr/2wBDAQcICAoJChQLCxQqHBgcKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKir/wAARCADAAqkDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD6RooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAormrHXLo+P7zQ7tgUNmt3CoQDyxvKn5s854PTjmuloAKKKKACiimTSxwQvLM6xxxqWZmOAoHUmgDG1vxdpehanY6bcvJNqGoMy21pAA0kmBk9SAB7kgVNpfiOy1W9msoxNBewDMttcJskUeuO49xmud8I6TY6z4j1Dxs4S5ku3MFhKyDMcCZX5T7nNaWuafHD4u0LVYNsdwZXtZWHBeNkJwfXDKKYHTUUCikAUUUUAFFFY2q+LtD0TVLbT9U1GK3ubk/u1bPrgZPRcnjmgDZooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigDm9SsfJ8daZqcQjV5YJLWVmJyV+8APfP9a6QcAVg+LkQaXDcvx9muEkyCQeuMAd+SOK3UO5AfUZp9AFooopAFcx8Q2uG8F3VnYMFur5ktYcnHzOwH8sn8K6euG8SCXVvif4b0xHP2ezSTUJwCOq4CZ/GmgOq0PSodC0Gy0u1AEVpCsQwMZwOT+Jyfxqj4hVZdU0GLJ3/AG7zAAM8LGxJ/kPxrdrmr6WG7+ImmWhUl7O1luS3IwThQPToTQB0tFFFIAooooAK8/tPCtp4nv8Axfd6iqyfb5PsMLgA+XHGoGVPruOfwFdrq10bHRb27HWC3klH/AVJ/pXL/CZp5vhlpd1ecz3fmXEhPctIx/lin0A1fBF9Jf8Ag3T3nJM0UZgkLdSyEoT+O3Nb1YPhCJYdMuY0RkUXs+NxBz8/Wt6kAUUUUAFFcl4p1rWfC0w1eQwXWhKyrdxiMiW2QnmQEcMB3HFdTbzxXVvHPbuskUqh0dTkMDyCKAJKKKKACiiigAooooAKKKKACiii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3a7qEuzbu3x2/wA+PLznEQ+95b5xj/XSYxiPZpUUAZsWl3cfl7td1CXZt3b47f58eXnOIh97y3zjH+ukxjEezN/4RfV/+h78Qf8AfjT/AP5FrpKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAIri2hu4GhuYkljb7yuMg1kxyS6A/lXTvNp7H93LjJg5+63tyMH8626a6LIhRxlWGCD3oAcDkAjoarajZrqGl3VnJ9y4heJvowI/rWWZD4ckbzizaW54fk/Zz0wepIPr2rcVgygjkGgDiPhDeST/AA+t7K5cNc6XNJZS4OeUbj9CK7ivM/h5GmhfEjxloBLEy3C6hET02vyf1YflXplNjYVRm0axn1KK/eHbdR9JEYqWHo2PvD2NXqKQgooooAKKKKACiiigArEsdDk0zxTf6haSD7JqSq88DfwTKMb19iOvuBW3RQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQA141lQpIoZWGCCOtYj3jeHp2F8+NMc5WduluT/AAnH8PTB7Vu1Dd2sN7ayW11GJIZVKup7g0Aeb+Ib+20n42+FdTgZDFrFtLYSyo3DnrH+pFenV8466t34fgl0TV4Ggn0bWP7Q0m4ZciW0L/Oqt6oCDj0GO1fRcEyXECTRMGjkUMrDuCMg02Nj6KKKQgooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAMbxR4ZsvFeiS6dfgruGYpkA3wt/eXP8ALvVnQdJGhaBZaWtzLdC0hWITTY3OB3OOK0KKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA/9k=';
     doc.addImage(logoAssinaturaBase64, 'PNG', 84, 238, 40, 30); // x, y, largura, altura
 
-  
+    //meu teste
+    y = 120;
+
+    doc.setFontSize(10);
+    doc.text(
+      'Determinação da resistência potencial de aderência à tração ao substrato',
+      14,
+      10
+    );
+
+    // Dados da tabela
+    const head2 = [
+      [
+        {content: 'Determinação da resistência potencial de aderência à tração ao substrato', colSpan: 14}
+      ],
+      [
+        { content: 'N°', rowSpan: 2 },
+        { content: 'Diâmetro mm', rowSpan: 2 },
+        { content: 'Área mm²', rowSpan: 2 },
+        { content: 'Espessura mm', rowSpan: 2 },
+        { content: 'Subst', rowSpan: 2 },
+        { content: 'Junta', rowSpan: 2 },
+        { content: 'Carga kgf', rowSpan: 2 },
+        { content: 'RESIST. Mpa', rowSpan: 2 },
+        { content: 'Validação', rowSpan: 2 },
+        { content: 'Forma de Ruptura (%)', colSpan: 5 },
+      ],
+      [
+        { content: '(A) Sub' },
+        { content: '(B) Sub/Arga' },
+        { content: '(C) Rup Arga' },
+        { content: '(D) Arga Cola' },
+        { content: '(E) Colar pastilha' },
+      ],
+    ];
+
+    const body2 = [
+       ['1', '48', '1810', '0,00', '0,00', '0,00', '25,0', '0,14', 'VÁLIDO', '0%', '100%', '0%', '0%', '0%'],
+      ...Array(11).fill(['', '', '', '', '', '', '', '', '', '', '', '', '', '']),
+      [
+        { content: 'Média Resistência Substrato', colSpan: 9, styles: { halign: 'right' } },
+        '0,25', {content: 'Observações', colSpan: 4, rowSpan: 5, styles: { halign: 'left', valign: 'top' }}
+      ],
+      [
+        { content: 'Resultado MAX', colSpan: 9, styles: { halign: 'right' } },
+        '0,31'
+      ],
+      [
+        { content: 'Resultado MIN', colSpan: 9, styles: { halign: 'right' } },
+        '0,18'
+      ],
+      [
+        { content: 'Tipo de Ruptura', colSpan: 9 }
+      ],
+     
+    ];
+
+    // Renderizar tabela
+    autoTable(doc, {
+      head: head2,
+      body: body2,
+      startY: 100,
+      styles: {
+        fontSize: 8,
+        halign: 'center',
+        valign: 'middle',
+      },
+      headStyles: {
+        fillColor: [220, 220, 220],
+        textColor: 0,
+        lineWidth: 0.1,
+      },
+      bodyStyles: {
+        lineWidth: 0.1,
+      },
+    });
+
+
     const blobUrl = doc.output("bloburl");
     window.open(blobUrl, "_blank");
   
