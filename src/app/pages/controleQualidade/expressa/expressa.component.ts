@@ -549,6 +549,7 @@ receberDadosAmostra(): void {
       this.amostraData.subtipo,
       this.amostraData.produtoAmostraInfo?.id || this.amostraData.produtoAmostra,
       this.amostraData.codDb,
+      this.amostraData.estadoFisico,
       this.amostraData.periodoHora,
       this.amostraData.periodoTurno,
       this.amostraData.tipoAmostragem,

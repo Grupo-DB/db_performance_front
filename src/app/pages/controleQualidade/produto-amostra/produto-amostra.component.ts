@@ -35,7 +35,9 @@ interface ProdutoAmostraForm {
   registroEmpresa: FormControl,
   registroProduto: FormControl,
   material: FormControl,
-  codDb: FormControl
+  codDb: FormControl,
+  tipo: FormControl,
+  subtipo: FormControl
 }
 
 export interface ProdutoAmostra {
@@ -45,6 +47,8 @@ export interface ProdutoAmostra {
   registro_produto: string;
   material: string;
   cod_db: string;
+  tipo: string;
+  subtipo: string;
 }
 
 @Component({
@@ -145,7 +149,9 @@ export class ProdutoAmostraComponent implements OnInit {
       registroEmpresa: new FormControl('', ),
       registroProduto: new FormControl('',),
       material: new FormControl('', [Validators.required]),
-      codDb: new FormControl('',)
+      codDb: new FormControl('',),
+      tipo: new FormControl(''),
+      subtipo: new FormControl('')
     });
     this.editForm = this.fb.group({
       id:[''],
@@ -153,7 +159,9 @@ export class ProdutoAmostraComponent implements OnInit {
       registro_empresa: [''],
       registro_produto: [''],
       material: [''],
-      codDb: ['']
+      codDb: [''],
+      tipo: [''],
+      subtipo: ['']
     });
   }
   
@@ -213,7 +221,9 @@ export class ProdutoAmostraComponent implements OnInit {
       registro_empresa: produtoAmostra?.registro_empresa,
       registro_produto: produtoAmostra?.registro_produto,
       material: produtoAmostra.material,
-      codDb: produtoAmostra.cod_db
+      codDb: produtoAmostra.cod_db,
+      tipo: produtoAmostra.tipo,
+      subtipo: produtoAmostra.subtipo
     });
     console.log(this.editForm);
   }
@@ -225,7 +235,9 @@ export class ProdutoAmostraComponent implements OnInit {
       registro_empresa: this.editForm.value.registro_empresa,
       registro_produto: this.editForm.value.registro_produto,
       material: this.editForm.value.material,
-      cod_db: this.editForm.value.codDb
+      cod_db: this.editForm.value.codDb,
+      tipo: this.editForm.value.tipo,
+      subtipo: this.editForm.value.subtipo
     };
     this.amostraService.editProduto(id, dadosAtualizados).subscribe({
       next:() =>{
@@ -292,7 +304,9 @@ submit(){
     this.registerForm.value.registroEmpresa,
     this.registerForm.value.registroProduto,
     this.registerForm.value.material,
-    this.registerForm.value.codDb
+    this.registerForm.value.codDb,
+    this.registerForm.value.tipo,
+    this.registerForm.value.subtipo
   ).subscribe({
     next: () => {
       this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Produto de Amostra cadastrado com sucesso!!', life: 1000 });

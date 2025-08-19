@@ -85,8 +85,24 @@ atualizarDescricaoImagem(imagemId: number, descricao: string): Observable<any> {
     const url = `${this.produtoUrl}${id}/`;
     return this.http.delete(url);
   }
-  registerProduto(nome:string, registroEmpresa: string, registroProduto: string, material: string, codDb: string): Observable<Produto> {
-    return this.http.post<Produto>(this.produtoUrl,{ nome:nome, registro_empresa: registroEmpresa, registro_produto: registroProduto, material: material, cod_db: codDb })
+  registerProduto(
+    nome:string, 
+    registroEmpresa: string, 
+    registroProduto: string, 
+    material: string, 
+    codDb: string, 
+    tipo: string, 
+    subtipo: string
+  ): Observable<Produto> {
+    return this.http.post<Produto>(this.produtoUrl,{ 
+      nome:nome, 
+      registro_empresa: registroEmpresa, 
+      registro_produto: registroProduto, 
+      material: material, 
+      cod_db: codDb, 
+      tipo: tipo, 
+      subtipo: subtipo 
+    })
   }
 
   //////////Amostras
@@ -127,6 +143,7 @@ atualizarDescricaoImagem(imagemId: number, descricao: string): Observable<any> {
     subtipo: any,
     produtoAmostra: any,
     codDb: any,
+    estadoFisico: any,
     periodoHora: any,
     periodoTurno: any,
     tipoAmostragem: any,
@@ -160,6 +177,7 @@ atualizarDescricaoImagem(imagemId: number, descricao: string): Observable<any> {
       subtipo: subtipo,
       produto_amostra: produtoAmostra,
       cod_db: codDb,
+      estado_fisico: estadoFisico,
       periodo_hora: periodoHora,
       periodo_turno: periodoTurno,
       tipo_amostragem: tipoAmostragem,
@@ -188,6 +206,7 @@ atualizarDescricaoImagem(imagemId: number, descricao: string): Observable<any> {
       subtipo: dadosAmostraExpressa.subtipo,
       produto_amostra: dadosAmostraExpressa.produtoAmostra,
       cod_db: dadosAmostraExpressa.codDb,
+      estado_fisico: dadosAmostraExpressa.estadoFisico,
       periodo_hora: dadosAmostraExpressa.periodoHora,
       periodo_turno: dadosAmostraExpressa.periodoTurno,
       tipo_amostragem: dadosAmostraExpressa.tipoAmostragem,

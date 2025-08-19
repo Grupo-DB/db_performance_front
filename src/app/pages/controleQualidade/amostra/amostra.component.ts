@@ -86,6 +86,7 @@ interface AmostraForm{
   subtipo: FormControl,
   produtoAmostra: FormControl,
   codDb: FormControl,
+  estadoFisico: FormControl,
   periodoHora: FormControl,
   periodoTurno: FormControl,
   tipoAmostragem: FormControl,
@@ -260,6 +261,7 @@ materiais: any[] = [
   { value: 'Argamassa' },
   { value: 'Cal' },
   { value: 'Calcário' },
+  { value: 'Dolomita'},
   { value: 'Cimento' },
   { value: 'Cinza Pozolana' },
   { value: 'Fertilizante' },
@@ -314,15 +316,25 @@ materiais: any[] = [
     { id: 21, nome: 'Saco' },
   ]
   status = [
-    { id: 0, nome: 'Sem OS' },
-    { id: 1, nome: 'Arquivada' },
-    { id: 2, nome: 'Laudo' },
+    { id: 0, nome: 'Simples' },
+    { id: 1, nome: 'Parcial' },
+    { id: 2, nome: 'Complexa' },
+    { id: 3, nome: 'Super Complexa' },
   ]
 
   finalidades = [
     { id: 0, nome: 'Controle de Qualidade' },
     { id: 1, nome: 'SAC' },
     { id: 2, nome: 'Desenvolvimento de Produtos' },
+    { id: 3, nome: 'Demanda Comercial' },
+    { id: 4, nome: 'Laboratório / Qualidade' },
+    { id: 5, nome: 'Teste Validação' },
+    { id: 6, nome: 'Reclamação Atendimento' },
+    { id: 7, nome: 'Treinamento' },
+    { id: 8, nome: 'Padrão' },
+    { id: 9, nome: 'Controle Matéria Prima' },
+    { id: 10, nome: 'Outros' },
+
   ]
 
   responsaveis = [
@@ -374,29 +386,30 @@ materiais: any[] = [
     dataEnvio: new FormControl('',),
     destinoEnvio: new FormControl('',),
     dataRecebimento: new FormControl('',),
-    reter: new FormControl('1',[Validators.required]),
+    reter: new FormControl('1'),
     registroEp: new FormControl('',),
     registroProduto: new FormControl('',),
-    numeroLote: new FormControl('',[Validators.required]),
-    dataColeta: new FormControl('',[Validators.required]),
-    dataEntrada: new FormControl('',[Validators.required]),
+    numeroLote: new FormControl(''),
+    dataColeta: new FormControl(''),
+    dataEntrada: new FormControl(''),
     numero: new FormControl(''),
-    tipoAmostra: new FormControl('',[Validators.required]),
+    tipoAmostra: new FormControl(''),
     subtipo: new FormControl(''),
     produtoAmostra: new FormControl(''),
     codDb: new FormControl(''),
+    estadoFisico: new FormControl(''),
     periodoHora: new FormControl(''),
     periodoTurno: new FormControl(''),
-    tipoAmostragem: new FormControl('',[Validators.required]),
-    localColeta: new FormControl('',[Validators.required]),
-    fornecedor: new FormControl('',[Validators.required]),
-    representatividadeLote: new FormControl('',[Validators.required]),
+    tipoAmostragem: new FormControl(''),
+    localColeta: new FormControl(''),
+    fornecedor: new FormControl(''),
+    representatividadeLote: new FormControl(''),
     identificacaoComplementar: new FormControl(''),
     complemento: new FormControl(''),
     observacoes: new FormControl(''),
     ordem: new FormControl(''),
     digitador: new FormControl(''),
-    status: new FormControl('',[Validators.required]),
+    status: new FormControl(''),
   });
   this.registerOrdemForm = new FormGroup<OrdemForm>({
     data: new FormControl('',[Validators.required]),
@@ -805,7 +818,9 @@ onProdutoAmostraChange(produtoId: number) {
     this.registerForm.patchValue({
       registroEp: produtoSelecionado.registro_empresa,
       registroProduto: produtoSelecionado.registro_produto,
-      codDb: produtoSelecionado.cod_db
+      codDb: produtoSelecionado.cod_db,
+      tipoAmostra:produtoSelecionado.tipo,
+      subtipo:produtoSelecionado.subtipo,
     });
   }
 }
@@ -832,7 +847,7 @@ submitOrdem(){
     next:() =>{
       this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Ordem de serviço registrada com sucesso.' });
       this.registerOrdemForm.reset();
-      this.activeStep = 3; // Avança para o próximo passo
+      //this.activeStep = 3; // Avança para o próximo passo
     }
 
     , error: (err) => {
@@ -898,6 +913,7 @@ submitAmostra() {
     this.registerForm.value.subtipo,
     this.registerForm.value.produtoAmostra,
     this.registerForm.value.codDb,
+    this.registerForm.value.estadoFisico,
     this.registerForm.value.periodoHora,
     this.registerForm.value.periodoTurno,
     this.registerForm.value.tipoAmostragem,
@@ -1126,6 +1142,7 @@ converterAmostraSalvaParaFormulario(amostra: any): any {
     subtipo: amostra.subtipo || '',
     produtoAmostra: amostra.produto_amostra_detalhes?.id || amostra.produto_amostra,
     codDb: amostra.cod_db || '',
+    estadoFisico: amostra.estado_fisico || '',
     periodoHora: amostra.periodo_hora || '',
     periodoTurno: amostra.periodo_turno || '',
     tipoAmostragem: amostra.tipo_amostragem || '',
@@ -1782,6 +1799,7 @@ limparDadosFormulario() {
       this.amostraData.subtipo,
       this.amostraData.produtoAmostraInfo?.id || this.amostraData.produtoAmostra,
       this.amostraData.codDb,
+      this.amostraData.estadoFisico,
       this.amostraData.periodoHora,
       this.amostraData.periodoTurno,
       this.amostraData.tipoAmostragem,
@@ -2154,6 +2172,7 @@ criarAmostraNormal(): void {
     this.registerForm.value.subtipo,
     this.registerForm.value.produtoAmostra,
     this.registerForm.value.codDb,
+    this.registerForm.value.estadoFisico,
     this.registerForm.value.periodoHora,
     this.registerForm.value.periodoTurno,
     this.registerForm.value.tipoAmostragem,

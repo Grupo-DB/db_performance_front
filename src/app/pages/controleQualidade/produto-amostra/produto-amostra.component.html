@@ -58,7 +58,7 @@
                 title="Cadastrar novo produto de amostra"
                 class="flex flex-column gap-4"
             >
-                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                <div class="form-geral flex flex-column gap-3 w-12">
                     <div class="fg1 flex flex-column w-12 align-items-center">
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
@@ -66,80 +66,116 @@
                                     <h2>Inserir novo</h2>
                                 </div>
                             </ng-template>
-                            <div class="flex flex-column w-12 gap-3">
-                                <div class="w-12 text-left">
-                                    <p-floatlabel variant="on">
-                                        <p-iconfield>
-                                            <p-inputicon class="pi pi-file-edit" />
-                                            <input
-                                                variant="filled"
-                                                [style]="{'width':'100%'}"
-                                                pInputText id="on_label"
-                                                autocomplete="off"
-                                                formControlName="nome"
-                                                type="text"
-                                            />
-                                        </p-iconfield>
-                                        <label for="on_label">Digite o nome</label>
-                                    </p-floatlabel>
-                                </div>           
-                                <div class="w-12 text-left">
-                                    <p-floatlabel variant="on">
-                                        <p-iconfield>
-                                            <p-inputicon class="pi pi-file-edit" />
-                                            <input
-                                                variant="filled"
-                                                [style]="{'width':'100%'}"
-                                                pInputText id="on_label"
-                                                autocomplete="off"
-                                                formControlName="registroEmpresa"
-                                                type="text"
-                                            />
-                                        </p-iconfield>
-                                        <label for="on_label">Digite o registro de empresa</label>
-                                    </p-floatlabel>
-                                </div>           
-                                <div class="w-12 text-left">
-                                    <p-floatlabel variant="on">
-                                        <p-iconfield>
-                                            <p-inputicon class="pi pi-file-edit" />
-                                            <input
-                                                variant="filled"
-                                                [style]="{'width':'100%'}"
-                                                pInputText id="on_label"
-                                                autocomplete="off"
-                                                formControlName="registroProduto"
-                                                type="text"
-                                            />
-                                        </p-iconfield>
-                                        <label for="on_label">Digite o registro de produto</label>
-                                    </p-floatlabel>
+                            <div class="flex flex-column w-12 lg:flex-row">
+                                <div class="flex flex-column w-12 gap-3 lg:gap-3 lg:w-6">
+                                    <div class="w-12 text-left">
+                                        <p-floatlabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-file-edit" />
+                                                <input
+                                                    variant="filled"
+                                                    [style]="{'width':'100%'}"
+                                                    pInputText id="on_label"
+                                                    autocomplete="off"
+                                                    formControlName="nome"
+                                                    type="text"
+                                                />
+                                            </p-iconfield>
+                                            <label for="on_label">Digite o nome</label>
+                                        </p-floatlabel>
+                                    </div>
+                                    <div class="w-12 text-left">
+                                        <p-floatLabel variant="on">
+                                            <p-select inputId="float-label" [style]="{'width':'100%'}" [options]="materiais" formControlName="material"
+                                                optionLabel="display" optionValue="value" appendTo="body" [filter]="true" filterBy="value"
+                                                [showClear]="true" (onChange)="onMaterialChange($event.value, 'edit')">
+                                            </p-select>
+                                            <label for="float-label">Selecione o Material</label>
+                                        </p-floatLabel>
+                                    </div>
+                                    <div class="w-12 text-left">
+                                        <p-floatlabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-file-edit" />
+                                                <input
+                                                    variant="filled"
+                                                    [style]="{'width':'100%'}"
+                                                    pInputText id="on_label"
+                                                    autocomplete="off"
+                                                    formControlName="tipo"
+                                                    type="text"
+                                                />
+                                            </p-iconfield>
+                                            <label for="on_label">Digite o tipo</label>
+                                        </p-floatlabel>
+                                    </div>
+                                    <div class="w-12 text-left">
+                                        <p-floatlabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-file-edit" />
+                                                <input
+                                                    variant="filled"
+                                                    [style]="{'width':'100%'}"
+                                                    pInputText id="on_label"
+                                                    autocomplete="off"
+                                                    formControlName="subtipo"
+                                                    type="text"
+                                                />
+                                            </p-iconfield>
+                                            <label for="on_label">Digite o subtipo</label>
+                                        </p-floatlabel>
+                                    </div>           
                                 </div>
-                                <div class="w-12 text-left">
-                                    <p-floatLabel variant="on">
-                                        <p-select inputId="float-label" [style]="{'width':'100%'}" [options]="materiais" formControlName="material"
-                                            optionLabel="display" optionValue="value" appendTo="body" [filter]="true" filterBy="value"
-                                            [showClear]="true" (onChange)="onMaterialChange($event.value, 'edit')">
-                                        </p-select>
-                                        <label for="float-label">Selecione o Material</label>
-                                    </p-floatLabel>
-                                </div>
-                                <div *ngIf="registerForm.get('material')?.value === 'argamassa'" class="w-12 text-left">
-                                    <p-floatlabel variant="on">
-                                        <p-iconfield>
-                                            <p-inputicon class="pi pi-file-edit" />
-                                            <input
-                                                variant="filled"
-                                                [style]="{'width':'100%'}"
-                                                pInputText id="on_label"
-                                                autocomplete="off"
-                                                formControlName="codDb"
-                                                type="text"
-                                            />
-                                        </p-iconfield>
-                                        <label for="on_label">Digite o código DB</label>
-                                    </p-floatlabel>
-                                </div>
+                                <div class="flex flex-column gap-3 lg:w-6">
+                                    <div class="w-12 text-left ml-1">
+                                        <p-floatlabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-file-edit" />
+                                                <input
+                                                    variant="filled"
+                                                    [style]="{'width':'100%'}"
+                                                    pInputText id="on_label"
+                                                    autocomplete="off"
+                                                    formControlName="registroEmpresa"
+                                                    type="text"
+                                                />
+                                            </p-iconfield>
+                                            <label for="on_label">Digite o registro de empresa</label>
+                                        </p-floatlabel>
+                                    </div>           
+                                    <div class="w-12 text-left ml-1">
+                                        <p-floatlabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-file-edit" />
+                                                <input
+                                                    variant="filled"
+                                                    [style]="{'width':'100%'}"
+                                                    pInputText id="on_label"
+                                                    autocomplete="off"
+                                                    formControlName="registroProduto"
+                                                    type="text"
+                                                />
+                                            </p-iconfield>
+                                            <label for="on_label">Digite o registro de produto</label>
+                                        </p-floatlabel>
+                                    </div>    
+                                    <div *ngIf="registerForm.get('material')?.value === 'argamassa'" class="w-12 text-left ml-1">
+                                        <p-floatlabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-file-edit" />
+                                                <input
+                                                    variant="filled"
+                                                    [style]="{'width':'100%'}"
+                                                    pInputText id="on_label"
+                                                    autocomplete="off"
+                                                    formControlName="codDb"
+                                                    type="text"
+                                                />
+                                            </p-iconfield>
+                                            <label for="on_label">Digite o código DB</label>
+                                        </p-floatlabel>
+                                    </div>
+                                </div>    
                             </div>
                             <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
                                 <p-button 
@@ -189,7 +225,7 @@
                             [paginator]="true"
                             [rows]="10"
                             [rowsPerPageOptions]="[10, 20, 50]"
-                            [globalFilterFields]="['nome']"
+                            [globalFilterFields]="['nome','material', 'tipo', 'subtipo','registro_empresa', 'registro_produto', 'cod_db']"
                             scrollable="true"
                             currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
                             
@@ -215,17 +251,25 @@
                             </ng-template>
                             <ng-template pTemplate="header">
                                 <tr>
-                                    <th style="width: 10%; text-align: center;" type="text" field="nome" display="menu">Nome</th>
-                                    <th style="width: 35%; text-align: center;" type="text" field="registro_empresa" display="menu">Registro de Empresa</th>
-                                    <th style="width: 35%; text-align: center;" type="text" field="registro_produto" display="menu">Registro de Produto</th>
-                                    <th style="width: 20%; text-align: center;" type="text" field="acoes" display="menu">Ações</th>
+                                    <th style="width: 20%; text-align: center;" type="text" field="nome" display="menu">Nome</th>
+                                    <th style="width: 20%; text-align: center;" type="text" field="material" display="menu">Material</th>
+                                    <th style="width: 15%; text-align: center;" type="text" field="tipo" display="menu">Tipo</th>
+                                    <th style="width: 15%; text-align: center;" type="text" field="subtipo" display="menu">Subtipo</th>
+                                    <th style="width: 10%; text-align: center;" type="text" field="registro_empresa" display="menu">Registro Empresa</th>
+                                    <th style="width: 10%; text-align: center;" type="text" field="registro_produto" display="menu">Registro Produto</th>
+                                    <th style="width: 10%; text-align: center;" type="text" field="cod_db" display="menu">Código DB</th>
+                                    <th style="width: 10%; text-align: center;" type="text" field="acoes" display="menu">Ações</th>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-produtoAmostra>
                                 <tr>
                                     <td style="text-align: center;">{{ produtoAmostra.nome }}</td>
+                                    <td style="text-align: center;">{{ produtoAmostra.material }}</td>
+                                    <td style="text-align: center;">{{ produtoAmostra.tipo }}</td>
+                                    <td style="text-align: center;">{{ produtoAmostra.subtipo }}</td>
                                     <td style="text-align: center;">{{ produtoAmostra.registro_empresa }}</td>
                                     <td style="text-align: center;">{{ produtoAmostra.registro_produto }}</td>
+                                    <td style="text-align: center;">{{ produtoAmostra.cod_db }}</td>
                                     <td style="text-align: center;">
                                         <div style="display: flex; justify-content: end;">
                                             <p-button
@@ -307,7 +351,51 @@
                                         <label for="on_label">Digite o nome</label>
                                     </p-floatlabel>
                                 </div>
+
+                                <div class="form2 w-12 text-left">
+                                    <p-floatLabel variant="on">
+                                        <p-select inputId="float-label" [style]="{'width':'100%'}" [options]="materiais" formControlName="material"
+                                            optionLabel="display" optionValue="value" appendTo="body" [filter]="true" filterBy="value" [showClear]="true"
+                                            (onChange)="onMaterialChange($event.value, 'edit')"
+                                            >
+                                        </p-select>
+                                        <label for="float-label">Selecione o Material</label>
+                                    </p-floatLabel>
+                                </div>
                         
+                                <div class="w-12 text-left">
+                                        <p-floatlabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-file-edit" />
+                                                <input
+                                                    variant="filled"
+                                                    [style]="{'width':'100%'}"
+                                                    pInputText id="on_label"
+                                                    autocomplete="off"
+                                                    formControlName="tipo"
+                                                    type="text"
+                                                />
+                                            </p-iconfield>
+                                            <label for="on_label">Digite o tipo</label>
+                                        </p-floatlabel>
+                                    </div>
+                                    <div class="w-12 text-left">
+                                        <p-floatlabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-file-edit" />
+                                                <input
+                                                    variant="filled"
+                                                    [style]="{'width':'100%'}"
+                                                    pInputText id="on_label"
+                                                    autocomplete="off"
+                                                    formControlName="subtipo"
+                                                    type="text"
+                                                />
+                                            </p-iconfield>
+                                            <label for="on_label">Digite o subtipo</label>
+                                        </p-floatlabel>
+                                    </div>  
+
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
@@ -341,16 +429,7 @@
                                         <label for="on_label">Digite o registro de produto</label>
                                     </p-floatlabel>
                                 </div>
-                                <div class="form2 w-10 mb-5 mt-5 text-left">
-                                    <p-floatLabel variant="on">
-                                        <p-select inputId="float-label" [style]="{'width':'100%'}" [options]="materiais" formControlName="material"
-                                            optionLabel="display" optionValue="value" appendTo="body" [filter]="true" filterBy="value" [showClear]="true"
-                                            (onChange)="onMaterialChange($event.value, 'edit')"
-                                            >
-                                        </p-select>
-                                        <label for="float-label">Selecione o Material</label>
-                                    </p-floatLabel>
-                                </div>
+                                
                                 <div *ngIf="editForm.get('material')?.value === 'argamassa'" class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
@@ -365,6 +444,38 @@
                                             />
                                         </p-iconfield>
                                         <label for="on_label">Digite o código DB</label>
+                                    </p-floatlabel>
+                                </div>
+                                <div *ngIf="registerForm.get('material')?.value === 'argamassa'" class="w-12 text-left">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-file-edit" />
+                                            <input
+                                                variant="filled"
+                                                [style]="{'width':'100%'}"
+                                                pInputText id="on_label"
+                                                autocomplete="off"
+                                                formControlName="tipo"
+                                                type="text"
+                                            />
+                                        </p-iconfield>
+                                        <label for="on_label">Digite o tipo</label>
+                                    </p-floatlabel>
+                                </div>
+                                <div *ngIf="registerForm.get('material')?.value === 'argamassa'" class="w-12 text-left">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-file-edit" />
+                                            <input
+                                                variant="filled"
+                                                [style]="{'width':'100%'}"
+                                                pInputText id="on_label"
+                                                autocomplete="off"
+                                                formControlName="subtipo"
+                                                type="text"
+                                            />
+                                        </p-iconfield>
+                                        <label for="on_label">Digite o subtipo</label>
                                     </p-floatlabel>
                                 </div>
                             </div>
