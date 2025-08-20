@@ -50,8 +50,7 @@
             <b>Ordens de Serviço</b>
         </p-divider>
     </div>
-<!-- <p-button label="PDFFFFFFFFFFFF" 
-(onClick)="imprimirCalculoPDF()" /> -->
+
     <div class="containerInterno w-12">
         <div class="background-form" @swipeAnimation>
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
@@ -250,7 +249,7 @@
                                     #dt1
                                     [value]="analisesFiltradas"
                                     [paginator]="true"
-                                    [rows]="10"
+                                    [rows]="30"
                                     [globalFilterFields]="[
                                         'fornecedor',
                                         'numero',
@@ -366,9 +365,15 @@
                                         <th style="width: 2%; text-align: center;" type="text" field="finalizada" display="menu">Finalizada</th>
                                         <th style="width: 2%; text-align: center;" type="text" field="laudo" display="menu">Laudo</th>
                                         <th style="width: 2%; text-align: center;" type="text" field="aprovada" display="menu">Aprovada</th>
+                                        <!-- <th style="width: 15%; text-align: center;" type="text" field="fornecedor" display="menu">Fornecedor</th>
+                                        <th style="width: 15%; text-align: center;" type="text" field="numero" display="menu">Número</th>
+                                        <th style="width: 15%; text-align: center;" type="text" field="responsavel" display="menu">Responsável</th>
+                                        <th style="width: 10%; text-align: center;" type="text" field="status" display="menu">Status</th> -->
+                                        <th style="width: 10%; text-align: center;" type="text" field="acoes"display="menu">Opções</th>
                                     </tr>
                                 </ng-template>
 
+                                
                                 <ng-template pTemplate="body" let-analise>
                                     <tr>
                                         <td style="text-align: left;">
@@ -392,6 +397,10 @@
                                                 [severity]="getStatusSeverity(analise.estado)"
                                             />
                                         </td> -->
+                                        <!-- <td style="text-align: center;">{{ analise.amostra_detalhes.fornecedor }}</td>
+                                        <td style="text-align: center;">{{ analise.amostra_detalhes.numero }}</td>
+                                        <td style="text-align: center;">{{ analise.amostra_detalhes.expressa_detalhes?.responsavel }}</td>
+                                        <td style="text-align: center;">{{ analise.amostra_detalhes.status }}</td> -->
                                         <td style="text-align: center;">
                                             <div style="display: flex; justify-content: center;">
                                                 <p-speeddial 
@@ -518,6 +527,18 @@
                                                         />
                                                     </a>
                                                 </div>
+
+                                                <div style="position: relative;">
+                                                    <p-button 
+                                                        icon="pi pi-book" 
+                                                        [rounded]="true" 
+                                                        label="Laudo" 
+                                                        (onClick)="abrirModalLaudo(analise.amostra_detalhes)"
+                                                        severity="warn"
+                                                        class="ml-2"
+                                                    />
+                                                </div>
+
                                             </div>
 
                                         </td>

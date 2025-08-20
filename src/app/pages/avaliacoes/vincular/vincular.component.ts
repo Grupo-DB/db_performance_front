@@ -30,8 +30,6 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { SelectModule } from 'primeng/select';
-import { ConfirmDialog } from 'primeng/confirmdialog';
-
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
 import { DrawerModule } from 'primeng/drawer';
@@ -45,7 +43,7 @@ interface RegisterAssociacaoForm{
   selector: 'app-vincular',
   standalone: true,
   imports: [
-    NzIconModule,NzLayoutModule,NzMenuModule,TabMenuModule,TreeTableModule,ReactiveFormsModule,FormsModule,PickListModule,CommonModule,InputMaskModule,DividerModule,RippleModule,IconFieldModule,InputIconModule,SelectModule,FloatLabelModule,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule, CardModule, InplaceModule, DrawerModule, ConfirmDialog
+    NzIconModule,NzLayoutModule,NzMenuModule,TabMenuModule,TreeTableModule,ReactiveFormsModule,FormsModule,PickListModule,CommonModule,InputMaskModule,DividerModule,RippleModule,IconFieldModule,InputIconModule,SelectModule,FloatLabelModule,RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule, CardModule, InplaceModule, DrawerModule,
   ],
   providers:[
     MessageService,

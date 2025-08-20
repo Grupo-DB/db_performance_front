@@ -60,7 +60,7 @@ import autoTable from 'jspdf-autotable';
 import { TooltipModule } from 'primeng/tooltip';
 import { AvaliadorService } from '../../../services/avaliacoesServices/avaliadores/registeravaliador.service';
 import { Avaliador } from '../../avaliacoes/avaliador/avaliador.component';
-import { id } from 'date-fns/locale';
+
 
 
 interface FileWithInfo {
@@ -158,7 +158,7 @@ interface Column {
     ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,
     InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,
     InputIcon, FieldsetModule, MenuModule, SplitButtonModule, TagModule,
-    DrawerModule, SpeedDialModule, InplaceModule, CdkDragPlaceholder, 
+    DrawerModule, SpeedDialModule, InplaceModule, 
     NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule
 ],
   animations:[
