@@ -320,7 +320,7 @@
                                                     <p-select inputId="float-label" [style]="{'width':'100%'}"
                                                         [options]="produtosFiltrados" formControlName="produtoAmostra"
                                                         optionLabel="nome" optionValue="id" appendTo="body" [filter]="true"
-                                                        filterBy="value" [showClear]="true"
+                                                        filterBy="value" [showClear]="true" [editable]="true"
                                                         (onChange)="onProdutoAmostraChange($event.value)">
                                                     </p-select>
                                                     <label for="float-label">Produto de Amostra</label>
