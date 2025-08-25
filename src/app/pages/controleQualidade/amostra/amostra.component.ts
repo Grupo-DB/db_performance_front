@@ -708,6 +708,38 @@ export class AmostraComponent implements OnInit {
     });
   }
 
+  excluirAmostra(id: number) {
+    this.confirmationService.confirm({
+      message: 'Tem certeza que deseja excluir esta Amostra?',
+      header: 'Confirmação',
+      icon: 'pi pi-exclamation-triangle',
+      acceptIcon: 'pi pi-check',
+      rejectIcon: 'pi pi-times',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-info',
+      rejectButtonStyleClass: 'p-button-secondary',
+      accept: () => {
+        this.amostraService.deleteAmostra(id).subscribe({
+          next: () => {
+            this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Amostra excluída com sucesso!!', life: 1000 });
+            setTimeout(() => {
+              window.location.reload(); // Atualiza a página após a exclusão
+            }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+          },
+          error: (err) => {
+            if (err.status === 403) {
+              this.messageService.add({ severity: 'error', summary: 'Erro de autorização!', detail: 'Você não tem permissão para realizar esta ação.', life: 2000 });
+            } 
+          }
+        });
+      },
+      reject: () => {
+        this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 1000 });
+      }
+    });
+  }
+
   getDigitadorInfo(): void {
   this.colaboradorService.getColaboradorInfo().subscribe(
     data => {
@@ -921,11 +953,10 @@ onCamposRelevantesChange() {
 
 getMenuItems(amostra: any) {
   return [
-    { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(amostra) },
-    { label: 'Abrir OS', icon: 'pi pi-folder-open', command: () => this.abrirOS(amostra) },
-    { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(amostra) },
-    { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluir(amostra) },
-    { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(amostra) },
+    { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(amostra), tooltip: 'Visualizar amostra', tooltipPosition: 'top' },
+    { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(amostra), tooltip: 'Editar amostra', tooltipPosition: 'top' },
+    { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluirAmostra(amostra.id), tooltip: 'Excluir amostra', tooltipPosition: 'top' },
+    { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(amostra), tooltip: 'Visualizar imagens', tooltipPosition: 'top' },
   ];
 }
 
@@ -942,14 +973,6 @@ visualizar(amostra: any) {
 abrirOS(amostra: any) {
   this.amostraSelecionada = amostra;
   this.activeStep = 2;
-}
-
-editar(amostra: any) {
-  // lógica para editar
-}
-
-excluir(amostra: any) {
-  // lógica para excluir
 }
 
 exibirRepresentatividadeLote(): boolean {
