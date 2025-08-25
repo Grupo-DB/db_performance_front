@@ -919,13 +919,13 @@ onCamposRelevantesChange() {
   }
 }
 
-getMenuItems(analise: any) {
+getMenuItems(amostra: any) {
   return [
-    { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(analise) },
-    { label: 'Abrir OS', icon: 'pi pi-folder-open', command: () => this.abrirOS(analise) },
-    { label: 'Editar', icon: 'pi pi-pencil', command: () => this.editar(analise) },
-    { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluir(analise) },
-    { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise) },
+    { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(amostra) },
+    { label: 'Abrir OS', icon: 'pi pi-folder-open', command: () => this.abrirOS(amostra) },
+    { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(amostra) },
+    { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluir(amostra) },
+    { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(amostra) },
   ];
 }
 
