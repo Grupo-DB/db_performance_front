@@ -488,10 +488,19 @@ export class AmostraComponent implements OnInit {
     console.log('azqaui');
     console.log(amostra);
     this.editFormVisible = true;
+
+    const dataEntrada = amostra.data_entrada ? new Date(amostra.data_entrada) : null;
+    const dataColeta = amostra.data_coleta ? new Date(amostra.data_coleta) : null;
+    const dataEnvio = amostra.data_envio ? new Date(amostra.data_envio) : null;
+    const dataRecebimento = amostra.data_recebida ? new Date(amostra.data_recebida) : null;
+
     this.editForm.patchValue({
       id: amostra.id,
-      dataEntrada: amostra.data_entrada,
-      dataColeta: amostra.data_coleta,
+      dataEntrada: dataEntrada,
+      dataColeta: dataColeta,
+      dataEnvio: dataEnvio,
+      dataRecebimento: dataRecebimento,
+
       numero:  amostra.numero,
       finalidade:  amostra.finalidade,
       numeroLote:  amostra.numero_lote,
@@ -512,9 +521,7 @@ export class AmostraComponent implements OnInit {
       representatividadeLote: amostra.representatividade_lote,
       registroEp: amostra.registro_ep,
       registroProduto: amostra.registro_produto,
-      dataEnvio: amostra.data_envio,
       destinoEnvio: amostra.destino_envio,
-      dataRecebimento: amostra.data_recebida,
       identificacaoComplementar: amostra.identificacao_complementar,
       complemento: amostra.complemento,
       observacoes: amostra.observacoes,
@@ -621,13 +628,66 @@ export class AmostraComponent implements OnInit {
   }
 
   saveEdit(){
-    alert(this.editForm.value.id);
+
     const id = this.editForm.value.id;
+
+    let dataEntradaFormatada = null;
+    const dataEntrada = this.editForm.value.dataEntrada;
+    if (dataEntrada instanceof Date) {
+      dataEntradaFormatada = formatDate(dataEntrada, 'yyyy-MM-dd', 'en-US');
+    }
+
+    let dataColetaFormatada = null;
+    const dataColeta = this.editForm.value.dataColeta;
+    if (dataColeta instanceof Date) {
+      dataColetaFormatada = formatDate(dataColeta, 'yyyy-MM-dd', 'en-US');
+    }
+
+    let dataEnvioFormatada = null;
+    const dataEnvio = this.editForm.value.dataEnvio;
+    if (dataEnvio instanceof Date) {
+      dataEnvioFormatada = formatDate(dataEnvio, 'yyyy-MM-dd', 'en-US');
+    }
+
+    let dataRecebimentoFormatada = null;
+    const dataRecebimento = this.editForm.value.dataRecebimento;
+    if (dataRecebimento instanceof Date) {
+      dataRecebimentoFormatada = formatDate(dataRecebimento, 'yyyy-MM-dd', 'en-US');
+    }
+
     const dadosAtualizados: Partial<Amostra> = {
-      // nome: this.editForm.value.nome,
+      data_entrada: dataEntradaFormatada,
+      data_coleta: dataColetaFormatada,
+      data_envio: dataEnvioFormatada,
+      data_recebida: dataRecebimentoFormatada,
+
+      numero: this.editForm.value.numero,
+      finalidade: this.editForm.value.finalidade,
+      numero_lote: this.editForm.value.numeroLote,
+      status: this.editForm.value.status,
+      local_coleta: this.editForm.value.localColeta,
+      material: this.editForm.value.material,
+      tipo_amostra: this.editForm.value.tipoAmostra,
+      subtipo: this.editForm.value.subtipo,
+      estado_fisico: this.editForm.value.estadoFisico,
+      cod_db: this.editForm.value.codDb,
+      fornecedor: this.editForm.value.fornecedor,
+      periodo_hora: this.editForm.value.periodoHora,
+      periodo_turno: this.editForm.value.periodoTurno,
+      tipo_amostragem: this.editForm.value.tipoAmostragem,
+      representatividade_lote: this.editForm.value.representatividadeLote,
+      registro_ep: this.editForm.value.registroEp,
+      registro_produto: this.editForm.value.registroProduto,
+      destino_envio: this.editForm.value.destinoEnvio,
+      identificacao_complementar: this.editForm.value.identificacaoComplementar,
+      complemento: this.editForm.value.complemento,
+      observacoes: this.editForm.value.observacoes,
+      reter: this.editForm.value.reter,
     };
+    console.log(dadosAtualizados);
     this.amostraService.editAmostra(id, dadosAtualizados).subscribe({
-      next:() =>{
+      next:() =>{       
+        this.editFormVisible = false;
         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Amostra atualizada com sucesso!!', life: 1000 });
         this.loadAmostras();
       },
