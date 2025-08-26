@@ -1,7 +1,7 @@
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 import { CommonModule, DatePipe, formatDate } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { ReactiveFormsModule, FormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, FormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { MessageService, ConfirmationService, MenuItem } from 'primeng/api';
@@ -61,8 +61,6 @@ import { TooltipModule } from 'primeng/tooltip';
 import { AvaliadorService } from '../../../services/avaliacoesServices/avaliadores/registeravaliador.service';
 import { Avaliador } from '../../avaliacoes/avaliador/avaliador.component';
 
-
-
 interface FileWithInfo {
   file: File;
   descricao: string;
@@ -117,7 +115,34 @@ interface AnaliseForm{
 
 export interface Amostra {
   id: number;
-  nome: string;
+  data_entrada: any;
+  data_coleta: any;
+  numero: any;
+  finalidade: any;
+  numero_lote: any;
+  status: any;
+  local_coleta: any;
+
+  material: any;
+  tipo_amostra: any;
+  subtipo: any;
+  estado_fisico: any;
+  cod_db: any;
+  fornecedor: any;
+  periodo_hora: any;
+  periodo_turno: any;
+  tipo_amostragem: any;
+  representatividade_lote: any;
+  registro_ep: any;
+  registro_produto: any;
+  data_envio: any;
+  destino_envio: any;
+  data_recebida: any;
+  identificacao_complementar: any;
+  complemento: any;
+  observacoes: any;
+  reter: any;
+  
 }
 
 export interface Especie{
@@ -212,6 +237,9 @@ interface Column {
 })
 export class AmostraComponent implements OnInit {
 
+  editForm!: FormGroup;
+  editFormVisible: boolean = false;
+
   avaliadores: Avaliador [] | undefined;
   cols!: Column[];
   selectedColumns!: Column[];  
@@ -250,26 +278,26 @@ export class AmostraComponent implements OnInit {
   modalVisualizar: boolean = false;
   materiaisFiltro: any[] = [];
 
-tipos = [
-  { value: 'Media' },
-  { value: 'Pontual' }
-]
+  tipos = [
+    { value: 'Media' },
+    { value: 'Pontual' }
+  ]
 
-materiais: any[] = [
-  { value: 'Aditivos' },
-  { value: 'Areia' },
-  { value: 'Argamassa' },
-  { value: 'Cal' },
-  { value: 'Calcário' },
-  { value: 'Dolomita'},
-  { value: 'Cimento' },
-  { value: 'Cinza Pozolana' },
-  { value: 'Fertilizante' },
-  { value: 'Finaliza' },
-  { value: 'Aditivos' },
-  { value: 'Mineração' },
-  
-]
+  materiais: any[] = [
+    { value: 'Aditivos' },
+    { value: 'Areia' },
+    { value: 'Argamassa' },
+    { value: 'Cal' },
+    { value: 'Calcário' },
+    { value: 'Dolomita'},
+    { value: 'Cimento' },
+    { value: 'Cinza Pozolana' },
+    { value: 'Fertilizante' },
+    { value: 'Finaliza' },
+    { value: 'Aditivos' },
+    { value: 'Mineração' },
+    
+  ]
 
   fornecedores = [
     { id: 0, nome:'Cibracal' },
@@ -376,51 +404,132 @@ materiais: any[] = [
     private datePipe: DatePipe,
     private analiseService: AnaliseService,
     private cd: ChangeDetectorRef,
-    private router: Router 
-)
-{
-  this.registerForm = new FormGroup<AmostraForm>({
-    material: new FormControl('',[Validators.required]),
-    finalidade: new FormControl('',[Validators.required]),
-    numeroSac: new FormControl('',),
-    dataEnvio: new FormControl('',),
-    destinoEnvio: new FormControl('',),
-    dataRecebimento: new FormControl('',),
-    reter: new FormControl('1'),
-    registroEp: new FormControl('',),
-    registroProduto: new FormControl('',),
-    numeroLote: new FormControl(''),
-    dataColeta: new FormControl(''),
-    dataEntrada: new FormControl(''),
-    numero: new FormControl(''),
-    tipoAmostra: new FormControl(''),
-    subtipo: new FormControl(''),
-    produtoAmostra: new FormControl(''),
-    codDb: new FormControl(''),
-    estadoFisico: new FormControl(''),
-    periodoHora: new FormControl(''),
-    periodoTurno: new FormControl(''),
-    tipoAmostragem: new FormControl(''),
-    localColeta: new FormControl(''),
-    fornecedor: new FormControl(''),
-    representatividadeLote: new FormControl(''),
-    identificacaoComplementar: new FormControl(''),
-    complemento: new FormControl(''),
-    observacoes: new FormControl(''),
-    ordem: new FormControl(''),
-    digitador: new FormControl(''),
-    status: new FormControl(''),
-  });
-  this.registerOrdemForm = new FormGroup<OrdemForm>({
-    data: new FormControl('',[Validators.required]),
-    numero: new FormControl('',[Validators.required]),
-    planoAnalise: new FormControl('',[Validators.required]),
-    responsavel: new FormControl('',[Validators.required]),
-    digitador: new FormControl('',[Validators.required]),
-    classificacao: new FormControl('',[Validators.required])
-  });
- 
-}
+    private router: Router,
+    private fb: FormBuilder,
+    
+  )
+  {
+    this.registerForm = new FormGroup<AmostraForm>({
+      material: new FormControl('',[Validators.required]),
+      finalidade: new FormControl('',[Validators.required]),
+      numeroSac: new FormControl('',),
+      dataEnvio: new FormControl('',),
+      destinoEnvio: new FormControl('',),
+      dataRecebimento: new FormControl('',),
+      reter: new FormControl('1'),
+      registroEp: new FormControl('',),
+      registroProduto: new FormControl('',),
+      numeroLote: new FormControl(''),
+      dataColeta: new FormControl(''),
+      dataEntrada: new FormControl(''),
+      numero: new FormControl(''),
+      tipoAmostra: new FormControl(''),
+      subtipo: new FormControl(''),
+      produtoAmostra: new FormControl(''),
+      codDb: new FormControl(''),
+      estadoFisico: new FormControl(''),
+      periodoHora: new FormControl(''),
+      periodoTurno: new FormControl(''),
+      tipoAmostragem: new FormControl(''),
+      localColeta: new FormControl(''),
+      fornecedor: new FormControl(''),
+      representatividadeLote: new FormControl(''),
+      identificacaoComplementar: new FormControl(''),
+      complemento: new FormControl(''),
+      observacoes: new FormControl(''),
+      ordem: new FormControl(''),
+      digitador: new FormControl(''),
+      status: new FormControl(''),
+    });
+    this.registerOrdemForm = new FormGroup<OrdemForm>({
+      data: new FormControl('',[Validators.required]),
+      numero: new FormControl('',[Validators.required]),
+      planoAnalise: new FormControl('',[Validators.required]),
+      responsavel: new FormControl('',[Validators.required]),
+      digitador: new FormControl('',[Validators.required]),
+      classificacao: new FormControl('',[Validators.required])
+    });
+
+    this.editForm  = this.fb.group({
+      id: [''],
+      dataEntrada: [''],
+      dataColeta: [''],
+      numero: [''],
+      finalidade: [''],
+      numeroLote: [''],
+      status: [''],
+      localColeta: [''],
+
+      material: [''],
+      tipoAmostra: [''],
+      subtipo: [''],
+      estadoFisico: [''],
+      codDb: [''],
+      fornecedor: [''],
+      periodoHora: [''],
+      periodoTurno: [''],
+      tipoAmostragem: [''],
+      representatividadeLote: [''],
+      registroEp: [''],
+      registroProduto: [''],
+      dataEnvio: [''],
+      destinoEnvio: [''],
+      dataRecebimento: [''],
+      identificacaoComplementar: [''],
+      complemento: [''],
+      observacoes: [''],
+      reter: [''],
+      
+    });
+
+  }
+
+  abrirModalEdicao(amostra: Amostra) {
+    console.log('azqaui');
+    console.log(amostra);
+    this.editFormVisible = true;
+
+    const dataEntrada = amostra.data_entrada ? new Date(amostra.data_entrada) : null;
+    const dataColeta = amostra.data_coleta ? new Date(amostra.data_coleta) : null;
+    const dataEnvio = amostra.data_envio ? new Date(amostra.data_envio) : null;
+    const dataRecebimento = amostra.data_recebida ? new Date(amostra.data_recebida) : null;
+
+    this.editForm.patchValue({
+      id: amostra.id,
+      dataEntrada: dataEntrada,
+      dataColeta: dataColeta,
+      dataEnvio: dataEnvio,
+      dataRecebimento: dataRecebimento,
+
+      numero:  amostra.numero,
+      finalidade:  amostra.finalidade,
+      numeroLote:  amostra.numero_lote,
+      status:  amostra.status,
+      localColeta:  amostra.local_coleta,
+      
+      material:  amostra.material,
+      //nnao sei
+      // produto_amostra
+      tipoAmostra: amostra.tipo_amostra,
+      subtipo: amostra.subtipo,
+      estadoFisico: amostra.estado_fisico,
+      codDB: amostra.cod_db,
+      fornecedor: amostra.fornecedor,
+      periodoHora: amostra.periodo_hora,
+      periodoTurno: amostra.periodo_turno,
+      tipoAmostragem: amostra.tipo_amostragem,
+      representatividadeLote: amostra.representatividade_lote,
+      registroEp: amostra.registro_ep,
+      registroProduto: amostra.registro_produto,
+      destinoEnvio: amostra.destino_envio,
+      identificacaoComplementar: amostra.identificacao_complementar,
+      complemento: amostra.complemento,
+      observacoes: amostra.observacoes,
+      reter: amostra.reter,
+      
+    });
+  }
+
   hasGroup(groups: string[]): boolean {
     return this.loginService.hasAnyGroup(groups);
   }
@@ -455,26 +564,26 @@ materiais: any[] = [
 
 
   getSeverity(materialNome: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | undefined {
-  if (!materialNome) {
-    return 'secondary';
-  }
-
-  switch (materialNome.toLowerCase()) {
-    case 'calcario':
-      return 'warn';
-    case 'acabamento':
-      return 'success';
-    case 'argamassa':
-      return 'info';
-    case 'cal':
-      return 'danger';
-    case 'mineracao':
-      return 'contrast';
-    default:
+    if (!materialNome) {
       return 'secondary';
-  }
+    }
 
-}
+    switch (materialNome.toLowerCase()) {
+      case 'calcario':
+        return 'warn';
+      case 'acabamento':
+        return 'success';
+      case 'argamassa':
+        return 'info';
+      case 'cal':
+        return 'danger';
+      case 'mineracao':
+        return 'contrast';
+      default:
+        return 'secondary';
+    }
+
+  }
   
   loadAmostras(): void {
     this.amostraService.getAmostrasSemOrdem().subscribe(
@@ -515,7 +624,120 @@ materiais: any[] = [
     this.registerForm.reset();
   }
   clearEditForm(){
-    //this.editForm.reset();
+    this.editForm.reset();
+  }
+
+  saveEdit(){
+
+    const id = this.editForm.value.id;
+
+    let dataEntradaFormatada = null;
+    const dataEntrada = this.editForm.value.dataEntrada;
+    if (dataEntrada instanceof Date) {
+      dataEntradaFormatada = formatDate(dataEntrada, 'yyyy-MM-dd', 'en-US');
+    }
+
+    let dataColetaFormatada = null;
+    const dataColeta = this.editForm.value.dataColeta;
+    if (dataColeta instanceof Date) {
+      dataColetaFormatada = formatDate(dataColeta, 'yyyy-MM-dd', 'en-US');
+    }
+
+    let dataEnvioFormatada = null;
+    const dataEnvio = this.editForm.value.dataEnvio;
+    if (dataEnvio instanceof Date) {
+      dataEnvioFormatada = formatDate(dataEnvio, 'yyyy-MM-dd', 'en-US');
+    }
+
+    let dataRecebimentoFormatada = null;
+    const dataRecebimento = this.editForm.value.dataRecebimento;
+    if (dataRecebimento instanceof Date) {
+      dataRecebimentoFormatada = formatDate(dataRecebimento, 'yyyy-MM-dd', 'en-US');
+    }
+
+    const dadosAtualizados: Partial<Amostra> = {
+      data_entrada: dataEntradaFormatada,
+      data_coleta: dataColetaFormatada,
+      data_envio: dataEnvioFormatada,
+      data_recebida: dataRecebimentoFormatada,
+
+      numero: this.editForm.value.numero,
+      finalidade: this.editForm.value.finalidade,
+      numero_lote: this.editForm.value.numeroLote,
+      status: this.editForm.value.status,
+      local_coleta: this.editForm.value.localColeta,
+      material: this.editForm.value.material,
+      tipo_amostra: this.editForm.value.tipoAmostra,
+      subtipo: this.editForm.value.subtipo,
+      estado_fisico: this.editForm.value.estadoFisico,
+      cod_db: this.editForm.value.codDb,
+      fornecedor: this.editForm.value.fornecedor,
+      periodo_hora: this.editForm.value.periodoHora,
+      periodo_turno: this.editForm.value.periodoTurno,
+      tipo_amostragem: this.editForm.value.tipoAmostragem,
+      representatividade_lote: this.editForm.value.representatividadeLote,
+      registro_ep: this.editForm.value.registroEp,
+      registro_produto: this.editForm.value.registroProduto,
+      destino_envio: this.editForm.value.destinoEnvio,
+      identificacao_complementar: this.editForm.value.identificacaoComplementar,
+      complemento: this.editForm.value.complemento,
+      observacoes: this.editForm.value.observacoes,
+      reter: this.editForm.value.reter,
+    };
+    console.log(dadosAtualizados);
+    this.amostraService.editAmostra(id, dadosAtualizados).subscribe({
+      next:() =>{       
+        this.editFormVisible = false;
+        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Amostra atualizada com sucesso!!', life: 1000 });
+        this.loadAmostras();
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });
+  }
+
+  excluirAmostra(id: number) {
+    this.confirmationService.confirm({
+      message: 'Tem certeza que deseja excluir esta Amostra?',
+      header: 'Confirmação',
+      icon: 'pi pi-exclamation-triangle',
+      acceptIcon: 'pi pi-check',
+      rejectIcon: 'pi pi-times',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-info',
+      rejectButtonStyleClass: 'p-button-secondary',
+      accept: () => {
+        this.amostraService.deleteAmostra(id).subscribe({
+          next: () => {
+            this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Amostra excluída com sucesso!!', life: 1000 });
+            setTimeout(() => {
+              window.location.reload(); // Atualiza a página após a exclusão
+            }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+          },
+          error: (err) => {
+            if (err.status === 403) {
+              this.messageService.add({ severity: 'error', summary: 'Erro de autorização!', detail: 'Você não tem permissão para realizar esta ação.', life: 2000 });
+            } 
+          }
+        });
+      },
+      reject: () => {
+        this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 1000 });
+      }
+    });
   }
 
   getDigitadorInfo(): void {
@@ -729,13 +951,12 @@ onCamposRelevantesChange() {
   }
 }
 
-getMenuItems(analise: any) {
+getMenuItems(amostra: any) {
   return [
-    { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(analise) },
-    { label: 'Abrir OS', icon: 'pi pi-folder-open', command: () => this.abrirOS(analise) },
-    { label: 'Editar', icon: 'pi pi-pencil', command: () => this.editar(analise) },
-    { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluir(analise) },
-    { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise) },
+    { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(amostra), tooltip: 'Visualizar amostra', tooltipPosition: 'top' },
+    { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(amostra), tooltip: 'Editar amostra', tooltipPosition: 'top' },
+    { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluirAmostra(amostra.id), tooltip: 'Excluir amostra', tooltipPosition: 'top' },
+    { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(amostra), tooltip: 'Visualizar imagens', tooltipPosition: 'top' },
   ];
 }
 
@@ -752,14 +973,6 @@ visualizar(amostra: any) {
 abrirOS(amostra: any) {
   this.amostraSelecionada = amostra;
   this.activeStep = 2;
-}
-
-editar(amostra: any) {
-  // lógica para editar
-}
-
-excluir(amostra: any) {
-  // lógica para excluir
 }
 
 exibirRepresentatividadeLote(): boolean {
@@ -2505,7 +2718,5 @@ verificarEstadoArquivos(): void {
 
   // doc.save("Etiqueta.pdf");
   }
-
-
-
+ 
 }
