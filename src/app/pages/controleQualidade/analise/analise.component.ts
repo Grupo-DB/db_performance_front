@@ -47,6 +47,7 @@ import { CardModule } from 'primeng/card';
 import { PopoverModule } from 'primeng/popover';
 import { HttpClient } from '@angular/common/http';
 import { id } from 'date-fns/locale';
+import { TooltipModule } from 'primeng/tooltip';
 
 export interface Analise {
   id: number;
@@ -67,7 +68,7 @@ interface FileWithInfo {
     ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,
     InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,
     InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, AvatarModule,
-    PopoverModule, BadgeModule
+    PopoverModule, BadgeModule, TooltipModule
 ],
   animations: [
     trigger('efeitoFade', [

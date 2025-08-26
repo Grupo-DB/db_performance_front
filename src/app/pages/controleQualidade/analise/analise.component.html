@@ -114,13 +114,13 @@
     <div class="container">
         <div class="form-geral flex flex-column align-items-center" @swipeAnimation>
             <div class="step1 w-11 mt-3">
-                <p-fieldset *ngIf="analise">
+                <p-card class="card" *ngIf="analise">
                     <ng-template #header>
-                        <div class="flex flex-row justify-content-between gap-2 px-2">
-                            <span class="font-bold">Amostra</span>
-                            <span class="font-bold">
+                        <div class="header flex flex-row justify-content-between gap-2 px-2">
+                            <h2>Amostra</h2>
+                            <h2>
                                 Amostra N°: <b>{{ analise.amostra_detalhes?.numero }}</b>
-                            </span>
+                            </h2>
                         </div>
                     </ng-template>
                     <div class="flex flex-column w-12 lg:flex-row">
@@ -149,13 +149,15 @@
                             ></p-button>
                         </div>    
                     </div>
-                </p-fieldset>
+                </p-card>
             </div>
 
             <div class="w-11 mt-4">
                 <div *ngFor="let plano of analisesSimplificadas[0]?.planoDetalhes">
-                    <p-divider align="left" type="solid">
-                        Plano de Análise: <b> {{ plano.descricao }}</b>
+                    <p-divider align="left" type="solid" class="title">
+                        <div class="title">
+                            Plano de Análise: <b> {{ plano.descricao }}</b>
+                        </div>
                     </p-divider>
                     <!-- Tabela para cada ensaio fixo (fora dos cálculos) -->
                     <div class="step1">
@@ -207,7 +209,8 @@
                                                 </p-button>
                                             </td>
                                             <td>
-                                                <div class="flex align-items-start justify-content-start gap-2">   
+                                                <div class="flex align-items-start justify-content-start gap-2">
+                                                    <i class="pi pi-file-edit text-primary"></i>   
                                                     <span class="font-bold text-lg">{{ ensaio.descricao }}</span>
                                                     <span class="text-sm text-600 ml-2">({{ ensaio.unidade }})</span>
                                                 </div>
@@ -223,14 +226,28 @@
                                                 </div>
                                             </td>
                                             <td style="text-align: end;">
-                                                <p-button icon="pi pi-history" severity="primary" size="small" [raised]="true"
+                                                <p-button 
+                                                    icon="pi pi-history" 
+                                                    severity="primary" 
+                                                    size="small" 
+                                                    [raised]="true"
                                                     (onClick)="abrirDrawerResultadosEnsaios(ensaio)"
-                                                    [loading]="carregandoResultados && ensaioSelecionadoParaPesquisa?.descricao === ensaio.descricao">
+                                                    [loading]="carregandoResultados && ensaioSelecionadoParaPesquisa?.descricao === ensaio.descricao"
+                                                    pTooltip="Ver resultados anteriores"
+                                                    tooltipPosition="top"
+                                                >
                                                 </p-button>
                                             </td>
                                             <td *ngIf="podeEditarEnsaiosCalculos()" class="text-right">
-                                                <p-button icon="pi pi-trash" severity="danger" [raised]="true" size="small"
-                                                    (onClick)="removerEnsaio(ensaio, plano)" pTooltip="Remover ensaio">
+                                                <p-button 
+                                                    icon="pi pi-trash" 
+                                                    severity="danger" 
+                                                    [raised]="true" 
+                                                    size="small"
+                                                    (onClick)="removerEnsaio(ensaio, plano)" 
+                                                    pTooltip="Remover ensaio"
+                                                    tooltipPosition="top"
+                                                    >
                                                 </p-button>
                                             </td>
                                         </tr>
@@ -245,9 +262,9 @@
                                                         
                                                         <div class="flex flex-column lg:flex-row">                                                            
                                                             <!-- Variáveis -->
-                                                            <div class="flex flex-column w-6">
+                                                            <div class="flex flex-column w-8">
                                                                
-                                                                <div class="flex flex-row gap-0" *ngIf="ensaio.variavel_detalhes && ensaio.variavel_detalhes.length > 0">
+                                                                <div class="flex flex-row  gap-1" *ngIf="ensaio.variavel_detalhes && ensaio.variavel_detalhes.length > 0">
                                                                     <div class="flex flex-row w-6" *ngFor="let variavel of getVariaveisOrdenadas(ensaio.variavel_detalhes)">
                                                                         <p-floatlabel variant="in">
                                                                             <!-- Input para data -->
@@ -262,7 +279,7 @@
                                                                                 [(ngModel)]="variavel.valorData"
                                                                                 (ngModelChange)="atualizarVariavelData(ensaio, variavel, $event)"
                                                                                 dateFormat="dd/mm/yy"
-                                                                                placeholder="Selecione a data">
+                                                                            >
                                                                             </p-datepicker>
 
                                                                             <!-- Input numérico (padrão) -->
@@ -287,8 +304,6 @@
                                                                     
                                                                 </div>
 
-                                                                
-
                                                                 <!-- Para ensaios simples (sem variavel_detalhes) -->
                                                                 <div *ngIf="!ensaio.variavel_detalhes || ensaio.variavel_detalhes.length === 0">
                                                                     <div class="flex flex-column">
@@ -306,9 +321,15 @@
                                                                 </div>
                                                                 <div class="flex flex-row justify-content-start w-12">
                                                                     <div class="flex gap-2 mt-5 w-6">
-                                                                        <p-button icon="pi pi-book" severity="warn" [raised]="true" size="small"
+                                                                        <p-button 
+                                                                            icon="pi pi-book" 
+                                                                            severity="warn" 
+                                                                            [raised]="true" 
+                                                                            size="small"
                                                                             (click)="ensaioSelecionado = ensaio; popoverDetalhes.toggle($event)" 
-                                                                            pTooltip="Ver detalhes técnicos do ensaio">
+                                                                            pTooltip="Ver detalhes técnicos do ensaio"
+                                                                            tooltipPosition="top"
+                                                                        >
                                                                         </p-button>
                                                                         <p-button 
                                                                             severity="primary"
@@ -324,44 +345,47 @@
                                                                     
                                                                 </div>    
                                                             </div>
-                                                            <div class="flex flex-column w-6">
+                                                            <div class="flex flex-column w-4">
                                                                 <div class="flex flex-row gap-1">
                                                                     <!-- Técnico -->
                                                                     <div class="flex w-6 justify-content-end">
-                                                                    
-                                                                        <p-select 
-                                                                            [style]="{'width':'100%'}" 
-                                                                            [options]="responsaveis" 
-                                                                            optionLabel="value"
-                                                                            optionValue="value" 
-                                                                            [(ngModel)]="ensaio.responsavel" 
-                                                                            appendTo="body" 
-                                                                            [filter]="true" 
-                                                                            filterBy="value"
-                                                                            [showClear]="true"
-                                                                            placeholder="Selecione o Responsável">
-                                                                        </p-select>
+                                                                        <p-floatLabel variant="in">
+                                                                            <p-select 
+                                                                                [style]="{'width':'100%'}" 
+                                                                                [options]="responsaveis" 
+                                                                                optionLabel="value"
+                                                                                optionValue="value" 
+                                                                                [(ngModel)]="ensaio.responsavel" 
+                                                                                appendTo="body" 
+                                                                                [filter]="true" 
+                                                                                filterBy="value"
+                                                                                [showClear]="true"
+                                                                            >
+                                                                            </p-select>
+                                                                            <label for="float-label">Selecione o Responsável</label>
+                                                                        </p-floatLabel>
                                                                     </div>
 
                                                                     <!-- Nº Cadinho -->
-                                                                    <div class="flex w-6 justify-content-end" *ngIf="!planoTemEnsaioComVariavelData(plano)">
-                                                                    
-                                                                        <p-inputnumber 
-                                                                            [(ngModel)]="ensaio.numero_cadinho" 
-                                                                            [showButtons]="true" 
-                                                                            [min]="1" 
-                                                                            [max]="9999"
-                                                                            mode="decimal"
-                                                                            [useGrouping]="false"
-                                                                            placeholder="Nº Cadinho"
-                                                                            [style]="{'width':'100%'}">
-                                                                        </p-inputnumber>
+                                                                    <div class="flex w-6 justify-content-end">
+                                                                        <p-floatLabel variant="in">
+                                                                            <p-inputnumber 
+                                                                                [(ngModel)]="ensaio.numero_cadinho" 
+                                                                                [showButtons]="true" 
+                                                                                [min]="1" 
+                                                                                [max]="9999"
+                                                                                mode="decimal"
+                                                                                [useGrouping]="false"
+                                                                                [style]="{'width':'100%'}">
+                                                                            </p-inputnumber>
+                                                                            <label for="float-label">Nº Cadinho</label>
+                                                                        </p-floatLabel>
                                                                     </div>
                                                                 </div>    
                                                                 <!-- Resultado -->
                                                                     <div class="flex flex-column mt-6 w-12 justify-content-end">
                                                                         <div class="bg-gray-50 border-round mt-2 text-right">
-                                                                            <label class=" text-sm font-medium">Resultado Final</label>
+                                                                            <label class="text-sm font-medium">Resultado Final</label>
                                                                         </div>
                                                                         <div class="bg-gray-50 border-round mt-2 text-right">
                                                                             <span class="text-2xl font-bold text-primary">{{ ensaio.valor || 0 }}</span>
@@ -383,12 +407,12 @@
                             <p-popover #popoverDetalhes>
                                 <ng-template #content>
                                     <div class="p-3" style="min-width: 600px;" *ngIf="ensaioSelecionado">
-                                        <p-card class="card">
-                                            <ng-template #header>
+                                        
+                                            
                                                 <div class="header w-full text-left">
                                                     <h2>Detalhes do Ensaio: {{ ensaioSelecionado.descricao }}</h2>
                                                 </div>
-                                            </ng-template>
+                                           
                                             <p-table [value]="[ensaioSelecionado]" class="tabela">
                                                 <ng-template pTemplate="header">
                                                     <tr>
@@ -399,7 +423,7 @@
                                                     </tr>
                                                 </ng-template>
                                                 <ng-template pTemplate="body" let-e>
-                                                    <tr>
+                                                    <tr class="row">
                                                         <td>{{ e.tipo_ensaio_detalhes?.nome }}</td>
                                                         <td>{{ e.tempo_previsto }}</td>
                                                         <td>
@@ -417,7 +441,7 @@
                                                     </tr>
                                                 </ng-template>
                                             </p-table>
-                                        </p-card>
+                                        
                                     </div>
                                 </ng-template>
                             </p-popover>
@@ -448,7 +472,7 @@
                                     
                                     <ng-template pTemplate="header">
                                         <tr class="tabela">
-                                            <th style="width: 3rem;">
+                                            <th style="width: 5%;">
                                                 <p-button
                                                     [text]="true"
                                                     [plain]="true"
@@ -458,10 +482,10 @@
                                                     pTooltip="Expandir/Recolher todos os cálculos">
                                                 </p-button>
                                             </th>
-                                            <th style="width: 30%; text-align: center;">Cálculo</th>
-                                            <th style="width: 20%; text-align: center;">Resultado</th>
-                                            <th style="width: 15%; text-align: center;">Histórico</th>
-                                            <th style="width: 15%; text-align: center;" *ngIf="podeEditarEnsaiosCalculos()">Ações</th>
+                                            <th style="width: 30%; text-align: left;">Cálculo</th>
+                                            <th style="width: 35%; text-align: right;">Resultado</th>
+                                            <th style="width: 15%; text-align: right;">Histórico</th>
+                                            <th style="width: 15%; text-align: right;" *ngIf="podeEditarEnsaiosCalculos()">Ações</th>
                                         </tr>
                                     </ng-template>
 
@@ -478,14 +502,14 @@
                                                 </p-button>
                                             </td>
                                             <td>
-                                                <div class="flex align-items-center gap-2">
+                                                <div class="flex align-items-start justify-content-start gap-2">
                                                     <i class="pi pi-calculator text-primary"></i>
                                                     <span class="font-bold text-lg">{{ calc.descricao }}</span>
                                                     <span class="text-sm text-600 ml-2">({{ calc.unidade }})</span>
                                                 </div>
                                             </td>
-                                            <td style="text-align: center;">
-                                                <div class="flex align-items-center justify-content-center gap-2">
+                                            <td style="text-align: end;">
+                                                <div class="flex align-items-end justify-content-end gap-2">
                                                     <span class="valor-result font-bold text-lg text-primary">
                                                         {{ calc.resultado || 0 }}
                                                     </span>
@@ -494,15 +518,29 @@
                                                     </span>
                                                 </div>
                                             </td>
-                                            <td style="text-align: center;">
-                                                <p-button icon="pi pi-history" severity="primary" size="small" [raised]="true"
+                                            <td style="text-align: end;">
+                                                <p-button 
+                                                    icon="pi pi-history" 
+                                                    severity="primary" 
+                                                    size="small" 
+                                                    [raised]="true"
                                                     (onClick)="abrirDrawerResultados(calc, plano)"
-                                                    [loading]="carregandoResultados && calculoSelecionadoParaPesquisa?.descricao === calc.descricao">
+                                                    [loading]="carregandoResultados && calculoSelecionadoParaPesquisa?.descricao === calc.descricao"
+                                                    pTooltip="Ver resultados anteriores"
+                                                    tooltipPosition="top"
+                                                    >
                                                 </p-button>
                                             </td>
-                                            <td *ngIf="podeEditarEnsaiosCalculos()" class="text-center">
-                                                <p-button icon="pi pi-trash" severity="warn" [raised]="true" size="small"
-                                                    (onClick)="removerCalculo(calc, plano)" pTooltip="Remover cálculo">
+                                            <td *ngIf="podeEditarEnsaiosCalculos()" class="text-right">
+                                                <p-button 
+                                                    icon="pi pi-trash" 
+                                                    severity="danger" 
+                                                    [raised]="true" 
+                                                    size="small"
+                                                    (onClick)="removerCalculo(calc, plano)" 
+                                                    pTooltip="Remover cálculo"
+                                                    tooltipPosition="top"
+                                                >
                                                 </p-button>
                                             </td>
                                         </tr>
@@ -511,87 +549,76 @@
                                         <tr *ngIf="calc.expanded">
                                             <td colspan="5" style="background-color: #f8f9fa;">
                                                 <div class="p-3">
-                                                    <p-card class="mb-3">
-                                                        <ng-template #header>
-                                                            <div class="flex justify-content-between align-items-center">
-                                                                <h4>Detalhes do Cálculo: {{ calc.descricao }}</h4>
-                                                                <div class="flex gap-2">
-                                                                    <p-button icon="pi pi-book" severity="warn" [raised]="true" size="small"
+                                                            <div class="header flex justify-content-between align-items-center">
+                                                                <h2>Detalhes do Cálculo: {{ calc.descricao }}</h2>
+                                                            </div>
+                                                       
+                                                        <div class="flex flex-column lg:flex-row">
+                                                            <div class="flex flex-column w-8">
+                                                                <div class="flex flex-row  gap-1" *ngIf="calc.ensaios_detalhes && calc.ensaios_detalhes.length > 0">
+                                                                    <div class="flex flex-row w-6" *ngFor="let ensaio of calc.ensaios_detalhes">
+                                                            
+                                                                            <div class="flex justify-content-between align-items-center gap-1">
+                                                                                <div class="flex align-items-center gap-2">
+                                                                                    <i class="pi pi-flask text-primary"></i>
+                                                                                    <span class="font-bold">{{ ensaio.descricao }}</span>
+                                                                                </div>
+                                                                                <div class="flex align-items-center gap-2">
+                                                                                    <p-inputnumber 
+                                                                                        [(ngModel)]="ensaio.valor" 
+                                                                                        [showButtons]="true" 
+                                                                                        readonly="true"
+                                                                                        (ngModelChange)="calcular(calc, plano)"
+                                                                                        [style]="{'width':'150px'}">
+                                                                                    </p-inputnumber>
+                                                                                </div>
+                                                                            </div>
+                                                                        
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex mt-8 gap-2">
+                                                                    <p-button 
+                                                                        icon="pi pi-book"
+                                                                        severity="warn" 
+                                                                        [raised]="true" 
+                                                                        size="small"
                                                                         (click)="calculoSelecionado = calc; popoverDetalhesCalculo.toggle($event)" 
                                                                         pTooltip="Ver detalhes técnicos do cálculo">
                                                                     </p-button>
                                                                 </div>
-                                                            </div>
-                                                        </ng-template>
-                                                        
-                                                        <div class="grid">
+                                                            </div>    
+                                                            <div class="flex flex-column w-4 align-items-end justify-content-end">
                                                             <!-- Responsável -->
-                                                            <div class="col-12 md:col-6 lg:col-3">
-                                                                <label class="block text-sm font-medium mb-2">Responsável</label>
-                                                                <p-select 
-                                                                    [style]="{'width':'100%'}" 
-                                                                    [options]="responsaveis" 
-                                                                    optionLabel="value"
-                                                                    optionValue="value" 
-                                                                    [(ngModel)]="calc.responsavel" 
-                                                                    appendTo="body" 
-                                                                    [filter]="true" 
-                                                                    filterBy="value"
-                                                                    [showClear]="true"
-                                                                    placeholder="Selecione o Responsável">
-                                                                </p-select>
-                                                            </div>
-
-                                                            <!-- Resultado -->
-                                                            <div class="col-12 md:col-6 lg:col-3">
-                                                                <label class="block text-sm font-medium mb-2">Resultado Final</label>
-                                                                <div class="p-3 bg-gray-50 border-round text-center">
-                                                                    <span class="text-2xl font-bold text-primary">{{ calc.resultado || 0 }}</span>
-                                                                    <span class="ml-2 text-lg text-600">{{ calc.unidade }}</span>
+                                                                <div class="flex flex-column w-8">
+                                                                    <p-floatLabel variant="in">
+                                                                        <p-select 
+                                                                            [style]="{'width':'100%'}" 
+                                                                            [options]="responsaveis" 
+                                                                            optionLabel="value"
+                                                                            optionValue="value" 
+                                                                            [(ngModel)]="calc.responsavel" 
+                                                                            appendTo="body" 
+                                                                            [filter]="true" 
+                                                                            filterBy="value"
+                                                                            [showClear]="true"
+                                                                            placeholder="Selecione o Responsável">
+                                                                        </p-select>
+                                                                        <label for="float-label">Selecione o Responsável</label>
+                                                                    </p-floatLabel>
                                                                 </div>
-                                                            </div>
-
-                                                            <!-- Fórmula -->
-                                                            <div class="col-12 md:col-6 lg:col-6">
-                                                                <label class="block text-sm font-medium mb-2">Fórmula</label>
-                                                                <p-floatlabel variant="in">
-                                                                    <p-iconfield>
-                                                                        <p-inputicon class="pi pi-calculator" />
-                                                                        <input variant="filled" [style]="{'width':'100%'}" pInputText
-                                                                            id="funcao_calculo_{{calc.id}}" autocomplete="off" [(ngModel)]="calc.funcao"
-                                                                            type="text" readonly />
-                                                                    </p-iconfield>
-                                                                    <label for="funcao_calculo_{{calc.id}}">Fórmula</label>
-                                                                </p-floatlabel>
-                                                            </div>
-                                                        </div>
-
-                                                        <!-- Ensaios do Cálculo -->
-                                                        <div class="mt-4">
-                                                            <h5>Ensaios do Cálculo</h5>
-                                                            <div class="grid" *ngIf="calc.ensaios_detalhes && calc.ensaios_detalhes.length > 0">
-                                                                <div class="col-12" *ngFor="let ensaio of calc.ensaios_detalhes">
-                                                                    <div class="p-3 border-round-md bg-white border-1 border-gray-200">
-                                                                        <div class="flex justify-content-between align-items-center">
-                                                                            <div class="flex align-items-center gap-2">
-                                                                                <i class="pi pi-flask text-primary"></i>
-                                                                                <span class="font-bold">{{ ensaio.descricao }}</span>
-                                                                            </div>
-                                                                            <div class="flex align-items-center gap-2">
-                                                                                <p-inputnumber 
-                                                                                    [(ngModel)]="ensaio.valor" 
-                                                                                    [showButtons]="true" 
-                                                                                    readonly="true"
-                                                                                    (ngModelChange)="calcular(calc, plano)"
-                                                                                    [style]="{'width':'150px'}">
-                                                                                </p-inputnumber>
-                                                                            </div>
-                                                                        </div>
+                                                                 <!-- Resultado -->
+                                                                <div class="flex flex-column mt-6 w-12 justify-content-end">
+                                                                    <div class="bg-gray-50 border-round mt-2 text-right">
+                                                                        <label class="text-sm font-medium">Resultado Final</label>
                                                                     </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </p-card>
+                                                                    <div class="p-3 bg-gray-50 border-round mt-2 text-right">
+                                                                        <span class="text-2xl font-bold text-primary">{{ calc.resultado || 0 }}</span>
+                                                                        <span class="ml-2 text-lg text-600">{{ calc.unidade }}</span>
+                                                                    </div>
+                                                                </div>  
+                                                            </div>    
+                                                            
+                                                        </div> 
                                                 </div>
                                             </td>
                                         </tr>
@@ -603,15 +630,14 @@
                             <p-popover #popoverDetalhesCalculo>
                                 <ng-template #content>
                                     <div class="p-3" style="min-width: 600px;" *ngIf="calculoSelecionado">
-                                        <p-card class="card">
-                                            <ng-template #header>
+                                       
                                                 <div class="header w-full text-left">
                                                     <h2>Detalhes do Cálculo: {{ calculoSelecionado.descricao }}</h2>
                                                 </div>
-                                            </ng-template>
+                                            
                                             <p-table [value]="calculoSelecionado.ensaios_detalhes" class="tabela">
                                                 <ng-template pTemplate="header">
-                                                    <tr>
+                                                    <tr class="row">
                                                         <th>Tipo</th>
                                                         <th>Tempo Previsto</th>
                                                         <th>Digitador</th>
@@ -619,7 +645,7 @@
                                                     </tr>
                                                 </ng-template>
                                                 <ng-template pTemplate="body" let-e>
-                                                    <tr>
+                                                    <tr class="row">
                                                         <td>{{ e.tipo_ensaio_detalhes?.nome }}</td>
                                                         <td>{{ e.tempo_previsto }}</td>
                                                         <td>{{ e.digitador }}</td>
@@ -638,7 +664,7 @@
                                                     </tr>
                                                 </ng-template>
                                             </p-table>
-                                        </p-card>
+                                        
                                     </div>
                                 </ng-template>
                             </p-popover>
@@ -646,7 +672,7 @@
                     </div>
                 </div>
             </div>    
-                    <div class="step1 flex flex-column w-11 gap-3 mt-5 mb-5 justify-content-end lg:w-11 lg:flex-row">                        
+                    <div class="step1 flex flex-column w-11 gap-3 mt-3 mb-5 justify-content-end lg:w-11 lg:flex-row">                        
                         <div class="w-2 text-right">
                             <p-button label="Salvar Resultados" severity="success" icon="pi pi-check" iconPos="right" [raised]="true"
                                 size="large" (onClick)="salvarAnaliseResultados()" />
@@ -670,12 +696,12 @@
         <p>Carregando histórico...</p>
     </div>
     <div *ngIf="!carregandoResultados && resultadosAnteriores.length > 0">
-        <p-card class="card">
-            <ng-template #header>
+        
+            
                 <div class="header w-full text-left">
                     Resultados Anteriores <h2><b>{{ calculoSelecionadoParaPesquisa?.descricao }}</b></h2>
                 </div>
-            </ng-template>
+           
             <p-table [value]="resultadosAnteriores" [scrollable]="true" scrollHeight="400px" class="tabela">
                 <ng-template pTemplate="header">
                     <tr>
@@ -688,7 +714,7 @@
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-resultado>
-                    <tr>
+                    <tr class="row">
                         <td>{{ resultado.dataFormatada }}</td>
                         <td>{{ resultado.amostraNumero }}</td>
                         <td><strong>{{ resultado.resultadoCalculo }}</strong></td>
@@ -705,7 +731,7 @@
                     </tr>
                 </ng-template>
             </p-table>
-        </p-card>
+        
     </div>
     <div *ngIf="!carregandoResultados && resultadosAnteriores.length === 0" class="text-center p-4">
         <i class="pi pi-info-circle" style="font-size: 2rem; color: #2196F3;"></i>
@@ -726,12 +752,12 @@
         <p>Carregando histórico...</p>
     </div>
     <div *ngIf="!carregandoResultados && resultadosAnteriores.length > 0">
-        <p-card class="card">
-            <ng-template #header>
+       
+            
                 <div class="header w-full text-left">
                     Resultados Anteriores <h2><b>{{ ensaioSelecionadoParaPesquisa?.descricao }}</b></h2>
                 </div>
-            </ng-template>
+            
             <p-table [value]="resultadosAnteriores" [scrollable]="true" scrollHeight="400px" class="tabela">
                 <ng-template pTemplate="header">
                     <tr>
@@ -744,7 +770,7 @@
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-resultado>
-                    <tr>
+                    <tr class="row">
                         <td>{{ resultado.dataFormatada }}</td>
                         <td>{{ resultado.amostraNumero }}</td>
                         <td>
@@ -760,7 +786,7 @@
                     </tr>
                 </ng-template>
             </p-table>
-        </p-card>
+        
     </div>
     <div *ngIf="!carregandoResultados && resultadosAnteriores.length === 0" class="text-center p-4">
         <i class="pi pi-info-circle" style="font-size: 2rem; color: #2196F3;"></i>

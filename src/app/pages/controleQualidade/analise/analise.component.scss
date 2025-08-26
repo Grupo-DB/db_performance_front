@@ -15,6 +15,9 @@
         border-radius: 8px; 
     }
 }
+.ensaio-table-spacing{
+  border-top-right-radius: 8px;
+}
 .row{
   background-color: #444959;
   color: #ffffff;
@@ -31,20 +34,29 @@
 .step1{
     background-color: #F7F8FA;
     border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    //box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
 }
-
-.wrap{
-      background-color: #dc2626;
-    }
+.title{
+  background-color: #F7F8FA;
+}
 
 h2{
    font-family: 'Roboto', sans-serif;
   font-weight: 700;
   color: #6C7684;
 }
-
+.card{
+  .header{
+    background-color: #3B3E44;
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
+    h2{
+      color: #ffffff;
+    }
+  }
+}
 
 .card2{
     .header{
@@ -70,6 +82,10 @@ h2{
   background-color: #444959;
   color: #ffffff;
  } 
+
+ :host ::ng-deep .p-divider-content{
+  background-color: #F7F8FA;
+ }
 
 .ensaio-table-spacing {
   margin-bottom: 32px; 
@@ -150,8 +166,9 @@ h2{
 }
 
 :host ::ng-deep .p-card-body {
-  background-color: #D9D9D9;
-  border: transparent;
+  background-color: #444959;
+  border-radius: 2px;
+  color: #ffffff;
 }
 
 :host ::ng-deep .p-badge.p-badge-danger {
