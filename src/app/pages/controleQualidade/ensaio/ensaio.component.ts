@@ -124,6 +124,7 @@ export class EnsaioComponent implements OnInit{
   filteredVariaveis: any[] = [];
   tipos = [
    { label: 'Variavel', value: 'Variavel' }, 
+  { label: 'Ensaio', value:'Ensaio' }, 
    { label: 'Operador', value:'Operador' }, 
    { label: 'Condicional', value:'Condicional' }, 
    { label: 'Delimitador', value:'Delimitador' }, 
@@ -210,7 +211,7 @@ export class EnsaioComponent implements OnInit{
   {
     this.registerForm = new FormGroup({
       descricao: new FormControl('',[Validators.required, Validators.minLength(3)]),
-      valor: new FormControl({ value: 0, disabled: true }),
+      valor: new FormControl(''),
       tipoEnsaio: new FormControl(''),
       unidade: new FormControl(''),
       tempoPrevistoValor: new FormControl('', Validators.required),
@@ -293,6 +294,10 @@ export class EnsaioComponent implements OnInit{
           const v = this.variaveis.find(v => v.tecnica === tecnica);
           return v && v.nome ? v.nome : b.valor;
         }
+        if (b.tipo === 'Ensaio') {
+          const e = this.ensaios.find(x => (x as any).ensaioTecnico === b.valor || (x as any).tecnica === b.valor);
+          return e && e.descricao ? e.descricao : b.valor;
+        }
         return b.valor;
       })
       .filter(v => !!v)
@@ -349,6 +354,13 @@ export class EnsaioComponent implements OnInit{
 getValoresPorTipo(tipo: string): any[] {
   switch (tipo) {
     case 'Variavel': return this.variaveis.map(v => ({ label: v.nome, value: v.tecnica }));
+    case 'Ensaio': return this.ensaios.map((e: any) => {
+        const fallback = e?.id != null ? `ensaio${String(e.id).padStart(2, '0')}` : undefined;
+        const codigo = e.ensaioTecnico || e.tecnica || fallback;
+        if (!codigo) return null;
+        const label = e.descricao || codigo;
+        return { label, value: codigo as string };
+      }).filter(Boolean) as any[];
     case 'Operador': return this.operadores;
     case 'Condicional': return this.condicionais;
     case 'Delimitador': return this.delimitadores;
@@ -459,6 +471,17 @@ gerarSafeVarsPorTecnica() {
       this.safeVars[variavel.tecnica] = resultado ? resultado.valor : 0;
     }
   });
+  // Acrescenta os valores dos ensaios usando seu código técnico
+  this.ensaios.forEach((e: any) => {
+    const val = typeof e.valor === 'number' ? e.valor : Number(e.valor);
+    const num = isNaN(val) ? 0 : val;
+    if (e.ensaioTecnico) this.safeVars[e.ensaioTecnico] = num;
+    if (e.tecnica) this.safeVars[e.tecnica] = num;
+    if (e?.id != null) {
+      const fallback = `ensaio${String(e.id).padStart(2, '0')}`;
+      this.safeVars[fallback] = num;
+    }
+  });
 }
 
 
@@ -533,6 +556,8 @@ converterFuncaoParaBlocos(funcao: string): { tipo: string, valor: string }[] {
       return { tipo: 'Operador', valor: token };
     } else if (!isNaN(Number(token))) {
       return { tipo: 'Valor', valor: token };
+    } else if (Object.keys(this.funcoesDatas).includes(token)) {
+      return { tipo: 'Funcao Data', valor: token };
     } else {
       // Se o token for um tecnica conhecido, marca como Variavel, senão Ensaio
       const isTecnica = this.variaveis.some(v => v.tecnica === token);
@@ -598,6 +623,27 @@ validarExpressaoComValores(expr: string): boolean {
         const valorTeste = v.tipo === 'data' ? new Date().getTime() : 1;
         fakeExpr = fakeExpr.replace(regex, valorTeste.toString());
         scope[v.tecnica] = valorTeste;
+      }
+    });
+    // Substituir códigos técnicos de ensaio por valores conhecidos (ou 1)
+    this.ensaios.forEach((e: any) => {
+      const num = typeof e.valor === 'number' ? e.valor : Number(e.valor);
+      const valorTeste = isNaN(num) ? 1 : num;
+      if (e.ensaioTecnico) {
+        const re1 = new RegExp(e.ensaioTecnico.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+        fakeExpr = fakeExpr.replace(re1, valorTeste.toString());
+        scope[e.ensaioTecnico] = valorTeste;
+      }
+      if (e.tecnica) {
+        const re2 = new RegExp(e.tecnica.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+        fakeExpr = fakeExpr.replace(re2, valorTeste.toString());
+        scope[e.tecnica] = valorTeste;
+      }
+      if (e?.id != null) {
+        const fallback = `ensaio${String(e.id).padStart(2, '0')}`;
+        const re3 = new RegExp(fallback.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+        fakeExpr = fakeExpr.replace(re3, valorTeste.toString());
+        scope[fallback] = valorTeste;
       }
     });
     

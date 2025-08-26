@@ -1,20 +1,28 @@
 @import "primeicons/primeicons.css";
 .container{
     max-width: 100%;
-    //background-color: #F7F8FA;
+    background-color: #F7F8FA;
 }
 
 .tabela{
     th{
-        background-color: #eeeeee;
-        //color: #ffffff;
+        background-color: #3B3E44;
+        color: #ffffff;
         font-weight: 800;
     }
     tr{
-        border-bottom: 16px solid transparent; 
+        border-bottom: 16px solid transparent;
+        border-radius: 8px; 
     }
 }
-
+.ensaio-table-spacing{
+  border-top-right-radius: 8px;
+}
+.row{
+  background-color: #444959;
+  color: #ffffff;
+  border-radius: 4px;
+}
 .containerInterno{
     background-color: #ffffff;
     border: 10px solid #ffffff;
@@ -25,22 +33,38 @@
 
 .step1{
     background-color: #F7F8FA;
-    border-radius: 20px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    //box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
 }
+.title{
+  background-color: #F7F8FA;
+}
 
+h2{
+   font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+  color: #6C7684;
+}
 .card{
+  .header{
+    background-color: #3B3E44;
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
+    h2{
+      color: #ffffff;
+    }
+  }
+}
+
+.card2{
     .header{
-        background-color: #4A90E2;
-        color: #ffffff;
+        background-color: #898993;
+        //color: #444959;
         padding: 10px;
         border-radius: 10px 10px 0 0;
         
-        h2{
-            color: #ffffff;
-            font-weight: 700;
-        }
     }
 }
 .valor-result{
@@ -50,15 +74,28 @@
 }
 
  :host ::ng-deep .p-fieldset-legend {
-    background-color: #4A90E2;
+    background-color: #444959;
     color: #fff;
   }
+
+ :host ::ng-deep .p-fieldset-content-container{
+  background-color: #444959;
+  color: #ffffff;
+ } 
+
+ :host ::ng-deep .p-divider-content{
+  background-color: #F7F8FA;
+ }
+
 .ensaio-table-spacing {
   margin-bottom: 32px; 
 }
 .tabela-ensaio-wrap {
   margin-bottom: 32px; 
 }
+
+
+
 
 /* ===== ESTILOS PARA O SISTEMA DE ALERTAS DE ROMPIMENTO ===== */
 .alertas-rompimento-panel {
@@ -126,6 +163,12 @@
 /* Animação para badges */
 :host ::ng-deep .p-badge {
   animation: pulse 2s infinite;
+}
+
+:host ::ng-deep .p-card-body {
+  background-color: #444959;
+  border-radius: 2px;
+  color: #ffffff;
 }
 
 :host ::ng-deep .p-badge.p-badge-danger {

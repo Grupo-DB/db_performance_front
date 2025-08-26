@@ -164,7 +164,7 @@
                             autocomplete="off"
                             formControlName="valor"
                             type="text"
-                            [disabled]="true"
+                            
                         />
                     </p-iconfield>
                     <label for="on_label">Digite o valor</label>
@@ -483,6 +483,9 @@
                 <p-divider align="left" type="solid">
                     <b style="font-size: 20px;">Montar Cálculo</b>
                 </p-divider>
+                <div style="font-size: 12px; color: #666; margin-top: 4px;">
+                    Dica: selecione o tipo <b>Ensaio</b> para usar o resultado de outro ensaio (o valor é referenciado pelo código técnico, ex.: <code>ensaio01</code>).
+                </div>
 
         </ng-template>    
         <div class="w-full flex flex-column md:flex-row" style="height: 30vh;"> 
@@ -588,6 +591,9 @@
                 <p-divider align="left" type="solid">
                     <b style="font-size: 20px;">Editar Cálculo</b>
                 </p-divider>
+                <div style="font-size: 12px; color: #666; margin-top: 4px;">
+                    Dica: use o tipo <b>Ensaio</b> para referenciar outros ensaios (ex.: <code>ensaio02</code>). A visualização mostra a descrição; a fórmula salva usa o código técnico.
+                </div>
 
     </ng-template>
     <div class="w-full flex flex-column md:flex-row" style="height: 60vh;"> 
