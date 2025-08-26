@@ -30,6 +30,8 @@ import { evaluate } from 'mathjs';
 import { Variavel } from '../variavel/variavel.component';
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
+import { CdkDragPlaceholder } from "@angular/cdk/drag-drop";
+import { TooltipModule } from 'primeng/tooltip';
 
 interface RegisterEnsaioForm {
   descricao:FormControl;
@@ -69,8 +71,10 @@ export interface Unidades {
 @Component({
   selector: 'app-ensaio',
   imports: [
-    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink, InputNumberModule, CardModule, InplaceModule
-  ],
+    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule, InputMaskModule, DialogModule, ConfirmDialogModule, 
+    SelectModule, IconFieldModule, FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule, ButtonModule, 
+    DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, InputNumberModule, CardModule, InplaceModule,TooltipModule
+],
   providers:[
      MessageService,ConfirmationService
   ],
@@ -124,7 +128,7 @@ export class EnsaioComponent implements OnInit{
   filteredVariaveis: any[] = [];
   tipos = [
    { label: 'Variavel', value: 'Variavel' }, 
-  { label: 'Ensaio', value:'Ensaio' }, 
+   { label: 'Ensaio', value:'Ensaio' }, 
    { label: 'Operador', value:'Operador' }, 
    { label: 'Condicional', value:'Condicional' }, 
    { label: 'Delimitador', value:'Delimitador' }, 
@@ -214,8 +218,8 @@ export class EnsaioComponent implements OnInit{
       valor: new FormControl(''),
       tipoEnsaio: new FormControl(''),
       unidade: new FormControl(''),
-      tempoPrevistoValor: new FormControl('', Validators.required),
-      tempoPrevistoUnidade: new FormControl('', Validators.required),
+      tempoPrevistoValor: new FormControl('',),
+      tempoPrevistoUnidade: new FormControl('',),
       variavel: new FormControl(''),
       funcao: new FormControl(''),
       norma: new FormControl(''),
@@ -239,7 +243,7 @@ export class EnsaioComponent implements OnInit{
   }
 
   ngOnInit() {
-    this.registerForm.get('valor')?.disable();
+    //this.registerForm.get('valor')?.disable();
     //
     this.loadEnsaios();
     this.loadTiposEnsaio();

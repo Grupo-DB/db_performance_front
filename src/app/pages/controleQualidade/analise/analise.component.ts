@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AnaliseService } from '../../../services/controleQualidade/analise.service';
 import { CommonModule, DatePipe, formatDate } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormGroup } from '@angular/forms';
@@ -48,6 +48,7 @@ import { PopoverModule } from 'primeng/popover';
 import { HttpClient } from '@angular/common/http';
 import { id } from 'date-fns/locale';
 import { TooltipModule } from 'primeng/tooltip';
+import { timeout } from 'rxjs';
 
 export interface Analise {
   id: number;
@@ -203,6 +204,7 @@ export class AnaliseComponent implements OnInit, OnDestroy {
   calculoSelecionado: any = null;
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private analiseService: AnaliseService,
     private colaboradorService: ColaboradorService,
     private messageService: MessageService,
@@ -2163,7 +2165,9 @@ salvarAnaliseResultados() {
   this.analiseService.registerAnaliseResultados(idAnalise, payload).subscribe({
     next: () => {
       this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Análise salva com sucesso!' });
-      // Aqui você pode recarregar dados ou navegar, se desejar
+      setTimeout(() => {
+        this.router.navigate(['/welcome/controleQualidade/ordem']);
+      }, 1000);
     },
     error: (err) => {
       this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao salvar análise.' });
@@ -3058,6 +3062,7 @@ fecharDrawerResultadosEnsaios() {
 
   // Atualização visual: reconsultar análise após salvar para não perder valores
   this.getAnalise();
+  window.location.reload();
   }
 
   /**
@@ -3159,11 +3164,11 @@ fecharDrawerResultadosEnsaios() {
     
     // Recarregar toda a análise para forçar atualização total da página
     this.getAnalise();
+
+    this.cd.detectChanges();
   }
 
-  /**
-   * Remove um ensaio da análise
-   */
+
   removerEnsaio(ensaio: any, plano: any): void {
     console.log('removerEnsaio chamado:', { ensaio, plano });
     console.log('podeEditarEnsaiosCalculos():', this.podeEditarEnsaiosCalculos());

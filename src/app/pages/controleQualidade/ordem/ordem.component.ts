@@ -2878,16 +2878,16 @@ private criarAnaliseParaAmostra(amostraId: number): void {
 
   // ================ MÉTODOS PARA ORDEM EXPRESSA ================
 
-  alternarTipoOrdem(): void {
-    this.isOrdemExpressa = !this.isOrdemExpressa;
-    console.log('Tipo de ordem alterado para:', this.isOrdemExpressa ? 'Expressa' : 'Normal');
+  // alternarTipoOrdem(): void {
+  //   this.isOrdemExpressa = !this.isOrdemExpressa;
+  //   console.log('Tipo de ordem alterado para:', this.isOrdemExpressa ? 'Expressa' : 'Normal');
     
-    if (this.isOrdemExpressa) {
-      // Limpar seleções anteriores
-      this.ensaiosSelecionados = [];
-      this.calculosSelecionados = [];
-    }
-  }
+  //   if (this.isOrdemExpressa) {
+  //     // Limpar seleções anteriores
+  //     this.ensaiosSelecionados = [];
+  //     this.calculosSelecionados = [];
+  //   }
+  // }
 
   abrirModalEnsaios(): void {
     this.modalEnsaiosVisible = true;

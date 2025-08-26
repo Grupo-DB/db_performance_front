@@ -110,7 +110,6 @@
     </p-card>
 </div>
  
-<div class="containerWrap">
     <div class="container">
         <div class="form-geral flex flex-column align-items-center" @swipeAnimation>
             <div class="step1 w-11 mt-3">
@@ -186,7 +185,7 @@
                                                     size="small"
                                                     [icon]="todasExpandidas ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
                                                     (click)="toggleTodasLinhas()"
-                                                    pTooltip="Expandir/Recolher todas as linhas">
+                                                    pTooltip="Expandir/Recolher todasc as linhas">
                                                 </p-button>
                                             </th>
                                             <th style="width: 30%; text-align: left;">Ensaio</th>
@@ -348,7 +347,7 @@
                                                             <div class="flex flex-column w-4">
                                                                 <div class="flex flex-row gap-1">
                                                                     <!-- Técnico -->
-                                                                    <div class="flex w-6 justify-content-end">
+                                                                    <div class="flex flex-column w-8">
                                                                         <p-floatLabel variant="in">
                                                                             <p-select 
                                                                                 [style]="{'width':'100%'}" 
@@ -364,7 +363,7 @@
                                                                             </p-select>
                                                                             <label for="float-label">Selecione o Responsável</label>
                                                                         </p-floatLabel>
-                                                                    </div>
+                                                                    </div>    
 
                                                                     <!-- Nº Cadinho -->
                                                                     <div class="flex w-6 justify-content-end">
@@ -601,7 +600,7 @@
                                                                             [filter]="true" 
                                                                             filterBy="value"
                                                                             [showClear]="true"
-                                                                            placeholder="Selecione o Responsável">
+                                                                        >
                                                                         </p-select>
                                                                         <label for="float-label">Selecione o Responsável</label>
                                                                     </p-floatLabel>
@@ -932,7 +931,8 @@
             [value]="getEnsaiosDisponiveis()" 
             selectionMode="multiple" 
             [(selection)]="ensaiosSelecionadosParaAdicionar"
-            [paginator]="true" 
+            [paginator]="true"
+            [responsive]="true"
             [rows]="10"
             [globalFilterFields]="['descricao', 'tipo_ensaio_detalhes.nome']">
             
@@ -959,7 +959,6 @@
                 </th>
                 <th>Descrição</th>
                 <th>Tipo</th>
-                <th>Responsável</th>
                 <th>Tempo Previsto</th>
                 </tr>
             </ng-template>
@@ -971,7 +970,6 @@
                 </td>
                 <td>{{ ensaio.descricao }}</td>
                 <td>{{ ensaio.tipo_ensaio_detalhes?.nome || 'N/A' }}</td>
-                <td>{{ ensaio.responsavel || 'N/A' }}</td>
                 <td>{{ ensaio.tempo_previsto || 'N/A' }}</td>
                 </tr>
             </ng-template>

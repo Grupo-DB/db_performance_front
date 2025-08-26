@@ -81,12 +81,6 @@
                                     class="flex flex-column">
                                     
                                     <!-- Toggle para tipo de ordem -->
-                                    <div class="flex align-items-center justify-content-center mb-4">
-                                        <span class="mr-3">Ordem Normal</span>
-                                        <p-toggleswitch [(ngModel)]="isOrdemExpressa" [ngModelOptions]="{standalone: true}" 
-                                                       (onChange)="alternarTipoOrdem()"></p-toggleswitch>
-                                        <span class="ml-3 font-bold" [class.text-primary]="isOrdemExpressa">Ordem Expressa</span>
-                                    </div>
                                     
                                     <div class="form-geral flex flex-column align-items-center"
                                          [class.border-2]="isOrdemExpressa" 
