@@ -523,22 +523,12 @@
                                                             severity="help"
                                                             [rounded]="true" 
                                                             pTooltip="Imprimir Laudo"
+                                                            (onClick)="abrirModalLaudo(analise.amostra_detalhes)"
                                                             tooltipPosition="top" 
                                                         />
                                                     </a>
                                                 </div>
-
-                                                <div style="position: relative;">
-                                                    <p-button 
-                                                        icon="pi pi-book" 
-                                                        [rounded]="true" 
-                                                        label="Laudo" 
-                                                        (onClick)="abrirModalLaudo(analise.amostra_detalhes)"
-                                                        severity="warn"
-                                                        class="ml-2"
-                                                    />
-                                                </div>
-
+                        
                                             </div>
 
                                         </td>
