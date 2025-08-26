@@ -142,22 +142,26 @@
                                             <!-- Seção para ordem expressa -->
                                             <div class="w-6 text-left mb-3 mt-3 ml-3" *ngIf="isOrdemExpressa">
                                                 <div class="flex flex-column gap-2">
-                                                    <p-button label="Selecionar Ensaios" 
-                                                             icon="pi pi-plus" 
-                                                             severity="success" 
-                                                             size="small"
-                                                             (onClick)="abrirModalEnsaios()"
-                                                             [badge]="ensaiosSelecionados.length.toString()"
-                                                             [badgeClass]="'p-badge-secondary'">
+                                                    <p-button 
+                                                        label="Selecionar Ensaios" 
+                                                        icon="pi pi-plus" 
+                                                        severity="success" 
+                                                        size="small"
+                                                        (onClick)="abrirModalEnsaios()"
+                                                        [badge]="ensaiosSelecionados.length.toString()"
+                                                        [badgeClass]="'p-badge-secondary'"
+                                                    >
                                                     </p-button>
                                                     
-                                                    <p-button label="Selecionar Cálculos" 
-                                                             icon="pi pi-plus" 
-                                                             severity="info" 
-                                                             size="small"
-                                                             (onClick)="abrirModalCalculos()"
-                                                             [badge]="calculosSelecionados.length.toString()"
-                                                             [badgeClass]="'p-badge-secondary'">
+                                                    <p-button 
+                                                        label="Selecionar Cálculos" 
+                                                        icon="pi pi-plus" 
+                                                        severity="info" 
+                                                        size="small"
+                                                        (onClick)="abrirModalCalculos()"
+                                                        [badge]="calculosSelecionados.length.toString()"
+                                                        [badgeClass]="'p-badge-secondary'"
+                                                    >
                                                     </p-button>
                                                 </div>
                                             </div>
@@ -334,9 +338,10 @@
                                 <ng-template pTemplate="header">
                                     <tr>
                                         <th style="width: 10%; text-align: left;">Material</th>
+                                        <th style="width: 15%; text-align: left;" type="text"field="fornecedor" display="menu">Número</th>
                                         <th pSortableColumn="data_entrada" style="width: 10%;">
                                             <div class="flex justify-between items-left">
-                                                Data Entrada
+                                                Data de Abertura
                                                 <p-sortIcon field="data_entrada" />
                                                 <p-columnFilter 
                                                     type="date" 
@@ -346,30 +351,13 @@
                                                     showMenu="false" />
                                             </div>
                                         </th>
-                                        <th pSortableColumn="data_coleta" style="width: 10%;">
-                                            <div class="flex justify-between items-left">
-                                                Data Coleta
-                                                <p-sortIcon field="data_coleta" />
-                                                 <p-columnFilter 
-                                                    type="date" 
-                                                    field="data_coleta" 
-                                                    display="menu"  
-                                                    class="ml-auto" 
-                                                    showMenu="false" />
-                                            </div>
-                                        </th>
-                                        <th style="width: 15%; text-align: left;" type="text"field="fornecedor" display="menu">Fornecedor</th>
-                                        <th style="width: 15%; text-align: left;" type="text" field="numero" display="menu">Número</th>
+                                        <th style="width: 15%; text-align: left;" type="text" field="numero" display="menu">Classificação da OS</th>
                                         <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">Responsável</th>
                                         <th style="width: 24%; text-align: center;" type="text" field="acoes"display="menu">Opções</th>
                                         <th style="width: 2%; text-align: center;" type="text" field="finalizada" display="menu">Finalizada</th>
                                         <th style="width: 2%; text-align: center;" type="text" field="laudo" display="menu">Laudo</th>
                                         <th style="width: 2%; text-align: center;" type="text" field="aprovada" display="menu">Aprovada</th>
-                                        <!-- <th style="width: 15%; text-align: center;" type="text" field="fornecedor" display="menu">Fornecedor</th>
-                                        <th style="width: 15%; text-align: center;" type="text" field="numero" display="menu">Número</th>
-                                        <th style="width: 15%; text-align: center;" type="text" field="responsavel" display="menu">Responsável</th>
-                                        <th style="width: 10%; text-align: center;" type="text" field="status" display="menu">Status</th> -->
-                                        <th style="width: 10%; text-align: center;" type="text" field="acoes"display="menu">Opções</th>
+                                      
                                     </tr>
                                 </ng-template>
 
@@ -382,25 +370,22 @@
                                             [severity]="getSeverity(analise.amostra_detalhes.material)"
                                             />
                                         </td>
-                                        <td style="text-align: left;">
-                                            {{ analise.amostra_detalhes.data_entrada | date: 'dd/MM/yy' }}
-                                        </td>
-                                        <td style="text-align: left;">
-                                            {{ analise.amostra_detalhes.data_coleta | date: 'dd/MM/yy' }}
-                                        </td>
-                                        <td style="text-align: left;">{{ analise.amostra_detalhes.fornecedor }}</td>
-                                        <td style="text-align: left;">{{ analise.amostra_detalhes.numero }}</td>
-                                        <td style="text-align: left;">{{ analise.amostra_detalhes?.ordem_detalhes?.responsavel }}</td>
-                                        <!-- <td style="text-align: center;">
-                                            <p-tag
-                                                [value]="getStatusDisplayName(analise.estado)"
-                                                [severity]="getStatusSeverity(analise.estado)"
-                                            />
-                                        </td> -->
-                                        <!-- <td style="text-align: center;">{{ analise.amostra_detalhes.fornecedor }}</td>
-                                        <td style="text-align: center;">{{ analise.amostra_detalhes.numero }}</td>
-                                        <td style="text-align: center;">{{ analise.amostra_detalhes.expressa_detalhes?.responsavel }}</td>
-                                        <td style="text-align: center;">{{ analise.amostra_detalhes.status }}</td> -->
+                                        <td style="text-align: left;"> {{ analise.amostra_detalhes?.numero }} </td>
+                                        <ng-container *ngIf="analise?.amostra_detalhes?.expressa_detalhes; else ensaioDetalhes">
+                                            <td style="text-align: left;">
+                                                {{ analise.amostra_detalhes?.expressa_detalhes?.data | date:'dd/MM/yy' }}
+                                            </td>
+                                            <td style="text-align: left;"> {{ analise.amostra_detalhes.expressa_detalhes.classificacao }} </td>
+                                            <td style="text-align: left;"> {{ analise.amostra_detalhes.expressa_detalhes.responsavel }} </td>
+                                        </ng-container>
+                                        <ng-template #ensaioDetalhes>
+                                            <td style="text-align: left;">
+                                                {{ analise.amostra_detalhes?.ordem_detalhes?.data | date:'dd/MM/yy' }}
+                                            </td>
+                                            <td style="text-align: left;"> {{ analise.amostra_detalhes.ordem_detalhes.classificacao }} </td>
+                                            <td style="text-align: left;"> {{ analise.amostra_detalhes.ordem_detalhes.responsavel }} </td>
+                                        </ng-template>
+                                      
                                         <td style="text-align: center;">
                                             <div style="display: flex; justify-content: center;">
                                                 <p-speeddial 
