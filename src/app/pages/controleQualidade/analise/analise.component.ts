@@ -225,18 +225,26 @@ export class AnaliseComponent implements OnInit, OnDestroy {
       if (!ensaio || !ensaio.funcao) return false;
       const tokens: string[] = (ensaio.funcao.match(/var\d+/g) as string[]) || [];
       const uniques: string[] = Array.from(new Set(tokens)) as string[];
+
+      // Caso a função não use variáveis técnicas (varX), mas apenas constantes e/ou outros ensaios,
+      // não bloqueie o cálculo aqui. Deixe o fluxo calcular normalmente usando os tokens ensaioNN.
+      if (uniques.length === 0) return true;
+
+      // Se houver varX, precisamos ter variáveis detalhadas para checar os defaults
       if (!Array.isArray(ensaio.variavel_detalhes) || ensaio.variavel_detalhes.length === 0) return false;
+
       // Criar mapa tecnica->valor
-  const map: any = {};
+      const map: any = {};
       ensaio.variavel_detalhes.forEach((v: any) => {
         const key = v.tecnica || v.varTecnica || v.nome;
         map[key] = v.valor;
       });
-      // Todas as tecnicas presentes e com número válido e não-zero
+
+      // Todas as técnicas presentes e com número válido (zero é permitido)
       return uniques.every((tk: string) => {
         const val = (map as any)[tk as any];
         const num = typeof val === 'number' ? val : Number(val);
-        return !isNaN(num) && val !== null && val !== undefined && val !== '' && num !== 0;
+        return !isNaN(num) && val !== null && val !== undefined && val !== '';
       });
     } catch {
       return false;
@@ -1814,8 +1822,9 @@ forcarDeteccaoMudancas() {
   this.cd.detectChanges();
 }
  calcularEnsaioDireto(ensaio: any, planoRef?: any) {
+  // Ensaio sem função: é valor fixo vindo do backend ou digitado manualmente.
+  // Não sobrescrever para 0; apenas sair preservando o valor existente.
   if (!ensaio.funcao) {
-    ensaio.valor = 0;
     return;
   }
   
@@ -1909,10 +1918,8 @@ forcarDeteccaoMudancas() {
       ...funcoesDatas
     };
 
-    if (Object.keys(safeVars).length === 0) {
-      ensaio.valor = 0;
-      return;
-    }
+  // Se não há tokens (varX/ensaioNN), ainda assim avalie a expressão.
+  // Ex.: função "1.2794" (constante) ou somente funções de data.
 
     console.log(`🔧 Scope para avaliação:`, scope);
     console.log(`📝 Função a ser avaliada: ${ensaio.funcao}`);
@@ -2994,8 +3001,8 @@ fecharDrawerResultadosEnsaios() {
     }
 
     // Salvar imediatamente para garantir persistência dos valores padrão
-    this.salvarAnaliseResultados();
-
+    //this.salvarAnaliseResultados();
+    window.location.reload();
     // Recarregar toda a análise para forçar atualização total da página (mantido como fallback)
     this.getAnalise();
   }
