@@ -18,21 +18,26 @@
 }
 
 .card{
-    .header{
-        background-color: #4A90E2;
-        color: #ffffff;
-        padding: 10px;
-        border-radius: 10px 10px 0 0;
-        
-        h2{
-            color: #ffffff;
-            font-weight: 700;
-        }
+  .header{
+    background-color: #3B3E44;
+    display: flex;
+    justify-content: start;
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
+    h2{
+      color: #ffffff;
     }
+  }
 }
-
+.step1{
+    background-color: #F7F8FA;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
 .form-geral{
-    width: 98%;
+    width: 100%;
     margin-left: auto;
     margin-right: auto;
     border-radius: 8px;
@@ -116,14 +121,14 @@
     }
 }
 .tabela{
-    margin: auto;
-    border-radius: 10px;
-    width: 100%;
     th{
-        font-size: 14px;
+        background-color: #3B3E44;
+        color: #ffffff;
+        font-weight: 800;
     }
-    td{
-        font-size:12px ;
+    tr{
+        border-bottom: 16px solid transparent;
+        //border-radius: 8px; 
     }
 }
 .flex{
@@ -213,3 +218,9 @@
     bottom: 0;
     z-index: 10;
   }
+
+  :host ::ng-deep .p-card-body {
+  background-color: #f8f9fa;
+  border-radius: 2px;
+  color: #ffffff;
+}

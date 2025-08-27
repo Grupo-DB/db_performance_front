@@ -50,7 +50,7 @@
         (submit)="submit()"
         enctype="multipart/form-data"
     >
-    <div class="form-geral flex flex-column align-items-center" @swipeAnimation>
+        <div class="form-geral flex flex-column align-items-center" @swipeAnimation>
             <div class="w-11 mt-5">
                 <p-card class="card">
                     <ng-template #header>
@@ -231,7 +231,7 @@
             tooltipPosition="top">
         </p-button>
         <p-button 
-            icon="pi pi-trash" 
+            icon="pi pi-save" 
             severity="success"
             label="Salvar" 
             size="large" 
@@ -312,7 +312,7 @@
                                         size="small" 
                                         [raised]="true"
                                         (onClick)="abrirModalEdicao(ensaios)"
-                                        pTooltip="Editar ensaio" 
+                                        pTooltip="Editar" 
                                         tooltipPosition="top">
                                     </p-button>
                                     <p-button 
@@ -321,7 +321,7 @@
                                         size="small" 
                                         [raised]="true"
                                         (onClick)="excluirEnsaio(ensaios.id)"
-                                        pTooltip="Excluir ensaio" 
+                                        pTooltip="Excluir" 
                                         tooltipPosition="top">
                                     </p-button>
                                 </td>
@@ -515,7 +515,7 @@
             tooltipPosition="top">
         </p-button>
         <p-button 
-            icon="pi pi-trash" 
+            icon="pi pi-save" 
             severity="success"
             label="Salvar" 
             size="large" 
@@ -533,7 +533,7 @@
     <p-drawer
         [(visible)]="montarFormulaVisivel"
         position="left"
-        styleClass=" md:w-10 lg:w-8"
+        styleClass=" md:w-10 lg:w-10"
         [style]="{ height: '100vh' }"
     >
         <ng-template pTemplate="header">
@@ -638,7 +638,7 @@
 <p-drawer
     [(visible)]="editarFormulaVisivel"
     position="left"
-    styleClass="w-full md:w-10 lg:w-6"
+    styleClass="w-full md:w-10 lg:w-10"
 
 >
 

@@ -9,6 +9,9 @@
                     <a routerLink="/welcome/controleQualidade/tipoEnsaio">Tipo de Ensaio</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/variavel">Variáveis de Ensaio</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/controleQualidade/ensaio" >Ensaio</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
@@ -43,53 +46,39 @@
     </ul>
 </div>
 
-<div class="container flex flex-column align-items-center mb-4">
-
-    <div class="titulo mt-2 mb-0 w-12 text-2xl">
-        <p-divider align="left" type="solid">
-            <b>Tipos de Ensaio</b>
-        </p-divider>
-    </div>
-
-    <div class="containerInterno w-12">
-
-
-        <div class="background-form" @swipeAnimation>
-
-            <form
-                [formGroup]="registerForm" title="Cadastrar novo Tipo de Ensaio" class="flex flex-column gap-4" 
-                
-            >
-                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-
-                    <div class="fg1 flex flex-column w-12 align-items-center">
-
-                        <p-card class="card w-12 text-center">
-                            <ng-template #header>
-                                <div class="header w-full text-center">
-                                    <h2>Inserir Novo</h2>
-                                </div>
-                            </ng-template>
-                            <div class="flex flex-column w-12 gap-3">
-
-                                <div class="w-12 text-left">
-                                    <p-floatlabel variant="on">
-                                        <p-iconfield>
-                                            <p-inputicon class="pi pi-file-edit" />
-                                            <input
-                                                variant="filled"
-                                                [style]="{'width':'100%'}"
-                                                pInputText id="on_label"
-                                                autocomplete="off"
-                                                formControlName="nome"
-                                                type="text"
-                                            />
-                                        </p-iconfield>
-                                        <label for="on_label">Digite o nome</label>
-                                    </p-floatlabel>
-                                </div>
-                           
-                            </div>
+<div class="container">
+    <form
+        [formGroup]="registerForm" 
+        title="Cadastrar novo Tipo de Ensaio" 
+        class="flex flex-column gap-4"         
+    >
+       <div class="form-geral flex flex-column align-items-center" @swipeAnimation>
+            <div class="w-11 mt-5">
+                <p-card class="card">
+                    <ng-template #header>
+                        <div class="header w-full text-center">
+                            <h2>Inserir Novo</h2>
+                        </div>
+                    </ng-template>
+                    <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation>
+                        <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
+                            <div class="form2 w-10 mb-3 mt-3">
+                                <p-floatlabel variant="on">
+                                    <p-iconfield>
+                                        <p-inputicon class="pi pi-file-edit" />
+                                        <input
+                                            variant="filled"
+                                            [style]="{'width':'100%'}"
+                                            pInputText id="on_label"
+                                            autocomplete="off"
+                                            formControlName="nome"
+                                            type="text"
+                                        />
+                                    </p-iconfield>
+                                    <label for="on_label">Digite o nome</label>
+                                </p-floatlabel>
+                            </div>                      
+                        </div>
                             <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
                                 <p-button 
                                     (onClick)="clearForm()" 
@@ -107,6 +96,7 @@
                                     tooltipPosition="top"
                                     pTooltip="Salvar Tipo de Ensaio"
                                 />
+                            </div>
                             </div>
                         </p-card>
                     </div>    
@@ -206,10 +196,6 @@
                 </p-inplace>
             </div>
         </div>
-
-    </div>
-    
-</div>
 
 <!---------------------------------Modal Edição---------------------------------------------->
 
