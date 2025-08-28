@@ -2073,6 +2073,84 @@ gerarNumero(materialNome: string, sequencial: number): string {
     //   // doc.save("Etiqueta.pdf");
   }
 
+  duplicata(amostra: any): void {
+    this.confirmationService.confirm({
+      message: `Tem certeza que deseja fazer a duplicata?`,
+      header: 'Confirmar Duplicata',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Não',
+      accept: () => {
+        
+        const novaAmostra = JSON.parse(JSON.stringify(amostra));
+        //zera id
+        delete novaAmostra.id;
+        
+        
+          console.log(novaAmostra);
+
+          this.amostraService.registerAmostra(
+            novaAmostra.material,
+            novaAmostra.finalidade,
+            novaAmostra.numeroSac,
+            novaAmostra.data_envia,
+            novaAmostra.destino_envio,
+            novaAmostra.data_recebimento,
+            novaAmostra.reter,
+            novaAmostra.registro_ep,
+            novaAmostra.registro_produto,
+            novaAmostra.numero_lote,
+            novaAmostra.data_coleta,
+            novaAmostra.data_entrada,
+            novaAmostra.numero,
+            novaAmostra.tipoAmostra,
+            novaAmostra.subtipo,
+            novaAmostra.produtoAmostra,
+            novaAmostra.codDb,
+            novaAmostra.estado_fisico,
+            novaAmostra.periodo_Hora,
+            novaAmostra.periodo_turno,
+            novaAmostra.tipo_amostragem,
+            novaAmostra.local_coleta,
+            novaAmostra.fornecedor,
+            novaAmostra.representatividade_lote,
+            novaAmostra.identificacao_complementar,
+            novaAmostra.complemento,
+            novaAmostra.observacoes,
+            novaAmostra.ordem,
+            null,
+            novaAmostra.digitador,
+            novaAmostra.status
+          ).subscribe({
+            next: (amostraCriada) => {
+              console.log('Amostra duplicada:', amostraCriada);
+              
+              this.messageService.add({ 
+                severity: 'success', 
+                summary: 'Sucesso', 
+                detail: 'Duplicata registrada com sucesso.' 
+              });
+              
+              
+            },
+            error: (err) => {
+              console.error('Erro ao registrar amostra:', err);
+              if (err.status === 401) {
+                this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+              } else if (err.status === 403) {
+                this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+              } else if (err.status === 400) {
+                this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+              } else {
+                this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+              }
+            }
+          });
+        },
+      
+    });
+  }
+
   getTipoOrdem(tipoOrdem: string): 'info' | 'warn' | 'secondary' | 'contrast' | undefined {
 
     switch (tipoOrdem) {
@@ -2529,6 +2607,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
         }} 
       },
       { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise) },
+      { label: 'Duplicata', icon: 'pi pi-file-import', command: () => this.duplicata(analise) },
     ];
 
     return menuItems;
