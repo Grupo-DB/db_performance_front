@@ -18,17 +18,17 @@
 }
 
 .card{
-    .header{
-        background-color: #4A90E2;
-        color: #ffffff;
-        padding: 10px;
-        border-radius: 10px 10px 0 0;
-        
-        h2{
-            color: #ffffff;
-            font-weight: 700;
-        }
+  .header{
+    background-color: #3B3E44;
+    display: flex;
+    justify-content: start;
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
+    h2{
+      color: #ffffff;
     }
+  }
 }
 
 .form-geral{
@@ -181,4 +181,9 @@
             margin-bottom: 20px;;
         }
     }
+}
+:host ::ng-deep .p-card-body {
+  background-color: #f8f9fa;
+  border-radius: 2px;
+  color: #ffffff;
 }

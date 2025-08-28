@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AnaliseService } from '../../../services/controleQualidade/analise.service';
 import { CommonModule, DatePipe, formatDate } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormGroup } from '@angular/forms';
@@ -48,6 +48,7 @@ import { PopoverModule } from 'primeng/popover';
 import { HttpClient } from '@angular/common/http';
 import { id } from 'date-fns/locale';
 import { TooltipModule } from 'primeng/tooltip';
+import { timeout } from 'rxjs';
 
 export interface Analise {
   id: number;
@@ -203,6 +204,7 @@ export class AnaliseComponent implements OnInit, OnDestroy {
   calculoSelecionado: any = null;
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private analiseService: AnaliseService,
     private colaboradorService: ColaboradorService,
     private messageService: MessageService,
@@ -217,24 +219,286 @@ export class AnaliseComponent implements OnInit, OnDestroy {
     private httpClient: HttpClient
   ) {}
 
+  // Implementação personalizada de drag and drop para ensaios
+  onDragStart(event: DragEvent, ensaio: any, index: number, plano: any) {
+    console.log('Drag started:', { ensaio: ensaio.descricao, index });
+    event.dataTransfer?.setData('text/plain', JSON.stringify({ index, type: 'ensaio', planoId: plano.id }));
+    
+    // Fechar todas as linhas expandidas
+    plano.ensaio_detalhes.forEach((e: any) => e.expanded = false);
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+  }
+
+  onDrop(event: DragEvent, targetEnsaio: any, targetIndex: number, plano: any) {
+    event.preventDefault();
+    
+    try {
+      const data = JSON.parse(event.dataTransfer?.getData('text/plain') || '{}');
+      
+      if (data.type !== 'ensaio' || data.planoId !== plano.id) {
+        return;
+      }
+
+      const sourceIndex = data.index;
+      
+      console.log(`Movendo ensaio do índice ${sourceIndex} para ${targetIndex}`);
+      
+      if (sourceIndex === targetIndex) {
+        return;
+      }
+
+      // Criar nova ordem
+      const newArray = [...plano.ensaio_detalhes];
+      const [movedItem] = newArray.splice(sourceIndex, 1);
+      newArray.splice(targetIndex, 0, movedItem);
+      
+      // Atualizar o array
+      plano.ensaio_detalhes = newArray;
+      
+      console.log('Nova ordem:', newArray.map((e: any, i: number) => ({ index: i, descricao: e.descricao })));
+      
+      this.cd.detectChanges();
+      
+      this.messageService.add({ 
+        severity: 'success', 
+        summary: 'Sucesso', 
+        detail: `Ensaio movido da posição ${sourceIndex + 1} para ${targetIndex + 1}` 
+      });
+    } catch (e) {
+      console.error('Erro no drop:', e);
+      this.messageService.add({ 
+        severity: 'error', 
+        summary: 'Erro', 
+        detail: 'Falha ao reordenar ensaio' 
+      });
+    }
+  }
+
+  // Implementação personalizada de drag and drop para cálculos
+  onDragStartCalculo(event: DragEvent, calculo: any, index: number, plano: any) {
+    console.log('Drag started (cálculo):', { calculo: calculo.descricao, index });
+    event.dataTransfer?.setData('text/plain', JSON.stringify({ index, type: 'calculo', planoId: plano.id }));
+    
+    // Fechar todas as linhas expandidas
+    plano.calculo_ensaio_detalhes.forEach((c: any) => c.expanded = false);
+  }
+
+  onDropCalculo(event: DragEvent, targetCalculo: any, targetIndex: number, plano: any) {
+    event.preventDefault();
+    
+    try {
+      const data = JSON.parse(event.dataTransfer?.getData('text/plain') || '{}');
+      
+      if (data.type !== 'calculo' || data.planoId !== plano.id) {
+        return;
+      }
+
+      const sourceIndex = data.index;
+      
+      console.log(`Movendo cálculo do índice ${sourceIndex} para ${targetIndex}`);
+      
+      if (sourceIndex === targetIndex) {
+        return;
+      }
+
+      // Criar nova ordem
+      const newArray = [...plano.calculo_ensaio_detalhes];
+      const [movedItem] = newArray.splice(sourceIndex, 1);
+      newArray.splice(targetIndex, 0, movedItem);
+      
+      // Atualizar o array
+      plano.calculo_ensaio_detalhes = newArray;
+      
+      console.log('Nova ordem (cálculos):', newArray.map((c: any, i: number) => ({ index: i, descricao: c.descricao })));
+      
+      this.cd.detectChanges();
+      
+      this.messageService.add({ 
+        severity: 'success', 
+        summary: 'Sucesso', 
+        detail: `Cálculo movido da posição ${sourceIndex + 1} para ${targetIndex + 1}` 
+      });
+    } catch (e) {
+      console.error('Erro no drop (cálculo):', e);
+      this.messageService.add({ 
+        severity: 'error', 
+        summary: 'Erro', 
+        detail: 'Falha ao reordenar cálculo' 
+      });
+    }
+  }
+
+  // Reordenação de linhas (Ensaios Diretos) - Mantido como fallback
+  onRowReorderEnsaios(event: any, plano: any) {
+    try {
+      console.log('onRowReorderEnsaios called with event:', event);
+      console.log('Event structure:', {
+        value: event?.value,
+        dragIndex: event?.dragIndex,
+        dropIndex: event?.dropIndex,
+        rows: event?.rows
+      });
+      
+      if (!plano || !Array.isArray(plano.ensaio_detalhes)) {
+        console.warn('Plano ou ensaio_detalhes inválido');
+        return;
+      }
+
+      console.log('Ensaios before reorder:', plano.ensaio_detalhes.map((e: any, i: number) => ({ index: i, id: e.id, descricao: e.descricao })));
+
+      // Temporariamente colapsar todas as linhas expandidas para evitar conflitos
+      plano.ensaio_detalhes.forEach((ensaio: any) => {
+        ensaio.expanded = false;
+      });
+
+      // PrimeNG 19 - usa event.value que contém o array reordenado
+      if (event && event.value && Array.isArray(event.value)) {
+        console.log('Usando event.value para reordenação (PrimeNG 19)');
+        plano.ensaio_detalhes = [...event.value];
+      } 
+      // Fallback para versões anteriores com índices
+      else if (
+        event &&
+        typeof event.dragIndex === 'number' &&
+        typeof event.dropIndex === 'number'
+      ) {
+        console.log(`Movendo item do índice ${event.dragIndex} para ${event.dropIndex}`);
+        
+        // Criar cópia do array
+        const newArray = [...plano.ensaio_detalhes];
+        
+        // Mover o item
+        const draggedItem = newArray.splice(event.dragIndex, 1)[0];
+        newArray.splice(event.dropIndex, 0, draggedItem);
+        
+        // Atualizar o array
+        plano.ensaio_detalhes = newArray;
+      }
+      else {
+        console.warn('Evento de reordenação não reconhecido:', event);
+        return;
+      }
+
+      console.log('Ensaios after reorder:', plano.ensaio_detalhes.map((e: any, i: number) => ({ index: i, id: e.id, descricao: e.descricao })));
+
+      // Forçar atualização da interface
+      this.cd.detectChanges();
+      
+      this.messageService.add({ 
+        severity: 'success', 
+        summary: 'Ordem atualizada', 
+        detail: 'Ensaios reordenados com sucesso' 
+      });
+    } catch (e) {
+      console.error('Erro no reordenamento de ensaios:', e);
+      this.messageService.add({ 
+        severity: 'error', 
+        summary: 'Erro', 
+        detail: 'Falha ao reordenar ensaios' 
+      });
+    }
+  }
+
+  // Reordenação de linhas (Cálculos)
+  onRowReorderCalculos(event: any, plano: any) {
+    try {
+      console.log('onRowReorderCalculos called with event:', event);
+      console.log('Event structure:', {
+        value: event?.value,
+        dragIndex: event?.dragIndex,
+        dropIndex: event?.dropIndex,
+        rows: event?.rows
+      });
+      
+      if (!plano || !Array.isArray(plano.calculo_ensaio_detalhes)) {
+        console.warn('Plano ou calculo_ensaio_detalhes inválido');
+        return;
+      }
+
+      console.log('Cálculos before reorder:', plano.calculo_ensaio_detalhes.map((c: any, i: number) => ({ index: i, id: c.id, descricao: c.descricao })));
+
+      // Temporariamente colapsar todas as linhas expandidas para evitar conflitos
+      plano.calculo_ensaio_detalhes.forEach((calculo: any) => {
+        calculo.expanded = false;
+      });
+
+      // PrimeNG 19 - usa event.value que contém o array reordenado
+      if (event && event.value && Array.isArray(event.value)) {
+        console.log('Usando event.value para reordenação (PrimeNG 19)');
+        plano.calculo_ensaio_detalhes = [...event.value];
+      } 
+      // Fallback para versões anteriores com índices
+      else if (
+        event &&
+        typeof event.dragIndex === 'number' &&
+        typeof event.dropIndex === 'number'
+      ) {
+        console.log(`Movendo item do índice ${event.dragIndex} para ${event.dropIndex}`);
+        
+        // Criar cópia do array
+        const newArray = [...plano.calculo_ensaio_detalhes];
+        
+        // Mover o item
+        const draggedItem = newArray.splice(event.dragIndex, 1)[0];
+        newArray.splice(event.dropIndex, 0, draggedItem);
+        
+        // Atualizar o array
+        plano.calculo_ensaio_detalhes = newArray;
+      }
+      else {
+        console.warn('Evento de reordenação não reconhecido:', event);
+        return;
+      }
+
+      console.log('Cálculos after reorder:', plano.calculo_ensaio_detalhes.map((c: any, i: number) => ({ index: i, id: c.id, descricao: c.descricao })));
+
+      // Forçar atualização da interface
+      this.cd.detectChanges();
+      
+      this.messageService.add({ 
+        severity: 'success', 
+        summary: 'Ordem atualizada', 
+        detail: 'Cálculos reordenados com sucesso' 
+      });
+    } catch (e) {
+      console.error('Erro no reordenamento de cálculos:', e);
+      this.messageService.add({ 
+        severity: 'error', 
+        summary: 'Erro', 
+        detail: 'Falha ao reordenar cálculos' 
+      });
+    }
+  }
+
   // Verifica se todas as variáveis exigidas por uma função possuem valores numéricos default
   private deveCalcularEnsaioComDefaults(ensaio: any): boolean {
     try {
       if (!ensaio || !ensaio.funcao) return false;
       const tokens: string[] = (ensaio.funcao.match(/var\d+/g) as string[]) || [];
       const uniques: string[] = Array.from(new Set(tokens)) as string[];
+
+      // Caso a função não use variáveis técnicas (varX), mas apenas constantes e/ou outros ensaios,
+      // não bloqueie o cálculo aqui. Deixe o fluxo calcular normalmente usando os tokens ensaioNN.
+      if (uniques.length === 0) return true;
+
+      // Se houver varX, precisamos ter variáveis detalhadas para checar os defaults
       if (!Array.isArray(ensaio.variavel_detalhes) || ensaio.variavel_detalhes.length === 0) return false;
+
       // Criar mapa tecnica->valor
-  const map: any = {};
+      const map: any = {};
       ensaio.variavel_detalhes.forEach((v: any) => {
         const key = v.tecnica || v.varTecnica || v.nome;
         map[key] = v.valor;
       });
-      // Todas as tecnicas presentes e com número válido e não-zero
+
+      // Todas as técnicas presentes e com número válido (zero é permitido)
       return uniques.every((tk: string) => {
         const val = (map as any)[tk as any];
         const num = typeof val === 'number' ? val : Number(val);
-        return !isNaN(num) && val !== null && val !== undefined && val !== '' && num !== 0;
+        return !isNaN(num) && val !== null && val !== undefined && val !== '';
       });
     } catch {
       return false;
@@ -1812,8 +2076,9 @@ forcarDeteccaoMudancas() {
   this.cd.detectChanges();
 }
  calcularEnsaioDireto(ensaio: any, planoRef?: any) {
+  // Ensaio sem função: é valor fixo vindo do backend ou digitado manualmente.
+  // Não sobrescrever para 0; apenas sair preservando o valor existente.
   if (!ensaio.funcao) {
-    ensaio.valor = 0;
     return;
   }
   
@@ -1907,10 +2172,8 @@ forcarDeteccaoMudancas() {
       ...funcoesDatas
     };
 
-    if (Object.keys(safeVars).length === 0) {
-      ensaio.valor = 0;
-      return;
-    }
+  // Se não há tokens (varX/ensaioNN), ainda assim avalie a expressão.
+  // Ex.: função "1.2794" (constante) ou somente funções de data.
 
     console.log(`🔧 Scope para avaliação:`, scope);
     console.log(`📝 Função a ser avaliada: ${ensaio.funcao}`);
@@ -2163,7 +2426,9 @@ salvarAnaliseResultados() {
   this.analiseService.registerAnaliseResultados(idAnalise, payload).subscribe({
     next: () => {
       this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Análise salva com sucesso!' });
-      // Aqui você pode recarregar dados ou navegar, se desejar
+      setTimeout(() => {
+        this.router.navigate(['/welcome/controleQualidade/ordem']);
+      }, 1000);
     },
     error: (err) => {
       this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao salvar análise.' });
@@ -2990,8 +3255,8 @@ fecharDrawerResultadosEnsaios() {
     }
 
     // Salvar imediatamente para garantir persistência dos valores padrão
-    this.salvarAnaliseResultados();
-
+    //this.salvarAnaliseResultados();
+    window.location.reload();
     // Recarregar toda a análise para forçar atualização total da página (mantido como fallback)
     this.getAnalise();
   }
@@ -3058,6 +3323,7 @@ fecharDrawerResultadosEnsaios() {
 
   // Atualização visual: reconsultar análise após salvar para não perder valores
   this.getAnalise();
+  window.location.reload();
   }
 
   /**
@@ -3159,11 +3425,11 @@ fecharDrawerResultadosEnsaios() {
     
     // Recarregar toda a análise para forçar atualização total da página
     this.getAnalise();
+
+    this.cd.detectChanges();
   }
 
-  /**
-   * Remove um ensaio da análise
-   */
+
   removerEnsaio(ensaio: any, plano: any): void {
     console.log('removerEnsaio chamado:', { ensaio, plano });
     console.log('podeEditarEnsaiosCalculos():', this.podeEditarEnsaiosCalculos());

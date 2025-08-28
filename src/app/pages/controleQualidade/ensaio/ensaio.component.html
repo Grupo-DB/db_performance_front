@@ -44,277 +44,322 @@
 </div>
 
 <div class="container">
-
-    <div class="titulo mt-6 mb-6 text-2xl">
-        <p-divider align="left" type="solid">
-            <b>Ensaio</b>
-        </p-divider>
-    </div>
-
     <form
         [formGroup]="registerForm"
         title="Cadastrar novo Ensaio"
         (submit)="submit()"
         enctype="multipart/form-data"
     >
+        <div class="form-geral flex flex-column align-items-center" @swipeAnimation>
+            <div class="w-11 mt-5">
+                <p-card class="card">
+                    <ng-template #header>
+                        <div class="header">
+                            <h2>Cadastrar novo Ensaio</h2>
+                        </div>
+                    </ng-template>
+                    <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation>
+                        <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
+                            <div class="form2 w-10 mb-3 mt-3">
+                                <p-floatlabel variant="on">
+                                    <p-iconfield>
+                                        <p-inputicon class="pi pi-file-edit" />
+                                        <input
+                                            variant="filled"
+                                            [style]="{'width':'100%'}"
+                                            pInputText id="on_label"
+                                            autocomplete="off"
+                                            formControlName="descricao"
+                                            type="text"
+                                        />
+                                    </p-iconfield>
+                                    <label for="on_label">Digite a descrição</label>
+                                </p-floatlabel>
+                            </div>
+                            <div class="flex w-10 ">
+                                <div class="form2 w-12 mb-3 mt-3">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-file-edit" />
+                                            <input
+                                                variant="filled"
+                                                [style]="{'width':'100%'}"
+                                                pInputText id="on_label"
+                                                autocomplete="off"
+                                                formControlName="funcao"
+                                                type="text"
+                                                [readOnly]="true"
 
-    <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation>
-        <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
-            <div class="form2 w-10 mb-3 mt-3">
-                <p-floatlabel variant="on">
-                    <p-iconfield>
-                        <p-inputicon class="pi pi-file-edit" />
-                        <input
-                            variant="filled"
-                            [style]="{'width':'100%'}"
-                            pInputText id="on_label"
-                            autocomplete="off"
-                            formControlName="descricao"
-                            type="text"
-                        />
-                    </p-iconfield>
-                    <label for="on_label">Digite a descrição</label>
-                </p-floatlabel>
-            </div>
-            <div class="flex w-10 ">
-                <div class="form2 w-12 mb-3 mt-3">
-                    <p-floatlabel variant="on">
-                        <p-iconfield>
-                            <p-inputicon class="pi pi-file-edit" />
-                            <input
-                                variant="filled"
-                                [style]="{'width':'100%'}"
-                                pInputText id="on_label"
-                                autocomplete="off"
-                                formControlName="funcao"
-                                type="text"
-                                [readOnly]="true"
+                                            />
+                                        </p-iconfield>
+                                        <label for="on_label">Cálculo</label>
+                                    </p-floatlabel>
+                                </div>
+                                <div class="form2 flex w-1 mb-3 mt-3">
+                                    <button pButton type="button" icon="pi pi-plus" (click)="montarFormula()"></button> 
+                                </div>
+                            </div>
+                            <div class="form2 flex flex-column md:flex-row w-10 mb-3 mt-3">
+                                <div class="w-6 text-left md:mb-3 lg:mr-1">
+                                    <p-floatLabel variant="on">
+                                                <p-inputNumber 
+                                                    variant="filled"
+                                                    mode="decimal"
+                                                    formControlName="tempoPrevistoValor"
+                                                    [showButtons]="true" 
+                                                    inputId="tempo" 
+                                                    [min]="0" 
+                                                    [max]="9999"
+                                                    [useGrouping]="false" 
+                                                />
+                                                <label for="tempo">Tempo Previsto</label>
+                                    </p-floatLabel>     
+                                </div>
+                                
+                                <div class="w-8 text-left">    
+                                    <p-floatLabel variant="on"> 
+                                        <p-select
+                                            inputId="float-label"
+                                            [style]="{'width':'100%'}"
+                                            [options]="unidades" 
+                                            formControlName="tempoPrevistoUnidade"
+                                            optionLabel="value"
+                                            optionValue="value"
+                                            appendTo="body"
+                                            [filter]="true" 
+                                            filterBy="value"
+                                            [showClear]="true"
 
-                            />
-                        </p-iconfield>
-                        <label for="on_label">Cálculo</label>
-                    </p-floatlabel>
-                </div>
-                <div class="form2 flex w-1 mb-3 mt-3">
-                    <button pButton type="button" icon="pi pi-plus" (click)="montarFormula()"></button> 
-                </div>
-            </div>
-            <div class="form2 flex flex-column md:flex-row w-10 mb-3 mt-3">
-                <div class="w-6 text-left md:mb-3 lg:mr-1">
-                    <p-floatLabel variant="on">
-                                <p-inputNumber 
-                                    variant="filled"
-                                    mode="decimal"
-                                    formControlName="tempoPrevistoValor"
-                                    [showButtons]="true" 
-                                    inputId="tempo" 
-                                    [min]="0" 
-                                    [max]="9999"
-                                    [useGrouping]="false" 
-                                />
-                                <label for="tempo">Tempo Previsto</label>
-                    </p-floatLabel>     
-                </div>
-                <div class="w-10 mb-3 mt-3">
-                        <p-floatlabel variant="on">
-                            <p-iconfield>
-                                <p-inputicon class="pi pi-file-edit" />
-                                <input
-                                    variant="filled"
-                                    [style]="{'width':'100%'}"
-                                    pInputText id="on_label"
-                                    autocomplete="off"
-                                    formControlName="norma"
-                                    type="text"
-                                />
-                            </p-iconfield>
-                            <label for="on_label">Digite a norma</label>
-                        </p-floatlabel>
-                    </div>
-                <div class="w-8 text-left">    
-                    <p-floatLabel variant="on"> 
-                        <p-select
-                            inputId="float-label"
-                            [style]="{'width':'100%'}"
-                            [options]="unidades" 
-                            formControlName="tempoPrevistoUnidade"
-                            optionLabel="value"
-                            optionValue="value"
-                            appendTo="body"
-                            [filter]="true" 
-                            filterBy="value"
-                            [showClear]="true"
-
-                        >
-                        </p-select>
-                        <label for="float-label">Informe a Unidade de tempo</label>
-                    </p-floatLabel>
-                </div>    
-            </div>
-        </div>
-        <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
-            <div class="form2 w-10 mb-3 mt-3">
-                <p-floatlabel variant="on">
-                    <p-iconfield>
-                        <p-inputicon class="pi pi-file-edit" />
-                        <input
-                            variant="filled"
-                            [style]="{'width':'100%'}"
-                            pInputText id="on_label"
-                            autocomplete="off"
-                            formControlName="valor"
-                            type="text"
+                                        >
+                                        </p-select>
+                                        <label for="float-label">Informe a Unidade de tempo</label>
+                                    </p-floatLabel>
+                                </div>    
+                            </div>
+                        </div>
+                        <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
+                            <div class="form2 w-10 mb-3 mt-3" *ngIf="registerForm.get('tipoEnsaio')?.value===7">
+                                <p-floatlabel variant="on">
+                                    <p-iconfield>
+                                        <p-inputicon class="pi pi-file-edit" />
+                                        <input
+                                            variant="filled"
+                                            [style]="{'width':'100%'}"
+                                            pInputText id="on_label"
+                                            autocomplete="off"
+                                            formControlName="valor"
+                                            type="text"
+                                            
+                                        />
+                                    </p-iconfield>
+                                    <label for="on_label">Digite o valor</label>
+                                </p-floatlabel>
+                            </div>
                             
-                        />
-                    </p-iconfield>
-                    <label for="on_label">Digite o valor</label>
-                </p-floatlabel>
+                                    <div class="form2 w-10 mb-3 mt-3 text-left">
+                                        <p-floatLabel variant="on"> 
+                                            <p-select
+                                                variant="filled"
+                                                inputId="float-label"
+                                                [style]="{'width':'100%'}"
+                                                [options]="tiposEnsaio" 
+                                                formControlName="tipoEnsaio"
+                                                optionLabel="nome"
+                                                optionValue="id"
+                                                [filter]="true" 
+                                                filterBy="nome"
+                                                [showClear]="true"
+                                                appendTo="body"
+                                            >
+                                            </p-select>
+                                            <label for="float-label">Selecione o Tipo de Ensaio</label>
+                                        </p-floatLabel> 
+                                    </div>
+                                <div class="flex flex-row w-10 mt-3 gap-1">    
+                                    <div class="w-6">
+                                        <p-floatlabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-file-edit" />
+                                                <input
+                                                    variant="filled"
+                                                    [style]="{'width':'100%'}"
+                                                    pInputText id="on_label"
+                                                    autocomplete="off"
+                                                    formControlName="unidade"
+                                                    type="text"
+                                                />
+                                            </p-iconfield>
+                                            <label for="on_label">Digite a Unidade</label>
+                                        </p-floatlabel>
+                                    </div>
+                                    <div class="w-6">
+                                        <p-floatlabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-file-edit" />
+                                                <input
+                                                    variant="filled"
+                                                    [style]="{'width':'100%'}"
+                                                    pInputText id="on_label"
+                                                    autocomplete="off"
+                                                    formControlName="norma"
+                                                    type="text"
+                                                />
+                                            </p-iconfield>
+                                            <label for="on_label">Digite a norma</label>
+                                        </p-floatlabel>
+                                    </div>
+                                </div>    
+                        </div>
+                    </div>
+                </p-card>
             </div>
-            <div class="form2 w-10 mb-5 mt-3 text-left">
-                <p-floatLabel variant="on"> 
-                    <p-select
-                        variant="filled"
-                        inputId="float-label"
-                        [style]="{'width':'100%'}"
-                        [options]="tiposEnsaio" 
-                        formControlName="tipoEnsaio"
-                        optionLabel="nome"
-                        optionValue="id"
-                        [filter]="true" 
-                        filterBy="nome"
-                        [showClear]="true"
-                        appendTo="body"
-                    >
-                    </p-select>
-                    <label for="float-label">Selecione o Tipo de Ensaio</label>
-                </p-floatLabel> 
-            </div>
-            <div class="form2 w-10 mb-3 mt-3">
-                <p-floatlabel variant="on">
-                    <p-iconfield>
-                        <p-inputicon class="pi pi-file-edit" />
-                        <input
-                            variant="filled"
-                            [style]="{'width':'100%'}"
-                            pInputText id="on_label"
-                            autocomplete="off"
-                            formControlName="unidade"
-                            type="text"
-                        />
-                    </p-iconfield>
-                    <label for="on_label">Digite a Unidade</label>
-                </p-floatlabel>
-            </div>
-        </div>
-    </div>
-
+        </div>        
     </form>
 
 </div>
-<div class="container">
-    <div class="flex justify-content-center mb-5 mt-5"@efeitoFade>
+<div class="container flex flex-column align-items-center">
+    <div class="flex justify-content-center mb-5 mt-5 gap-2"@efeitoFade>
         <p-toast></p-toast>
-        <div class="btnsec" (click)="clearForm()">
-            <p>Limpar</p>
-        </div>
-        <div class="btnpri" (click)="submit()">
-            <p>Salvar</p>            
-        </div>
+        
+        <p-button 
+            icon="pi pi-eraser" 
+            severity="primary"
+            label="Limpar" 
+            size="large" [raised]="true" 
+            (onClick)="clearForm()"
+            pTooltip="Limpar Formulário" 
+            tooltipPosition="top">
+        </p-button>
+        <p-button 
+            icon="pi pi-save" 
+            severity="success"
+            label="Salvar" 
+            size="large" 
+            [raised]="true" 
+            (onClick)="submit()"
+            pTooltip="Salvar ensaio" 
+            tooltipPosition="top">
+        </p-button>
 
     </div>
 
-    <div class="tabela w-11"@swipeAnimationReverse> 
-        <p-toast />
-        <p-confirmDialog />
-        <p-table
-            #dt1
-            [value]="ensaios"
-            [paginator]="true"
-            [rows]="10"
-            [rowsPerPageOptions]="[10, 20, 50]"
-            [globalFilterFields]="['nome','descricao','responsavel','valor','tempo_previsto','tipo_ensaio_detalhes.nome']"
-            [showCurrentPageReport]="true"
-            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Ensaios"
-            scrollable="true"
-            stripedRows
-        >
-            <ng-template pTemplate="caption">
-                <div class="flex flex-row md: justify-content-end">
-                    <p-floatlabel variant="on">
-                        <p-iconfield>
-                            <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
-                            <input
-                                variant="filled"
-                                [(ngModel)] = "inputValue"
-                                [style]="{'width':'100%'}"
-                                pInputText id="on_label"
-                                autocomplete="off"
-                                type="text"
-                                (keyup)="filterTable()"
-                                style="border-color:#1b91ff;"
-                            />
-                        </p-iconfield>
-                        <label for="on_label" style="color: #1b91ff">Pesquisar</label>
-                    </p-floatlabel>
-                </div>
-            </ng-template>
-            <ng-template pTemplate="header">
-                <tr>
-                    <th style="width: 20%; text-align: center;" type="text" field="descricao" display="menu">Descrição</th>
-                    <th style="width: 20%; text-align: center;" type="text" field="valor" display="menu">Unidade</th>
-                    <th style="width: 20%; text-align: center;" type="text" field="tempo_previsto" display="menu">Tempo Previsto</th>
-                    <th style="width: 20%; text-align: center;" type="text" field="norma" display="menu">Norma</th>
-                    <th style="width: 20%; text-align: center;" type="text" field="tipo_ensaio_detalhes.nome" display="menu">Tipo de Ensaio</th>
-                    <th style="width: 20%; text-align: center;" type="text" field="acoes" display="menu">Ações</th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-ensaios>
-                <tr>
-                    <td style="text-align: center;">{{ ensaios.descricao }}</td>
-                    <td style="text-align: center;">{{ ensaios.unidade }}</td>
-                    <td style="text-align: center;">{{ ensaios.tempo_previsto }}</td>
-                    <td style="text-align: center;">{{ ensaios.norma }}</td>
-                    <td style="text-align: center;">{{ ensaios.tipo_ensaio_detalhes.nome }}</td>
-                    <td class="flex justify-content-center">
-                        <div class="btnsec" (click)="abrirModalEdicao(ensaios)">
-                            <p>Editar</p>
+    <div class="step1 mt-4 w-11"@swipeAnimation>
+        <div class="tabela text-left w-12">
+            <p-toast />
+            <p-confirmDialog />
+            <p-inplace closable="true" closeIcon="pi pi-angle-up">
+                <ng-template pTemplate="display">
+                    <p-button label="Ensaios" tooltipPosition="top" pTooltip="Exibir Amostras">
+                        <div class="inline-flex align-items-center">
+                            <span><i class="pi pi-angle-down"></i></span>
                         </div>
-
-                        <div class="btnpri" (click)="excluirEnsaio(ensaios.id)">
-                            <p>Excluir</p>            
-                        </div>
-                    </td>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="paginatorleft">
-                <p-button type="button"  styleClass="p-button-text"></p-button>
-            </ng-template>
-            <ng-template pTemplate="paginatorright">
-                <p-button type="button"  styleClass="p-button-text"></p-button>
-            </ng-template> 
-        </p-table>
+                    </p-button>
+    
+                </ng-template>
+                <ng-template pTemplate="content">
+                    <p-table
+                        #dt1
+                        [value]="ensaios"
+                        [paginator]="true"
+                        [rows]="10"
+                        [rowsPerPageOptions]="[10, 20, 50]"
+                        [globalFilterFields]="['nome','descricao','responsavel','valor','tempo_previsto','tipo_ensaio_detalhes.nome']"
+                        [showCurrentPageReport]="true"
+                        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Ensaios"
+                        scrollable="true"
+                    >
+                        <ng-template pTemplate="caption">
+                            <div class="flex flex-row md: justify-content-end">
+                                <p-floatlabel variant="on">
+                                    <p-iconfield>
+                                        <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
+                                        <input
+                                            variant="filled"
+                                            [(ngModel)] = "inputValue"
+                                            [style]="{'width':'100%'}"
+                                            pInputText id="on_label"
+                                            autocomplete="off"
+                                            type="text"
+                                            (keyup)="filterTable()"
+                                            style="border-color:#1b91ff;"
+                                        />
+                                    </p-iconfield>
+                                    <label for="on_label" style="color: #1b91ff">Pesquisar</label>
+                                </p-floatlabel>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr class="tabela">
+                                <th style="width: 20%; text-align: center;" type="text" field="descricao" display="menu">Descrição</th>
+                                <th style="width: 20%; text-align: center;" type="text" field="valor" display="menu">Unidade</th>
+                                <th style="width: 20%; text-align: center;" type="text" field="tempo_previsto" display="menu">Tempo Previsto</th>
+                                <th style="width: 20%; text-align: center;" type="text" field="norma" display="menu">Norma</th>
+                                <th style="width: 20%; text-align: center;" type="text" field="tipo_ensaio_detalhes.nome" display="menu">Tipo de Ensaio</th>
+                                <th style="width: 20%; text-align: center;" type="text" field="acoes" display="menu">Ações</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-ensaios>
+                            <tr class="row8">
+                                <td style="text-align: center;">{{ ensaios.descricao }}</td>
+                                <td style="text-align: center;">{{ ensaios.unidade }}</td>
+                                <td style="text-align: center;">{{ ensaios.tempo_previsto }}</td>
+                                <td style="text-align: center;">{{ ensaios.norma }}</td>
+                                <td style="text-align: center;">{{ ensaios.tipo_ensaio_detalhes.nome }}</td>
+                                <td class="flex justify-content-center gap-1">
+                                    <p-button 
+                                        icon="pi pi-file-edit" 
+                                        severity="primary" 
+                                        size="small" 
+                                        [raised]="true"
+                                        (onClick)="abrirModalEdicao(ensaios)"
+                                        pTooltip="Editar" 
+                                        tooltipPosition="top">
+                                    </p-button>
+                                    <p-button 
+                                        icon="pi pi-trash" 
+                                        severity="danger" 
+                                        size="small" 
+                                        [raised]="true"
+                                        (onClick)="excluirEnsaio(ensaios.id)"
+                                        pTooltip="Excluir" 
+                                        tooltipPosition="top">
+                                    </p-button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorleft">
+                            <p-button type="button"  styleClass="p-button-text"></p-button>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorright">
+                            <p-button type="button"  styleClass="p-button-text"></p-button>
+                        </ng-template> 
+                    </p-table>
+                </ng-template>
+            </p-inplace>        
     </div>
 
     <!-------------------------------------------MODAL EDIÇÂO---------------------------------------------->
     <p-drawer
         [(visible)]="editFormVisible"
         position="right"
-        [style]="{ width: '20%' }"
-        styleClass="w-full md:w-10 lg:w-3"
+        styleClass="w-full md:w-10 lg:w-4"
     >
-
-    <div class="titulo">
-        <p-divider align="left" type="solid">
-            <b>Editar Ensaio</b>
-        </p-divider> 
-    </div>
-
+    
         <form
             [formGroup]="editForm"
             title="Editar Ensaio"
         >
-            <div class="editGeral flex flex-column lg:flex-row">
-                <div class="fg1edit flex flex-column w-12 align-items-center lg:w-12">
+        <p-card class="card">
+                    <ng-template #header>
+                        <div class="header">
+                            <h2>Editar Ensaio</h2>
+                        </div>
+                    </ng-template>
+            
+                <div 
+                    class="flex flex-column w-12 align-items-center lg:w-12"
+                    
+                    >
                     <div class="w-10 mb-3 mt-3">
                         <p-floatlabel variant="on">
                             <p-iconfield>
@@ -456,16 +501,29 @@
                         </p-floatlabel>
                     </div>
                 </div>
-            </div>
+            
+        </p-card>    
         </form>
-        <div class="flex justify-content-center mb-5 mt-5">
-            <div class="btnsec" (click)="clearEditForm()">
-                <p>Limpar</p>
-            </div>
-
-            <div class="btnpri" (click)="saveEdit()">
-                <p>Salvar</p>            
-            </div>
+        <div class="flex justify-content-center gap-2 mb-5 mt-5">
+            <p-button 
+            icon="pi pi-eraser" 
+            severity="primary"
+            label="Limpar" 
+            size="large" [raised]="true" 
+            (onClick)="clearEditForm()"
+            pTooltip="Limpar Formulário" 
+            tooltipPosition="top">
+        </p-button>
+        <p-button 
+            icon="pi pi-save" 
+            severity="success"
+            label="Salvar" 
+            size="large" 
+            [raised]="true" 
+            (onClick)="saveEdit()"
+            pTooltip="Salvar ensaio" 
+            tooltipPosition="top">
+        </p-button>
         </div>
     </p-drawer>
 
@@ -474,18 +532,16 @@
 <!-------------------------------------Modal Montagem Formulas--------------------------------------->
     <p-drawer
         [(visible)]="montarFormulaVisivel"
-        position="bottom"
-        styleClass="w-full md:w-10 lg:w-12"
-        [style]="{ height: '60vh' }"
+        position="left"
+        styleClass=" md:w-10 lg:w-10"
+        [style]="{ height: '100vh' }"
     >
         <ng-template pTemplate="header">
 
                 <p-divider align="left" type="solid">
                     <b style="font-size: 20px;">Montar Cálculo</b>
                 </p-divider>
-                <div style="font-size: 12px; color: #666; margin-top: 4px;">
-                    Dica: selecione o tipo <b>Ensaio</b> para usar o resultado de outro ensaio (o valor é referenciado pelo código técnico, ex.: <code>ensaio01</code>).
-                </div>
+                
 
         </ng-template>    
         <div class="w-full flex flex-column md:flex-row" style="height: 30vh;"> 
@@ -569,7 +625,7 @@
         </div>
 
         <ng-template pTemplate="footer">
-            <div class="drawer-footer gap-1">
+            <div class="flex drawer-footer gap-1">
                 <button pButton type="button" icon="pi pi-plus" label="Adicionar" (click)="adicionarBloco()"></button>
                 <button pButton type="button" icon="pi pi-check" label="Inserir" (click)="salvarFormula()"></button>
             </div>
@@ -582,7 +638,7 @@
 <p-drawer
     [(visible)]="editarFormulaVisivel"
     position="left"
-    styleClass="w-full md:w-10 lg:w-6"
+    styleClass="w-full md:w-10 lg:w-10"
 
 >
 
@@ -591,9 +647,7 @@
                 <p-divider align="left" type="solid">
                     <b style="font-size: 20px;">Editar Cálculo</b>
                 </p-divider>
-                <div style="font-size: 12px; color: #666; margin-top: 4px;">
-                    Dica: use o tipo <b>Ensaio</b> para referenciar outros ensaios (ex.: <code>ensaio02</code>). A visualização mostra a descrição; a fórmula salva usa o código técnico.
-                </div>
+                
 
     </ng-template>
     <div class="w-full flex flex-column md:flex-row" style="height: 60vh;"> 
@@ -676,7 +730,7 @@
         </div>
 
         <ng-template pTemplate="footer">
-            <div class="drawer-footer gap-1">
+            <div class="flex drawer-footer gap-1">
               <button pButton icon="pi pi-plus" label="Adicionar" (click)="adicionarBloco()"></button>
               <button pButton icon="pi pi-check" label="Inserir" (click)="salvarFormulaEditada()"></button>
             </div>

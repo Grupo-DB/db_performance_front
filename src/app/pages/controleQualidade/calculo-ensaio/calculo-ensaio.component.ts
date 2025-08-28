@@ -31,6 +31,7 @@ import { id } from 'date-fns/locale';
 
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
+import { TooltipModule } from 'primeng/tooltip';
 
 interface RegisterCalculoEnsaioForm{
   descricao: FormControl;
@@ -55,7 +56,11 @@ export interface CalculoEnsaio{
 @Component({
   selector: 'app-calculo-ensaio',
   imports: [
-    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,InputNumberModule,AutoCompleteModule, CardModule, InplaceModule
+    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,
+    InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,
+    FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,
+    ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,
+    InputNumberModule,AutoCompleteModule, CardModule, InplaceModule, TooltipModule
   ],
   providers: [
     MessageService,ConfirmationService
