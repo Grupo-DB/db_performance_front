@@ -174,7 +174,9 @@
                                 <p-table 
                                     class="ensaio-table-spacing" 
                                     [value]="plano.ensaio_detalhes"
-                                    [tableStyle]="{'min-width': '70rem'}">
+                                    [tableStyle]="{'min-width': '70rem'}"
+                                    [dataKey]="'id'"
+                                >
                                     
                                     <ng-template pTemplate="header">
                                         <tr class="tabela">
@@ -188,6 +190,8 @@
                                                     pTooltip="Expandir/Recolher todasc as linhas">
                                                 </p-button>
                                             </th>
+                                            <!-- Drag handle header -->
+                                            <th style="width: 4%;"></th>
                                             <th style="width: 30%; text-align: left;">Ensaio</th>
                                             <th style="width: 35%; text-align: right;">Resultado</th>
                                             <th style="width: 15%; text-align: right;">Histórico</th>
@@ -197,7 +201,13 @@
 
                                     <!-- Linha principal -->
                                     <ng-template pTemplate="body" let-ensaio let-rowIndex="rowIndex">
-                                        <tr class="row">
+                                        <tr class="row" 
+                                            draggable="true"
+                                            (dragstart)="onDragStart($event, ensaio, rowIndex, plano)"
+                                            (dragover)="onDragOver($event)"
+                                            (drop)="onDrop($event, ensaio, rowIndex, plano)"
+                                            style="cursor: grab;"
+                                            [style.opacity]="ensaio.expanded ? '0.7' : '1'">
                                             <td>
                                                 <p-button
                                                     [text]="true"
@@ -206,6 +216,14 @@
                                                     [icon]="ensaio.expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
                                                     (click)="toggleEnsaioExpansion(ensaio)">
                                                 </p-button>
+                                            </td>
+                                            <!-- Drag handle cell -->
+                                            <td>
+                                                <span 
+                                                    class="pi pi-sort-alt" 
+                                                    style="cursor: move; font-size: 1.2em; color: #6c757d;"
+                                                    title="Arrastar para reordenar">
+                                                </span>
                                             </td>
                                             <td>
                                                 <div class="flex align-items-start justify-content-start gap-2">
@@ -251,9 +269,9 @@
                                             </td>
                                         </tr>
                                         
-                                        <!-- Linha expandida (condicional) -->
-                                        <tr *ngIf="ensaio.expanded">
-                                            <td colspan="5" style="background-color: #f8f9fa;">
+                                        <!-- Linha expandida (condicional) - Separada para não interferir no reordenamento -->
+                                        <tr *ngIf="ensaio.expanded" class="expanded-row">
+                                            <td [attr.colspan]="podeEditarEnsaiosCalculos() ? 6 : 5" style="background-color: #f8f9fa; padding: 0;">
                                                 <div class="p-3">
                                                             <div class="header flex justify-content-between align-items-center">
                                                                 <h2 class="text-2xl font-bold text-primary">Realizar Ensaio: {{ ensaio.descricao }}</h2>
@@ -467,7 +485,9 @@
                                 <p-table 
                                     class="ensaio-table-spacing" 
                                     [value]="plano.calculo_ensaio_detalhes"
-                                    [tableStyle]="{'min-width': '70rem'}">
+                                    [tableStyle]="{'min-width': '70rem'}"
+                                    [dataKey]="'id'"
+                                >
                                     
                                     <ng-template pTemplate="header">
                                         <tr class="tabela">
@@ -481,6 +501,8 @@
                                                     pTooltip="Expandir/Recolher todos os cálculos">
                                                 </p-button>
                                             </th>
+                                            <!-- Drag handle header for cálculos -->
+                                            <th style="width: 4%;"></th>
                                             <th style="width: 30%; text-align: left;">Cálculo</th>
                                             <th style="width: 35%; text-align: right;">Resultado</th>
                                             <th style="width: 15%; text-align: right;">Histórico</th>
@@ -490,7 +512,13 @@
 
                                     <!-- Linha principal do cálculo -->
                                     <ng-template pTemplate="body" let-calc let-rowIndex="rowIndex">
-                                        <tr class="row">
+                                        <tr class="row" 
+                                            draggable="true"
+                                            (dragstart)="onDragStartCalculo($event, calc, rowIndex, plano)"
+                                            (dragover)="onDragOver($event)"
+                                            (drop)="onDropCalculo($event, calc, rowIndex, plano)"
+                                            style="cursor: grab;"
+                                            [style.opacity]="calc.expanded ? '0.7' : '1'">
                                             <td>
                                                 <p-button
                                                     [text]="true"
@@ -499,6 +527,14 @@
                                                     [icon]="calc.expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
                                                     (click)="toggleCalculoExpansion(calc)">
                                                 </p-button>
+                                            </td>
+                                            <!-- Drag handle cell for cálculos -->
+                                            <td>
+                                                <span 
+                                                    class="pi pi-sort-alt" 
+                                                    style="cursor: move; font-size: 1.2em; color: #6c757d;"
+                                                    title="Arrastar para reordenar">
+                                                </span>
                                             </td>
                                             <td>
                                                 <div class="flex align-items-start justify-content-start gap-2">
@@ -544,9 +580,9 @@
                                             </td>
                                         </tr>
                                         
-                                        <!-- Linha expandida do cálculo (condicional) -->
-                                        <tr *ngIf="calc.expanded">
-                                            <td colspan="5" style="background-color: #f8f9fa;">
+                                        <!-- Linha expandida do cálculo (condicional) - Separada para não interferir no reordenamento -->
+                                        <tr *ngIf="calc.expanded" class="expanded-row">
+                                            <td [attr.colspan]="podeEditarEnsaiosCalculos() ? 6 : 5" style="background-color: #f8f9fa; padding: 0;">
                                                 <div class="p-3">
                                                             <div class="header flex justify-content-between align-items-center">
                                                                 <h2>Detalhes do Cálculo: {{ calc.descricao }}</h2>
