@@ -24,12 +24,10 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
 import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-import { SpeedDial, SpeedDialModule } from 'primeng/speeddial';
+import { SpeedDialModule } from 'primeng/speeddial';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { OrdemService } from '../../../services/controleQualidade/ordem.service';
-import { string, boolean } from 'mathjs';
 import { EnsaioService } from '../../../services/controleQualidade/ensaio.service';
-import { CdkDragPlaceholder } from '@angular/cdk/drag-drop';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
@@ -48,11 +46,9 @@ import { TagModule } from 'primeng/tag';
 import { CheckboxModule } from 'primeng/checkbox';
 import { Amostra } from '../amostra/amostra.component';
 
-
 import jsPDF from 'jspdf';
 import autoTable, { CellInput } from "jspdf-autotable";
 import { Chart } from 'chart.js';
-
 
 interface OrdemForm {
   data: FormControl,
@@ -78,6 +74,7 @@ export interface Ordem {
   modificacoes: any;
   classificacao: any;
 }
+
 
 @Component({
   selector: 'app-ordem',
@@ -172,11 +169,12 @@ export class OrdemComponent implements OnInit {
   modalEnsaiosVisible: boolean = false;
   modalCalculosVisible: boolean = false;
 
-  teste: any[] = [];
-
   isCreatingOrdem: boolean = false;
   isCreatingAnalise: boolean = false;
   registerOrdemForm!: FormGroup<OrdemForm>;
+
+  editFormVisible: boolean = false;
+  editForm!: FormGroup;
 
   dadosTabela = [
     { tempo: '5min', valor: 2.3 },
@@ -256,10 +254,23 @@ export class OrdemComponent implements OnInit {
       id: [''],
       nome: [''],
     });
+
+    this.editForm  = this.fb.group({
+      id: [''],
+      numero: [''],
+      data: [''],
+      classificacao: [''],
+      plano_analise: [''],
+      responsavel: [''],
+      isExpressa: [''],
+      idSalvar: [''],
+     
+      
+    });
   }
   
 
- ngOnInit() {
+  ngOnInit() {
     this.receberDadosAmostra();
     setTimeout(() => {
       if (!this.amostraData) {
@@ -274,7 +285,131 @@ export class OrdemComponent implements OnInit {
     this.configurarFormularioInicial();
   }
 
-receberDadosAmostra(): void {
+  abrirModalEdicao(amostra: Amostra) {
+    // console.log('azqaui');
+    // console.log(amostra);
+
+    this.editFormVisible = true;
+
+    let classificacao = '';
+    let responsavel = '';
+    let data = null;
+    let isExpressa = false;
+    let idSalvar = '';
+
+    if(amostra.expressa_detalhes){
+      classificacao = amostra.expressa_detalhes.classificacao;
+      responsavel = amostra.expressa_detalhes.responsavel;
+      data = formatDate(amostra.expressa_detalhes.data, 'dd/MM/yyyy', 'en-US');
+      isExpressa = true;
+      idSalvar = amostra.expressa_detalhes.id;
+
+    }else{
+      classificacao = amostra.ordem_detalhes.classificacao;
+      responsavel = amostra.ordem_detalhes.responsavel;
+      data = formatDate(amostra.ordem_detalhes.data, 'dd/MM/yyyy', 'en-US');
+      idSalvar = amostra.ordem_detalhes.id;
+    }
+
+    this.editForm.patchValue({
+      id: amostra.id,
+      numero: amostra.numero,
+      classificacao: classificacao,
+      responsavel: responsavel,
+      data: data,
+      isExpressa: isExpressa,
+      idSalvar: idSalvar,
+    });
+  }
+
+  clearEditForm(){
+    this.editForm.reset();
+  }
+
+  saveEditOrdem(idSalvar: number ){
+    let dataFormatada = null;
+
+    if (this.editForm.value.data instanceof Date) {
+        dataFormatada = formatDate(this.editForm.value.data, 'yyyy-MM-dd', 'en-US');
+    }else{
+      // Formato brasileiro DD/MM/YYYY
+      const [dia, mes, ano] = this.editForm.value.data.split('/');
+      dataFormatada = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
+      dataFormatada = formatDate(dataFormatada, 'yyyy-MM-dd', 'en-US');
+    }
+
+    const dadosAtualizados: Partial<Amostra> = {
+      data: dataFormatada,
+      numero: this.editForm.value.numero,
+      classificacao: this.editForm.value.classificacao,
+      responsavel: this.editForm.value.responsavel,
+    };
+    console.log(dadosAtualizados);
+    this.amostraService.editAmostraOrdem(idSalvar, dadosAtualizados).subscribe({
+      next:() =>{       
+        this.editFormVisible = false;
+        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Amostra atualizada com sucesso!!', life: 1000 });
+        this.loadAnalises();
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });
+  }
+
+  saveEditExpressa(idSalvar: number ){
+  
+
+    let dataFormatada = null;
+    
+    // Formato brasileiro DD/MM/YYYY
+    const [dia, mes, ano] = this.editForm.value.data.split('/');
+    dataFormatada = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
+    dataFormatada = formatDate(dataFormatada, 'yyyy-MM-dd', 'en-US');
+
+    const dadosAtualizados: Partial<Amostra> = {
+     
+      data: dataFormatada,
+      numero: this.editForm.value.numero,
+      classificacao: this.editForm.value.classificacao,
+      responsavel: this.editForm.value.responsavel,
+    };
+    console.log(dadosAtualizados);
+    this.amostraService.editAmostraExpressa(idSalvar, dadosAtualizados).subscribe({
+      next:() =>{       
+        this.editFormVisible = false;
+        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Amostra atualizada com sucesso!!', life: 1000 });
+        this.loadAnalises();
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });
+  }
+
+  receberDadosAmostra(): void {
     // Tentar receber via navigation state
     if (window.history.state && window.history.state.amostraData) {
       this.amostraData = window.history.state.amostraData;
@@ -454,10 +589,10 @@ gerarNumero(materialNome: string, sequencial: number): string {
   return `${materialNome} ${parte1}.${parte2}`;
 }
 
-private normalize(str: string): string {
-  if (!str) return '';
-  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
-}
+  private normalize(str: string): string {
+    if (!str) return '';
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  }
 
   analisesFiltradas: any[] = []; // array para exibir na tabela
   materiaisSelecionados: string[] = []; // valores escolhidos no multiselect
@@ -477,7 +612,7 @@ private normalize(str: string): string {
 
         
         }));
-
+ console.log('Aqui', this.analises);
         // Inicializa a lista filtrada
         this.analisesFiltradas = [...this.analises];
 
@@ -561,7 +696,7 @@ private normalize(str: string): string {
         }
       });
     } else {
-      console.log(`❌ ultimo_ensaio.ensaios_utilizados não encontrado para análise ${analise.id}`);
+      // console.log(`❌ ultimo_ensaio.ensaios_utilizados não encontrado para análise ${analise.id}`);
     }
   }
 
@@ -1938,6 +2073,99 @@ private normalize(str: string): string {
     //   // doc.save("Etiqueta.pdf");
   }
 
+  duplicata(amostra: any): void {
+    this.confirmationService.confirm({
+      message: `Tem certeza que deseja fazer a duplicata?`,
+      header: 'Confirmar Duplicata',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Não',
+      accept: () => {
+        
+        const novaAmostra = JSON.parse(JSON.stringify(amostra));
+        //zera id
+        delete novaAmostra.id;
+        
+        
+          console.log(novaAmostra);
+
+          this.amostraService.registerAmostra(
+            novaAmostra.material,
+            novaAmostra.finalidade,
+            novaAmostra.numeroSac,
+            novaAmostra.data_envia,
+            novaAmostra.destino_envio,
+            novaAmostra.data_recebimento,
+            novaAmostra.reter,
+            novaAmostra.registro_ep,
+            novaAmostra.registro_produto,
+            novaAmostra.numero_lote,
+            novaAmostra.data_coleta,
+            novaAmostra.data_entrada,
+            novaAmostra.numero,
+            novaAmostra.tipoAmostra,
+            novaAmostra.subtipo,
+            novaAmostra.produtoAmostra,
+            novaAmostra.codDb,
+            novaAmostra.estado_fisico,
+            novaAmostra.periodo_Hora,
+            novaAmostra.periodo_turno,
+            novaAmostra.tipo_amostragem,
+            novaAmostra.local_coleta,
+            novaAmostra.fornecedor,
+            novaAmostra.representatividade_lote,
+            novaAmostra.identificacao_complementar,
+            novaAmostra.complemento,
+            novaAmostra.observacoes,
+            novaAmostra.ordem,
+            null,
+            novaAmostra.digitador,
+            novaAmostra.status
+          ).subscribe({
+            next: (amostraCriada) => {
+              console.log('Amostra duplicada:', amostraCriada);
+              
+              this.messageService.add({ 
+                severity: 'success', 
+                summary: 'Sucesso', 
+                detail: 'Duplicata registrada com sucesso.' 
+              });
+              
+              
+            },
+            error: (err) => {
+              console.error('Erro ao registrar amostra:', err);
+              if (err.status === 401) {
+                this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+              } else if (err.status === 403) {
+                this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+              } else if (err.status === 400) {
+                this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+              } else {
+                this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+              }
+            }
+          });
+        },
+      
+    });
+  }
+
+  getTipoOrdem(tipoOrdem: string): 'info' | 'warn' | 'secondary' | 'contrast' | undefined {
+
+    switch (tipoOrdem) {
+      case 'expressa':
+        return 'warn';
+      case 'normal':
+        return 'contrast';
+      case 'mineracao':
+        return 'contrast';
+      default:
+        return 'secondary';
+    }
+
+  }
+
   imprimirLaudoCalcPDF(amostra_detalhes_selecionada: any) {
 
     const doc = new jsPDF({ 
@@ -2305,41 +2533,93 @@ private normalize(str: string): string {
   //   // doc.save("Etiqueta.pdf");
   }
 
+  excluirAmostraOrdem(id: any): void {
+    this.confirmationService.confirm({
+      message: `Tem certeza que deseja excluir a os ${id}?`,
+      header: 'Confirmar Exclusão',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Não',
+      accept: () => {
+        this.amostraService.deleteAmostraOrdem(id).subscribe({
+          next: () => {
+            this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Amostra excluída com sucesso!!', life: 1000 });
+            setTimeout(() => {
+              window.location.reload(); // Atualiza a página após a exclusão
+            }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+          },
+          error: (err) => {
+            if (err.status === 403) {
+              this.messageService.add({ severity: 'error', summary: 'Erro de autorização!', detail: 'Você não tem permissão para realizar esta ação.', life: 2000 });
+            } 
+            if (err.status === 500) {
+              this.messageService.add({ severity: 'error', summary: 'Erro de exclusão!', detail: 'Não é possível excluir, pois esta OS já está associada a uma análise! ', life: 2000 });
+            } 
+          }
+        });
+      },
+      reject: () => {
+        this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 1000 });
+      }
+    });
+  }
+
+  excluirAmostraExpressa(id: any): void {
+    this.confirmationService.confirm({
+      message: `Tem certeza que deseja excluir a os ${id}?`,
+      header: 'Confirmar Exclusão',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Não',
+      accept: () => {
+        this.amostraService.deleteAmostraExpressa(id).subscribe({
+          next: () => {
+            this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Amostra excluída com sucesso!!', life: 1000 });
+            setTimeout(() => {
+              window.location.reload(); // Atualiza a página após a exclusão
+            }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+          },
+          error: (err) => {
+            if (err.status === 403) {
+              this.messageService.add({ severity: 'error', summary: 'Erro de autorização!', detail: 'Você não tem permissão para realizar esta ação.', life: 2000 });
+            } 
+            if (err.status === 500) {
+              this.messageService.add({ severity: 'error', summary: 'Erro de exclusão!', detail: 'Não é possível excluir, pois esta OS já está associada a uma análise! ', life: 2000 });
+            } 
+          }
+        });
+      },
+      reject: () => {
+        this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 1000 });
+      }
+    });
+  }
+
   getMenuItems(analise: any) {
     const menuItems = [
       { label: 'IMPRIMIR', icon: 'pi pi-print', command: () => this.imprimirCalculoPDF(analise) },
-      { label: 'Editar', icon: 'pi pi-pencil', command: () => this.editarAnalise(analise) },
-      { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluirAnalise(analise) },
+      { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(analise) },
+      { label: 'Excluir', icon: 'pi pi-trash', command: () => { 
+        if (analise.expressa_detalhes) {
+          this.excluirAmostraExpressa(analise.expressa_detalhes.id);
+        } else {
+          this.excluirAmostraOrdem(analise.ordem_detalhes.id);
+        }} 
+      },
       { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise) },
+      { label: 'Duplicata', icon: 'pi pi-file-import', command: () => this.duplicata(analise) },
     ];
 
-    // Debug: verificar o valor da propriedade
-    //console.log('analise completa:', analise);
-    //console.log('analise.finalizada:', analise.finalizada, typeof analise.finalizada);
-
-    // Verificar se a análise está finalizada (aceitar boolean true ou number 1 ou string '1')
-    // if (analise && (
-    //     analise.finalizada === true || 
-    //     analise.finalizada === 1 || 
-    //     analise.finalizada === '1'
-    // )) {
-    //   menuItems.push({
-    //     label: 'Encaminhar para Laudo',
-    //     icon: 'pi pi-book',
-    //     command: () => this.laudoAnalise(analise)
-    //   });
-    // }
-
     return menuItems;
-}
+  }
 
-getStatusIcon(status: boolean): string {
-  return status ? 'pi-check-circle' : 'pi-times-circle';
-}
+  getStatusIcon(status: boolean): string {
+    return status ? 'pi-check-circle' : 'pi-times-circle';
+  }
 
-getStatusColor(status: boolean): string {
-  return status ? '#22c55e' : '#ef4444';
-}
+  getStatusColor(status: boolean): string {
+    return status ? '#22c55e' : '#ef4444';
+  }
 
     
   // ================ MÉTODOS DE AÇÕES DAS ANÁLISES ================
@@ -2351,41 +2631,6 @@ getStatusColor(status: boolean): string {
       severity: 'info',
       summary: 'Informação',
       detail: 'Funcionalidade em desenvolvimento'
-    });
-  }
-
-  /**
-   * Edita uma análise
-   */
-  editarAnalise(analise: any): void {
-    console.log('Editando análise:', analise);
-    // Implementar edição da análise
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Informação',
-      detail: 'Funcionalidade em desenvolvimento'
-    });
-  }
-
-  /**
-   * Exclui uma análise
-   */
-  excluirAnalise(analise: any): void {
-    this.confirmationService.confirm({
-      message: `Tem certeza que deseja excluir a análise ${analise.id}?`,
-      header: 'Confirmar Exclusão',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Sim',
-      rejectLabel: 'Não',
-      accept: () => {
-        // Implementar exclusão
-        console.log('Excluindo análise:', analise);
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Informação',
-          detail: 'Funcionalidade em desenvolvimento'
-        });
-      }
     });
   }
 

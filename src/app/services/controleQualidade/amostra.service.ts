@@ -9,12 +9,15 @@ import { Amostra } from '../../pages/controleQualidade/amostra/amostra.component
   providedIn: 'root'
 })
 export class AmostraService {
-  private tipoAmostraUrl = 'http://localhost:8000/amostra/tipoAmostra/';
-  private amostraUrl = 'http://localhost:8000/amostra/amostra/';
-  private imageUrl = 'http://localhost:8000/amostra/amostraImagem/';
-  private produtoUrl = 'http://localhost:8000/amostra/produto/';
-  private sequencialUrl = 'http://localhost:8000/amostra/amostra/proximo-sequencial/';
-  private representatividadeUrl = 'http://localhost:8000/cal/representatividade/';
+
+  private amostraExpressaUrl = 'http://172.50.10.79:8008/ordem/expressa/';
+  private amostraOrdemUrl = 'http://172.50.10.79:8008/ordem/ordem/';
+  private tipoAmostraUrl = 'http://172.50.10.79:8008/amostra/tipoAmostra/';
+  private amostraUrl = 'http://172.50.10.79:8008/amostra/amostra/';
+  private imageUrl = 'http://172.50.10.79:8008/amostra/amostraImagem/';
+  private produtoUrl = 'http://172.50.10.79:8008/amostra/produto/';
+  private sequencialUrl = 'http://172.50.10.79:8008/amostra/amostra/proximo-sequencial/';
+  private representatividadeUrl = 'http://172.50.10.79:8008/cal/representatividade/';
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
@@ -114,13 +117,36 @@ atualizarDescricaoImagem(imagemId: number, descricao: string): Observable<any> {
     return this.http.get<any[]>(url);
   }
   getAmostraById(amostraId: number): Observable<any> {
-  const url = `${this.amostraUrl}${amostraId}/`;
-  return this.http.get(url, this.httpOptions);
-}
+    const url = `${this.amostraUrl}${amostraId}/`;
+    return this.http.get(url, this.httpOptions);
+  }
+
   editAmostra(id: number, dadosAtualizados: Partial<Amostra>): Observable<any>{
     const url = `${this.amostraUrl}${id}/`;
     return this.http.patch<any>(url, dadosAtualizados);
   }
+  
+
+  editAmostraExpressa(id: number, dadosAtualizados: Partial<Amostra>): Observable<any>{
+    const url = `${this.amostraExpressaUrl}${id}/`;
+    return this.http.patch<any>(url, dadosAtualizados);
+  }
+
+  editAmostraOrdem(id: number, dadosAtualizados: Partial<Amostra>): Observable<any>{
+    const url = `${this.amostraOrdemUrl}${id}/`;
+    return this.http.patch<any>(url, dadosAtualizados);
+  }
+
+  deleteAmostraOrdem(id: number): Observable<any>{
+    const url = `${this.amostraOrdemUrl}${id}/`;
+    return this.http.delete(url);
+  }
+
+  deleteAmostraExpressa(id: number): Observable<any>{
+    const url = `${this.amostraExpressaUrl}${id}/`;
+    return this.http.delete(url);
+  }
+
   deleteAmostra(id: number): Observable<any>{
     const url = `${this.amostraUrl}${id}/`;
     return this.http.delete(url);
