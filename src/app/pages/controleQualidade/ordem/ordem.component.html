@@ -353,6 +353,7 @@
                                         </th>
                                         <th style="width: 15%; text-align: left;" type="text" field="numero" display="menu">Classificação da OS</th>
                                         <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">Responsável</th>
+                                        <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">Tipo</th>
                                         <th style="width: 24%; text-align: center;" type="text" field="acoes"display="menu">Opções</th>
                                         <th style="width: 2%; text-align: center;" type="text" field="finalizada" display="menu">Finalizada</th>
                                         <th style="width: 2%; text-align: center;" type="text" field="laudo" display="menu">Laudo</th>
@@ -377,6 +378,12 @@
                                             </td>
                                             <td style="text-align: left;"> {{ analise.amostra_detalhes.expressa_detalhes.classificacao }} </td>
                                             <td style="text-align: left;"> {{ analise.amostra_detalhes.expressa_detalhes.responsavel }} </td>
+                                            <td style="text-align: left;"> 
+                                                <p-tag
+                                                    [value]="'Expressa'"
+                                                    [severity]="getTipoOrdem('expressa')"
+                                                />
+                                            </td>
                                         </ng-container>
                                         <ng-template #ensaioDetalhes>
                                             <td style="text-align: left;">
@@ -384,6 +391,12 @@
                                             </td>
                                             <td style="text-align: left;"> {{ analise.amostra_detalhes.ordem_detalhes.classificacao }} </td>
                                             <td style="text-align: left;"> {{ analise.amostra_detalhes.ordem_detalhes.responsavel }} </td>
+                                            <td style="text-align: left;">
+                                                <p-tag
+                                                    [value]="'Normal'"
+                                                    [severity]="getTipoOrdem('normal')"
+                                                />
+                                            </td>
                                         </ng-template>
                                       
                                         <td style="text-align: center;">

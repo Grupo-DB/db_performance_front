@@ -270,7 +270,7 @@ export class OrdemComponent implements OnInit {
   }
   
 
- ngOnInit() {
+  ngOnInit() {
     this.receberDadosAmostra();
     setTimeout(() => {
       if (!this.amostraData) {
@@ -2073,6 +2073,21 @@ gerarNumero(materialNome: string, sequencial: number): string {
     //   // doc.save("Etiqueta.pdf");
   }
 
+  getTipoOrdem(tipoOrdem: string): 'info' | 'warn' | 'secondary' | 'contrast' | undefined {
+
+    switch (tipoOrdem) {
+      case 'expressa':
+        return 'warn';
+      case 'normal':
+        return 'contrast';
+      case 'mineracao':
+        return 'contrast';
+      default:
+        return 'secondary';
+    }
+
+  }
+
   imprimirLaudoCalcPDF(amostra_detalhes_selecionada: any) {
 
     const doc = new jsPDF({ 
@@ -2538,30 +2553,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
       summary: 'Informação',
       detail: 'Funcionalidade em desenvolvimento'
     });
-  }
-
-  /**
-   * Exclui uma análise
-   */
-  excluirAnalise(analise: any): void {
-        console.log(analise);
-
-    // this.confirmationService.confirm({
-    //   message: `Tem certeza que deseja excluir a análise ${analise.id}?`,
-    //   header: 'Confirmar Exclusão',
-    //   icon: 'pi pi-exclamation-triangle',
-    //   acceptLabel: 'Sim',
-    //   rejectLabel: 'Não',
-    //   accept: () => {
-    //     // Implementar exclusão
-    //     console.log('Excluindo análise:', analise);
-    //     this.messageService.add({
-    //       severity: 'info',
-    //       summary: 'Informação',
-    //       detail: 'Funcionalidade em desenvolvimento'
-    //     });
-    //   }
-    // });
   }
 
   /**
