@@ -44,39 +44,24 @@
 </div>
 
 <div class="container">
-    <form
-        [formGroup]="registerForm"
-        title="Cadastrar novo Ensaio"
-        (submit)="submit()"
-        enctype="multipart/form-data"
-    >
-        <div class="form-geral flex flex-column align-items-center" @swipeAnimation>
-            <div class="w-11 mt-5">
-                <p-card class="card">
-                    <ng-template #header>
-                        <div class="header">
-                            <h2>Cadastrar novo Ensaio</h2>
-                        </div>
-                    </ng-template>
-                    <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation>
-                        <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
-                            <div class="form2 w-10 mb-3 mt-3">
-                                <p-floatlabel variant="on">
-                                    <p-iconfield>
-                                        <p-inputicon class="pi pi-file-edit" />
-                                        <input
-                                            variant="filled"
-                                            [style]="{'width':'100%'}"
-                                            pInputText id="on_label"
-                                            autocomplete="off"
-                                            formControlName="descricao"
-                                            type="text"
-                                        />
-                                    </p-iconfield>
-                                    <label for="on_label">Digite a descrição</label>
-                                </p-floatlabel>
+    <div class="containerInterno w-12">
+
+        <form
+            [formGroup]="registerForm"
+            title="Cadastrar novo Ensaio"
+            (submit)="submit()"
+            enctype="multipart/form-data"
+        >
+            <div class="form-geral flex flex-column align-items-center" @swipeAnimation>
+                <div class="w-12 mt-5">
+                    <p-card class="card">
+                        <ng-template #header>
+                            <div class="header">
+                                <h2>Cadastrar Novo Ensaio</h2>
                             </div>
-                            <div class="flex w-10 ">
+                        </ng-template>
+                        <div class="form-geral flex flex-column lg:flex-row"@swipeAnimation>
+                            <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
                                 <div class="form2 w-12 mb-3 mt-3">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
@@ -86,164 +71,175 @@
                                                 [style]="{'width':'100%'}"
                                                 pInputText id="on_label"
                                                 autocomplete="off"
-                                                formControlName="funcao"
+                                                formControlName="descricao"
                                                 type="text"
-                                                [readOnly]="true"
-
                                             />
                                         </p-iconfield>
-                                        <label for="on_label">Cálculo</label>
+                                        <label for="on_label">Digite a descrição</label>
                                     </p-floatlabel>
                                 </div>
-                                <div class="form2 flex w-1 mb-3 mt-3">
-                                    <button pButton type="button" icon="pi pi-plus" (click)="montarFormula()"></button> 
-                                </div>
-                            </div>
-                            <div class="form2 flex flex-column md:flex-row w-10 mb-3 mt-3">
-                                <div class="w-6 text-left md:mb-3 lg:mr-1">
-                                    <p-floatLabel variant="on">
-                                                <p-inputNumber 
+                                <div class="flex w-12 ">
+                                    <div class="form2 w-12 mb-3 mt-3">
+                                        <p-floatlabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-file-edit" />
+                                                <input
                                                     variant="filled"
-                                                    mode="decimal"
-                                                    formControlName="tempoPrevistoValor"
-                                                    [showButtons]="true" 
-                                                    inputId="tempo" 
-                                                    [min]="0" 
-                                                    [max]="9999"
-                                                    [useGrouping]="false" 
-                                                />
-                                                <label for="tempo">Tempo Previsto</label>
-                                    </p-floatLabel>     
-                                </div>
-                                
-                                <div class="w-8 text-left">    
-                                    <p-floatLabel variant="on"> 
-                                        <p-select
-                                            inputId="float-label"
-                                            [style]="{'width':'100%'}"
-                                            [options]="unidades" 
-                                            formControlName="tempoPrevistoUnidade"
-                                            optionLabel="value"
-                                            optionValue="value"
-                                            appendTo="body"
-                                            [filter]="true" 
-                                            filterBy="value"
-                                            [showClear]="true"
+                                                    [style]="{'width':'100%'}"
+                                                    pInputText id="on_label"
+                                                    autocomplete="off"
+                                                    formControlName="funcao"
+                                                    type="text"
+                                                    [readOnly]="true"
 
-                                        >
-                                        </p-select>
-                                        <label for="float-label">Informe a Unidade de tempo</label>
-                                    </p-floatLabel>
-                                </div>    
-                            </div>
-                        </div>
-                        <div class="fg1 flex flex-column w-12 align-items-center lg:w-6">
-                            <div class="form2 w-10 mb-3 mt-3" *ngIf="registerForm.get('tipoEnsaio')?.value===7">
-                                <p-floatlabel variant="on">
-                                    <p-iconfield>
-                                        <p-inputicon class="pi pi-file-edit" />
-                                        <input
-                                            variant="filled"
-                                            [style]="{'width':'100%'}"
-                                            pInputText id="on_label"
-                                            autocomplete="off"
-                                            formControlName="valor"
-                                            type="text"
-                                            
-                                        />
-                                    </p-iconfield>
-                                    <label for="on_label">Digite o valor</label>
-                                </p-floatlabel>
-                            </div>
-                            
-                                    <div class="form2 w-10 mb-3 mt-3 text-left">
+                                                />
+                                            </p-iconfield>
+                                            <label for="on_label">Cálculo</label>
+                                        </p-floatlabel>
+                                    </div>
+                                    <div class="form2 flex w-1 mb-3 mt-3">
+                                        <button pButton type="button" icon="pi pi-plus" (click)="montarFormula()"></button> 
+                                    </div>
+                                </div>
+                                <div class="form2 flex flex-column md:flex-row w-12 mb-3 mt-3">
+                                    <div class="w-12 text-left md:mb-3 lg:mr-1">
+                                        <p-floatLabel variant="on">
+                                            <p-inputNumber 
+                                                variant="filled"
+                                                mode="decimal"
+                                                formControlName="tempoPrevistoValor"
+                                                [showButtons]="true" 
+                                                inputId="tempo" 
+                                                [min]="0" 
+                                                [max]="9999"
+                                                [useGrouping]="false" 
+                                            />
+                                        <label for="tempo">Tempo Previsto</label>
+                                        </p-floatLabel>     
+                                    </div>
+                                    
+                                    <div class="w-12 text-left">    
                                         <p-floatLabel variant="on"> 
                                             <p-select
-                                                variant="filled"
                                                 inputId="float-label"
                                                 [style]="{'width':'100%'}"
-                                                [options]="tiposEnsaio" 
-                                                formControlName="tipoEnsaio"
-                                                optionLabel="nome"
-                                                optionValue="id"
-                                                [filter]="true" 
-                                                filterBy="nome"
-                                                [showClear]="true"
+                                                [options]="unidades" 
+                                                formControlName="tempoPrevistoUnidade"
+                                                optionLabel="value"
+                                                optionValue="value"
                                                 appendTo="body"
+                                                [filter]="true" 
+                                                filterBy="value"
+                                                [showClear]="true"
+
                                             >
                                             </p-select>
-                                            <label for="float-label">Selecione o Tipo de Ensaio</label>
-                                        </p-floatLabel> 
-                                    </div>
-                                <div class="flex flex-row w-10 mt-3 gap-1">    
-                                    <div class="w-6">
-                                        <p-floatlabel variant="on">
-                                            <p-iconfield>
-                                                <p-inputicon class="pi pi-file-edit" />
-                                                <input
+                                            <label for="float-label">Informe a Unidade de tempo</label>
+                                        </p-floatLabel>
+                                    </div>    
+                                </div>
+                            </div>
+                            <div class="fg1 flex flex-column w-12 align-items-center lg:w-6 ml-4">
+                                <div class="form2 w-12 mb-3 mt-3" *ngIf="registerForm.get('tipoEnsaio')?.value===7">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-file-edit" />
+                                            <input
+                                                variant="filled"
+                                                [style]="{'width':'100%'}"
+                                                pInputText id="on_label"
+                                                autocomplete="off"
+                                                formControlName="valor"
+                                                type="text"
+                                                
+                                            />
+                                        </p-iconfield>
+                                        <label for="on_label">Digite o valor</label>
+                                    </p-floatlabel>
+                                </div>
+                                
+                                        <div class="form2 w-12 mb-3 mt-3 text-left">
+                                            <p-floatLabel variant="on"> 
+                                                <p-select
                                                     variant="filled"
+                                                    inputId="float-label"
                                                     [style]="{'width':'100%'}"
-                                                    pInputText id="on_label"
-                                                    autocomplete="off"
-                                                    formControlName="unidade"
-                                                    type="text"
-                                                />
-                                            </p-iconfield>
-                                            <label for="on_label">Digite a Unidade</label>
-                                        </p-floatlabel>
-                                    </div>
-                                    <div class="w-6">
-                                        <p-floatlabel variant="on">
-                                            <p-iconfield>
-                                                <p-inputicon class="pi pi-file-edit" />
-                                                <input
-                                                    variant="filled"
-                                                    [style]="{'width':'100%'}"
-                                                    pInputText id="on_label"
-                                                    autocomplete="off"
-                                                    formControlName="norma"
-                                                    type="text"
-                                                />
-                                            </p-iconfield>
-                                            <label for="on_label">Digite a norma</label>
-                                        </p-floatlabel>
-                                    </div>
-                                </div>    
+                                                    [options]="tiposEnsaio" 
+                                                    formControlName="tipoEnsaio"
+                                                    optionLabel="nome"
+                                                    optionValue="id"
+                                                    [filter]="true" 
+                                                    filterBy="nome"
+                                                    [showClear]="true"
+                                                    appendTo="body"
+                                                >
+                                                </p-select>
+                                                <label for="float-label">Selecione o Tipo de Ensaio</label>
+                                            </p-floatLabel> 
+                                        </div>
+                                    <div class="flex flex-row w-12 mt-3 gap-1">    
+                                        <div class="w-6">
+                                            <p-floatlabel variant="on">
+                                                <p-iconfield>
+                                                    <p-inputicon class="pi pi-file-edit" />
+                                                    <input
+                                                        variant="filled"
+                                                        [style]="{'width':'100%'}"
+                                                        pInputText id="on_label"
+                                                        autocomplete="off"
+                                                        formControlName="unidade"
+                                                        type="text"
+                                                    />
+                                                </p-iconfield>
+                                                <label for="on_label">Digite a Unidade</label>
+                                            </p-floatlabel>
+                                        </div>
+                                        <div class="w-6">
+                                            <p-floatlabel variant="on">
+                                                <p-iconfield>
+                                                    <p-inputicon class="pi pi-file-edit" />
+                                                    <input
+                                                        variant="filled"
+                                                        [style]="{'width':'100%'}"
+                                                        pInputText id="on_label"
+                                                        autocomplete="off"
+                                                        formControlName="norma"
+                                                        type="text"
+                                                    />
+                                                </p-iconfield>
+                                                <label for="on_label">Digite a norma</label>
+                                            </p-floatlabel>
+                                        </div>
+                                    </div>    
+                            </div>
                         </div>
-                    </div>
-                </p-card>
-            </div>
-        </div>        
-    </form>
-
-</div>
-<div class="container flex flex-column align-items-center">
-    <div class="flex justify-content-center mb-5 mt-5 gap-2"@efeitoFade>
-        <p-toast></p-toast>
-        
-        <p-button 
-            icon="pi pi-eraser" 
-            severity="primary"
-            label="Limpar" 
-            size="large" [raised]="true" 
-            (onClick)="clearForm()"
-            pTooltip="Limpar Formulário" 
-            tooltipPosition="top">
-        </p-button>
-        <p-button 
-            icon="pi pi-save" 
-            severity="success"
-            label="Salvar" 
-            size="large" 
-            [raised]="true" 
-            (onClick)="submit()"
-            pTooltip="Salvar ensaio" 
-            tooltipPosition="top">
-        </p-button>
-
+                        <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                            <p-button 
+                                (onClick)="clearForm()" 
+                                label="Limpar"
+                                iconPos="right"  
+                                tooltipPosition="top"
+                                pTooltip="Limpar"
+                                icon="pi pi-eraser"
+                            />
+                            <p-button 
+                                (onClick)="submit()" 
+                                label="Salvar" 
+                                severity="success"
+                                icon="pi pi-save" 
+                                iconPos="right" 
+                                tooltipPosition="top"
+                                pTooltip="Salvar"
+                            />
+                        </div>
+                    </p-card>
+                </div>
+            </div>        
+        </form>
     </div>
-
-    <div class="step1 mt-4 w-11"@swipeAnimation>
+</div>
+<div class="containerInterno container flex flex-column align-items-center">
+    <div class="step1 mt-4 w-12"@swipeAnimation>
         <div class="tabela text-left w-12">
             <p-toast />
             <p-confirmDialog />
