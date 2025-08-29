@@ -1,17 +1,10 @@
 <div class="container flex flex-column align-items-center mb-4">
 
-    <div class="titulo mt-2 mb-0 w-12 text-2xl">
-        <p-divider align="left" type="solid">
-            <b>Cadastro de Áreas</b>
-        </p-divider>
-    </div>
-
     <div class="containerInterno w-12">
-        <div class="background-form" @swipeAnimation>
+        <div @swipeAnimation>
 
             <form
                 [formGroup]="registerareaForm" title="Cadastrar nova Área" class="flex flex-column gap-4" 
-                
             >
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
 
@@ -20,7 +13,7 @@
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
                                 <div class="header w-full text-center">
-                                    <h2>Inserir Nova</h2>
+                                    <h2>Inserir Nova Área</h2>
                                 </div>
                             </ng-template>
                             <div class="flex flex-column w-12 gap-3">
@@ -80,15 +73,16 @@
                                     iconPos="right"  
                                     tooltipPosition="top"
                                     pTooltip="Limpar"
+                                    icon="pi pi-eraser"
                                 />
                                 <p-button 
                                     (onClick)="submit()" 
-                                    label="Salvar Área" 
+                                    label="Salvar" 
                                     severity="success"
-                                    icon="pi pi-check" 
+                                    icon="pi pi-save" 
                                     iconPos="right" 
                                     tooltipPosition="top"
-                                    pTooltip="Salvar Área"
+                                    pTooltip="Salvar"
                                 />
                             </div>
                         </p-card>
@@ -99,7 +93,7 @@
         </div>
 
         <div class="background-form mt-4 w-12" @swipeAnimation>
-            <div class="tabela text-left w-12">
+            <div class="text-left w-12">
                 <p-toast />
                 <p-confirmDialog />
                 <p-inplace closable="true" closeIcon="pi pi-angle-up">
@@ -148,7 +142,7 @@
                                 </div>
                             </ng-template>
                             <ng-template pTemplate="header">
-                                <tr>
+                                <tr class="tabela">
                                     <th style="width:25%" type="text" field="nome" display="menu">
                                         Nome
                                     </th>
@@ -167,22 +161,26 @@
                                     <td style="text-align: center;">{{ getNomeEmpresa(area.empresa) }}</td>
                                     <td style="text-align: center;">{{ getNomeFilial(area.filial) }}</td>
                                     <td style="text-align: center;">
-                                        <div style="display: flex; justify-content: center;">
+                                        <div class="flex justify-content-center gap-2">
                                             <p-button
-                                                label = "Editar"
-                                                class="ml-1"
-                                                tooltipPosition="top"
-                                                pTooltip="Abrir OS"
-                                                (onClick)="abrirModalEdicao(area)"
-                                            ></p-button>
+                                            icon="pi pi-file-edit" 
+                                            severity="primary" 
+                                            size="small" 
+                                            [raised]="true"
+                                            pTooltip="Editar" 
+                                            tooltipPosition="top"
+                                            (onClick)="abrirModalEdicao(area)">
+                                            </p-button>
+
                                             <p-button 
-                                                label = "Excluir"
-                                                severity="danger"
-                                                class="ml-2"
-                                                tooltipPosition="top"
-                                                pTooltip="OS Expressa"
-                                                (onClick)="excluirArea(area.id)"
-                                            ></p-button>
+                                            icon="pi pi-trash" 
+                                            severity="danger" 
+                                            size="small" 
+                                            [raised]="true"
+                                            pTooltip="Excluir" 
+                                            tooltipPosition="top"
+                                            (onClick)="excluirArea(area.id)">
+                                            </p-button>
                                         </div>
                                     </td>
                                 </tr>
@@ -283,18 +281,18 @@
                                 <p-button 
                                     (onClick)="cleareditForm()" 
                                     label="Limpar"
-                                    iconPos="right"  
-                                    tooltipPosition="top"
+                                    iconPos="right"                                      tooltipPosition="top"
                                     pTooltip="Limpar"
+                                    icon="pi pi-eraser" 
                                 />
                                 <p-button 
                                     (onClick)="saveEdit()" 
                                     label="Salvar" 
                                     severity="success"
-                                    icon="pi pi-check" 
+                                    icon="pi pi-save" 
                                     iconPos="right" 
                                     tooltipPosition="top"
-                                    pTooltip="Salvar Área"
+                                    pTooltip="Salvar"
                                 />
                             </div>
                         </p-card>

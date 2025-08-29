@@ -1,4 +1,8 @@
 @import "primeicons/primeicons.css";
+:host ::ng-deep .p-card-body{
+    background-color: #f8f9fa;
+    border-radius: 0 0 10px 10px;
+}
 .tabela{
     background-color: #3B3E44;
     color: #ffffff;
