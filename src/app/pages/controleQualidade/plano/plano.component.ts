@@ -31,6 +31,7 @@ import { MultiSelect, MultiSelectModule } from 'primeng/multiselect';
 import { id } from 'date-fns/locale';
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
+import { PickListModule } from 'primeng/picklist';
 
 interface RegisterPlanoForm{
   descricao: FormControl,
@@ -50,7 +51,7 @@ export interface Plano{
 @Component({
   selector: 'app-plano',
   imports: [
-    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,InputNumberModule,AutoCompleteModule,MultiSelectModule, CardModule, InplaceModule,
+    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,InputNumberModule,AutoCompleteModule,MultiSelectModule, CardModule, InplaceModule, PickListModule
   ],
   animations:[
     trigger('efeitoFade',[
@@ -105,6 +106,10 @@ export class PlanoComponent implements OnInit {
   planosAnalise: any[] = [];
   ensaios: Ensaio[] = [];
   calculosEnsaio: CalculoEnsaio[] = [];
+  calculos: any[] = [];
+  targetCalculos!: CalculoEnsaio[];
+
+  targetEnsaios!: Ensaio[];
 
   registerForm!: FormGroup<RegisterPlanoForm>;
   editForm!: FormGroup;
@@ -138,9 +143,15 @@ export class PlanoComponent implements OnInit {
     return this.loginService.hasAnyGroup(groups);
   }
   ngOnInit(): void {
+    this.targetEnsaios = [];
+    this.targetCalculos = [];
     this.loadPlanos();
     this.loadEnsaios();
     this.loadCalculosEnsaio();
+  }
+
+  trackByFn(index: number, item: any): any {
+    return item.id ?? index; // usa 'id' se existir, senão o índice
   }
   loadPlanos(){
     this.ensaioService.getPlanoAnalise().subscribe(

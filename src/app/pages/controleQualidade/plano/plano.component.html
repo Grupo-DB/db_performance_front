@@ -82,42 +82,67 @@
                                 </div>
 
                                 <div class="w-12 text-left">
-                                    <p-floatlabel variant="on">
-                                        <p-multiselect
-                                            inputId="float-label"
-                                            [style]="{'width':'100%'}"
-                                            [options]="ensaios" 
-                                            formControlName="ensaios"
-                                            optionLabel="descricao"
-                                            optionValue="id"
-                                            appendTo="body"
-                                            [filter]="true" 
-                                            filterBy="value"
-                                            [showClear]="true"
-                                        >
-                                        </p-multiselect>
-                                        <label for="float-label">Selecione o(s) Ensaio(s)</label>
-                                    </p-floatlabel>
+                                    <div class="mt-2 mb-0 w-12 ">
+                                        <p-divider align="left" type="solid">
+                                            <b>Selecione os Ensaios para OS</b>
+                                        </p-divider>
+                                    </div>
+                                    <p-pickList 
+                                        [source]="ensaios" 
+                                        [target]="targetEnsaios" 
+                                        sourceHeader="Ensaios"
+                                        targetHeader="Selecionados" 
+                                        [dragdrop]="true" 
+                                        [responsive]="true"
+                                        [sourceStyle]="{ height: '20rem' }" 
+                                        [targetStyle]="{ height: '20rem' }" filterBy="descricao"
+                                        sourceFilterPlaceholder="Pesquisa por nome" targetFilterPlaceholder="Pesquisa por nome"
+                                        breakpoint="412px"
+                                        styleClass="picklist-black"
+                                        [trackBy]="trackByFn"
+                                    >
+                                        <ng-template let-ensaio pTemplate="item">
+                                            <div class="flex flex-wrap p-2 align-items-center gap-3">
+                                                <div class="flex-1 flex flex-column gap-2">
+                                                    <span class="font-bold">{{ ensaio.descricao }}</span>
+                                                    <div class="flex align-products-center gap-2">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                    </p-pickList>
                                 </div>
 
                                 <div class="w-12 text-left">
-                                    <p-floatlabel variant="on">
-                                        <p-multiselect
-                                            inputId="float-label"
-                                            [style]="{'width':'100%'}"
-                                            [options]="calculosEnsaio" 
-                                            formControlName="calculos_ensaio"
-                                            optionLabel="descricao"
-                                            optionValue="id"
-                                            appendTo="body"
-                                            [filter]="true" 
-                                            filterBy="value"
-                                            [showClear]="true"
-                                            
+                                    <div class="mt-2 mb-0 w-12 ">
+                                        <p-divider align="left" type="solid">
+                                            <b>Selecione os Cálculos para OS</b>
+                                        </p-divider>
+                                    </div>
+                                    <p-pickList 
+                                        [source]="calculosEnsaio" 
+                                        [target]="targetCalculos"
+                                        [trackBy]="trackByFn"
+                                        sourceHeader="Cálculos"
+                                        targetHeader="Selecionados"
+                                        [dragdrop]="true"
+                                        [responsive]="true"
+                                        [sourceStyle]="{ height: '50%' }" 
+                                        [targetStyle]="{ height: '30rem' }"
+                                        filterBy="descricao"
+                                        sourceFilterPlaceholder="Pesquisa por nome" 
+                                        targetFilterPlaceholder="Pesquisa por nome"
+                                        breakpoint="412px"
                                         >
-                                        </p-multiselect>
-                                        <label for="float-label">Selecione o(s) Cálculos de Ensaio(s)</label>
-                                    </p-floatlabel>
+                                        <ng-template let-ensaio pTemplate="item">
+                                            <div class="flex flex-wrap p-2 align-items-center gap-3">
+                                            <div class="flex-1 flex flex-column gap-2">
+                                                <span class="font-bold">{{ ensaio.descricao }}</span>
+                                            </div>
+                                            </div>
+                                        </ng-template>
+                                        </p-pickList>
+                                   
                                 </div>
                            
                             </div>
