@@ -1,13 +1,15 @@
 @import "primeicons/primeicons.css";
+:host ::ng-deep .p-card-body{
+    background-color: #f8f9fa;
+    border-radius: 0 0 10px 10px;
+}
 .container{
     max-width: 100%;
 }
 .containerInterno{
     background-color: #ffffff;
     border: 10px solid #ffffff;
-    border-radius: 20px;
     padding: 10px;
-    //box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
 .titulo{
@@ -18,12 +20,11 @@
 }
 
 .card{
-    .header{
-        background-color: #4A90E2;
+     .header{
+        background-color: #3B3E44;
         color: #ffffff;
         padding: 10px;
         border-radius: 10px 10px 0 0;
-        
         h2{
             color: #ffffff;
             font-weight: 700;
@@ -116,10 +117,14 @@
     }
 }
 .tabela{
+    background-color: #3B3E44;
+    color: #ffffff;
     border-radius: 10px;
     width: 100%;
     th{
         font-size: 14px;
+        background-color: #3B3E44 !important;
+        color: white !important;
     }
     td{
         font-size:12px ;
@@ -131,12 +136,6 @@
     button{
         margin-left: 1%;
     }
-}
-
-.tabela{
-    border-radius: 10px;
-    margin: auto;
-    width: 99%;
 }
 
 .td-acao{
