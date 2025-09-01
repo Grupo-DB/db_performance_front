@@ -32,6 +32,7 @@ import { id } from 'date-fns/locale';
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
 import { TooltipModule } from 'primeng/tooltip';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 interface RegisterCalculoEnsaioForm{
   descricao: FormControl;
@@ -59,8 +60,9 @@ export interface CalculoEnsaio{
     ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,
     InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,
     FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,
-    ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,
-    InputNumberModule,AutoCompleteModule, CardModule, InplaceModule, TooltipModule
+  ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,
+  InputNumberModule,AutoCompleteModule, CardModule, InplaceModule, TooltipModule,
+  MultiSelectModule
   ],
   providers: [
     MessageService,ConfirmationService
@@ -200,6 +202,9 @@ export class CalculoEnsaioComponent implements OnInit {
   editarFormulaVisivel: boolean = false;
   resultados: { ensaioId: number, valor: number }[] = [];
 
+  // Permite escolher Ensaios manualmente em vez de só inferir pela expressão
+  syncEnsaiosFromExpr = true;
+
   @HostListener('document:keydown.insert', ['$event'])
   handleInsertShortcut(event: KeyboardEvent) {
     event.preventDefault();
@@ -277,14 +282,14 @@ export class CalculoEnsaioComponent implements OnInit {
   adicionarBloco() {
     this.expressaoDinamica.push({ tipo: '', valor: '' });
     this.registerForm.get('funcao')?.setValue(this.getExpressaoString());
-    this.atualizarEnsaiosDoForm();
+  this.atualizarEnsaiosDoForm();
   }
 
   removerBloco(i: number) {
     if (this.expressaoDinamica.length > 1) {
       this.expressaoDinamica.splice(i, 1);
       this.registerForm.get('funcao')?.setValue(this.getExpressaoString());
-      this.atualizarEnsaiosDoForm();
+  this.atualizarEnsaiosDoForm();
     }
   }
 
@@ -422,6 +427,8 @@ salvarFormula() {
   const novaExpressao = this.getExpressaoString(); // monta a expressão a partir dos blocos
   this.registerForm.get('funcao')?.setValue(novaExpressao);
   this.montarFormulaVisivel = false;
+  // Atualiza a lista de ensaios se estiver sincronizando
+  this.atualizarEnsaiosDoForm();
 }
 
 salvarFormulaEditada() {
@@ -642,6 +649,9 @@ validarExpressaoComValores(expr: string): boolean {
 }
 
 private atualizarEnsaiosDoForm() {
+  // Se o usuário quiser controlar manualmente, não sobrescrever
+  if (!this.syncEnsaiosFromExpr) return;
+
   const descricoes = this.ensaios.map(e => e.descricao);
 
   // Pegua os ensaios usados na expressão, sem duplicatas
@@ -653,6 +663,19 @@ private atualizarEnsaiosDoForm() {
     .filter(e => !!e);
 
   this.registerForm.get('ensaios')?.setValue(usados.map(e => e.id));
+}
+
+// Callback do MultiSelect quando o usuário escolhe Ensaios manualmente
+onEnsaiosSelecionadosChange(ids: any[]) {
+  this.registerForm.get('ensaios')?.setValue(ids || []);
+}
+
+// Alterna sincronização entre expressão e lista de ensaios
+toggleSyncEnsaios(checked: boolean) {
+  this.syncEnsaiosFromExpr = checked;
+  if (this.syncEnsaiosFromExpr) {
+    this.atualizarEnsaiosDoForm();
+  }
 }
 
 }

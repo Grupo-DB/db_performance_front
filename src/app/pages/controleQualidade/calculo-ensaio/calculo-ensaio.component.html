@@ -97,8 +97,27 @@
                                             <label for="on_label">Cálculo</label>
                                         </p-floatlabel>
                                     </div>
-                                    <div class="form2 flex w-12 mb-3 mt-3">
+                                    <div class="form2 flex w-12 mb-3 mt-3 gap-3 align-items-center">
                                         <button pButton icon="pi pi-plus" (click)="montarFormula()" label="Inserir Cálculo" ></button> 
+                                        <div class="flex align-items-center gap-2">
+                                            <input type="checkbox" [checked]="syncEnsaiosFromExpr" (change)="toggleSyncEnsaios($any($event.target).checked)" id="chk-sync-ens" />
+                                            <label for="chk-sync-ens">Sincronizar ensaios pela expressão</label>
+                                        </div>
+                                    </div>
+                                    <div class="form2 w-12 mt-2" *ngIf="!syncEnsaiosFromExpr">
+                                        <p-floatlabel variant="on">
+                                            <p-multiSelect 
+                                                formControlName="ensaios"
+                                                [options]="ensaios"
+                                                optionLabel="descricao"
+                                                optionValue="id"
+                                                display="chip"
+                                                [filter]="true"
+                                                [style]="{width: '100%'}"
+                                                appendTo="body"
+                                            ></p-multiSelect>
+                                            <label for="ensaios">Selecione os Ensaios deste cálculo</label>
+                                        </p-floatlabel>
                                     </div>
                                 </div>
                                 <div class="w-12 text-left">

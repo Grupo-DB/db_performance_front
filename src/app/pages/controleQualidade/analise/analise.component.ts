@@ -331,6 +331,45 @@ export class AnaliseComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Drag-and-drop para reordenar ensaios internos dentro de um cálculo
+  onDragStartEnsaioInterno(event: DragEvent, ensaio: any, index: number, calc: any, plano: any) {
+    console.log('Drag started (ensaio interno):', { ensaio: ensaio.descricao, index, calc: calc?.descricao });
+    event.dataTransfer?.setData('text/plain', JSON.stringify({ type: 'ensaioInterno', index, calcId: calc?.id, planoId: plano?.id }));
+  }
+
+  onDropEnsaioInterno(event: DragEvent, targetEnsaio: any, targetIndex: number, calc: any, plano: any) {
+    event.preventDefault();
+    try {
+      const data = JSON.parse(event.dataTransfer?.getData('text/plain') || '{}');
+      if (data.type !== 'ensaioInterno' || data.calcId !== calc?.id || data.planoId !== plano?.id) {
+        return;
+      }
+      const sourceIndex = data.index;
+      if (typeof sourceIndex !== 'number' || typeof targetIndex !== 'number' || !Array.isArray(calc?.ensaios_detalhes)) {
+        return;
+      }
+
+      console.log(`Movendo ensaio interno do índice ${sourceIndex} para ${targetIndex} no cálculo '${calc?.descricao}'`);
+      if (sourceIndex === targetIndex) return;
+
+      const newArray = [...calc.ensaios_detalhes];
+      const [movedItem] = newArray.splice(sourceIndex, 1);
+      newArray.splice(targetIndex, 0, movedItem);
+      calc.ensaios_detalhes = newArray;
+
+      // Forçar atualização e feedback
+      this.cd.detectChanges();
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Ordem atualizada',
+        detail: `Ensaio interno movido da posição ${sourceIndex + 1} para ${targetIndex + 1}`
+      });
+    } catch (e) {
+      console.error('Erro no drop (ensaio interno):', e);
+      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao reordenar ensaio interno' });
+    }
+  }
+
   // Reordenação de linhas (Ensaios Diretos) - Mantido como fallback
   onRowReorderEnsaios(event: any, plano: any) {
     try {
@@ -524,6 +563,17 @@ export class AnaliseComponent implements OnInit, OnDestroy {
   if (!str) return '';
   return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 }
+  
+  // Compara tokens do tipo "ensaioNN" ignorando zeros à esquerda (ensaio7 === ensaio07)
+  private tokensIguais(a?: string, b?: string): boolean {
+    if (!a || !b) return false;
+    const norm = (t: string) => {
+      const m = String(t).match(/^ensaio(\d+)$/i);
+      if (m) return `ensaio${parseInt(m[1], 10)}`; // remove zeros à esquerda
+      return String(t).toLowerCase();
+    };
+    return norm(a) === norm(b);
+  }
   ngOnInit(): void {
     this.analiseId = Number(this.route.snapshot.paramMap.get('id'));
     this.getDigitadorInfo();
@@ -1074,6 +1124,7 @@ loadAnalisePorId(analise: any) {
   // 1. Processar ensaios - incluindo valores calculados salvos
   console.log('🔍 DEBUG: Dados completos da análise recebida do banco:', analise);
   console.log('🔍 DEBUG: ultimo_ensaio completo:', analise.ultimo_ensaio);
+  console.log('🔍 DEBUG: ultimo_calculo completokkkkkkkkkkkkkk:', analise.ultimo_calculo);
   console.log('🔍 DEBUG: ensaios_detalhes completo:', analise.ensaios_detalhes);
   
   // CORREÇÃO: Buscar dados salvos tanto em ultimo_ensaio quanto em ensaios_detalhes
@@ -1157,11 +1208,16 @@ loadAnalisePorId(analise: any) {
         responsavelBanco: valorRecente?.responsavel, // NOVO: Log do responsável
         responsavelOriginal: ensaio.responsavel
       });
+      // Mapear responsável salvo para o objeto do dropdown, se existir
+      const respDiretoSalvo = valorRecente?.responsavel || valorRecente?.responsavel1;
+  const respDiretoObj = this.responsaveis.find(r => r.value === respDiretoSalvo);
+
       return {
         ...ensaio,
         valor: valorFinal, // Usa o valor salvo do banco
         numero_cadinho: valorRecente?.numero_cadinho || ensaio.numero_cadinho, // NOVO: Restaurar número do cadinho
-        responsavel: valorRecente?.responsavel || valorRecente?.responsavel1 || ensaio.responsavel, // CORRIGIDO: Usar responsável específico do ensaio, com fallback para responsavel1
+  // manter ngModel como string (optionValue = 'value')
+  responsavel: (respDiretoObj?.value) || valorRecente?.responsavel || valorRecente?.responsavel1 || ensaio.responsavel,
         digitador: valorRecente ? analise.ultimo_ensaio.digitador : ensaio.digitador || this.digitador,
       };
     });
@@ -1232,31 +1288,142 @@ loadAnalisePorId(analise: any) {
   // 3. Processar cálculos (mesmo para ambos os tipos)
   if (calculoDetalhes.length > 0) {
     const calculosDetalhes = analise.calculos_detalhes || [];
-    calculoDetalhes = calculoDetalhes.map((calc: any) => {
+  calculoDetalhes = calculoDetalhes.map((calc: any) => {
       const calcBanco = calculosDetalhes
         .filter((c: any) => c.calculos === calc.descricao)
         .sort((a: any, b: any) => b.id - a.id)[0];
       const ensaiosUtilizados = calcBanco?.ensaios_utilizados || calc.ensaios_detalhes || [];
-      calc.ensaios_detalhes = ensaiosUtilizados.length
-        ? ensaiosUtilizados.map((u: any) => {
-            const original = (calc.ensaio_detalhes_original || calc.ensaios_detalhes || []).find((e: any) => String(e.id) === String(u.id));
-            const responsavelObj = this.responsaveis.find(r =>
-              r.value === u.responsavel || r.value === u.responsavel || r.value === u.responsavel
-            );
-            return {
-              ...u,
-              valor: u.valor,
-              responsavel: responsavelObj || u.responsavel || null,
-              digitador: calcBanco?.digitador || this.digitador,
-              tempo_previsto: original?.tempo_previsto ?? null,
-              tipo_ensaio_detalhes: original?.tipo_ensaio_detalhes ?? null,
-              variavel: u.variavel || original?.variavel,
-            };
-          })
-        : (calc.ensaios_detalhes || []);
+
+      // Helper local: cria variáveis varNN a partir da função
+      const criarVariaveisPorFuncaoLocal = (funcao: string, ensaioDesc: string) => {
+        const varMatches = (funcao?.match(/var\d+/g) || []);
+        const varList: string[] = Array.from(new Set(varMatches));
+        return varList.map((varName, index) => ({
+          nome: `${varName} (${ensaioDesc || ''})`.trim(),
+          tecnica: varName,
+          valor: 0,
+          varTecnica: varName,
+          id: `${ensaioDesc || 'ensaio'}_${varName}`
+        }));
+      };
+
+      const aplicarValoresVariaveis = (variavelDetalhes: any[], salvo: any) => {
+        if (!Array.isArray(variavelDetalhes)) return [];
+        // 1) Array variaveis_utilizadas
+        const mapArray: Record<string, any> = {};
+        if (Array.isArray(salvo?.variaveis_utilizadas)) {
+          salvo.variaveis_utilizadas.forEach((v: any) => {
+            if (v && v.tecnica) mapArray[v.tecnica] = v.valor;
+          });
+        }
+        // 2) Objeto variaveis { varNN: {valor, descricao} }
+        const mapObj: Record<string, any> = {};
+        if (salvo?.variaveis && typeof salvo.variaveis === 'object') {
+          Object.keys(salvo.variaveis).forEach(k => {
+            const entry = salvo.variaveis[k];
+            if (entry) mapObj[k] = entry.valor;
+          });
+        }
+        // 3) Top-level varNN em salvo
+        const mapTop: Record<string, any> = {};
+        if (salvo) {
+          Object.keys(salvo).forEach(k => {
+            if (/^var\d+$/.test(k)) mapTop[k] = (salvo as any)[k];
+          });
+        }
+        // Aplicar na lista
+        variavelDetalhes.forEach((v: any) => {
+          const key = v.tecnica || v.varTecnica || v.nome;
+          let valor = undefined;
+          if (key in mapArray) valor = mapArray[key];
+          else if (key in mapObj) valor = mapObj[key];
+          else if (key in mapTop) valor = mapTop[key];
+          if (valor !== undefined) {
+            // Tratar datas
+            if (this.isVariavelTipoData(v)) {
+              try {
+                let dataObj: Date | null = null;
+                if (typeof valor === 'string') {
+                  if (valor.includes('/')) {
+                    const [dia, mes, ano] = valor.split('/');
+                    dataObj = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
+                  } else {
+                    dataObj = new Date(valor);
+                  }
+                } else if (typeof valor === 'number') {
+                  // timestamp ou número
+                  const dTmp = new Date(valor);
+                  dataObj = isNaN(dTmp.getTime()) ? null : dTmp;
+                }
+                if (dataObj && !isNaN(dataObj.getTime())) {
+                  v.valor = dataObj.toISOString().split('T')[0];
+                  v.valorData = dataObj;
+                  v.valorTimestamp = dataObj.getTime();
+                } else {
+                  v.valor = valor;
+                }
+              } catch {
+                v.valor = valor;
+              }
+            } else {
+              v.valor = typeof valor === 'number' ? valor : Number(valor);
+              if (isNaN(v.valor)) v.valor = valor;
+            }
+          }
+        });
+        return variavelDetalhes;
+      };
+
+      let novosEnsaios: any[];
+      if (ensaiosUtilizados.length) {
+        novosEnsaios = ensaiosUtilizados.map((u: any) => {
+          const original = (calc.ensaio_detalhes_original || calc.ensaios_detalhes || []).find((e: any) => String(e.id) === String(u.id));
+          const responsavelObj = this.responsaveis.find(r => r.value === u.responsavel);
+          // construir variavel_detalhes
+          let variavelDetalhes = Array.isArray(original?.variavel_detalhes)
+            ? original.variavel_detalhes.map((x: any) => ({ ...x }))
+            : [];
+          const funcaoEnsaio = u.funcao || original?.funcao;
+          if ((!variavelDetalhes || variavelDetalhes.length === 0) && funcaoEnsaio) {
+            variavelDetalhes = criarVariaveisPorFuncaoLocal(funcaoEnsaio, u.descricao || original?.descricao);
+          }
+          // aplicar valores salvos
+          variavelDetalhes = aplicarValoresVariaveis(variavelDetalhes, u);
+
+          return {
+            ...u,
+            valor: u.valor,
+            // manter como string para o p-select (optionValue='value')
+            responsavel: (responsavelObj?.value) || u.responsavel || null,
+            digitador: calcBanco?.digitador || this.digitador,
+            tempo_previsto: original?.tempo_previsto ?? null,
+            tipo_ensaio_detalhes: original?.tipo_ensaio_detalhes ?? null,
+            variavel: u.variavel || original?.variavel,
+            numero_cadinho: u.numero_cadinho ?? original?.numero_cadinho ?? null,
+            variavel_detalhes: variavelDetalhes,
+            funcao: funcaoEnsaio || null
+          };
+        });
+      } else {
+        // Sem dados salvos: apenas garantir que variavel_detalhes exista a partir da função
+        novosEnsaios = (calc.ensaios_detalhes || []).map((e: any) => {
+          if (e?.funcao && (!Array.isArray(e.variavel_detalhes) || e.variavel_detalhes.length === 0)) {
+            e.variavel_detalhes = criarVariaveisPorFuncaoLocal(e.funcao, e.descricao);
+          }
+          return e;
+        });
+      }
+
+      // Responsável do cálculo (nível cálculo)
+  const responsavelCalcObj = this.responsaveis.find(r => r.value === (calcBanco?.responsavel || calc.responsavel));
+
       return {
         ...calc,
+        ensaios_detalhes: novosEnsaios,
         resultado: calcBanco?.resultados ?? calc.resultado,
+  // manter responsavel no cálculo como string
+  responsavel: (responsavelCalcObj?.value) || calcBanco?.responsavel || calc.responsavel || null,
+  digitador: calcBanco?.digitador || calc.digitador || this.digitador,
       };
     });
   }
@@ -1336,7 +1503,7 @@ loadAnalisePorId(analise: any) {
       this.inicializarVariaveisEnsaios();
       this.mapearEnsaiosParaCalculos();
       // Agora sim, carrega o último resultado gravado para sobrescrever os valores corretamente
-      this.carregarUltimoResultadoGravado();
+      //this.carregarUltimoResultadoGravado();
       // Aplicar responsável padrão (primeiro do histórico, depois usuário logado)
       console.log('🎯 Chamando aplicarResponsavelPadrao...');
       this.aplicarResponsavelPadrao();
@@ -1412,11 +1579,74 @@ inicializarVariaveisEnsaios() {
     const analiseData = this.analisesSimplificadas[0];
     const planoDetalhes = analiseData?.planoDetalhes || [];
     planoDetalhes.forEach((plano: any) => {
-      if (plano.calculo_ensaio_detalhes && plano.ensaio_detalhes) {
+      // Mantém os ensaios definidos no próprio cálculo (internos).
+      // Não substituir por ensaios do plano para preservar independência.
+      if (plano.calculo_ensaio_detalhes) {
         plano.calculo_ensaio_detalhes.forEach((calculo: any) => {
-          // Se o cálculo não tem ensaios associados, associa todos os ensaios do plano
-          if (!Array.isArray(calculo.ensaios_detalhes) || calculo.ensaios_detalhes.length === 0) {
-            calculo.ensaios_detalhes = plano.ensaio_detalhes.map((e: any) => ({ ...e }));
+          if (Array.isArray(calculo.ensaios_detalhes)) {
+            // Enriquecer ensaios internos com definição (função/variáveis)
+            calculo.ensaios_detalhes.forEach((e: any) => {
+              // 1) Se não houver função, tentar obter do catálogo ou do próprio plano
+              if (!e.funcao) {
+                const base = (this.ensaiosDisponiveis || []).find((b: any) => String(b.id) === String(e.id) || this.normalize(b.descricao) === this.normalize(e.descricao))
+                           || (plano.ensaio_detalhes || []).find((b: any) => String(b.id) === String(e.id) || this.normalize(b.descricao) === this.normalize(e.descricao));
+                if (base?.funcao) {
+                  e.funcao = base.funcao;
+                }
+                if (!e.unidade && base?.unidade) e.unidade = base.unidade;
+                // Propagar identificadores para permitir resolução por token (ensaioNN)
+                if (!e.tecnica && base?.tecnica) e.tecnica = base.tecnica;
+                if (!e.variavel && base?.tecnica) e.variavel = base.tecnica; // compat
+                if (!e.id && base?.id) e.id = base.id;
+              }
+              // Garanta tecnica/variavel/id mesmo quando já existe função/variáveis
+              const baseAll = (this.ensaiosDisponiveis || []).find((b: any) => String(b.id) === String(e.id) || this.normalize(b.descricao) === this.normalize(e.descricao))
+                           || (plano.ensaio_detalhes || []).find((b: any) => String(b.id) === String(e.id) || this.normalize(b.descricao) === this.normalize(e.descricao));
+              if (!e.id && baseAll?.id) e.id = baseAll.id;
+              if (!e.tecnica && baseAll?.tecnica) e.tecnica = baseAll.tecnica;
+              if (!e.variavel && baseAll?.tecnica) e.variavel = baseAll.tecnica;
+              // Se ainda faltar tecnica, derive de id (ensaioNN)
+              const idNum = Number(e.id || baseAll?.id);
+              if (!e.tecnica && !isNaN(idNum)) {
+                e.tecnica = `ensaio${String(idNum).padStart(2, '0')}`;
+              }
+              if (!e.variavel && e.tecnica) e.variavel = e.tecnica;
+              // 2) Inicializa variáveis técnicas a partir da função do ensaio interno
+              if (e.funcao && (!Array.isArray(e.variavel_detalhes) || e.variavel_detalhes.length === 0)) {
+                const varMatches = (e.funcao.match(/var\d+/g) || []);
+                const varList: string[] = Array.from(new Set(varMatches));
+                // Tentar nomes/infos do base
+                const base = (this.ensaiosDisponiveis || []).find((b: any) => String(b.id) === String(e.id) || this.normalize(b.descricao) === this.normalize(e.descricao))
+                           || (plano.ensaio_detalhes || []).find((b: any) => String(b.id) === String(e.id) || this.normalize(b.descricao) === this.normalize(e.descricao));
+                const baseVars = Array.isArray(base?.variavel_detalhes) ? base.variavel_detalhes : [];
+                // Também garanta técnica/id mesmo quando já havia função
+                if (!e.tecnica && base?.tecnica) e.tecnica = base.tecnica;
+                if (!e.variavel && base?.tecnica) e.variavel = base.tecnica;
+                if (!e.id && base?.id) e.id = base.id;
+                e.variavel_detalhes = varList.map((varName: string, idx: number) => {
+                  const bv = baseVars[idx];
+                  const nomeAmigavel = bv?.nome && !/^var\d+$/.test(bv.nome) ? bv.nome : undefined;
+                  const tipo = bv?.tipo;
+                  const item: any = {
+                    nome: nomeAmigavel || varName,
+                    tecnica: varName,
+                    varTecnica: varName,
+                    id: `${e.descricao || e.id}_${varName}`,
+                    valor: 0
+                  };
+                  if (tipo) item.tipo = tipo;
+                  return item;
+                });
+                // Se base trouxer valores default, use-os
+                if (Array.isArray(baseVars) && baseVars.length === e.variavel_detalhes.length) {
+                  e.variavel_detalhes.forEach((v: any, i: number) => {
+                    const bv = baseVars[i];
+                    if (typeof bv?.valor !== 'undefined') v.valor = Number(bv.valor) || 0;
+                    if (typeof bv?.valorTimestamp === 'number') v.valorTimestamp = bv.valorTimestamp;
+                  });
+                }
+              }
+            });
           }
         });
       }
@@ -1466,13 +1696,44 @@ inicializarVariaveisEnsaios() {
   }
   // Aplica os valores do último resultado gravado nos ensaios e variáveis do modelo
   public aplicarUltimoResultadoGravado(): void {
-    if (!this.ultimoResultadoGravado || !this.analisesSimplificadas.length) return;
-    const planoDetalhes = this.analisesSimplificadas[0]?.planoDetalhes || [];
+    if (!this.analisesSimplificadas.length) return;
+    const analise0 = this.analisesSimplificadas[0];
+    const planoDetalhes = analise0?.planoDetalhes || [];
+    
+    // Fonte de dados salvos (flexível): usa ultimoResultadoGravado.ensaiosUtilizados,
+    // senão cai para analise0.ultimo_ensaio.ensaios_utilizados, senão analise0.ensaiosUtilizados
+    const savedList: any[] = (this.ultimoResultadoGravado?.ensaiosUtilizados && Array.isArray(this.ultimoResultadoGravado.ensaiosUtilizados))
+      ? this.ultimoResultadoGravado.ensaiosUtilizados
+      : (Array.isArray((analise0 as any)?.ultimo_ensaio?.ensaios_utilizados)
+          ? (analise0 as any).ultimo_ensaio.ensaios_utilizados
+          : (Array.isArray((analise0 as any)?.ensaiosUtilizados) ? (analise0 as any).ensaiosUtilizados : []));
+
+    // Fonte de dados salvos para cálculos: usa ultimoResultadoGravado.calculosUtilizados ou ultimo_calculo diretamente
+    let savedCalculosList: any[] = [];
+    
+    // Primeiro tenta buscar nos calculosUtilizados
+    if (this.ultimoResultadoGravado?.calculosUtilizados && Array.isArray(this.ultimoResultadoGravado.calculosUtilizados)) {
+      savedCalculosList = this.ultimoResultadoGravado.calculosUtilizados;
+    }
+    // Se não encontrar, tenta buscar no ultimo_calculo diretamente
+    else if (this.ultimoResultadoGravado?.ultimo_calculo) {
+      savedCalculosList = [this.ultimoResultadoGravado.ultimo_calculo];
+    }
+    // Senão tenta buscar no analise0.ultimo_calculo
+    else if ((analise0 as any)?.ultimo_calculo) {
+      savedCalculosList = [(analise0 as any).ultimo_calculo];
+    }
+
+    console.log('=== APLICANDO ÚLTIMO RESULTADO GRAVADO ===');
+    console.log('savedList (ensaios):', savedList);
+    console.log('savedCalculosList (cálculos):', savedCalculosList);
+
+    if (!savedList.length && !savedCalculosList.length) return;
     // Atualiza ensaios
     planoDetalhes.forEach((plano: any) => {
       if (plano.ensaio_detalhes) {
         plano.ensaio_detalhes.forEach((ensaio: any) => {
-          const ensaioSalvo = this.ultimoResultadoGravado.ensaiosUtilizados?.find((e: any) => String(e.id) === String(ensaio.id));
+          const ensaioSalvo = savedList.find((e: any) => String(e.id) === String(ensaio.id));
           if (ensaioSalvo) {
             const vFlex = this.parseNumeroFlex(ensaioSalvo.valor);
             ensaio.valor = typeof vFlex === 'number' ? vFlex : (Number(vFlex) || ensaioSalvo.valor);
@@ -1526,11 +1787,154 @@ inicializarVariaveisEnsaios() {
           }
         });
       }
+
+      // Atualiza ensaios internos dos cálculos com os últimos valores salvos
+  if (Array.isArray(plano.calculo_ensaio_detalhes)) {
+        plano.calculo_ensaio_detalhes.forEach((calc: any) => {
+          if (!Array.isArray(calc.ensaios_detalhes)) return;
+          calc.ensaios_detalhes.forEach((ensaioCalc: any) => {
+    const salvo = savedList.find((e: any) =>
+              String(e.id) === String(ensaioCalc.id) ||
+              this.tokensIguais(e.variavel, ensaioCalc.tecnica || ensaioCalc.variavel) ||
+              (e.descricao && ensaioCalc.descricao && this.normalize(e.descricao) === this.normalize(ensaioCalc.descricao))
+            );
+            if (!salvo) return;
+            const vFlexCalc = this.parseNumeroFlex(salvo.valor);
+            ensaioCalc.valor = typeof vFlexCalc === 'number' ? vFlexCalc : (Number(vFlexCalc) || salvo.valor);
+            // metadata
+            if (typeof salvo.numero_cadinho !== 'undefined') ensaioCalc.numero_cadinho = salvo.numero_cadinho;
+            if (salvo.responsavel) ensaioCalc.responsavel = salvo.responsavel;
+
+            // Variáveis do ensaio interno
+            if (Array.isArray(ensaioCalc.variavel_detalhes)) {
+              if (Array.isArray(salvo.variaveis_utilizadas) && salvo.variaveis_utilizadas.length > 0) {
+                const varMatchesCalc = (ensaioCalc.funcao && ensaioCalc.funcao.match(/var\d+/g)) || [];
+                const tecnicaListCalc = Array.from(new Set(varMatchesCalc));
+                salvo.variaveis_utilizadas.forEach((vSalva: any, idx: number) => {
+                  let vAtual = null;
+                  if (vSalva.tecnica) vAtual = ensaioCalc.variavel_detalhes.find((v: any) => v.tecnica === vSalva.tecnica);
+                  if (!vAtual && tecnicaListCalc[idx]) {
+                    vAtual = ensaioCalc.variavel_detalhes.find((v: any) => v.tecnica === tecnicaListCalc[idx]);
+                    if (vAtual && !vAtual.tecnica) vAtual.tecnica = tecnicaListCalc[idx];
+                  }
+                  if (!vAtual && vSalva.nome) vAtual = ensaioCalc.variavel_detalhes.find((v: any) => v.nome === vSalva.nome);
+                  if (!vAtual && ensaioCalc.variavel_detalhes[idx]) vAtual = ensaioCalc.variavel_detalhes[idx];
+                  if (vAtual) {
+                    vAtual.valor = vSalva.valor;
+                    if (!vAtual.tecnica && tecnicaListCalc[idx]) vAtual.tecnica = tecnicaListCalc[idx];
+                  }
+                });
+                ensaioCalc.variavel_detalhes.forEach((v: any, idx: number) => {
+                  if (typeof v.valor === 'undefined' || v.valor === null) v.valor = ensaioCalc.valor;
+                  if (!v.tecnica && tecnicaListCalc[idx]) v.tecnica = tecnicaListCalc[idx];
+                });
+              } else {
+                ensaioCalc.variavel_detalhes.forEach((v: any, idx: number) => {
+                  v.valor = ensaioCalc.valor;
+                  const varMatchesCalc = (ensaioCalc.funcao && ensaioCalc.funcao.match(/var\d+/g)) || [];
+                  if (!v.tecnica && varMatchesCalc[idx]) v.tecnica = varMatchesCalc[idx];
+                });
+              }
+            }
+          });
+        });
+      }
     });
+
+    // Aplica dados específicos dos cálculos salvos (ultimo_calculo)
+    savedCalculosList.forEach((calculoSalvo: any) => {
+      console.log('Aplicando cálculo salvo:', calculoSalvo);
+      
+      if (Array.isArray(calculoSalvo.ensaios_utilizados)) {
+        planoDetalhes.forEach((plano: any) => {
+          if (Array.isArray(plano.calculo_ensaio_detalhes)) {
+            plano.calculo_ensaio_detalhes.forEach((calc: any) => {
+              // Identifica o cálculo correspondente
+              const isCalculoCorrespondente = calc.id === calculoSalvo.id || 
+                                            calc.descricao === calculoSalvo.descricao ||
+                                            calc.calculos === calculoSalvo.calculos;
+              
+              if (isCalculoCorrespondente && Array.isArray(calc.ensaios_detalhes)) {
+                console.log('Aplicando ensaios salvos ao cálculo:', calc.descricao);
+                
+                // Aplica os valores dos ensaios internos salvos
+                calculoSalvo.ensaios_utilizados.forEach((ensaioSalvo: any) => {
+                  const ensaioInterno = calc.ensaios_detalhes.find((e: any) => 
+                    String(e.id) === String(ensaioSalvo.id) ||
+                    this.tokensIguais(e.tecnica || e.variavel, ensaioSalvo.variavel) ||
+                    (e.descricao && ensaioSalvo.descricao && this.normalize(e.descricao) === this.normalize(ensaioSalvo.descricao))
+                  );
+                  
+                  if (ensaioInterno) {
+                    console.log('Aplicando valores ao ensaio interno:', ensaioInterno.descricao, ensaioSalvo);
+                    
+                    // Aplica valor principal
+                    const vFlex = this.parseNumeroFlex(ensaioSalvo.valor);
+                    ensaioInterno.valor = typeof vFlex === 'number' ? vFlex : (Number(vFlex) || ensaioSalvo.valor);
+                    
+                    // Aplica metadata
+                    if (typeof ensaioSalvo.numero_cadinho !== 'undefined') ensaioInterno.numero_cadinho = ensaioSalvo.numero_cadinho;
+                    if (ensaioSalvo.responsavel) ensaioInterno.responsavel = ensaioSalvo.responsavel;
+                    
+                    // Aplica variáveis utilizadas
+                    if (Array.isArray(ensaioInterno.variavel_detalhes) && Array.isArray(ensaioSalvo.variaveis_utilizadas)) {
+                      const varMatches = (ensaioInterno.funcao && ensaioInterno.funcao.match(/var\d+/g)) || [];
+                      const tecnicaList = Array.from(new Set(varMatches));
+                      
+                      ensaioSalvo.variaveis_utilizadas.forEach((vSalva: any, idx: number) => {
+                        let vAtual = null;
+                        
+                        // Busca por técnica
+                        if (vSalva.tecnica) {
+                          vAtual = ensaioInterno.variavel_detalhes.find((v: any) => v.tecnica === vSalva.tecnica);
+                        }
+                        
+                        // Busca pela técnica da expressão
+                        if (!vAtual && tecnicaList[idx]) {
+                          vAtual = ensaioInterno.variavel_detalhes.find((v: any) => v.tecnica === tecnicaList[idx]);
+                          if (vAtual && !vAtual.tecnica) vAtual.tecnica = tecnicaList[idx];
+                        }
+                        
+                        // Busca por nome
+                        if (!vAtual && vSalva.nome) {
+                          vAtual = ensaioInterno.variavel_detalhes.find((v: any) => v.nome === vSalva.nome);
+                        }
+                        
+                        // Busca por posição
+                        if (!vAtual && ensaioInterno.variavel_detalhes[idx]) {
+                          vAtual = ensaioInterno.variavel_detalhes[idx];
+                        }
+                        
+                        if (vAtual) {
+                          vAtual.valor = vSalva.valor;
+                          if (!vAtual.tecnica && tecnicaList[idx]) vAtual.tecnica = tecnicaList[idx];
+                          console.log('Variável aplicada:', vAtual.tecnica, vSalva.valor);
+                        }
+                      });
+                      
+                      // Preenche variáveis restantes se necessário
+                      ensaioInterno.variavel_detalhes.forEach((v: any, idx: number) => {
+                        if (typeof v.valor === 'undefined' || v.valor === null) {
+                          v.valor = ensaioInterno.valor;
+                        }
+                        if (!v.tecnica && tecnicaList[idx]) {
+                          v.tecnica = tecnicaList[idx];
+                        }
+                      });
+                    }
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
+    });
+
     // 1. Processa todos os ensaios diretos (atualiza valores)
     this.processarTodosEnsaiosDiretos();
 
-    // 2. Propaga o valor dos ensaios diretos para os cálculos dependentes
+  // 2. (Opcional/Legado) Propaga o valor dos ensaios diretos para os cálculos dependentes
     const analiseData_aplicar = this.analisesSimplificadas[0];
     const planoDetalhes_aplicar = analiseData_aplicar?.planoDetalhes || [];
     planoDetalhes_aplicar.forEach((plano: any) => {
@@ -1582,52 +1986,11 @@ recalcularTodosCalculos() {
     if (plano.calculo_ensaio_detalhes) {
       plano.calculo_ensaio_detalhes.forEach((calc: any) => {
         console.log('=== PROCESSANDO CÁLCULO:', calc.descricao, '===');
-        console.log('Ensaios do cálculo ANTES da sincronização:', calc.ensaios_detalhes);
-        // SINCRONIZAR valores dos ensaios antes de calcular
-        if (calc.ensaios_detalhes && plano.ensaio_detalhes) {
-          calc.ensaios_detalhes.forEach((ensaioCalc: any) => {
-            // Buscar pelo campo tecnica primeiro
-            let ensaioPlano = null;
-            if (ensaioCalc.tecnica) {
-              ensaioPlano = plano.ensaio_detalhes.find((e: any) => e.tecnica === ensaioCalc.tecnica);
-            }
-            // Se não achou por tecnica, tenta por id, descricao, variavel
-            if (!ensaioPlano && ensaioCalc.id) {
-              ensaioPlano = plano.ensaio_detalhes.find((e: any) => e.id === ensaioCalc.id);
-            }
-            if (!ensaioPlano && ensaioCalc.descricao) {
-              ensaioPlano = plano.ensaio_detalhes.find((e: any) => e.descricao === ensaioCalc.descricao);
-            }
-            if (!ensaioPlano && ensaioCalc.variavel) {
-              ensaioPlano = plano.ensaio_detalhes.find((e: any) => e.variavel === ensaioCalc.variavel || e.nome === ensaioCalc.variavel);
-            }
-            if (ensaioPlano) {
-              // Sempre preenche o campo tecnica se não existir
-              if (!ensaioCalc.tecnica && ensaioPlano.tecnica) {
-                ensaioCalc.tecnica = ensaioPlano.tecnica;
-              }
-              if (!ensaioPlano.tecnica && ensaioCalc.tecnica) {
-                ensaioPlano.tecnica = ensaioCalc.tecnica;
-              }
-              const valorAntigo = ensaioCalc.valor;
-              ensaioCalc.valor = ensaioPlano.valor;
-              console.log(`✓ Sincronizado ${ensaioCalc.tecnica || ensaioCalc.descricao || ensaioCalc.variavel}: ${valorAntigo} → ${ensaioPlano.valor}`);
-            } else {
-              console.warn(`✗ Ensaio ${ensaioCalc.tecnica || ensaioCalc.descricao || ensaioCalc.variavel} (ID: ${ensaioCalc.id}, VAR: ${ensaioCalc.variavel}) não encontrado no plano`);
-              console.log('Ensaios disponíveis no plano:', plano.ensaio_detalhes.map((e: any) => ({
-                id: e.id,
-                tecnica: e.tecnica,
-                descricao: e.descricao,
-                valor: e.valor,
-                variavel: e.variavel,
-                nome: e.nome
-              })));
-            }
-          });
-        }
-        console.log('Ensaios do cálculo APÓS sincronização:', calc.ensaios_detalhes);
-        // Agora calcular com os valores atualizados
-        this.calcular(calc, plano);
+  console.log('Ensaios do cálculo (internos):', calc.ensaios_detalhes);
+  // Primeiro recalcula as dependências internas entre ensaios do próprio cálculo
+  this.recalcularEnsaiosInternosDoCalculo(calc, plano);
+  // Agora calcular com os valores atualizados
+  this.calcular(calc, plano);
         console.log(`✓ Cálculo ${calc.descricao} resultado FINAL: ${calc.resultado}`);
         console.log('=== FIM CÁLCULO:', calc.descricao, '===\n');
       });
@@ -1635,32 +1998,34 @@ recalcularTodosCalculos() {
   });
   console.log('=== FIM RECÁLCULO DE TODOS OS CÁLCULOS ===');
 }
-//----------------------------QUINTO PASSO  CALCULAR ENSAOS DIRETOS-----------------------------------------------------------------------
-  // Função a para garantir o mapeamento correto
+//----------------------------QUINTO PASSO  CALCULAR ENSAIOS DIRETOS-----------------------------------------------------------------------
+  // Calcula um ensaio direto (ou interno de cálculo) usando suas variáveis técnicas varX
   calcularEnsaioDiretoCorrigido(ensaio: any) {
     if (!ensaio || !ensaio.funcao || !Array.isArray(ensaio.variavel_detalhes)) return;
     const varMatches = (ensaio.funcao.match(/var\d+/g) || []);
     const varList: string[] = Array.from(new Set(varMatches));
     const safeVars: any = {};
-    // Log detalhado das variáveis na ordem da expressão, usando apenas tecnica
     console.log('--- Variáveis do ensaio (ordem da expressão, apenas tecnica) ---');
     varList.forEach((varName, idx) => {
-      const variavel = ensaio.variavel_detalhes.find((v: any) => v.tecnica === varName);
-      const valor = variavel && typeof variavel.valor !== 'undefined' ? Number(variavel.valor) : 0;
+      const variavel = ensaio.variavel_detalhes.find((v: any) => v.tecnica === varName || v.nome === varName);
+      let valor = 0;
+      if (variavel) {
+        if (typeof variavel.valorTimestamp === 'number') valor = variavel.valorTimestamp;
+        else if (typeof variavel.valor === 'string') {
+          const d = new Date(variavel.valor);
+          valor = isNaN(d.getTime()) ? Number(variavel.valor) || 0 : d.getTime();
+        } else {
+          valor = typeof variavel.valor === 'number' ? variavel.valor : Number(variavel.valor) || 0;
+        }
+      }
       safeVars[varName] = valor;
       console.log(`tecnica=${varName} [${idx}]: valor=${valor}`);
     });
     console.log('SafeVars final para avaliação (usando tecnica):', safeVars);
-    
-    // Adicionar funções de data ao escopo
+
     const funcoesDatas = {
       adicionarDias: (data: string | number, dias: number) => {
-        let dataBase: Date;
-        if (typeof data === 'string') {
-          dataBase = new Date(data);
-        } else {
-          dataBase = new Date(data);
-        }
+        const dataBase = new Date(data);
         const novaData = new Date(dataBase);
         novaData.setDate(novaData.getDate() + dias);
         return novaData.getTime();
@@ -1671,17 +2036,12 @@ recalcularTodosCalculos() {
         const diffTime = Math.abs(d2.getTime() - d1.getTime());
         return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       },
-      hoje: () => {
-        return new Date().getTime();
-      }
+      hoje: () => new Date().getTime()
     };
-    
+
     const scope = { ...safeVars, ...funcoesDatas };
-    
     try {
       const resultado = evaluate(ensaio.funcao, scope);
-      
-      // Se o resultado é um timestamp (resultado de função de data), converter para data legível
       if (ensaio.funcao.includes('adicionarDias') || ensaio.funcao.includes('hoje')) {
         if (typeof resultado === 'number' && resultado > 946684800000) {
           const dataResultado = new Date(resultado);
@@ -1691,64 +2051,78 @@ recalcularTodosCalculos() {
           ensaio.valor = resultado;
         }
       } else {
-    ensaio.valor = (typeof resultado === 'number' && isFinite(resultado)) ? resultado : 0;
+        ensaio.valor = (typeof resultado === 'number' && isFinite(resultado)) ? resultado : 0;
       }
-      
       console.log(`✓ Resultado calculado (usando tecnica): ${ensaio.valor}`);
     } catch (e) {
       ensaio.valor = 'Erro no cálculo';
       console.error('Erro no cálculo (usando tecnica):', e);
     }
   }
-//----------------------SEXTO PASSO - CALCULAR-------------------------------------------------------------
-calcular(calc: any, produto?: any) {
-  console.log('=== MÉTODO CALCULAR INICIADO ===');
-  console.log('Cálculo:', calc.descricao);
-  console.log('Função:', calc.funcao);
-  // Sincronizar valores de calc.ensaios_detalhes com os ensaios do plano (produto), usando tecnica
-  if (produto && produto.planoEnsaios && Array.isArray(calc.ensaios_detalhes)) {
-    calc.ensaios_detalhes.forEach((ensaioCalc: any) => {
-      // Busca o ensaio do plano com a mesma tecnica
-      const ensaioPlano = produto.planoEnsaios.find((e: any) => e.tecnica === ensaioCalc.tecnica || e.variavel === ensaioCalc.tecnica);
-      if (ensaioPlano && typeof ensaioPlano.valor !== 'undefined') {
-        ensaioCalc.valor = ensaioPlano.valor;
-      }
-    });
-  }
-  if (!calc.ensaios_detalhes || !Array.isArray(calc.ensaios_detalhes)) {
-    calc.resultado = 'Sem ensaios para calcular';
-    console.log('Resultado: Sem ensaios para calcular');
-    return;
-  }
-  // 1. Descobre tokens varX e ensaioNN
-  const varMatches = (calc.funcao.match(/\b(var\d+|ensaio\d+)\b/g) || []);
-  const varList = Array.from(new Set(varMatches)) as string[];
-  console.log('Tokens encontrados na função:', varList);
-  // 2. Monta safeVars resolvendo por tecnica/variavel e também ensaio tokens no plano
-  const safeVars: any = {};
-  // Acha o plano correspondente se vier como 'produto'
-  const planoRef = produto && produto.planoDetalhes ? produto : this.analisesSimplificadas?.[0];
-  const planos = planoRef?.planoDetalhes || [];
-  const plano = planos[0];
-  varList.forEach((tk: string) => {
-    if (/^var\d+$/.test(tk)) {
-      // Busca pelo campo tecnica ou variavel nos ensaios associados ao cálculo
-      const ensaio = calc.ensaios_detalhes.find((e: any) => e.tecnica === tk || e.variavel === tk);
-      const valor = ensaio && typeof ensaio.valor !== 'undefined' ? Number(ensaio.valor) : 0;
-      safeVars[tk] = valor;
-      console.log(`SafeVar var ${tk} = ${valor}`);
-    } else if (/^ensaio\d+$/.test(tk)) {
-      // Resolver via plano pelos critérios: tecnica == token ou id do token (ensaio{id})
-      let valor = 0;
-      if (plano && plano.ensaio_detalhes) {
-        const porTecnica = plano.ensaio_detalhes.find((e: any) => e.tecnica === tk || e.variavel === tk);
-        if (porTecnica && typeof porTecnica.valor !== 'undefined') {
-          valor = typeof porTecnica.valor === 'number' ? porTecnica.valor : Number(porTecnica.valor);
-        } else {
+
+//----------------------SEXTO PASSO - CALCULAR (CÁLCULO ENSAIO)-------------------------------------------------------------
+  calcular(calc: any, produtoOuPlano?: any) {
+    console.log('=== MÉTODO CALCULAR INICIADO ===');
+    console.log('Cálculo:', calc.descricao);
+    console.log('Função:', calc.funcao);
+  // Antes de avaliar a expressão do cálculo, garanta que os ensaios internos estejam atualizados
+  this.recalcularEnsaiosInternosDoCalculo(calc, produtoOuPlano);
+    // Plano base apenas como contexto (sem sincronizar valores)
+    let planoBase: any | undefined = undefined;
+    if (produtoOuPlano && Array.isArray(produtoOuPlano.ensaio_detalhes)) {
+      planoBase = produtoOuPlano;
+    } else if (produtoOuPlano && Array.isArray(produtoOuPlano.planoEnsaios)) {
+      planoBase = { ensaio_detalhes: produtoOuPlano.planoEnsaios };
+    } else if (this.analisesSimplificadas?.[0]?.planoDetalhes?.length) {
+      const analise0 = this.analisesSimplificadas[0];
+      planoBase = analise0.planoDetalhes.find((p: any) => Array.isArray(p.calculo_ensaio_detalhes) && p.calculo_ensaio_detalhes.includes(calc))
+                || analise0.planoDetalhes[0];
+    }
+
+    if (!calc.ensaios_detalhes || !Array.isArray(calc.ensaios_detalhes)) {
+      calc.resultado = 'Sem ensaios para calcular';
+      console.log('Resultado: Sem ensaios para calcular');
+      return;
+    }
+
+    const varMatches = (calc.funcao.match(/\b(var\d+|ensaio\d+)\b/g) || []);
+    const varList = Array.from(new Set(varMatches)) as string[];
+    console.log('Tokens encontrados na função:', varList);
+
+    const safeVars: any = {};
+    varList.forEach((tk: string) => {
+      if (/^var\d+$/.test(tk)) {
+        const ens = calc.ensaios_detalhes.find((e: any) => e.tecnica === tk || e.variavel === tk);
+        const valor = ens && typeof ens.valor !== 'undefined' ? (typeof ens.valor === 'number' ? ens.valor : Number(ens.valor) || 0) : 0;
+        safeVars[tk] = valor;
+        console.log(`SafeVar var ${tk} = ${valor}`);
+      } else if (/^ensaio\d+$/.test(tk)) {
+        let valor = 0;
+        // 1) técnica/variável no próprio cálculo (comparando tokens com tolerância a zeros à esquerda)
+        let porCalcTec = calc.ensaios_detalhes.find((e: any) => this.tokensIguais(e.tecnica, tk) || this.tokensIguais(e.variavel, tk));
+        // fallback por descrição contendo o token (casos legados onde técnica não veio)
+        if (!porCalcTec) {
+          porCalcTec = calc.ensaios_detalhes.find((e: any) =>
+            typeof e.descricao === 'string' && (
+              e.descricao.includes(tk) || this.normalize(e.descricao) === this.normalize(tk)
+            )
+          );
+        }
+        if (porCalcTec) {
+          if (typeof porCalcTec.valorTimestamp === 'number') valor = porCalcTec.valorTimestamp;
+          else if (typeof porCalcTec.valor === 'string') {
+            const d = new Date(porCalcTec.valor);
+            valor = isNaN(d.getTime()) ? Number(porCalcTec.valor) || 0 : d.getTime();
+          } else {
+            valor = typeof porCalcTec.valor === 'number' ? porCalcTec.valor : Number(porCalcTec.valor) || 0;
+          }
+        }
+        // 2) por id no token (ensaio{id})
+        if (!valor) {
           const m = tk.match(/ensaio(\d+)/);
           const idNum = m ? parseInt(m[1], 10) : NaN;
           if (!isNaN(idNum)) {
-            const porId = plano.ensaio_detalhes.find((e: any) => String(e.id) === String(idNum));
+            const porId = calc.ensaios_detalhes.find((e: any) => String(e.id) === String(idNum));
             if (porId) {
               if (typeof porId.valorTimestamp === 'number') valor = porId.valorTimestamp;
               else if (typeof porId.valor === 'string') {
@@ -1760,65 +2134,197 @@ calcular(calc: any, produto?: any) {
             }
           }
         }
-      }
-      safeVars[tk] = isNaN(valor) ? 0 : valor;
-      console.log(`SafeVar ensaio ${tk} = ${safeVars[tk]}`);
-    } else {
-      safeVars[tk] = 0;
-    }
-  });
-  console.log('SafeVars final para avaliação:', safeVars);
-  
-  // Adicionar funções de data ao escopo
-  const funcoesDatas = {
-    adicionarDias: (data: string | number, dias: number) => {
-      let dataBase: Date;
-      if (typeof data === 'string') {
-        dataBase = new Date(data);
+        // 3) Fallback: plano base
+        if (!valor && planoBase && Array.isArray(planoBase.ensaio_detalhes)) {
+          const porTecPlano = planoBase.ensaio_detalhes.find((e: any) => this.tokensIguais(e.tecnica, tk) || this.tokensIguais(e.variavel, tk));
+          if (porTecPlano) {
+            if (typeof porTecPlano.valorTimestamp === 'number') valor = porTecPlano.valorTimestamp;
+            else if (typeof porTecPlano.valor === 'string') {
+              const d = new Date(porTecPlano.valor);
+              valor = isNaN(d.getTime()) ? Number(porTecPlano.valor) || 0 : d.getTime();
+            } else {
+              valor = typeof porTecPlano.valor === 'number' ? porTecPlano.valor : Number(porTecPlano.valor) || 0;
+            }
+          }
+        }
+        safeVars[tk] = isNaN(valor) ? 0 : valor;
+        console.log(`SafeVar ensaio ${tk} = ${safeVars[tk]}`);
       } else {
-        dataBase = new Date(data);
+        safeVars[tk] = 0;
       }
-      const novaData = new Date(dataBase);
-      novaData.setDate(novaData.getDate() + dias);
-      return novaData.getTime();
-    },
-    diasEntre: (data1: string | number, data2: string | number) => {
-      const d1 = new Date(data1);
-      const d2 = new Date(data2);
-      const diffTime = Math.abs(d2.getTime() - d1.getTime());
-      return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    },
-    hoje: () => {
-      return new Date().getTime();
-    }
-  };
-  
-  const scope = { ...safeVars, ...funcoesDatas };
-  
-  // 3. AvaliA usando mathjs
-  try {
-    const resultado = evaluate(calc.funcao, scope);
-    
-    // Se o resultado é um timestamp (resultado de função de data), converter para data legível
-    if (calc.funcao.includes('adicionarDias') || calc.funcao.includes('hoje')) {
-      if (typeof resultado === 'number' && resultado > 946684800000) {
-        const dataResultado = new Date(resultado);
-        calc.resultado = dataResultado.toLocaleDateString('pt-BR');
-        calc.valorTimestamp = resultado;
+    });
+    console.log('SafeVars final para avaliação:', safeVars);
+
+    const funcoesDatas = {
+      adicionarDias: (data: string | number, dias: number) => {
+        const dataBase = new Date(data);
+        const novaData = new Date(dataBase);
+        novaData.setDate(novaData.getDate() + dias);
+        return novaData.getTime();
+      },
+      diasEntre: (data1: string | number, data2: string | number) => {
+        const d1 = new Date(data1);
+        const d2 = new Date(data2);
+        const diffTime = Math.abs(d2.getTime() - d1.getTime());
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      },
+      hoje: () => new Date().getTime()
+    };
+
+    const scope = { ...safeVars, ...funcoesDatas };
+    try {
+      const resultado = evaluate(calc.funcao, scope);
+      if (calc.funcao.includes('adicionarDias') || calc.funcao.includes('hoje')) {
+        if (typeof resultado === 'number' && resultado > 946684800000) {
+          const dataResultado = new Date(resultado);
+          calc.resultado = dataResultado.toLocaleDateString('pt-BR');
+          calc.valorTimestamp = resultado;
+        } else {
+          calc.resultado = resultado;
+        }
       } else {
-        calc.resultado = resultado;
+        calc.resultado = (typeof resultado === 'number' && isFinite(resultado)) ? resultado : 0;
       }
-    } else {
-  calc.resultado = (typeof resultado === 'number' && isFinite(resultado)) ? resultado : 0;
+      console.log(`✓ Resultado calculado: ${calc.resultado}`);
+    } catch (e) {
+      calc.resultado = 'Erro no cálculo';
+      console.error('Erro no cálculo:', e);
     }
-    
-    console.log(`✓ Resultado calculado: ${calc.resultado}`);
-  } catch (e) {
-    calc.resultado = 'Erro no cálculo';
-    console.error('Erro no cálculo:', e);
+    console.log('=== MÉTODO CALCULAR FINALIZADO ===\n');
   }
-  console.log('=== MÉTODO CALCULAR FINALIZADO ===\n');
-}  
+  
+  // Resolve dependências entre ensaios internos de um cálculo (como Ensaios Diretos)
+  private recalcularEnsaiosInternosDoCalculo(calc: any, planoBase?: any) {
+    if (!calc || !Array.isArray(calc.ensaios_detalhes)) return;
+    const MAX_PASSOS = 5;
+    for (let passo = 0; passo < MAX_PASSOS; passo++) {
+      let alterou = false;
+      calc.ensaios_detalhes.forEach((ensaio: any) => {
+        if (ensaio?.funcao) {
+          if (this.deveCalcularEnsaioComDefaults(ensaio)) {
+            const antes = ensaio.valor;
+            this.calcularEnsaioInterno(ensaio, calc, planoBase);
+            if (antes !== ensaio.valor) alterou = true;
+          }
+        }
+      });
+      if (!alterou) break;
+    }
+  }
+
+  // Calcula um ensaio interno (dentro de um cálculo), suportando varX e ensaioNN
+  private calcularEnsaioInterno(ensaio: any, calc: any, planoBase?: any) {
+    if (!ensaio || !ensaio.funcao) return;
+    try {
+      const tokenMatches = (ensaio.funcao.match(/\b(var\d+|ensaio\d+)\b/g) || []);
+      const uniqueTokens = Array.from(new Set(tokenMatches)) as string[];
+      const safeVars: any = {};
+      uniqueTokens.forEach((tk: string) => {
+        if (/^var\d+$/.test(tk)) {
+          const variavel = Array.isArray(ensaio.variavel_detalhes)
+            ? ensaio.variavel_detalhes.find((v: any) => v.tecnica === tk || v.nome === tk)
+            : null;
+          let valor = 0;
+          if (variavel) {
+            if (typeof variavel.valorTimestamp === 'number') valor = variavel.valorTimestamp;
+            else if (typeof variavel.valor === 'string') {
+              const d = new Date(variavel.valor);
+              valor = isNaN(d.getTime()) ? Number(variavel.valor) || 0 : d.getTime();
+            } else {
+              valor = typeof variavel.valor === 'number' ? variavel.valor : Number(variavel.valor) || 0;
+            }
+          }
+          safeVars[tk] = isNaN(valor) ? 0 : valor;
+        } else if (/^ensaio\d+$/.test(tk)) {
+          const valor = this.obterValorEnsaioDeContexto(calc, planoBase, tk);
+          safeVars[tk] = isNaN(valor) ? 0 : valor;
+        } else {
+          safeVars[tk] = 0;
+        }
+      });
+
+      const funcoesDatas = {
+        adicionarDias: (data: string | number, dias: number) => {
+          const dataBase = new Date(data);
+          const novaData = new Date(dataBase);
+          novaData.setDate(novaData.getDate() + dias);
+          return novaData.getTime();
+        },
+        diasEntre: (data1: string | number, data2: string | number) => {
+          const d1 = new Date(data1);
+          const d2 = new Date(data2);
+          const diffTime = Math.abs(d2.getTime() - d1.getTime());
+          return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        },
+        hoje: () => new Date().getTime()
+      };
+
+      const scope = { ...safeVars, ...funcoesDatas };
+      const resultado = evaluate(ensaio.funcao, scope);
+      if (ensaio.funcao.includes('adicionarDias') || ensaio.funcao.includes('hoje') || ensaio.funcao.includes('diasEntre')) {
+        if (typeof resultado === 'number' && resultado > 946684800000) {
+          const dataResultado = new Date(resultado);
+          ensaio.valor = dataResultado.toLocaleDateString('pt-BR');
+          ensaio.valorTimestamp = resultado;
+        } else {
+          ensaio.valor = resultado;
+        }
+      } else {
+        ensaio.valor = (typeof resultado === 'number' && isFinite(resultado)) ? resultado : 0;
+      }
+    } catch (e) {
+      console.error('Erro ao calcular ensaio interno:', e);
+    }
+  }
+
+  // Busca valor para um token ensaioNN priorizando o contexto do cálculo, com fallback ao plano
+  private obterValorEnsaioDeContexto(calc: any, planoBase: any, token: string): number {
+    let valor = 0;
+    if (calc && Array.isArray(calc.ensaios_detalhes)) {
+  let porCalcTec = calc.ensaios_detalhes.find((e: any) => this.tokensIguais(e.tecnica, token) || this.tokensIguais(e.variavel, token));
+      if (!porCalcTec) {
+        porCalcTec = calc.ensaios_detalhes.find((e: any) => typeof e.descricao === 'string' && (e.descricao.includes(token) || this.normalize(e.descricao) === this.normalize(token)));
+      }
+      if (porCalcTec) {
+        if (typeof porCalcTec.valorTimestamp === 'number') valor = porCalcTec.valorTimestamp;
+        else if (typeof porCalcTec.valor === 'string') {
+          const d = new Date(porCalcTec.valor);
+          valor = isNaN(d.getTime()) ? Number(porCalcTec.valor) || 0 : d.getTime();
+        } else {
+          valor = typeof porCalcTec.valor === 'number' ? porCalcTec.valor : Number(porCalcTec.valor) || 0;
+        }
+      }
+      if (!valor) {
+        const m = token.match(/ensaio(\d+)/);
+        const idNum = m ? parseInt(m[1], 10) : NaN;
+        if (!isNaN(idNum)) {
+          const porId = calc.ensaios_detalhes.find((e: any) => String(e.id) === String(idNum));
+          if (porId) {
+            if (typeof porId.valorTimestamp === 'number') valor = porId.valorTimestamp;
+            else if (typeof porId.valor === 'string') {
+              const d = new Date(porId.valor);
+              valor = isNaN(d.getTime()) ? Number(porId.valor) || 0 : d.getTime();
+            } else {
+              valor = typeof porId.valor === 'number' ? porId.valor : Number(porId.valor) || 0;
+            }
+          }
+        }
+      }
+    }
+    if (!valor && planoBase && Array.isArray(planoBase.ensaio_detalhes)) {
+  const porTecPlano = planoBase.ensaio_detalhes.find((e: any) => this.tokensIguais(e.tecnica, token) || this.tokensIguais(e.variavel, token));
+      if (porTecPlano) {
+        if (typeof porTecPlano.valorTimestamp === 'number') valor = porTecPlano.valorTimestamp;
+        else if (typeof porTecPlano.valor === 'string') {
+          const d = new Date(porTecPlano.valor);
+          valor = isNaN(d.getTime()) ? Number(porTecPlano.valor) || 0 : d.getTime();
+        } else {
+          valor = typeof porTecPlano.valor === 'number' ? porTecPlano.valor : Number(porTecPlano.valor) || 0;
+        }
+      }
+    }
+    return isNaN(valor) ? 0 : valor;
+  }
 sincronizarValoresEnsaios(produto: any, calc: any) {
   if (!produto.planoEnsaios || !calc.ensaios_detalhes) return;
   calc.ensaios_detalhes.forEach((ensaioCalc: any) => {
@@ -1949,16 +2455,31 @@ atualizarVariavelData(ensaio: any, variavel: any, novaData: Date) {
 }
 
 // Quando o valor de um ensaio simples (sem variáveis) é alterado
+private _ensaioChangeTimer: any;
 onValorEnsaioChange(ensaio: any, novoValor: any) {
-  const num = typeof novoValor === 'number' ? novoValor : Number(novoValor) || 0;
-  ensaio.valor = num;
-  const plano = this.encontrarPlanoDoEnsaio(ensaio);
-  if (plano) {
-    // Não precisa recalcular ensaios diretos (não há função), mas outros que dependem deste podem existir
-    this.recalcularTodosEnsaiosDirectos(plano);
-  }
-  this.recalcularTodosCalculos();
-  this.cd.detectChanges();
+  if (this._ensaioChangeTimer) clearTimeout(this._ensaioChangeTimer);
+  this._ensaioChangeTimer = setTimeout(() => {
+    const num = typeof novoValor === 'number' ? novoValor : Number(novoValor?.toString().replace(',', '.')) || 0;
+    ensaio.valor = num;
+    const plano = this.encontrarPlanoDoEnsaio(ensaio);
+    if (plano) {
+      this.recalcularTodosEnsaiosDirectos(plano);
+    }
+    this.recalcularTodosCalculos();
+    this.cd.detectChanges();
+  }, 120);
+}
+
+// Quando o resultado de um cálculo é alterado manualmente
+private _calculoChangeTimer: any;
+onResultadoCalculoChange(calculo: any, novoValor: any) {
+  if (this._calculoChangeTimer) clearTimeout(this._calculoChangeTimer);
+  this._calculoChangeTimer = setTimeout(() => {
+    const num = typeof novoValor === 'number' ? novoValor : Number(novoValor?.toString().replace(',', '.')) || 0;
+    calculo.resultado = num;
+    this.recalcularTodosCalculos();
+    this.cd.detectChanges();
+  }, 120);
 }
 
 // Calcular datas automáticas baseadas em outras datas
@@ -1991,6 +2512,87 @@ calcularDatasAutomaticas(ensaio: any, variavelAlterada: any) {
     }
   }
 }
+
+  // Permite editar o valor de um ensaio listado dentro do cálculo expandido
+  onValorEnsaioDentroCalculoChange(plano: any, ensaioCalc: any, novoValor: any) {
+    const num = typeof novoValor === 'number' ? novoValor : Number(novoValor?.toString().replace(',', '.')) || 0;
+    ensaioCalc.valor = num;
+    // Recalcula apenas os cálculos deste plano (o cálculo atual certamente será recalculado)
+    if (plano?.calculo_ensaio_detalhes) {
+      const calcRef = plano.calculo_ensaio_detalhes.find((c: any) => Array.isArray(c.ensaios_detalhes) && c.ensaios_detalhes.includes(ensaioCalc));
+      if (calcRef) {
+        this.recalcularEnsaiosInternosDoCalculo(calcRef, plano);
+        this.calcular(calcRef, plano);
+      }
+      plano.calculo_ensaio_detalhes.forEach((c: any) => {
+        if (c !== calcRef) {
+          this.recalcularEnsaiosInternosDoCalculo(c, plano);
+          this.calcular(c, plano);
+        }
+      });
+    }
+    this.cd.detectChanges();
+  }
+
+  // Atualiza variável de um ensaio dentro do cálculo expandido (numérica ou data)
+  atualizarVariavelEnsaioDentroCalculo(plano: any, ensaioCalc: any, variavelCalc: any, novoValor: any) {
+    // Atualiza apenas no ensaio interno do cálculo
+    if (Array.isArray(ensaioCalc.variavel_detalhes)) {
+      const variavelLocal = ensaioCalc.variavel_detalhes.find((v: any) => v.tecnica === variavelCalc.tecnica || v.nome === variavelCalc.nome);
+      if (variavelLocal) {
+        if (this.isVariavelTipoData(variavelLocal)) {
+          // novaData é do tipo Date
+          this.atualizarVariavelData(ensaioCalc, variavelLocal, novoValor);
+        } else {
+          this.atualizarVariavelEnsaio(ensaioCalc, variavelLocal, novoValor);
+        }
+        // Recalcula os cálculos deste plano
+        if (plano?.calculo_ensaio_detalhes) {
+          // Recalcula o cálculo que contém este ensaio primeiro
+          const calcRef = plano.calculo_ensaio_detalhes.find((c: any) => Array.isArray(c.ensaios_detalhes) && c.ensaios_detalhes.includes(ensaioCalc));
+          if (calcRef) {
+            this.recalcularEnsaiosInternosDoCalculo(calcRef, plano);
+            this.calcular(calcRef, plano);
+          }
+          // Recalcula demais cálculos
+          plano.calculo_ensaio_detalhes.forEach((c: any) => {
+            if (c !== calcRef) {
+              this.recalcularEnsaiosInternosDoCalculo(c, plano);
+              this.calcular(c, plano);
+            }
+          });
+        }
+        this.cd.detectChanges();
+      }
+    }
+  }
+
+  // Atualiza o responsável de um ensaio dentro do cálculo e sincroniza com o ensaio direto
+  onResponsavelEnsaioDentroCalculoChange(plano: any, ensaioCalc: any, novoResponsavel: any) {
+    ensaioCalc.responsavel = novoResponsavel;
+    this.cd.detectChanges();
+  }
+
+  // Atualiza o número do cadinho do ensaio dentro do cálculo e sincroniza com o ensaio direto
+  onNumeroCadinhoDentroCalculoChange(plano: any, ensaioCalc: any, novoNumero: any) {
+    const num = typeof novoNumero === 'number' ? novoNumero : Number(novoNumero) || 0;
+    ensaioCalc.numero_cadinho = num;
+    this.cd.detectChanges();
+  }
+
+  // Helper: encontra o ensaio do plano correspondente ao ensaio listado no cálculo
+  private encontrarEnsaioNoPlanoPorCalc(plano: any, ensaioCalc: any): any | undefined {
+    if (!plano || !Array.isArray(plano.ensaio_detalhes)) return undefined;
+    return plano.ensaio_detalhes.find((e: any) =>
+      String(e.id) === String(ensaioCalc.id) ||
+      e.descricao === ensaioCalc.descricao ||
+      e.tecnica === ensaioCalc.tecnica ||
+      e.variavel === ensaioCalc.variavel
+    );
+  }
+
+  // Removido: agora usamos referências compartilhadas aos ensaios do plano
+
 
 // Inicializar datas nas variáveis
 inicializarDatasVariaveis() {
@@ -2249,26 +2851,28 @@ recalcularCalculosDependentes(ensaioAlterado: any) {
         console.log('Ensaio alterado:', ensaioAlterado);
         // Verificar se este cálculo usa o ensaio alterado
         const usaEnsaio = calc.ensaios_detalhes?.some((e: any) => {
-          const comparaId = e.id === ensaioAlterado.id;
-          const comparaDescricao = e.descricao === ensaioAlterado.descricao;
-          console.log(`Comparando: ${e.id} === ${ensaioAlterado.id} = ${comparaId}`);
-          console.log(`Comparando: "${e.descricao}" === "${ensaioAlterado.descricao}" = ${comparaDescricao}`);
-          
-          return comparaId || comparaDescricao;
+          const idMatch = String(e.id) === String(ensaioAlterado.id);
+          const descMatch = this.normalize(String(e.descricao || '')) === this.normalize(String(ensaioAlterado.descricao || ''));
+          const tecMatch = e.tecnica && ensaioAlterado.tecnica && String(e.tecnica) === String(ensaioAlterado.tecnica);
+          const varMatch = e.variavel && ensaioAlterado.variavel && String(e.variavel) === String(ensaioAlterado.variavel);
+          return idMatch || descMatch || tecMatch || varMatch;
         });
         console.log('Usa ensaio:', usaEnsaio);
         if (usaEnsaio) {
           console.log('Recalculando cálculo:', calc.descricao);
           // Sincronizar o valor do ensaio alterado no cálculo
           calc.ensaios_detalhes.forEach((ensaioCalc: any) => {
-            if (ensaioCalc.id === ensaioAlterado.id || ensaioCalc.descricao === ensaioAlterado.descricao) {
-              console.log(`Atualizando valor de ${ensaioCalc.descricao} de ${ensaioCalc.valor} para ${ensaioAlterado.valor}`);
+            const idMatch = String(ensaioCalc.id) === String(ensaioAlterado.id);
+            const descMatch = this.normalize(String(ensaioCalc.descricao || '')) === this.normalize(String(ensaioAlterado.descricao || ''));
+            const tecMatch = ensaioCalc.tecnica && ensaioAlterado.tecnica && String(ensaioCalc.tecnica) === String(ensaioAlterado.tecnica);
+            const varMatch = ensaioCalc.variavel && ensaioAlterado.variavel && String(ensaioCalc.variavel) === String(ensaioAlterado.variavel);
+            if (idMatch || descMatch || tecMatch || varMatch) {
               ensaioCalc.valor = ensaioAlterado.valor;
             }
           });
-          // Recalcular o cálculo
+          // Recalcular o cálculo com os novos valores
           this.calcular(calc, plano);
-          console.log('Resultado do cálculo:', calc.resultado);
+          console.log('Cálculo recalculado. Resultado:', calc.resultado);
         }
       });
     }
@@ -2404,16 +3008,45 @@ salvarAnaliseResultados() {
       calculos: calc.descricao,
       valores: (calc.ensaios_detalhes || []).map((e: any) => e.valor),
       resultados: calc.resultado,
+  responsavel: (typeof calc.responsavel === 'object' && calc.responsavel !== null) ? (calc.responsavel as any).value : (calc.responsavel || null),
       digitador: this.digitador,
-      ensaios_utilizados: (calc.ensaios_detalhes || []).map((e: any) => ({
-        id: e.id,
-        descricao: e.descricao,
-        valor: e.valor,
-        variavel: e.variavel,
-        responsavel: typeof e.responsavel === 'object' && e.responsavel !== null
-          ? e.responsavel.value
-          : e.responsavel
-      }))
+      ensaios_utilizados: (calc.ensaios_detalhes || []).map((e: any) => {
+        // Montar variáveis utilizadas deste ensaio interno (espelhando ensaio direto)
+        const variaveisTodas = Array.isArray(e.variavel_detalhes)
+          ? e.variavel_detalhes.map((v: any) => ({
+              nome: v.nome,
+              valor: v.valor,
+              tecnica: v.tecnica || v.varTecnica || v.nome
+            }))
+          : [];
+        let variaveisFiltradas = variaveisTodas;
+        if (e.funcao) {
+          const varsNaFuncao = Array.from(new Set((e.funcao.match(/var\d+/g) || [])));
+          variaveisFiltradas = variaveisTodas.filter((v: any) => varsNaFuncao.includes(v.tecnica));
+        }
+        const variaveisDict = variaveisFiltradas.reduce((acc: any, v: any) => {
+          acc[v.tecnica] = {
+            descricao: v.nome,
+            valor: v.valor !== undefined && v.valor !== null ? Number(v.valor) : 0
+          };
+          return acc;
+        }, {});
+
+        return {
+          id: e.id,
+          descricao: e.descricao,
+          valor: e.valor,
+          variavel: e.variavel,
+          responsavel: typeof e.responsavel === 'object' && e.responsavel !== null
+            ? e.responsavel.value
+            : e.responsavel,
+          digitador: e.digitador || this.digitador,
+          numero_cadinho: e.numero_cadinho || null,
+          funcao: e.funcao || null,
+          variaveis_utilizadas: variaveisFiltradas,
+          variaveis: variaveisDict
+        };
+      })
     }))
   );
   const idAnalise = this.analiseId ?? 0;
@@ -2505,10 +3138,12 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
       analise_id: item.analise_id,
       tipo: item.tipo,
       ensaio_descricao: item.ensaio_descricao,
-      calculo_descricao: item.calculo_descricao,
+      calculo_descricao: item.calculo_descricao, // ADICIONADO
       valor_ensaio: item.valor_ensaio,
       resultado_calculo: item.resultado_calculo,
-      todasAsPropriedades: Object.keys(item),
+      ensaios_utilizados_tipo: typeof item.ensaios_utilizados, // NOVO: Verificar tipo
+      ensaios_utilizados_valor: item.ensaios_utilizados, // NOVO: Ver o valor
+      todasAsPropriedades: Object.keys(item), // ADICIONADO: ver todas as propriedades
       estruturaCompleta: item
     });
   });
@@ -2525,8 +3160,8 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
         amostraNumero: item.amostra_numero || 'N/A',
         dataAnalise: item.data_analise || new Date(),
         dataFormatada: this.datePipe.transform(item.data_analise || new Date(), 'dd/MM/yyyy HH:mm') || 'Data não disponível',
-        responsavel: item.responsavel || 'N/A',
-        digitador: item.responsavel ||  item.ensaio_responsavel || 'T/A',
+        responsavel: item.responsavel || item.ensaio_responsavel || 'N/A',
+        digitador: item.digitador || item.ensaio_digitador || 'N/A',
         resultadoCalculo: null,
         ensaiosUtilizados: []
       });
@@ -2546,6 +3181,81 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
       const descricaoCalculo = item.calculo_descricao || item.descricao || calcAtual.descricao || 'Cálculo';
       console.log(`� Descrição do cálculo: "${descricaoCalculo}"`);
       
+      // Construir lista de variáveis do cálculo (varNN e ensaioNN) com seus valores atuais
+      const tokens = Array.from(new Set((calcAtual.funcao?.match(/\b(var\d+|ensaio\d+)\b/g) || []))) as string[];
+      const variaveis: any[] = [];
+      const variaveisUtilizadas: any[] = [];
+      
+      // Criar mapa de ensaios do cálculo para incluir variavel_detalhes
+      const ensaiosUtilizadosMap: any[] = [];
+      
+      tokens.forEach((tk) => {
+        let valor = 0;
+        let desc = '';
+        let ensaioRef = null;
+        
+        if (/^var\d+$/.test(tk)) {
+          const ens = Array.isArray(calcAtual.ensaios_detalhes) ? calcAtual.ensaios_detalhes.find((e: any) => e.tecnica === tk || e.variavel === tk) : null;
+          if (ens) {
+            ensaioRef = ens;
+            if (typeof ens.valorTimestamp === 'number') valor = ens.valorTimestamp;
+            else if (typeof ens.valor === 'string') {
+              const d = new Date(ens.valor);
+              valor = isNaN(d.getTime()) ? Number(ens.valor) || 0 : d.getTime();
+            } else {
+              valor = typeof ens.valor === 'number' ? ens.valor : Number(ens.valor) || 0;
+            }
+            desc = ens.descricao || '';
+          }
+          variaveis.push({ nome: tk, valor, tecnica: tk, descricao: desc });
+          variaveisUtilizadas.push({ nome: tk, valor, tecnica: tk, descricao: desc });
+        } else if (/^ensaio\d+$/.test(tk)) {
+          // procurar dentro do cálculo por tecnica/variavel/descricao ou id no token
+          let ens = Array.isArray(calcAtual.ensaios_detalhes)
+            ? calcAtual.ensaios_detalhes.find((e: any) => this.tokensIguais(e.tecnica, tk) || this.tokensIguais(e.variavel, tk))
+            : null;
+          if (!ens && Array.isArray(calcAtual.ensaios_detalhes)) {
+            ens = calcAtual.ensaios_detalhes.find((e: any) => typeof e.descricao === 'string' && (e.descricao.includes(tk) || this.normalize(e.descricao) === this.normalize(tk)));
+          }
+          if (!ens && Array.isArray(calcAtual.ensaios_detalhes)) {
+            const m = tk.match(/ensaio(\d+)/);
+            const idNum = m ? parseInt(m[1], 10) : NaN;
+            if (!isNaN(idNum)) ens = calcAtual.ensaios_detalhes.find((e: any) => String(e.id) === String(idNum));
+          }
+          if (ens) {
+            ensaioRef = ens;
+            if (typeof ens.valorTimestamp === 'number') valor = ens.valorTimestamp;
+            else if (typeof ens.valor === 'string') {
+              const d = new Date(ens.valor);
+              valor = isNaN(d.getTime()) ? Number(ens.valor) || 0 : d.getTime();
+            } else {
+              valor = typeof ens.valor === 'number' ? ens.valor : Number(ens.valor) || 0;
+            }
+            desc = ens.descricao || '';
+          }
+          variaveisUtilizadas.push({ nome: tk, valor, tecnica: tk, descricao: desc });
+        }
+        
+        // Adicionar ensaio aos ensaios_utilizados se não existir ainda
+        if (ensaioRef && !ensaiosUtilizadosMap.find(e => e.id === ensaioRef.id)) {
+          ensaiosUtilizadosMap.push({
+            id: ensaioRef.id,
+            descricao: ensaioRef.descricao || '',
+            valor: ensaioRef.valor || 0,
+            responsavel: ensaioRef.responsavel || item.responsavel || 'N/A',
+            digitador: ensaioRef.digitador || item.digitador || 'N/A',
+            numero_cadinho: ensaioRef.numero_cadinho || null,
+            variaveis_utilizadas: Array.isArray(ensaioRef.variavel_detalhes) ? ensaioRef.variavel_detalhes.map((v: any) => ({
+              nome: v.nome || v.tecnica || '',
+              valor: v.valor || 0,
+              tecnica: v.tecnica || '',
+              descricao: v.descricao || '',
+              tipo: v.tipo || 'number'
+            })) : []
+          });
+        }
+      });
+
       const jaExisteCalculo = analiseData.ensaiosUtilizados.find((e: any) => 
         e.tipo === 'CALCULO' && e.descricao === descricaoCalculo
       );
@@ -2557,13 +3267,31 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
           valor: item.resultado_calculo,
           responsavel: item.responsavel || item.digitador || 'N/A',
           digitador: item.digitador || 'N/A',
-          tipo: 'CALCULO'
+          tipo: 'CALCULO',
+          funcao: calcAtual.funcao,
+          variaveis,
+          variaveis_utilizadas: variaveisUtilizadas,
+          ensaios_utilizados: ensaiosUtilizadosMap
         };
         analiseData.ensaiosUtilizados.push(calculoItem);
         console.log(`✅ Cálculo adicionado:`, calculoItem);
       } else {
         console.log(`⚠️ Cálculo já existe: ${descricaoCalculo}`);
       }
+
+      // Espelhar um objeto ultimo_calculo com os mesmos dados para fácil acesso
+      (analiseData as any).ultimo_calculo = {
+        id: `calculo_${analiseId}`,
+        descricao: descricaoCalculo,
+        valor: item.resultado_calculo,
+        responsavel: item.responsavel || item.digitador || 'N/A',
+        digitador: item.digitador || 'N/A',
+        tipo: 'CALCULO',
+        funcao: calcAtual.funcao,
+        variaveis,
+        variaveis_utilizadas: variaveisUtilizadas,
+        ensaios_utilizados: ensaiosUtilizadosMap
+      };
     } else {
       console.log(`❌ NÃO tem resultado_calculo válido - valor: ${item.resultado_calculo}`);
     }
@@ -2587,14 +3315,15 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
               e.id === valorItem.id || e.descricao === valorItem.descricao
             );
             if (!ensaioExistente) {
+              console.log(`🔍 Adicionando ensaio - Descrição: ${valorItem.descricao}, Número Cadinho: ${item.numero_cadinho || valorItem.numero_cadinho || 'não encontrado'}`);
               analiseData.ensaiosUtilizados.push({
                 id: valorItem.id,
                 descricao: valorItem.descricao,
                 valor: valorItem.valor, // Usar o valor do objeto
                 responsavel: item.ensaio_responsavel || 'N/A',
-                digitador: item.ensaio_digitador || 'N/A'
+                digitador: item.ensaio_digitador || 'N/A',
+                numero_cadinho: item.numero_cadinho || valorItem.numero_cadinho || null // NOVO: Número do cadinho
               });
-              console.log(`✅ Ensaio adicionado: ${valorItem.descricao} = ${valorItem.valor}`);
             }
           }
         });
@@ -2611,364 +3340,6 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
             e.id === item.ensaio_id || e.descricao === item.ensaio_descricao
           );
           if (!ensaioExistente) {
-            analiseData.ensaiosUtilizados.push({
-              id: item.ensaio_id,
-              descricao: item.ensaio_descricao,
-              valor: item.valor_ensaio,
-              responsavel: item.ensaio_responsavel || 'N/A',
-              digitador: item.ensaio_digitador || 'N/A'
-            });
-          }
-        }
-      }
-      // Atualizar dados básicos se não foram definidos
-      if (analiseData.responsavel === 'N/A' && item.ensaio_responsavel) {
-        analiseData.responsavel = item.ensaio_responsavel;
-      }
-    }
-  });
-  // Converter para array e filtrar apenas análises com resultado de cálculo
-  this.resultadosAnteriores = Array.from(analiseMap.values())
-    .filter((item: any) => {
-      const temResultado = item.resultadoCalculo !== null && item.resultadoCalculo !== undefined;
-      const temEnsaios = item.ensaiosUtilizados.length > 0;
-      console.log(`📋 Análise ${item.analiseId}:`, {
-        temResultado,
-        resultado: item.resultadoCalculo,
-        temEnsaios,
-        qtdEnsaios: item.ensaiosUtilizados.length,
-        ensaios: item.ensaiosUtilizados.map((e: any) => `${e.descricao}=${e.valor}`).join(', ')
-      });
-      return temResultado && temEnsaios;
-    })
-    .sort((a: any, b: any) => new Date(b.dataAnalise).getTime() - new Date(a.dataAnalise).getTime());
-    
-  console.log('🎉 PROCESSAMENTO DE CÁLCULOS CONCLUÍDO!');
-  console.log(`📊 Total de resultados processados: ${this.resultadosAnteriores.length}`);
-  console.log('📋 Resultados finais:', this.resultadosAnteriores);
-  
-  // DEBUG: Verificar se a variável está sendo atualizada
-  if (this.resultadosAnteriores.length > 0) {
-    console.log('✅ SUCESSO: Resultados anteriores de cálculos carregados para exibição');
-    this.resultadosAnteriores.forEach((resultado: any, idx: number) => {
-      console.log(`  Resultado ${idx + 1}:`, {
-        analiseId: resultado.analiseId,
-        descricao: resultado.amostraNumero,
-        qtdEnsaios: resultado.ensaiosUtilizados.length,
-        resultadoCalculo: resultado.resultadoCalculo,
-        ensaios: resultado.ensaiosUtilizados
-      });
-    });
-  } else {
-    console.log('❌ PROBLEMA: Nenhum resultado de cálculo foi adicionado à lista final');
-  }
-}
-aplicarResultadosAnteriores(resultadoAnterior: any) {
-  console.log('Aplicando resultados anteriores:', resultadoAnterior);
-  if (!this.analisesSimplificadas || this.analisesSimplificadas.length === 0) {
-    this.messageService.add({
-      severity: 'warn',
-      summary: 'Aviso',
-      detail: 'Nenhuma análise carregada para aplicar os valores.'
-    });
-    return;
-  }
-  const analiseData = this.analisesSimplificadas[0];
-  const planoDetalhes = analiseData?.planoDetalhes || [];
-  let valoresAplicados = 0;
-  planoDetalhes.forEach((plano: any) => {
-    // Aplicar nos cálculos
-    if (plano.calculo_ensaio_detalhes) {
-      plano.calculo_ensaio_detalhes.forEach((calc: any) => {
-        if (calc.descricao === this.calculoSelecionadoParaPesquisa?.descricao) {
-          console.log('Aplicando valores no cálculo:', calc.descricao);
-          // Aplicar valores dos ensaios
-          if (calc.ensaios_detalhes && resultadoAnterior.ensaiosUtilizados) {
-            calc.ensaios_detalhes.forEach((ensaioCalc: any) => {
-              const ensaioAnterior = resultadoAnterior.ensaiosUtilizados.find((e: any) => 
-                e.id === ensaioCalc.id || e.descricao === ensaioCalc.descricao
-              );
-              if (ensaioAnterior) {
-                console.log(`Aplicando valor: ${ensaioCalc.descricao} = ${ensaioAnterior.valor}`);
-                ensaioCalc.valor = ensaioAnterior.valor;
-                if (ensaioAnterior.responsavel) {
-                  ensaioCalc.responsavel = ensaioAnterior.responsavel;
-                }
-                valoresAplicados++;
-                // Sincronizar com ensaio direto se existir
-                const ensaioDireto = plano.ensaio_detalhes?.find((e: any) => 
-                  e.id === ensaioCalc.id || e.descricao === ensaioCalc.descricao
-                );
-                if (ensaioDireto) {
-                  ensaioDireto.valor = ensaioAnterior.valor;
-                  if (ensaioAnterior.responsavel) {
-                    ensaioDireto.responsavel = ensaioAnterior.responsavel;
-                  }
-                }
-              }
-            });
-          }
-          // Recalcular o cálculo com os novos valores
-          this.calcular(calc, plano);
-          console.log('Cálculo recalculado. Resultado:', calc.resultado);
-        }
-      });
-    }
-  });
-  if (valoresAplicados > 0) {
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Sucesso',
-      detail: `${valoresAplicados} valores aplicados com sucesso. Cálculo atualizado.`
-    });
-    this.fecharResultadosAnteriores();
-    this.forcarDeteccaoMudancas();
-  } else {
-    this.messageService.add({
-      severity: 'warn',
-      summary: 'Aviso',
-      detail: 'Nenhum valor foi aplicado. Verifique se os ensaios correspondem.'
-    });
-  }
-}
-fecharResultadosAnteriores() {
-  this.mostrandoResultadosAnteriores = false;
-  this.resultadosAnteriores = [];
-  this.calculoSelecionadoParaPesquisa = null;
-  this.ensaioSelecionadoParaPesquisa = null;
-  }
-
-  abrirDrawerResultados(calc: any, plano: any) {
-    this.calculoSelecionadoParaPesquisa = calc;
-    this.carregandoResultados = true;
-    this.drawerResultadosVisivel = true;
-    // Parâmetros obrigatórios para a API
-    const calculoNome = calc.descricao || '';
-    const ensaioIds = (calc.ensaios_detalhes || []).map((e: any) => e.id);
-    const limitResultados = 5; // Limitar a 5 resultados anteriores
-    console.log('Buscando resultados anteriores:', { calculoNome, ensaioIds, limit: limitResultados });
-    this.analiseService.getResultadosAnteriores(calculoNome, ensaioIds, limitResultados).subscribe({
-      next: (resultados: any[]) => {
-         console.log('Resultados recebidos:kkkkkkkkkkkkkkkkkkkkk', resultados);
-  this.processarResultadosAnteriores(resultados, calc);
-  this.carregandoResultados = false;
-},
-      error: (err: any) => {
-        this.carregandoResultados = false;
-        this.messageService?.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao buscar resultados anteriores.' });
-        console.error('Erro ao buscar resultados anteriores:', err);
-      }
-    });
-  }
-
-  fecharDrawerResultados() {
-    this.drawerResultadosVisivel = false;
-    this.calculoSelecionadoParaPesquisa = null;
-    this.resultadosAnteriores = [];
-  }
-
- abrirDrawerResultadosEnsaios(ensaio: any) {
-    this.ensaioSelecionadoParaPesquisa = ensaio;
-    this.carregandoResultados = true;
-    this.drawerResultadosEnsaioVisivel = true;
-    // Parâmetros obrigatórios para a API
-    const ensaioNome = ensaio.descricao || '';
-    const ensaioIds = [ensaio.id];
-    const limitResultados = 5; // Limitar a 5 resultados anteriores
-    console.log('Buscando resultados anteriores:', { ensaioNome, ensaioIds, limit: limitResultados });
-    this.analiseService.getResultadosAnterioresEnsaios(ensaioNome, ensaioIds, limitResultados).subscribe({
-      next: (resultados: any[]) => {
-        console.log('🔍 RESULTADOS RECEBIDOS DO BACKEND:', resultados);
-        console.log('🔍 PRIMEIRO RESULTADO (estrutura completa):', JSON.stringify(resultados[0], null, 2));
-        resultados.forEach((resultado, index) => {
-          console.log(`🔍 Resultado ${index + 1} - numero_cadinho:`, resultado.numero_cadinho);
-          if (resultado.ensaios_utilizados) {
-            console.log(`🔍 Resultado ${index + 1} - ensaios_utilizados:`, resultado.ensaios_utilizados);
-          }
-        });
-  this.processarResultadosAnterioresEnsaios(resultados, ensaio);
-  this.carregandoResultados = false;
-},
-      error: (err: any) => {
-        this.carregandoResultados = false;
-        this.messageService?.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao buscar resultados anteriores.' });
-        console.error('Erro ao buscar resultados anteriores:', err);
-      }
-    });
-  }
-
-fecharDrawerResultadosEnsaios() {
-    this.drawerResultadosEnsaioVisivel = false;
-    this.ensaioSelecionadoParaPesquisa = null;
-    this.resultadosAnteriores = [];
-  }
-
-
-
-  processarResultadosAnterioresEnsaios(resultados: any[], contextoAtual: any) {
-  console.log('🎯 INICIANDO PROCESSAMENTO DE RESULTADOS ANTERIORES');
-  console.log('🔍 Total de resultados recebidos:', resultados.length);
-  console.log('🔍 Contexto atual:', contextoAtual);
-  
-  // Log detalhado de cada resultado
-  resultados.forEach((resultado, index) => {
-    console.log(`📋 Resultado ${index + 1}:`);
-    console.log(`  - ID: ${resultado.id}`);
-    console.log(`  - numero_cadinho: ${resultado.numero_cadinho}`);
-    console.log(`  - ensaios_utilizados:`, resultado.ensaios_utilizados);
-    console.log(`  - Estrutura completa:`, JSON.stringify(resultado, null, 2));
-  });
-  console.log('🚨 MÉTODO ATUALIZADO - VERSÃO 2.0 🚨');
-  console.log('=== PROCESSANDO RESULTADOS ANTERIORES ===');
-  console.log('Dados recebidos:', resultados);
-  console.log('Contexto atual:', contextoAtual);
-
-  if (!resultados || !Array.isArray(resultados) || resultados.length === 0) {
-    console.log('❌ Nenhum resultado para processar');
-    this.resultadosAnteriores = [];
-    return;
-  }
-
-  console.log('🔍 Analisando estrutura de cada item recebido:');
-  resultados.forEach((item: any, index: number) => {
-    console.log(`Item ${index}:`, {
-      analise_id: item.analise_id,
-      tipo: item.tipo,
-      ensaio_descricao: item.ensaio_descricao,
-      calculo_descricao: item.calculo_descricao, // ADICIONADO
-      valor_ensaio: item.valor_ensaio,
-      resultado_calculo: item.resultado_calculo,
-      ensaios_utilizados_tipo: typeof item.ensaios_utilizados, // NOVO: Verificar tipo
-      ensaios_utilizados_valor: item.ensaios_utilizados, // NOVO: Ver o valor
-      todasAsPropriedades: Object.keys(item), // ADICIONADO: ver todas as propriedades
-      estruturaCompleta: item
-    });
-    
-    // NOVO: Fazer parse do ensaios_utilizados se for string
-    if (item.ensaios_utilizados && typeof item.ensaios_utilizados === 'string') {
-      try {
-        console.log(`🔄 Fazendo parse de ensaios_utilizados para item ${index}`);
-        item.ensaios_utilizados_parsed = JSON.parse(item.ensaios_utilizados);
-        console.log(`✅ Parse bem-sucedido:`, item.ensaios_utilizados_parsed);
-      } catch (error) {
-        console.error(`❌ Erro no parse de ensaios_utilizados para item ${index}:`, error);
-        item.ensaios_utilizados_parsed = [];
-      }
-    } else if (item.ensaios_utilizados && Array.isArray(item.ensaios_utilizados)) {
-      console.log(`✅ ensaios_utilizados já é array para item ${index}`);
-      item.ensaios_utilizados_parsed = item.ensaios_utilizados;
-    } else {
-      console.log(`⚠️ ensaios_utilizados não encontrado ou inválido para item ${index}`);
-      item.ensaios_utilizados_parsed = [];
-    }
-  });
-
-  const analiseMap = new Map();
-  resultados.forEach((item: any, index: number) => {
-    const analiseId = item.analise_id;
-    console.log(`🔄 Processando item ${index} - analiseId: ${analiseId}`);
-    
-    if (!analiseMap.has(analiseId)) {
-      console.log(`✨ Criando nova entrada para análise ${analiseId}`);
-      analiseMap.set(analiseId, {
-        analiseId: analiseId,
-        amostraNumero: item.amostra_numero || 'N/A',
-        dataAnalise: item.data_analise || new Date(),
-        dataFormatada: this.datePipe.transform(item.data_analise || new Date(), 'dd/MM/yyyy HH:mm') || 'Data não disponível',
-        responsavel: item.responsavel || item.ensaio_responsavel || 'N/A',
-        digitador: item.digitador || item.ensaio_digitador || 'N/A',
-        resultadoCalculo: null,
-        ensaiosUtilizados: []
-      });
-    }
-    const analiseData = analiseMap.get(analiseId);
-    console.log(`📝 Dados da análise ${analiseId}:`, analiseData);
-
-    // Processa resultado de cálculo, se houver
-    console.log(`🔍 Verificando se é cálculo: tipo="${item.tipo}", resultado_calculo="${item.resultado_calculo}", item completo:`, item);
-    
-    // TESTE: Processar qualquer item que tenha resultado_calculo válido
-    if (item.resultado_calculo !== null && item.resultado_calculo !== undefined && item.resultado_calculo !== '') {
-      console.log(`🧮 Processando CÁLCULO (sem verificar tipo) - resultado: ${item.resultado_calculo}`);
-      analiseData.resultadoCalculo = item.resultado_calculo;
-      
-      // NOVO: Adicionar o próprio cálculo como "ensaio" para aparecer na lista
-      const descricaoCalculo = item.calculo_descricao || item.descricao || contextoAtual.descricao || 'Cálculo';
-      console.log(`📝 Descrição do cálculo: "${descricaoCalculo}"`);
-      
-      const jaExisteCalculo = analiseData.ensaiosUtilizados.find((e: any) => 
-        e.tipo === 'CALCULO' && e.descricao === descricaoCalculo
-      );
-      
-      if (!jaExisteCalculo) {
-        const calculoItem = {
-          id: `calculo_${analiseId}`,
-          descricao: descricaoCalculo,
-          valor: item.resultado_calculo,
-          responsavel: item.responsavel || item.digitador || 'N/A',
-          digitador: item.digitador || 'N/A',
-          tipo: 'CALCULO'
-        };
-        analiseData.ensaiosUtilizados.push(calculoItem);
-        console.log(`✅ Cálculo adicionado:`, calculoItem);
-      } else {
-        console.log(`⚠️ Cálculo já existe: ${descricaoCalculo}`);
-      }
-    } else {
-      console.log(`❌ NÃO tem resultado_calculo válido - valor: ${item.resultado_calculo}`);
-    }
-
-    // Processa ensaios (direto ou de cálculo)
-    if (item.tipo === 'ENSAIO' && item.ensaio_descricao) {
-      console.log(`🔬 Processando ENSAIO - ${item.ensaio_descricao}, valor_ensaio:`, item.valor_ensaio);
-      if (item.valor_ensaio && Array.isArray(item.valor_ensaio)) {
-        item.valor_ensaio.forEach((valorItem: any) => {
-          // Para drawer de ensaio direto, sempre adiciona; para cálculo, verifica se faz parte do cálculo
-          let adicionar = true;
-          if (contextoAtual.ensaios_detalhes) {
-            adicionar = contextoAtual.ensaios_detalhes.some((e: any) =>
-              e.id === valorItem.id ||
-              e.descricao === valorItem.descricao ||
-              this.normalize(e.descricao) === this.normalize(valorItem.descricao)
-            );
-          } else if (contextoAtual.id) {
-            adicionar = valorItem.id === contextoAtual.id ||
-                        valorItem.descricao === contextoAtual.descricao;
-          }
-          if (adicionar) {
-            const jaExiste = analiseData.ensaiosUtilizados.find((e: any) =>
-              e.id === valorItem.id || e.descricao === valorItem.descricao
-            );
-            if (!jaExiste) {
-              console.log(`🔍 Adicionando ensaio - Descrição: ${valorItem.descricao}, Número Cadinho: ${item.numero_cadinho || valorItem.numero_cadinho || 'não encontrado'}`);
-              analiseData.ensaiosUtilizados.push({
-                id: valorItem.id,
-                descricao: valorItem.descricao,
-                valor: valorItem.valor,
-                responsavel: item.ensaio_responsavel || 'N/A',
-                digitador: item.ensaio_digitador || 'N/A',
-                numero_cadinho: item.numero_cadinho || valorItem.numero_cadinho || null // NOVO: Número do cadinho
-              });
-            }
-          }
-        });
-      } else if (item.valor_ensaio) {
-        let adicionar = true;
-        if (contextoAtual.ensaios_detalhes) {
-          adicionar = contextoAtual.ensaios_detalhes.some((e: any) =>
-            e.id === item.ensaio_id ||
-            e.descricao === item.ensaio_descricao ||
-            this.normalize(e.descricao) === this.normalize(item.ensaio_descricao)
-          );
-        } else if (contextoAtual.id) {
-          adicionar = item.ensaio_id === contextoAtual.id ||
-                      item.ensaio_descricao === contextoAtual.descricao;
-        }
-        if (adicionar) {
-          const jaExiste = analiseData.ensaiosUtilizados.find((e: any) =>
-            e.id === item.ensaio_id || e.descricao === item.ensaio_descricao
-          );
-          if (!jaExiste) {
             console.log(`🔍 Adicionando ensaio direto - Descrição: ${item.ensaio_descricao}, Número Cadinho: ${item.numero_cadinho || 'não encontrado'}`);
             analiseData.ensaiosUtilizados.push({
               id: item.ensaio_id,
@@ -2981,6 +3352,7 @@ fecharDrawerResultadosEnsaios() {
           }
         }
       }
+      // Atualizar dados básicos se não foram definidos
       if (analiseData.responsavel === 'N/A' && item.ensaio_responsavel) {
         analiseData.responsavel = item.ensaio_responsavel;
       }
@@ -2995,15 +3367,15 @@ fecharDrawerResultadosEnsaios() {
         
         // Verificar se este ensaio deve ser incluído (baseado no contexto)
         let adicionar = true;
-        if (contextoAtual.ensaios_detalhes) {
-          adicionar = contextoAtual.ensaios_detalhes.some((e: any) =>
+        if (calcAtual.ensaios_detalhes) {
+          adicionar = calcAtual.ensaios_detalhes.some((e: any) =>
             e.id === ensaioParsed.id ||
             e.descricao === ensaioParsed.descricao ||
             this.normalize(e.descricao) === this.normalize(ensaioParsed.descricao)
           );
-        } else if (contextoAtual.id) {
-          adicionar = ensaioParsed.id === contextoAtual.id ||
-                      ensaioParsed.descricao === contextoAtual.descricao;
+        } else if (calcAtual.id) {
+          adicionar = ensaioParsed.id === calcAtual.id ||
+                      ensaioParsed.descricao === calcAtual.descricao;
         }
         
         if (adicionar) {
@@ -4031,6 +4403,32 @@ private verificarEstadoTodasCalculos(): void {
     
     this.todasCalculosExpandidas = totalCalculos > 0 && calculosExpandidos === totalCalculos;
   }
+}
+
+// ====== Drawer de Resultados (Cálculos) ======
+abrirDrawerResultados(calculo: any, plano?: any): void {
+  this.calculoSelecionadoParaPesquisa = calculo;
+  this.drawerResultadosVisivel = true;
+  this.cd.detectChanges();
+}
+
+fecharDrawerResultados(): void {
+  this.drawerResultadosVisivel = false;
+  this.calculoSelecionadoParaPesquisa = null;
+  this.cd.detectChanges();
+}
+
+// ====== Drawer de Resultados (Ensaios) ======
+abrirDrawerResultadosEnsaios(ensaio: any): void {
+  this.ensaioSelecionadoParaPesquisa = ensaio;
+  this.drawerResultadosEnsaioVisivel = true;
+  this.cd.detectChanges();
+}
+
+fecharDrawerResultadosEnsaios(): void {
+  this.drawerResultadosEnsaioVisivel = false;
+  this.ensaioSelecionadoParaPesquisa = null;
+  this.cd.detectChanges();
 }
 
 }
