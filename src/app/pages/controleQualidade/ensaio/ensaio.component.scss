@@ -1,4 +1,8 @@
 @import "primeicons/primeicons.css";
+.blocos-scroll {
+    height: 100%;
+    overflow-y: auto;
+}
 .container{
     max-width: 100%;
     //background-color: #F7F8FA;

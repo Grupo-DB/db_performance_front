@@ -531,8 +531,6 @@ export class AnaliseComponent implements OnInit, OnDestroy {
     if (this.analiseId !== undefined) {
       this.analiseService.getAnaliseById(this.analiseId).subscribe(
         (analise) => {
-              console.log('AQUI', analise);
-
           this.analise = analise;
           this.idAnalise = analise.id;
           this.loadAnalisePorId(analise);
