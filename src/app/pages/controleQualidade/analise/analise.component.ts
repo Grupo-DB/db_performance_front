@@ -63,13 +63,7 @@ interface FileWithInfo {
 @Component({
   selector: 'app-analise',
   imports: [
-    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule, CardModule,
-    InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule,
-    FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,
-    ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,
-    InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,
-    InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, AvatarModule,
-    PopoverModule, BadgeModule, TooltipModule
+    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule, CardModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, AvatarModule, PopoverModule, BadgeModule, TooltipModule
 ],
   animations: [
     trigger('efeitoFade', [
@@ -537,6 +531,8 @@ export class AnaliseComponent implements OnInit, OnDestroy {
     if (this.analiseId !== undefined) {
       this.analiseService.getAnaliseById(this.analiseId).subscribe(
         (analise) => {
+              console.log('AQUI', analise);
+
           this.analise = analise;
           this.idAnalise = analise.id;
           this.loadAnalisePorId(analise);

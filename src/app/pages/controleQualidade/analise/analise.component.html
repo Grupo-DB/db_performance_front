@@ -112,7 +112,7 @@
  
     <div class="container">
         <div class="form-geral flex flex-column align-items-center" @swipeAnimation>
-            <div class="step1 w-11 mt-3">
+            <div class="step1 w-12 mt-3">
                 <p-card class="card" *ngIf="analise">
                     <ng-template #header>
                         <div class="header flex flex-row justify-content-between gap-2 px-2">
@@ -127,31 +127,49 @@
                             <p><b>Data de Coleta:</b> {{ analise.amostra_detalhes?.data_coleta }}</p>
                             <p><b>Digitador:</b> {{ analise.amostra_detalhes?.digitador }}</p>
                             <p><b>Material:</b> {{ analise.amostra_detalhes?.material }}</p>
-                            <p><b>Finalidade:</b> {{ analise.amostra_detalhes?.finalidade }}</p>
                         </div>
                         <div class="text-left w-4">
+                            <p><b>Finalidade:</b> {{ analise.amostra_detalhes?.finalidade }}</p>
                             <p><b>Produto:</b> {{ analise.amostra_detalhes?.produto_amostra_detalhes?.nome }}</p>
-                            <p><b>Data Entrada:</b> {{ analise.amostra_detalhes?.data_entrada }}</p>
+                            <p><b>Data Entrada:</b> {{ analise.amostra_detalhes?.data_entrada  | date:'dd/MM/yy' }}</p>
+                        </div>
+                        <div class="text-left w-4">
                             <p><b>Fornecedor:</b> {{ analise.amostra_detalhes?.fornecedor }}</p>
                             <p><b>Local de Coleta:</b> {{ analise.amostra_detalhes?.local_coleta }}</p>
-                        </div>
-                        <div class="text-left w-4">
                             <p><b>Status:</b> {{ analise.amostra_detalhes?.status }}</p>
-                            <p-button 
-                                class="w-12" 
-                                label="Imagens"
-                                [raised]="true"
-                                severity="primary" 
-                                icon="pi pi-image" 
-                                iconPos="right"
-                                (onClick)="visualizarImagens(analise.amostra_detalhes?.id)"
-                            ></p-button>
                         </div>    
+                    </div>
+                    <div class="flex flex-column lg:flex-row align-items-center w-full">
+                        <div class="col-12 lg:col-4 flex justify-content-center lg:justify-content-start">
+                            <p-button
+                            class="w-full lg:w-auto"
+                            label="Imagens"
+                            [raised]="true"
+                            severity="primary"
+                            icon="pi pi-image"
+                            iconPos="right"
+                            (onClick)="visualizarImagens(analise.amostra_detalhes?.id)">
+                            </p-button>
+                        </div>
+
+                        <div class="text-left w-8"> 
+                            <p-floatlabel variant="in"> 
+                                <textarea 
+                                pTextarea 
+                                [value]="analise.amostra_detalhes?.observacoes" 
+                                id="on_label" 
+                                rows="5" 
+                                cols="30" 
+                                class="h-full w-full" 
+                                style="border-radius: 5px; background-color: #444959; color: white;" ></textarea> 
+                                <label for="in_label">Observações:</label> 
+                            </p-floatlabel> 
+                        </div>
                     </div>
                 </p-card>
             </div>
 
-            <div class="w-11 mt-4">
+            <div class="w-12 mt-4">
                 <div *ngFor="let plano of analisesSimplificadas[0]?.planoDetalhes">
                     <p-divider align="left" type="solid" class="title">
                         <div class="title">
@@ -707,21 +725,21 @@
                     </div>
                 </div>
             </div>    
-                    <div class="step1 flex flex-column w-11 gap-3 mt-3 mb-5 justify-content-end lg:w-11 lg:flex-row">                        
-                        <div class="w-2 text-right">
-                            <p-button label="Salvar Resultados" severity="success" icon="pi pi-check" iconPos="right" [raised]="true"
-                                size="large" (onClick)="salvarAnaliseResultados()" />
-                        </div>
-                        <!-- <div class="w-2"
-                            *ngIf="podeEditarEnsaiosCalculos() && (!analisesSimplificadas[0]?.planoDetalhes?.[0]?.calculo_ensaio_detalhes || analisesSimplificadas[0]?.planoDetalhes?.[0]?.calculo_ensaio_detalhes.length === 0)">
-                            <p-button icon="pi pi-plus" iconPos="right" label="Adicionar Cálculo" severity="info" size="large"
-                                [raised]="true" (onClick)="abrirModalAdicionarCalculos()" pTooltip="Adicionar novo cálculo à análise">
-                            </p-button>
-                        </div> -->
-                    </div>
-                    
+            <div class="step1 flex flex-column w-12 gap-3 mt-3 mb-5 justify-content-end lg:w-11 lg:flex-row">                        
+                <div class="w-2 text-right">
+                    <p-button label="Salvar Resultados" severity="success" icon="pi pi-check" iconPos="right" [raised]="true"
+                        size="large" (onClick)="salvarAnaliseResultados()" />
                 </div>
+                <!-- <div class="w-2"
+                    *ngIf="podeEditarEnsaiosCalculos() && (!analisesSimplificadas[0]?.planoDetalhes?.[0]?.calculo_ensaio_detalhes || analisesSimplificadas[0]?.planoDetalhes?.[0]?.calculo_ensaio_detalhes.length === 0)">
+                    <p-button icon="pi pi-plus" iconPos="right" label="Adicionar Cálculo" severity="info" size="large"
+                        [raised]="true" (onClick)="abrirModalAdicionarCalculos()" pTooltip="Adicionar novo cálculo à análise">
+                    </p-button>
+                </div> -->
             </div>
+            
+        </div>
+    </div>
 
 <!-- Resultados Anteriores Calculos -->
 <p-drawer [visible]="drawerResultadosVisivel" [modal]="true" [dismissible]="true" position="top"
@@ -731,41 +749,40 @@
         <p>Carregando histórico...</p>
     </div>
     <div *ngIf="!carregandoResultados && resultadosAnteriores.length > 0">
-        
-            
-                <div class="header w-full text-left">
-                    Resultados Anteriores <h2><b>{{ calculoSelecionadoParaPesquisa?.descricao }}</b></h2>
-                </div>
+    
+        <div class="header w-full text-left">
+            Resultados Anteriores <h2><b>{{ calculoSelecionadoParaPesquisa?.descricao }}</b></h2>
+        </div>
            
-            <p-table [value]="resultadosAnteriores" [scrollable]="true" scrollHeight="400px" class="tabela">
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th>Data</th>
-                        <th>Amostra</th>
-                        <th>Resultado</th>
-                        <th>Ensaios/Valores</th>
-                        
+        <p-table [value]="resultadosAnteriores" [scrollable]="true" scrollHeight="400px" class="tabela">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Data</th>
+                    <th>Amostra</th>
+                    <th>Resultado</th>
+                    <th>Ensaios/Valores</th>
+                    
 
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-resultado>
-                    <tr class="row">
-                        <td>{{ resultado.dataFormatada }}</td>
-                        <td>{{ resultado.amostraNumero }}</td>
-                        <td><strong>{{ resultado.resultadoCalculo }}</strong></td>
-                        <td>
-                            <div *ngFor="let ensaio of resultado.ensaiosUtilizados" style="margin-bottom: 5px;">
-                                <span class="ensaio-item">
-                                    {{ ensaio.descricao }}: <strong>{{ ensaio.valor }}</strong>
-                                </span>
-                            </div>
-                        </td>
-                        
-                       
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-resultado>
+                <tr class="row">
+                    <td>{{ resultado.dataFormatada }}</td>
+                    <td>{{ resultado.amostraNumero }}</td>
+                    <td><strong>{{ resultado.resultadoCalculo }}</strong></td>
+                    <td>
+                        <div *ngFor="let ensaio of resultado.ensaiosUtilizados" style="margin-bottom: 5px;">
+                            <span class="ensaio-item">
+                                {{ ensaio.descricao }}: <strong>{{ ensaio.valor }}</strong>
+                            </span>
+                        </div>
+                    </td>
+                    
+                    
 
-                    </tr>
-                </ng-template>
-            </p-table>
+                </tr>
+            </ng-template>
+        </p-table>
         
     </div>
     <div *ngIf="!carregandoResultados && resultadosAnteriores.length === 0" class="text-center p-4">
@@ -787,41 +804,38 @@
         <p>Carregando histórico...</p>
     </div>
     <div *ngIf="!carregandoResultados && resultadosAnteriores.length > 0">
-       
+        <div class="header w-full text-left">
+            Resultados Anteriores <h2><b>{{ ensaioSelecionadoParaPesquisa?.descricao }}</b></h2>
+        </div>
             
-                <div class="header w-full text-left">
-                    Resultados Anteriores <h2><b>{{ ensaioSelecionadoParaPesquisa?.descricao }}</b></h2>
-                </div>
-            
-            <p-table [value]="resultadosAnteriores" [scrollable]="true" scrollHeight="400px" class="tabela">
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th>Data</th>
-                        <th>Amostra</th>
-                        <th>Resultado</th>
-                        
-                        <th>Responsável</th>
-                        <th>Digitador</th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-resultado>
-                    <tr class="row">
-                        <td>{{ resultado.dataFormatada }}</td>
-                        <td>{{ resultado.amostraNumero }}</td>
-                        <td>
-                            <div *ngFor="let ensaio of resultado.ensaiosUtilizados" style="margin-bottom: 5px;">
-                                <span class="ensaio-item">
-                                    <strong>{{ ensaio.valor }}</strong>
-                                </span>
-                            </div>
-                        </td>
-                        
-                        <td>{{ resultado.responsavel }}</td>
-                        <td>{{ resultado.digitador}}</td>
-                    </tr>
-                </ng-template>
-            </p-table>
-        
+        <p-table [value]="resultadosAnteriores" [scrollable]="true" scrollHeight="400px" class="tabela">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Data</th>
+                    <th>Amostra</th>
+                    <th>Resultado</th>
+                    
+                    <th>Responsável</th>
+                    <th>Digitador</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-resultado>
+                <tr class="row">
+                    <td>{{ resultado.dataFormatada }}</td>
+                    <td>{{ resultado.amostraNumero }}</td>
+                    <td>
+                        <div *ngFor="let ensaio of resultado.ensaiosUtilizados" style="margin-bottom: 5px;">
+                            <span class="ensaio-item">
+                                <strong>{{ ensaio.valor }}</strong>
+                            </span>
+                        </div>
+                    </td>
+                    
+                    <td>{{ resultado.responsavel }}</td>
+                    <td>{{ resultado.digitador}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
     </div>
     <div *ngIf="!carregandoResultados && resultadosAnteriores.length === 0" class="text-center p-4">
         <i class="pi pi-info-circle" style="font-size: 2rem; color: #2196F3;"></i>
@@ -832,8 +846,6 @@
         </p-button>
     </ng-template>
 </p-drawer>
-
-
 
 <!-- Resultados Anteriores Imagens -->
 <p-drawer 
