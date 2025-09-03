@@ -9,6 +9,9 @@
                     <a routerLink="/welcome/controleQualidade/tipoEnsaio">Tipo de Ensaio</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/variavel">Variáveis de Ensaio</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/controleQualidade/ensaio" >Ensaio</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
@@ -71,7 +74,9 @@
                             </ng-template>
                             <ng-template pTemplate="content">
 
-                                <form [formGroup]="registerOrdemForm" title="Cadastrar nova Ordem de Serviço"
+                                <form 
+                                    [formGroup]="registerOrdemForm" 
+                                    title="Cadastrar nova Ordem de Serviço"
                                     class="flex flex-column">
                                     
                                     <!-- Toggle para tipo de ordem -->

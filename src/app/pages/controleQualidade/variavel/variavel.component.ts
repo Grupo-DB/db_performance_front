@@ -24,6 +24,9 @@ import { ToastModule } from 'primeng/toast';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { EnsaioService } from '../../../services/controleQualidade/ensaio.service';
 
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
+
 interface RegisterVariavelForm {
   nome: FormControl;
   valor: FormControl;
@@ -39,10 +42,7 @@ export interface Variavel{
 @Component({
   selector: 'app-variavel',
   imports: [
-    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,
-    InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,
-    FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,
-    ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink
+    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink, CardModule, InplaceModule
   ],
   providers: [
     MessageService,ConfirmationService
