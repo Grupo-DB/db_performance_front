@@ -555,6 +555,13 @@ export class AnaliseComponent implements OnInit, OnDestroy {
     return valor;
   }
 
+  // Arredonda números para 2 casas decimais
+  private round2(value: any): number {
+    const num = typeof value === 'number' ? value : Number(value);
+    if (!isFinite(num)) return 0;
+    return Math.round(num * 100) / 100;
+  }
+
    hasGroup(groups: string[]): boolean {
     return this.loginService.hasAnyGroup(groups);
   }
@@ -2085,7 +2092,7 @@ recalcularTodosCalculos() {
       return;
     }
 
-    const varMatches = (calc.funcao.match(/\b(var\d+|ensaio\d+)\b/g) || []);
+    const varMatches = (calc.funcao.match(/\b(var\d+|ensaio\d+|calculo\d+)\b/g) || []);
     const varList = Array.from(new Set(varMatches)) as string[];
     console.log('Tokens encontrados na função:', varList);
 
@@ -2096,6 +2103,27 @@ recalcularTodosCalculos() {
         const valor = ens && typeof ens.valor !== 'undefined' ? (typeof ens.valor === 'number' ? ens.valor : Number(ens.valor) || 0) : 0;
         safeVars[tk] = valor;
         console.log(`SafeVar var ${tk} = ${valor}`);
+      } else if (/^calculo\d+$/.test(tk)) {
+        // Buscar valor de outros cálculos por código técnico
+        let valor = 0;
+        
+        // Buscar em todos os planos por cálculos com o código técnico correspondente
+        if (this.analisesSimplificadas?.[0]?.planoDetalhes) {
+          for (const plano of this.analisesSimplificadas[0].planoDetalhes) {
+            if (Array.isArray(plano.calculo_ensaio_detalhes)) {
+              const calculoRef = plano.calculo_ensaio_detalhes.find((c: any) => 
+                c.tecnica === tk || this.tokensIguais(c.tecnica, tk)
+              );
+              if (calculoRef && typeof calculoRef.resultado !== 'undefined') {
+                valor = typeof calculoRef.resultado === 'number' ? calculoRef.resultado : Number(calculoRef.resultado) || 0;
+                break;
+              }
+            }
+          }
+        }
+        
+        safeVars[tk] = isNaN(valor) ? 0 : valor;
+        console.log(`SafeVar calculo ${tk} = ${safeVars[tk]}`);
       } else if (/^ensaio\d+$/.test(tk)) {
         let valor = 0;
         // 1) técnica/variável no próprio cálculo (comparando tokens com tolerância a zeros à esquerda)
@@ -2183,7 +2211,7 @@ recalcularTodosCalculos() {
           calc.resultado = resultado;
         }
       } else {
-        calc.resultado = (typeof resultado === 'number' && isFinite(resultado)) ? resultado : 0;
+        calc.resultado = (typeof resultado === 'number' && isFinite(resultado)) ? this.round2(resultado) : 0;
       }
       console.log(`✓ Resultado calculado: ${calc.resultado}`);
     } catch (e) {
@@ -2212,11 +2240,11 @@ recalcularTodosCalculos() {
     }
   }
 
-  // Calcula um ensaio interno (dentro de um cálculo), suportando varX e ensaioNN
+  // Calcula um ensaio interno (dentro de um cálculo), suportando varX, ensaioNN e calculoNN
   private calcularEnsaioInterno(ensaio: any, calc: any, planoBase?: any) {
     if (!ensaio || !ensaio.funcao) return;
     try {
-      const tokenMatches = (ensaio.funcao.match(/\b(var\d+|ensaio\d+)\b/g) || []);
+      const tokenMatches = (ensaio.funcao.match(/\b(var\d+|ensaio\d+|calculo\d+)\b/g) || []);
       const uniqueTokens = Array.from(new Set(tokenMatches)) as string[];
       const safeVars: any = {};
       uniqueTokens.forEach((tk: string) => {
@@ -2234,6 +2262,26 @@ recalcularTodosCalculos() {
               valor = typeof variavel.valor === 'number' ? variavel.valor : Number(variavel.valor) || 0;
             }
           }
+          safeVars[tk] = isNaN(valor) ? 0 : valor;
+        } else if (/^calculo\d+$/.test(tk)) {
+          // Buscar valor de outros cálculos por código técnico
+          let valor = 0;
+          
+          // Buscar em todos os planos por cálculos com o código técnico correspondente
+          if (this.analisesSimplificadas?.[0]?.planoDetalhes) {
+            for (const plano of this.analisesSimplificadas[0].planoDetalhes) {
+              if (Array.isArray(plano.calculo_ensaio_detalhes)) {
+                const calculoRef = plano.calculo_ensaio_detalhes.find((c: any) => 
+                  c.tecnica === tk || this.tokensIguais(c.tecnica, tk)
+                );
+                if (calculoRef && typeof calculoRef.resultado !== 'undefined') {
+                  valor = typeof calculoRef.resultado === 'number' ? calculoRef.resultado : Number(calculoRef.resultado) || 0;
+                  break;
+                }
+              }
+            }
+          }
+          
           safeVars[tk] = isNaN(valor) ? 0 : valor;
         } else if (/^ensaio\d+$/.test(tk)) {
           const valor = this.obterValorEnsaioDeContexto(calc, planoBase, tk);
@@ -2270,7 +2318,7 @@ recalcularTodosCalculos() {
           ensaio.valor = resultado;
         }
       } else {
-        ensaio.valor = (typeof resultado === 'number' && isFinite(resultado)) ? resultado : 0;
+        ensaio.valor = (typeof resultado === 'number' && isFinite(resultado)) ? this.round2(resultado) : 0;
       }
     } catch (e) {
       console.error('Erro ao calcular ensaio interno:', e);
@@ -2459,8 +2507,8 @@ private _ensaioChangeTimer: any;
 onValorEnsaioChange(ensaio: any, novoValor: any) {
   if (this._ensaioChangeTimer) clearTimeout(this._ensaioChangeTimer);
   this._ensaioChangeTimer = setTimeout(() => {
-    const num = typeof novoValor === 'number' ? novoValor : Number(novoValor?.toString().replace(',', '.')) || 0;
-    ensaio.valor = num;
+  const num = typeof novoValor === 'number' ? novoValor : Number(novoValor?.toString().replace(',', '.')) || 0;
+  ensaio.valor = this.round2(num);
     const plano = this.encontrarPlanoDoEnsaio(ensaio);
     if (plano) {
       this.recalcularTodosEnsaiosDirectos(plano);
@@ -2475,8 +2523,8 @@ private _calculoChangeTimer: any;
 onResultadoCalculoChange(calculo: any, novoValor: any) {
   if (this._calculoChangeTimer) clearTimeout(this._calculoChangeTimer);
   this._calculoChangeTimer = setTimeout(() => {
-    const num = typeof novoValor === 'number' ? novoValor : Number(novoValor?.toString().replace(',', '.')) || 0;
-    calculo.resultado = num;
+  const num = typeof novoValor === 'number' ? novoValor : Number(novoValor?.toString().replace(',', '.')) || 0;
+  calculo.resultado = this.round2(num);
     this.recalcularTodosCalculos();
     this.cd.detectChanges();
   }, 120);
@@ -2515,8 +2563,8 @@ calcularDatasAutomaticas(ensaio: any, variavelAlterada: any) {
 
   // Permite editar o valor de um ensaio listado dentro do cálculo expandido
   onValorEnsaioDentroCalculoChange(plano: any, ensaioCalc: any, novoValor: any) {
-    const num = typeof novoValor === 'number' ? novoValor : Number(novoValor?.toString().replace(',', '.')) || 0;
-    ensaioCalc.valor = num;
+  const num = typeof novoValor === 'number' ? novoValor : Number(novoValor?.toString().replace(',', '.')) || 0;
+  ensaioCalc.valor = this.round2(num);
     // Recalcula apenas os cálculos deste plano (o cálculo atual certamente será recalculado)
     if (plano?.calculo_ensaio_detalhes) {
       const calcRef = plano.calculo_ensaio_detalhes.find((c: any) => Array.isArray(c.ensaios_detalhes) && c.ensaios_detalhes.includes(ensaioCalc));
@@ -2796,7 +2844,7 @@ forcarDeteccaoMudancas() {
         console.log(`🔢 Resultado como número: ${ensaio.valor}`);
       }
     } else {
-  ensaio.valor = (typeof resultado === 'number' && isFinite(resultado)) ? resultado : 0;
+  ensaio.valor = (typeof resultado === 'number' && isFinite(resultado)) ? this.round2(resultado) : 0;
       console.log(`🔢 Resultado numérico: ${ensaio.valor}`);
     }
     
@@ -2963,11 +3011,11 @@ salvarAnaliseResultados() {
         console.log(`  ⚠️ Nenhuma variável específica encontrada para o ensaio "${ensaio.descricao}"`);
       }
 
-      const valorParaSalvar = this.parseNumeroFlex(valorFinal);
+  const valorParaSalvar = this.round2(this.parseNumeroFlex(valorFinal));
       return {
         id: ensaio.id,
         descricao: ensaio.descricao,
-        valor: typeof valorParaSalvar === 'number' ? valorParaSalvar : (Number(valorParaSalvar) || 0),
+  valor: typeof valorParaSalvar === 'number' ? valorParaSalvar : (Number(valorParaSalvar) || 0),
         tecnica: ensaio.tecnica || `ensaio${String(ensaio.id).padStart(2, '0')}`,
         tipo: 'ENSAIO',
         responsavel: typeof ensaio.responsavel === 'object' && ensaio.responsavel !== null
@@ -3006,8 +3054,8 @@ salvarAnaliseResultados() {
   const calculos = planoDetalhes.flatMap((plano: any) =>
     (plano.calculo_ensaio_detalhes || []).map((calc: any) => ({
       calculos: calc.descricao,
-      valores: (calc.ensaios_detalhes || []).map((e: any) => e.valor),
-      resultados: calc.resultado,
+  valores: (calc.ensaios_detalhes || []).map((e: any) => this.round2(e.valor)),
+  resultados: typeof calc.resultado === 'number' ? this.round2(calc.resultado) : calc.resultado,
   responsavel: (typeof calc.responsavel === 'object' && calc.responsavel !== null) ? (calc.responsavel as any).value : (calc.responsavel || null),
       digitador: this.digitador,
       ensaios_utilizados: (calc.ensaios_detalhes || []).map((e: any) => {
@@ -3035,7 +3083,7 @@ salvarAnaliseResultados() {
         return {
           id: e.id,
           descricao: e.descricao,
-          valor: e.valor,
+          valor: this.round2(e.valor),
           variavel: e.variavel,
           responsavel: typeof e.responsavel === 'object' && e.responsavel !== null
             ? e.responsavel.value

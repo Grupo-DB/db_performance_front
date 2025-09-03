@@ -64,8 +64,18 @@ export class EnsaioService {
     const url = `${this.apiUrlCalculoEnsaio}${id}/`;
     return this.http.delete(url);
   }
-  registerCalculoEnsaio(descricao: string, funcao: any, ensaios: any, responsavel: string, unidade: any, valor: number){
-    return this.http.post<CalculoEnsaio>(this.apiUrlCalculoEnsaio, { descricao: descricao, funcao: funcao, ensaios: ensaios, responsavel: responsavel, unidade: unidade, valor: valor });
+  registerCalculoEnsaio(descricao: string, funcao: any, ensaios: any, responsavel: string, unidade: any, valor: number, calculosEnsaio?: any[], tecnica?: string){
+    const payload = { 
+      descricao: descricao, 
+      funcao: funcao, 
+      ensaios: ensaios, 
+      responsavel: responsavel, 
+      unidade: unidade, 
+      valor: valor,
+      calculos_ensaio: calculosEnsaio || [],
+      tecnica: tecnica
+    };
+    return this.http.post<CalculoEnsaio>(this.apiUrlCalculoEnsaio, payload);
   }
 
   //Plano de analise

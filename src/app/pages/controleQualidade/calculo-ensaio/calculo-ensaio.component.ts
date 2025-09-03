@@ -38,6 +38,7 @@ interface RegisterCalculoEnsaioForm{
   descricao: FormControl;
   funcao: FormControl;
   ensaios: FormControl;
+  calculosEnsaio: FormControl;
   responsavel: FormControl;
   unidade: FormControl;
   valor: FormControl;
@@ -49,9 +50,12 @@ export interface CalculoEnsaio{
   funcao: string;
   ensaios: any;
   ensaios_detalhes: any;
+  calculos_ensaio?: any;
+  calculos_ensaio_detalhes?: any;
   responsavel: string;
   unidade: string;
   valor: number;
+  tecnica?: string;
 }
 
 @Component({
@@ -129,6 +133,38 @@ export class CalculoEnsaioComponent implements OnInit {
   inputValue: string = '';
   @ViewChild('autoComp') autoComp!: AutoComplete;
 
+  async gerarCalculoTecnico(): Promise<string> {
+    // Busca o maior número já utilizado em tecnica (ex: calculo01, calculo02, ...) a partir do backend
+    let max = 0;
+    try {
+      const calculosBackend = await new Promise<any[]>(resolve => {
+        this.ensaioService.getCalculoEnsaio().subscribe(resolve, () => resolve([]));
+      });
+      calculosBackend.forEach(c => {
+        if (c.tecnica) {
+          const match = c.tecnica.match(/calculo(\d+)/);
+          if (match) {
+            const num = parseInt(match[1], 10);
+            if (!isNaN(num) && num > max) max = num;
+          }
+        }
+      });
+    } catch (e) {
+      // fallback para lista local
+      this.caculosEnsaio.forEach(c => {
+        if (c.tecnica) {
+          const match = c.tecnica.match(/calculo(\d+)/);
+          if (match) {
+            const num = parseInt(match[1], 10);
+            if (!isNaN(num) && num > max) max = num;
+          }
+        }
+      });
+    }
+    const next = max + 1;
+    return 'calculo' + next.toString().padStart(2, '0');
+  }
+
   // Armazena o mapeamento de variáveis técnicas (nome amigável <-> tecnica)
   variaveisTecnicas: { id: any, nome: string, tecnica: string }[] = [];
 
@@ -154,6 +190,7 @@ export class CalculoEnsaioComponent implements OnInit {
 
   tipos = [
    { label: 'Ensaio', value: 'Ensaio' }, 
+   { label: 'Cálculo de Ensaio', value: 'CalculoEnsaio' },
    { label: 'Operador', value:'Operador' }, 
    { label: 'Condicional', value:'Condicional' }, 
    { label: 'Delimitador', value:'Delimitador' }, 
@@ -230,6 +267,7 @@ export class CalculoEnsaioComponent implements OnInit {
       descricao: new FormControl('', [Validators.required, Validators.minLength(3)]),
       funcao: new FormControl('', [Validators.required]),
       ensaios: new FormControl('', [Validators.required]),
+      calculosEnsaio: new FormControl([]),
       responsavel: new FormControl(''),
       unidade: new FormControl(''),
       valor: new FormControl(0)
@@ -240,6 +278,7 @@ export class CalculoEnsaioComponent implements OnInit {
       descricao: [''],
       funcao: [''],
       ensaios: [''],
+      calculosEnsaio: [''],
       responsavel: [''],
       unidade: [''],
       valor: ['']
@@ -270,6 +309,13 @@ export class CalculoEnsaioComponent implements OnInit {
   getValoresPorTipo(tipo: string): any[] {
     switch (tipo) {
       case 'Ensaio': return this.ensaios.map(e => ({ label: e.descricao, value: e.descricao }));
+      case 'CalculoEnsaio': return this.caculosEnsaio.map((c: any) => {
+        const fallback = c?.id != null ? `calculo${String(c.id).padStart(2, '0')}` : undefined;
+        const codigo = c.tecnica || fallback;
+        if (!codigo) return null;
+        const label = c.descricao || codigo;
+        return { label, value: codigo as string };
+      }).filter(Boolean) as any[];
       case 'Operador': return this.operadores;
       case 'Condicional': return this.condicionais;
       case 'Delimitador': return this.delimitadores;
@@ -303,18 +349,27 @@ export class CalculoEnsaioComponent implements OnInit {
   gerarNomesSegurosComValoresAtuais() {
     this.safeVars = {};
     this.nameMap = {};
-    // Usa o campo técnico real do ensaio (ensaioTecnico ou tecnica)
+    
+    // Processar ensaios usando o campo ensaioTecnico ou tecnica
     this.ensaios.forEach((ensaio: any) => {
-      // Busca o campo técnico real do backend
       let tecnica = ensaio.ensaioTecnico || ensaio.tecnica;
-      // Se não existir, gera um nome seguro temporário
       if (!tecnica) {
         tecnica = 'ens' + ensaio.id;
       }
-      // Busca o valor digitado para este ensaio
       const resultado = this.resultados.find(r => r.ensaioId === ensaio.id);
       this.safeVars[tecnica] = resultado ? resultado.valor : 0;
       this.nameMap[ensaio.descricao] = tecnica;
+    });
+
+    // Processar cálculos de ensaio usando o campo tecnica
+    this.caculosEnsaio.forEach((calculo: any) => {
+      let tecnica = calculo.tecnica;
+      if (!tecnica) {
+        tecnica = 'calculo' + calculo.id;
+      }
+      // Usar o valor do cálculo (se existir) ou 0 como padrão
+      this.safeVars[tecnica] = calculo.valor || 0;
+      this.nameMap[calculo.descricao] = tecnica;
     });
   }
 
@@ -324,8 +379,8 @@ getExpressaoString() {
   this.gerarNomesSegurosComValoresAtuais();
   return this.expressaoDinamica
     .map(b => {
-      // Se for tipo Ensaio, substitui pelo nome técnico real
-      if (b.tipo === 'Ensaio' && b.valor !== undefined && this.nameMap[b.valor]) {
+      // Se for tipo Ensaio ou CalculoEnsaio, substitui pelo nome técnico real
+      if ((b.tipo === 'Ensaio' || b.tipo === 'CalculoEnsaio') && b.valor !== undefined && this.nameMap[b.valor]) {
         return this.nameMap[b.valor];
       }
       return b.valor;
@@ -339,8 +394,8 @@ converterExpressaoParaNomes(expr: string): string {
   const reverseMap = Object.fromEntries(
     Object.entries(this.nameMap).map(([k, v]) => [v, k])
   );
-  // Substitui todos os varX pelo nome do ensaio
-  return expr.replace(/ens\d+/g, (match) => reverseMap[match] || match);
+  // Substitui todos os ensXX e calculoXX pelo nome correspondente
+  return expr.replace(/(ens\d+|ensaio\d+|calculo\d+)/g, (match) => reverseMap[match] || match);
 }
 // Avalia a expressão usando math.js e os valores dos ensaios
 avaliarExpressao() {
@@ -417,6 +472,8 @@ converterFuncaoParaBlocos(funcao: string): { tipo: string, valor: string }[] {
       return { tipo: 'Operador', valor: token };
     } else if (!isNaN(Number(token))) {
       return { tipo: 'Valor', valor: token };
+    } else if (token.startsWith('calculo')) {
+      return { tipo: 'CalculoEnsaio', valor: token };
     } else {
       return { tipo: 'Ensaio', valor: token };
     }
@@ -443,7 +500,8 @@ salvarFormulaEditada() {
       id: calculo.id,
       descricao: calculo.descricao,
       funcao: calculo.funcao,
-      ensaios: calculo.ensaios_detalhes.descricao,
+      ensaios: calculo.ensaios_detalhes?.descricao || '',
+      calculosEnsaio: calculo.calculos_ensaio_detalhes?.descricao || '',
       responsavel: calculo.responsavel,
       unidade: calculo.unidade,
       valor: calculo.valor
@@ -533,7 +591,7 @@ salvarFormulaEditada() {
     });
   }
 
-  submit(){
+  async submit(){
     const expressao = this.getExpressaoString();
 
     if (!expressao || expressao.trim() === '') {
@@ -546,11 +604,18 @@ salvarFormulaEditada() {
       return;
     }
 
-    // Gera o mapeamento nome amigável <-> tecnica (varX)
+    // Gera o mapeamento nome amigável <-> tecnica
     this.gerarNomesSegurosComValoresAtuais();
     const ensaiosSelecionados = Array.isArray(this.registerForm.value.ensaios)
       ? this.registerForm.value.ensaios
       : [this.registerForm.value.ensaios];
+
+    const calculosSelecionados = Array.isArray(this.registerForm.value.calculosEnsaio)
+      ? this.registerForm.value.calculosEnsaio
+      : this.registerForm.value.calculosEnsaio ? [this.registerForm.value.calculosEnsaio] : [];
+
+    // Gera o código técnico de forma única consultando o backend
+    const calculoTecnico = await this.gerarCalculoTecnico();
 
     // Preenche o campo tecnica em uma estrutura auxiliar para uso futuro
     this.variaveisTecnicas = ensaiosSelecionados.map((ensaioId: any, idx: number) => {
@@ -564,25 +629,29 @@ salvarFormulaEditada() {
       };
     });
 
-    // O backend espera apenas os IDs dos ensaios
+    // O backend espera apenas os IDs dos ensaios e cálculos
     const payload = {
       descricao: this.registerForm.value.descricao,
       funcao: this.registerForm.value.funcao,
       ensaios: ensaiosSelecionados,
+      calculosEnsaio: calculosSelecionados,
       responsavel: this.registerForm.value.responsavel,
       unidade: this.registerForm.value.unidade,
-      valor: this.registerForm.value.valor
+      valor: this.registerForm.value.valor,
+      tecnica: calculoTecnico
     };
 
     console.log('Enviando cálculo de ensaio:', payload);
-    console.log('Variáveis técnicas (frontend):', this.variaveisTecnicas);
+    console.log('Código técnico gerado:', calculoTecnico);
     this.ensaioService.registerCalculoEnsaio(
       payload.descricao,
       payload.funcao,
       payload.ensaios,
       payload.responsavel,
       payload.unidade,
-      payload.valor
+      payload.valor,
+      payload.calculosEnsaio,
+      payload.tecnica
     ).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Cálculo de ensaio cadastrado com sucesso!!', life: 1000 });
@@ -624,8 +693,8 @@ validarExpressaoComValores(expr: string): boolean {
       exprSegura = exprSegura.replace(regex, this.nameMap[origName]);
     });
 
-    // Substitui nomes técnicos do tipo ensXX ou ensaioXX por 1
-    let fakeExpr = exprSegura.replace(/ens\d+|ensaio\d+/g, '1');
+    // Substitui nomes técnicos do tipo ensXX, ensaioXX ou calculoXX por 1
+    let fakeExpr = exprSegura.replace(/(ens\d+|ensaio\d+|calculo\d+)/g, '1');
     fakeExpr = fakeExpr.replace(/\s+/g, ' ');
     fakeExpr = fakeExpr.replace(/1\s+1/g, '1');
     console.log('Expressão para validação:', fakeExpr);
@@ -652,22 +721,34 @@ private atualizarEnsaiosDoForm() {
   // Se o usuário quiser controlar manualmente, não sobrescrever
   if (!this.syncEnsaiosFromExpr) return;
 
-  const descricoes = this.ensaios.map(e => e.descricao);
-
-  // Pegua os ensaios usados na expressão, sem duplicatas
-  const usados = this.expressaoDinamica
-    .filter(b => b.tipo === 'Ensaio' && descricoes.includes(b.valor || ''))
-    .map(b => b.valor)
-    .filter((valor, idx, arr) => arr.indexOf(valor) === idx) // elimina duplicatas
-    .map(valor => this.ensaios.find(e => e.descricao === valor))
+  // Busca todos os códigos técnicos usados na expressão
+  const expr = this.getExpressaoString();
+  
+  // Procura por códigos técnicos de ensaios (ensXX, ensaioXX)
+  const ensaioMatches = (expr.match(/(ens\d+|ensaio\d+)/g) || []);
+  const ensaiosUsados = ensaioMatches
+    .map(codigo => this.ensaios.find((e: any) => e.ensaioTecnico === codigo || e.tecnica === codigo))
     .filter(e => !!e);
 
-  this.registerForm.get('ensaios')?.setValue(usados.map(e => e.id));
+  // Procura por códigos técnicos de cálculos (calculoXX)
+  const calculoMatches = (expr.match(/calculo\d+/g) || []);
+  const calculosUsados = calculoMatches
+    .map(codigo => this.caculosEnsaio.find((c: any) => c.tecnica === codigo))
+    .filter(c => !!c);
+
+  // Atualiza os campos do formulário
+  this.registerForm.get('ensaios')?.setValue(ensaiosUsados.map(e => e.id));
+  this.registerForm.get('calculosEnsaio')?.setValue(calculosUsados.map(c => c.id));
 }
 
 // Callback do MultiSelect quando o usuário escolhe Ensaios manualmente
 onEnsaiosSelecionadosChange(ids: any[]) {
   this.registerForm.get('ensaios')?.setValue(ids || []);
+}
+
+// Callback do MultiSelect quando o usuário escolhe Cálculos de Ensaio manualmente
+onCalculosSelecionadosChange(ids: any[]) {
+  this.registerForm.get('calculosEnsaio')?.setValue(ids || []);
 }
 
 // Alterna sincronização entre expressão e lista de ensaios

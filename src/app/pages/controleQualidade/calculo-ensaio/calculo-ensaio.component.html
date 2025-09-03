@@ -119,6 +119,21 @@
                                             <label for="ensaios">Selecione os Ensaios deste cálculo</label>
                                         </p-floatlabel>
                                     </div>
+                                    <div class="form2 w-12 mt-2" *ngIf="!syncEnsaiosFromExpr">
+                                        <p-floatlabel variant="on">
+                                            <p-multiSelect 
+                                                formControlName="calculosEnsaio"
+                                                [options]="caculosEnsaio"
+                                                optionLabel="descricao"
+                                                optionValue="id"
+                                                display="chip"
+                                                [filter]="true"
+                                                [style]="{width: '100%'}"
+                                                appendTo="body"
+                                            ></p-multiSelect>
+                                            <label for="calculosEnsaio">Selecione os Cálculos de Ensaio a usar</label>
+                                        </p-floatlabel>
+                                    </div>
                                 </div>
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
