@@ -45,12 +45,6 @@
 
 <div class="container flex flex-column align-items-center mb-4">
 
-    <div class="titulo mt-2 mb-0 w-12 text-2xl">
-        <p-divider align="left" type="solid">
-            <b>Ordens de Serviço</b>
-        </p-divider>
-    </div>
-
     <div class="containerInterno w-12">
         <div class="background-form" @swipeAnimation>
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
@@ -330,7 +324,7 @@
                                     </div>
                                 </ng-template>
                                 <ng-template pTemplate="header">
-                                    <tr>
+                                    <tr class="tabela">
                                         <th style="width: 10%; text-align: left;">Material</th>
                                         <th style="width: 15%; text-align: left;" type="text"field="fornecedor" display="menu">Número</th>
                                         <th pSortableColumn="data_entrada" style="width: 10%;">
