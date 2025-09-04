@@ -556,6 +556,14 @@ export class AnaliseComponent implements OnInit, OnDestroy {
     return Math.round(num * 100) / 100;
   }
 
+  // Arredonda números para N casas decimais
+  private roundN(value: any, n: number): number {
+    const num = typeof value === 'number' ? value : Number(value);
+    if (!isFinite(num)) return 0;
+    const f = Math.pow(10, n);
+    return Math.round(num * f) / f;
+  }
+
    hasGroup(groups: string[]): boolean {
     return this.loginService.hasAnyGroup(groups);
   }
@@ -564,6 +572,11 @@ export class AnaliseComponent implements OnInit, OnDestroy {
   if (!str) return '';
   return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 }
+
+  // Escapa caracteres especiais para uso seguro em RegExp
+  private escapeRegExp(text: string): string {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
   
   // Compara tokens do tipo "ensaioNN" ignorando zeros à esquerda (ensaio7 === ensaio07)
   private tokensIguais(a?: string, b?: string): boolean {
@@ -574,6 +587,16 @@ export class AnaliseComponent implements OnInit, OnDestroy {
       return String(t).toLowerCase();
     };
     return norm(a) === norm(b);
+  }
+
+  // Garante que cada ensaio direto do plano tenha uma 'tecnica' no formato ensaioNN
+  private garantirTecnicasDoPlano(plano: any): void {
+    if (!plano || !Array.isArray(plano.ensaio_detalhes)) return;
+    plano.ensaio_detalhes.forEach((e: any, idx: number) => {
+      if (!e.tecnica || !/^ensaio\d+$/i.test(String(e.tecnica))) {
+        e.tecnica = `ensaio${String(idx + 1).padStart(2, '0')}`;
+      }
+    });
   }
   ngOnInit(): void {
     this.analiseId = Number(this.route.snapshot.paramMap.get('id'));
@@ -2814,19 +2837,46 @@ forcarDeteccaoMudancas() {
     const scope = {
       ...safeVars,
       ...funcoesDatas
-    };
+    } as any;
 
-  // Se não há tokens (varX/ensaioNN), ainda assim avalie a expressão.
-  // Ex.: função "1.2794" (constante) ou somente funções de data.
+    // Permitir referências por descrição de outros ensaios (ex.: "Ensaio A * 10").
+    // Substitui ocorrências exatas da descrição por seus valores numéricos antes de avaliar.
+    let expressao = ensaio.funcao;
+    try {
+      const plano = planoRef || this.encontrarPlanoDoEnsaio(ensaio);
+      const ensaiosPlano: any[] = Array.isArray(plano?.ensaio_detalhes) ? plano.ensaio_detalhes : [];
+      ensaiosPlano.forEach((eOut: any) => {
+        const desc = (eOut?.descricao || '').trim();
+        if (!desc) return;
+        // Valor preferindo timestamp para datas
+        let valorNum: number = 0;
+        if (typeof eOut?.valorTimestamp === 'number') {
+          valorNum = eOut.valorTimestamp;
+        } else if (typeof eOut?.valor === 'string') {
+          const d = new Date(eOut.valor);
+          valorNum = !isNaN(d.getTime()) ? d.getTime() : Number(eOut.valor) || 0;
+        } else {
+          valorNum = typeof eOut?.valor === 'number' ? eOut.valor : Number(eOut?.valor) || 0;
+        }
+        if (desc && isFinite(valorNum)) {
+          const rx = new RegExp(`\\b${this.escapeRegExp(desc)}\\b`, 'g');
+          expressao = expressao.replace(rx, String(valorNum));
+        }
+      });
+    } catch (re) {
+      console.warn('Falha ao substituir descrições de ensaio na expressão:', re);
+    }
 
+    // Se não há tokens (varX/ensaioNN), ainda assim avalie a expressão.
+    // Ex.: função "1.2794" (constante) ou somente funções de data.
     console.log(`🔧 Scope para avaliação:`, scope);
-    console.log(`📝 Função a ser avaliada: ${ensaio.funcao}`);
+    console.log(`📝 Expressão a ser avaliada: ${expressao}`);
 
-    const resultado = evaluate(ensaio.funcao, scope);
+    const resultado = evaluate(expressao, scope);
     console.log(`🎯 Resultado bruto da avaliação: ${resultado} (tipo: ${typeof resultado})`);
     
     // Se o resultado é um timestamp (resultado de função de data), converter para data legível
-    if (ensaio.funcao.includes('adicionarDias') || ensaio.funcao.includes('hoje') || ensaio.funcao.includes('diasEntre')) {
+  if (ensaio.funcao.includes('adicionarDias') || ensaio.funcao.includes('hoje') || ensaio.funcao.includes('diasEntre')) {
       // Verificar se o resultado é um timestamp válido
       if (typeof resultado === 'number' && resultado > 946684800000) { // timestamp após ano 2000
         const dataResultado = new Date(resultado);
@@ -2838,8 +2888,23 @@ forcarDeteccaoMudancas() {
         console.log(`🔢 Resultado como número: ${ensaio.valor}`);
       }
     } else {
-  ensaio.valor = (typeof resultado === 'number' && isFinite(resultado)) ? this.round2(resultado) : 0;
-      console.log(`🔢 Resultado numérico: ${ensaio.valor}`);
+      if (typeof resultado === 'number' && isFinite(resultado)) {
+        // Evitar zerar resultados muito pequenos; aplicar precisão adaptativa
+        const abs = Math.abs(resultado);
+        let arredondado: number;
+        if (abs >= 1) {
+          arredondado = this.roundN(resultado, 2);
+        } else if (abs >= 0.01) {
+          arredondado = this.roundN(resultado, 4);
+        } else {
+          arredondado = this.roundN(resultado, 8);
+        }
+        ensaio.valor = arredondado;
+        console.log(`🔢 Resultado numérico: ${ensaio.valor} (bruto: ${resultado})`);
+      } else {
+        ensaio.valor = 0;
+        console.warn('⚠️ Resultado inválido; definindo 0');
+      }
     }
     
     console.log(`✅ Ensaio ${ensaio.descricao} calculado com sucesso: ${ensaio.valor}`);
@@ -2861,23 +2926,41 @@ private encontrarPlanoDoEnsaio(ensaio: any): any | undefined {
 
 // Dado um token 'ensaioNN', encontra o valor do ensaio correspondente no plano
 private obterValorEnsaioPorToken(plano: any, token: string): number {
-  if (!plano || !plano.ensaio_detalhes) return 0;
-  // Primeiro tenta por tecnica
-  let alvo = plano.ensaio_detalhes.find((e: any) => e.tecnica === token);
+  if (!plano || !Array.isArray(plano.ensaio_detalhes)) return 0;
+  // 1) Tentar por tecnica com comparação tolerant a zeros à esquerda (ensaio7 == ensaio07)
+  let alvo = plano.ensaio_detalhes.find((e: any) => this.tokensIguais(e?.tecnica, token));
+
+  // 2) Fallback por id numérico contido no token (ensaio{id})
   if (!alvo) {
-    // Tenta por fallback de id (ensaio{id})
-    const m = token.match(/ensaio(\d+)/);
+    const m = token.match(/ensaio(\d+)/i);
     const idNum = m ? parseInt(m[1], 10) : NaN;
-    if (!isNaN(idNum)) alvo = plano.ensaio_detalhes.find((e: any) => e.id === idNum);
+    if (!isNaN(idNum)) {
+      // 2a) Por id (quando IDs são numéricos e estáveis)
+      alvo = plano.ensaio_detalhes.find((e: any) => String(e?.id) === String(idNum));
+      // 2b) Fallback por índice (ensaio12 -> index 11)
+      if (!alvo) {
+        const byIndex = plano.ensaio_detalhes[idNum - 1];
+        if (byIndex) alvo = byIndex;
+      }
+    }
   }
+
   if (!alvo) return 0;
-  // Se for data, preferir timestamp armazenado
+
+  // Preferir timestamp quando for data
   if (typeof alvo.valorTimestamp === 'number') return alvo.valorTimestamp;
-  // Se string de data, tentar converter
+
+  // Converter string para número ou data
   if (typeof alvo.valor === 'string') {
+    // Tentar data primeiro
     const d = new Date(alvo.valor);
     if (!isNaN(d.getTime())) return d.getTime();
+    // Tentar número flexível
+    const n = this.parseNumeroFlex(alvo.valor);
+    const num = typeof n === 'number' ? n : Number(n);
+    return isNaN(num) ? 0 : num;
   }
+
   const num = typeof alvo.valor === 'number' ? alvo.valor : Number(alvo.valor);
   return isNaN(num) ? 0 : num;
 }
@@ -2922,6 +3005,8 @@ recalcularCalculosDependentes(ensaioAlterado: any) {
 }
 recalcularTodosEnsaiosDirectos(plano: any) {
   if (!plano || !plano.ensaio_detalhes) return;
+  // Antes de recalcular, garanta tokens de técnica consistentes (ensaioNN)
+  this.garantirTecnicasDoPlano(plano);
   // Faz múltiplas passagens para resolver dependências entre ensaios
   const MAX_PASSOS = 5;
   for (let passo = 0; passo < MAX_PASSOS; passo++) {
@@ -4489,7 +4574,43 @@ private verificarEstadoTodasCalculos(): void {
 abrirDrawerResultados(calculo: any, plano?: any): void {
   this.calculoSelecionadoParaPesquisa = calculo;
   this.drawerResultadosVisivel = true;
-  this.cd.detectChanges();
+  this.carregandoResultados = true;
+  this.resultadosAnteriores = [];
+
+  // Descobrir quais ensaios devem ser usados na busca do histórico
+  let ensaioIds: number[] = [];
+  if (Array.isArray(calculo?.ensaios_detalhes) && calculo.ensaios_detalhes.length > 0) {
+    ensaioIds = calculo.ensaios_detalhes.map((e: any) => Number(e.id)).filter((id: any) => !!id);
+  } else if (plano?.ensaio_detalhes) {
+    ensaioIds = (plano.ensaio_detalhes || []).map((e: any) => Number(e.id)).filter((id: any) => !!id);
+  } else if (this.analisesSimplificadas?.[0]?.planoDetalhes?.[0]?.ensaio_detalhes) {
+    ensaioIds = (this.analisesSimplificadas[0].planoDetalhes[0].ensaio_detalhes || []).map((e: any) => Number(e.id)).filter((id: any) => !!id);
+  }
+
+  const descricao = calculo?.descricao || '';
+  if (!descricao || ensaioIds.length === 0) {
+    this.carregandoResultados = false;
+    this.cd.detectChanges();
+    return;
+  }
+
+  this.analiseService?.getResultadosAnteriores(descricao, ensaioIds, 10).subscribe({
+    next: (resultados: any[]) => {
+      try {
+        this.processarResultadosAnteriores(resultados, calculo);
+      } finally {
+        this.carregandoResultados = false;
+        this.cd.detectChanges();
+      }
+    },
+    error: (err: any) => {
+      console.error('Erro ao carregar resultados anteriores (cálculo):', err);
+      this.messageService?.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao carregar histórico do cálculo.' });
+      this.carregandoResultados = false;
+      this.resultadosAnteriores = [];
+      this.cd.detectChanges();
+    }
+  });
 }
 
 fecharDrawerResultados(): void {
@@ -4502,7 +4623,35 @@ fecharDrawerResultados(): void {
 abrirDrawerResultadosEnsaios(ensaio: any): void {
   this.ensaioSelecionadoParaPesquisa = ensaio;
   this.drawerResultadosEnsaioVisivel = true;
-  this.cd.detectChanges();
+  this.carregandoResultados = true;
+  this.resultadosAnteriores = [];
+
+  const ensaioId = Number(ensaio?.id);
+  const descricao = ensaio?.descricao || '';
+  if (!descricao || !ensaioId) {
+    this.carregandoResultados = false;
+    this.cd.detectChanges();
+    return;
+  }
+
+  this.analiseService?.getResultadosAnterioresEnsaios(descricao, [ensaioId], 10).subscribe({
+    next: (resultados: any[]) => {
+      try {
+        // Reuse do mesmo processador para padronizar a visualização
+        this.processarResultadosAnteriores(resultados, { ensaios_detalhes: [{ id: ensaioId, descricao }] });
+      } finally {
+        this.carregandoResultados = false;
+        this.cd.detectChanges();
+      }
+    },
+    error: (err: any) => {
+      console.error('Erro ao carregar resultados anteriores (ensaio):', err);
+      this.messageService?.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao carregar histórico do ensaio.' });
+      this.carregandoResultados = false;
+      this.resultadosAnteriores = [];
+      this.cd.detectChanges();
+    }
+  });
 }
 
 fecharDrawerResultadosEnsaios(): void {

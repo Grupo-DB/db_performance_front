@@ -115,14 +115,14 @@ export class VariavelComponent implements OnInit {
   {
     this.registerForm = new FormGroup<RegisterVariavelForm>({
       nome: new FormControl('', Validators.required),
-      valor: new FormControl({value: 0, disabled: true}),
+      valor: new FormControl(0),
       tipo: new FormControl('', Validators.required)
     });
 
     this.editForm = this.fb.group({
       id: [''],
       nome: [''],
-      valor: [{value: 0, disabled: true}],
+      valor: [0],
       tipo: [''],
       variavelTecnica: [''],
     });
