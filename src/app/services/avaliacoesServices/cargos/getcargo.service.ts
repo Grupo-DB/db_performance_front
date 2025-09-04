@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class GetCargoService {
-  private apiUrl = 'http://localhost:8000/management/get_cargo/'; 
+  private apiUrl = 'http://172.50.10.79:8008/management/get_cargo/'; 
   constructor(private http: HttpClient) { }
 
   getCargos(): Observable<any[]>{
