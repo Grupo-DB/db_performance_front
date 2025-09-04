@@ -997,9 +997,19 @@ imprimirAmostraVisualizar() {
     y += 7;
   };
 
+  let data_entrada = '';
+  if (this.amostraSelecionada.data_entrada) {
+    data_entrada = formatDate( this.amostraSelecionada.data_entrada, 'dd/MM/YYYY', 'en-US');
+  }
+
+  let data_coleta = '';
+  if (this.amostraSelecionada.data_coleta) {
+    data_coleta = formatDate( this.amostraSelecionada.data_coleta, 'dd/MM/YYYY', 'en-US');
+  }
+
   addTitle("Informações Gerais");
-  addField("Data de Entrada", this.amostraSelecionada.data_entrada);
-  addField("Data de Coleta", this.amostraSelecionada.data_coleta);
+  addField("Data de Entrada", data_entrada);
+  addField("Data de Coleta", data_coleta);
   addField("Finalidade", this.amostraSelecionada.finalidade);
   addField("N° SAC", this.amostraSelecionada.numero_sac);
   addField("Número", this.amostraSelecionada.numero);
@@ -1027,12 +1037,22 @@ imprimirAmostraVisualizar() {
   doc.line(10, y, 200, y);
   y += 10;
 
+  let data_envio = '';
+  if (this.amostraSelecionada.data_envio) {
+    data_envio = formatDate( this.amostraSelecionada.data_envio, 'dd/MM/YYYY', 'en-US');
+  }
+
+  let data_recebida = '';
+  if (this.amostraSelecionada.data_recebida) {
+    data_recebida = formatDate( this.amostraSelecionada.data_recebida, 'dd/MM/YYYY', 'en-US');
+  }
+
   addTitle("Complementos");
   addField("Registro Empresa", this.amostraSelecionada.registro_ep);
   addField("Registro Produto", this.amostraSelecionada.registro_produto);
-  addField("Data de Envio", this.amostraSelecionada.data_envio);
+  addField("Data de Envio", data_envio);
   addField("Destino do Envio", this.amostraSelecionada.destino_envio);
-  addField("Data de Recebimento", this.amostraSelecionada.data_recebida);
+  addField("Data de Recebimento", data_recebida);
   addField("Identificação Complementar", this.amostraSelecionada.identificacao_complementar);
   addField("Complemento", this.amostraSelecionada.complemento);
   addField("Observações", this.amostraSelecionada.observacoes);
@@ -2158,9 +2178,6 @@ limparDadosFormulario() {
     });
   }
 
-
-
-
 preencherFormularioOSComAmostraFormulario(dadosFormulario: any) {
   console.log('Preenchendo formulário OS com dados do formulário:', dadosFormulario);
 
@@ -2175,8 +2192,6 @@ preencherFormularioOSComAmostraFormulario(dadosFormulario: any) {
   });
   
 }
-
-
 
 loadAnalises(){
   this.analiseService.getAnalises().subscribe(

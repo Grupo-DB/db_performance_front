@@ -1495,8 +1495,8 @@
 
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                 <div class="text-left w-6">
-                    <b>Data de Entrada:</b> {{ amostraSelecionada.data_entrada }}<br>
-                    <b>Data de Coleta:</b> {{ amostraSelecionada.data_coleta }}<br>
+                    <b>Data de Entrada:</b> {{ amostraSelecionada.data_entrada | date:'dd/MM/yyyy'}}<br>
+                    <b>Data de Coleta:</b> {{ amostraSelecionada.data_coleta | date:'dd/MM/yyyy' }}<br>
                     <b>Finalidade:</b> {{ amostraSelecionada.finalidade }}<br>
                     <b>N° SAC:</b> {{ amostraSelecionada.numero_sac }}
                 </div>
@@ -1531,9 +1531,9 @@
                 <div class="text-left w-6">
                     <b>Registro Empresa:</b> {{ amostraSelecionada.registro_ep }}<br>
                     <b>Registro Produto:</b> {{ amostraSelecionada.registro_produto }}<br>
-                    <b>Data de Envio:</b> {{ amostraSelecionada.data_envio }}<br>
+                    <b>Data de Envio:</b> {{ amostraSelecionada.data_envio | date:'dd/MM/yyyy' }}<br>
                     <b>Destino do Envio:</b> {{ amostraSelecionada.destino_envio }}<br>
-                    <b>Data de Recebimento:</b> {{ amostraSelecionada.data_recebida }}
+                    <b>Data de Recebimento:</b> {{ amostraSelecionada.data_recebida | date:'dd/MM/yyyy' }}
                 </div>
                 <div class="text-left w-6">
                     <b>Identificação Complementar:</b> {{ amostraSelecionada.identificacao_complementar }}<br>
