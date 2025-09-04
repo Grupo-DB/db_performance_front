@@ -30,7 +30,7 @@ import { StepperModule } from 'primeng/stepper';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { ColaboradorService } from '../../../services/avaliacoesServices/colaboradores/registercolaborador.service';
-import { evaluate } from 'mathjs';
+import { evaluate, norm } from 'mathjs';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { ProjecaoService } from '../../../services/baseOrcamentariaServices/dre/projecao.service';
@@ -3019,6 +3019,9 @@ salvarAnaliseResultados() {
         tempo_previsto: ensaio.tempo_previsto,
         tipo_ensaio: ensaio.tipo_ensaio_detalhes?.nome,
         funcao: ensaio.funcao || null,
+        norma: ensaio.norma || null,
+        unidade: ensaio.unidade || null,
+        garantia: ensaio.garantia || null,
         numero_cadinho: ensaio.numero_cadinho || null, // NOVO: Adicionar número do cadinho
         variaveis_utilizadas: variaveisUtilizadas,
         variaveis: variaveisDoEnsaio.reduce((acc: any, v: any) => {
@@ -3045,52 +3048,87 @@ salvarAnaliseResultados() {
     ensaios_utilizados: todosEnsaios
   }];
   // Montar cálculos (funciona para ambos os tipos)
-  const calculos = planoDetalhes.flatMap((plano: any) =>
-    (plano.calculo_ensaio_detalhes || []).map((calc: any) => ({
-      calculos: calc.descricao,
-  valores: (calc.ensaios_detalhes || []).map((e: any) => this.round2(e.valor)),
-  resultados: typeof calc.resultado === 'number' ? this.round2(calc.resultado) : calc.resultado,
-  responsavel: (typeof calc.responsavel === 'object' && calc.responsavel !== null) ? (calc.responsavel as any).value : (calc.responsavel || null),
-      digitador: this.digitador,
-      ensaios_utilizados: (calc.ensaios_detalhes || []).map((e: any) => {
-        // Montar variáveis utilizadas deste ensaio interno (espelhando ensaio direto)
-        const variaveisTodas = Array.isArray(e.variavel_detalhes)
-          ? e.variavel_detalhes.map((v: any) => ({
-              nome: v.nome,
-              valor: v.valor,
-              tecnica: v.tecnica || v.varTecnica || v.nome
-            }))
-          : [];
-        let variaveisFiltradas = variaveisTodas;
-        if (e.funcao) {
-          const varsNaFuncao = Array.from(new Set((e.funcao.match(/var\d+/g) || [])));
-          variaveisFiltradas = variaveisTodas.filter((v: any) => varsNaFuncao.includes(v.tecnica));
-        }
-        const variaveisDict = variaveisFiltradas.reduce((acc: any, v: any) => {
-          acc[v.tecnica] = {
-            descricao: v.nome,
-            valor: v.valor !== undefined && v.valor !== null ? Number(v.valor) : 0
-          };
-          return acc;
-        }, {});
+ const calculos = planoDetalhes.flatMap((plano: any) =>
+  (plano.calculo_ensaio_detalhes || []).map((calc: any) => ({
+    calculos: calc.descricao,
+    valores: (calc.ensaios_detalhes || []).map((e: any) => this.round2(e.valor)),
+    resultados: typeof calc.resultado === 'number' ? this.round2(calc.resultado) : calc.resultado,
+    responsavel: (typeof calc.responsavel === 'object' && calc.responsavel !== null) ? (calc.responsavel as any).value : (calc.responsavel || null),
+    digitador: this.digitador,
+    ensaios_utilizados: (calc.ensaios_detalhes || []).map((e: any) => {
+      // Buscar dados completos do ensaio nos ensaios diretos do plano
+      const ensaioDireto = plano.ensaio_detalhes?.find((ed: any) => 
+        ed.id === e.id || 
+        ed.descricao === e.descricao ||
+        ed.tecnica === e.tecnica
+      );
 
-        return {
-          id: e.id,
-          descricao: e.descricao,
-          valor: this.round2(e.valor),
-          variavel: e.variavel,
-          responsavel: typeof e.responsavel === 'object' && e.responsavel !== null
-            ? e.responsavel.value
-            : e.responsavel,
-          digitador: e.digitador || this.digitador,
-          numero_cadinho: e.numero_cadinho || null,
-          funcao: e.funcao || null,
-          variaveis_utilizadas: variaveisFiltradas,
-          variaveis: variaveisDict
+      // Buscar dados nos ensaios disponíveis como fallback
+      const ensaioCompleto = ensaioDireto || this.ensaiosDisponiveis?.find((disp: any) =>
+        disp.id === e.id ||
+        disp.descricao === e.descricao ||
+        this.normalize(disp.descricao) === this.normalize(e.descricao)
+      );
+
+      console.log(`🔍 Mapeando ensaio ${e.descricao}:`, {
+        temEnsaioDireto: !!ensaioDireto,
+        temEnsaioCompleto: !!ensaioCompleto,
+        norma: e.norma || ensaioCompleto?.norma,
+        garantia: e.garantia || ensaioCompleto?.garantia,
+        unidade: e.unidade || ensaioCompleto?.unidade
+      });
+
+      // Montar variáveis utilizadas
+      const variaveisTodas = Array.isArray(e.variavel_detalhes)
+        ? e.variavel_detalhes.map((v: any) => ({
+            nome: v.nome,
+            valor: v.valor,
+            tecnica: v.tecnica || v.varTecnica || v.nome
+          }))
+        : [];
+
+      let variaveisFiltradas = variaveisTodas;
+      if (e.funcao) {
+        const varsNaFuncao = Array.from(new Set((e.funcao.match(/var\d+/g) || [])));
+        variaveisFiltradas = variaveisTodas.filter((v: any) => varsNaFuncao.includes(v.tecnica));
+      }
+
+      const variaveisDict = variaveisFiltradas.reduce((acc: any, v: any) => {
+        acc[v.tecnica] = {
+          descricao: v.nome,
+          valor: v.valor !== undefined && v.valor !== null ? Number(v.valor) : 0
         };
-      })
-    }))
-  );
+        return acc;
+      }, {});
+
+      return {
+        id: e.id,
+        descricao: e.descricao,
+        valor: this.round2(e.valor),
+        variavel: e.variavel || e.tecnica,
+        responsavel: typeof e.responsavel === 'object' && e.responsavel !== null
+          ? e.responsavel.value
+          : e.responsavel,
+        digitador: e.digitador || this.digitador,
+        numero_cadinho: e.numero_cadinho || null,
+        funcao: e.funcao || null,
+        
+        // **CORREÇÃO: Buscar dados completos com fallbacks**
+        garantia: e.garantia || ensaioCompleto?.garantia || ensaioDireto?.garantia || null,
+        tipo_ensaio: e.tipo_ensaio_detalhes?.nome || ensaioCompleto?.tipo_ensaio_detalhes?.nome || ensaioDireto?.tipo_ensaio_detalhes?.nome || null,
+        norma: e.norma || ensaioCompleto?.norma || ensaioDireto?.norma || null,
+        unidade: e.unidade || ensaioCompleto?.unidade || ensaioDireto?.unidade || null,
+        
+        // **NOVO: Campos adicionais que podem ser úteis**
+        tempo_previsto: e.tempo_previsto || ensaioCompleto?.tempo_previsto || ensaioDireto?.tempo_previsto || null,
+        tecnica: e.tecnica || ensaioCompleto?.tecnica || ensaioDireto?.tecnica || `ensaio${String(e.id).padStart(2, '0')}`,
+        
+        variaveis_utilizadas: variaveisFiltradas,
+        variaveis: variaveisDict
+      };
+    })
+  }))
+);
   const idAnalise = this.analiseId ?? 0;
   const payload = {
     estado: 'PENDENTE',

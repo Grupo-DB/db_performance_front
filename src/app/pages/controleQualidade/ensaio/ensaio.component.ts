@@ -43,6 +43,7 @@ interface RegisterEnsaioForm {
   variavel: FormControl;
   funcao: FormControl;
   norma: FormControl;
+  garantia: FormControl;
 }
 
 export interface Ensaio {
@@ -58,6 +59,7 @@ export interface Ensaio {
   variavel: any;
   funcao: any;
   norma: any;
+  garantia: string
   ensaioTecnico?: string;
 }
 
@@ -223,6 +225,7 @@ export class EnsaioComponent implements OnInit{
       variavel: new FormControl(''),
       funcao: new FormControl(''),
       norma: new FormControl(''),
+      garantia: new FormControl(''),
     });
     this.editForm = this.fb.group({
       id: [''],
@@ -235,6 +238,7 @@ export class EnsaioComponent implements OnInit{
       variavel: [''],
       funcao: [''],
       norma: [''],
+      garantia: [''],
     });
   }
 
@@ -488,28 +492,6 @@ gerarSafeVarsPorTecnica() {
   });
 }
 
-
-// avaliarExpressao() {
-//   const expressao = this.registerForm.get('funcao')?.value;
-//   if (!expressao) return null;
-
-//   // Agora a expressão já deve estar usando os nomes do campo tecnica
-//   this.gerarSafeVarsPorTecnica();
-
-//   try {
-//     const resultado = evaluate(expressao, this.safeVars);
-//     return resultado;
-//   } catch (e) {
-//     this.messageService.add({
-//       severity: 'error',
-//       summary: 'Erro ao calcular',
-//       detail: 'Expressão inválida ou erro de cálculo.',
-//       life: 5000
-//     });
-//     return null;
-//   }
-// }
-
 avaliarExpressao() {
   const expressao = this.registerForm.get('funcao')?.value;
   if (!expressao) return null;
@@ -535,10 +517,6 @@ avaliarExpressao() {
     return null;
   }
 }
-
-
-
-
 
 ////////////-------------------------Montagem de Fórmula-------------------------////////////
 montarFormula(){
@@ -569,43 +547,6 @@ converterFuncaoParaBlocos(funcao: string): { tipo: string, valor: string }[] {
     }
   });
 }
-
-// Não é mais necessário converter nomes técnicos para nomes amigáveis
-
-
-// validarExpressaoComValores(expr: string): boolean {
-//   try {
-//     // Gere safeVars usando tecnica
-//     this.gerarSafeVarsPorTecnica();
-//     // Substitua todas as variáveis (tecnica) por 1 para validar sintaxe
-//     let fakeExpr = expr;
-//     this.variaveis.forEach(v => {
-//       if (v.tecnica) {
-//         const regex = new RegExp(v.tecnica.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-//         fakeExpr = fakeExpr.replace(regex, '1');
-//       }
-//     });
-//     fakeExpr = fakeExpr.replace(/\s+/g, ' ');
-//     fakeExpr = fakeExpr.replace(/1\s+1/g, '1');
-//     console.log('Expressão para validação:', fakeExpr);
-//     evaluate(fakeExpr);
-//     this.messageService.add({
-//       severity: 'info',
-//       summary: 'Expressão válida!',
-//       detail: `Expressão testada: ${fakeExpr}`,
-//       life: 5000
-//     });
-//     return true;
-//   } catch (error) {
-//     this.messageService.add({
-//       severity: 'error',
-//       summary: 'Expressão inválida!',
-//       detail: 'A expressão montada possui erro de sintaxe ou operadores inválidos.',
-//       life: 5000
-//     });
-//     return false;
-//   }
-// }
 
 validarExpressaoComValores(expr: string): boolean {
   if (!expr || expr.trim() === '') {
@@ -682,7 +623,7 @@ salvarFormula() {
   this.montarFormulaVisivel = false;
 }
 
-// Crie um método específico para buscar variáveis na expressão
+// Cria um método específico para buscar variáveis na expressão
 private buscarVariaveisNaExpressao(expressao: string) {
   console.log('=== BUSCANDO VARIÁVEIS NA EXPRESSÃO ===');
   console.log('Expressão recebida:', expressao);
@@ -798,13 +739,6 @@ filterVariaveis(event: any) {
     );
   }
 
-
-
-
-
-
-
-
   /////////////////////////////////////////////////////////////////
   filterTable() {
     this.dt1.filterGlobal(this.inputValue,'contains');
@@ -839,6 +773,7 @@ filterVariaveis(event: any) {
     variavel: ensaio.variavel,
     funcao: ensaio.funcao,
     norma: ensaio.norma,
+    garantia: ensaio.garantia
   });
 }
  saveEdit(){
@@ -863,6 +798,7 @@ filterVariaveis(event: any) {
     variavel: this.editForm.value.variavel,
     funcao: this.editForm.value.funcao,
     norma: this.editForm.value.norma,
+    garantia: this.editForm.value.garantia
   };
   
   this.ensaioService.editEnsaio(id, dadosAtualizados).subscribe({
@@ -953,6 +889,7 @@ filterVariaveis(event: any) {
       variaveis,
       this.registerForm.value.funcao,
       this.registerForm.value.norma,
+      this.registerForm.value.garantia,
       ensaioTecnico
     ).subscribe({
       next: () => {
