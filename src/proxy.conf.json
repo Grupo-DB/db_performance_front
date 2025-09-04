@@ -1,9 +1,9 @@
 {
     "/api": {
 <<<<<<< HEAD
-      "target": "http://172.50.10.79:8008",
+      "target": "http://localhost:8000",
 =======
-      "target": "http://172.50.10.79:8008
+      "target": "http://localhost:8000
 ",
 >>>>>>> origin/responsividade
       "secure": false,

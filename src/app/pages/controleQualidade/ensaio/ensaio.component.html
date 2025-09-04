@@ -180,6 +180,22 @@
                                                 <label for="float-label">Selecione o Tipo de Ensaio</label>
                                             </p-floatLabel> 
                                         </div>
+                                        <div class="form2 w-12 mb-3 mt-3">
+                                            <p-floatlabel variant="on">
+                                                <p-iconfield>
+                                                    <p-inputicon class="pi pi-file-edit" />
+                                                    <input
+                                                        variant="filled"
+                                                        [style]="{'width':'100%'}"
+                                                        pInputText id="on_label"
+                                                        autocomplete="off"
+                                                        formControlName="garantia"
+                                                        type="text"
+                                                    />
+                                                </p-iconfield>
+                                                <label for="on_label">Digite a garantia</label>
+                                            </p-floatlabel>
+                                        </div>
                                     <div class="flex flex-row w-12 mt-3 gap-1">    
                                         <div class="w-6">
                                             <p-floatlabel variant="on">
@@ -497,6 +513,22 @@
                                 />
                             </p-iconfield>
                             <label for="on_label">Digite a unidade</label>
+                        </p-floatlabel>
+                    </div>
+                    <div class="w-10 mb-3 mt-3">
+                        <p-floatlabel variant="on">
+                            <p-iconfield>
+                                <p-inputicon class="pi pi-file-edit" />
+                                <input
+                                    variant="filled"
+                                    [style]="{'width':'100%'}"
+                                    pInputText id="on_label"
+                                    autocomplete="off"
+                                    formControlName="garantia"
+                                    type="text"
+                                />
+                            </p-iconfield>
+                            <label for="on_label">Digite a garantia</label>
                         </p-floatlabel>
                     </div>
                 </div>
