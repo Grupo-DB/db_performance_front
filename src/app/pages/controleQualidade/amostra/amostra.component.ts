@@ -976,6 +976,72 @@ visualizar(amostra: any) {
   console.log('Drawer deve abrir', amostra); 
 }
 
+imprimirAmostraVisualizar() {
+  const doc = new jsPDF();
+
+  let y = 15;
+
+  const addTitle = (title: string) => {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text(title, 10, y);
+    y += 8;
+  };
+
+  const addField = (label: string, value: any) => {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text(`${label}:`, 20, y);
+    doc.setFont("helvetica", "normal");
+    doc.text(String(value || "-"), 100, y);
+    y += 7;
+  };
+
+  addTitle("Informações Gerais");
+  addField("Data de Entrada", this.amostraSelecionada.data_entrada);
+  addField("Data de Coleta", this.amostraSelecionada.data_coleta);
+  addField("Finalidade", this.amostraSelecionada.finalidade);
+  addField("N° SAC", this.amostraSelecionada.numero_sac);
+  addField("Número", this.amostraSelecionada.numero);
+  addField("Número Lote", this.amostraSelecionada.numero_lote);
+  addField("Classificação", this.amostraSelecionada.status);
+  addField("Local de Coleta", this.amostraSelecionada.local_coleta);
+
+  y += 5;
+  doc.line(10, y, 200, y);
+  y += 10;
+
+  addTitle("Material");
+  addField("Material", this.amostraSelecionada.material);
+  addField("Produto de Amostra", this.amostraSelecionada.produto_amostra_detalhes?.nome);
+  addField("Tipo", this.amostraSelecionada.produto_amostra_detalhes?.tipo);
+  addField("Subtipo", this.amostraSelecionada.produto_amostra_detalhes?.sub_tipo);
+  addField("Código DB", this.amostraSelecionada.cod_db);
+  addField("Fornecedor", this.amostraSelecionada.fornecedor);
+  addField("Período Hora", this.amostraSelecionada.periodo_hora);
+  addField("Periodicidade", this.amostraSelecionada.periodo_turno);
+  addField("Tipo de Amostragem", this.amostraSelecionada.tipo_amostragem);
+  addField("Representatividade do Lote Tn", this.amostraSelecionada.representividade_lote);
+
+  y += 5;
+  doc.line(10, y, 200, y);
+  y += 10;
+
+  addTitle("Complementos");
+  addField("Registro Empresa", this.amostraSelecionada.registro_ep);
+  addField("Registro Produto", this.amostraSelecionada.registro_produto);
+  addField("Data de Envio", this.amostraSelecionada.data_envio);
+  addField("Destino do Envio", this.amostraSelecionada.destino_envio);
+  addField("Data de Recebimento", this.amostraSelecionada.data_recebida);
+  addField("Identificação Complementar", this.amostraSelecionada.identificacao_complementar);
+  addField("Complemento", this.amostraSelecionada.complemento);
+  addField("Observações", this.amostraSelecionada.observacoes);
+  addField("Reter", this.amostraSelecionada.reter ? "Sim" : "Não");
+
+  const blobUrl = doc.output("bloburl");
+  window.open(blobUrl, "_blank");
+}
+
 abrirOS(amostra: any) {
   this.amostraSelecionada = amostra;
   this.activeStep = 2;
