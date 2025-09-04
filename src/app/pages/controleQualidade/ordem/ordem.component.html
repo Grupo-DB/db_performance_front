@@ -657,71 +657,6 @@
   
 </p-drawer>
 
-<!-- Modal para Seleção de laudos -->
-<p-dialog [(visible)]="modalLaudo" [modal]="true" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false">
-    <div class="containerInterno w-12">
-        <div class="background-form">
-           
-                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-                    <div class="fg1 flex flex-column w-12 align-items-center">
-
-                        <p-card class="card w-12 text-center">
-                            <ng-template #header>
-                                <div class="header w-full text-center">
-                                    <b>Selecionar Ánalises do Laudo</b>
-                                </div>
-                            </ng-template>
-                            <div class="flex flex-column w-12 gap-3">
-                            
-                               <p-table [value]="ensaios_laudo" [(selection)]="ensaios_selecionados" dataKey="id">
-                                    <ng-template pTemplate="header">
-                                        <tr>
-                                        <th style="width: 3em">
-                                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                                        </th>
-                                        <!-- <th>ID</th> -->
-                                        <th>Ánalises</th>
-                                        </tr>
-                                    </ng-template>
-
-                                    <ng-template pTemplate="body" let-ensaio>
-                                        <tr [pSelectableRow]="ensaio">
-                                        <td>
-                                            <p-tableCheckbox [value]="ensaio"></p-tableCheckbox>
-                                        </td>
-                                        <!-- <td>{{ ensaio.id }}</td> -->
-                                        <td>{{ ensaio.descricao }}</td>
-                                        </tr>
-                                    </ng-template>
-                                </p-table>
-                                <p-floatlabel variant="in">
-                                    <textarea pTextarea id="in_label" [(ngModel)]="bodyTabelaObs" rows="5" cols="30" style="resize: none" class="h-full w-full"></textarea>
-                                    <label for="in_label">Observações:</label>
-                                </p-floatlabel>
-
-                                <canvas #graficoCanvas style="visibility:hidden; position:absolute; top:-9999px;"></canvas>
-
-                            </div>
-                            
-                            <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
-                                <p-button 
-                                    label="Gerar Laudo" 
-                                    (onClick)="salvarSelecionados()"
-                                    severity="success"
-                                    icon="pi pi-check" 
-                                    iconPos="right" 
-                                    tooltipPosition="top"
-                                    pTooltip="Gerar Laudo"
-                                />
-                            </div>
-                        </p-card>
-                    </div>    
-                </div>
-
-        </div>
-    </div>
-</p-dialog>
-
 <!-- Modal para seleção de ensaios -->
 <p-dialog header="Selecionar Ensaios" 
           [(visible)]="modalEnsaiosVisible" 
@@ -780,65 +715,14 @@
   </div>
 </p-dialog>
 
-<!-- Modal para seleção de cálculos -->
-<p-dialog header="Selecionar Cálculos" 
-          [(visible)]="modalCalculosVisible" 
-          [style]="{width: '80vw', height: '70vh'}" 
-          [modal]="true" 
-          [closable]="true"
-          [draggable]="false" 
-          [resizable]="false">
-  
-  <div class="flex flex-column h-full">
-    <div class="flex-1 overflow-auto">
-      <p-table [value]="calculosDisponiveis" 
-               [scrollable]="true" 
-               scrollHeight="400px"
-               [paginator]="true" 
-               [rows]="10"
-               [globalFilterFields]="['descricao', 'funcao', 'responsavel']">
-        
-        <ng-template pTemplate="header">
-          <tr>
-            <th style="width: 50px">
-              <p-checkbox></p-checkbox>
-            </th>
-            <th>Descrição</th>
-            <th>Função</th>
-            <th>Responsável</th>
-          </tr>
-        </ng-template>
-        
-        <ng-template pTemplate="body" let-calculo>
-          <tr>
-            <td>
-              <p-checkbox [(ngModel)]="calculo.selecionado" 
-                          [binary]="true">
-              </p-checkbox>
-            </td>
-            <td>{{ calculo.descricao }}</td>
-            <td>{{ calculo.funcao }}</td>
-            <td>{{ calculo.responsavel }}</td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </div>
-    
-    <div class="flex justify-content-end gap-2 mt-3">
-      <p-button label="Cancelar" 
-                severity="secondary" 
-                (onClick)="fecharModalCalculos()">
-      </p-button>
-      <p-button label="Adicionar Selecionados" 
-                icon="pi pi-plus" 
-                severity="success"
-                (onClick)="adicionarCalculosSelecionados()">
-      </p-button>
-    </div>
-  </div>
-</p-dialog>
-
-<p-dialog [(visible)]="modalLaudo" [modal]="true" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false">
+<p-dialog 
+    [(visible)]="modalLaudo" 
+    [modal]="true" 
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" 
+    [style]="{ width: '80vw' }" 
+    [draggable]="false" 
+    [resizable]="false"
+>
     <div class="containerInterno w-12">
         <div class="background-form">
            
@@ -851,16 +735,21 @@
                                     <b>Selecionar Ánalises do Laudo</b>
                                 </div>
                             </ng-template>
-                            <div class="flex flex-column w-12 gap-3">
-                            
-                               <p-table [value]="ensaios_laudo" [(selection)]="ensaios_selecionados" dataKey="id">
+                            <div class="flex flex-row w-12 gap-3">
+                                <!-- Coluna da tabela -->
+                                <div class="w-12">
+                                    <p-table 
+                                        [value]="ensaios_laudo" 
+                                        [(selection)]="ensaios_selecionados" 
+                                        dataKey="id"   
+                                    >
                                     <ng-template pTemplate="header">
                                         <tr>
-                                        <th style="width: 3em">
-                                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                                        </th>
-                                        <!-- <th>ID</th> -->
-                                        <th>Ánalises</th>
+                                            <th style="width: 3em">
+                                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                            </th>
+                                            <th>Análises</th>
+                                            <th>Garantias</th>
                                         </tr>
                                     </ng-template>
 
@@ -869,18 +758,20 @@
                                         <td>
                                             <p-tableCheckbox [value]="ensaio"></p-tableCheckbox>
                                         </td>
-                                        <!-- <td>{{ ensaio.id }}</td> -->
-                                        <td>{{ ensaio.descricao }}</td>
+                                            <td>{{ ensaio.descricao }}</td>
+                                            <td>
+                                                <input
+                                                    value="{{ ensaio.garantia }}"
+                                                    type="text"
+                                                    pInputText
+                                                    [(ngModel)]="ensaio.garantia"
+                                                    placeholder="Digite a garantia"
+                                                />
+                                            </td>
                                         </tr>
                                     </ng-template>
-                                </p-table>
-                                <p-floatlabel variant="in">
-                                    <textarea pTextarea id="in_label" [(ngModel)]="bodyTabelaObs" rows="5" cols="30" style="resize: none" class="h-full w-full"></textarea>
-                                    <label for="in_label">Observações:</label>
-                                </p-floatlabel>
-
-                                <canvas #graficoCanvas style="visibility:hidden; position:absolute; top:-9999px;"></canvas>
-
+                                    </p-table>
+                                </div>
                             </div>
                             
                             <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
