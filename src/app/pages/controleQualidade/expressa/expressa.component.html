@@ -43,22 +43,16 @@
     </ul>
 </div>
 
-<div class="titulo mt-6 mb-0 w-12 text-2xl">
-    <p-divider align="left" type="solid">
-        <b>Ordem de Serviço Expressa</b>
-    </p-divider>
-</div>
-
 <form [formGroup]="expressaForm" title="Cadastrar nova OS Expressa">
-<div class="container w-12 flex flex-column align-items-center">
-    <div class="step1 w-10 mt-5 flex flex-column align-items-center">
-        <div class="w-12 ">
-            <p-card *ngIf="amostraData" class="card p-4 mb-4">
-                <ng-template #header>
-                    <div class="header w-full text-center">
-                        <h2>Dados da Amostra/Preencher OS</h2>
-                    </div>
-                </ng-template>
+    <div class="containerInterno w-12 flex flex-column align-items-center">
+        <div class="w-12 flex flex-column align-items-center">
+            <div class="w-12 ">
+                <p-card *ngIf="amostraData" class="card p-4 mb-4">
+                    <ng-template #header>
+                        <div class="header w-full text-center">
+                            <h2>Dados da Amostra/Preencher OS</h2>
+                        </div>
+                    </ng-template>
                     <div class="grid">
                         <div class="text-left col-12 md:col-6 lg:col-4">
                             <strong>Número:</strong> {{ amostraData.numero || 'N/A' }}
@@ -115,7 +109,7 @@
     
                     <div class="w-12 flex flex-column mt-6 lg:flex-row">
                         <div class="flex flex-column w-12 gap-2  lg:w-12">
-                            <div class="w-11 text-left mb-3">
+                            <div class="w-12 text-left mb-3">
                                 <p-floatLabel variant="on">
                                     <p-datepicker variant="filled" [style]="{'width':'100%'}" id="da" formControlName="data"
                                         dateFormat="dd/mm/yy" inputId="float-label" [showIcon]="true">
@@ -124,7 +118,7 @@
                                 </p-floatLabel>
                             </div>
     
-                            <div class="w-11 text-left mb-3">
+                            <div class="w-12 text-left mb-3">
                                 <p-floatLabel variant="on">
                                     <p-select inputId="float-label" [style]="{'width':'100%'}" [options]="classificacoes"
                                         formControlName="classificacao" optionLabel="nome" optionValue="nome"
@@ -134,7 +128,7 @@
                                 </p-floatLabel>
                             </div>
     
-                            <div class="w-11 text-left mb-3">
+                            <div class="w-12 text-left mb-3">
                                 <p-floatlabel variant="on">
                                     <p-iconfield>
                                         <p-inputicon class="pi pi-file-edit" />
@@ -146,8 +140,8 @@
                             </div>
                         </div>
     
-                        <div class="flex flex-column w-12 gap-2 lg:w-12">
-                            <div class="w-11 text-left mb-3">
+                        <div class="flex flex-column w-12 gap-2 lg:w-12 ml-4">
+                            <div class="w-12 text-left mb-3">
                                 <p-floatLabel variant="on">
                                     <p-select inputId="float-label" [style]="{'width':'100%'}" [options]="responsaveis"
                                         formControlName="responsavel" optionLabel="value" optionValue="value"
@@ -156,7 +150,7 @@
                                     <label for="float-label">Selecione o Responsável</label>
                                 </p-floatLabel>
                             </div>
-                            <div class="w-11 text-left mb-3">
+                            <div class="w-12 text-left mb-3">
                                 <p-floatlabel variant="on">
                                     <p-iconfield>
                                         <p-inputicon class="pi pi-file-edit" />
@@ -171,69 +165,91 @@
                 </p-card>
             </div>
         </div>
-        <div class="step1 w-10 mt-5 flex flex-column align-items-center">    
+        <div class="step1 w-12 mt-5 flex flex-column align-items-center">    
             <div class="flex flex-column w-12 align-items-center">    
                 <p-card class="card w-full">
-                        <ng-template #header>
-                            <div class="header w-full text-center">
-                                <h2>Selecione os Ensaios para OS</h2>
-                            </div>
-                        </ng-template>
-                        <p-pickList [source]="ensaios" [target]="targetEnsaios" sourceHeader="Ensaios"
-                            targetHeader="Selecionados" [dragdrop]="true" [responsive]="true"
-                            [sourceStyle]="{ height: '20rem' }" [targetStyle]="{ height: '20rem' }" filterBy="descricao"
-                            sourceFilterPlaceholder="Pesquisa por nome" targetFilterPlaceholder="Pesquisa por nome"
-                            breakpoint="412px">
-                            <ng-template let-ensaio pTemplate="item">
-                                <div class="flex flex-wrap p-2 align-items-center gap-3">
-                                    <div class="flex-1 flex flex-column gap-2">
-                                        <span class="font-bold">{{ ensaio.descricao }}</span>
-                                        <div class="flex align-products-center gap-2">
-                                        </div>
+                    <ng-template #header>
+                        <div class="header w-full text-center">
+                            <h2>Selecione os Ensaios para OS</h2>
+                        </div>
+                    </ng-template>
+                    <p-pickList 
+                        [source]="ensaios" 
+                        [target]="targetEnsaios" 
+                        sourceHeader="Ensaios"
+                        targetHeader="Selecionados" 
+                        [dragdrop]="true" 
+                        [responsive]="true"
+                        [sourceStyle]="{ height: '20rem' }" 
+                        [targetStyle]="{ height: '20rem' }" filterBy="descricao"
+                        sourceFilterPlaceholder="Pesquisa por nome" targetFilterPlaceholder="Pesquisa por nome"
+                        breakpoint="412px"
+                          styleClass="picklist-black"
+
+                        >
+                        <ng-template let-ensaio pTemplate="item">
+                            <div class="flex flex-wrap p-2 align-items-center gap-3">
+                                <div class="flex-1 flex flex-column gap-2">
+                                    <span class="font-bold">{{ ensaio.descricao }}</span>
+                                    <div class="flex align-products-center gap-2">
                                     </div>
                                 </div>
-                            </ng-template>
-                        </p-pickList>
-                    </p-card>
-                </div>
-            </div>    
-            <div class="step1 w-10 mt-5 flex flex-column align-items-center">    
-                <div class="flex flex-column w-12 align-items-center">   
-                    <p-card class="card w-full">
-                        <ng-template #header>
-                            <div class="header w-full text-center">
-                                <h2>Selecione os Cálculos para OS</h2>
                             </div>
                         </ng-template>
-                        <p-pickList [source]="calculos" [target]="targetCalculos" sourceHeader="Calculos"
-                            targetHeader="Selecionados" [dragdrop]="true" [responsive]="true"
-                            [sourceStyle]="{ height: '50%' }" [targetStyle]="{ height: '30rem' }" filterBy="descricao"
-                            sourceFilterPlaceholder="Pesquisa por nome" targetFilterPlaceholder="Pesquisa por nome"
-                            breakpoint="412px">
-                            <ng-template let-ensaio pTemplate="item">
-                                <div class="flex flex-wrap p-2 align-items-center gap-3">
-                                    <div class="flex-1 flex flex-column gap-2">
-                                        <span class="font-bold">{{ ensaio.descricao }}</span>
-                                        <div class="flex align-products-center gap-2">
-                                        </div>
-                                    </div>
-                                </div>
-                            </ng-template>
-                        </p-pickList>
-                    </p-card>   
-                </div>
+                    </p-pickList>
+                </p-card>
             </div>
-            <div class="step1 w-10 mt-5 mb-5 flex flex-column align-items-center">
-                <div class="flex flex-column w-12 align-items-center">
-                    <div class=" flex w-6 gap-3 justify-content-end text-right">
-                        <!-- <p-button title="Validar Dados" label="Validar" (onClick)="validarDadosEnvio()" severity="secondary" icon="pi pi-check-circle" iconPos="left" />
-                        <p-button title="Debug PickLists" label="Debug" (onClick)="debugPickLists()" severity="secondary" icon="pi pi-info-circle" iconPos="left" /> -->
-                        <p-button title="Avançar" label="Imprimir" severity="info" icon="pi pi-arrow-right" iconPos="right" />
-                        <p-button label="Gravar" (onClick)="criarAmostra()" severity="success" icon="pi pi-check" iconPos="right" />
-                    </div>
+        </div>    
+        <div class="step1 w-12 mt-5 flex flex-column align-items-center">    
+            <div class="flex flex-column w-12 align-items-center">   
+                <p-card class="card w-full">
+                    <ng-template #header>
+                        <div class="header w-full text-center">
+                            <h2>Selecione os Cálculos para OS</h2>
+                        </div>
+                    </ng-template>
+                    <p-pickList [source]="calculos" [target]="targetCalculos" sourceHeader="Calculos"
+                        targetHeader="Selecionados" [dragdrop]="true" [responsive]="true"
+                        [sourceStyle]="{ height: '50%' }" [targetStyle]="{ height: '30rem' }" filterBy="descricao"
+                        sourceFilterPlaceholder="Pesquisa por nome" targetFilterPlaceholder="Pesquisa por nome"
+                        breakpoint="412px">
+                        <ng-template let-ensaio pTemplate="item">
+                            <div class="flex flex-wrap p-2 align-items-center gap-3">
+                                <div class="flex-1 flex flex-column gap-2">
+                                    <span class="font-bold">{{ ensaio.descricao }}</span>
+                                    <div class="flex align-products-center gap-2">
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-pickList>
+                </p-card>   
+            </div>
+        </div>
+        <div class="step1 w-12 mt-5 mb-5 flex flex-column align-items-center">
+            <div class="flex flex-column w-12 align-items-center">
+                <div class=" flex w-12 gap-3 justify-content-center text-center">
+                    <p-button 
+                        label="Imprimir" 
+                        severity="info" 
+                        icon="pi pi-print" 
+                        iconPos="right" 
+                        tooltipPosition="top"
+                        pTooltip="Imprimir"
+                    />
+                    <p-button 
+                        (onClick)="criarAmostra()" 
+                        label="Salvar" 
+                        severity="success"
+                        icon="pi pi-save" 
+                        iconPos="right" 
+                        tooltipPosition="top"
+                        pTooltip="Salvar"
+                    />
                 </div>
             </div>
         </div>
+    </div>
         
 </form>
         

@@ -1,13 +1,146 @@
 @import "primeicons/primeicons.css";
-.container{
-    max-width: 100%;
+
+//Picklist
+:host ::ng-deep {
+    .p-picklist {
+        .p-picklist-source-controls,
+        .p-picklist-target-controls {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            
+            .p-button {
+                margin: 0.25rem 0;
+                background-color: #3B3E44;
+                color: white;
+                border-color: #3B3E44;
+                
+                &:hover {
+                    background-color: #3B3E44;
+                    border-color: #3B3E44;
+                }
+            }
+        }
+        
+        .p-picklist-transfer-controls {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            
+            .p-button {
+                margin: 0.25rem 0;
+                background-color: #3B3E44;
+                color: white;
+                border-color: #3B3E44;
+                
+                &:hover {
+                    background-color: #3B3E44;
+                    border-color: #3B3E44;
+                }
+                
+                &:disabled {
+                    background-color: #e9ecef;
+                    color: #6c757d;
+                    border-color: #e9ecef;
+                }
+            }
+        }
+        
+        .p-picklist-source-list-container,
+        .p-picklist-target-list-container {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            
+            .p-picklist-header {
+                background-color: #3B3E44;
+                color: white;
+                padding: 1rem;
+                font-weight: 600;
+            }
+            
+            .p-picklist-list {
+                max-height: 300px;
+                
+                .p-picklist-item {
+                    padding: 0.75rem 1rem;
+                    border-bottom: 1px solid #f1f3f4;
+                    background-color: #8d1616 !important;
+                    color: #333333;
+                    
+                    &:hover {
+                        background-color: #d1ecf1 !important;
+                        color: #0066cc !important;
+                        cursor: pointer;
+                    }
+                    
+                    &.p-highlight {
+                        background-color: #3B3E44 !important;
+                        color: white !important;
+                        
+                        &:hover {
+                            background-color: #3B3E44 !important;
+                        }
+                    }
+                    
+                    &:nth-child(even):not(.p-highlight) {
+                        background-color: #f8f9fa !important;
+                        
+                        &:hover {
+                            background-color: #d1ecf1 !important;
+                            color: #0066cc !important;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+:host ::ng-deep .p-divider.p-divider-horizontal .p-divider-content {
+  background: #f8f9fa !important; /* fundo atrás do texto */
+  color:#626972 !important;      /* texto branco */
+  padding: 0;            /* espaçamento lateral */
+  border-radius: 4px;          /* arredondar se quiser */
+}
+:host ::ng-deep .p-card-body{
+    background-color: #f8f9fa;
+    border-radius: 0 0 10px 10px;
+}
+.tabela{
+    background-color: #3B3E44;
+    color: #ffffff;
+    border-radius: 10px;
+    width: 100%;
+    th{
+        font-size: 14px;
+        background-color: #3B3E44 !important;
+        color: white !important;
+    }
+    td{
+        font-size:12px ;
+    }
+}
+
+.card{
+    border-radius: 10px;
+    .header{
+        background-color: #3B3E44;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        h2{
+            color: #ffffff;
+            font-weight: 700;
+        }
+    }
 }
 .containerInterno{
     background-color: #ffffff;
     border: 10px solid #ffffff;
-    border-radius: 20px;
     padding: 10px;
-    //box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+.container{
+    max-width: 100%;
 }
 
 .titulo{
@@ -15,20 +148,6 @@
     //background-color: #4A90E2;
     background-color: #ffffff;
     border: 20px solid #ffffff;
-}
-
-.card{
-    .header{
-        background-color: #4A90E2;
-        color: #ffffff;
-        padding: 10px;
-        border-radius: 10px 10px 0 0;
-        
-        h2{
-            color: #ffffff;
-            font-weight: 700;
-        }
-    }
 }
 
 .form-geral{
@@ -115,17 +234,7 @@
         margin-top: 10px;
     }
 }
-.tabela{
-    margin: auto;
-    border-radius: 10px;
-    width: 100%;
-    th{
-        font-size: 14px;
-    }
-    td{
-        font-size:12px ;
-    }
-}
+
 .flex{
     
     text-align: end;

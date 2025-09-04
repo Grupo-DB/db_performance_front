@@ -44,15 +44,8 @@
 </div>
 
 <div class="container flex flex-column align-items-center mb-4">
-
-    <div class="titulo mt-2 mb-0 w-12 text-2xl">
-        <p-divider align="left" type="solid">
-            <b>Planos de Análises</b>
-        </p-divider>
-    </div>
-
     <div class="containerInterno w-12">
-        <div class="background-form" @swipeAnimation>
+        <div @swipeAnimation>
 
             <form
                 [formGroup]="registerForm"
@@ -66,7 +59,7 @@
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
                                 <div class="header w-full text-center">
-                                    <h2>Inserir Novo</h2>
+                                    <h2>Inserir Novo Plano de Análise</h2>
                                 </div>
                             </ng-template>
                             <div class="flex flex-column w-12 gap-3">
@@ -89,42 +82,67 @@
                                 </div>
 
                                 <div class="w-12 text-left">
-                                    <p-floatlabel variant="on">
-                                        <p-multiselect
-                                            inputId="float-label"
-                                            [style]="{'width':'100%'}"
-                                            [options]="ensaios" 
-                                            formControlName="ensaios"
-                                            optionLabel="descricao"
-                                            optionValue="id"
-                                            appendTo="body"
-                                            [filter]="true" 
-                                            filterBy="value"
-                                            [showClear]="true"
-                                        >
-                                        </p-multiselect>
-                                        <label for="float-label">Selecione o(s) Ensaio(s)</label>
-                                    </p-floatlabel>
+                                    <div class="mt-2 mb-0 w-12 ">
+                                        <p-divider align="left" type="solid">
+                                            <b>Selecione os Ensaios para OS</b>
+                                        </p-divider>
+                                    </div>
+                                    <p-pickList 
+                                        [source]="ensaios" 
+                                        [target]="targetEnsaios" 
+                                        sourceHeader="Ensaios"
+                                        targetHeader="Selecionados" 
+                                        [dragdrop]="true" 
+                                        [responsive]="true"
+                                        [sourceStyle]="{ height: '20rem' }" 
+                                        [targetStyle]="{ height: '20rem' }" filterBy="descricao"
+                                        sourceFilterPlaceholder="Pesquisa por nome" targetFilterPlaceholder="Pesquisa por nome"
+                                        breakpoint="412px"
+                                        styleClass="picklist-black"
+                                        [trackBy]="trackByFn"
+                                    >
+                                        <ng-template let-ensaio pTemplate="item">
+                                            <div class="flex flex-wrap p-2 align-items-center gap-3">
+                                                <div class="flex-1 flex flex-column gap-2">
+                                                    <span class="font-bold">{{ ensaio.descricao }}</span>
+                                                    <div class="flex align-products-center gap-2">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                    </p-pickList>
                                 </div>
 
                                 <div class="w-12 text-left">
-                                    <p-floatlabel variant="on">
-                                        <p-multiselect
-                                            inputId="float-label"
-                                            [style]="{'width':'100%'}"
-                                            [options]="calculosEnsaio" 
-                                            formControlName="calculos_ensaio"
-                                            optionLabel="descricao"
-                                            optionValue="id"
-                                            appendTo="body"
-                                            [filter]="true" 
-                                            filterBy="value"
-                                            [showClear]="true"
-                                            
+                                    <div class="mt-2 mb-0 w-12 ">
+                                        <p-divider align="left" type="solid">
+                                            <b>Selecione os Cálculos para OS</b>
+                                        </p-divider>
+                                    </div>
+                                    <p-pickList 
+                                        [source]="calculosEnsaio" 
+                                        [target]="targetCalculos"
+                                        [trackBy]="trackByFn"
+                                        sourceHeader="Cálculos"
+                                        targetHeader="Selecionados"
+                                        [dragdrop]="true"
+                                        [responsive]="true"
+                                        [sourceStyle]="{ height: '50%' }" 
+                                        [targetStyle]="{ height: '30rem' }"
+                                        filterBy="descricao"
+                                        sourceFilterPlaceholder="Pesquisa por nome" 
+                                        targetFilterPlaceholder="Pesquisa por nome"
+                                        breakpoint="412px"
                                         >
-                                        </p-multiselect>
-                                        <label for="float-label">Selecione o(s) Cálculos de Ensaio(s)</label>
-                                    </p-floatlabel>
+                                        <ng-template let-ensaio pTemplate="item">
+                                            <div class="flex flex-wrap p-2 align-items-center gap-3">
+                                            <div class="flex-1 flex flex-column gap-2">
+                                                <span class="font-bold">{{ ensaio.descricao }}</span>
+                                            </div>
+                                            </div>
+                                        </ng-template>
+                                        </p-pickList>
+                                   
                                 </div>
                            
                             </div>
@@ -135,15 +153,16 @@
                                     iconPos="right"  
                                     tooltipPosition="top"
                                     pTooltip="Limpar"
+                                    icon="pi pi-eraser"
                                 />
                                 <p-button 
                                     (onClick)="submit()" 
-                                    label="Salvar Plano de Análises" 
+                                    label="Salvar" 
                                     severity="success"
-                                    icon="pi pi-check" 
+                                    icon="pi pi-save" 
                                     iconPos="right" 
                                     tooltipPosition="top"
-                                    pTooltip="Salvar Plano de Análises"
+                                    pTooltip="Salvar"
                                 />
                             </div>
                         </p-card>
@@ -154,7 +173,7 @@
         </div>
 
         <div class="background-form mt-4 w-12" @swipeAnimation>
-            <div class="tabela text-left w-12">
+            <div class="text-left w-12">
                 <p-toast />
                 <p-confirmDialog />
                 <p-inplace closable="true" closeIcon="pi pi-angle-up">
@@ -203,7 +222,7 @@
                                 </div>
                             </ng-template>
                             <ng-template pTemplate="header">
-                                <tr>
+                                <tr class="tabela">
                                     <th style="width: 10%; text-align: center;" type="text" field="descricao" display="menu">Descrição</th>
                                     <th style="width: 35%; text-align: center;" type="text" field="ensaios" display="menu">Ensaios</th>
                                     <th style="width: 35%; text-align: center;" type="text" field="calcsEnsaios" display="menu">Cálculos de Ensaios</th>
@@ -226,21 +245,25 @@
                                         </span>             
                                     </td>
                                     <td style="text-align: center;">
-                                        <div style="display: flex; justify-content: center;">
+                                        <div class="flex justify-content-center gap-2">
                                             <p-button
-                                                label = "Editar"
-                                                class="ml-1"
-                                                tooltipPosition="top"
-                                                pTooltip="Editar"
-                                                (onClick)="abrirModalEdicao(planoAnalise)"
+                                            icon="pi pi-file-edit" 
+                                            severity="primary" 
+                                            size="small" 
+                                            [raised]="true"
+                                            pTooltip="Editar" 
+                                            tooltipPosition="top"
+                                            (onClick)="abrirModalEdicao(planoAnalise)"
                                             ></p-button>
+
                                             <p-button 
-                                                label = "Excluir"
-                                                severity="danger"
-                                                class="ml-2"
-                                                tooltipPosition="top"
-                                                pTooltip="Excluir"
-                                                (onClick)="excluirPlano(planoAnalise.id)"
+                                            icon="pi pi-trash" 
+                                            severity="danger" 
+                                            size="small" 
+                                            [raised]="true"
+                                            pTooltip="Excluir" 
+                                            tooltipPosition="top"
+                                            (onClick)="excluirPlano(planoAnalise.id)"
                                             ></p-button>
                                         </div>
                                     </td>
@@ -350,12 +373,13 @@
                                     iconPos="right"  
                                     tooltipPosition="top"
                                     pTooltip="Limpar"
+                                    icon="pi pi-eraser"
                                 />
                                 <p-button 
                                     (onClick)="saveEdit()" 
                                     label="Salvar" 
                                     severity="success"
-                                    icon="pi pi-check" 
+                                    icon="pi pi-save" 
                                     iconPos="right" 
                                     tooltipPosition="top"
                                     pTooltip="Salvar"

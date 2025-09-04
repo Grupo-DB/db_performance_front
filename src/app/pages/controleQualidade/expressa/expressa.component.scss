@@ -1,4 +1,8 @@
 @import "primeicons/primeicons.css";
+:host ::ng-deep .p-card-body{
+    background-color: #f8f9fa;
+    border-radius: 0 0 10px 10px;
+}
 .container{
     max-width: 100%;
     position: relative;
@@ -177,28 +181,24 @@
     background-color: #F7F8FA;
     border-radius: 20px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
 }
 
 .containerInterno{
     background-color: #ffffff;
     border: 10px solid #ffffff;
-    border-radius: 20px;
-    padding: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
     //box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-.card{
-    .header{
-        background-color: #4A90E2;
+.header{
+    background-color: #3B3E44;
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
+    h2{
         color: #ffffff;
-        padding: 10px;
-        border-radius: 10px 10px 0 0;
-        
-        h2{
-            color: #ffffff;
-            font-weight: 700;
-        }
+        font-weight: 700;
     }
 }
 
@@ -258,13 +258,13 @@
             
             .p-button {
                 margin: 0.25rem 0;
-                background-color: #4A90E2;
+                background-color: #3B3E44;
                 color: white;
-                border-color: #4A90E2;
+                border-color: #3B3E44;
                 
                 &:hover {
-                    background-color: #3578d1;
-                    border-color: #3578d1;
+                    background-color: #3B3E44;
+                    border-color: #3B3E44;
                 }
             }
         }
@@ -276,13 +276,13 @@
             
             .p-button {
                 margin: 0.25rem 0;
-                background-color: #4A90E2;
+                background-color: #3B3E44;
                 color: white;
-                border-color: #3578d1;
+                border-color: #3B3E44;
                 
                 &:hover {
-                    background-color: #3578d1;
-                    border-color: #3578d1;
+                    background-color: #3B3E44;
+                    border-color: #3B3E44;
                 }
                 
                 &:disabled {
@@ -299,7 +299,7 @@
             border-radius: 8px;
             
             .p-picklist-header {
-                background-color: #4A90E2;
+                background-color: #3B3E44;
                 color: white;
                 padding: 1rem;
                 font-weight: 600;
@@ -321,11 +321,11 @@
                     }
                     
                     &.p-highlight {
-                        background-color: #4A90E2 !important;
+                        background-color: #3B3E44 !important;
                         color: white !important;
                         
                         &:hover {
-                            background-color: #3578d1 !important;
+                            background-color: #3B3E44 !important;
                         }
                     }
                     
