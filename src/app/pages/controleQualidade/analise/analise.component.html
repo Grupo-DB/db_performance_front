@@ -223,7 +223,8 @@
 
                                     <!-- Linha principal -->
                                     <ng-template pTemplate="body" let-ensaio let-rowIndex="rowIndex">
-                                        <tr class="row" 
+                                        <tr class="row"
+                                            [class.row-expanded]="ensaio.expanded" 
                                             draggable="true"
                                             (dragstart)="onDragStart($event, ensaio, rowIndex, plano)"
                                             (dragover)="onDragOver($event)"
@@ -294,51 +295,67 @@
                                         <!-- Linha expandida (condicional) - Separada para não interferir no reordenamento -->
                                         <tr *ngIf="ensaio.expanded" class="expanded-row">
                                             <td [attr.colspan]="podeEditarEnsaiosCalculos() ? 6 : 5" style="background-color: #f8f9fa; padding: 0;">
-                                                <div class="p-3">
+                                                <div 
+                                                    class="p-3"
+                                                    style="background-color: #f8f9fa;"    
+                                                >
                                                             <div class="header flex justify-content-between align-items-center">
-                                                                <h2 class="text-2xl font-bold text-primary">Realizar Ensaio: {{ ensaio.descricao }}</h2>
+                                                                <h2 class="text-2xl font-bold text-primary"><i class="pi pi-objects-column"></i> {{ ensaio.descricao }}</h2>
                                                             </div>
-                                                        
-                                                        <div class="flex flex-column lg:flex-row">                                                            
+                                                            
+                                                        <div 
+                                                            class="flex flex-column lg:flex-row"
+                                                            
+                                                        >
                                                             <!-- Variáveis -->
                                                             <div class="flex flex-column w-8">
                                                                
-                                                                <div class="flex flex-row  gap-1" *ngIf="ensaio.variavel_detalhes && ensaio.variavel_detalhes.length > 0">
-                                                                    <div class="flex flex-row w-6" *ngFor="let variavel of getVariaveisOrdenadas(ensaio.variavel_detalhes)">
-                                                                        <p-floatlabel variant="in">
-                                                                            <!-- Input para data -->
-                                                                            <p-datepicker 
-                                                                                *ngIf="isVariavelTipoData(variavel)"
-                                                                                [showIcon]="true"
-                                                                                variant="filled" 
-                                                                                size="small" 
-                                                                                [style]="{'width':'100%'}"
-                                                                                appendTo="body"
-                                                                                id="variavel_{{variavel.id || variavel.nome}}"
-                                                                                [(ngModel)]="variavel.valorData"
-                                                                                (ngModelChange)="atualizarVariavelData(ensaio, variavel, $event)"
-                                                                                dateFormat="dd/mm/yy"
-                                                                            >
-                                                                            </p-datepicker>
+                                                                <div 
+                                                                    class="flex  gap-1"
+                                                                    *ngIf="ensaio.variavel_detalhes && ensaio.variavel_detalhes.length > 0"
+                                                                >
+                                                                    <div 
+                                                                        class="flex flex-wrap w-12 gap-1"
+                                                                    >
+                                                                        <div
+                                                                            class="flex flex-wrap"
+                                                                            *ngFor="let variavel of getVariaveisOrdenadas(ensaio.variavel_detalhes)"
+                                                                        >
+                                                                            <p-floatlabel variant="in">
+                                                                                <!-- Input para data -->
+                                                                                <p-datepicker 
+                                                                                    *ngIf="isVariavelTipoData(variavel)"
+                                                                                    [showIcon]="true"
+                                                                                    variant="filled" 
+                                                                                    size="small" 
+                                                                                    [style]="{'width':'100%'}"
+                                                                                    appendTo="body"
+                                                                                    id="variavel_{{variavel.id || variavel.nome}}"
+                                                                                    [(ngModel)]="variavel.valorData"
+                                                                                    (ngModelChange)="atualizarVariavelData(ensaio, variavel, $event)"
+                                                                                    dateFormat="dd/mm/yy"
+                                                                                >
+                                                                                </p-datepicker>
 
-                                                                            <!-- Input numérico (padrão) -->
-                                                                            <p-inputnumber 
-                                                                                *ngIf="!isVariavelTipoData(variavel)"
-                                                                                mode="decimal" 
-                                                                                [minFractionDigits]="2" 
-                                                                                [maxFractionDigits]="5"
-                                                                                variant="filled" 
-                                                                                size="large" 
-                                                                                [style]="{'width':'100%'}"
-                                                                                id="variavel_{{variavel.id || variavel.nome}}" 
-                                                                                showButtons="true"
-                                                                                [(ngModel)]="variavel.valor"
-                                                                                (ngModelChange)="atualizarVariavelEnsaio(ensaio, variavel, $event)" />
+                                                                                <!-- Input numérico (padrão) -->
+                                                                                <p-inputnumber 
+                                                                                    *ngIf="!isVariavelTipoData(variavel)"
+                                                                                    mode="decimal" 
+                                                                                    [minFractionDigits]="2" 
+                                                                                    [maxFractionDigits]="8"
+                                                                                    variant="filled" 
+                                                                                    size="large" 
+                                                                                    [style]="{'width':'100%'}"
+                                                                                    id="variavel_{{variavel.id || variavel.nome}}" 
+                                                                                    showButtons="false"
+                                                                                    [(ngModel)]="variavel.valor"
+                                                                                    (ngModelChange)="atualizarVariavelEnsaio(ensaio, variavel, $event)" />
 
-                                                                            <label for="variavel_{{variavel.id || variavel.nome}}">
-                                                                                {{ getVariavelDisplayName(variavel, ensaio) }}
-                                                                            </label>
-                                                                        </p-floatlabel>
+                                                                                <label for="variavel_{{variavel.id || variavel.nome}}">
+                                                                                    {{ getVariavelDisplayName(variavel, ensaio) }}
+                                                                                </label>
+                                                                            </p-floatlabel>
+                                                                        </div> 
                                                                     </div>
                                                                     
                                                                 </div>
@@ -359,29 +376,16 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="flex flex-row justify-content-start w-12">
-                                                                    <div class="flex gap-2 mt-5 w-6">
-                                                                        <p-button 
-                                                                            icon="pi pi-book" 
-                                                                            severity="warn" 
-                                                                            [raised]="true" 
-                                                                            size="small"
-                                                                            (click)="ensaioSelecionado = ensaio; popoverDetalhes.toggle($event)" 
-                                                                            pTooltip="Ver detalhes técnicos do ensaio"
-                                                                            tooltipPosition="top"
-                                                                        >
-                                                                        </p-button>
-                                                                        <p-button 
-                                                                            severity="primary"
-                                                                            pTooltip="Alterar ordem das variáveis"
-                                                                            tooltipPosition="top"
-                                                                            size="small" 
-                                                                            [raised]="true" 
-                                                                            icon="pi pi-arrows-v" 
-                                                                            (click)="abrirModalOrdemVariaveis(ensaio)">
-                                                                        </p-button>
-                                                                    </div>
-
-                                                                    
+                                                                    <div class="resultado flex flex-column mt-3 w-6 justify-content-end"
+                                                                         [ngClass]="{ negativo: (+ensaio.valor || 0) < 0 }">
+                                                                        <div class="bg-gray-50 border-round mt-2 text-center">
+                                                                            <label class="text-sm font-medium">Resultado Final</label>
+                                                                        </div>
+                                                                        <div class="bg-gray-50 border-round mt-2 text-center">
+                                                                            <span class="text-2xl font-bold text-primary resultado-valor">{{ ensaio.valor || 0 }}</span>
+                                                                            <span class="ml-2 text-lg text-600">{{ ensaio.unidade }}</span>
+                                                                        </div>
+                                                                    </div>                                                                  
                                                                 </div>    
                                                             </div>
                                                             <div class="flex flex-column w-4">
@@ -422,15 +426,37 @@
                                                                     </div>
                                                                 </div>    
                                                                 <!-- Resultado -->
-                                                                    <div class="flex flex-column mt-6 w-12 justify-content-end">
-                                                                        <div class="bg-gray-50 border-round mt-2 text-right">
+                                                                    <!-- <div class="resultado flex flex-column mt-6 w-12 justify-content-end"
+                                                                         [ngClass]="{ negativo: (+ensaio.valor || 0) < 0 }">
+                                                                        <div class="bg-gray-50 border-round mt-2 text-center">
                                                                             <label class="text-sm font-medium">Resultado Final</label>
                                                                         </div>
-                                                                        <div class="bg-gray-50 border-round mt-2 text-right">
-                                                                            <span class="text-2xl font-bold text-primary">{{ ensaio.valor || 0 }}</span>
+                                                                        <div class="bg-gray-50 border-round mt-2 text-center">
+                                                                            <span class="text-2xl font-bold text-primary resultado-valor">{{ ensaio.valor || 0 }}</span>
                                                                             <span class="ml-2 text-lg text-600">{{ ensaio.unidade }}</span>
                                                                         </div>
-                                                                    </div>
+                                                                    </div> -->
+                                                                <div class="flex gap-2 mt-5 w-6">
+                                                                        <p-button 
+                                                                            icon="pi pi-book" 
+                                                                            severity="warn" 
+                                                                            [raised]="true" 
+                                                                            size="small"
+                                                                            (click)="ensaioSelecionado = ensaio; popoverDetalhes.toggle($event)" 
+                                                                            pTooltip="Ver detalhes técnicos do ensaio"
+                                                                            tooltipPosition="top"
+                                                                        >
+                                                                        </p-button>
+                                                                        <p-button 
+                                                                            severity="primary"
+                                                                            pTooltip="Alterar ordem das variáveis"
+                                                                            tooltipPosition="top"
+                                                                            size="small" 
+                                                                            [raised]="true" 
+                                                                            icon="pi pi-arrows-v" 
+                                                                            (click)="abrirModalOrdemVariaveis(ensaio)">
+                                                                        </p-button>
+                                                                    </div>    
                                                                 </div>    
                                                             </div>
                                                          
@@ -610,7 +636,7 @@
                                                         <h2>Ensaios pertencentes ao Cálculo: {{ calc.descricao }}</h2>
                                                     </div>
                                                        
-                                                    <div class="flex flex-column lg:flex-row">
+                                                    <div class="flex flex-column lg:flex-row lg:w-12">
                                                         <div class="flex flex-column w-12">
                                                             <div class="flex flex-column gap-3" *ngIf="calc.ensaios_detalhes && calc.ensaios_detalhes.length > 0">
                                                                 <div 
@@ -635,106 +661,138 @@
                                                                         </span>
                                                                     </div>
                                                                     <!-- Variáveis do ensaio (se houver) -->
-                                                                    <div class="mt-2 ml-3" *ngIf="ensaio.variavel_detalhes && ensaio.variavel_detalhes.length">
-                                                                        <div class="flex w-12">
-                                                                            <div class="w-6 gap-1" *ngFor="let variavel of getVariaveisOrdenadas(ensaio.variavel_detalhes)">
-                                                                                <div class="flex flex-wrap align-items-center gap-2">
-                                                                                    <!-- <label class="text-sm w-7">{{ getVariavelDisplayName(variavel, ensaio) }}</label> -->
-                                                                                    <!-- Data -->
-                                                                                    <p-datepicker 
-                                                                                        *ngIf="isVariavelTipoData(variavel)"
-                                                                                        [(ngModel)]="variavel.valorData"
-                                                                                        (ngModelChange)="atualizarVariavelEnsaioDentroCalculo(plano, ensaio, variavel, $event)"
-                                                                                        dateFormat="dd/mm/yy"
-                                                                                        [showIcon]="true"
-                                                                                        inputId="variavel_{{variavel.id || variavel.nome}}"
-                                                                                        [style]="{'width':'100%'}">
-                                                                                    </p-datepicker>
-                                                                                    <p-floatlabel variant="in">
-                                                                                        <p-inputnumber 
-                                                                                            *ngIf="!isVariavelTipoData(variavel)"
-                                                                                            mode="decimal" 
-                                                                                            [minFractionDigits]="2" 
-                                                                                            [maxFractionDigits]="5"
-                                                                                            variant="filled" 
-                                                                                            size="large" 
-                                                                                            [style]="{'width':'100%'}"
-                                                                                            id="variavel_{{variavel.id || variavel.nome}}" 
-                                                                                            showButtons="true"
-                                                                                            [(ngModel)]="variavel.valor"
-                                                                                            (ngModelChange)="atualizarVariavelEnsaio(ensaio, variavel, $event)" 
-                                                                                        />
-                                                                                        <label for="variavel_{{variavel.id || variavel.nome}}">
-                                                                                            {{ getVariavelDisplayName(variavel, ensaio) }}
-                                                                                        </label>
-                                                                                    </p-floatlabel>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="flex justify-content-between w-6 gap-1">
-                                                                                <p-floatLabel variant="in">
-                                                                                    <p-select 
-                                                                                        [style]="{'width':'100%'}" 
-                                                                                        [options]="responsaveis" 
-                                                                                        optionLabel="value"
-                                                                                        optionValue="value" 
-                                                                                        [(ngModel)]="ensaio.responsavel"
-                                                                                        (ngModelChange)="onResponsavelEnsaioDentroCalculoChange(plano, ensaio, $event)"
-                                                                                         appendTo="body" 
-                                                                                        [filter]="true" 
-                                                                                        filterBy="value"
-                                                                                        [showClear]="true"
+                                                                    <div class="mt-2 ml-3" *ngIf="ensaio.variavel_detalhes || ensaio.variavel_detalhes.length">
+                                                                        <div class="flex flex-column w-12 lg:flex-row">
+                                                                            <div class="flex flex-column w-12 gap-1">
+                                                                                <div class="flex flex-wrap gap-1">    
+                                                                                    <div 
+                                                                                        class="flex flex-row" 
+                                                                                        *ngFor="let variavel of getVariaveisOrdenadas(ensaio.variavel_detalhes)"
                                                                                     >
-                                                                                    </p-select>
-                                                                                    <label>Responsável</label>
-                                                                                </p-floatLabel>
-                                                                                <p-floatLabel variant="in">
-                                                                                    <p-inputnumber 
-                                                                                        [(ngModel)]="ensaio.numero_cadinho" 
-                                                                                        (ngModelChange)="onNumeroCadinhoDentroCalculoChange(plano, ensaio, $event)"
-                                                                                        [showButtons]="true" 
-                                                                                        [min]="1" 
-                                                                                        [max]="9999"
-                                                                                        mode="decimal"
-                                                                                        [useGrouping]="false"
-                                                                                        [style]="{'width':'100%'}">
-                                                                                    </p-inputnumber>
-                                                                                    <label>Nº Cadinho</label>
-                                                                                </p-floatLabel> 
+                                                                                        
+                                                                                            <p-datepicker 
+                                                                                                *ngIf="isVariavelTipoData(variavel)"
+                                                                                                [(ngModel)]="variavel.valorData"
+                                                                                                (ngModelChange)="atualizarVariavelEnsaioDentroCalculo(plano, ensaio, variavel, $event)"
+                                                                                                dateFormat="dd/mm/yy"
+                                                                                                [showIcon]="true"
+                                                                                                inputId="variavel_{{variavel.id || variavel.nome}}"
+                                                                                                [style]="{'width':'100%'}">
+                                                                                            </p-datepicker>
+                                                                                            <p-floatlabel variant="in">
+                                                                                                <p-inputnumber 
+                                                                                                    *ngIf="!isVariavelTipoData(variavel)"
+                                                                                                    mode="decimal" 
+                                                                                                    [minFractionDigits]="2" 
+                                                                                                    [maxFractionDigits]="5"
+                                                                                                    variant="filled" 
+                                                                                                    size="large" 
+                                                                                                    [style]="{'width':'100%'}"
+                                                                                                    id="variavel_{{variavel.id || variavel.nome}}" 
+                                                                                                    showButtons="false"
+                                                                                                    [(ngModel)]="variavel.valor"
+                                                                                                    (ngModelChange)="atualizarVariavelEnsaio(ensaio, variavel, $event)" 
+                                                                                                />
+                                                                                                <label for="variavel_{{variavel.id || variavel.nome}}">
+                                                                                                    {{ getVariavelDisplayName(variavel, ensaio) }}
+                                                                                                </label>
+                                                                                            </p-floatlabel>
+                                                                                        
+                                                                                    </div>
+                                                                                </div>    
+                                                                                <div 
+                                                                                    class="resultado flex flex-column mt-3 w-6 justify-content-end"
+                                                                                    [ngClass]="{ negativo: (+ensaio.valor || 0) < 0 }"
+                                                                                >
+                                                                                    <div class="bg-gray-50 border-round mt-2 text-center">
+                                                                                        <label class="text-sm font-medium">Resultado</label>
+                                                                                    </div>
+                                                                                    <div class="bg-gray-50 border-round mt-2 text-center">
+                                                                                        <span class="text-2xl font-bold text-primary">{{ ensaio.valor || 0 }}</span>
+                                                                                        <span class="ml-2 text-lg text-600">{{ ensaio.unidade }}</span>
+                                                                                    </div>
+                                                                                     
+                                                                                </div>
+                                                                               
+                                                                            </div>    
+                                                                            
+                                                                            <div class="flex flex-column w-6">
+                                                                                <div class="flex flex-column justify-content-between w-10 lg:flex-row">
+                                                                                        <div class="flex flex-column w-8">
+                                                                                            <p-floatLabel variant="in">
+                                                                                                <p-select 
+                                                                                                    [style]="{'width':'100%'}" 
+                                                                                                    [options]="responsaveis" 
+                                                                                                    optionLabel="value"
+                                                                                                    optionValue="value" 
+                                                                                                    [(ngModel)]="ensaio.responsavel"
+                                                                                                    (ngModelChange)="onResponsavelEnsaioDentroCalculoChange(plano, ensaio, $event)"
+                                                                                                    appendTo="body" 
+                                                                                                    [filter]="true" 
+                                                                                                    filterBy="value"
+                                                                                                    [showClear]="true"
+                                                                                                >
+                                                                                                </p-select>
+                                                                                                <label>Responsável</label>
+                                                                                            </p-floatLabel>
+                                                                                        </div>
+                                                                                        <div class="flex w-2 ">    
+                                                                                            <p-floatLabel variant="in">
+                                                                                                <p-inputnumber 
+                                                                                                    [(ngModel)]="ensaio.numero_cadinho" 
+                                                                                                    (ngModelChange)="onNumeroCadinhoDentroCalculoChange(plano, ensaio, $event)"
+                                                                                                    [showButtons]="true" 
+                                                                                                    [min]="1" 
+                                                                                                    [max]="9999"
+                                                                                                    mode="decimal"
+                                                                                                    [useGrouping]="false"
+                                                                                                    [style]="{'width':'100%'}">
+                                                                                                </p-inputnumber>
+                                                                                                <label>Nº Cadinho</label>
+                                                                                            </p-floatLabel>
+                                                                                        </div>
+                                                                                </div>        
+                                                                                <div class="flex flex-column mt-3 w-12 lg:flex-row">
+                                                                          
+                                                                                    <div class="flex gap-1 mt-5 w-4">    
+                                                                                        <p-button 
+                                                                                            icon="pi pi-book" 
+                                                                                            severity="warn" 
+                                                                                            [raised]="true" 
+                                                                                            size="small"
+                                                                                            (click)="ensaioSelecionado = ensaio; popoverDetalhes.toggle($event)" 
+                                                                                            pTooltip="Ver detalhes técnicos do ensaio"
+                                                                                            tooltipPosition="top"
+                                                                                        >
+                                                                                        </p-button>
+                                                                                        <p-button 
+                                                                                            severity="primary"
+                                                                                            pTooltip="Alterar ordem das variáveis"
+                                                                                            tooltipPosition="top"
+                                                                                            size="small" 
+                                                                                            [raised]="true" 
+                                                                                            icon="pi pi-arrows-v" 
+                                                                                            (click)="abrirModalOrdemVariaveis(ensaio)">
+                                                                                        </p-button>
+                                                                                    </div>
+                                                                                
+                                                                                </div>     
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                     <!-- Controles por ensaio (Responsável e Nº Cadinho) -->
-                                                                    <div class="flex flex-column mt-3 w-12 justify-content-end">
-                                                                        <div class="bg-gray-50 border-round mt-2 text-right">
-                                                                            <label class="text-sm font-medium">Resultado </label>
-                                                                               
-                                                                            <p-inputnumber
-                                                                                *ngIf="!ensaio.variavel_detalhes || ensaio.variavel_detalhes.length === 0"
-                                                                                [(ngModel)]="ensaio.valor"
-                                                                                [showButtons]="true"
-                                                                                (ngModelChange)="onValorEnsaioDentroCalculoChange(plano, ensaio, $event); calcular(calc, plano)"
-                                                                                
-                                                                            >
-                                                                            </p-inputnumber>
-                                                                         
-                                                                        </div>
-                                                                        <!-- Para ensaios sem variáveis, permite digitar manualmente como no ensaio direto -->
-                                                                          
-                                                                        <!-- Para ensaios com variáveis, mostrar o resultado calculado (somente leitura) -->
-                                                                        <div *ngIf="ensaio.variavel_detalhes && ensaio.variavel_detalhes.length > 0" class="text-right">
-                                                                            <span class="text-2xl font-bold text-primary">{{ ensaio.valor || 0 }}</span>
-                                                                        </div>
-                                                                        <span class="text-600 text-sm" *ngIf="ensaio.unidade">{{ ensaio.unidade }}</span>
-                                                                    </div>
+                                                                    
+
+
                                                                 </div>
                                                             </div>
                                                             
                                                         </div>                                                                                                           
                                                     </div>
-                                                    <div class="flex flex-column lg:flex-row w-12 align-items-end justify-content-around border-pink-800 border-3  border-round-lg"
+                                                    <div class="flex flex-column lg:flex-row w-12 align-items-end   border-3  border-round-lg"
                                                         style="background-color: #444959; color: #ffffff;"
                                                     >
-                                                        <div class="w-4 m-3">
+                                                        <div class="w-1 m-3">
                                                                 <p-button 
                                                                     icon="pi pi-book"
                                                                     severity="warn" 
@@ -745,7 +803,8 @@
                                                                 </p-button>
                                                             </div>
                                                         <!-- Responsável -->
-                                                        <div class="w-4 m-3">
+                                                        <div class="w-3 m-3">
+                                                            
                                                             <p-floatLabel variant="in">
                                                                 <p-select
                                                                     variant="filled" 
@@ -764,16 +823,16 @@
                                                             </p-floatLabel>
                                                         </div>
                                                         <!-- Resultado -->
-                                                        <div class="flex flex-column mt-6 w-4 justify-content-end">
-                                                            
-                                                            <div class="bg-gray-50 border-round mt-2 text-right w-11">
-                                                                <label class="text-sm font-medium">Resultado Final </label>
+                                                        <div class="resultado flex flex-column  w-8 justify-content-end m-3" [ngClass]="{ negativo: (+calc.resultado || 0) < 0 }">
+                                                            <div class="bg-gray-50 border-round mt-2 text-center">
+                                                                <label class="text-sm font-medium">Resultado Final do Cálculo</label>
                                                             </div>
-                                                            <div class="p-3 bg-gray-50 border-round mt-1 text-right">
+                                                            <div class="bg-gray-50 border-round mt-2 text-center">
                                                                 <span class="text-2xl font-bold text-primary">{{ calc.resultado || 0 }}</span>
                                                                 <span class="ml-2 text-lg text-600">{{ calc.unidade }}</span>
                                                             </div>
-                                                        </div>  
+                                                        
+                                                        </div>
                                                     </div>  
                                                 </div>
                                             </td>

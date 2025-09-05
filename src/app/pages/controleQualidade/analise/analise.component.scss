@@ -95,7 +95,25 @@ h2{
 }
 
 
+.resultado {
+  color: #16A34A;             /* verde do texto */
+  background-color: #DCFCE7;  /* verde clarinho do fundo */
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+}
 
+/* Estado negativo para o box de resultado (quando valor < 0) */
+.resultado.negativo {
+  color: #DC2626;
+  background-color: #FEE2E2; /* bg-red-100 */
+  border: 1px solid #FECACA; /* border-red-200 */
+}
+
+/* Força a cor do valor quando negativo */
+.resultado.negativo .resultado-valor {
+  color: #DC2626 !important; /* text-red-600 */
+}
 
 /* ===== ESTILOS PARA O SISTEMA DE ALERTAS DE ROMPIMENTO ===== */
 .alertas-rompimento-panel {
