@@ -44,6 +44,7 @@ interface RegisterEnsaioForm {
   funcao: FormControl;
   norma: FormControl;
   garantia: FormControl;
+  tipoGarantia: FormControl;
 }
 
 export interface Ensaio {
@@ -140,10 +141,10 @@ export class EnsaioComponent implements OnInit{
   ];
 
   funcoesData = [
-  { label: 'Adicionar dias', value: 'adicionarDias' },
-  { label: 'Dias entre datas', value: 'diasEntre' },
-  { label: 'Data atual', value: 'hoje' }
-];
+    { label: 'Adicionar dias', value: 'adicionarDias' },
+    { label: 'Dias entre datas', value: 'diasEntre' },
+    { label: 'Data atual', value: 'hoje' }
+  ];
   
   unidades = [
     { value: 'Segundos' },
@@ -192,6 +193,11 @@ export class EnsaioComponent implements OnInit{
     { label: '}', value: '}' },
     { label: ',', value: ',' },
   ];
+
+  tipo_garantia = [
+    { value: 'Min' },
+    { value: 'Max' }
+  ]
   elementos: any[] = [];
   expressaoDinamica: { tipo?: string, valor?: string }[] = [
     { tipo: '', valor: '' }
@@ -226,6 +232,7 @@ export class EnsaioComponent implements OnInit{
       funcao: new FormControl(''),
       norma: new FormControl(''),
       garantia: new FormControl(''),
+      tipoGarantia: new FormControl(''),
     });
     this.editForm = this.fb.group({
       id: [''],
@@ -880,6 +887,11 @@ filterVariaveis(event: any) {
     // Gera o nome técnico de forma única consultando o backend
     const ensaioTecnico = await this.gerarEnsaioTecnico();
     console.log('Enviando VVVVVV:', variaveis, 'Ensaio técnico:', ensaioTecnico);
+
+    let garantia = this.registerForm.value.garantia;
+    if(this.registerForm.value.garantia && this.registerForm.value.tipoGarantia){
+      garantia = this.registerForm.value.garantia+' '+this.registerForm.value.tipoGarantia;
+    }
     this.ensaioService.registerEnsaio(
       this.registerForm.value.descricao,
       this.registerForm.value.valor,
@@ -889,7 +901,7 @@ filterVariaveis(event: any) {
       variaveis,
       this.registerForm.value.funcao,
       this.registerForm.value.norma,
-      this.registerForm.value.garantia,
+      garantia,
       ensaioTecnico
     ).subscribe({
       next: () => {
