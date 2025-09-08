@@ -161,41 +161,62 @@
                                     </p-floatlabel>
                                 </div>
                                 
-                                        <div class="form2 w-12 mb-3 mt-3 text-left">
+                                    <div class="form2 w-12 mb-3 mt-3 text-left">
+                                        <p-floatLabel variant="on"> 
+                                            <p-select
+                                                variant="filled"
+                                                inputId="float-label"
+                                                [style]="{'width':'100%'}"
+                                                [options]="tiposEnsaio" 
+                                                formControlName="tipoEnsaio"
+                                                optionLabel="nome"
+                                                optionValue="id"
+                                                [filter]="true" 
+                                                filterBy="nome"
+                                                [showClear]="true"
+                                                appendTo="body"
+                                            >
+                                            </p-select>
+                                            <label for="float-label">Selecione o Tipo de Ensaio</label>
+                                        </p-floatLabel> 
+                                    </div>
+                                    <div class="form2 flex flex-column md:flex-row w-12 mt-3">
+                                        <div class="w-12 text-left md:mb-3 lg:mr-1">
+                                            <p-floatLabel variant="on">
+                                                <p-inputNumber 
+                                                    variant="filled"
+                                                    mode="decimal"
+                                                    formControlName="garantia"
+                                                    [showButtons]="true" 
+                                                    inputId="tempo" 
+                                                    [min]="0" 
+                                                    [max]="9999"
+                                                    [useGrouping]="false" 
+                                                />
+                                            <label for="tempo">Garantia</label>
+                                            </p-floatLabel>     
+                                        </div>
+                                
+                                        <div class="w-12 text-left">    
                                             <p-floatLabel variant="on"> 
                                                 <p-select
-                                                    variant="filled"
                                                     inputId="float-label"
                                                     [style]="{'width':'100%'}"
-                                                    [options]="tiposEnsaio" 
-                                                    formControlName="tipoEnsaio"
-                                                    optionLabel="nome"
-                                                    optionValue="id"
-                                                    [filter]="true" 
-                                                    filterBy="nome"
-                                                    [showClear]="true"
+                                                    [options]="tipo_garantia" 
+                                                    formControlName="tipoGarantia"
+                                                    optionLabel="value"
+                                                    optionValue="value"
                                                     appendTo="body"
+                                                    [filter]="true" 
+                                                    filterBy="value"
+                                                    [showClear]="true"
+
                                                 >
                                                 </p-select>
-                                                <label for="float-label">Selecione o Tipo de Ensaio</label>
-                                            </p-floatLabel> 
-                                        </div>
-                                        <div class="form2 w-12 mb-3 mt-3">
-                                            <p-floatlabel variant="on">
-                                                <p-iconfield>
-                                                    <p-inputicon class="pi pi-file-edit" />
-                                                    <input
-                                                        variant="filled"
-                                                        [style]="{'width':'100%'}"
-                                                        pInputText id="on_label"
-                                                        autocomplete="off"
-                                                        formControlName="garantia"
-                                                        type="text"
-                                                    />
-                                                </p-iconfield>
-                                                <label for="on_label">Digite a garantia</label>
-                                            </p-floatlabel>
-                                        </div>
+                                                <label for="float-label">Tipo de Garantia</label>
+                                            </p-floatLabel>
+                                        </div>    
+                                    </div>
                                     <div class="flex flex-row w-12 mt-3 gap-1">    
                                         <div class="w-6">
                                             <p-floatlabel variant="on">
@@ -310,6 +331,7 @@
                                 <th style="width: 20%; text-align: center;" type="text" field="tempo_previsto" display="menu">Tempo Previsto</th>
                                 <th style="width: 20%; text-align: center;" type="text" field="norma" display="menu">Norma</th>
                                 <th style="width: 20%; text-align: center;" type="text" field="tipo_ensaio_detalhes.nome" display="menu">Tipo de Ensaio</th>
+                                <th style="width: 20%; text-align: center;" type="text" field="tipo_ensaio_detalhes.nome" display="menu">Garantia</th>
                                 <th style="width: 20%; text-align: center;" type="text" field="acoes" display="menu">Ações</th>
                             </tr>
                         </ng-template>
@@ -320,6 +342,7 @@
                                 <td style="text-align: center;">{{ ensaios.tempo_previsto }}</td>
                                 <td style="text-align: center;">{{ ensaios.norma }}</td>
                                 <td style="text-align: center;">{{ ensaios.tipo_ensaio_detalhes.nome }}</td>
+                                <td style="text-align: center;">{{ ensaios.garantia }}</td>
                                 <td class="flex justify-content-center gap-1">
                                     <p-button 
                                         icon="pi pi-file-edit" 
