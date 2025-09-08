@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/avaliacoes/login/login.component';
+import { CanDeactivateGuard } from './guards/can-deactivate.guard';
 import { WelcomeComponent } from './pages/avaliacoes/welcome/welcome.component';
 import { CreateuserComponent } from './pages/avaliacoes/createuser/createuser.component';
 import { RegisterCompanyComponent } from './pages/avaliacoes/registercompany/registercompany.component';
@@ -142,7 +143,7 @@ export const routes: Routes = [
       { path: 'controleQualidade/tipoAmostra', component: TipoAmostraComponent },
       { path: 'controleQualidade/produtoAmostra', component: ProdutoAmostraComponent },
       { path: 'controleQualidade/amostra', component: AmostraComponent },
-      { path: 'controleQualidade/analise/:id', component: AnaliseComponent },
+      { path: 'controleQualidade/analise/:id', component: AnaliseComponent, canDeactivate: [CanDeactivateGuard] },
       { path: 'controleQualidade/expressa', component: ExpressaComponent },
       { path: 'controleQualidade/variavel', component: VariavelComponent },
       { path: 'controleQualidade/ordem', component: OrdemComponent },

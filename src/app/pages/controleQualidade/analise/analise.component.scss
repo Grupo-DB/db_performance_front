@@ -96,26 +96,25 @@ h2{
 
 
 .resultado {
-  color: #16A34A;             /* verde do texto */
-  background-color: #DCFCE7;  /* verde clarinho do fundo */
+  color: #16A34A;            
+  background-color: #DCFCE7;  
   padding: 8px 12px;
   border-radius: 6px;
   font-weight: bold;
 }
 
-/* Estado negativo para o box de resultado (quando valor < 0) */
+//Estado negativo para o box de resultado 
 .resultado.negativo {
   color: #DC2626;
-  background-color: #FEE2E2; /* bg-red-100 */
-  border: 1px solid #FECACA; /* border-red-200 */
+  background-color: #FEE2E2;
+  border: 1px solid #FECACA; 
 }
 
-/* Força a cor do valor quando negativo */
+// Força a cor do valor quando negativo 
 .resultado.negativo .resultado-valor {
-  color: #DC2626 !important; /* text-red-600 */
+  color: #DC2626 !important;
 }
-
-/* ===== ESTILOS PARA O SISTEMA DE ALERTAS DE ROMPIMENTO ===== */
+//===== ESTILOS PARA O SISTEMA DE ALERTAS DE ROMPIMENTO
 .alertas-rompimento-panel {
   margin: 1rem;
   animation: slideIn 0.3s ease-out;
@@ -141,7 +140,7 @@ h2{
   }
 }
 
-/* Cores personalizadas para os diferentes tipos de alerta */
+//Cores personalizadas para os diferentes tipos de alerta 
 .bg-red-50 {
   background-color: #fef2f2;
 }
@@ -178,7 +177,7 @@ h2{
   color: #2563eb;
 }
 
-/* Animação para badges */
+// Animação para badges
 :host ::ng-deep .p-badge {
   animation: pulse 2s infinite;
 }
@@ -213,7 +212,7 @@ h2{
   }
 }
 
-/* Responsividade para dispositivos móveis */
+// Responsividade para dispositivos móveis 
 @media (max-width: 768px) {
   .alertas-rompimento-panel {
     margin: 0.5rem;

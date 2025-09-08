@@ -1,5 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { CanComponentDeactivate } from '../../../guards/can-deactivate.guard';
 import { AnaliseService } from '../../../services/controleQualidade/analise.service';
 import { CommonModule, DatePipe, formatDate } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormGroup } from '@angular/forms';
@@ -114,9 +115,13 @@ interface FileWithInfo {
   templateUrl: './analise.component.html',
   styleUrl: './analise.component.scss'
 })
-export class AnaliseComponent implements OnInit, OnDestroy {
+export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactivate {
   ensaioSelecionado: any;
   modalOrdemVariaveisVisible: any;
+
+  // Controle de mudanças não salvas
+  public hasUnsavedChanges = false;
+  private lastSavedState: string = '';
 
   /**
    * Atualiza nomes das variáveis ao editar a descrição do ensaio
@@ -1510,6 +1515,8 @@ loadAnalisePorId(analise: any) {
   // Inicializar datas após carregar os dados
   setTimeout(() => {
     this.inicializarDatasVariaveis();
+    // Inicializar estado salvo após carregar os dados
+    this.markAsSaved();
   }, 100);
   
   planoDetalhes.forEach((plano: any) => {
@@ -2459,6 +2466,7 @@ atualizarVariavelEnsaio(ensaio: any, variavel: any, novoValor: any) {
   }
   // Recalcular todos os cálculos que dependem dos ensaios
   this.recalcularTodosCalculos();
+  this.markAsChanged(); // Marcar mudanças
   this.cd.detectChanges();
 }
 
@@ -2531,6 +2539,7 @@ onValorEnsaioChange(ensaio: any, novoValor: any) {
       this.recalcularTodosEnsaiosDirectos(plano);
     }
     this.recalcularTodosCalculos();
+    this.markAsChanged(); // Marcar mudanças
     this.cd.detectChanges();
   }, 120);
 }
@@ -3223,6 +3232,7 @@ salvarAnaliseResultados() {
   // Chamada para salvar a análise no backend
   this.analiseService.registerAnaliseResultados(idAnalise, payload).subscribe({
     next: () => {
+      this.markAsSaved(); // Marcar como salvo após sucesso
       this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Análise salva com sucesso!' });
       setTimeout(() => {
         this.router.navigate(['/welcome/controleQualidade/ordem']);
@@ -3876,9 +3886,7 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
     planoDetalhes[planoIdx].ensaio_detalhes.splice(ensaioIdx, 1);
     window.location.reload();
   }
-  /**
-   * Adiciona os cálculos selecionados à análise atual
-   */
+
   adicionarCalculos(): void {
     if (!this.calculosSelecionadosParaAdicionar.length) {
       this.messageService.add({
@@ -3962,7 +3970,7 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
     
     // Recarregar toda a análise para forçar atualização total da página
     this.getAnalise();
-
+    window.location.reload();
     this.cd.detectChanges();
   }
 
@@ -4659,5 +4667,63 @@ fecharDrawerResultadosEnsaios(): void {
   this.ensaioSelecionadoParaPesquisa = null;
   this.cd.detectChanges();
 }
+
+  // Implementação do CanComponentDeactivate
+  canDeactivate(): boolean | Promise<boolean> {
+    if (!this.hasUnsavedChanges) {
+      return true;
+    }
+
+    return new Promise((resolve) => {
+      this.confirmationService.confirm({
+        message: 'Você tem alterações não salvas. Deseja sair sem salvar?',
+        header: 'Confirmação',
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: 'Sair sem salvar',
+        rejectLabel: 'Continuar editando',
+        accept: () => resolve(true),
+        reject: () => resolve(false)
+      });
+    });
+  }
+
+  // Detectar tentativa de fechar janela/aba
+  @HostListener('window:beforeunload', ['$event'])
+  unloadNotification($event: any): void {
+    if (this.hasUnsavedChanges) {
+      $event.returnValue = 'Você tem alterações não salvas. Tem certeza que deseja sair?';
+    }
+  }
+
+  // Marcar mudanças como não salvas
+  private markAsChanged(): void {
+    this.hasUnsavedChanges = true;
+  }
+
+  // Marcar como salvo
+  private markAsSaved(): void {
+    this.hasUnsavedChanges = false;
+    this.lastSavedState = this.getCurrentState();
+  }
+
+  // Obter estado atual dos dados
+  private getCurrentState(): string {
+    try {
+      return JSON.stringify({
+        analisesSimplificadas: this.analisesSimplificadas,
+        timestamp: new Date().getTime()
+      });
+    } catch (e) {
+      return '';
+    }
+  }
+
+  // Verificar se há mudanças
+  private checkForChanges(): void {
+    const currentState = this.getCurrentState();
+    if (currentState !== this.lastSavedState && this.lastSavedState !== '') {
+      this.hasUnsavedChanges = true;
+    }
+  }
 
 }
