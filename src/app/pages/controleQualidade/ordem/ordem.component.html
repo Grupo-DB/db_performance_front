@@ -256,7 +256,7 @@
                                 >
                                 <ng-template pTemplate="caption">
                                     <div class="step1 flex flex-column w-12 justify-content-end lg:w-12 lg:flex-row">
-                                        <div class="w-6 text-left">
+                                        <div class="w-2 text-left">
                                             <p-multiselect
                                                 [(ngModel)]="materiaisSelecionados"
                                                 [options]="materiaisFiltro"
@@ -309,7 +309,33 @@
                                              >   
                                             </p-columnFilter>
                                         </div>
-                                        <div class=" flex w-6 gap-3 justify-content-end text-right">
+                                        <div class="w-2 text-left">
+                                            <p-multiselect
+                                                [(ngModel)]="tipoSelecionados"
+                                                [options]="tipoFiltro"
+                                                (onChange)="filtrarPorTipo()"
+                                                placeholder="Tipo"
+                                                [showClear]="true"
+                                                optionLabel="label"
+                                                optionValue="value"
+                                                [maxSelectedLabels]="3"
+                                                appendTo="body"
+                                            >
+                                                <ng-template pTemplate="selectedItems" let-selectedOptions>
+                                                    <div class="flex gap-1 flex-wrap">
+                                                    <p-tag
+                                                        *ngFor="let option of selectedOptions"
+                                                        [value]="option.value"
+                                                        [severity]="getTipoOrdem(option.value)"
+                                                    />
+                                                    </div>
+                                                </ng-template>
+                                                <ng-template pTemplate="item" let-option>
+                                                    <p-tag [value]="option.value" [severity]="getTipoOrdem(option.value)" />
+                                                </ng-template>
+                                            </p-multiselect>
+                                        </div>
+                                        <div class=" flex w-2 gap-3 justify-content-end text-right">
                                             <p-floatlabel variant="on">
                                                 <p-iconfield>
                                                     <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
@@ -374,7 +400,7 @@
                                             <td style="text-align: left;"> 
                                                 <p-tag
                                                     [value]="'Expressa'"
-                                                    [severity]="getTipoOrdem('expressa')"
+                                                    [severity]="getTipoOrdem('Expressa')"
                                                 />
                                             </td>
                                         </ng-container>
@@ -386,7 +412,7 @@
                                             <td style="text-align: left;"> {{ analise.amostra_detalhes.ordem_detalhes.responsavel }} </td>
                                             <td style="text-align: left;">
                                                 <p-tag
-                                                    [value]="'Normal'"
+                                                    [value]="'Plano'"
                                                     [severity]="getTipoOrdem('normal')"
                                                 />
                                             </td>

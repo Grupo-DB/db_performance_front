@@ -177,6 +177,12 @@ export class OrdemComponent implements OnInit {
   editFormVisible: boolean = false;
   editForm!: FormGroup;
 
+  tipoFiltro = [
+    { value: 'Expressa' },
+    { value: 'Plano' },
+  ]
+
+
   dadosTabela = [
     { tempo: '5min', valor: 2.3 },
     { tempo: '20min', valor: 4.1 },
@@ -1315,6 +1321,24 @@ gerarNumero(materialNome: string, sequencial: number): string {
       this.analisesFiltradas = this.analises.filter((analise) =>
         this.materiaisSelecionados.includes(analise.material)
       );
+    }
+  }
+
+  tipoSelecionados: string = ''; // valores escolhidos no multiselect
+  // Filtro pelo MultiSelect
+  filtrarPorTipo(): void {
+    if (this.tipoSelecionados.length === 0) {
+      this.analisesFiltradas = [...this.analises];
+    } else {      
+      if(this.tipoSelecionados == 'Expressa'){
+          this.analisesFiltradas = this.analises.filter(
+          (analise) => analise?.amostra_detalhes?.expressa_detalhes
+        );
+      }else{
+        this.analisesFiltradas = this.analises.filter(
+          (analise) => analise?.amostra_detalhes?.ordem_detalhes
+        );
+      }
     }
   }
 
@@ -2880,17 +2904,13 @@ gerarNumero(materialNome: string, sequencial: number): string {
     });
   }
 
-  getTipoOrdem(tipoOrdem: string): 'info' | 'warn' | 'secondary' | 'contrast' | undefined {
+  getTipoOrdem(tipoOrdem: string): 'warn' | 'contrast' | undefined {
 
     switch (tipoOrdem) {
-      case 'expressa':
+      case 'Expressa':
         return 'warn';
-      case 'normal':
-        return 'contrast';
-      case 'mineracao':
-        return 'contrast';
       default:
-        return 'secondary';
+        return 'contrast';
     }
 
   }
