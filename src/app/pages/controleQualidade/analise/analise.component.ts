@@ -118,14 +118,11 @@ interface FileWithInfo {
 export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactivate {
   ensaioSelecionado: any;
   modalOrdemVariaveisVisible: any;
-
   // Controle de mudanças não salvas
   public hasUnsavedChanges = false;
   private lastSavedState: string = '';
-
-  /**
-   * Atualiza nomes das variáveis ao editar a descrição do ensaio
-   */
+  //Atualiza nomes das variáveis ao editar a descrição do ensaio
+   
   onDescricaoEnsaioChange(ensaio: any): void {
     this.atualizarNomesVariaveisEnsaio(ensaio);
   }
@@ -174,6 +171,9 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
   amostraId: any;
   //
   planoEnsaioId: any;
+  // Controle de alertas para evitar duplicações
+  private alertasExibidos = new Set<string>();
+  private timerLimpezaAlertas: any;
   editFormVisible = false;
   ensaiosDisponiveis: any[] = [];
   calculosDisponiveis: any[] = [];
@@ -183,7 +183,7 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
   
   // Sistema de alertas de rompimento
   alertasRompimento: any[] = [];
-  intervaloPadrao = 60000; // 1 minuto para demonstração (use 300000 para 5 minutos em produção)
+  intervaloPadrao = 60000; // 1 minuto para demonstração (300000 para 5 minutos em produção)
   intervalId: any = null;
   configAlerta = {
     diasAviso: 1, // Avisar 1 dia antes
@@ -218,46 +218,35 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
     private httpClient: HttpClient
   ) {}
 
-  // Implementação personalizada de drag and drop para ensaios
+  // drag and drop para ensaios
   onDragStart(event: DragEvent, ensaio: any, index: number, plano: any) {
-    console.log('Drag started:', { ensaio: ensaio.descricao, index });
+    //console.log('Drag started:', { ensaio: ensaio.descricao, index });
     event.dataTransfer?.setData('text/plain', JSON.stringify({ index, type: 'ensaio', planoId: plano.id }));
-    
     // Fechar todas as linhas expandidas
     plano.ensaio_detalhes.forEach((e: any) => e.expanded = false);
   }
-
   onDragOver(event: DragEvent) {
     event.preventDefault();
   }
-
   onDrop(event: DragEvent, targetEnsaio: any, targetIndex: number, plano: any) {
-    event.preventDefault();
-    
+    event.preventDefault(); 
     try {
       const data = JSON.parse(event.dataTransfer?.getData('text/plain') || '{}');
-      
       if (data.type !== 'ensaio' || data.planoId !== plano.id) {
         return;
       }
-
       const sourceIndex = data.index;
-      
-      console.log(`Movendo ensaio do índice ${sourceIndex} para ${targetIndex}`);
-      
+      //console.log(`Movendo ensaio do índice ${sourceIndex} para ${targetIndex}`);
       if (sourceIndex === targetIndex) {
         return;
       }
-
       // Criar nova ordem
       const newArray = [...plano.ensaio_detalhes];
       const [movedItem] = newArray.splice(sourceIndex, 1);
       newArray.splice(targetIndex, 0, movedItem);
-      
       // Atualizar o array
       plano.ensaio_detalhes = newArray;
-      
-      console.log('Nova ordem:', newArray.map((e: any, i: number) => ({ index: i, descricao: e.descricao })));
+      //console.log('Nova ordem:', newArray.map((e: any, i: number) => ({ index: i, descricao: e.descricao })));
       
       this.cd.detectChanges();
       
@@ -267,7 +256,7 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
         detail: `Ensaio movido da posição ${sourceIndex + 1} para ${targetIndex + 1}` 
       });
     } catch (e) {
-      console.error('Erro no drop:', e);
+      // console.error('Erro no drop:', e);
       this.messageService.add({ 
         severity: 'error', 
         summary: 'Erro', 
@@ -276,9 +265,15 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
     }
   }
 
-  // Implementação personalizada de drag and drop para cálculos
+  /**
+   * Implementação de drag and drop para cálculos
+   * @param event - Evento de drag
+   * @param calculo - Objeto do cálculo sendo arrastado
+   * @param index - Índice do cálculo na lista
+   * @param plano - Plano que contém o cálculo
+   */
   onDragStartCalculo(event: DragEvent, calculo: any, index: number, plano: any) {
-    console.log('Drag started (cálculo):', { calculo: calculo.descricao, index });
+    // console.log('Drag started (cálculo):', { calculo: calculo.descricao, index });
     event.dataTransfer?.setData('text/plain', JSON.stringify({ index, type: 'calculo', planoId: plano.id }));
     
     // Fechar todas as linhas expandidas
@@ -297,7 +292,7 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
 
       const sourceIndex = data.index;
       
-      console.log(`Movendo cálculo do índice ${sourceIndex} para ${targetIndex}`);
+      // console.log(`Movendo cálculo do índice ${sourceIndex} para ${targetIndex}`);
       
       if (sourceIndex === targetIndex) {
         return;
@@ -311,7 +306,7 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
       // Atualizar o array
       plano.calculo_ensaio_detalhes = newArray;
       
-      console.log('Nova ordem (cálculos):', newArray.map((c: any, i: number) => ({ index: i, descricao: c.descricao })));
+      // console.log('Nova ordem (cálculos):', newArray.map((c: any, i: number) => ({ index: i, descricao: c.descricao })));
       
       this.cd.detectChanges();
       
@@ -321,7 +316,7 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
         detail: `Cálculo movido da posição ${sourceIndex + 1} para ${targetIndex + 1}` 
       });
     } catch (e) {
-      console.error('Erro no drop (cálculo):', e);
+      // console.error('Erro no drop (cálculo):', e);
       this.messageService.add({ 
         severity: 'error', 
         summary: 'Erro', 
@@ -330,9 +325,16 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
     }
   }
 
-  // Drag-and-drop para reordenar ensaios internos dentro de um cálculo
+  /**
+   * Drag-and-drop para reordenar ensaios internos dentro de um cálculo
+   * @param event - Evento de drag
+   * @param ensaio - Ensaio sendo arrastado
+   * @param index - Índice do ensaio
+   * @param calc - Cálculo que contém o ensaio
+   * @param plano - Plano que contém o cálculo
+   */
   onDragStartEnsaioInterno(event: DragEvent, ensaio: any, index: number, calc: any, plano: any) {
-    console.log('Drag started (ensaio interno):', { ensaio: ensaio.descricao, index, calc: calc?.descricao });
+    // console.log('Drag started (ensaio interno):', { ensaio: ensaio.descricao, index, calc: calc?.descricao });
     event.dataTransfer?.setData('text/plain', JSON.stringify({ type: 'ensaioInterno', index, calcId: calc?.id, planoId: plano?.id }));
   }
 
@@ -348,7 +350,7 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
         return;
       }
 
-      console.log(`Movendo ensaio interno do índice ${sourceIndex} para ${targetIndex} no cálculo '${calc?.descricao}'`);
+      // console.log(`Movendo ensaio interno do índice ${sourceIndex} para ${targetIndex} no cálculo '${calc?.descricao}'`);
       if (sourceIndex === targetIndex) return;
 
       const newArray = [...calc.ensaios_detalhes];
@@ -364,28 +366,32 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
         detail: `Ensaio interno movido da posição ${sourceIndex + 1} para ${targetIndex + 1}`
       });
     } catch (e) {
-      console.error('Erro no drop (ensaio interno):', e);
+      // console.error('Erro no drop (ensaio interno):', e);
       this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao reordenar ensaio interno' });
     }
   }
 
-  // Reordenação de linhas (Ensaios Diretos) - Mantido como fallback
+  /**
+   * Reordenação de linhas (Ensaios Diretos) - Mantido como fallback
+   * @param event - Evento de reordenação do PrimeNG
+   * @param plano - Plano que contém os ensaios
+   */
   onRowReorderEnsaios(event: any, plano: any) {
     try {
-      console.log('onRowReorderEnsaios called with event:', event);
-      console.log('Event structure:', {
-        value: event?.value,
-        dragIndex: event?.dragIndex,
-        dropIndex: event?.dropIndex,
-        rows: event?.rows
-      });
+      // console.log('onRowReorderEnsaios called with event:', event);
+      // console.log('Event structure:', {
+      //   value: event?.value,
+      //   dragIndex: event?.dragIndex,
+      //   dropIndex: event?.dropIndex,
+      //   rows: event?.rows
+      // });
       
       if (!plano || !Array.isArray(plano.ensaio_detalhes)) {
-        console.warn('Plano ou ensaio_detalhes inválido');
+        // console.warn('Plano ou ensaio_detalhes inválido');
         return;
       }
 
-      console.log('Ensaios before reorder:', plano.ensaio_detalhes.map((e: any, i: number) => ({ index: i, id: e.id, descricao: e.descricao })));
+      // console.log('Ensaios before reorder:', plano.ensaio_detalhes.map((e: any, i: number) => ({ index: i, id: e.id, descricao: e.descricao })));
 
       // Temporariamente colapsar todas as linhas expandidas para evitar conflitos
       plano.ensaio_detalhes.forEach((ensaio: any) => {
@@ -394,7 +400,7 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
 
       // PrimeNG 19 - usa event.value que contém o array reordenado
       if (event && event.value && Array.isArray(event.value)) {
-        console.log('Usando event.value para reordenação (PrimeNG 19)');
+        // console.log('Usando event.value para reordenação (PrimeNG 19)');
         plano.ensaio_detalhes = [...event.value];
       } 
       // Fallback para versões anteriores com índices
@@ -403,7 +409,7 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
         typeof event.dragIndex === 'number' &&
         typeof event.dropIndex === 'number'
       ) {
-        console.log(`Movendo item do índice ${event.dragIndex} para ${event.dropIndex}`);
+        // console.log(`Movendo item do índice ${event.dragIndex} para ${event.dropIndex}`);
         
         // Criar cópia do array
         const newArray = [...plano.ensaio_detalhes];
@@ -416,11 +422,11 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
         plano.ensaio_detalhes = newArray;
       }
       else {
-        console.warn('Evento de reordenação não reconhecido:', event);
+        // console.warn('Evento de reordenação não reconhecido:', event);
         return;
       }
 
-      console.log('Ensaios after reorder:', plano.ensaio_detalhes.map((e: any, i: number) => ({ index: i, id: e.id, descricao: e.descricao })));
+      // console.log('Ensaios after reorder:', plano.ensaio_detalhes.map((e: any, i: number) => ({ index: i, id: e.id, descricao: e.descricao })));
 
       // Forçar atualização da interface
       this.cd.detectChanges();
@@ -431,7 +437,7 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
         detail: 'Ensaios reordenados com sucesso' 
       });
     } catch (e) {
-      console.error('Erro no reordenamento de ensaios:', e);
+      // console.error('Erro no reordenamento de ensaios:', e);
       this.messageService.add({ 
         severity: 'error', 
         summary: 'Erro', 
@@ -440,23 +446,27 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
     }
   }
 
-  // Reordenação de linhas (Cálculos)
+  /**
+   * Reordenação de linhas (Cálculos)
+   * @param event - Evento de reordenação do PrimeNG
+   * @param plano - Plano que contém os cálculos
+   */
   onRowReorderCalculos(event: any, plano: any) {
     try {
-      console.log('onRowReorderCalculos called with event:', event);
-      console.log('Event structure:', {
-        value: event?.value,
-        dragIndex: event?.dragIndex,
-        dropIndex: event?.dropIndex,
-        rows: event?.rows
-      });
+      // console.log('onRowReorderCalculos called with event:', event);
+      // console.log('Event structure:', {
+      //   value: event?.value,
+      //   dragIndex: event?.dragIndex,
+      //   dropIndex: event?.dropIndex,
+      //   rows: event?.rows
+      // });
       
       if (!plano || !Array.isArray(plano.calculo_ensaio_detalhes)) {
-        console.warn('Plano ou calculo_ensaio_detalhes inválido');
+        // console.warn('Plano ou calculo_ensaio_detalhes inválido');
         return;
       }
 
-      console.log('Cálculos before reorder:', plano.calculo_ensaio_detalhes.map((c: any, i: number) => ({ index: i, id: c.id, descricao: c.descricao })));
+      // console.log('Cálculos before reorder:', plano.calculo_ensaio_detalhes.map((c: any, i: number) => ({ index: i, id: c.id, descricao: c.descricao })));
 
       // Temporariamente colapsar todas as linhas expandidas para evitar conflitos
       plano.calculo_ensaio_detalhes.forEach((calculo: any) => {
@@ -465,7 +475,7 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
 
       // PrimeNG 19 - usa event.value que contém o array reordenado
       if (event && event.value && Array.isArray(event.value)) {
-        console.log('Usando event.value para reordenação (PrimeNG 19)');
+        // console.log('Usando event.value para reordenação (PrimeNG 19)');
         plano.calculo_ensaio_detalhes = [...event.value];
       } 
       // Fallback para versões anteriores com índices
@@ -474,7 +484,7 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
         typeof event.dragIndex === 'number' &&
         typeof event.dropIndex === 'number'
       ) {
-        console.log(`Movendo item do índice ${event.dragIndex} para ${event.dropIndex}`);
+        // console.log(`Movendo item do índice ${event.dragIndex} para ${event.dropIndex}`);
         
         // Criar cópia do array
         const newArray = [...plano.calculo_ensaio_detalhes];
@@ -487,11 +497,11 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
         plano.calculo_ensaio_detalhes = newArray;
       }
       else {
-        console.warn('Evento de reordenação não reconhecido:', event);
+        // console.warn('Evento de reordenação não reconhecido:', event);
         return;
       }
 
-      console.log('Cálculos after reorder:', plano.calculo_ensaio_detalhes.map((c: any, i: number) => ({ index: i, id: c.id, descricao: c.descricao })));
+      // console.log('Cálculos after reorder:', plano.calculo_ensaio_detalhes.map((c: any, i: number) => ({ index: i, id: c.id, descricao: c.descricao })));
 
       // Forçar atualização da interface
       this.cd.detectChanges();
@@ -502,7 +512,7 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
         detail: 'Cálculos reordenados com sucesso' 
       });
     } catch (e) {
-      console.error('Erro no reordenamento de cálculos:', e);
+      // console.error('Erro no reordenamento de cálculos:', e);
       this.messageService.add({ 
         severity: 'error', 
         summary: 'Erro', 
@@ -554,11 +564,18 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
     return valor;
   }
 
-  // Arredonda números para 2 casas decimais
+  // Arredonda números para 4 casas decimais
   private round2(value: any): number {
     const num = typeof value === 'number' ? value : Number(value);
     if (!isFinite(num)) return 0;
-    return Math.round(num * 100) / 100;
+    return Math.round(num * 10000) / 10000;
+  }
+
+  // Arredonda números para 4 casas decimais (função adicional para clareza)
+  private round4(value: any): number {
+    const num = typeof value === 'number' ? value : Number(value);
+    if (!isFinite(num)) return 0;
+    return Math.round(num * 10000) / 10000;
   }
 
   // Arredonda números para N casas decimais
@@ -629,7 +646,7 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
           }, 0);
         },
         (error) => {
-          console.error('Erro ao buscar análise:', error);
+          // console.error('Erro ao buscar análise:', error);
         }
       );
     }
@@ -641,8 +658,8 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
       
       // Verificar se o nome do usuário logado está na lista de responsáveis
       const responsavelEncontrado = this.responsaveis.find(r => r.value === data.nome);
-      console.log('👤 Usuário logado:', data.nome);
-      console.log('🔍 Responsável encontrado na lista:', responsavelEncontrado);
+      // console.log('👤 Usuário logado:', data.nome);
+      // console.log('🔍 Responsável encontrado na lista:', responsavelEncontrado);
       
       // Preencher o campo digitador e responsável em todos os ensaios já carregados
       this.analisesSimplificadas[0]?.planoDetalhes.forEach((plano: any) => {
@@ -651,7 +668,7 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
           // NOVO: Definir responsável automaticamente se não estiver definido
           if (!ensaio.responsavel && responsavelEncontrado) {
             ensaio.responsavel = responsavelEncontrado.value;
-            console.log(`✅ Responsável definido automaticamente para ensaio ${ensaio.descricao}: ${ensaio.responsavel}`);
+            // console.log(`✅ Responsável definido automaticamente para ensaio ${ensaio.descricao}: ${ensaio.responsavel}`);
           }
           //console.log('Digitador do ensaio:', ensaio.digitador);
         });
@@ -660,7 +677,7 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
           // NOVO: Definir responsável automaticamente para cálculos se não estiver definido
           if (!calc.responsavel && responsavelEncontrado) {
             calc.responsavel = responsavelEncontrado.value;
-            console.log(`✅ Responsável definido automaticamente para cálculo ${calc.descricao}: ${calc.responsavel}`);
+            // console.log(`✅ Responsável definido automaticamente para cálculo ${calc.descricao}: ${calc.responsavel}`);
           }
           // Se quiser mostrar também nos ensaios de cálculo:
           calc.ensaios_detalhes?.forEach((calc: any) => {
@@ -668,14 +685,14 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
             // NOVO: Definir responsável automaticamente para ensaios de cálculo se não estiver definido
             if (!calc.responsavel && responsavelEncontrado) {
               calc.responsavel = responsavelEncontrado.value;
-              console.log(`✅ Responsável definido automaticamente para ensaio de cálculo ${calc.descricao}: ${calc.responsavel}`);
+              // console.log(`✅ Responsável definido automaticamente para ensaio de cálculo ${calc.descricao}: ${calc.responsavel}`);
             }
           });
         });
       });
     },
     error => {
-      console.error('Erro ao obter informações do colaborador:', error);
+      // console.error('Erro ao obter informações do colaborador:', error);
       this.digitador = null;
     }
   );
@@ -689,7 +706,7 @@ private obterResponsavelPadrao(): string | null {
   // 1. Tentar obter responsável dos ensaios_utilizados salvos
   const responsavelDoHistorico = this.obterResponsavelDoHistorico();
   if (responsavelDoHistorico) {
-    console.log(`✅ Responsável obtido do histórico: ${responsavelDoHistorico}`);
+    // console.log(`✅ Responsável obtido do histórico: ${responsavelDoHistorico}`);
     return responsavelDoHistorico;
   }
   
@@ -697,7 +714,7 @@ private obterResponsavelPadrao(): string | null {
   if (this.digitador) {
     const responsavelEncontrado = this.responsaveis.find(r => r.value === this.digitador);
     if (responsavelEncontrado) {
-      console.log(`✅ Responsável padrão definido (usuário logado): ${responsavelEncontrado.value}`);
+      // console.log(`✅ Responsável padrão definido (usuário logado): ${responsavelEncontrado.value}`);
       return responsavelEncontrado.value;
     }
   }
@@ -2238,11 +2255,374 @@ recalcularTodosCalculos() {
         calc.resultado = (typeof resultado === 'number' && isFinite(resultado)) ? this.round2(resultado) : 0;
       }
       console.log(`✓ Resultado calculado: ${calc.resultado}`);
+      
+      // Verificar alertas após o cálculo
+      this.verificarAlertaPRNT(calc);
+      
     } catch (e) {
       calc.resultado = 'Erro no cálculo';
       console.error('Erro no cálculo:', e);
     }
     console.log('=== MÉTODO CALCULAR FINALIZADO ===\n');
+  }
+
+  // Verificar alerta PRNT após o cálculo
+  private verificarAlertaPRNT(calc: any) {
+    console.log('🔍 Verificando alerta PRNT para cálculo:', calc?.descricao, 'Resultado:', calc?.resultado);
+    
+    if (!calc || !calc.descricao) {
+      console.log('❌ Cálculo inválido ou sem descrição');
+      return;
+    }
+    
+    // CORREÇÃO: Permitir resultado 0 - remover verificação !calc.resultado
+    if (calc.resultado === null || calc.resultado === undefined) {
+      console.log('❌ Resultado é null ou undefined');
+      return;
+    }
+    
+    // Verificar se é um cálculo PRNT (por descrição)
+    const descricaoLower = calc.descricao.toLowerCase();
+    console.log('🔍 Descrição em minúsculas:', descricaoLower);
+    
+    const isPRNT = descricaoLower.includes('prnt') || 
+                   descricaoLower.includes('poder relativo de neutralização total') ||
+                   descricaoLower.includes('neutralização');
+    
+    console.log('🧪 É cálculo PRNT?', isPRNT);
+    
+    if (isPRNT) {
+      const resultado = typeof calc.resultado === 'number' ? calc.resultado : Number(calc.resultado);
+      console.log('📊 Resultado numérico:', resultado);
+      
+      if (!isNaN(resultado)) {
+        if (resultado < 73) {
+          // PRNT abaixo de 73 - REPROVADO
+          if (this.podeExibirAlerta('PRNT_REPROVADO', resultado)) {
+            console.warn(`🚨 ALERTA PRNT: Resultado ${resultado} < 73 - REPROVADO`);
+            
+            this.messageService.add({
+              severity: 'error',
+              summary: 'REPROVADO - Baixo PRNT',
+              detail: `O resultado do cálculo PRNT (${resultado.toFixed(2)}) está abaixo de 73. Material reprovado!`,
+              life: 8000,
+              sticky: true
+            });
+          }
+        } else {
+          // PRNT >= 73 - OK
+          if (this.podeExibirAlerta('PRNT_OK', resultado)) {
+            console.log(`✅ PRNT OK: Resultado ${resultado} >= 73`);
+            
+            this.messageService.add({
+              severity: 'success',
+              summary: 'PRNT OK',
+              detail: `O resultado do cálculo PRNT (${resultado.toFixed(2)}) está dentro do padrão (≥ 73).`,
+              life: 5000
+            });
+          }
+        }
+      } else {
+        console.error('❌ Resultado não é um número válido:', calc.resultado);
+      }
+    } else {
+      console.log('ℹ️ Não é um cálculo PRNT, ignorando verificação');
+    }
+  }
+
+  // Controlar alertas duplicados
+  private podeExibirAlerta(tipo: string, valor: number): boolean {
+    const chave = `${tipo}_${valor.toFixed(2)}`;
+    
+    if (this.alertasExibidos.has(chave)) {
+      console.log(`⏭️ Alerta ${tipo} já exibido para valor ${valor}, ignorando`);
+      return false;
+    }
+    
+    this.alertasExibidos.add(chave);
+    
+    // Limpar alertas após 30 segundos para permitir novos alertas se o valor mudar
+    if (this.timerLimpezaAlertas) {
+      clearTimeout(this.timerLimpezaAlertas);
+    }
+    
+    this.timerLimpezaAlertas = setTimeout(() => {
+      this.alertasExibidos.clear();
+      console.log('🧹 Cache de alertas limpo');
+    }, 30000);
+    
+    return true;
+  }
+
+  // Método para limpar cache de alertas manualmente
+  public limparCacheAlertas() {
+    this.alertasExibidos.clear();
+    console.log('🧹 Cache de alertas limpo manualmente');
+  }
+
+  // Método público para testar alertas manualmente (pode ser chamado no console do browser)
+  public testarAlertas() {
+    console.log('🧪 Testando alertas PRNT (cálculos) e Fechamento (ensaios)...');
+    
+    if (!this.analisesSimplificadas || this.analisesSimplificadas.length === 0) {
+      console.log('❌ Nenhuma análise encontrada');
+      return;
+    }
+
+    const analiseData = this.analisesSimplificadas[0];
+    const planoDetalhes = analiseData?.planoDetalhes || [];
+    
+    let calculosEncontrados = 0;
+    let ensaiosEncontrados = 0;
+    
+    planoDetalhes.forEach((plano: any) => {
+      // Verificar cálculos (PRNT)
+      if (plano.calculo_ensaio_detalhes) {
+        plano.calculo_ensaio_detalhes.forEach((calc: any) => {
+          calculosEncontrados++;
+          console.log(`🔍 Verificando cálculo: "${calc.descricao}" com resultado: ${calc.resultado}`);
+          this.verificarAlertaPRNT(calc);
+        });
+      }
+      
+      // Verificar ensaios (Fechamento)
+      if (plano.ensaio_detalhes) {
+        plano.ensaio_detalhes.forEach((ensaio: any) => {
+          ensaiosEncontrados++;
+          console.log(`🔍 Verificando ensaio: "${ensaio.descricao}" com valor: ${ensaio.valor}`);
+          this.verificarAlertaFechamento(ensaio, plano);
+        });
+      }
+    });
+    
+    console.log(`✅ Verificação concluída! Cálculos: ${calculosEncontrados}, Ensaios: ${ensaiosEncontrados}`);
+  }
+
+  // Método específico para testar apenas PRNT (compatibilidade)
+  public testarAlertaPRNT() {
+    console.log('🧪 Testando apenas alerta PRNT...');
+    this.testarAlertas();
+  }
+
+  // Verificar alerta Fechamento para ensaios com regras específicas
+  private verificarAlertaFechamento(ensaio: any, planoBase?: any) {
+    console.log('🔍 Verificando alerta Fechamento para ensaio:', ensaio?.descricao, 'Valor:', ensaio?.valor);
+    
+    if (!ensaio || !ensaio.descricao) {
+      console.log('❌ Ensaio inválido ou sem descrição');
+      return;
+    }
+    
+    // Verificar se é um ensaio Fechamento (por descrição)
+    const descricaoLower = ensaio.descricao.toLowerCase();
+    console.log('🔍 Descrição em minúsculas:', descricaoLower);
+    
+    const isFechamento = descricaoLower.includes('fechamento') || 
+                         descricaoLower.includes('fechament') ||
+                         descricaoLower.includes('balanço');
+    
+    console.log('🧪 É ensaio Fechamento?', isFechamento);
+    
+    if (isFechamento) {
+      // Primeiro verificar se há ensaios obrigatórios
+      const ensaiosObrigatorios = ['ri + sio₂', 'cao', 'mgo', 'perda ao fogo'];
+      const ensaiosEncontrados = this.verificarEnsaiosObrigatoriosFechamento(null, planoBase, ensaiosObrigatorios);
+      
+      if (ensaiosEncontrados.faltantes.length > 0) {
+        // Análise incompleta
+        const chaveIncompleta = `FECHAMENTO_INCOMPLETO_${ensaiosEncontrados.faltantes.join('_')}`;
+        if (!this.alertasExibidos.has(chaveIncompleta)) {
+          this.alertasExibidos.add(chaveIncompleta);
+          console.warn(`⚠️ FECHAMENTO - Ensaios faltantes: ${ensaiosEncontrados.faltantes.join(', ')}`);
+          
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Análise Parcial ou Incompleta',
+            detail: `Fechamento não pode ser validado. Faltam ensaios: ${ensaiosEncontrados.faltantes.join(', ')}`,
+            life: 8000,
+            sticky: true
+          });
+        }
+        return;
+      }
+      
+      // Se chegou aqui, todos os ensaios obrigatórios estão presentes
+      if (ensaio.valor === null || ensaio.valor === undefined) {
+        console.log('❌ Valor é null ou undefined');
+        return;
+      }
+      
+      const resultado = typeof ensaio.valor === 'number' ? ensaio.valor : Number(ensaio.valor);
+      console.log('📊 Valor numérico do Fechamento:', resultado);
+      
+      if (!isNaN(resultado)) {
+        if (resultado < 97.5) {
+          // Fechamento baixo - REPROVADO
+          if (this.podeExibirAlerta('FECHAMENTO_BAIXO', resultado)) {
+            console.warn(`🚨 ALERTA FECHAMENTO: Resultado ${resultado} < 97.5 - REPROVADO BAIXO`);
+            
+            this.messageService.add({
+              severity: 'error',
+              summary: 'REPROVADO - Fechamento Baixo',
+              detail: `O resultado do Fechamento (${resultado.toFixed(2)}%) está abaixo de 97,5%. Material reprovado!`,
+              life: 8000,
+              sticky: true
+            });
+          }
+        } else if (resultado >= 99) {
+          // Fechamento alto - REPROVADO
+          if (this.podeExibirAlerta('FECHAMENTO_ALTO', resultado)) {
+            console.warn(`🚨 ALERTA FECHAMENTO: Resultado ${resultado} >= 99 - REPROVADO ALTO`);
+            
+            this.messageService.add({
+              severity: 'error',
+              summary: 'REPROVADO - Fechamento Alto',
+              detail: `O resultado do Fechamento (${resultado.toFixed(2)}%) está acima de 99%. Material reprovado!`,
+              life: 8000,
+              sticky: true
+            });
+          }
+        } else {
+          // Fechamento OK (97.5 <= resultado < 99)
+          if (this.podeExibirAlerta('FECHAMENTO_OK', resultado)) {
+            console.log(`✅ FECHAMENTO OK: Resultado ${resultado} está entre 97,5% e 99%`);
+            
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Fechamento OK',
+              detail: `O resultado do Fechamento (${resultado.toFixed(2)}%) está dentro do padrão (97,5% - 99%).`,
+              life: 5000
+            });
+          }
+        }
+      } else {
+        console.error('❌ Valor não é um número válido:', ensaio.valor);
+      }
+    } else {
+      console.log('ℹ️ Não é um ensaio Fechamento, ignorando verificação');
+    }
+  }
+
+  // Verificar se todos os ensaios obrigatórios para Fechamento estão presentes
+  private verificarEnsaiosObrigatoriosFechamento(calc: any, planoBase: any, ensaiosObrigatorios: string[]): {encontrados: string[], faltantes: string[]} {
+    const encontrados: string[] = [];
+    const faltantes: string[] = [];
+    
+    console.log('🔍 Verificando ensaios obrigatórios para Fechamento...');
+    
+    ensaiosObrigatorios.forEach(ensaioObrigatorio => {
+      let encontrado = false;
+      
+      // Buscar no plano base primeiro
+      if (planoBase && Array.isArray(planoBase.ensaio_detalhes)) {
+        encontrado = planoBase.ensaio_detalhes.some((ensaio: any) => {
+          const descricaoEnsaio = (ensaio.descricao || '').toLowerCase();
+          const match = this.verificarMatchEnsaio(descricaoEnsaio, ensaioObrigatorio);
+          if (match) {
+            console.log(`✅ Ensaio encontrado no plano: "${ensaio.descricao}" (${ensaioObrigatorio})`);
+          }
+          return match;
+        });
+      }
+      
+      // Se não encontrou, buscar em todos os planos
+      if (!encontrado && this.analisesSimplificadas?.[0]?.planoDetalhes) {
+        for (const plano of this.analisesSimplificadas[0].planoDetalhes) {
+          if (Array.isArray(plano.ensaio_detalhes)) {
+            encontrado = plano.ensaio_detalhes.some((ensaio: any) => {
+              const descricaoEnsaio = (ensaio.descricao || '').toLowerCase();
+              const match = this.verificarMatchEnsaio(descricaoEnsaio, ensaioObrigatorio);
+              if (match) {
+                console.log(`✅ Ensaio encontrado em outro plano: "${ensaio.descricao}" (${ensaioObrigatorio})`);
+              }
+              return match;
+            });
+          }
+          if (encontrado) break;
+        }
+      }
+      
+      // Também buscar nos cálculos (ensaios internos) se necessário
+      if (!encontrado && this.analisesSimplificadas?.[0]?.planoDetalhes) {
+        for (const plano of this.analisesSimplificadas[0].planoDetalhes) {
+          if (Array.isArray(plano.calculo_ensaio_detalhes)) {
+            for (const calculo of plano.calculo_ensaio_detalhes) {
+              if (Array.isArray(calculo.ensaios_detalhes)) {
+                encontrado = calculo.ensaios_detalhes.some((ensaio: any) => {
+                  const descricaoEnsaio = (ensaio.descricao || '').toLowerCase();
+                  const match = this.verificarMatchEnsaio(descricaoEnsaio, ensaioObrigatorio);
+                  if (match) {
+                    console.log(`✅ Ensaio encontrado no cálculo "${calculo.descricao}": "${ensaio.descricao}" (${ensaioObrigatorio})`);
+                  }
+                  return match;
+                });
+                if (encontrado) break;
+              }
+            }
+            if (encontrado) break;
+          }
+        }
+      }
+      
+      if (encontrado) {
+        encontrados.push(ensaioObrigatorio);
+      } else {
+        faltantes.push(ensaioObrigatorio);
+        console.warn(`❌ Ensaio obrigatório não encontrado: ${ensaioObrigatorio}`);
+      }
+    });
+    
+    console.log('📊 Ensaios encontrados:', encontrados);
+    console.log('⚠️ Ensaios faltantes:', faltantes);
+    
+    return { encontrados, faltantes };
+  }
+
+  // Verificar se a descrição do ensaio corresponde ao ensaio obrigatório
+  private verificarMatchEnsaio(descricaoEnsaio: string, ensaioObrigatorio: string): boolean {
+    // Normalizar strings para comparação
+    const normalize = (str: string) => str.toLowerCase()
+      .replace(/[áàâãä]/g, 'a')
+      .replace(/[éèêë]/g, 'e')
+      .replace(/[íìîï]/g, 'i')
+      .replace(/[óòôõö]/g, 'o')
+      .replace(/[úùûü]/g, 'u')
+      .replace(/[ç]/g, 'c')
+      .replace(/[₂]/g, '2')
+      .replace(/\s+/g, ' ')
+      .trim();
+    
+    const descricaoNorm = normalize(descricaoEnsaio);
+    const obrigatorioNorm = normalize(ensaioObrigatorio);
+    
+    // Verificações específicas por tipo de ensaio
+    switch (obrigatorioNorm) {
+      case 'ri + sio2':
+      case 'ri + sio₂':
+        return descricaoNorm.includes('ri') || 
+               descricaoNorm.includes('sio2') || 
+               descricaoNorm.includes('sio₂') ||
+               descricaoNorm.includes('silica') ||
+               descricaoNorm.includes('residuo insolúvel');
+      
+      case 'cao':
+        return descricaoNorm.includes('cao') || 
+               descricaoNorm.includes('calcio') ||
+               descricaoNorm.includes('cálcio');
+      
+      case 'mgo':
+        return descricaoNorm.includes('mgo') || 
+               descricaoNorm.includes('magnesio') ||
+               descricaoNorm.includes('magnésio');
+      
+      case 'perda ao fogo':
+        return descricaoNorm.includes('perda') || 
+               descricaoNorm.includes('pf') ||
+               descricaoNorm.includes('fogo');
+      
+      default:
+        return descricaoNorm.includes(obrigatorioNorm);
+    }
   }
   
   // Resolve dependências entre ensaios internos de um cálculo (como Ensaios Diretos)
@@ -2535,6 +2915,10 @@ onValorEnsaioChange(ensaio: any, novoValor: any) {
   const num = typeof novoValor === 'number' ? novoValor : Number(novoValor?.toString().replace(',', '.')) || 0;
   ensaio.valor = this.round2(num);
     const plano = this.encontrarPlanoDoEnsaio(ensaio);
+    
+    // Verificar alerta Fechamento após alteração manual
+    this.verificarAlertaFechamento(ensaio, plano);
+    
     if (plano) {
       this.recalcularTodosEnsaiosDirectos(plano);
     }
@@ -2551,6 +2935,10 @@ onResultadoCalculoChange(calculo: any, novoValor: any) {
   this._calculoChangeTimer = setTimeout(() => {
   const num = typeof novoValor === 'number' ? novoValor : Number(novoValor?.toString().replace(',', '.')) || 0;
   calculo.resultado = this.round2(num);
+    
+    // Verificar alerta PRNT após alteração manual
+    this.verificarAlertaPRNT(calculo);
+    
     this.recalcularTodosCalculos();
     this.cd.detectChanges();
   }, 120);
@@ -2898,16 +3286,8 @@ forcarDeteccaoMudancas() {
       }
     } else {
       if (typeof resultado === 'number' && isFinite(resultado)) {
-        // Evitar zerar resultados muito pequenos; aplicar precisão adaptativa
-        const abs = Math.abs(resultado);
-        let arredondado: number;
-        if (abs >= 1) {
-          arredondado = this.roundN(resultado, 2);
-        } else if (abs >= 0.01) {
-          arredondado = this.roundN(resultado, 4);
-        } else {
-          arredondado = this.roundN(resultado, 8);
-        }
+        // Arredondar sempre para 4 casas decimais
+        const arredondado = this.roundN(resultado, 4);
         ensaio.valor = arredondado;
         console.log(`🔢 Resultado numérico: ${ensaio.valor} (bruto: ${resultado})`);
       } else {
@@ -2918,7 +3298,12 @@ forcarDeteccaoMudancas() {
     
     console.log(`✅ Ensaio ${ensaio.descricao} calculado com sucesso: ${ensaio.valor}`);
     
-    this.recalcularTodosCalculos();
+    // Verificar alerta Fechamento após cálculo do ensaio
+    const plano = planoRef || this.encontrarPlanoDoEnsaio(ensaio);
+    this.verificarAlertaFechamento(ensaio, plano);
+    
+    // Remover recálculo automático aqui para evitar loops de alertas
+    // this.recalcularTodosCalculos();
     this.forcarDeteccaoMudancas();
   } catch (error) {
     ensaio.valor = 0;
@@ -4289,6 +4674,19 @@ moverVariavelPara(direcao: 'cima' | 'baixo', index: number): void {
 
 ngOnDestroy(): void {
   this.pararSistemaAlertas();
+  
+  // Limpar timers de controle de alertas
+  if (this.timerLimpezaAlertas) {
+    clearTimeout(this.timerLimpezaAlertas);
+  }
+  if (this._ensaioChangeTimer) {
+    clearTimeout(this._ensaioChangeTimer);
+  }
+  if (this._calculoChangeTimer) {
+    clearTimeout(this._calculoChangeTimer);
+  }
+  
+  this.alertasExibidos.clear();
 }
 
 /**
