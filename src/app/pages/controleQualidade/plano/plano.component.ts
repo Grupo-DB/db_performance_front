@@ -108,8 +108,10 @@ export class PlanoComponent implements OnInit {
   calculosEnsaio: CalculoEnsaio[] = [];
   calculos: any[] = [];
   targetCalculos!: CalculoEnsaio[];
-
   targetEnsaios!: Ensaio[];
+
+  planEnsaios: any[] = [];
+  planCalculos: any[] = [0];
 
   registerForm!: FormGroup<RegisterPlanoForm>;
   editForm!: FormGroup;
@@ -128,8 +130,8 @@ export class PlanoComponent implements OnInit {
   {
     this.registerForm = new FormGroup({
       descricao: new FormControl('',[Validators.required, Validators.minLength(3)]),
-      ensaios: new FormControl('',[Validators.required]),
-      calculos_ensaio: new FormControl('',[Validators.required]),
+      ensaios: new FormControl(''),
+      calculos_ensaio: new FormControl(''),
     });
     this.editForm = this.fb.group({
       id:[''],
@@ -268,12 +270,25 @@ export class PlanoComponent implements OnInit {
   }
 
   submit(){
-    const ensaios = this.registerForm.value.ensaios;
-    const calculosEnsaio = this.registerForm.value.calculos_ensaio;
+    this.registerForm.patchValue({
+      ensaios: this.targetEnsaios,
+      calculos_ensaio: this.targetCalculos
+    });
+
+    this.planEnsaios = [];
+    this.targetEnsaios.forEach(ensaio => {
+      this.planEnsaios.push(ensaio.id);
+    });
+
+    this.planCalculos = [];
+    this.targetCalculos.forEach(calculo => {
+      this.planCalculos.push(calculo.id || 0);
+    });
+
     this.ensaioService.registerPlanoAnalise(
       this.registerForm.value.descricao,
-      ensaios,
-      calculosEnsaio
+      this.planEnsaios,
+      this.planCalculos,
     ).subscribe({
       next:() => {
         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Plano de análise cadastrado com sucesso!!', life: 1000 });

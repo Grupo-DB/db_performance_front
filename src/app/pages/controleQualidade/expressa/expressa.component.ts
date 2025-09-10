@@ -529,6 +529,16 @@ receberDadosAmostra(): void {
       dataRecebimentoFormatada = formatDate(dataRecebimentoValue, 'yyyy-MM-dd', 'en-US');
     } 
 
+    // Calcular data de descarte automaticamente
+    let dataDescarteFormatada = null;
+    const material = this.amostraData.materialInfo?.nome || this.amostraData.material;
+    if (dataEntradaValue instanceof Date && !isNaN(dataEntradaValue.getTime()) && material) {
+      const dataDescarteValue = this.calcularDataDescarte(dataEntradaValue, material);
+      if (dataDescarteValue) {
+        dataDescarteFormatada = formatDate(dataDescarteValue, 'yyyy-MM-dd', 'en-US');
+      }
+    }
+
     // Criar amostra vinculada à ordem
     this.amostraService.registerAmostra(
       this.amostraData.materialInfo?.id || this.amostraData.material,
@@ -562,7 +572,8 @@ receberDadosAmostra(): void {
       null,
       idOrdem, // Vincular à ordem criada
       this.expressaForm.value.digitador,
-      this.amostraData.statusInfo?.nome || this.amostraData.status
+      this.amostraData.statusInfo?.nome || this.amostraData.status,
+      dataDescarteFormatada
     ).subscribe({
       next: (amostraCriada) => {
       console.log('✅ Amostra criada:', amostraCriada);
@@ -774,6 +785,41 @@ receberDadosAmostra(): void {
       tamanho: fileInfo.file.size
     });
   });
+}
+
+// Função para normalizar strings
+private normalize(str: string): string {
+  if (!str) return '';
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+
+// Função para calcular a data de descarte baseada no material e data de entrada
+private calcularDataDescarte(dataEntrada: Date, material: string): Date | null {
+  if (!dataEntrada || !material) {
+    return null;
+  }
+
+  const materialNormalizado = this.normalize(material);
+  const dataDescarte = new Date(dataEntrada);
+  
+  // Argamassa: +120 dias
+  if (materialNormalizado === 'argamassa') {
+    dataDescarte.setDate(dataDescarte.getDate() + 120);
+  }
+  // Cal, Cinza Pozolana, Cimento, Calcario e Finaliza: +90 dias  
+  else if (materialNormalizado === 'cal' || 
+           materialNormalizado === 'cinza pozolana' ||
+           materialNormalizado === 'cimento' ||
+           materialNormalizado === 'calcario' ||
+           materialNormalizado === 'finaliza') {
+    dataDescarte.setDate(dataDescarte.getDate() + 90);
+  }
+  // Para outros materiais, usar 90 dias como padrão
+  else {
+    dataDescarte.setDate(dataDescarte.getDate() + 90);
+  }
+
+  return dataDescarte;
 }
 
 }

@@ -60,6 +60,7 @@ import autoTable from 'jspdf-autotable';
 import { TooltipModule } from 'primeng/tooltip';
 import { AvaliadorService } from '../../../services/avaliacoesServices/avaliadores/registeravaliador.service';
 import { Avaliador } from '../../avaliacoes/avaliador/avaliador.component';
+import { da } from 'date-fns/locale';
 
 interface FileWithInfo {
   file: File;
@@ -96,7 +97,8 @@ interface AmostraForm{
   observacoes: FormControl,
   ordem: FormControl,
   digitador: FormControl,
-  status: FormControl
+  status: FormControl,
+  dataDescarte: FormControl,
 }
 
 interface OrdemForm {
@@ -148,6 +150,7 @@ export interface Amostra {
   classificacao: any;
   responsavel: any;
   data: any;
+  data_descarte: any;
   
 }
 
@@ -446,6 +449,7 @@ export class AmostraComponent implements OnInit {
       ordem: new FormControl(''),
       digitador: new FormControl(''),
       status: new FormControl(''),
+      dataDescarte: new FormControl(''),
     });
     this.registerOrdemForm = new FormGroup<OrdemForm>({
       data: new FormControl('',[Validators.required]),
@@ -485,6 +489,7 @@ export class AmostraComponent implements OnInit {
       complemento: [''],
       observacoes: [''],
       reter: [''],
+      dataDescarte: [''],
       
     });
 
@@ -499,6 +504,12 @@ export class AmostraComponent implements OnInit {
     const dataColeta = amostra.data_coleta ? new Date(amostra.data_coleta) : null;
     const dataEnvio = amostra.data_envio ? new Date(amostra.data_envio) : null;
     const dataRecebimento = amostra.data_recebida ? new Date(amostra.data_recebida) : null;
+    
+    // Calcular data de descarte se não existir ou usar a existente
+    let dataDescarte = amostra.data_descarte ? new Date(amostra.data_descarte) : null;
+    if (!dataDescarte && dataEntrada && amostra.material) {
+      dataDescarte = this.calcularDataDescarte(dataEntrada, amostra.material);
+    }
 
     this.editForm.patchValue({
       id: amostra.id,
@@ -532,6 +543,7 @@ export class AmostraComponent implements OnInit {
       complemento: amostra.complemento,
       observacoes: amostra.observacoes,
       reter: amostra.reter,
+      dataDescarte: dataDescarte
       
     });
   }
@@ -558,6 +570,13 @@ export class AmostraComponent implements OnInit {
   this.registerForm.get('material')?.valueChanges.subscribe(() => this.onCamposRelevantesChange());
   this.registerForm.get('tipoAmostragem')?.valueChanges.subscribe(() => this.onCamposRelevantesChange());
   this.registerForm.get('dataColeta')?.valueChanges.subscribe(() => this.onCamposRelevantesChange());
+
+  // Listeners para atualizar data de descarte automaticamente
+  this.registerForm.get('dataEntrada')?.valueChanges.subscribe(() => this.atualizarDataDescarte());
+  this.registerForm.get('material')?.valueChanges.subscribe(() => this.atualizarDataDescarte());
+
+  // Chamada inicial para calcular data de descarte se houver dados
+  setTimeout(() => this.atualizarDataDescarte(), 100);
 
     // Configuração das colunas da tabela
     this.cols = [
@@ -661,12 +680,18 @@ export class AmostraComponent implements OnInit {
       dataRecebimentoFormatada = formatDate(dataRecebimento, 'yyyy-MM-dd', 'en-US');
     }
 
+    let dataDescarteFormatada = null;
+    const dataDescarte = this.editForm.value.dataDescarte;
+    if (dataDescarte instanceof Date) {
+      dataDescarteFormatada = formatDate(dataDescarte, 'yyyy-MM-dd', 'en-US');
+    }
+
     const dadosAtualizados: Partial<Amostra> = {
       data_entrada: dataEntradaFormatada,
       data_coleta: dataColetaFormatada,
       data_envio: dataEnvioFormatada,
       data_recebida: dataRecebimentoFormatada,
-
+      data_descarte: dataDescarteFormatada,
       numero: this.editForm.value.numero,
       finalidade: this.editForm.value.finalidade,
       numero_lote: this.editForm.value.numeroLote,
@@ -829,6 +854,8 @@ onMaterialChange(materialNome: string) {
         console.log('Número da amostra gerado:', numero);
         this.loadProdutosPorMaterial(materialNormalizado);
         this.loadTiposAmostraPorMaterial(materialNormalizado);
+        // Atualizar data de descarte quando material mudar
+        this.atualizarDataDescarte();
       },
       error: (err) => {
         console.error('Erro ao buscar sequencial:', err);
@@ -1200,6 +1227,16 @@ submitAmostra() {
     dataRecebimentoFormatada = formatDate(dataRecebimentoValue, 'yyyy-MM-dd', 'en-US');
   }
 
+  // Calcular data de descarte automaticamente baseada no material e data de entrada
+  let dataDescarteFormatada = null;
+  const material = this.registerForm.value.material;
+  if (dataEntradaValue instanceof Date && !isNaN(dataEntradaValue.getTime()) && material) {
+    const dataDescarteValue = this.calcularDataDescarte(dataEntradaValue, material);
+    if (dataDescarteValue) {
+      dataDescarteFormatada = formatDate(dataDescarteValue, 'yyyy-MM-dd', 'en-US');
+    }
+  }
+
   this.amostraService.registerAmostra(
     this.registerForm.value.material,
     this.registerForm.value.finalidade,
@@ -1231,7 +1268,8 @@ submitAmostra() {
     this.registerForm.value.ordem,
     null,
     this.registerForm.value.digitador,
-    this.registerForm.value.status
+    this.registerForm.value.status,
+    dataDescarteFormatada
   ).subscribe({
     next: (amostraCriada) => {
       console.log('Amostra criada:', amostraCriada);
@@ -1436,6 +1474,7 @@ converterAmostraSalvaParaFormulario(amostra: any): any {
     dataEnvio: amostra.data_envio ? new Date(amostra.data_envio) : null,
     destinoEnvio: amostra.destino_envio || '',
     dataRecebimento: amostra.data_recebimento ? new Date(amostra.data_recebimento) : null,
+    dataDescarte: amostra.data_descarte ? new Date(amostra.data_descarte) : null,
     reter: amostra.reter || false,
     registroEp: amostra.registro_ep || '',
     registroProduto: amostra.registro_produto || '',
@@ -2084,6 +2123,16 @@ limparDadosFormulario() {
       dataRecebimentoFormatada = formatDate(dataRecebimentoValue, 'yyyy-MM-dd', 'en-US');
     } 
 
+    // Calcular data de descarte automaticamente baseada no material e data de entrada
+    let dataDescarteFormatada = null;
+    const material = this.amostraData.materialInfo?.nome || this.amostraData.material;
+    if (dataEntradaValue instanceof Date && !isNaN(dataEntradaValue.getTime()) && material) {
+      const dataDescarteValue = this.calcularDataDescarte(dataEntradaValue, material);
+      if (dataDescarteValue) {
+        dataDescarteFormatada = formatDate(dataDescarteValue, 'yyyy-MM-dd', 'en-US');
+      }
+    }
+
     // Criar amostra vinculada à ordem
     this.amostraService.registerAmostra(
       this.amostraData.materialInfo?.id || this.amostraData.material,
@@ -2117,7 +2166,8 @@ limparDadosFormulario() {
       idOrdem, // Vincular à ordem criada
       null,
       this.registerOrdemForm.value.digitador,
-      this.amostraData.statusInfo?.nome || this.amostraData.status
+      this.amostraData.statusInfo?.nome || this.amostraData.status,
+      dataDescarteFormatada
     ).subscribe({
       next: (amostraCriada) => {
       console.log('✅ Amostra criada:', amostraCriada);
@@ -2221,6 +2271,7 @@ loadUltimaAnalise(){
         this.analisesSimplificadas = [{
           amostraDataEntrada: ultimaAnalise.amostra_detalhes?.data_entrada,
           amostraDataColeta: ultimaAnalise.amostra_detalhes?.data_coleta,
+          amostraDataDescarte: ultimaAnalise.amostra_detalhes?.data_descarte,
           amostraDigitador: ultimaAnalise.amostra_detalhes?.digitador,
           amostraFornecedor: ultimaAnalise.amostra_detalhes?.fornecedor,
           amostraIdentificacaoComplementar: ultimaAnalise.amostra_detalhes?.identificacao_complementar,
@@ -2245,6 +2296,7 @@ loadUltimaAnalise(){
           ordemPlanoAnalise: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.plano_detalhes?.descricao,
           planoDetalhes: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.plano_detalhes || [],
           planoEnsaios: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.plano_detalhes?.ensaio_detalhes,
+
           //planoCalculos: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.plano_detalhes?.calculo_ensaio_detalhes,
         }];console.log('Numero da Ordem:', this.analisesSimplificadas[0].ordemNumero);
       } else {
@@ -2300,6 +2352,52 @@ calcular(calc: any, produto?: any) {
 private normalize(str: string): string {
   if (!str) return '';
   return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+
+// Função para calcular a data de descarte baseada no material e data de entrada
+private calcularDataDescarte(dataEntrada: Date, material: string): Date | null {
+  if (!dataEntrada || !material) {
+    return null;
+  }
+
+  const materialNormalizado = this.normalize(material);
+  const dataDescarte = new Date(dataEntrada);
+  
+  // Argamassa: +120 dias
+  if (materialNormalizado === 'argamassa') {
+    dataDescarte.setDate(dataDescarte.getDate() + 120);
+  }
+  // Cal, Cinza Pozolana, Cimento, Calcario e Finaliza: +90 dias  
+  else if (materialNormalizado === 'cal' || 
+           materialNormalizado === 'cinza pozolana' ||
+           materialNormalizado === 'cimento' ||
+           materialNormalizado === 'calcario' ||
+           materialNormalizado === 'finaliza') {
+    dataDescarte.setDate(dataDescarte.getDate() + 90);
+  }
+  // Para outros materiais, usar 90 dias como padrão
+  else {
+    dataDescarte.setDate(dataDescarte.getDate() + 90);
+  }
+
+  return dataDescarte;
+}
+
+// Função para atualizar a data de descarte no formulário
+private atualizarDataDescarte(): void {
+  const dataEntrada = this.registerForm.get('dataEntrada')?.value;
+  const material = this.registerForm.get('material')?.value;
+  
+  console.log('🗓️ Atualizando data de descarte - Data Entrada:', dataEntrada, 'Material:', material);
+  
+  if (dataEntrada && material) {
+    const dataDescarte = this.calcularDataDescarte(dataEntrada, material);
+    console.log('📅 Data de descarte calculada:', dataDescarte);
+    this.registerForm.get('dataDescarte')?.setValue(dataDescarte, { emitEvent: false });
+  } else {
+    // Limpar campo se não tiver dados suficientes
+    this.registerForm.get('dataDescarte')?.setValue(null, { emitEvent: false });
+  }
 }
 
 recalcularTodosCalculos(produto: any) {
@@ -2451,6 +2549,16 @@ criarAmostraNormal(): void {
     dataRecebimentoFormatada = formatDate(dataRecebimentoValue, 'yyyy-MM-dd', 'en-US');
   }
 
+  // Calcular data de descarte automaticamente baseada no material e data de entrada
+  let dataDescarteFormatada = '';
+  const material = this.registerForm.value.material;
+  if (dataEntradaValue instanceof Date && !isNaN(dataEntradaValue.getTime()) && material) {
+    const dataDescarteValue = this.calcularDataDescarte(dataEntradaValue, material);
+    if (dataDescarteValue) {
+      dataDescarteFormatada = formatDate(dataDescarteValue, 'yyyy-MM-dd', 'en-US');
+    }
+  }
+
   console.log('📝 Criando amostra normal...');
   
   // Criar amostra normal (sem ordem)
@@ -2485,7 +2593,8 @@ criarAmostraNormal(): void {
     null, // Sem ordem para amostra normal
     null,
     this.registerForm.value.digitador,
-    this.registerForm.value.status
+    this.registerForm.value.status,
+    dataDescarteFormatada
   ).subscribe({
     next: (amostraCriada) => {
       console.log('✅ Amostra normal criada:', amostraCriada);
@@ -2732,10 +2841,12 @@ verificarEstadoArquivos(): void {
 
   const dataEntradaValue = this.registerForm.value.dataEntrada;
   if (dataEntradaValue instanceof Date && !isNaN(dataEntradaValue.getTime())) {
-    const dataDescarteValue = new Date(dataEntradaValue);
-    dataDescarteValue.setDate(dataDescarteValue.getDate() + 60);
+    const material = this.registerForm.value.material;
+    const dataDescarteValue = this.calcularDataDescarte(dataEntradaValue, material);
     dataEntradaFormatada = formatDate(dataEntradaValue, 'dd/MM/yy', 'en-US');
-    dataDescarteFormatada = formatDate(dataDescarteValue, 'dd/MM/yy', 'en-US');
+    if (dataDescarteValue) {
+      dataDescarteFormatada = formatDate(dataDescarteValue, 'dd/MM/yy', 'en-US');
+    }
   } 
   let materialNome = this.registerForm.value.material;
   let material = this.registerForm.value.material;

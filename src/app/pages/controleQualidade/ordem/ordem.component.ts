@@ -2842,6 +2842,18 @@ gerarNumero(materialNome: string, sequencial: number): string {
         
           console.log(novaAmostra);
 
+          // Calcular data de descarte se necessário
+          let dataDescarteFormatada = novaAmostra.data_descarte;
+          if (!dataDescarteFormatada && novaAmostra.data_entrada && novaAmostra.material) {
+            const dataEntrada = new Date(novaAmostra.data_entrada);
+            if (!isNaN(dataEntrada.getTime())) {
+              const dataDescarte = this.calcularDataDescarte(dataEntrada, novaAmostra.material);
+              if (dataDescarte) {
+                dataDescarteFormatada = formatDate(dataDescarte, 'yyyy-MM-dd', 'en-US');
+              }
+            }
+          }
+
           this.amostraService.registerAmostra(
             novaAmostra.material,
             novaAmostra.finalidade,
@@ -2873,7 +2885,8 @@ gerarNumero(materialNome: string, sequencial: number): string {
             novaAmostra.ordem,
             null,
             novaAmostra.digitador,
-            novaAmostra.status
+            novaAmostra.status,
+            dataDescarteFormatada
           ).subscribe({
             next: (amostraCriada) => {
               console.log('Amostra duplicada:', amostraCriada);
@@ -3860,8 +3873,33 @@ private criarAnaliseParaAmostra(amostraId: number): void {
     }
   }
 
+  // Função para calcular a data de descarte baseada no material e data de entrada
+  private calcularDataDescarte(dataEntrada: Date, material: string): Date | null {
+    if (!dataEntrada || !material) {
+      return null;
+    }
 
+    const materialNormalizado = this.normalize(material);
+    const dataDescarte = new Date(dataEntrada);
+    
+    // Argamassa: +120 dias
+    if (materialNormalizado === 'argamassa') {
+      dataDescarte.setDate(dataDescarte.getDate() + 120);
+    }
+    // Cal, Cinza Pozolana, Cimento, Calcario e Finaliza: +90 dias  
+    else if (materialNormalizado === 'cal' || 
+             materialNormalizado === 'cinza pozolana' ||
+             materialNormalizado === 'cimento' ||
+             materialNormalizado === 'calcario' ||
+             materialNormalizado === 'finaliza') {
+      dataDescarte.setDate(dataDescarte.getDate() + 90);
+    }
+    // Para outros materiais, usar 90 dias como padrão
+    else {
+      dataDescarte.setDate(dataDescarte.getDate() + 90);
+    }
 
-
+    return dataDescarte;
+  }
 
 }

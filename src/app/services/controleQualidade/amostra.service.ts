@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { TipoAmostra } from '../../pages/controleQualidade/tipo-amostra/tipo-amostra.component';
 import { Produto } from '../../pages/baseOrcamentaria/dre/produto/produto.component';
 import { Amostra } from '../../pages/controleQualidade/amostra/amostra.component';
+import { da } from 'date-fns/locale';
 
 @Injectable({
   providedIn: 'root'
@@ -183,6 +184,7 @@ atualizarDescricaoImagem(imagemId: number, descricao: string): Observable<any> {
     expressa: any,
     digitador: any,
     status: any,
+    dataDescarte: any,
   )
   {
     return this.http.post<Amostra>(this.amostraUrl, {
@@ -216,7 +218,8 @@ atualizarDescricaoImagem(imagemId: number, descricao: string): Observable<any> {
       ordem: ordem,
       expressa: expressa, 
       digitador: digitador,
-      status: status
+      status: status,
+      data_descarte: dataDescarte
     });
   }
 
@@ -244,7 +247,7 @@ atualizarDescricaoImagem(imagemId: number, descricao: string): Observable<any> {
       ordem: dadosAmostraExpressa.numeroOrdem,
       digitador: dadosAmostraExpressa.digitador,
       status: dadosAmostraExpressa.status,
-      
+      data_descarte: dadosAmostraExpressa.dataDescarte,
       // Campos específicos para expressa
       tipo_ordem: dadosAmostraExpressa.tipoOrdem || 'EXPRESSA',
       prioridade: dadosAmostraExpressa.prioridade || 'ALTA',

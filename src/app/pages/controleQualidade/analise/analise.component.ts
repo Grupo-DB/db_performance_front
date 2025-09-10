@@ -578,6 +578,17 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
     return Math.round(num * 10000) / 10000;
   }
 
+  /**
+   * Formata números para exibição removendo zeros desnecessários
+   * Usado apenas para mostrar o resultado na interface, sem afetar os cálculos internos
+   */
+  formatForDisplay(value: any): string {
+    const num = typeof value === 'number' ? value : Number(value);
+    if (!isFinite(num)) return '0';
+    // Usar até 4 casas decimais, mas remover zeros à direita
+    return parseFloat(num.toFixed(4)).toString();
+  }
+
   // Arredonda números para N casas decimais
   private roundN(value: any, n: number): number {
     const num = typeof value === 'number' ? value : Number(value);
@@ -2252,7 +2263,8 @@ recalcularTodosCalculos() {
           calc.resultado = resultado;
         }
       } else {
-        calc.resultado = (typeof resultado === 'number' && isFinite(resultado)) ? this.round2(resultado) : 0;
+        // MUDANÇA: Armazenar valor sem arredondamento para cálculos precisos
+        calc.resultado = (typeof resultado === 'number' && isFinite(resultado)) ? resultado : 0;
       }
       console.log(`✓ Resultado calculado: ${calc.resultado}`);
       
@@ -2304,7 +2316,7 @@ recalcularTodosCalculos() {
             this.messageService.add({
               severity: 'error',
               summary: 'REPROVADO - Baixo PRNT',
-              detail: `O resultado do cálculo PRNT (${resultado.toFixed(2)}) está abaixo de 73. Material reprovado!`,
+              detail: `O resultado do cálculo PRNT (${resultado.toFixed(4)}) está abaixo de 73. Material reprovado!`,
               life: 8000,
               sticky: true
             });
@@ -2317,7 +2329,7 @@ recalcularTodosCalculos() {
             this.messageService.add({
               severity: 'success',
               summary: 'PRNT OK',
-              detail: `O resultado do cálculo PRNT (${resultado.toFixed(2)}) está dentro do padrão (≥ 73).`,
+              detail: `O resultado do cálculo PRNT (${resultado.toFixed(4)}) está dentro do padrão (≥ 73).`,
               life: 5000
             });
           }
@@ -2332,7 +2344,7 @@ recalcularTodosCalculos() {
 
   // Controlar alertas duplicados
   private podeExibirAlerta(tipo: string, valor: number): boolean {
-    const chave = `${tipo}_${valor.toFixed(2)}`;
+    const chave = `${tipo}_${valor.toFixed(4)}`;
     
     if (this.alertasExibidos.has(chave)) {
       console.log(`⏭️ Alerta ${tipo} já exibido para valor ${valor}, ignorando`);
@@ -2464,7 +2476,7 @@ recalcularTodosCalculos() {
             this.messageService.add({
               severity: 'error',
               summary: 'REPROVADO - Fechamento Baixo',
-              detail: `O resultado do Fechamento (${resultado.toFixed(2)}%) está abaixo de 97,5%. Material reprovado!`,
+              detail: `O resultado do Fechamento (${resultado.toFixed(4)}%) está abaixo de 97,5%. Material reprovado!`,
               life: 8000,
               sticky: true
             });
@@ -2477,7 +2489,7 @@ recalcularTodosCalculos() {
             this.messageService.add({
               severity: 'error',
               summary: 'REPROVADO - Fechamento Alto',
-              detail: `O resultado do Fechamento (${resultado.toFixed(2)}%) está acima de 99%. Material reprovado!`,
+              detail: `O resultado do Fechamento (${resultado.toFixed(4)}%) está acima de 99%. Material reprovado!`,
               life: 8000,
               sticky: true
             });
@@ -2490,7 +2502,7 @@ recalcularTodosCalculos() {
             this.messageService.add({
               severity: 'success',
               summary: 'Fechamento OK',
-              detail: `O resultado do Fechamento (${resultado.toFixed(2)}%) está dentro do padrão (97,5% - 99%).`,
+              detail: `O resultado do Fechamento (${resultado.toFixed(4)}%) está dentro do padrão (97,5% - 99%).`,
               life: 5000
             });
           }
@@ -3530,8 +3542,8 @@ salvarAnaliseResultados() {
  const calculos = planoDetalhes.flatMap((plano: any) =>
   (plano.calculo_ensaio_detalhes || []).map((calc: any) => ({
     calculos: calc.descricao,
-    valores: (calc.ensaios_detalhes || []).map((e: any) => this.round2(e.valor)),
-    resultados: typeof calc.resultado === 'number' ? this.round2(calc.resultado) : calc.resultado,
+    valores: (calc.ensaios_detalhes || []).map((e: any) => this.round4(e.valor)),
+    resultados: typeof calc.resultado === 'number' ? parseFloat(this.formatForDisplay(calc.resultado)) : calc.resultado,
     responsavel: (typeof calc.responsavel === 'object' && calc.responsavel !== null) ? (calc.responsavel as any).value : (calc.responsavel || null),
     digitador: this.digitador,
     ensaios_utilizados: (calc.ensaios_detalhes || []).map((e: any) => {
