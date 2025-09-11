@@ -46,7 +46,6 @@
     </ul>
 </div>
 <div class="container flex flex-column align-items-center mb-4">
-
     <div class="containerInterno w-12">
         <div @swipeAnimation>
             <div class="form-geral flex flex-column gap-3 w-12">
@@ -122,7 +121,7 @@
                                         <div class="step1">
                                             <form [formGroup]="registerForm" title="Cadastrar nova amostra" class="flex flex-column gap-4">
                                                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row" @swipeAnimation>
-                    
+                                                    <!--CARD 1-->
                                                     <p-card class="card w-4 text-center">
                                                         <ng-template #header>
                                                             <p-divider type="solid" class="divider-custom">
@@ -149,13 +148,21 @@
                                                                     <label for="float-label">Data da Amostra</label>
                                                                 </p-floatLabel>
                                                             </div>
-                    
+                                                            <div class="w-12 text-left">
+                                                                <p-floatLabel variant="on">
+                                                                    <p-datepicker variant="filled" [style]="{'width':'100%'}" id="da"
+                                                                        formControlName="dataDescarte" dateFormat="dd/mm/yy"
+                                                                        inputId="float-label" [showIcon]="true" [disabled]="true">
+                                                                    </p-datepicker>
+                                                                    <label for="float-label">Data de Descarte</label>
+                                                                </p-floatLabel>
+                                                            </div>
                                                             <div class="w-12  text-left">
                                                                 <p-floatLabel variant="on">
                                                                     <p-select inputId="float-label" [style]="{'width':'100%'}"
                                                                         [options]="finalidades" formControlName="finalidade"
                                                                         optionLabel="nome" optionValue="nome" appendTo="body"
-                                                                        [filter]="true" filterBy="value" [showClear]="true">
+                                                                        [filter]="true" filterBy="nome" [showClear]="true">
                                                                     </p-select>
                                                                     <label for="float-label">Selecione a Finalidade</label>
                                                                 </p-floatLabel>
@@ -200,7 +207,7 @@
                                                                 <p-floatLabel variant="on">
                                                                     <p-select inputId="float-label" [style]="{'width':'100%'}"
                                                                         [options]="status" formControlName="status" optionLabel="nome"
-                                                                        optionValue="nome" appendTo="body" [filter]="true" filterBy="value"
+                                                                        optionValue="nome" appendTo="body" [filter]="true" filterBy="nome"
                                                                         [showClear]="true">
                                                                     </p-select>
                                                                     <label for="float-label">Classificação</label>
@@ -211,20 +218,12 @@
                                                                     <p-select inputId="float-label" [style]="{'width':'100%'}"
                                                                         [options]="locaisColeta" formControlName="localColeta"
                                                                         optionLabel="nome" optionValue="nome" appendTo="body"
-                                                                        [filter]="true" filterBy="value" [showClear]="true">
+                                                                        [filter]="true" filterBy="nome" [showClear]="true">
                                                                     </p-select>
                                                                     <label for="float-label">Local de Coleta</label>
                                                                 </p-floatLabel>
                                                             </div>
-                                                            <div class="w-12 text-left">
-                                                                <p-floatLabel variant="on">
-                                                                    <p-datepicker variant="filled" [style]="{'width':'100%'}" id="da"
-                                                                        formControlName="dataDescarte" dateFormat="dd/mm/yy"
-                                                                        inputId="float-label" [showIcon]="true" [disabled]="true">
-                                                                    </p-datepicker>
-                                                                    <label for="float-label">Data de Descarte (Calculada Automaticamente)</label>
-                                                                </p-floatLabel>
-                                                            </div>
+                                    
                                                             <div class = "text-left">
                                                                 <div class="buttons flex flex-wrap md:flex-row justify-content-around" >
                         
@@ -308,7 +307,7 @@
                                                             </div>
                                                         </div>
                                                     </p-card>
-                    
+                                                    <!--CARD 2-->
                                                     <p-card class="card w-4 text-center">
                                                         <ng-template #header>
                                                             <p-divider type="solid" class="divider-custom">
@@ -339,7 +338,7 @@
                                                                     <p-select inputId="float-label" [style]="{'width':'100%'}"
                                                                         [options]="produtosFiltrados" formControlName="produtoAmostra"
                                                                         optionLabel="nome" optionValue="id" appendTo="body" [filter]="true"
-                                                                        filterBy="value" [showClear]="true" [editable]="true"
+                                                                        filterBy="nome" [showClear]="true" [editable]="true"
                                                                         (onChange)="onProdutoAmostraChange($event.value)">
                                                                     </p-select>
                                                                     <label for="float-label">Produto de Amostra</label>
@@ -399,7 +398,7 @@
                                                                     <p-select inputId="float-label" [style]="{'width':'100%'}"
                                                                         [options]="fornecedores" formControlName="fornecedor"
                                                                         optionLabel="nome" optionValue="nome" appendTo="body"
-                                                                        [filter]="true" filterBy="value" [showClear]="true">
+                                                                        [filter]="true" filterBy="nome" [showClear]="true">
                                                                     </p-select>
                                                                     <label for="float-label">Fornecedor</label>
                                                                 </p-floatLabel>
@@ -428,8 +427,8 @@
                                                                 <p-floatLabel variant="on">
                                                                     <p-select inputId="float-label" [style]="{'width':'100%'}"
                                                                         [options]="periodos" formControlName="periodoTurno"
-                                                                        optionLabel="nome" optionValue="id" appendTo="nome" [filter]="true"
-                                                                        filterBy="value" [showClear]="true">
+                                                                        optionLabel="nome" optionValue="id" appendTo="body" [filter]="true"
+                                                                        filterBy="nome" [showClear]="true">
                                                                     </p-select>
                                                                     <label for="float-label">Periodicidade</label>
                                                                 </p-floatLabel>
@@ -460,7 +459,7 @@
                                                             </div>
                                                         </div>
                                                     </p-card>
-                    
+                                                    <!--CARD3-->
                                                     <p-card class="card w-4 text-center">
                                                         <ng-template #header>
                                                             <p-divider type="solid" class="divider-custom">

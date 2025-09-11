@@ -1285,7 +1285,9 @@ submitAmostra() {
       if (this.uploadedFilesWithInfo.length > 0) {
         this.uploadImages();
       } else {
-        this.activeStep = 3; // Avança para o próximo passo se não tiver imagens
+        this.clearForm();
+        this.loadAmostras();
+        this.activeStep = 3;
       }
     },
     error: (err) => {

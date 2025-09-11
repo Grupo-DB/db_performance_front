@@ -259,6 +259,7 @@
                                             <i class="pi pi-file-edit text-primary"></i>
                                             <span class="font-bold text-lg">{{ ensaio.descricao }}</span>
                                             <span class="text-sm text-600 ml-2">({{ ensaio.unidade }})</span>
+                                            <span class="text-sm text-600 ml-2" *ngIf="analise.amostra_detalhes?.material==='cal'">({{ ensaio.norma }})</span>
                                         </div>
                                     </td>
                                     <td style="text-align: end;">

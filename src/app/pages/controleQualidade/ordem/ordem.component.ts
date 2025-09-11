@@ -251,11 +251,11 @@ export class OrdemComponent implements OnInit {
   {
     this.registerOrdemForm = new FormGroup<OrdemForm>({
       data: new FormControl('', [Validators.required]),
-      numero: new FormControl('', [Validators.required]),
-      planoAnalise: new FormControl('', [Validators.required]),
-      responsavel: new FormControl('', [Validators.required]),
-      digitador: new FormControl('', [Validators.required]),
-      classificacao: new FormControl('', [Validators.required]),
+      numero: new FormControl('', ),
+      planoAnalise: new FormControl('', ),
+      responsavel: new FormControl('', ),
+      digitador: new FormControl('', ),
+      classificacao: new FormControl('', ),
     });
      this.laudoForm  = this.fb.group({
       id: [''],
@@ -604,7 +604,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
   analisesFiltradas: any[] = []; // array para exibir na tabela
   materiaisSelecionados: string[] = []; // valores escolhidos no multiselect
   loadAnalises(): void {
-    this.analiseService.getAnalises().subscribe(
+    this.analiseService.getAnalisesAbertas().subscribe(
       (response: any[]) => {
         // Mapeia e cria campos "planos" para facilitar o filtro global
         this.analises = response.map((analise: any) => ({

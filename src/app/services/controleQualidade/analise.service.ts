@@ -20,6 +20,10 @@ export class AnaliseService {
   getAnalises(): Observable<any>{
     return this.httpClient.get<any[]>(this.analiseUrl);   
   }
+  getAnalisesAbertas(): Observable<any>{
+    const url = `${this.analiseUrl}abertas/`;
+    return this.httpClient.get<any[]>(url);   
+  }
   getAnaliseById(id: number): Observable<Analise> {
     const url = `${this.analiseUrl}${id}/`;
     return this.httpClient.get<Analise>(url);
