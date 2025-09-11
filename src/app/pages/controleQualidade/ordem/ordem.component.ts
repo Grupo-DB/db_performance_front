@@ -143,6 +143,7 @@ export class OrdemComponent implements OnInit {
 
   laudoForm!: FormGroup;
   modalLaudo: boolean = false;
+  modalImpressao: boolean = false;
 
   ordens: Ordem[]=[];
   analises: any[] = [];
@@ -1353,38 +1354,72 @@ gerarNumero(materialNome: string, sequencial: number): string {
     )
   }
 
-   abrirModalLaudo(amostra_detalhes: any) {
-    
-    console.log('laudo', amostra_detalhes);
-    this.amostra_detalhes_selecionada = amostra_detalhes;
+  abrirModalLaudo(amostra_detalhes: any) {
+  
+  console.log('laudo', amostra_detalhes);
+  this.amostra_detalhes_selecionada = amostra_detalhes;
 
-    while (this.ensaios_laudo.length > 0) {
+  while (this.ensaios_laudo.length > 0) {
+      this.ensaios_laudo.pop(); // Removes elements one by one from the end
+  }
+
+    if(amostra_detalhes.ultimo_ensaio){
+      amostra_detalhes.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
+        this.ensaios_laudo.push({
+            id: ensaios_utilizados.id,
+            descricao: ensaios_utilizados.descricao,
+            garantia: ensaios_utilizados.garantia
+          });
+      });
+    }
+    if(amostra_detalhes.ultimo_calculo){
+      amostra_detalhes.ultimo_calculo.forEach((ultimo_calculo: any) => {
+        ultimo_calculo.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
+          this.ensaios_laudo.push({
+            id: ensaios_utilizados.id,
+            descricao: ensaios_utilizados.descricao,
+            garantia: ensaios_utilizados.garantia
+          });
+        });
+      });
+    }
+    this.modalLaudo = true;
+  }
+
+  abrirModalImpressao(amostra_detalhes: any) {
+  
+    this.amostra_detalhes_selecionada = amostra_detalhes;
+    this.ensaios_laudo.pop(); // Removes elements one by one from the end
+
+    while (this.ensaios_selecionados.length > 0) {
         this.ensaios_laudo.pop(); // Removes elements one by one from the end
     }
 
-      if(amostra_detalhes.ultimo_ensaio){
-        amostra_detalhes.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
+    if(amostra_detalhes.expressa_detalhes){
+      amostra_detalhes.expressa_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
+        this.ensaios_laudo.push({
+            id: ensaio_detalhes.id,
+            descricao: ensaio_detalhes.descricao,
+          });
+      });
+    }
+    if(amostra_detalhes.ordem_detalhes){
+      amostra_detalhes.ordem_detalhes.plano_detalhes.forEach((plano_detalhes: any) => {
+        plano_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
           this.ensaios_laudo.push({
-              id: ensaios_utilizados.id,
-              descricao: ensaios_utilizados.descricao,
-              garantia: ensaios_utilizados.garantia
-            });
-        });
-      }
-      if(amostra_detalhes.ultimo_calculo){
-        amostra_detalhes.ultimo_calculo.forEach((ultimo_calculo: any) => {
-          ultimo_calculo.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
-            this.ensaios_laudo.push({
-              id: ensaios_utilizados.id,
-              descricao: ensaios_utilizados.descricao,
-              garantia: ensaios_utilizados.garantia
-            });
+            id: ensaio_detalhes.id,
+            descricao: ensaio_detalhes.descricao,
           });
         });
-      }
-      
-    // }
-    this.modalLaudo = true;
+      });
+    }
+
+    this.modalImpressao = true;
+  }
+
+
+  imprimirSelecionados() {
+    this.imprimirCalculoPDF(this.amostra_detalhes_selecionada);
   }
 
   salvarSelecionados() {
@@ -2916,6 +2951,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
   }
 
   imprimirCalculoPDF(analise: any) {
+    console.log('kfkdjfsd', this.ensaios_selecionados);
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   let contadorLinhas = 45;
   autoTable(doc, {
@@ -2950,39 +2986,45 @@ gerarNumero(materialNome: string, sequencial: number): string {
   if(analise.expressa_detalhes){
     
     analise.expressa_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
-      // monta a linha de forma dinâmica
-      const body: any[] = [];
-      const linha: any[] = [];
-      const linhaVazia: any[] = [];
 
-      // primeira célula: descrição
-      linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
-      linha.push({ content: 'Técnico', styles: { halign: "center" } });
+      const existe = this.ensaios_selecionados.some(item => item.id === ensaio_detalhes.id);
+      if(existe){
 
-      linhaVazia.push({ content: '', styles: { halign: "center" } });
-      linhaVazia.push({ content: '', styles: { halign: "center" } });
+        const body: any[] = [];
+        const linha: any[] = [];
+        const linhaVazia: any[] = [];
 
-      // adiciona cada variável como coluna
-      ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
-        linha.push({ content: variavel_detalhes.nome, styles: { halign: "center",  } });
+        // primeira célula: descrição
+        linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
+        linha.push({ content: 'Técnico', styles: { halign: "center" } });
+
         linhaVazia.push({ content: '', styles: { halign: "center" } });
-      });
+        linhaVazia.push({ content: '', styles: { halign: "center" } });
 
-      // última célula: descrição novamente (ou resultado final)
-      linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold" } });
-      linhaVazia.push({ content: '', styles: { halign: "center" } });
+        // adiciona cada variável como coluna
+        ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
+          linha.push({ content: variavel_detalhes.nome, styles: { halign: "center",  } });
+          linhaVazia.push({ content: '', styles: { halign: "center" } });
+        });
 
-      // adiciona a linha no body
-      body.push(linha);
-      body.push(linhaVazia);
-      // gera a tabela
-      autoTable(doc, {
-        startY: contadorLinhas,
-        body,
-        theme: "grid",
-        styles: { fontSize: 8, cellPadding: 2 }
-      });
-      contadorLinhas+=20;
+        // última célula: descrição novamente (ou resultado final)
+        linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold" } });
+        linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+        // adiciona a linha no body
+        body.push(linha);
+        body.push(linhaVazia);
+        // gera a tabela
+        autoTable(doc, {
+          startY: contadorLinhas,
+          body,
+          theme: "grid",
+          styles: { fontSize: 8, cellPadding: 2 }
+        });
+        contadorLinhas+=20;
+
+      }
+      
     });
 
   }else{
@@ -2991,63 +3033,31 @@ gerarNumero(materialNome: string, sequencial: number): string {
             
       //aqui é o ennsaio_detalhes
       plano_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
-        const body: any[] = [];
-        const linha: any[] = [];
-        const linhaVazia: any[] = [];
-        
-        linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
-        linha.push({ content: 'Técnico', styles: { halign: "center" } });
-
-        linhaVazia.push({ content: '', styles: { halign: "center" } });
-        linhaVazia.push({ content: '', styles: { halign: "center" } });
-
-          ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
-            console.log('2')
-            console.log(variavel_detalhes)
-            linha.push({ content: variavel_detalhes.nome, styles: { halign: "center",  } });
-            linhaVazia.push({ content: '', styles: { halign: "center" } });
-          });    
-
-        linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
-        linhaVazia.push({ content: '', styles: { halign: "center" } });
-        
-        body.push(linha);
-        body.push(linhaVazia);
-
-        autoTable(doc, {
-          startY: contadorLinhas,
-          body,
-          theme: "grid",
-          styles: { fontSize: 8, cellPadding: 2 }
-        });
-
-        contadorLinhas+=20;
-      });
-
-        
-      plano_detalhes.calculo_ensaio_detalhes.forEach((calculo_ensaio_detalhes: any) => {
-        calculo_ensaio_detalhes.ensaios_detalhes.forEach((ensaio_detalhes: any) => {
+        const existe = this.ensaios_selecionados.some(item => item.id === ensaio_detalhes.id);
+        if(existe){
           const body: any[] = [];
           const linha: any[] = [];
           const linhaVazia: any[] = [];
-
+          
           linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
           linha.push({ content: 'Técnico', styles: { halign: "center" } });
 
           linhaVazia.push({ content: '', styles: { halign: "center" } });
           linhaVazia.push({ content: '', styles: { halign: "center" } });
 
-          ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
-            linha.push({ content: variavel_detalhes.nome, styles: { halign: "center",  } });
-            linhaVazia.push({ content: '', styles: { halign: "center" } });
-          });
+            ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
+              console.log('2')
+              console.log(variavel_detalhes)
+              linha.push({ content: variavel_detalhes.nome, styles: { halign: "center",  } });
+              linhaVazia.push({ content: '', styles: { halign: "center" } });
+            });    
 
           linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
           linhaVazia.push({ content: '', styles: { halign: "center" } });
-
+          
           body.push(linha);
           body.push(linhaVazia);
-      
+
           autoTable(doc, {
             startY: contadorLinhas,
             body,
@@ -3056,6 +3066,44 @@ gerarNumero(materialNome: string, sequencial: number): string {
           });
 
           contadorLinhas+=20;
+        }
+      });
+
+        
+      plano_detalhes.calculo_ensaio_detalhes.forEach((calculo_ensaio_detalhes: any) => {
+        calculo_ensaio_detalhes.ensaios_detalhes.forEach((ensaio_detalhes: any) => {
+          const existe = this.ensaios_selecionados.some(item => item.id === ensaio_detalhes.id);
+          if(existe){
+            const body: any[] = [];
+            const linha: any[] = [];
+            const linhaVazia: any[] = [];
+
+            linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
+            linha.push({ content: 'Técnico', styles: { halign: "center" } });
+
+            linhaVazia.push({ content: '', styles: { halign: "center" } });
+            linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+            ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
+              linha.push({ content: variavel_detalhes.nome, styles: { halign: "center",  } });
+              linhaVazia.push({ content: '', styles: { halign: "center" } });
+            });
+
+            linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
+            linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+            body.push(linha);
+            body.push(linhaVazia);
+        
+            autoTable(doc, {
+              startY: contadorLinhas,
+              body,
+              theme: "grid",
+              styles: { fontSize: 8, cellPadding: 2 }
+            });
+
+            contadorLinhas+=20;
+          }
         });
         
       });
@@ -3132,8 +3180,11 @@ gerarNumero(materialNome: string, sequencial: number): string {
   }
 
   getMenuItems(analise: any) {
+
+
     const menuItems = [
-      { label: 'IMPRIMIR', icon: 'pi pi-print', command: () => this.imprimirCalculoPDF(analise) },
+
+      { label: 'IMPRIMIR', icon: 'pi pi-print', command: () => this.abrirModalImpressao(analise) },
       { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(analise) },
       { label: 'Excluir', icon: 'pi pi-trash', command: () => { 
         if (analise.expressa_detalhes) {
