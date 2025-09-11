@@ -178,6 +178,10 @@ export class OrdemComponent implements OnInit {
   editFormVisible: boolean = false;
   editForm!: FormGroup;
 
+
+  modalVisualizar: boolean = false;
+  analiseSelecionada: any;
+
   tipoFiltro = [
     { value: 'Expressa' },
     { value: 'Plano' },
@@ -291,6 +295,17 @@ export class OrdemComponent implements OnInit {
     this.loadPlanosAnalise();
     this.carregarEnsaiosECalculosDisponiveis();
     this.configurarFormularioInicial();
+  }
+
+  visualizar(analise: any) {
+    this.analiseSelecionada = analise;
+    this.modalVisualizar = true;
+    console.log('Drawer deve abrir', analise); 
+  }
+
+  imprimirAnaliseVisualizar() {
+
+    alert('vai imprimir');
   }
 
   abrirModalEdicao(amostra: Amostra) {
@@ -3184,7 +3199,8 @@ gerarNumero(materialNome: string, sequencial: number): string {
 
     const menuItems = [
 
-      { label: 'IMPRIMIR', icon: 'pi pi-print', command: () => this.abrirModalImpressao(analise) },
+      { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(analise), tooltip: 'Visualizar OS', tooltipPosition: 'top' },
+      { label: 'Imprimir', icon: 'pi pi-print', command: () => this.abrirModalImpressao(analise) },
       { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(analise) },
       { label: 'Excluir', icon: 'pi pi-trash', command: () => { 
         if (analise.expressa_detalhes) {
