@@ -1,4 +1,15 @@
 @import "primeicons/primeicons.css";
+
+::ng-deep .custom-drawer .p-drawer-header {
+  justify-content: center; /* centraliza o conteúdo */
+}
+
+::ng-deep .custom-drawer .p-drawer-header .p-drawer-title {
+  flex: unset; /* evita que ocupe espaço lateral */
+  text-align: center;
+  width: 100%;
+}
+
 :host ::ng-deep .p-card-body{
     background-color: #f8f9fa;
     border-radius: 0 0 10px 10px;

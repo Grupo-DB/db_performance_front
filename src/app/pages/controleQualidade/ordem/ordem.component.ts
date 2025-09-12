@@ -280,7 +280,6 @@ export class OrdemComponent implements OnInit {
       
     });
   }
-  
 
   ngOnInit() {
     this.receberDadosAmostra();
@@ -300,13 +299,8 @@ export class OrdemComponent implements OnInit {
   visualizar(analise: any) {
     this.analiseSelecionada = analise;
     this.modalVisualizar = true;
-    console.log('Drawer deve abrir', analise); 
   }
 
-  imprimirAnaliseVisualizar() {
-
-    alert('vai imprimir');
-  }
 
   abrirModalEdicao(amostra: Amostra) {
     // console.log('azqaui');
@@ -1432,6 +1426,87 @@ gerarNumero(materialNome: string, sequencial: number): string {
     this.modalImpressao = true;
   }
 
+  imprimirVisualizar(analise: any){
+    const doc = new jsPDF();
+
+    let y = 10; // posição inicial Y
+
+    doc.setFontSize(20);
+    const pageWidth = doc.internal.pageSize.getWidth(); // largura da página
+    doc.text("OS", pageWidth / 2, y, { align: "center" });    
+    y += 15;
+
+    // --- Dados ---
+    doc.setFontSize(16);
+    doc.text("Dados", 10, y);
+    y += 10;
+
+    doc.setFontSize(12);
+    doc.text(`Número: ${analise.amostra_detalhes?.numero || 'N/D'}`, 10, y); y += 8;
+    doc.text(`Classificação: ${analise.amostra_detalhes?.expressa_detalhes?.classificacao 
+      || analise.amostra_detalhes?.ordem_detalhes?.classificacao || 'N/D'}`, 10, y); y += 8;
+    doc.text(`Responsável: ${analise.amostra_detalhes?.expressa_detalhes?.responsavel 
+      || analise.amostra_detalhes?.ordem_detalhes?.responsavel || 'N/D'}`, 10, y); y += 8;
+
+    const dataAbertura = analise.amostra_detalhes?.expressa_detalhes?.data 
+      || analise.amostra_detalhes?.ordem_detalhes?.data;
+    doc.text(`Data de Abertura: ${dataAbertura ? new Date(dataAbertura).toLocaleDateString('pt-BR') : 'N/D'}`, 10, y); 
+    y += 15;
+
+    // --- Cálculos ---
+    doc.setFontSize(16);
+    doc.text("Cálculos", 10, y); 
+    y += 10;
+
+    doc.setFontSize(12);
+    if (analise?.ultimo_calculo?.length > 0) {
+      analise.ultimo_calculo.forEach((calc: any) => {
+        doc.text(`Descrição: ${calc.calculos}`, 10, y); y += 8;
+        doc.text(`Resultado: ${calc.resultados}`, 10, y); y += 8;
+        y += 4; // espaço extra
+        if(y>=290){
+          doc.addPage();
+          y=10;
+        }
+      });
+    } else {
+      doc.text("N/D", 10, y);
+      y += 8;
+      if(y>=290){
+        doc.addPage();
+        y=10;
+      }
+    }
+
+    y += 10;
+
+    // --- Ensaios ---
+    doc.setFontSize(16);
+    doc.text("Ensaios", 10, y); 
+    y += 10;
+
+    doc.setFontSize(12);
+    if (analise?.ultimo_ensaio?.ensaios_utilizados?.length > 0) {
+      analise.ultimo_ensaio.ensaios_utilizados.forEach((ensaio: any) => {
+        doc.text(`Descrição: ${ensaio.descricao}`, 10, y); y += 8;
+        doc.text(`Resultado: ${ensaio.valor}`, 10, y); y += 8;
+        y += 4;
+        if(y>=290){
+          doc.addPage();
+          y=10;
+        }
+      });
+    } else {
+      doc.text("N/D", 10, y);
+      if(y>=290){
+        doc.addPage();
+        y=10;
+      }
+    }
+
+    const blobUrl = doc.output("bloburl");
+    window.open(blobUrl, "_blank");
+  }
 
   imprimirSelecionados() {
     this.imprimirCalculoPDF(this.amostra_detalhes_selecionada);
@@ -1455,6 +1530,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
     }
   }
 
+  ///////AQUIIII
    imprimirLaudoCalcPDF(amostra_detalhes_selecionada: any) {
 
     const doc = new jsPDF({ 
