@@ -143,6 +143,7 @@ export class OrdemComponent implements OnInit {
 
   laudoForm!: FormGroup;
   modalLaudo: boolean = false;
+  modalImpressao: boolean = false;
 
   ordens: Ordem[]=[];
   analises: any[] = [];
@@ -176,6 +177,10 @@ export class OrdemComponent implements OnInit {
 
   editFormVisible: boolean = false;
   editForm!: FormGroup;
+
+
+  modalVisualizar: boolean = false;
+  analiseSelecionada: any;
 
   tipoFiltro = [
     { value: 'Expressa' },
@@ -290,6 +295,17 @@ export class OrdemComponent implements OnInit {
     this.loadPlanosAnalise();
     this.carregarEnsaiosECalculosDisponiveis();
     this.configurarFormularioInicial();
+  }
+
+  visualizar(analise: any) {
+    this.analiseSelecionada = analise;
+    this.modalVisualizar = true;
+    console.log('Drawer deve abrir', analise); 
+  }
+
+  imprimirAnaliseVisualizar() {
+
+    alert('vai imprimir');
   }
 
   abrirModalEdicao(amostra: Amostra) {
@@ -1353,38 +1369,72 @@ gerarNumero(materialNome: string, sequencial: number): string {
     )
   }
 
-   abrirModalLaudo(amostra_detalhes: any) {
-    
-    console.log('laudo', amostra_detalhes);
-    this.amostra_detalhes_selecionada = amostra_detalhes;
+  abrirModalLaudo(amostra_detalhes: any) {
+  
+  console.log('laudo', amostra_detalhes);
+  this.amostra_detalhes_selecionada = amostra_detalhes;
 
-    while (this.ensaios_laudo.length > 0) {
+  while (this.ensaios_laudo.length > 0) {
+      this.ensaios_laudo.pop(); // Removes elements one by one from the end
+  }
+
+    if(amostra_detalhes.ultimo_ensaio){
+      amostra_detalhes.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
+        this.ensaios_laudo.push({
+            id: ensaios_utilizados.id,
+            descricao: ensaios_utilizados.descricao,
+            garantia: ensaios_utilizados.garantia
+          });
+      });
+    }
+    if(amostra_detalhes.ultimo_calculo){
+      amostra_detalhes.ultimo_calculo.forEach((ultimo_calculo: any) => {
+        ultimo_calculo.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
+          this.ensaios_laudo.push({
+            id: ensaios_utilizados.id,
+            descricao: ensaios_utilizados.descricao,
+            garantia: ensaios_utilizados.garantia
+          });
+        });
+      });
+    }
+    this.modalLaudo = true;
+  }
+
+  abrirModalImpressao(amostra_detalhes: any) {
+  
+    this.amostra_detalhes_selecionada = amostra_detalhes;
+    this.ensaios_laudo.pop(); // Removes elements one by one from the end
+
+    while (this.ensaios_selecionados.length > 0) {
         this.ensaios_laudo.pop(); // Removes elements one by one from the end
     }
 
-      if(amostra_detalhes.ultimo_ensaio){
-        amostra_detalhes.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
+    if(amostra_detalhes.expressa_detalhes){
+      amostra_detalhes.expressa_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
+        this.ensaios_laudo.push({
+            id: ensaio_detalhes.id,
+            descricao: ensaio_detalhes.descricao,
+          });
+      });
+    }
+    if(amostra_detalhes.ordem_detalhes){
+      amostra_detalhes.ordem_detalhes.plano_detalhes.forEach((plano_detalhes: any) => {
+        plano_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
           this.ensaios_laudo.push({
-              id: ensaios_utilizados.id,
-              descricao: ensaios_utilizados.descricao,
-              garantia: ensaios_utilizados.garantia
-            });
-        });
-      }
-      if(amostra_detalhes.ultimo_calculo){
-        amostra_detalhes.ultimo_calculo.forEach((ultimo_calculo: any) => {
-          ultimo_calculo.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
-            this.ensaios_laudo.push({
-              id: ensaios_utilizados.id,
-              descricao: ensaios_utilizados.descricao,
-              garantia: ensaios_utilizados.garantia
-            });
+            id: ensaio_detalhes.id,
+            descricao: ensaio_detalhes.descricao,
           });
         });
-      }
-      
-    // }
-    this.modalLaudo = true;
+      });
+    }
+
+    this.modalImpressao = true;
+  }
+
+
+  imprimirSelecionados() {
+    this.imprimirCalculoPDF(this.amostra_detalhes_selecionada);
   }
 
   salvarSelecionados() {
@@ -2929,157 +2979,170 @@ gerarNumero(materialNome: string, sequencial: number): string {
   }
 
   imprimirCalculoPDF(analise: any) {
-  const doc = new jsPDF({ unit: "mm", format: "a4" });
-  let contadorLinhas = 45;
-  autoTable(doc, {
-    startY: 10,
-    body: [
-      [
-        { content: "Ordem de Serviço", styles: { halign: "left", fontStyle: "bold" } },
-        { content: analise.numero, styles: { halign: "left", fontStyle: "bold" } },
-        { content: "Data de Entrada: "+analise.data_entrada, styles: { halign: "left" } },
+    console.log('kfkdjfsd', this.ensaios_selecionados);
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
+    let contadorLinhas = 45;
+    autoTable(doc, {
+      startY: 10,
+      body: [
+        [
+          { content: "Ordem de Serviço", styles: { halign: "left", fontStyle: "bold" } },
+          { content: analise.numero, styles: { halign: "left", fontStyle: "bold" } },
+          { content: "Data de Entrada: "+analise.data_entrada, styles: { halign: "left" } },
+        ],
+        [
+          { content: "Material da Amostra: "+analise.material, colSpan: 2, styles: { halign: "left" } },
+          { content: "Data de Amostra: "+analise.data_coleta, styles: { halign: "left" } }
+        ],
+        [
+          { content: "Tipo: "+analise?.tipo_amostragem, styles: { halign: "left" } },
+          { content: "Sub-tipo: "+analise?.subtipo, styles: { halign: "left" } },
+          { content: "Data de Conclusão: ", styles: { halign: "left" } }
+        ],
+        [
+          { content: "Local da Coleta: "+analise.local_coleta, colSpan: 2, styles: { halign: "left" } },
+          { content: "Data de Descarte: ", styles: { halign: "left", fontStyle: "bold" } }
+        ]
       ],
-      [
-        { content: "Material da Amostra: "+analise.material, colSpan: 2, styles: { halign: "left" } },
-        { content: "Data de Amostra: "+analise.data_coleta, styles: { halign: "left" } }
-      ],
-      [
-        { content: "Tipo: "+analise?.tipo_amostragem, styles: { halign: "left" } },
-        { content: "Sub-tipo: "+analise?.subtipo, styles: { halign: "left" } },
-        { content: "Data de Conclusão: ", styles: { halign: "left" } }
-      ],
-      [
-        { content: "Local da Coleta: "+analise.local_coleta, colSpan: 2, styles: { halign: "left" } },
-        { content: "Data de Descarte: ", styles: { halign: "left", fontStyle: "bold" } }
-      ]
-    ],
-    theme: "grid",
-    styles: {
-      fontSize: 9,
-      cellPadding: 2
-    }
-  });
-
-  if(analise.expressa_detalhes){
-    
-    analise.expressa_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
-      // monta a linha de forma dinâmica
-      const body: any[] = [];
-      const linha: any[] = [];
-      const linhaVazia: any[] = [];
-
-      // primeira célula: descrição
-      linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
-      linha.push({ content: 'Técnico', styles: { halign: "center" } });
-
-      linhaVazia.push({ content: '', styles: { halign: "center" } });
-      linhaVazia.push({ content: '', styles: { halign: "center" } });
-
-      // adiciona cada variável como coluna
-      ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
-        linha.push({ content: variavel_detalhes.nome, styles: { halign: "center",  } });
-        linhaVazia.push({ content: '', styles: { halign: "center" } });
-      });
-
-      // última célula: descrição novamente (ou resultado final)
-      linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold" } });
-      linhaVazia.push({ content: '', styles: { halign: "center" } });
-
-      // adiciona a linha no body
-      body.push(linha);
-      body.push(linhaVazia);
-      // gera a tabela
-      autoTable(doc, {
-        startY: contadorLinhas,
-        body,
-        theme: "grid",
-        styles: { fontSize: 8, cellPadding: 2 }
-      });
-      contadorLinhas+=20;
+      theme: "grid",
+      styles: {
+        fontSize: 9,
+        cellPadding: 2
+      }
     });
 
-  }else{
-    
-    analise.ordem_detalhes.plano_detalhes.forEach((plano_detalhes: any) => {
-            
-      //aqui é o ennsaio_detalhes
-      plano_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
-        const body: any[] = [];
-        const linha: any[] = [];
-        const linhaVazia: any[] = [];
-        
-        linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
-        linha.push({ content: 'Técnico', styles: { halign: "center" } });
+    if(analise.expressa_detalhes){
+      
+      analise.expressa_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
 
-        linhaVazia.push({ content: '', styles: { halign: "center" } });
-        linhaVazia.push({ content: '', styles: { halign: "center" } });
+        const existe = this.ensaios_selecionados.some(item => item.id === ensaio_detalhes.id);
+        if(existe){
 
-          ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
-            console.log('2')
-            console.log(variavel_detalhes)
-            linha.push({ content: variavel_detalhes.nome, styles: { halign: "center",  } });
-            linhaVazia.push({ content: '', styles: { halign: "center" } });
-          });    
-
-        linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
-        linhaVazia.push({ content: '', styles: { halign: "center" } });
-        
-        body.push(linha);
-        body.push(linhaVazia);
-
-        autoTable(doc, {
-          startY: contadorLinhas,
-          body,
-          theme: "grid",
-          styles: { fontSize: 8, cellPadding: 2 }
-        });
-
-        contadorLinhas+=20;
-      });
-
-        
-      plano_detalhes.calculo_ensaio_detalhes.forEach((calculo_ensaio_detalhes: any) => {
-        calculo_ensaio_detalhes.ensaios_detalhes.forEach((ensaio_detalhes: any) => {
           const body: any[] = [];
           const linha: any[] = [];
           const linhaVazia: any[] = [];
 
+          // primeira célula: descrição
           linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
           linha.push({ content: 'Técnico', styles: { halign: "center" } });
 
           linhaVazia.push({ content: '', styles: { halign: "center" } });
           linhaVazia.push({ content: '', styles: { halign: "center" } });
 
+          // adiciona cada variável como coluna
           ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
             linha.push({ content: variavel_detalhes.nome, styles: { halign: "center",  } });
             linhaVazia.push({ content: '', styles: { halign: "center" } });
           });
 
-          linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
+          // última célula: descrição novamente (ou resultado final)
+          linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold" } });
           linhaVazia.push({ content: '', styles: { halign: "center" } });
 
+          // adiciona a linha no body
           body.push(linha);
           body.push(linhaVazia);
-      
+          // gera a tabela
           autoTable(doc, {
             startY: contadorLinhas,
             body,
             theme: "grid",
             styles: { fontSize: 8, cellPadding: 2 }
           });
-
           contadorLinhas+=20;
-        });
+
+        }
         
       });
-    });
-  }
 
-  
-    const blobUrl = doc.output("bloburl");
-    window.open(blobUrl, "_blank");
-  
-  //   // doc.save("Etiqueta.pdf");
+    }else{
+      
+      analise.ordem_detalhes.plano_detalhes.forEach((plano_detalhes: any) => {
+              
+        //aqui é o ennsaio_detalhes
+        plano_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
+          const existe = this.ensaios_selecionados.some(item => item.id === ensaio_detalhes.id);
+          if(existe){
+            const body: any[] = [];
+            const linha: any[] = [];
+            const linhaVazia: any[] = [];
+            
+            linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
+            linha.push({ content: 'Técnico', styles: { halign: "center" } });
+
+            linhaVazia.push({ content: '', styles: { halign: "center" } });
+            linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+              ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
+                console.log('2')
+                console.log(variavel_detalhes)
+                linha.push({ content: variavel_detalhes.nome, styles: { halign: "center",  } });
+                linhaVazia.push({ content: '', styles: { halign: "center" } });
+              });    
+
+            linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
+            linhaVazia.push({ content: '', styles: { halign: "center" } });
+            
+            body.push(linha);
+            body.push(linhaVazia);
+
+            autoTable(doc, {
+              startY: contadorLinhas,
+              body,
+              theme: "grid",
+              styles: { fontSize: 8, cellPadding: 2 }
+            });
+
+            contadorLinhas+=20;
+          }
+        });
+
+          
+        plano_detalhes.calculo_ensaio_detalhes.forEach((calculo_ensaio_detalhes: any) => {
+          calculo_ensaio_detalhes.ensaios_detalhes.forEach((ensaio_detalhes: any) => {
+            const existe = this.ensaios_selecionados.some(item => item.id === ensaio_detalhes.id);
+            if(existe){
+              const body: any[] = [];
+              const linha: any[] = [];
+              const linhaVazia: any[] = [];
+
+              linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
+              linha.push({ content: 'Técnico', styles: { halign: "center" } });
+
+              linhaVazia.push({ content: '', styles: { halign: "center" } });
+              linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+              ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
+                linha.push({ content: variavel_detalhes.nome, styles: { halign: "center",  } });
+                linhaVazia.push({ content: '', styles: { halign: "center" } });
+              });
+
+              linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
+              linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+              body.push(linha);
+              body.push(linhaVazia);
+          
+              autoTable(doc, {
+                startY: contadorLinhas,
+                body,
+                theme: "grid",
+                styles: { fontSize: 8, cellPadding: 2 }
+              });
+
+              contadorLinhas+=20;
+            }
+          });
+          
+        });
+      });
+    }
+
+    
+      const blobUrl = doc.output("bloburl");
+      window.open(blobUrl, "_blank");
+    
+    //   // doc.save("Etiqueta.pdf");
   }
 
   excluirAmostraOrdem(id: any): void {
@@ -3145,18 +3208,22 @@ gerarNumero(materialNome: string, sequencial: number): string {
   }
 
   getMenuItems(analise: any) {
+
+
     const menuItems = [
-      { label: 'IMPRIMIR', icon: 'pi pi-print', command: () => this.imprimirCalculoPDF(analise) },
-      { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(analise) },
+
+      { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(analise), tooltip: 'Visualizar OS', tooltipPosition: 'top' },
+      { label: 'Imprimir', icon: 'pi pi-print', command: () => this.abrirModalImpressao(analise.amostra_detalhes) },
+      { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(analise.amostra_detalhes) },
       { label: 'Excluir', icon: 'pi pi-trash', command: () => { 
         if (analise.expressa_detalhes) {
-          this.excluirAmostraExpressa(analise.expressa_detalhes.id);
+          this.excluirAmostraExpressa(analise.amostra_detalhes.expressa_detalhes.id);
         } else {
-          this.excluirAmostraOrdem(analise.ordem_detalhes.id);
+          this.excluirAmostraOrdem(analise.amostra_detalhes.ordem_detalhes.id);
         }} 
       },
-      { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise) },
-      { label: 'Duplicata', icon: 'pi pi-file-import', command: () => this.duplicata(analise) },
+      { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise.amostra_detalhes) },
+      { label: 'Duplicata', icon: 'pi pi-file-import', command: () => this.duplicata(analise.amostra_detalhes) },
     ];
 
     return menuItems;
