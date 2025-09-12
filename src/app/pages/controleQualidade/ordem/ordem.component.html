@@ -254,7 +254,7 @@
                                         'responsavel'
                                     ]"
                                 >
-                                <ng-template pTemplate="caption">
+                                    <ng-template pTemplate="caption">
                                     <div class="step1 flex flex-column w-12 justify-content-end lg:w-12 lg:flex-row">
                                         <div class="w-2 text-left">
                                             <p-multiselect
@@ -353,224 +353,224 @@
                                             </p-floatlabel>
                                         </div>
                                     </div>
-                                </ng-template>
-                                <ng-template pTemplate="header">
-                                    <tr class="tabela">
-                                        <th style="width: 10%; text-align: left;">Material</th>
-                                        <th style="width: 15%; text-align: left;" type="text"field="fornecedor" display="menu">Número</th>
-                                        <th pSortableColumn="data_entrada" style="width: 10%;">
-                                            <div class="flex justify-between items-left">
-                                                Data de Abertura
-                                                <p-sortIcon field="data_entrada" />
-                                                <p-columnFilter 
-                                                    type="date" 
-                                                    field="data_entrada" 
-                                                    display="menu"  
-                                                    class="ml-auto" 
-                                                    showMenu="false" />
-                                            </div>
-                                        </th>
-                                        <th style="width: 15%; text-align: left;" type="text" field="numero" display="menu">Classificação da OS</th>
-                                        <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">Responsável</th>
-                                        <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">Tipo</th>
-                                        <th style="width: 24%; text-align: center;" type="text" field="acoes"display="menu">Opções</th>
-                                        <th style="width: 2%; text-align: center;" type="text" field="finalizada" display="menu">Finalizada</th>
-                                        <th style="width: 2%; text-align: center;" type="text" field="laudo" display="menu">Laudo</th>
-                                        <th style="width: 2%; text-align: center;" type="text" field="aprovada" display="menu">Aprovada</th>
-                                      
-                                    </tr>
-                                </ng-template>
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr class="tabela">
+                                            <th style="width: 10%; text-align: left;">Material</th>
+                                            <th style="width: 15%; text-align: left;" type="text"field="fornecedor" display="menu">Número</th>
+                                            <th pSortableColumn="data_entrada" style="width: 10%;">
+                                                <div class="flex justify-between items-left">
+                                                    Data de Abertura
+                                                    <p-sortIcon field="data_entrada" />
+                                                    <p-columnFilter 
+                                                        type="date" 
+                                                        field="data_entrada" 
+                                                        display="menu"  
+                                                        class="ml-auto" 
+                                                        showMenu="false" />
+                                                </div>
+                                            </th>
+                                            <th style="width: 15%; text-align: left;" type="text" field="numero" display="menu">Classificação da OS</th>
+                                            <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">Responsável</th>
+                                            <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">Tipo</th>
+                                            <th style="width: 24%; text-align: center;" type="text" field="acoes"display="menu">Opções</th>
+                                            <th style="width: 2%; text-align: center;" type="text" field="finalizada" display="menu">Finalizada</th>
+                                            <th style="width: 2%; text-align: center;" type="text" field="laudo" display="menu">Laudo</th>
+                                            <th style="width: 2%; text-align: center;" type="text" field="aprovada" display="menu">Aprovada</th>
+                                        
+                                        </tr>
+                                    </ng-template>
 
-                                
-                                <ng-template pTemplate="body" let-analise>
-                                    <tr>
-                                        <td style="text-align: left;">
-                                            <p-tag
-                                            [value]="analise.amostra_detalhes.material"
-                                            [severity]="getSeverity(analise.amostra_detalhes.material)"
-                                            />
-                                        </td>
-                                        <td style="text-align: left;"> {{ analise.amostra_detalhes?.numero }} </td>
-                                        <ng-container *ngIf="analise?.amostra_detalhes?.expressa_detalhes; else ensaioDetalhes">
-                                            <td style="text-align: left;">
-                                                {{ analise.amostra_detalhes?.expressa_detalhes?.data | date:'dd/MM/yy' }}
-                                            </td>
-                                            <td style="text-align: left;"> {{ analise.amostra_detalhes.expressa_detalhes.classificacao }} </td>
-                                            <td style="text-align: left;"> {{ analise.amostra_detalhes.expressa_detalhes.responsavel }} </td>
-                                            <td style="text-align: left;"> 
-                                                <p-tag
-                                                    [value]="'Expressa'"
-                                                    [severity]="getTipoOrdem('Expressa')"
-                                                />
-                                            </td>
-                                        </ng-container>
-                                        <ng-template #ensaioDetalhes>
-                                            <td style="text-align: left;">
-                                                {{ analise.amostra_detalhes?.ordem_detalhes?.data | date:'dd/MM/yy' }}
-                                            </td>
-                                            <td style="text-align: left;"> {{ analise.amostra_detalhes.ordem_detalhes.classificacao }} </td>
-                                            <td style="text-align: left;"> {{ analise.amostra_detalhes.ordem_detalhes.responsavel }} </td>
+                                    
+                                    <ng-template pTemplate="body" let-analise>
+                                        <tr>
                                             <td style="text-align: left;">
                                                 <p-tag
-                                                    [value]="'Plano'"
-                                                    [severity]="getTipoOrdem('normal')"
+                                                [value]="analise.amostra_detalhes.material"
+                                                [severity]="getSeverity(analise.amostra_detalhes.material)"
                                                 />
                                             </td>
-                                        </ng-template>
-                                      
-                                        <td style="text-align: center;">
-                                            <div style="display: flex; justify-content: center;">
+                                            <td style="text-align: left;"> {{ analise.amostra_detalhes?.numero }} </td>
+                                            <ng-container *ngIf="analise?.amostra_detalhes?.expressa_detalhes; else ensaioDetalhes">
+                                                <td style="text-align: left;">
+                                                    {{ analise.amostra_detalhes?.expressa_detalhes?.data | date:'dd/MM/yy' }}
+                                                </td>
+                                                <td style="text-align: left;"> {{ analise.amostra_detalhes.expressa_detalhes.classificacao }} </td>
+                                                <td style="text-align: left;"> {{ analise.amostra_detalhes.expressa_detalhes.responsavel }} </td>
+                                                <td style="text-align: left;"> 
+                                                    <p-tag
+                                                        [value]="'Expressa'"
+                                                        [severity]="getTipoOrdem('Expressa')"
+                                                    />
+                                                </td>
+                                            </ng-container>
+                                            <ng-template #ensaioDetalhes>
+                                                <td style="text-align: left;">
+                                                    {{ analise.amostra_detalhes?.ordem_detalhes?.data | date:'dd/MM/yy' }}
+                                                </td>
+                                                <td style="text-align: left;"> {{ analise.amostra_detalhes.ordem_detalhes.classificacao }} </td>
+                                                <td style="text-align: left;"> {{ analise.amostra_detalhes.ordem_detalhes.responsavel }} </td>
+                                                <td style="text-align: left;">
+                                                    <p-tag
+                                                        [value]="'Plano'"
+                                                        [severity]="getTipoOrdem('normal')"
+                                                    />
+                                                </td>
+                                            </ng-template>
+                                        
+                                            <td style="text-align: center;">
+                                                <div style="display: flex; justify-content: center;">
 
-                                                <p-speeddial 
-                                                    showIcon="pi pi-bars" hideIcon="pi pi-times"
-                                                    [model]="getMenuItems(analise.amostra_detalhes)"
-                                                    [radius]="80"
-                                                    type="quarter-circle" direction="up-left"
-                                                    [style]="{ position: 'relative', top: '0', right: 0 }" 
-                                                    [buttonProps]="{ severity: 'info', rounded: true }"
-                                                    [tooltipOptions]="{ tooltipPosition: 'right' }"
-                                                    pTooltip="Ações"
-                                                ></p-speeddial>
-                                                <div 
-                                                    style="position: relative;"
-                                                    *ngIf="!analise.finalizada"
-                                                >
-                                                    <a 
-                                                        type="button" 
-                                                        class="ml-2"
-                                                        [routerLink]="['/welcome/controleQualidade/analise', analise.id]"
+                                                    <p-speeddial 
+                                                        showIcon="pi pi-bars" hideIcon="pi pi-times"
+                                                        [model]="getMenuItems(analise)"
+                                                        [radius]="80"
+                                                        type="quarter-circle" direction="up-left"
+                                                        [style]="{ position: 'relative', top: '0', right: 0 }" 
+                                                        [buttonProps]="{ severity: 'info', rounded: true }"
+                                                        [tooltipOptions]="{ tooltipPosition: 'right' }"
+                                                        pTooltip="Ações"
+                                                    ></p-speeddial>
+                                                    <div 
+                                                        style="position: relative;"
+                                                        *ngIf="!analise.finalizada"
                                                     >
-                                                        <p-button
-                                                            severity="success" 
-                                                            icon="pi pi-file-edit"
-                                                            pTooltip="Realizar Análise"
-                                                            tooltipPosition="top"
-                                                            [disabled]="analise.finalizada" 
-                                                            [rounded]="true" 
-                                                        />
-                                                    </a>
-                                                </div>
-                                                <div 
-                                                    style="position: relative;"
-                                                    *ngIf="!analise.finalizada"
-                                                >
-                                                    <a 
-                                                        type="button" 
-                                                        class="ml-2"
+                                                        <a 
+                                                            type="button" 
+                                                            class="ml-2"
+                                                            [routerLink]="['/welcome/controleQualidade/analise', analise.id]"
+                                                        >
+                                                            <p-button
+                                                                severity="success" 
+                                                                icon="pi pi-file-edit"
+                                                                pTooltip="Realizar Análise"
+                                                                tooltipPosition="top"
+                                                                [disabled]="analise.finalizada" 
+                                                                [rounded]="true" 
+                                                            />
+                                                        </a>
+                                                    </div>
+                                                    <div 
+                                                        style="position: relative;"
+                                                        *ngIf="!analise.finalizada"
                                                     >
-                                                        <p-button 
-                                                            icon="pi pi-lock"
-                                                            severity="primary"
-                                                            (onClick)="finalizarAnalise(analise)" 
-                                                            [rounded]="true" 
-                                                            [disabled]="analise.finalizada"
-                                                            pTooltip="Finalizar OS"
-                                                            tooltipPosition="top" 
-                                                        />
-                                                    </a>
-                                                </div>
-                                                <div 
-                                                    style="position: relative;"
-                                                    *ngIf="analise.finalizada"    
-                                                >
-                                                    <a 
-                                                        type="button" 
-                                                        class="ml-2"  
+                                                        <a 
+                                                            type="button" 
+                                                            class="ml-2"
+                                                        >
+                                                            <p-button 
+                                                                icon="pi pi-lock"
+                                                                severity="primary"
+                                                                (onClick)="finalizarAnalise(analise)" 
+                                                                [rounded]="true" 
+                                                                [disabled]="analise.finalizada"
+                                                                pTooltip="Finalizar OS"
+                                                                tooltipPosition="top" 
+                                                            />
+                                                        </a>
+                                                    </div>
+                                                    <div 
+                                                        style="position: relative;"
+                                                        *ngIf="analise.finalizada"    
                                                     >
-                                                        <p-button 
-                                                            icon="pi pi-lock-open"
-                                                            severity="contrast"
-                                                            (onClick)="reabrirAnalise(analise)" 
-                                                            [rounded]="true" 
-                                                           
-                                                            pTooltip="Reabrir OS"
-                                                            tooltipPosition="top" 
-                                                        />
-                                                    </a>
-                                                </div>
-                                                <div 
-                                                    style="position: relative;"
-                                                    *ngIf="analise.finalizada && !analise.laudo"
-                                                >
-                                                    <a 
-                                                        type="button" 
-                                                        class="ml-2"
-                                                         
+                                                        <a 
+                                                            type="button" 
+                                                            class="ml-2"  
+                                                        >
+                                                            <p-button 
+                                                                icon="pi pi-lock-open"
+                                                                severity="contrast"
+                                                                (onClick)="reabrirAnalise(analise)" 
+                                                                [rounded]="true" 
+                                                            
+                                                                pTooltip="Reabrir OS"
+                                                                tooltipPosition="top" 
+                                                            />
+                                                        </a>
+                                                    </div>
+                                                    <div 
+                                                        style="position: relative;"
+                                                        *ngIf="analise.finalizada && !analise.laudo"
                                                     >
-                                                        <p-button 
-                                                            icon="pi pi-clipboard"
-                                                            severity="warn"
-                                                            (onClick)="laudoAnalise(analise)" 
-                                                            [rounded]="true" 
-                                                            pTooltip="Encaminhar para Laudo"
-                                                            tooltipPosition="top" 
-                                                        />
-                                                    </a>
-                                                </div>
-                                                <div 
-                                                    style="position: relative;"
-                                                    *ngIf="analise.finalizada && analise.laudo && !analise.aprovada"
-                                                >
-                                                    <a 
-                                                        type="button" 
-                                                        class="ml-2"
-                                                         
+                                                        <a 
+                                                            type="button" 
+                                                            class="ml-2"
+                                                            
+                                                        >
+                                                            <p-button 
+                                                                icon="pi pi-clipboard"
+                                                                severity="warn"
+                                                                (onClick)="laudoAnalise(analise)" 
+                                                                [rounded]="true" 
+                                                                pTooltip="Encaminhar para Laudo"
+                                                                tooltipPosition="top" 
+                                                            />
+                                                        </a>
+                                                    </div>
+                                                    <div 
+                                                        style="position: relative;"
+                                                        *ngIf="analise.finalizada && analise.laudo && !analise.aprovada"
                                                     >
-                                                        <p-button 
-                                                            icon="pi pi-check-circle"
-                                                            severity="success"
-                                                            (onClick)="aprovarAnalise(analise)" 
-                                                            [rounded]="true" 
-                                                            pTooltip="Aprovar OS"
-                                                            tooltipPosition="top" 
-                                                        />
-                                                    </a>
-                                                </div>
-                                                <div 
-                                                    style="position: relative;"
-                                                    *ngIf="analise.finalizada && analise.laudo && analise.aprovada"
-                                                >
-                                                    <a 
-                                                        type="button" 
-                                                        class="ml-2"
+                                                        <a 
+                                                            type="button" 
+                                                            class="ml-2"
+                                                            
+                                                        >
+                                                            <p-button 
+                                                                icon="pi pi-check-circle"
+                                                                severity="success"
+                                                                (onClick)="aprovarAnalise(analise)" 
+                                                                [rounded]="true" 
+                                                                pTooltip="Aprovar OS"
+                                                                tooltipPosition="top" 
+                                                            />
+                                                        </a>
+                                                    </div>
+                                                    <div 
+                                                        style="position: relative;"
+                                                        *ngIf="analise.finalizada && analise.laudo && analise.aprovada"
                                                     >
-                                                        <p-button 
-                                                            icon="pi pi-print"
-                                                            severity="help"
-                                                            [rounded]="true" 
-                                                            pTooltip="Imprimir Laudo"
-                                                            (onClick)="abrirModalLaudo(analise)"
-                                                            tooltipPosition="top" 
-                                                        />
-                                                    </a>
+                                                        <a 
+                                                            type="button" 
+                                                            class="ml-2"
+                                                        >
+                                                            <p-button 
+                                                                icon="pi pi-print"
+                                                                severity="help"
+                                                                [rounded]="true" 
+                                                                pTooltip="Imprimir Laudo"
+                                                                (onClick)="abrirModalLaudo(analise)"
+                                                                tooltipPosition="top" 
+                                                            />
+                                                        </a>
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <i 
-                                                class="pi" 
-                                                [ngClass]="getStatusIcon(analise.finalizada)"
-                                                [style.color]="getStatusColor(analise.finalizada)">
-                                            </i>
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <i 
-                                                class="pi" 
-                                                [ngClass]="getStatusIcon(analise.laudo)"
-                                                [style.color]="getStatusColor(analise.laudo)">
-                                            </i>
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <i 
-                                                class="pi" 
-                                                [ngClass]="getStatusIcon(analise.aprovada)"
-                                                [style.color]="getStatusColor(analise.aprovada)">
-                                            </i>
-                                        </td>             
+                                            </td>
+                                            <td style="text-align: center;">
+                                                <i 
+                                                    class="pi" 
+                                                    [ngClass]="getStatusIcon(analise.finalizada)"
+                                                    [style.color]="getStatusColor(analise.finalizada)">
+                                                </i>
+                                            </td>
+                                            <td style="text-align: center;">
+                                                <i 
+                                                    class="pi" 
+                                                    [ngClass]="getStatusIcon(analise.laudo)"
+                                                    [style.color]="getStatusColor(analise.laudo)">
+                                                </i>
+                                            </td>
+                                            <td style="text-align: center;">
+                                                <i 
+                                                    class="pi" 
+                                                    [ngClass]="getStatusIcon(analise.aprovada)"
+                                                    [style.color]="getStatusColor(analise.aprovada)">
+                                                </i>
+                                            </td>             
 
-                                    </tr>
-                                </ng-template>
+                                        </tr>
+                                    </ng-template>
                                 </p-table>
                             </div>
                         
@@ -596,30 +596,46 @@
         [style]="{ height: '100vh' }"        
     >
 
-<div *ngIf="analiseSelecionada">
+        <div *ngIf="analiseSelecionada">
+            <h2>Dados</h2>
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-                <div class="text-left w-6">
-                    <b>Número:</b> {{ analiseSelecionada.numero }}<br>
-                    <b>Classificação:</b> {{ analiseSelecionada.expressa_detalhes?.classificacao || analiseSelecionada.ordem_detalhes?.classificacao }}<br>
-                    <b>Responsável:</b> {{ analiseSelecionada.expressa_detalhes?.responsavel || analiseSelecionada.ordem_detalhes?.responsavel }}<br>
-                    <b>Data de Abertura:</b> {{ (analiseSelecionada.expressa_detalhes?.data || analiseSelecionada.ordem_detalhes?.data) | date:'dd/MM/yyyy'}}<br>
+                <div class="text-left w-12">
+                    <b>Número:</b> {{ analiseSelecionada.amostra_detalhes.numero }}<br>
+                    <b>Classificação:</b> {{ analiseSelecionada.amostra_detalhes.expressa_detalhes?.classificacao || analiseSelecionada.amostra_detalhes.ordem_detalhes?.classificacao }}<br>
+                    <b>Responsável:</b> {{ analiseSelecionada.amostra_detalhes.expressa_detalhes?.responsavel || analiseSelecionada.amostra_detalhes.ordem_detalhes?.responsavel }}<br>
+                    <b>Data de Abertura:</b> {{ (analiseSelecionada.amostra_detalhes.expressa_detalhes?.data || analiseSelecionada.amostra_detalhes.ordem_detalhes?.data) | date:'dd/MM/yyyy'}}<br>
                 </div>
             </div>
 
+            <br>
 
-            <div class=" flex w-12 gap-3 justify-content-center text-center">
-                <p-button 
-                    (onClick)="imprimirAnaliseVisualizar()" 
-                    label="Imprimir" 
-                    severity="warn"
-                    icon="pi pi-print" 
-                    iconPos="right" 
-                    tooltipPosition="top"
-                    pTooltip="Imprimir"
-                />
+            <h2>Cálculos</h2>
+            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                <div class="text-left w-12" >
+                    <span *ngIf="analiseSelecionada?.ultimo_calculo?.length > 0">
+                        <span *ngFor="let ultimo_calculo of analiseSelecionada.ultimo_calculo">
+                            <b>Descrição:</b> {{ ultimo_calculo.calculos }} <br>
+                            <b>Resultado:</b> {{ ultimo_calculo.resultados }}<hr>
+                        </span>
+                    </span>
+                </div>
             </div>
 
-</div>
+            <br>
+
+            <h2>Ensaios</h2>
+            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                <div class="text-left w-12" >
+                    <span *ngIf="analiseSelecionada?.ultimo_ensaio?.ensaios_utilizados?.length > 0">
+                        <span *ngFor="let ensaios_utilizados of analiseSelecionada.ultimo_ensaio.ensaios_utilizados">
+                            <b>Descrição:</b> {{ ensaios_utilizados.descricao }} <br>
+                            <b>Resultado:</b> {{ ensaios_utilizados.valor }}<hr>
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+        </div>
 
     </p-drawer>
 
