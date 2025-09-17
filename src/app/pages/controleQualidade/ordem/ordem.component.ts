@@ -276,8 +276,6 @@ export class OrdemComponent implements OnInit {
       responsavel: [''],
       isExpressa: [''],
       idSalvar: [''],
-     
-      
     });
   }
 
@@ -303,9 +301,6 @@ export class OrdemComponent implements OnInit {
 
 
   abrirModalEdicao(amostra: Amostra) {
-    // console.log('azqaui');
-    // console.log(amostra);
-
     this.editFormVisible = true;
 
     let classificacao = '';
@@ -313,6 +308,9 @@ export class OrdemComponent implements OnInit {
     let data = null;
     let isExpressa = false;
     let idSalvar = '';
+    let plano_analise = '';
+
+    console.log('AmOsTrAssss', amostra)
 
     if(amostra.expressa_detalhes){
       classificacao = amostra.expressa_detalhes.classificacao;
@@ -326,6 +324,8 @@ export class OrdemComponent implements OnInit {
       responsavel = amostra.ordem_detalhes.responsavel;
       data = formatDate(amostra.ordem_detalhes.data, 'dd/MM/yyyy', 'en-US');
       idSalvar = amostra.ordem_detalhes.id;
+      plano_analise = amostra.ordem_detalhes.plano_detalhes[0].id;
+
     }
 
     this.editForm.patchValue({
@@ -336,6 +336,7 @@ export class OrdemComponent implements OnInit {
       data: data,
       isExpressa: isExpressa,
       idSalvar: idSalvar,
+      plano_analise: plano_analise,
     });
   }
 
@@ -346,6 +347,20 @@ export class OrdemComponent implements OnInit {
   saveEditOrdem(idSalvar: number ){
     let dataFormatada = null;
 
+
+
+
+
+
+
+    
+    console.log(this.editForm.value);
+    alert('Atualizar API');
+
+
+
+
+
     if (this.editForm.value.data instanceof Date) {
         dataFormatada = formatDate(this.editForm.value.data, 'yyyy-MM-dd', 'en-US');
     }else{
@@ -355,14 +370,15 @@ export class OrdemComponent implements OnInit {
       dataFormatada = formatDate(dataFormatada, 'yyyy-MM-dd', 'en-US');
     }
 
-    const dadosAtualizados: Partial<Amostra> = {
+    const dadosAtualizados: Partial<Ordem> = {
       data: dataFormatada,
       numero: this.editForm.value.numero,
       classificacao: this.editForm.value.classificacao,
       responsavel: this.editForm.value.responsavel,
+      planoAnalise: this.editForm.value.plano_analise,
     };
-    console.log(dadosAtualizados);
-    this.amostraService.editAmostraOrdem(idSalvar, dadosAtualizados).subscribe({
+    console.log('dadosAtualizados', dadosAtualizados);
+    this.ordemService.editOrdens(idSalvar, dadosAtualizados).subscribe({
       next:() =>{       
         this.editFormVisible = false;
         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Amostra atualizada com sucesso!!', life: 1000 });
@@ -377,8 +393,7 @@ export class OrdemComponent implements OnInit {
           this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
         } else if (err.status === 400) {
           this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
-        }
-        else {
+        } else {
           this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
         } 
       }
@@ -464,6 +479,7 @@ export class OrdemComponent implements OnInit {
     this.ensaioService.getPlanoAnalise().subscribe(
       response => {
         this.planosAnalise = response;
+
       },
       error => {
         console.log('Erro ao carregar planos de análise', error);
