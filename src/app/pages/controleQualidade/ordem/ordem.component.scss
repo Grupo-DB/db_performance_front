@@ -1,5 +1,15 @@
 @import "primeicons/primeicons.css";
 
+.indent {
+  margin-left: 4em;  /* funciona como um TAB */
+}
+
+.linha-tracejada {
+  border: none;             /* remove a linha padrão do <hr> */
+  border-top: 1px dashed #333; /* define espessura, tipo e cor */
+  margin: 10px 0;          /* espaço em cima e embaixo */
+}
+
 ::ng-deep .custom-drawer .p-drawer-header {
   justify-content: center; /* centraliza o conteúdo */
 }

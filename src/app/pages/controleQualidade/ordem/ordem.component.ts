@@ -296,6 +296,7 @@ export class OrdemComponent implements OnInit {
 
   visualizar(analise: any) {
     this.analiseSelecionada = analise;
+    console.log('this.analiseSelecionada', this.analiseSelecionada  );
     this.modalVisualizar = true;
   }
 
@@ -1479,6 +1480,16 @@ gerarNumero(materialNome: string, sequencial: number): string {
       analise.ultimo_calculo.forEach((calc: any) => {
         doc.text(`Descrição: ${calc.calculos}`, 10, y); y += 8;
         doc.text(`Resultado: ${calc.resultados}`, 10, y); y += 8;
+        calc.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
+          doc.text(`Descrição: ${ensaios_utilizados.descricao}`, 30, y); y += 8;
+          doc.text(`Resultado: ${ensaios_utilizados.valor}`, 30, y); y += 8;
+          if(y>=290){
+            doc.addPage();
+            y=10;
+          }
+        });
+
+        
         y += 4; // espaço extra
         if(y>=290){
           doc.addPage();

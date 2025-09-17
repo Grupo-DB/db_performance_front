@@ -539,7 +539,18 @@
                     <span *ngIf="analiseSelecionada?.ultimo_calculo?.length > 0">
                         <span *ngFor="let ultimo_calculo of analiseSelecionada.ultimo_calculo">
                             <b>Descrição:</b> {{ ultimo_calculo.calculos }} <br>
-                            <b>Resultado:</b> {{ ultimo_calculo.resultados }}<hr>
+                            <b>Resultado:</b> {{ ultimo_calculo.resultados }} <br><br>
+                                       
+                            <b>Ensaios Utilizados</b>
+                            <br>
+                            <br>
+                            <div class="indent" *ngFor="let ensaios_utilizados of ultimo_calculo.ensaios_utilizados; let last = last">
+                                <b>Descrição:</b> {{ ensaios_utilizados.descricao }} <br>
+                                <b>Resultado:</b> {{ ensaios_utilizados.valor }} 
+                                <hr *ngIf="!last" class="linha-tracejada">
+                            </div>
+                            <br>
+                            <hr>
                         </span>
                     </span>
                 </div>
