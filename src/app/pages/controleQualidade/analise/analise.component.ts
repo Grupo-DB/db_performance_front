@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy, HostListener, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CanComponentDeactivate } from '../../../guards/can-deactivate.guard';
 import { AnaliseService } from '../../../services/controleQualidade/analise.service';
@@ -28,7 +28,7 @@ import { SelectModule } from 'primeng/select';
 import { SpeedDialModule } from 'primeng/speeddial';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { StepperModule } from 'primeng/stepper';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { ColaboradorService } from '../../../services/avaliacoesServices/colaboradores/registercolaborador.service';
 import { evaluate, norm } from 'mathjs';
@@ -201,6 +201,10 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
   todasExpandidas: boolean = false;
   todasCalculosExpandidas: boolean = false;
   calculoSelecionado: any = null;
+
+  inputValue: string = '';
+  inputCalculos: string = '';
+  @ViewChild('dt1') dt1!: Table;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -519,6 +523,32 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
         detail: 'Falha ao reordenar cálculos' 
       });
     }
+  }
+
+  filterTable() {
+    this.dt1.filterGlobal(this.inputValue,'contains');
+  }
+
+  getEnsaiosFiltrados(calc: any) {
+    const lista = Array.isArray(calc?.ensaios_detalhes) ? calc.ensaios_detalhes : [];
+    const termo = (calc?._filtroEnsaios || '').toString().trim().toLowerCase();
+    if (!termo) return lista;
+    return lista.filter((e: any) => {
+      const desc = (e?.descricao || '').toString().toLowerCase();
+      const und = (e?.unidade || '').toString().toLowerCase();
+      const norma = (e?.norma || '').toString().toLowerCase();
+      const resp = (e?.responsavel || '').toString().toLowerCase();
+      const cad = (e?.numero_cadinho ?? '').toString().toLowerCase();
+      const val = (e?.valor ?? '').toString().toLowerCase();
+      return (
+        desc.includes(termo) ||
+        und.includes(termo) ||
+        norma.includes(termo) ||
+        resp.includes(termo) ||
+        cad.includes(termo) ||
+        val.includes(termo)
+      );
+    });
   }
 
   // Verifica se todas as variáveis exigidas por uma função possuem valores numéricos default
@@ -2297,7 +2327,7 @@ recalcularTodosCalculos() {
     const descricaoLower = calc.descricao.toLowerCase();
     console.log('🔍 Descrição em minúsculas:', descricaoLower);
     
-    const isPRNT = descricaoLower.includes('prnt') || 
+    const isPRNT = descricaoLower.includes('prnt calcário') || 
                    descricaoLower.includes('poder relativo de neutralização total') ||
                    descricaoLower.includes('neutralização');
     

@@ -199,12 +199,33 @@
                     </div>
                     <!--ENSAIOS-->        
                     <div>
-                        <p-table 
+                        <p-table
+                            #dt1 
                             class="ensaio-table-spacing" 
                             [value]="plano.ensaio_detalhes"
                             [tableStyle]="{'min-width': '70rem'}"
                             [dataKey]="'id'"
+                            [globalFilterFields]="['descricao','unidade','norma','valor','responsavel','numero_cadinho']"
                         >
+                            <ng-template pTemplate="caption">
+                                <div class="flex flex-row md: justify-content-end">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
+                                                <input 
+                                                variant="filled" 
+                                                [(ngModel)]="inputValue"
+                                                [style]="{'width':'100%'}" 
+                                                pInputText id="on_label"
+                                                autocomplete="off" 
+                                                type="text" 
+                                                (ngModelChange)="dt1.filterGlobal($event, 'contains')"
+                                                />
+                                        </p-iconfield>
+                                        <label for="on_label" style="color: #1b91ff">Pesquisar</label>
+                                    </p-floatlabel>
+                                </div>
+                            </ng-template>
                             <ng-template pTemplate="header">
                                 <tr class="tabela">
                                     <th style="width: 5%;">
@@ -219,7 +240,7 @@
                                     </th>
                                     <!-- Drag handle header (móvel) -->
                                     <th style="width: 4%;"></th>
-                                    <th style="width: 30%; text-align: left;">Ensaio</th>
+                                    <th style="width: 30%; text-align: left;" field="ensaio" display="menu">Ensaio</th>
                                     <th style="width: 35%; text-align: right;">Resultado</th>
                                     <th style="width: 15%; text-align: right;">Histórico</th>
                                     <th style="width: 15%; text-align: right;" *ngIf="podeEditarEnsaiosCalculos()">Ações</th>
@@ -561,12 +582,33 @@
                         </div>
                     </div> 
                     <div class="tabela-ensaio-wrap">
-                        <p-table 
+                        <p-table
+                            #tabelaCalculos 
                             class="ensaio-table-spacing" 
                             [value]="plano.calculo_ensaio_detalhes"
                             [tableStyle]="{'min-width': '70rem'}" 
                             [dataKey]="'id'"
+                            [globalFilterFields]="['descricao','unidade','resultado','responsavel','digitador','ensaios_detalhes.descricao']"
                         >
+                            <ng-template pTemplate="caption">
+                                <div class="flex flex-row md: justify-content-end">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
+                                            <input
+                                                variant="filled"
+                                                [(ngModel)]="inputCalculos"
+                                                [style]="{'width':'100%'}"
+                                                pInputText id="calc_search"
+                                                autocomplete="off"
+                                                type="text"
+                                                (ngModelChange)="tabelaCalculos.filterGlobal($event, 'contains')"
+                                            />
+                                        </p-iconfield>
+                                        <label for="calc_search" style="color: #1b91ff">Pesquisar cálculos</label>
+                                    </p-floatlabel>
+                                </div>
+                            </ng-template>
                             <ng-template pTemplate="header">
                                 <tr class="tabela">
                                     <th style="width: 5%;">
@@ -672,9 +714,25 @@
                                                         class="flex flex-column gap-3"
                                                         *ngIf="calc.ensaios_detalhes && calc.ensaios_detalhes.length > 0"
                                                     >
+                                                        <div class="flex w-12 justify-content-end">
+                                                            <p-floatlabel variant="on">
+                                                                <p-iconfield>
+                                                                    <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
+                                                                    <input
+                                                                        variant="filled"
+                                                                        [(ngModel)]="calc._filtroEnsaios"
+                                                                        [style]="{'width':'20rem'}"
+                                                                        pInputText id="calc_ensaio_search_{{calc.id}}"
+                                                                        autocomplete="off"
+                                                                        type="text"
+                                                                    />
+                                                                </p-iconfield>
+                                                                <label for="calc_ensaio_search_{{calc.id}}" style="color: #1b91ff">Pesquisar ensaios</label>
+                                                            </p-floatlabel>
+                                                        </div>
                                                         <div 
                                                             class="flex flex-column w-12 border-500 surface-overlay border-2 border-round-lg p-2 mb-2"
-                                                            *ngFor="let ensaio of calc.ensaios_detalhes; let i = index" 
+                                                            *ngFor="let ensaio of getEnsaiosFiltrados(calc); let i = index" 
                                                             draggable="true"
                                                             (dragstart)="onDragStartEnsaioInterno($event, ensaio, i, calc, plano)"
                                                             (dragover)="onDragOver($event)"
