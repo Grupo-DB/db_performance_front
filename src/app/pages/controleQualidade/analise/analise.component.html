@@ -169,6 +169,63 @@
                             </p-floatlabel> 
                         </div>
                     </div>
+                    <div *ngIf="analise.amostra_detalhes.material==='argamassa'" class="flex flex-column mt-3 lg:flex-row w-full lg:justify-content-around">
+                        <div class="flex flex-column w-5 gap-3">
+                            <p-floatLabel variant="on"> 
+                                <p-select
+                                    variant="filled"
+                                    inputId="float-label"
+                                    [style]="{'width':'100%'}"
+                                    [options]="metodosModelagem" 
+                                    [(ngModel)]="analise.metodoModelagem"
+                                    optionLabel="value"
+                                    optionValue="value"
+                                    [filter]="true" 
+                                    filterBy="value"
+                                    [showClear]="true"
+                                    appendTo="body"
+                                >
+                                </p-select>
+                                <label for="float-label">Método de Modelagem Ensaios LAB</label>
+                            </p-floatLabel>
+                             <p-floatLabel variant="on"> 
+                                <p-select
+                                    variant="filled"
+                                    inputId="float-label"
+                                    [style]="{'width':'100%'}"
+                                    [options]="metodosModelagem" 
+                                    [(ngModel)]="analise.metodoMuro"
+                                    optionLabel="value"
+                                    optionValue="value"
+                                    [filter]="true" 
+                                    filterBy="value"
+                                    [showClear]="true"
+                                    appendTo="body"
+                                >
+                                </p-select>
+                                <label for="float-label">Método de Modelagem Aplicação no Muro</label>
+                            </p-floatLabel>  
+                        </div>
+                        <div class="w-6">
+                            <div class="text-left w-12"> 
+                                <p-floatlabel variant="on"> 
+                                    <textarea 
+                                        pTextarea 
+                                        [(ngModel)]="analise.observacoesMuro"
+                                        id="on_label" 
+                                        rows="5" 
+                                        cols="30" 
+                                        class="h-full w-full" 
+                                        style="border-radius: 5px; background-color: #444959; color: white;" >
+                                    </textarea> 
+                                    <label for="in_label">Observações:Aplicação no Muro</label> 
+                                </p-floatlabel> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-column mt-3 lg:flex-row w-full lg:justify-content-around">
+                        
+                    </div>
             </p-card>
         </div>
         <!-- TABELAS ENSAIOS E CALCULOS-->
@@ -250,6 +307,7 @@
                             <ng-template pTemplate="body" let-ensaio let-rowIndex="rowIndex">
                                 <tr 
                                     class="row"
+                                    [ngClass]="getClasseTipoEnsaio(ensaio)"
                                     [class.row-expanded]="ensaio.expanded" 
                                     draggable="true"
                                     (dragstart)="onDragStart($event, ensaio, rowIndex, plano)"
@@ -286,7 +344,7 @@
                                     <td style="text-align: end;">
                                         <div class="flex align-items-end justify-content-end">
                                             <span class="valor-result font-bold text-lg text-primary">
-                                                {{ ensaio.valor || 0 }}
+                                                {{ ensaioTemVariavelData(ensaio) ? (formatarDataExibicao(ensaio.valorTimestamp || ensaio.valor) || '—') : (ensaio.valor || 0) }}
                                             </span>
                                         </div>
                                         <div 
@@ -399,7 +457,7 @@
                                                             <div class="bg-gray-50 border-round mt-2 text-center">
                                                                 <span 
                                                                 class="text-2xl font-bold text-primary resultado-valor">
-                                                                {{ ensaio.valor || 0 }}
+                                                                {{ ensaioTemVariavelData(ensaio) ? (formatarDataExibicao(ensaio.valorTimestamp || ensaio.valor) || '—') : (ensaio.valor || 0) }}
                                                                 </span>
                                                                 <span class="ml-2 text-lg text-600">{{ ensaio.unidade }}</span>
                                                             </div>
@@ -539,7 +597,7 @@
                                     <div class="flex flex-column">
                                         <label class="font-bold text-sm text-600 mb-1">Valor Atual</label>
                                         <span class="text-2xl font-bold text-primary">
-                                            {{ ensaioSelecionado.valor || 0 }}
+                                            {{ ensaioTemVariavelData(ensaioSelecionado) ? (formatarDataExibicao(ensaioSelecionado?.valorTimestamp || ensaioSelecionado?.valor) || '—') : (ensaioSelecionado?.valor || 0) }}
                                             <span class="text-lg text-600 ml-2">{{ ensaioSelecionado.unidade }}</span>
                                         </span>
                                     </div>

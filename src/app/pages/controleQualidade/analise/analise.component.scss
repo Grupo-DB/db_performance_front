@@ -23,6 +23,23 @@
   color: #ffffff;
   //border-radius: 4px;
 }
+
+// Variações de cor por tipo de ensaio
+.row.row-tipo-calculado {
+  background-color: #3B3E44; // azul escuro
+}
+.row.row-tipo-informativo {
+  background-color: #333266; // roxo escuro
+}
+.row.row-tipo-fator {
+  background-color: #8ebb93; // verde escuro
+}
+.row.row-tipo-composto {
+  background-color: #744521; // marrom escuro
+}
+.row.row-tipo-data {
+  background-color: #ff5757; // vermelho escuro
+}
 .containerInterno{
     background-color: #ffffff;
     border: 10px solid #ffffff;
