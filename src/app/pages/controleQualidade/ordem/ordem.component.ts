@@ -187,7 +187,9 @@ export class OrdemComponent implements OnInit {
   children?: TreeNode[];
   leaf?: boolean;
   expanded?: boolean;
-selectedEnsaios: any[] = []; // aqui ficam os selecionados
+    partialSelected?: boolean;
+
+selectedEnsaios: TreeNode[] = []; // aqui ficam os selecionados
 
   modalVisualizar: boolean = false;
   analiseSelecionada: any;
@@ -251,6 +253,7 @@ selectedEnsaios: any[] = []; // aqui ficam os selecionados
     { id: 2, nome: 'Desenvolvimento de Produtos' },
   ]
   
+
   router: any;
   constructor(
     private loginService: LoginService,
@@ -1392,12 +1395,12 @@ gerarNumero(materialNome: string, sequencial: number): string {
 
   abrirModalLaudo(amostra_detalhes: any) {
   
-  console.log('laudo', amostra_detalhes);
-  this.amostra_detalhes_selecionada = amostra_detalhes;
+    console.log('laudo', amostra_detalhes);
+    this.amostra_detalhes_selecionada = amostra_detalhes;
 
-  while (this.ensaios_laudo.length > 0) {
-      this.ensaios_laudo.pop(); // Removes elements one by one from the end
-  }
+    while (this.ensaios_laudo.length > 0) {
+        this.ensaios_laudo.pop(); // Removes elements one by one from the end
+    }
 
     if(amostra_detalhes.ultimo_ensaio){
       amostra_detalhes.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
@@ -1423,43 +1426,98 @@ gerarNumero(materialNome: string, sequencial: number): string {
   }
 
   abrirModalImpressao2(analise: any) {
-  
+  console.log('analise', analise);
     this.amostra_detalhes_selecionada = analise;
 
-
     if(analise.amostra_detalhes.expressa_detalhes){
-      // this.ensaios_laudo.push({
-      //   id: '',
-      //   descricao: '--------------------------------- Cálculos -------------------------------------',
-      //   disabled: true
-      // });
 
-this.ensaios_laudo = analise.amostra_detalhes.expressa_detalhes.calculo_ensaio_detalhes.map(
-  (calculo: any): TreeNode => {
-    return {
-      key: String(calculo.id), // <- chave única (importante pro PrimeNG)
-      data: {
-        id: calculo.id,
-        descricao: calculo.descricao,
-        disabled: false,
-      },
-      children: calculo.ensaios_detalhes.map((ensaio: any): TreeNode => {
-        return {
-          key: String(ensaio.id),
-          data: {
-            id: ensaio.id,
-            descricao: ensaio.descricao,
-            disabled: false,
-          },
-          leaf: true, // <- diz que é nó final
-        };
-      }),
-      expanded: true, // <- já abre os nós
-    };
-  }
-);
+      this.ensaios_laudo = analise.amostra_detalhes.expressa_detalhes.calculo_ensaio_detalhes.map(
+        (calculo: any) => {
+          const children = (calculo.ensaios_detalhes || []).map((ensaio: any) => ({
+            data: {
+              id: calculo.id+'/'+ensaio.id,
+              descricao: calculo.id+'/'+ensaio.id+' - '+ensaio.descricao,
+              disabled: false
+            },
+            leaf: true
+          }));
+
+          return {
+            data: {
+              id: ''+calculo.id,
+              descricao: calculo.id+' - '+calculo.descricao,
+              disabled: false
+            },
+            children: children.length > 0 ? children : undefined,
+            expanded: false,
+            partialSelected: false
+          };
+        }
+      );
+
+      this.ensaios_laudo = analise.amostra_detalhes.expressa_detalhes.ensaio_detalhes.map(
+        (calculo: any) => {
+          const children = (calculo.variavel_detalhes || []).map((ensaio: any) => ({
+            data: {
+              id: calculo.id+'/'+ensaio.id,
+              descricao: calculo.id+'/'+ensaio.id+' - '+ensaio.nome,
+              disabled: false
+            },
+            leaf: true
+          }));
+
+          return {
+            data: {
+              id: ''+calculo.id,
+              descricao: calculo.id+' - '+calculo.descricao,
+              disabled: false
+            },
+            children: children.length > 0 ? children : undefined,
+            expanded: false,
+            partialSelected: false
+          };
+        }
+      );
+
+         
+
+        //  this.ensaios_laudo = [
+        //   {
+        //     data: { id: 1, descricao: 'PN CALCULADO (CAL)', disabled: false },
+        //     children: [
+        //       { data: { id: 11, descricao: 'Ri + SiO₂', disabled: false }, leaf: true },
+        //       { data: { id: 12, descricao: 'SO₃', disabled: false }, leaf: true }
+        //     ],
+        //     expanded: true
+        //   }
+        // ];
+  
     }
+    if(analise.amostra_detalhes.ordem_detalhes){
+      this.ensaios_laudo = [];
 
+      if (analise?.amostra_detalhes?.ordem_detalhes?.plano_detalhes) {
+        analise.amostra_detalhes.ordem_detalhes.plano_detalhes.forEach((plano_detalhes: any) => {
+          if (plano_detalhes.ensaio_detalhes) {
+            this.ensaios_laudo.push(
+              ...plano_detalhes.ensaio_detalhes.map((ensaio_detalhes: any) => ({
+                data: {
+                  id: '' + ensaio_detalhes.id,
+                  descricao: ensaio_detalhes.id + ' - ' + ensaio_detalhes.descricao,
+                  disabled: false
+                },
+                children: '',
+                expanded: false,
+                partialSelected: false
+              }))
+            );
+          }
+        });
+      }
+
+      // console.log("this.ensaios_laudo final:", this.ensaios_laudo);
+
+    }
  
     console.log('this.ensaios_laudo', this.ensaios_laudo)
     this.modalImpressao2 = true;
@@ -3197,7 +3255,33 @@ console.log('this.ensaios_laudo', this.ensaios_laudo)
   }
 
   imprimirCalculoPDF(analise: any) {
-    console.log('this.ensaios_selecionados', this.ensaios_selecionados);
+    const resultado: { pai: string, filhos: string[] }[] = [];
+
+    this.selectedEnsaios.forEach((selectedEnsaios: any) => {
+      const id = String(selectedEnsaios.data.id);
+
+      if (id.includes("/")) {
+        const [pai, filho] = id.split("/");
+        let paiExistente = resultado.find(r => r.pai === pai);
+
+        if (!paiExistente) {
+          paiExistente = { pai, filhos: [] };
+          resultado.push(paiExistente);
+        }
+
+        paiExistente.filhos.push(filho);
+
+      } else {
+        const pai = id;
+        let paiExistente = resultado.find(r => r.pai === pai);
+        if (!paiExistente) {
+          resultado.push({ pai, filhos: [] });
+        }
+      }
+    });
+
+    console.log(resultado);
+
     console.log('analise', analise);
     const doc = new jsPDF({ unit: "mm", format: "a4" });
     let contadorLinhas = 45;
@@ -3234,7 +3318,11 @@ console.log('this.ensaios_laudo', this.ensaios_laudo)
       
       analise.amostra_detalhes.expressa_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
 
-        const existe = this.ensaios_selecionados.some(item => item.id === ensaio_detalhes.id);
+        const existe = resultado.some(item => {
+          console.log("comparando -> item.pai:", ''+item.pai, "| ensaio_detalhes.id:", ''+ensaio_detalhes.id);
+          return item.pai == ensaio_detalhes.id;
+        });
+
         if(existe){
 
           const body: any[] = [];
@@ -3246,7 +3334,22 @@ console.log('this.ensaios_laudo', this.ensaios_laudo)
           linha.push({ content: 'Técnico', styles: { halign: "center" } });
       
           ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
-            linha.push({ content: variavel_detalhes.nome, styles: { halign: "center" } });
+            const pai = resultado.find(item => item.pai == ensaio_detalhes.id);
+            const filhoExiste = pai?.filhos.includes(String(variavel_detalhes.id));
+
+            console.log(
+              "comparando -> filhos do pai:",
+              pai?.filhos,
+              "| variavel_detalhes.id:",
+              ''+variavel_detalhes.id,
+              "| existe?",
+              filhoExiste
+            );
+
+            if (filhoExiste) {
+              linha.push({ content: variavel_detalhes.nome, styles: { halign: "center", fontStyle: "bold" } });
+              linhaVazia.push({ content: variavel_detalhes.valor, styles: { halign: "center" } });
+            }
           });
 
           linhaVazia.push({ content: '', styles: { halign: "center" } });
@@ -3278,7 +3381,10 @@ console.log('this.ensaios_laudo', this.ensaios_laudo)
 
       analise.amostra_detalhes.expressa_detalhes.calculo_ensaio_detalhes.forEach((calculo_ensaio_detalhes: any) => {
 
-        const existe = this.ensaios_selecionados.some(item => item.id === calculo_ensaio_detalhes.id);
+        const existe = resultado.some(item => {
+          console.log("comparando -> item.pai:", ''+item.pai, "| calculo_ensaio_detalhes.id:", ''+calculo_ensaio_detalhes.id);
+          return item.pai == calculo_ensaio_detalhes.id;
+        });
         if(existe){
 
           let body: any[] = [];
@@ -3294,31 +3400,36 @@ console.log('this.ensaios_laudo', this.ensaios_laudo)
 
           let contador = 0;
           calculo_ensaio_detalhes.ensaios_detalhes.forEach((ensaios_detalhes: any) => {
-            linha.push({ content: ensaios_detalhes.descricao, styles: { halign: "center" } });
-            linhaVazia.push({ content: ensaios_detalhes.valor ?? '', styles: { halign: "center" } });
-            contador ++;
-            if(contador >= 4){
-              linhaVazia.push({ content: '', styles: { halign: "center" } });
-              linhaVazia.push({ content: '', styles: { halign: "center" } });
-              body.push(linha);
-              body.push(linhaVazia);
-              autoTable(doc, {
-                startY: contadorLinhas,
-                body,
-                theme: "grid",
-                styles: { fontSize: 8, cellPadding: 2 }
-              });
-              contadorLinhas = (doc as any).lastAutoTable.finalY;
-              body = [];
-              linha = [];
-              linhaVazia = [];
-              contador = 0;
+            const pai = resultado.find(item => item.pai == calculo_ensaio_detalhes.id);
+            const filhoExiste = pai?.filhos.includes(String(ensaios_detalhes.id));
+
+            if (filhoExiste) {
+              linha.push({ content: ensaios_detalhes.nome, styles: { halign: "center", fontStyle: "bold" } });
+              linhaVazia.push({ content: ensaios_detalhes.valor, styles: { halign: "center" } });
+              contador ++;
+              if(contador >= 4){
+                linhaVazia.push({ content: '', styles: { halign: "center" } });
+                linhaVazia.push({ content: '', styles: { halign: "center" } });
+                body.push(linha);
+                body.push(linhaVazia);
+                autoTable(doc, {
+                  startY: contadorLinhas,
+                  body,
+                  theme: "grid",
+                  styles: { fontSize: 8, cellPadding: 2 }
+                });
+                contadorLinhas = (doc as any).lastAutoTable.finalY;
+                body = [];
+                linha = [];
+                linhaVazia = [];
+                contador = 0;
+              }
             }
+            
           });
 
           linhaVazia.push({ content: '', styles: { halign: "center" } });
           linhaVazia.push({ content: '', styles: { halign: "center" } });
-
 
           // última célula: descrição novamente (ou resultado final)
           linha.push({ content: calculo_ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold" } });
@@ -3349,7 +3460,10 @@ console.log('this.ensaios_laudo', this.ensaios_laudo)
               
         //aqui é o ennsaio_detalhes
         plano_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
-          const existe = this.ensaios_selecionados.some(item => item.id === ensaio_detalhes.id);
+          const existe = resultado.some(item => {
+            console.log("comparando -> item.pai:", ''+item.pai, "| ensaio_detalhes.id:", ''+ensaio_detalhes.id);
+            return item.pai == ensaio_detalhes.id;
+          });
           if(existe){
             const body: any[] = [];
             const linha: any[] = [];
@@ -3362,10 +3476,13 @@ console.log('this.ensaios_laudo', this.ensaios_laudo)
             linhaVazia.push({ content: '', styles: { halign: "center" } });
 
             ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
-              console.log('2 - AQUI')
-              console.log(variavel_detalhes)
-              linha.push({ content: variavel_detalhes.id+'  -  '+variavel_detalhes.nome, styles: { halign: "center",  } });
-              linhaVazia.push({ content: '', styles: { halign: "center" } });
+              const pai = resultado.find(item => item.pai == ensaio_detalhes.id);
+              const filhoExiste = pai?.filhos.includes(String(variavel_detalhes.id));
+
+              if (filhoExiste) {
+                linha.push({ content: variavel_detalhes.nome, styles: { halign: "center", fontStyle: "bold" } });
+                linhaVazia.push({ content: variavel_detalhes.valor, styles: { halign: "center" } });
+              }
             });    
 
             linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
@@ -3426,126 +3543,8 @@ console.log('this.ensaios_laudo', this.ensaios_laudo)
       });
     }
 
-
-
-    // if(analise.ultimo_calculo){
-      
-    //   analise.ultimo_calculo.forEach((ultimo_calculo: any) => {
-
-    //     const existe = this.ensaios_selecionados.some(item => item.id === ultimo_calculo.id);
-    //     if(existe){
-
-    //       const body: any[] = [];
-    //       const linha: any[] = [];
-    //       const linhaVazia: any[] = [];
-
-    //       // primeira célula: descrição
-    //       linha.push({ content: ultimo_calculo.id+'  -  '+ultimo_calculo.calculos+' ---> ultimo calculo', styles: { halign: "center",  } });
-    //       linha.push({ content: 'Técnico', styles: { halign: "center" } });
-
-    //       linhaVazia.push({ content: '', styles: { halign: "center" } });
-    //       linhaVazia.push({ content: '', styles: { halign: "center" } });
-
-    //       // adiciona cada variável como coluna
-    //       ultimo_calculo.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
-    //                               const teste = ensaios_utilizados.valor ? ensaios_utilizados.valor : '';
-
-    //         linha.push({ content: ensaios_utilizados.id+'  -  '+ensaios_utilizados.descricao, styles: { halign: "center",  } });
-    //         linhaVazia.push({ content: teste, styles: { halign: "center" } });
-    //       });
-
-    //       // última célula: descrição novamente (ou resultado final)
-    //       linha.push({ content: ultimo_calculo.calculos, styles: { halign: "center", fontStyle: "bold" } });
-    //       linhaVazia.push({ content: '', styles: { halign: "center" } });
-
-    //       // adiciona a linha no body
-    //       body.push(linha);
-    //       body.push(linhaVazia);
-    //       // gera a tabela
-    //       autoTable(doc, {
-    //         startY: contadorLinhas,
-    //         body,
-    //         theme: "grid",
-    //         styles: { fontSize: 8, cellPadding: 2 }
-    //       });
-    //       contadorLinhas+=20;
-
-    //     }
-        
-    //   });
-
-    // }
-
-    // if(analise.ultimo_ensaio){
-      
-    //   analise.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
-
-    //     const existe = this.ensaios_selecionados.some(item => item.id === ensaios_utilizados.id);
-    //     if(existe){
-
-    //       const body: any[] = [];
-    //       const linha: any[] = [];
-    //       const linhaVazia: any[] = [];
-
-    //       // primeira célula: descrição
-    //       linha.push({ content: ensaios_utilizados.id+'  -  '+ensaios_utilizados.descricao+' ---> ultimo ENSAIO', styles: { halign: "center",  } });
-    //       linha.push({ content: 'Técnico', styles: { halign: "center" } });
-
-    //       linhaVazia.push({ content: '', styles: { halign: "center" } });
-    //       linhaVazia.push({ content: '', styles: { halign: "center" } });
-
-    //       // adiciona cada variável como coluna
-    //       // ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
-    //       //   linha.push({ content: variavel_detalhes.nome, styles: { halign: "center",  } });
-    //       //   linhaVazia.push({ content: '', styles: { halign: "center" } });
-    //       // });
-
-    //       // última célula: descrição novamente (ou resultado final)
-    //                                         const teste = ensaios_utilizados.valor ? ensaios_utilizados.valor : '';
-
-    //       linha.push({ content: ensaios_utilizados.id+'  -  '+ensaios_utilizados.descricao, styles: { halign: "center", fontStyle: "bold" } });
-    //       linhaVazia.push({ content: teste, styles: { halign: "center" } });
-
-    //       // adiciona a linha no body
-    //       body.push(linha);
-    //       body.push(linhaVazia);
-    //       // gera a tabela
-    //       autoTable(doc, {
-    //         startY: contadorLinhas,
-    //         body,
-    //         theme: "grid",
-    //         styles: { fontSize: 8, cellPadding: 2 }
-    //       });
-    //       contadorLinhas+=20;
-
-    //     }
-        
-    //   });
-
-    // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-      const blobUrl = doc.output("bloburl");
-      window.open(blobUrl, "_blank");
+    const blobUrl = doc.output("bloburl");
+    window.open(blobUrl, "_blank");
     
     //   // doc.save("Etiqueta.pdf");
   }

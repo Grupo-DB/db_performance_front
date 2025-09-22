@@ -46,6 +46,8 @@
     </ul>
 </div>
 
+
+
 <div class="container flex flex-column align-items-center mb-4">
 
     <div class="containerInterno w-12">
@@ -932,29 +934,30 @@
                         <div class="flex flex-row w-12 gap-3">
                             <!-- Coluna da tabela -->
                             <div class="w-12">
-<p-treeTable 
-  [value]="ensaios_laudo"
-  selectionMode="checkbox" 
-  [(selection)]="selectedEnsaios"
-  dataKey="key">
+                                <p-treeTable
+                                    [value]="ensaios_laudo"
+                                    selectionMode="checkbox"
+                                    [(selection)]="selectedEnsaios"
+                                >
 
-  <ng-template pTemplate="header">
-    <tr>
-      <th style="width: 3rem"></th>
-      <th>Descrição</th>
-    </tr>
-  </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                        <th>Descrição</th>
+                                        </tr>
+                                    </ng-template>
 
-  <ng-template pTemplate="body" let-rowNode>
-    <tr>
-      <td>
-        <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
-        <p-treeTableCheckbox [value]="rowNode.node"></p-treeTableCheckbox>
-      </td>
-      <td>{{ rowNode.node.data?.descricao }}</td>
-    </tr>
-  </ng-template>
-</p-treeTable>
+                                    <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+                                        <tr>
+                                        <td>
+                                            <!-- 👇 toggler fica em TODAS as linhas -->
+                                            <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                                            <p-treeTableCheckbox [value]="rowNode"></p-treeTableCheckbox>
+
+                                            {{ rowData?.descricao }}</td>
+                                        </tr>
+                                    </ng-template>
+                                </p-treeTable>
+
                             </div>
                         </div>
                     
