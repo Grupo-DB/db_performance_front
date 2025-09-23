@@ -8,8 +8,8 @@ import { Expressa } from '../../pages/controleQualidade/expressa/expressa.compon
   providedIn: 'root'
 })
 export class OrdemService {
-  private ordemUrl = 'http://localhost:8000/ordem/ordem/';
-  private expressaUrl = 'http://localhost:8000/ordem/expressa/';
+  private ordemUrl = 'http://172.50.10.79:8008/ordem/ordem/';
+  private expressaUrl = 'http://172.50.10.79:8008/ordem/expressa/';
 
   constructor(
     private httpClient: HttpClient

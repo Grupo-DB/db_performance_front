@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class NotificacoesService {
 
-  private apiUrl = 'http://localhost:8000/management/notifications/';  // Ajuste a URL conforme necessário
+  private apiUrl = 'http://172.50.10.79:8008/management/notifications/';  // Ajuste a URL conforme necessário
 
   constructor(private http: HttpClient) { }
 

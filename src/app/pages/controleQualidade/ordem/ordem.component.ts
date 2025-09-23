@@ -45,10 +45,14 @@ import { AmostraService } from '../../../services/controleQualidade/amostra.serv
 import { TagModule } from 'primeng/tag';
 import { CheckboxModule } from 'primeng/checkbox';
 import { Amostra } from '../amostra/amostra.component';
+import { TreeTableModule } from 'primeng/treetable';
+
+import { TreeNode } from 'primeng/api';
 
 import jsPDF from 'jspdf';
 import autoTable, { CellInput } from "jspdf-autotable";
 import { Chart } from 'chart.js';
+
 
 interface OrdemForm {
   data: FormControl,
@@ -87,7 +91,7 @@ export interface Ordem {
     MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, 
     MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule,
     NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule, 
-    TagModule, CheckboxModule
+    TagModule, CheckboxModule,TreeTableModule
   ],
   animations: [
     trigger('efeitoFade',[
@@ -152,6 +156,7 @@ export class OrdemComponent implements OnInit {
   laudoForm!: FormGroup;
   modalLaudo: boolean = false;
   modalImpressao: boolean = false;
+  modalImpressao2: boolean = false;
 
   ordens: Ordem[]=[];
   analises: any[] = [];
@@ -186,6 +191,13 @@ export class OrdemComponent implements OnInit {
   editFormVisible: boolean = false;
   editForm!: FormGroup;
 
+  data?: any;
+  children?: TreeNode[];
+  leaf?: boolean;
+  expanded?: boolean;
+    partialSelected?: boolean;
+
+selectedEnsaios: TreeNode[] = []; // aqui ficam os selecionados
 
   modalVisualizar: boolean = false;
   analiseSelecionada: any;
@@ -249,6 +261,7 @@ export class OrdemComponent implements OnInit {
     { id: 2, nome: 'Desenvolvimento de Produtos' },
   ]
   
+
   router: any;
   constructor(
     private loginService: LoginService,
@@ -284,8 +297,6 @@ export class OrdemComponent implements OnInit {
       responsavel: [''],
       isExpressa: [''],
       idSalvar: [''],
-     
-      
     });
   }
   
@@ -306,14 +317,10 @@ export class OrdemComponent implements OnInit {
 
   visualizar(analise: any) {
     this.analiseSelecionada = analise;
+    console.log('this.analiseSelecionada', this.analiseSelecionada  );
     this.modalVisualizar = true;
-    console.log('Drawer deve abrir', analise); 
   }
 
-  imprimirAnaliseVisualizar() {
-
-    alert('vai imprimir');
-  }
 
   abrirModalEdicao(amostra: Amostra) {
     this.editFormVisible = true;
@@ -322,6 +329,9 @@ export class OrdemComponent implements OnInit {
     let data = null;
     let isExpressa = false;
     let idSalvar = '';
+    let plano_analise = '';
+
+    console.log('AmOsTrAssss', amostra)
 
     if(amostra.expressa_detalhes){
       classificacao = amostra.expressa_detalhes.classificacao;
@@ -335,6 +345,8 @@ export class OrdemComponent implements OnInit {
       responsavel = amostra.ordem_detalhes.responsavel;
       data = formatDate(amostra.ordem_detalhes.data, 'dd/MM/yyyy', 'en-US');
       idSalvar = amostra.ordem_detalhes.id;
+      plano_analise = amostra.ordem_detalhes.plano_detalhes[0].id;
+
     }
 
     this.editForm.patchValue({
@@ -345,6 +357,7 @@ export class OrdemComponent implements OnInit {
       data: data,
       isExpressa: isExpressa,
       idSalvar: idSalvar,
+      plano_analise: plano_analise,
     });
   }
 
@@ -355,6 +368,20 @@ export class OrdemComponent implements OnInit {
   saveEditOrdem(idSalvar: number ){
     let dataFormatada = null;
 
+
+
+
+
+
+
+    
+    console.log(this.editForm.value);
+    alert('Atualizar API');
+
+
+
+
+
     if (this.editForm.value.data instanceof Date) {
         dataFormatada = formatDate(this.editForm.value.data, 'yyyy-MM-dd', 'en-US');
     }else{
@@ -364,14 +391,15 @@ export class OrdemComponent implements OnInit {
       dataFormatada = formatDate(dataFormatada, 'yyyy-MM-dd', 'en-US');
     }
 
-    const dadosAtualizados: Partial<Amostra> = {
+    const dadosAtualizados: Partial<Ordem> = {
       data: dataFormatada,
       numero: this.editForm.value.numero,
       classificacao: this.editForm.value.classificacao,
       responsavel: this.editForm.value.responsavel,
+      planoAnalise: this.editForm.value.plano_analise,
     };
-    console.log(dadosAtualizados);
-    this.amostraService.editAmostraOrdem(idSalvar, dadosAtualizados).subscribe({
+    console.log('dadosAtualizados', dadosAtualizados);
+    this.ordemService.editOrdens(idSalvar, dadosAtualizados).subscribe({
       next:() =>{       
         this.editFormVisible = false;
         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Amostra atualizada com sucesso!!', life: 1000 });
@@ -386,8 +414,7 @@ export class OrdemComponent implements OnInit {
           this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
         } else if (err.status === 400) {
           this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
-        }
-        else {
+        } else {
           this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
         } 
       }
@@ -473,6 +500,7 @@ export class OrdemComponent implements OnInit {
     this.ensaioService.getPlanoAnalise().subscribe(
       response => {
         this.planosAnalise = response;
+
       },
       error => {
         console.log('Erro ao carregar planos de análise', error);
@@ -1374,12 +1402,12 @@ gerarNumero(materialNome: string, sequencial: number): string {
 
   abrirModalLaudo(amostra_detalhes: any) {
   
-  console.log('laudo', amostra_detalhes);
-  this.amostra_detalhes_selecionada = amostra_detalhes;
+    console.log('laudo', amostra_detalhes);
+    this.amostra_detalhes_selecionada = amostra_detalhes;
 
-  while (this.ensaios_laudo.length > 0) {
-      this.ensaios_laudo.pop(); // Removes elements one by one from the end
-  }
+    while (this.ensaios_laudo.length > 0) {
+        this.ensaios_laudo.pop(); // Removes elements one by one from the end
+    }
 
     if(amostra_detalhes.ultimo_ensaio){
       amostra_detalhes.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
@@ -1404,33 +1432,236 @@ gerarNumero(materialNome: string, sequencial: number): string {
     this.modalLaudo = true;
   }
 
-  abrirModalImpressao(amostra_detalhes: any) {
-    this.amostra_detalhes_selecionada = amostra_detalhes;
-    this.ensaios_laudo.pop(); // Remove ULTIMO ELEMENTO
-    while (this.ensaios_selecionados.length > 0) {
-        this.ensaios_laudo.pop(); 
+  abrirModalImpressao(analise: any) {
+    console.log('analise', analise);
+    this.amostra_detalhes_selecionada = analise;
+
+    if(analise.amostra_detalhes.expressa_detalhes){
+
+      const calculos = analise.amostra_detalhes.expressa_detalhes.calculo_ensaio_detalhes.map(
+        (calculo: any) => {
+          const children = (calculo.ensaios_detalhes || []).map((ensaio: any) => ({
+            data: {
+              id: calculo.id + '/' + ensaio.id,
+              descricao: calculo.id + '/' + ensaio.id + ' - ' + ensaio.descricao,
+              disabled: false
+            },
+            leaf: true
+          }));
+
+          return {
+            data: {
+              id: '' + calculo.id,
+              descricao: calculo.id + ' - ' + calculo.descricao,
+              disabled: false
+            },
+            children: children.length > 0 ? children : undefined,
+            expanded: false,
+            partialSelected: false
+          };
+        }
+      );
+
+      const ensaios = analise.amostra_detalhes.expressa_detalhes.ensaio_detalhes.map(
+        (ensaio: any) => {
+          const children = (ensaio.variavel_detalhes || []).map((variavel: any) => ({
+            data: {
+              id: ensaio.id + '/' + variavel.id,
+              descricao: ensaio.id + '/' + variavel.id + ' - ' + variavel.nome,
+              disabled: false
+            },
+            leaf: true
+          }));
+
+          return {
+            data: {
+              id: '' + ensaio.id,
+              descricao: ensaio.id + ' - ' + ensaio.descricao,
+              disabled: false
+            },
+            children: children.length > 0 ? children : undefined,
+            expanded: false,
+            partialSelected: false
+          };
+        }
+      );
+
+      // separador
+      const separador = {
+        data: {
+          id: 'separador',
+          descricao: '---------- CÁLCULOS ---------',
+          disabled: true
+        },
+        leaf: true
+      };
+
+      this.ensaios_laudo = [...ensaios, separador, ...calculos];
+
     }
-    if(amostra_detalhes.expressa_detalhes){
-      amostra_detalhes.expressa_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
-        this.ensaios_laudo.push({
-            id: ensaio_detalhes.id,
-            descricao: ensaio_detalhes.descricao,
-          });
-      });
-    }
-    if(amostra_detalhes.ordem_detalhes){
-      amostra_detalhes.ordem_detalhes.plano_detalhes.forEach((plano_detalhes: any) => {
-        plano_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
+
+    if (analise?.amostra_detalhes?.ordem_detalhes) {
+      this.ensaios_laudo = [];
+
+      analise.amostra_detalhes.ordem_detalhes.plano_detalhes?.forEach((plano_detalhes: any) => {
+        if (plano_detalhes.ensaio_detalhes) {
+          this.ensaios_laudo.push(
+            ...plano_detalhes.ensaio_detalhes.map((ensaio_detalhes: any) => {
+              const children = (ensaio_detalhes.variavel_detalhes || []).map((variavel: any) => ({
+                data: {
+                  id: ensaio_detalhes.id + '/' + variavel.id,
+                  descricao: ensaio_detalhes.id + '/' + variavel.id + ' - ' + variavel.nome,
+                  disabled: false
+                },
+                leaf: true
+              }));
+
+              return {
+                data: {
+                  id: '' + ensaio_detalhes.id,
+                  descricao: ensaio_detalhes.id + ' - ' + ensaio_detalhes.descricao,
+                  disabled: false
+                },
+                children: children.length > 0 ? children : undefined,
+                expanded: false,
+                partialSelected: false
+              };
+            })
+          );
+        }
+
+        if (plano_detalhes.calculo_ensaio_detalhes) {
           this.ensaios_laudo.push({
-            id: ensaio_detalhes.id,
-            descricao: ensaio_detalhes.descricao,
+            data: {
+              id: 'separador_' + plano_detalhes.id, // id único pra não dar conflito
+              descricao: '---------- CÁLCULOS ---------',
+              disabled: true
+            },
+            leaf: true
           });
-        });
+
+          this.ensaios_laudo.push(
+            ...plano_detalhes.calculo_ensaio_detalhes.map((calculo: any) => {
+              const ensaiosChildren = (calculo.ensaios_detalhes || []).map((ensaio: any) => ({
+                data: {
+                  id: calculo.id+'/' + ensaio.id,
+                  descricao: calculo.id+'/' + ensaio.id + ' - ' + ensaio.descricao,
+                  disabled: false
+                },
+                leaf: true
+              }));
+
+              return {
+                data: {
+                  id: ''+calculo.id,
+                  descricao: calculo.id + ' - ' + calculo.descricao,
+                  disabled: false
+                },
+                children: ensaiosChildren.length > 0 ? ensaiosChildren : undefined,
+                expanded: false,
+                partialSelected: false
+              };
+            })
+          );
+        }
+
       });
     }
-    this.modalImpressao = true;
+ 
+    console.log('this.ensaios_laudo', this.ensaios_laudo)
+    this.modalImpressao2 = true;
   }
 
+  imprimirVisualizar(analise: any){
+    const doc = new jsPDF();
+
+    let y = 10; // posição inicial Y
+
+    doc.setFontSize(20);
+    const pageWidth = doc.internal.pageSize.getWidth(); // largura da página
+    doc.text("OS", pageWidth / 2, y, { align: "center" });    
+    y += 15;
+
+    // --- Dados ---
+    doc.setFontSize(16);
+    doc.text("Dados", 10, y);
+    y += 10;
+
+    doc.setFontSize(12);
+    doc.text(`Número: ${analise.amostra_detalhes?.numero || 'N/D'}`, 10, y); y += 8;
+    doc.text(`Classificação: ${analise.amostra_detalhes?.expressa_detalhes?.classificacao 
+      || analise.amostra_detalhes?.ordem_detalhes?.classificacao || 'N/D'}`, 10, y); y += 8;
+    doc.text(`Responsável: ${analise.amostra_detalhes?.expressa_detalhes?.responsavel 
+      || analise.amostra_detalhes?.ordem_detalhes?.responsavel || 'N/D'}`, 10, y); y += 8;
+
+    const dataAbertura = analise.amostra_detalhes?.expressa_detalhes?.data 
+      || analise.amostra_detalhes?.ordem_detalhes?.data;
+    doc.text(`Data de Abertura: ${dataAbertura ? new Date(dataAbertura).toLocaleDateString('pt-BR') : 'N/D'}`, 10, y); 
+    y += 15;
+
+    // --- Cálculos ---
+    doc.setFontSize(16);
+    doc.text("Cálculos", 10, y); 
+    y += 10;
+
+    doc.setFontSize(12);
+    if (analise?.ultimo_calculo?.length > 0) {
+      analise.ultimo_calculo.forEach((calc: any) => {
+        doc.text(`Descrição: ${calc.calculos}`, 10, y); y += 8;
+        doc.text(`Resultado: ${calc.resultados}`, 10, y); y += 8;
+        calc.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
+          doc.text(`Descrição: ${ensaios_utilizados.descricao}`, 30, y); y += 8;
+          doc.text(`Resultado: ${ensaios_utilizados.valor}`, 30, y); y += 8;
+          if(y>=290){
+            doc.addPage();
+            y=10;
+          }
+        });
+        
+        y += 4; // espaço extra
+        if(y>=290){
+          doc.addPage();
+          y=10;
+        }
+      });
+    } else {
+      doc.text("N/D", 10, y);
+      y += 8;
+      if(y>=290){
+        doc.addPage();
+        y=10;
+      }
+    }
+
+    y += 10;
+
+    // --- Ensaios ---
+    doc.setFontSize(16);
+    doc.text("Ensaios", 10, y); 
+    y += 10;
+
+    doc.setFontSize(12);
+    if (analise?.ultimo_ensaio?.ensaios_utilizados?.length > 0) {
+      analise.ultimo_ensaio.ensaios_utilizados.forEach((ensaio: any) => {
+        doc.text(`Descrição: ${ensaio.descricao}`, 10, y); y += 8;
+        doc.text(`Resultado: ${ensaio.valor}`, 10, y); y += 8;
+        y += 4;
+        if(y>=290){
+          doc.addPage();
+          y=10;
+        }
+      });
+    } else {
+      doc.text("N/D", 10, y);
+      if(y>=290){
+        doc.addPage();
+        y=10;
+      }
+    }
+
+    const blobUrl = doc.output("bloburl");
+    window.open(blobUrl, "_blank");
+  }
 
   imprimirSelecionados() {
     this.imprimirCalculoPDF(this.amostra_detalhes_selecionada);
@@ -1454,6 +1685,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
     }
   }
 
+  ///////AQUIIII
    imprimirLaudoCalcPDF(amostra_detalhes_selecionada: any) {
 
     const doc = new jsPDF({ 
@@ -2978,7 +3210,34 @@ gerarNumero(materialNome: string, sequencial: number): string {
   }
 
   imprimirCalculoPDF(analise: any) {
-    console.log('kfkdjfsd', this.ensaios_selecionados);
+    const resultado: { pai: string, filhos: string[] }[] = [];
+
+    this.selectedEnsaios.forEach((selectedEnsaios: any) => {
+      const id = String(selectedEnsaios.data.id);
+
+      if (id.includes("/")) {
+        const [pai, filho] = id.split("/");
+        let paiExistente = resultado.find(r => r.pai === pai);
+
+        if (!paiExistente) {
+          paiExistente = { pai, filhos: [] };
+          resultado.push(paiExistente);
+        }
+
+        paiExistente.filhos.push(filho);
+
+      } else {
+        const pai = id;
+        let paiExistente = resultado.find(r => r.pai === pai);
+        if (!paiExistente) {
+          resultado.push({ pai, filhos: [] });
+        }
+      }
+    });
+
+    console.log(resultado);
+
+    console.log('analise', analise);
     const doc = new jsPDF({ unit: "mm", format: "a4" });
     let contadorLinhas = 45;
     autoTable(doc, {
@@ -2986,20 +3245,20 @@ gerarNumero(materialNome: string, sequencial: number): string {
       body: [
         [
           { content: "Ordem de Serviço", styles: { halign: "left", fontStyle: "bold" } },
-          { content: analise.numero, styles: { halign: "left", fontStyle: "bold" } },
-          { content: "Data de Entrada: "+analise.data_entrada, styles: { halign: "left" } },
+          { content: analise.amostra_detalhes.numero, styles: { halign: "left", fontStyle: "bold" } },
+          { content: "Data de Entrada: "+analise.amostra_detalhes.data_entrada, styles: { halign: "left" } },
         ],
         [
-          { content: "Material da Amostra: "+analise.material, colSpan: 2, styles: { halign: "left" } },
-          { content: "Data de Amostra: "+analise.data_coleta, styles: { halign: "left" } }
+          { content: "Material da Amostra: "+analise.amostra_detalhes.material, colSpan: 2, styles: { halign: "left" } },
+          { content: "Data de Amostra: "+analise.amostra_detalhes.data_coleta, styles: { halign: "left" } }
         ],
         [
-          { content: "Tipo: "+analise?.tipo_amostragem, styles: { halign: "left" } },
-          { content: "Sub-tipo: "+analise?.subtipo, styles: { halign: "left" } },
+          { content: "Tipo: "+analise.amostra_detalhes?.tipo_amostragem, styles: { halign: "left" } },
+          { content: "Sub-tipo: "+analise.amostra_detalhes?.subtipo, styles: { halign: "left" } },
           { content: "Data de Conclusão: ", styles: { halign: "left" } }
         ],
         [
-          { content: "Local da Coleta: "+analise.local_coleta, colSpan: 2, styles: { halign: "left" } },
+          { content: "Local da Coleta: "+analise.amostra_detalhes.local_coleta, colSpan: 2, styles: { halign: "left" } },
           { content: "Data de Descarte: ", styles: { halign: "left", fontStyle: "bold" } }
         ]
       ],
@@ -3010,74 +3269,178 @@ gerarNumero(materialNome: string, sequencial: number): string {
       }
     });
 
-    if(analise.expressa_detalhes){
+    if(analise.amostra_detalhes.expressa_detalhes){
       
-      analise.expressa_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
+      analise.amostra_detalhes.expressa_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
 
-        const existe = this.ensaios_selecionados.some(item => item.id === ensaio_detalhes.id);
+        const existe = resultado.some(item => {
+          console.log("comparando -> item.pai:", ''+item.pai, "| ensaio_detalhes.id:", ''+ensaio_detalhes.id);
+          return item.pai == ensaio_detalhes.id;
+        });
+
         if(existe){
 
           const body: any[] = [];
           const linha: any[] = [];
           const linhaVazia: any[] = [];
 
-          // primeira célula: descrição
           linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
           linha.push({ content: 'Técnico', styles: { halign: "center" } });
-
-          linhaVazia.push({ content: '', styles: { halign: "center" } });
-          linhaVazia.push({ content: '', styles: { halign: "center" } });
-
-          // adiciona cada variável como coluna
+      
           ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
-            linha.push({ content: variavel_detalhes.nome, styles: { halign: "center",  } });
-            linhaVazia.push({ content: '', styles: { halign: "center" } });
+            const pai = resultado.find(item => item.pai == ensaio_detalhes.id);
+            const filhoExiste = pai?.filhos.includes(String(variavel_detalhes.id));
+
+            // console.log(
+            //   "comparando -> filhos do pai:",
+            //   pai?.filhos,
+            //   "| variavel_detalhes.id:",
+            //   ''+variavel_detalhes.id,
+            //   "| existe?",
+            //   filhoExiste
+            // );
+
+            if (filhoExiste) {
+              linha.push({ content: variavel_detalhes.nome, styles: { halign: "center", fontStyle: "bold" } });
+              linhaVazia.push({ content: variavel_detalhes.valor, styles: { halign: "center" } });
+            }
           });
 
-          // última célula: descrição novamente (ou resultado final)
+          linhaVazia.push({ content: '', styles: { halign: "center" } });
+          linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+          ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
+            linhaVazia.push({ content: variavel_detalhes.valor, styles: { halign: "center" } });
+          });
+
           linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold" } });
           linhaVazia.push({ content: '', styles: { halign: "center" } });
 
-          // adiciona a linha no body
           body.push(linha);
           body.push(linhaVazia);
-          // gera a tabela
           autoTable(doc, {
             startY: contadorLinhas,
             body,
             theme: "grid",
             styles: { fontSize: 8, cellPadding: 2 }
           });
-          contadorLinhas+=20;
-
+          contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
         }
         
+      });
+      
+      let contador_calculo = 0;
+      analise.amostra_detalhes.expressa_detalhes.calculo_ensaio_detalhes.forEach((calculo_ensaio_detalhes: any) => {
+
+        const existe = resultado.some(item => {
+          console.log("comparando -> item.pai:", ''+item.pai, "| calculo_ensaio_detalhes.id:", ''+calculo_ensaio_detalhes.id);
+          return item.pai == calculo_ensaio_detalhes.id;
+        });
+        if(existe){
+          if(contador_calculo == 0){
+              autoTable(doc, {
+                startY: contadorLinhas+5,
+                body: [
+                  [
+                    { content: "Cálculos", styles: { halign: "left", fontStyle: "bold" } },
+                  ],
+                ],
+                theme: "grid",
+                styles: {
+                  fontSize: 9,
+                  cellPadding: 2
+                }
+              });
+              contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+              contador_calculo = 1;
+            }
+
+          let body: any[] = [];
+          let linha: any[] = [];
+          let linhaVazia: any[] = [];
+
+          linha.push({ content: calculo_ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold" } });
+          linha.push({ content: 'Técnico', styles: { halign: "center" } });
+
+          linhaVazia.push({ content: '', styles: { halign: "center" } });
+          linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+          let contador = 0;
+          calculo_ensaio_detalhes.ensaios_detalhes.forEach((ensaios_detalhes: any) => {
+            const pai = resultado.find(item => item.pai == calculo_ensaio_detalhes.id);
+            const filhoExiste = pai?.filhos.includes(String(ensaios_detalhes.id));
+
+            if (filhoExiste) {
+              linha.push({ content: ensaios_detalhes.nome, styles: { halign: "center", fontStyle: "bold" } });
+              linhaVazia.push({ content: ensaios_detalhes.valor, styles: { halign: "center" } });
+              contador ++;
+              if(contador >= 4){
+                linhaVazia.push({ content: '', styles: { halign: "center" } });
+                linhaVazia.push({ content: '', styles: { halign: "center" } });
+                body.push(linha);
+                body.push(linhaVazia);
+                autoTable(doc, {
+                  startY: contadorLinhas,
+                  body,
+                  theme: "grid",
+                  styles: { fontSize: 8, cellPadding: 2 }
+                });
+                contadorLinhas = (doc as any).lastAutoTable.finalY;
+                body = [];
+                linha = [];
+                linhaVazia = [];
+                contador = 0;
+              }
+            }
+          });
+
+          linhaVazia.push({ content: '', styles: { halign: "center" } });
+          linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+          linha.push({ content: calculo_ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold" } });
+          linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+          body.push(linha);
+          body.push(linhaVazia);
+          autoTable(doc, {
+            startY: contadorLinhas,
+            body,
+            theme: "grid",
+            styles: { fontSize: 8, cellPadding: 2 }
+          });
+          contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+        }
       });
 
     }else{
       
-      analise.ordem_detalhes.plano_detalhes.forEach((plano_detalhes: any) => {
+      analise.amostra_detalhes.ordem_detalhes.plano_detalhes.forEach((plano_detalhes: any) => {
               
-        //aqui é o ennsaio_detalhes
         plano_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
-          const existe = this.ensaios_selecionados.some(item => item.id === ensaio_detalhes.id);
+          const existe = resultado.some(item => {
+            console.log("comparando -> item.pai:", ''+item.pai, "| ensaio_detalhes.id:", ''+ensaio_detalhes.id);
+            return item.pai == ensaio_detalhes.id;
+          });
           if(existe){
             const body: any[] = [];
             const linha: any[] = [];
             const linhaVazia: any[] = [];
             
-            linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
+            linha.push({ content:  ensaio_detalhes.id+'  -  '+ensaio_detalhes.descricao, styles: { halign: "center",  } });
             linha.push({ content: 'Técnico', styles: { halign: "center" } });
 
             linhaVazia.push({ content: '', styles: { halign: "center" } });
             linhaVazia.push({ content: '', styles: { halign: "center" } });
 
-              ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
-                console.log('2')
-                console.log(variavel_detalhes)
-                linha.push({ content: variavel_detalhes.nome, styles: { halign: "center",  } });
-                linhaVazia.push({ content: '', styles: { halign: "center" } });
-              });    
+            ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
+              const pai = resultado.find(item => item.pai == ensaio_detalhes.id);
+              const filhoExiste = pai?.filhos.includes(String(variavel_detalhes.id));
+
+              if (filhoExiste) {
+                linha.push({ content: variavel_detalhes.nome, styles: { halign: "center", fontStyle: "bold" } });
+                linhaVazia.push({ content: variavel_detalhes.valor, styles: { halign: "center" } });
+              }
+            });    
 
             linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
             linhaVazia.push({ content: '', styles: { halign: "center" } });
@@ -3092,54 +3455,94 @@ gerarNumero(materialNome: string, sequencial: number): string {
               styles: { fontSize: 8, cellPadding: 2 }
             });
 
-            contadorLinhas+=20;
+            contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
           }
         });
 
-          
+        let contador_calculo = 0;
         plano_detalhes.calculo_ensaio_detalhes.forEach((calculo_ensaio_detalhes: any) => {
-          calculo_ensaio_detalhes.ensaios_detalhes.forEach((ensaio_detalhes: any) => {
-            const existe = this.ensaios_selecionados.some(item => item.id === ensaio_detalhes.id);
-            if(existe){
-              const body: any[] = [];
-              const linha: any[] = [];
-              const linhaVazia: any[] = [];
+          const existe = resultado.some(item => item.pai == calculo_ensaio_detalhes.id);
 
-              linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
-              linha.push({ content: 'Técnico', styles: { halign: "center" } });
-
-              linhaVazia.push({ content: '', styles: { halign: "center" } });
-              linhaVazia.push({ content: '', styles: { halign: "center" } });
-
-              ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
-                linha.push({ content: variavel_detalhes.nome, styles: { halign: "center",  } });
-                linhaVazia.push({ content: '', styles: { halign: "center" } });
-              });
-
-              linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
-              linhaVazia.push({ content: '', styles: { halign: "center" } });
-
-              body.push(linha);
-              body.push(linhaVazia);
-          
+          if (existe) {
+            if(contador_calculo == 0){
               autoTable(doc, {
-                startY: contadorLinhas,
-                body,
+                startY: contadorLinhas+5,
+                body: [
+                  [
+                    { content: "Cálculos", styles: { halign: "left", fontStyle: "bold" } },
+                  ],
+                ],
                 theme: "grid",
-                styles: { fontSize: 8, cellPadding: 2 }
+                styles: {
+                  fontSize: 9,
+                  cellPadding: 2
+                }
               });
 
-              contadorLinhas+=20;
+              contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+              contador_calculo = 1;
             }
-          });
-          
+
+            let body: any[] = [];
+            let linha: any[] = [];
+            let linhaVazia: any[] = [];
+
+            linha.push({ content: calculo_ensaio_detalhes.id + ' - ' + calculo_ensaio_detalhes.descricao, styles: { halign: "center" } });
+            linha.push({ content: 'Técnico', styles: { halign: "center" } });
+
+            linhaVazia.push({ content: '', styles: { halign: "center" } });
+            linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+            let contador = 0;
+            calculo_ensaio_detalhes.ensaios_detalhes.forEach((ensaio_detalhes: any) => {
+              const pai = resultado.find(item => item.pai == calculo_ensaio_detalhes.id);
+              const filhoExiste = pai?.filhos.includes(String(ensaio_detalhes.id));
+
+              if (filhoExiste) {
+                linha.push({ content: ensaio_detalhes.id + ' - ' + ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold" } });
+                linhaVazia.push({ content: ensaio_detalhes.valor, styles: { halign: "center" } });
+
+                contador ++;
+                if(contador >= 4){
+                  linhaVazia.push({ content: '', styles: { halign: "center" } });
+                  linhaVazia.push({ content: '', styles: { halign: "center" } });
+                  body.push(linha);
+                  body.push(linhaVazia);
+                  autoTable(doc, {
+                    startY: contadorLinhas,
+                    body,
+                    theme: "grid",
+                    styles: { fontSize: 8, cellPadding: 2 }
+                  });
+                  contadorLinhas = (doc as any).lastAutoTable.finalY;
+                  body = [];
+                  linha = [];
+                  linhaVazia = [];
+                  contador = 0;
+                }
+              }
+            });
+
+            linha.push({ content: calculo_ensaio_detalhes.descricao, styles: { halign: "center" } });
+            linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+            body.push(linha);
+            body.push(linhaVazia);
+
+            autoTable(doc, {
+              startY: contadorLinhas,
+              body,
+              theme: "grid",
+              styles: { fontSize: 8, cellPadding: 2 }
+            });
+            contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+          }
         });
       });
     }
 
-    
-      const blobUrl = doc.output("bloburl");
-      window.open(blobUrl, "_blank");
+    const blobUrl = doc.output("bloburl");
+    window.open(blobUrl, "_blank");
     
     //   // doc.save("Etiqueta.pdf");
   }
@@ -3209,7 +3612,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
   getMenuItems(analise: any) {
     const menuItems = [
       { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(analise), tooltip: 'Visualizar OS', tooltipPosition: 'top' },
-      { label: 'Imprimir', icon: 'pi pi-print', command: () => this.abrirModalImpressao(analise.amostra_detalhes) },
+      { label: 'Imprimir', icon: 'pi pi-print', command: () => this.abrirModalImpressao(analise) },
       { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(analise.amostra_detalhes) },
       { label: 'Excluir', icon: 'pi pi-trash', command: () => { 
         if (analise.expressa_detalhes) {

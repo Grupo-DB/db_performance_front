@@ -46,6 +46,8 @@
     </ul>
 </div>
 
+
+
 <div class="container flex flex-column align-items-center mb-4">
     <div class="containerInterno w-12">
         <div class="background-form" @swipeAnimation>
@@ -231,7 +233,7 @@
                                                 </ng-template>
                                             </p-multiselect>
                                         </div>
-                                        <div class=" flex w-2 gap-3 mt-3 justify-content-end text-right">
+                                        <!-- <div class=" flex w-2 gap-3 mt-3 justify-content-end text-right">
                                             Finalizada 
                                             <p-columnFilter 
                                                 type="boolean" 
@@ -257,7 +259,7 @@
                                                 showMenu="false"
                                              >   
                                             </p-columnFilter>
-                                        </div>
+                                        </div> -->
                                         <div class=" flex w-2 gap-3 justify-content-end text-right">
                                             <p-floatlabel variant="on">
                                                 <p-iconfield>
@@ -297,10 +299,10 @@
                                             <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">Responsável</th>
                                             <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">Tipo</th>
                                             <th style="width: 24%; text-align: center;" type="text" field="acoes"display="menu">Opções</th>
-                                            <th style="width: 2%; text-align: center;" type="text" field="finalizada" display="menu">Finalizada</th>
+                                            <!-- <th style="width: 2%; text-align: center;" type="text" field="finalizada" display="menu">Finalizada</th>
                                             <th style="width: 2%; text-align: center;" type="text" field="laudo" display="menu">Laudo</th>
                                             <th style="width: 2%; text-align: center;" type="text" field="aprovada" display="menu">Aprovada</th>
-                                        
+                                         -->
                                         </tr>
                                     </ng-template>
 
@@ -470,7 +472,7 @@
                                                 </div>
 
                                             </td>
-                                            <td style="text-align: center;">
+                                            <!-- <td style="text-align: center;">
                                                 <i 
                                                     class="pi" 
                                                     [ngClass]="getStatusIcon(analise.finalizada)"
@@ -490,7 +492,7 @@
                                                     [ngClass]="getStatusIcon(analise.aprovada)"
                                                     [style.color]="getStatusColor(analise.aprovada)">
                                                 </i>
-                                            </td>             
+                                            </td>              -->
 
                                         </tr>
                                     </ng-template>
@@ -538,7 +540,18 @@
                     <span *ngIf="analiseSelecionada?.ultimo_calculo?.length > 0">
                         <span *ngFor="let ultimo_calculo of analiseSelecionada.ultimo_calculo">
                             <b>Descrição:</b> {{ ultimo_calculo.calculos }} <br>
-                            <b>Resultado:</b> {{ ultimo_calculo.resultados }}<hr>
+                            <b>Resultado:</b> {{ ultimo_calculo.resultados }} <br><br>
+                                       
+                            <b>Ensaios Utilizados</b>
+                            <br>
+                            <br>
+                            <div class="indent" *ngFor="let ensaios_utilizados of ultimo_calculo.ensaios_utilizados; let last = last">
+                                <b>Descrição:</b> {{ ensaios_utilizados.descricao }} <br>
+                                <b>Resultado:</b> {{ ensaios_utilizados.valor }} 
+                                <hr *ngIf="!last" class="linha-tracejada">
+                            </div>
+                            <br>
+                            <hr>
                         </span>
                     </span>
                 </div>
@@ -556,6 +569,18 @@
                         </span>
                     </span>
                 </div>
+            </div>
+
+            <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                <p-button 
+                    label="Gerar Impressão" 
+                    (onClick)="imprimirVisualizar(analiseSelecionada)"
+                    severity="success"
+                    icon="pi pi-check" 
+                    iconPos="right" 
+                    tooltipPosition="top"
+                    pTooltip="Gerar Impressão"
+                />
             </div>
 
         </div>
@@ -627,6 +652,20 @@
                                             [showIcon]="true">
                                         </p-datepicker>
                                         <label for="float-label">Data de Abertura</label>
+                                    </p-floatLabel>
+                                </div>
+                                <div class="w-12 text-left" *ngIf="editForm.get('plano_analise')?.value">
+                                    <p-floatLabel variant="on">
+                                        <p-select 
+                                            inputId="float-label" 
+                                            [style]="{'width':'100%'}"
+                                            [options]="planosAnalise" 
+                                            formControlName="plano_analise"
+                                            optionLabel="descricao" 
+                                            optionValue="id" 
+                                        >
+                                        </p-select>
+                                        <label for="float-label">Selecione o Plano de Análise</label>
                                     </p-floatLabel>
                                 </div>
 
@@ -841,9 +880,9 @@
                                     <ng-template pTemplate="body" let-ensaio>
                                         <tr [pSelectableRow]="ensaio">
                                         <td>
-                                            <p-tableCheckbox [value]="ensaio"></p-tableCheckbox>
+                                            <p-tableCheckbox [value]="ensaio" [disabled]="ensaio.disabled"></p-tableCheckbox>
                                         </td>
-                                            <td>{{ ensaio.descricao }}</td>
+                                            <td [style.color]="ensaio.color">{{ ensaio.descricao }}</td>
                                         </tr>
                                     </ng-template>
                                 </p-table>
@@ -867,3 +906,77 @@
         </div>
     </div>
 </p-dialog>
+
+
+<!-- Modal para seleção de ensaios PARA IMPRESSÃO -->
+
+<p-dialog 
+    [(visible)]="modalImpressao2" 
+    [modal]="true" 
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" 
+    [style]="{ width: '80vw' }" 
+    [draggable]="false" 
+    [resizable]="false"
+>
+    <div class="containerInterno w-12">
+        <div class="background-form">
+           
+            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                <div class="fg1 flex flex-column w-12 align-items-center">
+
+                    <p-card class="card w-12 text-center">
+                        <ng-template #header>
+                            <div class="header w-full text-center">
+                                <b>Selecionar Ánanlises para Impressão</b>
+                            </div>
+                        </ng-template>
+                        <div class="flex flex-row w-12 gap-3">
+                            <!-- Coluna da tabela -->
+                            <div class="w-12">
+                                <p-treeTable
+                                    [value]="ensaios_laudo"
+                                    selectionMode="checkbox"
+                                    [(selection)]="selectedEnsaios"
+                                >
+
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                        <th>Descrição</th>
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+                                        <tr>
+                                        <td>
+                                            <!-- 👇 toggler fica em TODAS as linhas -->
+                                            <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                                            <p-treeTableCheckbox [value]="rowNode"></p-treeTableCheckbox>
+
+                                            {{ rowData?.descricao }}</td>
+                                        </tr>
+                                    </ng-template>
+                                </p-treeTable>
+
+                            </div>
+                        </div>
+                    
+                        <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                            <p-button 
+                                label="Gerar Impressão" 
+                                (onClick)="imprimirSelecionados()"
+                                severity="success"
+                                icon="pi pi-check" 
+                                iconPos="right" 
+                                tooltipPosition="top"
+                                pTooltip="Gerar Impressão"
+                            />
+                        </div>
+                    </p-card>
+                </div>    
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+
+

@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class GetPerguntaService {
-  private apiUrl = 'http://localhost:8000/management/get_pergunta/'; 
+  private apiUrl = 'http://172.50.10.79:8008/management/get_pergunta/'; 
   constructor(private http: HttpClient) { }
 
   getPerguntas(): Observable<any[]>{
