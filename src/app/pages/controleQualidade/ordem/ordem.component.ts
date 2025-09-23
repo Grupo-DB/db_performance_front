@@ -72,7 +72,7 @@ export interface Ordem {
   id: number;
   numero: number;
   data: string;
-  planoAnalise: any;
+  plano_analise: any;
   responsavel: string;
   digitador: string;
   modificacoes: any;
@@ -366,21 +366,9 @@ selectedEnsaios: TreeNode[] = []; // aqui ficam os selecionados
   }
 
   saveEditOrdem(idSalvar: number ){
-    let dataFormatada = null;
-
-
-
-
-
-
-
-    
+    let dataFormatada = null;    
     console.log(this.editForm.value);
     alert('Atualizar API');
-
-
-
-
 
     if (this.editForm.value.data instanceof Date) {
         dataFormatada = formatDate(this.editForm.value.data, 'yyyy-MM-dd', 'en-US');
@@ -396,14 +384,14 @@ selectedEnsaios: TreeNode[] = []; // aqui ficam os selecionados
       numero: this.editForm.value.numero,
       classificacao: this.editForm.value.classificacao,
       responsavel: this.editForm.value.responsavel,
-      planoAnalise: this.editForm.value.plano_analise,
+      plano_analise: this.editForm.value.plano_analise,
     };
     console.log('dadosAtualizados', dadosAtualizados);
     this.ordemService.editOrdens(idSalvar, dadosAtualizados).subscribe({
       next:() =>{       
         this.editFormVisible = false;
         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Amostra atualizada com sucesso!!', life: 1000 });
-        this.loadAnalises();
+        //this.loadAnalises();
       },
       error: (err) => {
         console.error('Login error:', err); 

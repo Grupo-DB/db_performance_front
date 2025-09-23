@@ -7,7 +7,7 @@ import { Analise } from '../../pages/controleQualidade/analise/analise.component
   providedIn: 'root'
 })
 export class AnaliseService {
-  private analiseUrl = 'http://172.50.10.79:8008/analise/analise/';
+  private analiseUrl = 'http://localhost:8000/analise/analise/';
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
@@ -22,6 +22,10 @@ export class AnaliseService {
   }
   getAnalisesAbertas(): Observable<any>{
     const url = `${this.analiseUrl}abertas/`;
+    return this.httpClient.get<any[]>(url);   
+  }
+  getAnalisesFechadas(): Observable<any>{
+    const url = `${this.analiseUrl}fechadas/`;
     return this.httpClient.get<any[]>(url);   
   }
   getAnaliseById(id: number): Observable<Analise> {
@@ -74,7 +78,7 @@ export class AnaliseService {
   //---------------------RESULTADOS---------------------
 
 getResultadosAnteriores(calculoDescricao: string, ensaioIds: number[], limit: number = 5): Observable<any[]> {
-  const url = `http://172.50.10.79:8008/analise/analise/resultados-anteriores/`;
+  const url = `http://localhost:8000/analise/analise/resultados-anteriores/`;
   
   // Corpo da requisição POST
   const body = {
@@ -87,7 +91,7 @@ getResultadosAnteriores(calculoDescricao: string, ensaioIds: number[], limit: nu
 }
 
 getResultadosAnterioresEnsaios(ensaioDescricao: string, ensaioIds: number[], limit: number = 5): Observable<any[]> {
-  const url = `http://172.50.10.79:8008/analise/analise/resultados-anteriores/`;
+  const url = `http://localhost:8000/analise/analise/resultados-anteriores/`;
   
   // Corpo da requisição POST
   const body = {

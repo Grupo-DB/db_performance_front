@@ -314,7 +314,8 @@ export class CalculoEnsaioComponent implements OnInit {
         const codigo = c.tecnica || fallback;
         if (!codigo) return null;
         const label = c.descricao || codigo;
-        return { label, value: codigo as string };
+        // Use a descrição como value para a edição reconhecer o item
+        return { label, value: label as string };
       }).filter(Boolean) as any[];
       case 'Operador': return this.operadores;
       case 'Condicional': return this.condicionais;
@@ -390,12 +391,23 @@ getExpressaoString() {
 }
 
 converterExpressaoParaNomes(expr: string): string {
+  // Certifica o mapa atualizado
+  this.gerarNomesSegurosComValoresAtuais();
   // Inverte o nameMap para buscar pelo valor
   const reverseMap = Object.fromEntries(
     Object.entries(this.nameMap).map(([k, v]) => [v, k])
   );
-  // Substitui todos os ensXX e calculoXX pelo nome correspondente
-  return expr.replace(/(ens\d+|ensaio\d+|calculo\d+)/g, (match) => reverseMap[match] || match);
+  // Substitui códigos por nomes com fallback
+  return expr.replace(/(ens\d+|ensaio\d+|calculo\d+)/g, (match) => {
+    if (reverseMap[match]) return '"' + reverseMap[match] + '"';
+    if (match.startsWith('calculo')) {
+      const calc = this.caculosEnsaio.find((c: any) => c?.tecnica === match || `calculo${c?.id}` === match);
+      return calc?.descricao ? '"' + calc.descricao + '"' : match;
+    } else {
+      const ens = this.ensaios.find((e: any) => e?.ensaioTecnico === match || e?.tecnica === match || `ens${e?.id}` === match || `ensaio${e?.id}` === match);
+      return ens?.descricao ? '"' + ens.descricao + '"' : match;
+    }
+  });
 }
 // Avalia a expressão usando math.js e os valores dos ensaios
 avaliarExpressao() {
@@ -460,22 +472,119 @@ avaliarExpressao() {
   editarFormula(){
     // Converte a string da função em blocos para edição
   const funcao = this.editForm.get('funcao')?.value || '';
+  this.gerarNomesSegurosComValoresAtuais();
   const funcaoComNomes = this.converterExpressaoParaNomes(funcao);
   this.expressaoDinamica = this.converterFuncaoParaBlocos(funcaoComNomes);
   this.editarFormulaVisivel = true;
   }
+  
+  // Exibe a função com nomes legíveis no modal de edição
+  get funcaoLegivelEdicao(): string {
+    try {
+      this.gerarNomesSegurosComValoresAtuais();
+      const expr = this.editForm.get('funcao')?.value || '';
+      return this.converterExpressaoParaNomes(expr);
+    } catch {
+      return this.editForm.get('funcao')?.value || '';
+    }
+  }
+
+  // Lista os nomes dos Ensaios e Cálculos presentes na expressão do modal de edição
+  get elementosUsadosEdicao(): { descricao: string, tipo: 'Ensaio' | 'Cálculo' }[] {
+    const expr: string = this.editForm.get('funcao')?.value || '';
+    const codigos = Array.from(new Set(expr.match(/(ens\d+|ensaio\d+|calculo\d+)/g) || []));
+    const usados: { descricao: string, tipo: 'Ensaio' | 'Cálculo' }[] = [];
+
+    codigos.forEach(codigo => {
+      if (codigo.startsWith('calculo')) {
+        const calc = this.caculosEnsaio.find((c: any) => c?.tecnica === codigo || `calculo${c?.id}` === codigo);
+        if (calc?.descricao) usados.push({ descricao: calc.descricao, tipo: 'Cálculo' });
+      } else {
+        const ens = this.ensaios.find((e: any) => e?.ensaioTecnico === codigo || e?.tecnica === codigo || `ens${e?.id}` === codigo || `ensaio${e?.id}` === codigo);
+        if (ens?.descricao) usados.push({ descricao: ens.descricao, tipo: 'Ensaio' });
+      }
+    });
+
+    return usados;
+  }
 // O método converterFuncaoParaBlocos pode ficar igual, pois agora recebe nomes de ensaio
+private tokenizeExpressao(expr: string): string[] {
+  const tokens: string[] = [];
+  const twoCharOps = ['>=', '<=', '==', '!=', '&&', '||'];
+  const oneCharOps = new Set(['+', '-', '*', '/', '^', '?', ':', '=', ',', '<', '>']);
+  const delims = new Set(['(', ')', '[', ']', '{', '}']);
+  let i = 0;
+  const n = expr.length;
+  while (i < n) {
+    const ch = expr[i];
+    if (ch === ' ' || ch === '\t' || ch === '\n' || ch === '\r') { i++; continue; }
+    // quoted names as a single token
+    if (ch === '"') {
+      i++;
+      let buf = '';
+      while (i < n && expr[i] !== '"') { buf += expr[i]; i++; }
+      if (i < n && expr[i] === '"') i++; // consume closing quote
+      tokens.push('"' + buf + '"');
+      continue;
+    }
+    const next2 = expr.slice(i, i + 2);
+    if (twoCharOps.includes(next2)) { tokens.push(next2); i += 2; continue; }
+    if (delims.has(ch) || oneCharOps.has(ch)) { tokens.push(ch); i++; continue; }
+    // função como 'sqrt' deve ser tratada como token
+    if (expr.startsWith('sqrt', i)) { tokens.push('sqrt'); i += 4; continue; }
+    // Coletar nome/numero até o próximo operador ou delimitador
+    let buf = '';
+    while (i < n) {
+      const c = expr[i];
+      const look2 = expr.slice(i, i + 2);
+      if (c === ' ' && buf.length === 0) { i++; continue; }
+      if (twoCharOps.includes(look2) || delims.has(c) || oneCharOps.has(c)) break;
+      buf += c;
+      i++;
+    }
+    const trimmed = buf.trim();
+    if (trimmed) tokens.push(trimmed);
+  }
+  return tokens;
+}
+
+private normalizeText(txt: string): string {
+  return (txt || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 converterFuncaoParaBlocos(funcao: string): { tipo: string, valor: string }[] {
-  const tokens = funcao.split(' ');
+  const tokens = this.tokenizeExpressao(funcao);
+  // Conjunto de descrições de Cálculos vindas tanto da lista quanto do nameMap
+  const calcFromList = (this.caculosEnsaio || []).map((c: any) => this.normalizeText(c?.descricao));
+  const calcFromMap = Object.entries(this.nameMap || {})
+    .filter(([nome, tecnica]) => typeof tecnica === 'string' && /^calculo\d+$/i.test(tecnica))
+    .map(([nome]) => this.normalizeText(nome));
+  const calculoDescricoesNorm = new Set([...calcFromList, ...calcFromMap]);
   return tokens.map(token => {
+    const isQuoted = token.startsWith('"') && token.endsWith('"');
+    const raw = isQuoted ? token.slice(1, -1) : token;
+    const tokenNorm = this.normalizeText(raw);
     if (['+', '-', '*', '/'].includes(token)) {
       return { tipo: 'Operador', valor: token };
+    } else if(['&&','||','!','==','!=','<','>','<=','>='].includes(token)) {
+      return { tipo: 'Operador Lógico', valor: token };
+    } else if(['?', ':'].includes(token)) {
+      return { tipo: 'Condicional', valor: token };
+    } else if(["(", ")", ","].includes(token)) {
+      return { tipo: 'Delimitador', valor: token };
     } else if (!isNaN(Number(token))) {
       return { tipo: 'Valor', valor: token };
     } else if (token.startsWith('calculo')) {
       return { tipo: 'CalculoEnsaio', valor: token };
+    } else if (calculoDescricoesNorm.has(tokenNorm)) {
+      return { tipo: 'CalculoEnsaio', valor: raw };
     } else {
-      return { tipo: 'Ensaio', valor: token };
+      return { tipo: 'Ensaio', valor: raw };
     }
   });
 }

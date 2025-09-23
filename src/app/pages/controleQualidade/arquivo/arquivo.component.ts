@@ -204,7 +204,7 @@ private confirmationService: ConfirmationService,
   analisesFiltradas: any[] = []; // array para exibir na tabela
   materiaisSelecionados: string[] = []; // valores escolhidos no multiselect
   loadAnalises(): void {
-    this.analiseService.getAnalisesAbertas().subscribe(
+    this.analiseService.getAnalisesFechadas().subscribe(
       (response: any[]) => {
         // Mapeia e cria campos "planos" para facilitar o filtro global
         this.analises = response.map((analise: any) => ({
@@ -220,7 +220,7 @@ private confirmationService: ConfirmationService,
         
         }));
         // Inicializa a lista filtrada
-        //this.analisesFiltradas = [...this.analises];
+  this.analisesFiltradas = [...this.analises];
 
         // Cria opções únicas para o MultiSelect
         this.materiaisFiltro = this.analises
