@@ -79,7 +79,15 @@ export interface Ordem {
 @Component({
   selector: 'app-ordem',
   imports: [
-    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule, CardModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule,NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule, TagModule, CheckboxModule
+    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule,
+    InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule, 
+    CardModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, 
+    InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, 
+    DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, 
+    MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, 
+    MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule,
+    NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule, 
+    TagModule, CheckboxModule
   ],
   animations: [
     trigger('efeitoFade',[
@@ -281,7 +289,6 @@ export class OrdemComponent implements OnInit {
     });
   }
   
-
   ngOnInit() {
     this.receberDadosAmostra();
     setTimeout(() => {
@@ -309,11 +316,7 @@ export class OrdemComponent implements OnInit {
   }
 
   abrirModalEdicao(amostra: Amostra) {
-    // console.log('azqaui');
-    // console.log(amostra);
-
     this.editFormVisible = true;
-
     let classificacao = '';
     let responsavel = '';
     let data = null;
@@ -1402,14 +1405,11 @@ gerarNumero(materialNome: string, sequencial: number): string {
   }
 
   abrirModalImpressao(amostra_detalhes: any) {
-  
     this.amostra_detalhes_selecionada = amostra_detalhes;
-    this.ensaios_laudo.pop(); // Removes elements one by one from the end
-
+    this.ensaios_laudo.pop(); // Remove ULTIMO ELEMENTO
     while (this.ensaios_selecionados.length > 0) {
-        this.ensaios_laudo.pop(); // Removes elements one by one from the end
+        this.ensaios_laudo.pop(); 
     }
-
     if(amostra_detalhes.expressa_detalhes){
       amostra_detalhes.expressa_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
         this.ensaios_laudo.push({
@@ -1428,7 +1428,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
         });
       });
     }
-
     this.modalImpressao = true;
   }
 
@@ -3208,10 +3207,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
   }
 
   getMenuItems(analise: any) {
-
-
     const menuItems = [
-
       { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(analise), tooltip: 'Visualizar OS', tooltipPosition: 'top' },
       { label: 'Imprimir', icon: 'pi pi-print', command: () => this.abrirModalImpressao(analise.amostra_detalhes) },
       { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(analise.amostra_detalhes) },
@@ -3225,7 +3221,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
       { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise.amostra_detalhes) },
       { label: 'Duplicata', icon: 'pi pi-file-import', command: () => this.duplicata(analise.amostra_detalhes) },
     ];
-
     return menuItems;
   }
 
@@ -3263,9 +3258,8 @@ gerarNumero(materialNome: string, sequencial: number): string {
     });
   }
 
-  /**
-   * Finaliza uma análise
-   */
+  
+  //Finalizar análise
   finalizarAnalise(analise: any): void {
     this.confirmationService.confirm({
       message: `Tem certeza que deseja finalizar a análise da amostra ${analise.id}?`,
@@ -3420,7 +3414,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
     if (!materialNome) {
       return 'secondary';
     }
-
     switch (materialNormalizado.toLowerCase()) {
       case 'calcario':
         return 'warn';
@@ -3435,12 +3428,9 @@ gerarNumero(materialNome: string, sequencial: number): string {
       default:
         return 'secondary';
     }
-
   }
 
-  /**
-   * Retorna o nome de exibição para o status da análise
-   */
+  //Retorna o nome de exibição para o status da análise  
   getStatusDisplayName(estado: string): string {
     const statusMap: { [key: string]: string } = {
       'EM_ANDAMENTO': 'Em Andamento',
