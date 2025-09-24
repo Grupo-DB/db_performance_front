@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy, HostListener, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CanComponentDeactivate } from '../../../guards/can-deactivate.guard';
 import { AnaliseService } from '../../../services/controleQualidade/analise.service';
@@ -28,7 +28,7 @@ import { SelectModule } from 'primeng/select';
 import { SpeedDialModule } from 'primeng/speeddial';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { StepperModule } from 'primeng/stepper';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { ColaboradorService } from '../../../services/avaliacoesServices/colaboradores/registercolaborador.service';
 import { evaluate, norm } from 'mathjs';
@@ -56,6 +56,9 @@ export interface Analise {
   data: string;
   amostra: any;
   estado: string;
+  metodoModelagem: string;
+  metodoMuro: string;
+  observacoesMuro: string;
 }
 interface FileWithInfo {
   file: File;
@@ -151,6 +154,13 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
     { value: 'David Weslei Sprada'},
     { value: 'Camila Vitoria Carneiro Alves Santos'},
   ]
+  metodosModelagem = [
+    { value: 'ARG' },
+    { value: 'BET' },
+    { value: 'MAC' },
+    { value: 'MAE' },
+    { value: 'MMV' },
+  ];
   planos: any;
   amostraNumero: any;
   planoDescricao: any;
@@ -201,6 +211,10 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
   todasExpandidas: boolean = false;
   todasCalculosExpandidas: boolean = false;
   calculoSelecionado: any = null;
+
+  inputValue: string = '';
+  inputCalculos: string = '';
+  @ViewChild('dt1') dt1!: Table;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -217,6 +231,19 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
     private datePipe: DatePipe,
     private httpClient: HttpClient
   ) {}
+
+  // Mapeia o tipo (ou descrição) do ensaio para uma classe de cor
+  getClasseTipoEnsaio(ensaio: any): string | undefined {
+    if (!ensaio) return undefined;
+    const tipo = (ensaio.tipo || ensaio.tipo_ensaio_detalhes?.nome || ensaio.descricao || '').toString().toLowerCase();
+    if (!tipo) return undefined;
+    if (tipo.includes('calculado')) return 'row-tipo-calculado';
+    if (tipo.includes('informativo')) return 'row-tipo-informativo';
+    if (tipo.includes('fator')) return 'row-tipo-fator';
+    if (tipo.includes('composto')) return 'row-tipo-composto';
+    if (tipo.includes('data') || tipo.includes('data')) return 'row-tipo-data';
+    return undefined;
+  }
 
   // drag and drop para ensaios
   onDragStart(event: DragEvent, ensaio: any, index: number, plano: any) {
@@ -521,6 +548,32 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
     }
   }
 
+  filterTable() {
+    this.dt1.filterGlobal(this.inputValue,'contains');
+  }
+
+  getEnsaiosFiltrados(calc: any) {
+    const lista = Array.isArray(calc?.ensaios_detalhes) ? calc.ensaios_detalhes : [];
+    const termo = (calc?._filtroEnsaios || '').toString().trim().toLowerCase();
+    if (!termo) return lista;
+    return lista.filter((e: any) => {
+      const desc = (e?.descricao || '').toString().toLowerCase();
+      const und = (e?.unidade || '').toString().toLowerCase();
+      const norma = (e?.norma || '').toString().toLowerCase();
+      const resp = (e?.responsavel || '').toString().toLowerCase();
+      const cad = (e?.numero_cadinho ?? '').toString().toLowerCase();
+      const val = (e?.valor ?? '').toString().toLowerCase();
+      return (
+        desc.includes(termo) ||
+        und.includes(termo) ||
+        norma.includes(termo) ||
+        resp.includes(termo) ||
+        cad.includes(termo) ||
+        val.includes(termo)
+      );
+    });
+  }
+
   // Verifica se todas as variáveis exigidas por uma função possuem valores numéricos default
   private deveCalcularEnsaioComDefaults(ensaio: any): boolean {
     try {
@@ -589,12 +642,82 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
     return parseFloat(num.toFixed(4)).toString();
   }
 
+  // Formata valores (timestamp/Date/string) em DD/MM/YYYY para exibição
+  formatarDataExibicao(value: any): string {
+    if (!value) return '';
+    let date: Date | null = null;
+    if (value instanceof Date) {
+      date = value;
+    } else if (typeof value === 'number') {
+      // assume timestamp em ms
+      date = new Date(value);
+    } else if (typeof value === 'string') {
+      const s = value.trim();
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) {
+        const [d, m, y] = s.split('/').map(v => parseInt(v, 10));
+        date = new Date(y, m - 1, d);
+      } else {
+        // tentar parse ISO ou genérico
+        const parsed = new Date(s);
+        if (!isNaN(parsed.getTime())) date = parsed;
+      }
+    }
+    if (!date || isNaN(date.getTime())) return '';
+    try {
+      return this.datePipe.transform(date, 'dd/MM/yyyy') || '';
+    } catch {
+      return '';
+    }
+  }
+
   // Arredonda números para N casas decimais
   private roundN(value: any, n: number): number {
     const num = typeof value === 'number' ? value : Number(value);
     if (!isFinite(num)) return 0;
     const f = Math.pow(10, n);
     return Math.round(num * f) / f;
+  }
+
+  // ===== Utilidades de Data (local) =====
+  private toLocalYYYYMMDD(d: Date): string {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  private parseDateLocal(value: any): Date | null {
+    if (!value && value !== 0) return null;
+    if (value instanceof Date) return isNaN(value.getTime()) ? null : value;
+    if (typeof value === 'number') {
+      const d = new Date(value);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    if (typeof value === 'string') {
+      const s = value.trim();
+      // DD/MM/YYYY
+      const br = s.match(/^([0-3]?\d)\/([0-1]?\d)\/(\d{4})$/);
+      if (br) {
+        const dd = parseInt(br[1], 10);
+        const mm = parseInt(br[2], 10);
+        const yy = parseInt(br[3], 10);
+        const d = new Date(yy, mm - 1, dd);
+        return isNaN(d.getTime()) ? null : d;
+      }
+      // YYYY-MM-DD (tratar como LOCAL, não UTC)
+      const isoLocal = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (isoLocal) {
+        const yy = parseInt(isoLocal[1], 10);
+        const mm = parseInt(isoLocal[2], 10);
+        const dd = parseInt(isoLocal[3], 10);
+        const d = new Date(yy, mm - 1, dd);
+        return isNaN(d.getTime()) ? null : d;
+      }
+      // Fallback
+      const d = new Date(s);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    return null;
   }
 
    hasGroup(groups: string[]): boolean {
@@ -645,6 +768,12 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
       this.analiseService.getAnaliseById(this.analiseId).subscribe(
         (analise) => {
           this.analise = analise;
+          // Mapear campos snake_case do backend para camelCase usados no front
+          if (this.analise) {
+            (this.analise as any).metodoModelagem = (this.analise as any).metodoModelagem ?? (this.analise as any).metodo_modelagem ?? '';
+            (this.analise as any).metodoMuro = (this.analise as any).metodoMuro ?? (this.analise as any).metodo_muro ?? '';
+            (this.analise as any).observacoesMuro = (this.analise as any).observacoesMuro ?? (this.analise as any).observacoes_muro ?? '';
+          }
           this.idAnalise = analise.id;
           this.loadAnalisePorId(analise);
           // Forçar detecção de mudanças após atualização dos dados
@@ -1128,6 +1257,14 @@ loadAnalisePorId(analise: any) {
     this.analisesSimplificadas = [];
     return;
   }
+  // Garantir que os campos camelCase estejam sincronizados com os snake_case do backend
+  try {
+    if (this.analise) {
+      (this.analise as any).metodoModelagem = (this.analise as any).metodoModelagem ?? (this.analise as any).metodo_modelagem ?? '';
+      (this.analise as any).metodoMuro = (this.analise as any).metodoMuro ?? (this.analise as any).metodo_muro ?? '';
+      (this.analise as any).observacoesMuro = (this.analise as any).observacoesMuro ?? (this.analise as any).observacoes_muro ?? '';
+    }
+  } catch {}
   let planoDetalhes: any[] = [];
   const isOrdemExpressa = analise.amostra_detalhes.expressa_detalhes !== null;
   const isOrdemNormal = analise.amostra_detalhes.ordem_detalhes !== null;
@@ -1311,15 +1448,15 @@ loadAnalisePorId(analise: any) {
                   
                   if (typeof valorSalvo === 'string') {
                     if (valorSalvo.includes('/')) {
-                      // Formato brasileiro DD/MM/YYYY
+                      // Formato brasileiro DD/MM/YYYY (local)
                       const [dia, mes, ano] = valorSalvo.split('/');
                       dataObj = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
                     } else {
-                      // Formato ISO ou outro
-                      dataObj = new Date(valorSalvo);
+                      // Formato ISO local yyyy-mm-dd ou outro
+                      dataObj = this.parseDateLocal(valorSalvo);
                     }
                   } else {
-                    dataObj = new Date(valorSalvo);
+                    dataObj = this.parseDateLocal(valorSalvo);
                   }
                   
                   if (dataObj && !isNaN(dataObj.getTime())) {
@@ -1405,15 +1542,14 @@ loadAnalisePorId(analise: any) {
                     const [dia, mes, ano] = valor.split('/');
                     dataObj = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
                   } else {
-                    dataObj = new Date(valor);
+                    dataObj = this.parseDateLocal(valor);
                   }
                 } else if (typeof valor === 'number') {
-                  // timestamp ou número
-                  const dTmp = new Date(valor);
-                  dataObj = isNaN(dTmp.getTime()) ? null : dTmp;
+                  const dTmp = this.parseDateLocal(valor);
+                  dataObj = isNaN(dTmp?.getTime() || NaN) ? null : dTmp;
                 }
                 if (dataObj && !isNaN(dataObj.getTime())) {
-                  v.valor = dataObj.toISOString().split('T')[0];
+                  v.valor = this.toLocalYYYYMMDD(dataObj);
                   v.valorData = dataObj;
                   v.valorTimestamp = dataObj.getTime();
                 } else {
@@ -2297,7 +2433,7 @@ recalcularTodosCalculos() {
     const descricaoLower = calc.descricao.toLowerCase();
     console.log('🔍 Descrição em minúsculas:', descricaoLower);
     
-    const isPRNT = descricaoLower.includes('prnt') || 
+    const isPRNT = descricaoLower.includes('prnt calcário') || 
                    descricaoLower.includes('poder relativo de neutralização total') ||
                    descricaoLower.includes('neutralização');
     
@@ -2890,9 +3026,9 @@ atualizarVariavelData(ensaio: any, variavel: any, novaData: Date) {
   // Atualiza o valor da data
   variavel.valorData = novaData;
   
-  // Converte a data para string no formato ISO para armazenamento e timestamp para cálculos
+  // Converte a data para string no formato local YYYY-MM-DD (sem timezone) e timestamp para cálculos
   if (novaData) {
-    variavel.valor = novaData.toISOString().split('T')[0]; // formato YYYY-MM-DD para backend
+    variavel.valor = this.toLocalYYYYMMDD(novaData); // formato YYYY-MM-DD (local) para backend
     variavel.valorTimestamp = novaData.getTime(); // timestamp para cálculos matemáticos
   } else {
     variavel.valor = null;
@@ -2966,13 +3102,13 @@ calcularDatasAutomaticas(ensaio: any, variavelAlterada: any) {
     );
     
     if (dataRompimentoVar && variavelAlterada.valorData) {
-      const dataModelagem = new Date(variavelAlterada.valorData);
+  const dataModelagem = this.parseDateLocal(variavelAlterada.valorData) || new Date(variavelAlterada.valorData);
       const dataRompimento = new Date(dataModelagem);
       dataRompimento.setDate(dataRompimento.getDate() + 28);
       
       // Atualiza a data de rompimento automaticamente
       dataRompimentoVar.valorData = dataRompimento;
-      dataRompimentoVar.valor = dataRompimento.toISOString().split('T')[0];
+  dataRompimentoVar.valor = this.toLocalYYYYMMDD(dataRompimento);
       dataRompimentoVar.valorTimestamp = dataRompimento.getTime();
       
       console.log(`Data de rompimento calculada automaticamente: ${dataRompimento.toLocaleDateString()}`);
@@ -3097,18 +3233,18 @@ inicializarDatasVariaveis() {
                     const [dia, mes, ano] = variavel.valor.split('/');
                     dataObj = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
                   } else if (variavel.valor.includes('-')) {
-                    // Formato ISO YYYY-MM-DD
-                    dataObj = new Date(variavel.valor);
+                    // Formato ISO YYYY-MM-DD (tratar como local)
+                    dataObj = this.parseDateLocal(variavel.valor);
                   } else {
                     // Tentar criar data diretamente
-                    dataObj = new Date(variavel.valor);
+                    dataObj = this.parseDateLocal(variavel.valor);
                   }
                 } else if (typeof variavel.valor === 'number') {
                   // Se for timestamp
-                  dataObj = new Date(variavel.valor);
+                  dataObj = this.parseDateLocal(variavel.valor);
                 } else {
                   // Tentar criar data diretamente
-                  dataObj = new Date(variavel.valor);
+                  dataObj = this.parseDateLocal(variavel.valor);
                 }
                 
                 // Verificar se a data é válida
@@ -3116,8 +3252,8 @@ inicializarDatasVariaveis() {
                   variavel.valorData = dataObj;
                   variavel.valorTimestamp = dataObj.getTime();
                   
-                  // Garantir que o valor está no formato ISO para o backend
-                  variavel.valor = dataObj.toISOString().split('T')[0];
+                  // Garantir que o valor está no formato local yyyy-mm-dd para o backend
+                  variavel.valor = this.toLocalYYYYMMDD(dataObj);
                   
                   console.log(`✅ Data inicializada: ${variavel.nome} = ${dataObj.toLocaleDateString('pt-BR')}`);
                 } else {
@@ -3624,7 +3760,11 @@ salvarAnaliseResultados() {
   const payload = {
     estado: 'PENDENTE',
     ensaios: ensaios,
-    calculos: calculos
+    calculos: calculos,
+    // Campos adicionais (snake_case) esperados pelo backend
+    metodo_modelagem: this.analise?.metodoModelagem ?? null,
+    metodo_muro: this.analise?.metodoMuro ?? null,
+    observacoes_muro: this.analise?.observacoesMuro ?? null
   };
   // Chamada para salvar a análise no backend
   this.analiseService.registerAnaliseResultados(idAnalise, payload).subscribe({

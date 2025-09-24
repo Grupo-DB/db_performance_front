@@ -543,7 +543,10 @@ converterFuncaoParaBlocos(funcao: string): { tipo: string, valor: string }[] {
   return tokens.map(token => {
     if (["+", "-", "*", "/"].includes(token)) {
       return { tipo: 'Operador', valor: token };
-    } else if (!isNaN(Number(token))) {
+    }else if(["(", ")", ","].includes(token)) {
+      return { tipo: 'Delimitador', valor: token };
+    } 
+    else if (!isNaN(Number(token))) {
       return { tipo: 'Valor', valor: token };
     } else if (Object.keys(this.funcoesDatas).includes(token)) {
       return { tipo: 'Funcao Data', valor: token };

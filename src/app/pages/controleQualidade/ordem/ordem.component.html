@@ -37,7 +37,7 @@
         </li>
 
         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
-            <a style="font-size: 13px;">Banco de Análises</a>
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/arquivo">Banco de Análises</a>
         </li>
 
         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
@@ -49,7 +49,6 @@
 
 
 <div class="container flex flex-column align-items-center mb-4">
-
     <div class="containerInterno w-12">
         <div class="background-form" @swipeAnimation>
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
@@ -351,11 +350,12 @@
                                                         showIcon="pi pi-bars" hideIcon="pi pi-times"
                                                         [model]="getMenuItems(analise)"
                                                         [radius]="80"
-                                                        type="quarter-circle" direction="up-left"
-                                                        [style]="{ position: 'relative', top: '0', right: 0 }" 
+                                                        type="linear" 
+                                                        direction="left"
+                                                        [style]="{ position: 'relative', top: 0, right: 0 }" 
                                                         [buttonProps]="{ severity: 'info', rounded: true }"
-                                                        [tooltipOptions]="{ tooltipPosition: 'right' }"
-                                                        pTooltip="Ações"
+                                                        [tooltipOptions]="{ tooltipPosition: 'bottom' }"
+                                                        
                                                     ></p-speeddial>
                                                     <div 
                                                         style="position: relative;"
@@ -608,7 +608,7 @@
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
                                 <div class="header w-full text-center">
-                                    <b>Editar Tipo de Ensaio</b>
+                                    <b>Editar Ordem de Serviço</b>
                                 </div>
                             </ng-template>
                             <div class="flex flex-column w-12 gap-3">

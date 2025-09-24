@@ -72,7 +72,7 @@ export interface Ordem {
   id: number;
   numero: number;
   data: string;
-  planoAnalise: any;
+  plano_analise: any;
   responsavel: string;
   digitador: string;
   modificacoes: any;
@@ -83,7 +83,15 @@ export interface Ordem {
 @Component({
   selector: 'app-ordem',
   imports: [
-    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule, CardModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule,NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule, TagModule, CheckboxModule,TreeTableModule
+    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule,
+    InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule, 
+    CardModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, 
+    InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, 
+    DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, 
+    MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, 
+    MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule,
+    NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule, 
+    TagModule, CheckboxModule,TreeTableModule
   ],
   animations: [
     trigger('efeitoFade',[
@@ -291,7 +299,7 @@ selectedEnsaios: TreeNode[] = []; // aqui ficam os selecionados
       idSalvar: [''],
     });
   }
-
+  
   ngOnInit() {
     this.receberDadosAmostra();
     setTimeout(() => {
@@ -316,7 +324,6 @@ selectedEnsaios: TreeNode[] = []; // aqui ficam os selecionados
 
   abrirModalEdicao(amostra: Amostra) {
     this.editFormVisible = true;
-
     let classificacao = '';
     let responsavel = '';
     let data = null;
@@ -359,21 +366,9 @@ selectedEnsaios: TreeNode[] = []; // aqui ficam os selecionados
   }
 
   saveEditOrdem(idSalvar: number ){
-    let dataFormatada = null;
-
-
-
-
-
-
-
-    
+    let dataFormatada = null;    
     console.log(this.editForm.value);
     alert('Atualizar API');
-
-
-
-
 
     if (this.editForm.value.data instanceof Date) {
         dataFormatada = formatDate(this.editForm.value.data, 'yyyy-MM-dd', 'en-US');
@@ -389,14 +384,14 @@ selectedEnsaios: TreeNode[] = []; // aqui ficam os selecionados
       numero: this.editForm.value.numero,
       classificacao: this.editForm.value.classificacao,
       responsavel: this.editForm.value.responsavel,
-      planoAnalise: this.editForm.value.plano_analise,
+      plano_analise: this.editForm.value.plano_analise,
     };
     console.log('dadosAtualizados', dadosAtualizados);
     this.ordemService.editOrdens(idSalvar, dadosAtualizados).subscribe({
       next:() =>{       
         this.editFormVisible = false;
         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Amostra atualizada com sucesso!!', life: 1000 });
-        this.loadAnalises();
+        //this.loadAnalises();
       },
       error: (err) => {
         console.error('Login error:', err); 
@@ -3691,10 +3686,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
   }
 
   getMenuItems(analise: any) {
-
-
     const menuItems = [
-
       { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(analise), tooltip: 'Visualizar OS', tooltipPosition: 'top' },
       { label: 'Imprimir', icon: 'pi pi-print', command: () => this.abrirModalImpressao(analise) },
       { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(analise.amostra_detalhes) },
@@ -3708,7 +3700,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
       { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise.amostra_detalhes) },
       { label: 'Duplicata', icon: 'pi pi-file-import', command: () => this.duplicata(analise.amostra_detalhes) },
     ];
-
     return menuItems;
   }
 
@@ -3745,9 +3736,8 @@ gerarNumero(materialNome: string, sequencial: number): string {
     });
   }
 
-  /**
-   * Finaliza uma análise
-   */
+  
+  //Finalizar análise
   finalizarAnalise(analise: any): void {
     this.confirmationService.confirm({
       message: `Tem certeza que deseja finalizar a análise da amostra ${analise.id}?`,
@@ -3902,7 +3892,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
     if (!materialNome) {
       return 'secondary';
     }
-
     switch (materialNormalizado.toLowerCase()) {
       case 'calcario':
         return 'warn';
@@ -3917,12 +3906,9 @@ gerarNumero(materialNome: string, sequencial: number): string {
       default:
         return 'secondary';
     }
-
   }
 
-  /**
-   * Retorna o nome de exibição para o status da análise
-   */
+  //Retorna o nome de exibição para o status da análise  
   getStatusDisplayName(estado: string): string {
     const statusMap: { [key: string]: string } = {
       'EM_ANDAMENTO': 'Em Andamento',

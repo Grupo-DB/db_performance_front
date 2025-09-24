@@ -37,7 +37,7 @@
         </li>
 
         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
-            <a style="font-size: 13px;">Banco de Análises</a>
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/arquivo">Banco de Análises</a>
         </li>
 
         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
@@ -48,7 +48,6 @@
 
 <div class="container">
     <div class="containerInterno w-12">
-
         <form
             [formGroup]="registerForm"
             title="Cadastrar novo Ensaio"
@@ -104,8 +103,8 @@
                                         <button pButton type="button" icon="pi pi-plus" (click)="montarFormula()"></button> 
                                     </div>
                                 </div>
-                                <div class="form2 flex flex-column md:flex-row w-12 mb-3 mt-3">
-                                    <div class="w-12 text-left md:mb-3 lg:mr-1">
+                                <div class="form2 flex flex-column md:flex-row md:justify-content-center w-12 mb-3 mt-3">
+                                    <div class="w-4 text-left md:mb-3 lg:mr-1">
                                         <p-floatLabel variant="on">
                                             <p-inputNumber 
                                                 variant="filled"
@@ -120,8 +119,7 @@
                                         <label for="tempo">Tempo Previsto</label>
                                         </p-floatLabel>     
                                     </div>
-                                    
-                                    <div class="w-12 text-left">    
+                                    <div class="w-6 text-left">    
                                         <p-floatLabel variant="on"> 
                                             <p-select
                                                 inputId="float-label"
@@ -180,8 +178,8 @@
                                             <label for="float-label">Selecione o Tipo de Ensaio</label>
                                         </p-floatLabel> 
                                     </div>
-                                    <div class="form2 flex flex-column md:flex-row w-12 mt-3">
-                                        <div class="w-12 text-left md:mb-3 lg:mr-1">
+                                    <div class="form2 flex flex-column md:flex-row w-12 mt-3 md:justify-content-center">
+                                        <div class="w-4 text-left md:mb-3 lg:mr-1">
                                             <p-floatLabel variant="on">
                                                 <p-inputNumber 
                                                     variant="filled"
@@ -195,9 +193,8 @@
                                                 />
                                             <label for="tempo">Garantia</label>
                                             </p-floatLabel>     
-                                        </div>
-                                
-                                        <div class="w-12 text-left">    
+                                        </div>          
+                                        <div class="w-6 text-left">    
                                             <p-floatLabel variant="on"> 
                                                 <p-select
                                                     inputId="float-label"
@@ -669,7 +666,7 @@
 
             <div class="w-4 expressao-container">
                 <div class="expressao">
-                 <span>{{ getExpressaoStringAmigavel() }}</span>
+                    <span style="font-size: 20px;">{{ getExpressaoStringAmigavel() }}</span>
                 </div>
             </div>
 
@@ -768,7 +765,7 @@
 
         <div class="w-4 expressao-container">
             <div class="expressao">
-                <span>{{ getExpressaoStringAmigavel() }}</span>
+                <span style="font-size: 20px;">{{ getExpressaoStringAmigavel() }}</span>
             </div>
         </div>
 

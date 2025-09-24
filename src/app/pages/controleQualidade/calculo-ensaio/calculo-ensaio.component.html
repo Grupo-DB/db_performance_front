@@ -97,7 +97,7 @@
                                         <button pButton icon="pi pi-plus" (click)="montarFormula()" label="Inserir Cálculo" ></button> 
                                         <div class="flex align-items-center gap-2">
                                             <input type="checkbox" [checked]="syncEnsaiosFromExpr" (change)="toggleSyncEnsaios($any($event.target).checked)" id="chk-sync-ens" />
-                                            <label for="chk-sync-ens">Sincronizar ensaios pela expressão</label>
+                                            <label style="color: black;" for="chk-sync-ens">Sincronizar ensaios pela expressão</label>
                                         </div>
                                     </div>
                                     <div class="form2 w-12 mt-2" *ngIf="!syncEnsaiosFromExpr">
@@ -115,7 +115,7 @@
                                             <label for="ensaios">Selecione os Ensaios deste cálculo</label>
                                         </p-floatlabel>
                                     </div>
-                                    <div class="form2 w-12 mt-2" *ngIf="!syncEnsaiosFromExpr">
+                                    <div class="form2 w-12  mb-3" *ngIf="!syncEnsaiosFromExpr">
                                         <p-floatlabel variant="on">
                                             <p-multiSelect 
                                                 formControlName="calculosEnsaio"
@@ -175,7 +175,7 @@
     </div>
 
 <div class="container flex flex-column align-items-center">
-        <div class="step1 mt-4 w-11"@swipeAnimation>
+        <div class="step1 mt-4 w-12"@swipeAnimation>
             <div class="tabela text-left w-12">
                 <p-toast />
                 <p-confirmDialog />
@@ -440,6 +440,7 @@
                                             </p-iconfield>
                                             <label for="on_label">Cálculo</label>
                                         </p-floatlabel>
+                                        <!-- <small class="text-500">{{ funcaoLegivelEdicao }}</small> -->
                                     </div>
                                     <div class="form2 flex w-1 mb-3 mt-3">
                                         <button pButton icon="pi pi-plus" (click)="editarFormula()"></button> 
@@ -461,6 +462,12 @@
                                         </p-iconfield>
                                         <label for="on_label">Digite a Unidade</label>
                                     </p-floatlabel>
+                                    <!-- <div class="mt-2" *ngIf="elementosUsadosEdicao.length">
+                                        <div class="text-sm text-600 mb-1">Itens usados na fórmula:</div>
+                                        <div class="flex flex-wrap gap-2">
+                                            <span class="p-chip" *ngFor="let it of elementosUsadosEdicao">{{ it.tipo }}: {{ it.descricao }}</span>
+                                        </div>
+                                    </div> -->
                                 </div>
 
                             </div>
