@@ -263,7 +263,7 @@ export class AmostraComponent implements OnInit {
   ordens: Ordem[] = [];
   analises:Analise[] = [];
   producaoLote: any = null;
-  activeStep: number = 2;
+  activeStep: number = 1;
   analisesSimplificadas: any[] = [];
   digitador: any;
   idUltimaAanalise: any;
