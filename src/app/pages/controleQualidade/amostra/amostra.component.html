@@ -100,19 +100,7 @@
                                     </ng-template>
                                 </p-step>
                     
-                                <p-step [value]="4">
-                                    <ng-template #content let-activateCallback="activateCallback" let-value="value">
-                                        <button pButton size="large" severity="contrast" [rounded]="true" (click)="activateCallback()">
-                                            <span [ngClass]="
-                                            {
-                                                'bg-primary text-primary-contrast border-primary': value <= activeStep,
-                                                'border-surface': value > activeStep
-                                            }">
-                                                <i class="pi pi-print"></i>
-                                            </span>
-                                        </button>
-                                    </ng-template>
-                                </p-step>
+                                
                             </p-step-list>
 
                             <p-step-panels>
@@ -563,17 +551,7 @@
                                         </div>
                     
                                         <div class="step1 flex flex-column w-12 gap-3 mb-5 mt-5 justify-content-end lg:w-12 lg:flex-row">
-                                            <div class="w-6 text-left">
-                                                <p-button 
-                                                    (onClick)="navegarParaExpressa()" 
-                                                    severity="danger" 
-                                                    label="OS Expressa"
-                                                    icon="pi pi-book" 
-                                                    iconPos="right"  
-                                                    tooltipPosition="top"
-                                                    pTooltip="OS Expressa"
-                                                />
-                                            </div>
+                                           
                                             <div class=" flex w-6 gap-3 justify-content-end text-right">
                                                 <p-button 
                                                     (onClick)="navegarParaOs()" 
@@ -733,15 +711,7 @@
                                                                                 (onClick)="criarOrdemDeAmostra(amostra)"
                                                                                 pTooltip="Abrir OS"
                                                                             ></p-button>
-                                                                            <p-button 
-                                                                                icon="pi pi-book" 
-                                                                                [rounded]="true"
-                                                                                severity="danger"
-                                                                                class="ml-2"
-                                                                                (onClick)="criarExpressaDeAmostra(amostra)"
-                                                                                tooltipPosition="top"
-                                                                                pTooltip="OS Expressa"
-                                                                            ></p-button>
+                                                                            
                                                                         </div>
                                                                     </td>
                                                                 </tr>
@@ -767,27 +737,41 @@
                                             </div>    
                                         </div>
                                         <div class="flex flex-column w-12 gap-3 mb-3 justify-content-end lg:w-12 lg:flex-row">
-                                        <div class="w-6 text-left">
-                                            <p-button 
-                                                title="Voltar" 
-                                                label="Voltar" 
-                                                severity="warn" 
-                                                icon="pi pi-arrow-left"
-                                                (onClick)="activateCallback(1)"
-                                            />
-                                        </div>
-                                        <div class=" flex w-6 gap-3 justify-content-end text-right">
-                                            <p-button 
-                                                title="Avançar" 
-                                                label="Avançar" 
-                                                severity="success" 
-                                                icon="pi pi-arrow-right" 
-                                                iconPos="right"
-                                                (onClick)="receberDadosAmostra()"
-                                            />
-                                        </div>
-                                    
-                                    </div> 
+                                            <div class="w-4 text-left">
+                                                <p-button 
+                                                    title="Voltar" 
+                                                    label="Voltar" 
+                                                    severity="warn" 
+                                                    icon="pi pi-arrow-left"
+                                                    (onClick)="activateCallback(1)"
+                                                />
+                                            </div>
+
+                                            <div class="w-4 text-center">
+                                               <p-button 
+                                                    (onClick)="navegarParaExpressa()" 
+                                                    severity="danger" 
+                                                    label="OS Expressa"
+                                                    icon="pi pi-book" 
+                                                    iconPos="right"  
+                                                    tooltipPosition="top"
+                                                    pTooltip="OS Expressa"
+                                                />
+                                            </div>
+
+
+                                            <div class=" flex w-4 gap-3 justify-content-end text-right">
+                                                <p-button 
+                                                    title="Avançar" 
+                                                    label="Avançar" 
+                                                    severity="success" 
+                                                    icon="pi pi-arrow-right" 
+                                                    iconPos="right"
+                                                    (onClick)="receberDadosAmostra()"
+                                                />
+                                            </div>
+                                        
+                                        </div> 
                                     </ng-template>
                                 </p-step-panel>
 
@@ -878,7 +862,7 @@
                                                             label="Voltar" 
                                                             severity="warn" 
                                                             icon="pi pi-arrow-left"
-                                                            (onClick)="voltarParaStep1()"
+                                                            (onClick)="voltarParaStep2()"
                                                         />
                                                     </div>
                                                     <div class="flex w-6 gap-3 justify-content-end text-right">
@@ -1600,7 +1584,7 @@
         <div *ngIf="amostraImagensSelecionada" class="mb-4">
             <h3>Amostra: {{ amostraImagensSelecionada.numero }}</h3>
             <p><strong>Material:</strong> {{ amostraImagensSelecionada.material_detalhes?.nome }}</p>
-            <p><strong>Data de Coleta:</strong> {{ amostraImagensSelecionada.data_coleta }}</p>
+            <p><strong>Data de Coleta:</strong> {{ amostraImagensSelecionada.data_coleta | date:'dd/MM/yyyy' }}</p>
         </div>
 
         <div *ngIf="imagensAmostra.length > 0" class="image-viewer">

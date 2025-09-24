@@ -263,7 +263,7 @@ export class AmostraComponent implements OnInit {
   ordens: Ordem[] = [];
   analises:Analise[] = [];
   producaoLote: any = null;
-  activeStep: number = 1;
+  activeStep: number = 2;
   analisesSimplificadas: any[] = [];
   digitador: any;
   idUltimaAanalise: any;
@@ -1287,7 +1287,7 @@ submitAmostra() {
       } else {
         this.clearForm();
         this.loadAmostras();
-        this.activeStep = 3;
+        this.activeStep = 2;
       }
     },
     error: (err) => {
@@ -2082,6 +2082,12 @@ voltarParaStep1() {
   this.activeStep = 1;
   // NÃO limpar this.amostraData aqui para permitir edições
   console.log('🔙 Voltou para step 1, dados preservados');
+}
+
+voltarParaStep2() {
+  this.activeStep = 2;
+  // NÃO limpar this.amostraData aqui para permitir edições
+  console.log('🔙 Voltou para step 2, dados preservados');
 }
 
 limparDadosFormulario() {

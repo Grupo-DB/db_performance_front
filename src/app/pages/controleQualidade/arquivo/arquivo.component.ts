@@ -322,15 +322,7 @@ private confirmationService: ConfirmationService,
     const menuItems = [
       { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(analise), tooltip: 'Visualizar OS', tooltipPosition: 'top' },
       { label: 'Imprimir', icon: 'pi pi-print', command: () => this.abrirModalImpressao(analise.amostra_detalhes) },
-      { label: 'Excluir', icon: 'pi pi-trash', command: () => { 
-        if (analise.expressa_detalhes) {
-          this.excluirAmostraExpressa(analise.amostra_detalhes.expressa_detalhes.id);
-        } else {
-          this.excluirAmostraOrdem(analise.amostra_detalhes.ordem_detalhes.id);
-        }} 
-      },
       { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise.amostra_detalhes) },
-      { label: 'Duplicata', icon: 'pi pi-file-import', command: () => this.duplicata(analise.amostra_detalhes) },
     ];
     return menuItems;
   }
@@ -437,10 +429,11 @@ private confirmationService: ConfirmationService,
 visualizarImagens(amostraId: any): void {
   console.log('Visualizando imagens da amostra:', amostraId);
   this.amostraImagensSelecionada = amostraId;
-  this.carregarImagensAmostra(amostraId);
+  this.carregarImagensAmostra(amostraId.id);
 }
 
 carregarImagensAmostra(amostraId: number): void {
+  console.log(amostraId, 'amosastraID');
   this.amostraService.getImagensAmostra(amostraId).subscribe({
     next: (imagens) => {
       // Usar image_url em vez de image para ter a URL completa
