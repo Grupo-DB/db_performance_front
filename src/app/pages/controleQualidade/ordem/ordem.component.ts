@@ -1431,7 +1431,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
           const children = (calculo.ensaios_detalhes || []).map((ensaio: any) => ({
             data: {
               id: calculo.id + '/' + ensaio.id,
-              descricao: calculo.id + '/' + ensaio.id + ' - ' + ensaio.descricao,
+              descricao: ensaio.id + ' - ' + ensaio.descricao,
               disabled: false
             },
             leaf: true
@@ -1440,7 +1440,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
           return {
             data: {
               id: '' + calculo.id,
-              descricao: calculo.id + ' - ' + calculo.descricao,
+              descricao:calculo.descricao,
               disabled: false
             },
             children: children.length > 0 ? children : undefined,
@@ -1455,7 +1455,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
           const children = (ensaio.variavel_detalhes || []).map((variavel: any) => ({
             data: {
               id: ensaio.id + '/' + variavel.id,
-              descricao: ensaio.id + '/' + variavel.id + ' - ' + variavel.nome,
+              descricao: variavel.id + ' - ' + variavel.nome,
               disabled: false
             },
             leaf: true
@@ -1464,7 +1464,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
           return {
             data: {
               id: '' + ensaio.id,
-              descricao: ensaio.id + ' - ' + ensaio.descricao,
+              descricao: ensaio.descricao,
               disabled: false
             },
             children: children.length > 0 ? children : undefined,
@@ -1498,7 +1498,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
               const children = (ensaio_detalhes.variavel_detalhes || []).map((variavel: any) => ({
                 data: {
                   id: ensaio_detalhes.id + '/' + variavel.id,
-                  descricao: ensaio_detalhes.id + '/' + variavel.id + ' - ' + variavel.nome,
+                  descricao: variavel.id + ' - ' + variavel.nome,
                   disabled: false
                 },
                 leaf: true
@@ -1507,7 +1507,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
               return {
                 data: {
                   id: '' + ensaio_detalhes.id,
-                  descricao: ensaio_detalhes.id + ' - ' + ensaio_detalhes.descricao,
+                  descricao: ensaio_detalhes.descricao,
                   disabled: false
                 },
                 children: children.length > 0 ? children : undefined,
@@ -1533,7 +1533,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
               const ensaiosChildren = (calculo.ensaios_detalhes || []).map((ensaio: any) => ({
                 data: {
                   id: calculo.id+'/' + ensaio.id,
-                  descricao: calculo.id+'/' + ensaio.id + ' - ' + ensaio.descricao,
+                  descricao: ensaio.id + ' - ' + ensaio.descricao,
                   disabled: false
                 },
                 leaf: true
@@ -1542,7 +1542,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
               return {
                 data: {
                   id: ''+calculo.id,
-                  descricao: calculo.id + ' - ' + calculo.descricao,
+                  descricao: calculo.descricao,
                   disabled: false
                 },
                 children: ensaiosChildren.length > 0 ? ensaiosChildren : undefined,
@@ -3228,17 +3228,20 @@ gerarNumero(materialNome: string, sequencial: number): string {
     console.log('analise', analise);
     const doc = new jsPDF({ unit: "mm", format: "a4" });
     let contadorLinhas = 45;
+    const data_entrada = formatDate(analise.amostra_detalhes.data_entrada, 'dd/MM/yyyy', 'en-US');
+    const data_coleta = formatDate(analise.amostra_detalhes.data_coleta, 'dd/MM/yyyy', 'en-US');
+
     autoTable(doc, {
       startY: 10,
       body: [
         [
           { content: "Ordem de Serviço", styles: { halign: "left", fontStyle: "bold" } },
           { content: analise.amostra_detalhes.numero, styles: { halign: "left", fontStyle: "bold" } },
-          { content: "Data de Entrada: "+analise.amostra_detalhes.data_entrada, styles: { halign: "left" } },
+          { content: "Data de Entrada: "+data_entrada, styles: { halign: "left" } },
         ],
         [
           { content: "Material da Amostra: "+analise.amostra_detalhes.material, colSpan: 2, styles: { halign: "left" } },
-          { content: "Data de Amostra: "+analise.amostra_detalhes.data_coleta, styles: { halign: "left" } }
+          { content: "Data de Amostra: "+data_coleta, styles: { halign: "left" } }
         ],
         [
           { content: "Tipo: "+analise.amostra_detalhes?.tipo_amostragem, styles: { halign: "left" } },
@@ -3268,13 +3271,33 @@ gerarNumero(materialNome: string, sequencial: number): string {
 
         if(existe){
 
-          const body: any[] = [];
-          const linha: any[] = [];
-          const linhaVazia: any[] = [];
+          let body: any[] = [];
+          let linha: any[] = [];
+          let linhaVazia: any[] = [];
 
-          linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
-          linha.push({ content: 'Técnico', styles: { halign: "center" } });
-      
+          linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold", fillColor: [220, 220, 220]  } });
+          linha.push({ content: 'Técnico', styles: { halign: "center", fontStyle: "bold" } });
+          linha.push({ content: 'Nº Cadinho', styles: { halign: "center", fontStyle: "bold" } });
+          
+          linhaVazia.push({ content: '', styles: { halign: "center", fillColor: [220, 220, 220]  } });
+          linhaVazia.push({ content: '', styles: { halign: "center" } });
+          linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+          body.push(linha);
+          body.push(linhaVazia);
+
+          autoTable(doc, {
+            startY: contadorLinhas,
+            body,
+            theme: "grid",
+            styles: { fontSize: 8, cellPadding: 2 }
+          });
+          contadorLinhas = (doc as any).lastAutoTable.finalY;
+          
+          body = [];
+          linha = [];
+          linhaVazia = [];
+
           ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
             const pai = resultado.find(item => item.pai == ensaio_detalhes.id);
             const filhoExiste = pai?.filhos.includes(String(variavel_detalhes.id));
@@ -3289,20 +3312,27 @@ gerarNumero(materialNome: string, sequencial: number): string {
             // );
 
             if (filhoExiste) {
-              linha.push({ content: variavel_detalhes.nome, styles: { halign: "center", fontStyle: "bold" } });
-              linhaVazia.push({ content: variavel_detalhes.valor, styles: { halign: "center" } });
+              linha.push({ content: variavel_detalhes.nome, styles: { halign: "center" } });
+              let variavel_valor = '';
+              if(variavel_detalhes.valor && variavel_detalhes.valor != 0){
+                variavel_valor = variavel_detalhes.valor;
+              }
+              linhaVazia.push({ content: variavel_valor, styles: { halign: "center" } });
             }
           });
 
-          linhaVazia.push({ content: '', styles: { halign: "center" } });
-          linhaVazia.push({ content: '', styles: { halign: "center" } });
+       
 
           ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
-            linhaVazia.push({ content: variavel_detalhes.valor, styles: { halign: "center" } });
+            let variavel_valor = '';
+            if(variavel_detalhes.valor && variavel_detalhes.valor != 0){
+              variavel_valor = variavel_detalhes.valor;
+            }
+            linhaVazia.push({ content: variavel_valor, styles: { halign: "center" } });
           });
 
-          linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold" } });
-          linhaVazia.push({ content: '', styles: { halign: "center" } });
+          linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold", fillColor: [220, 220, 220]  } });
+          linhaVazia.push({ content: '', styles: { halign: "center", fillColor: [220, 220, 220]  } });
 
           body.push(linha);
           body.push(linhaVazia);
@@ -3341,17 +3371,34 @@ gerarNumero(materialNome: string, sequencial: number): string {
               });
               contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
               contador_calculo = 1;
-            }
+          }
 
           let body: any[] = [];
           let linha: any[] = [];
           let linhaVazia: any[] = [];
 
           linha.push({ content: calculo_ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold" } });
-          linha.push({ content: 'Técnico', styles: { halign: "center" } });
+          linha.push({ content: 'Técnico', styles: { halign: "center", fontStyle: "bold" } });
+          linha.push({ content: 'Nº Cadinho', styles: { halign: "center", fontStyle: "bold" } });
 
+          linhaVazia.push({ content: '', styles: { halign: "center", fillColor: [220, 220, 220]  } });
           linhaVazia.push({ content: '', styles: { halign: "center" } });
           linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+          body.push(linha);
+          body.push(linhaVazia);
+
+          autoTable(doc, {
+            startY: contadorLinhas,
+            body,
+            theme: "grid",
+            styles: { fontSize: 8, cellPadding: 2 }
+          });
+          contadorLinhas = (doc as any).lastAutoTable.finalY;
+          
+          body = [];
+          linha = [];
+          linhaVazia = [];
 
           let contador = 0;
           calculo_ensaio_detalhes.ensaios_detalhes.forEach((ensaios_detalhes: any) => {
@@ -3359,8 +3406,12 @@ gerarNumero(materialNome: string, sequencial: number): string {
             const filhoExiste = pai?.filhos.includes(String(ensaios_detalhes.id));
 
             if (filhoExiste) {
-              linha.push({ content: ensaios_detalhes.nome, styles: { halign: "center", fontStyle: "bold" } });
-              linhaVazia.push({ content: ensaios_detalhes.valor, styles: { halign: "center" } });
+              linha.push({ content: ensaios_detalhes.nome, styles: { halign: "center"} });
+              let variavel_valor = '';
+              if(ensaios_detalhes.valor && ensaios_detalhes.valor != 0){
+                variavel_valor = ensaios_detalhes.valor;
+              }
+              linhaVazia.push({ content: variavel_valor, styles: { halign: "center" } });
               contador ++;
               if(contador >= 4){
                 linhaVazia.push({ content: '', styles: { halign: "center" } });
@@ -3382,11 +3433,8 @@ gerarNumero(materialNome: string, sequencial: number): string {
             }
           });
 
-          linhaVazia.push({ content: '', styles: { halign: "center" } });
-          linhaVazia.push({ content: '', styles: { halign: "center" } });
-
-          linha.push({ content: calculo_ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold" } });
-          linhaVazia.push({ content: '', styles: { halign: "center" } });
+          linha.push({ content: calculo_ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold", fillColor: [220, 220, 220]  } });
+          linhaVazia.push({ content: '', styles: { halign: "center", fillColor: [220, 220, 220]  } });
 
           body.push(linha);
           body.push(linhaVazia);
@@ -3410,28 +3458,48 @@ gerarNumero(materialNome: string, sequencial: number): string {
             return item.pai == ensaio_detalhes.id;
           });
           if(existe){
-            const body: any[] = [];
-            const linha: any[] = [];
-            const linhaVazia: any[] = [];
+            let body: any[] = [];
+            let linha: any[] = [];
+            let linhaVazia: any[] = [];
             
-            linha.push({ content:  ensaio_detalhes.id+'  -  '+ensaio_detalhes.descricao, styles: { halign: "center",  } });
-            linha.push({ content: 'Técnico', styles: { halign: "center" } });
+            linha.push({ content:  ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold", fillColor: [220, 220, 220]  } });
+            linha.push({ content: 'Técnico', styles: { halign: "center", fontStyle: "bold" } });
+            linha.push({ content: 'Nº Cadinho', styles: { halign: "center", fontStyle: "bold" } });
 
+            linhaVazia.push({ content: '', styles: { halign: "center", fillColor: [220, 220, 220] } });
             linhaVazia.push({ content: '', styles: { halign: "center" } });
             linhaVazia.push({ content: '', styles: { halign: "center" } });
+            body.push(linha);
+            body.push(linhaVazia);
+
+            autoTable(doc, {
+              startY: contadorLinhas,
+              body,
+              theme: "grid",
+              styles: { fontSize: 8, cellPadding: 2 }
+            });
+            contadorLinhas = (doc as any).lastAutoTable.finalY;
+            
+            body = [];
+            linha = [];
+            linhaVazia = [];
 
             ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
               const pai = resultado.find(item => item.pai == ensaio_detalhes.id);
               const filhoExiste = pai?.filhos.includes(String(variavel_detalhes.id));
 
               if (filhoExiste) {
-                linha.push({ content: variavel_detalhes.nome, styles: { halign: "center", fontStyle: "bold" } });
-                linhaVazia.push({ content: variavel_detalhes.valor, styles: { halign: "center" } });
+                let variavel_valor = '';
+                if(variavel_detalhes.valor && variavel_detalhes.valor != 0){
+                  variavel_valor = variavel_detalhes.valor;
+                }
+                linha.push({ content: variavel_detalhes.nome, styles: { halign: "center"} });
+                linhaVazia.push({ content: variavel_valor, styles: { halign: "center" } });
               }
             });    
 
-            linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center",  } });
-            linhaVazia.push({ content: '', styles: { halign: "center" } });
+            linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold", fillColor: [220, 220, 220] } });
+            linhaVazia.push({ content: '', styles: { halign: "center", fillColor: [220, 220, 220] } });
             
             body.push(linha);
             body.push(linhaVazia);
@@ -3457,7 +3525,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
                 startY: contadorLinhas+5,
                 body: [
                   [
-                    { content: "Cálculos", styles: { halign: "left", fontStyle: "bold" } },
+                    { content: "Cálculos", styles: { halign: "center", fontStyle: "bold" } },
                   ],
                 ],
                 theme: "grid",
@@ -3475,11 +3543,27 @@ gerarNumero(materialNome: string, sequencial: number): string {
             let linha: any[] = [];
             let linhaVazia: any[] = [];
 
-            linha.push({ content: calculo_ensaio_detalhes.id + ' - ' + calculo_ensaio_detalhes.descricao, styles: { halign: "center" } });
-            linha.push({ content: 'Técnico', styles: { halign: "center" } });
+            linha.push({ content: calculo_ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold", fillColor: [220, 220, 220] } });
+            linha.push({ content: 'Técnico', styles: { halign: "center", fontStyle: "bold" } });
+            linha.push({ content: 'Nº Cadinho', styles: { halign: "center", fontStyle: "bold" } });
 
+            linhaVazia.push({ content: '', styles: { halign: "center", fillColor: [220, 220, 220] } });
             linhaVazia.push({ content: '', styles: { halign: "center" } });
             linhaVazia.push({ content: '', styles: { halign: "center" } });
+            body.push(linha);
+            body.push(linhaVazia);
+
+            autoTable(doc, {
+              startY: contadorLinhas,
+              body,
+              theme: "grid",
+              styles: { fontSize: 8, cellPadding: 2 }
+            });
+            contadorLinhas = (doc as any).lastAutoTable.finalY;
+            
+            body = [];
+            linha = [];
+            linhaVazia = [];
 
             let contador = 0;
             calculo_ensaio_detalhes.ensaios_detalhes.forEach((ensaio_detalhes: any) => {
@@ -3487,8 +3571,12 @@ gerarNumero(materialNome: string, sequencial: number): string {
               const filhoExiste = pai?.filhos.includes(String(ensaio_detalhes.id));
 
               if (filhoExiste) {
-                linha.push({ content: ensaio_detalhes.id + ' - ' + ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold" } });
-                linhaVazia.push({ content: ensaio_detalhes.valor, styles: { halign: "center" } });
+                linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center" } });
+                let variavel_valor = '';
+                if(ensaio_detalhes.valor && ensaio_detalhes.valor != 0){
+                  variavel_valor = ensaio_detalhes.valor;
+                }
+                linhaVazia.push({ content: variavel_valor, styles: { halign: "center" } });
 
                 contador ++;
                 if(contador >= 4){
@@ -3511,8 +3599,8 @@ gerarNumero(materialNome: string, sequencial: number): string {
               }
             });
 
-            linha.push({ content: calculo_ensaio_detalhes.descricao, styles: { halign: "center" } });
-            linhaVazia.push({ content: '', styles: { halign: "center" } });
+            linha.push({ content: calculo_ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold", fillColor: [220, 220, 220] } });
+            linhaVazia.push({ content: '', styles: { halign: "center" , fillColor: [220, 220, 220]} });
 
             body.push(linha);
             body.push(linhaVazia);
@@ -3622,7 +3710,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
   getStatusColor(status: boolean): string {
     return status ? '#22c55e' : '#ef4444';
   }
-
     
   // ================ MÉTODOS DE AÇÕES DAS ANÁLISES ================
 
