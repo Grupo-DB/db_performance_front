@@ -166,22 +166,27 @@
                         </p-inplace>
 
                         <div class="flex flex-column w-12 gap-3 mt-3">
+                            <!-- <div class="w-12 text-center" style="margin: auto;" *ngIf="loading">
+                                <p-progress-spinner strokeWidth="6" fill="transparent" animationDuration=".8s" [style]="{ width: '350px', height: '350px' }" />
+                            </div> -->
                             <div class="w-12 text-left">
                                 <p-table 
                                     #dt1
                                     [value]="analisesFiltradas"
                                     [paginator]="true"
                                     [rows]="30"
+                                    [rowsPerPageOptions]="[20, 30, 50]"
                                     [globalFilterFields]="[
                                         'fornecedor',
                                         'numero',
                                         'status',
                                         'responsavel'
                                     ]"
+                                    [loading]="loading"
                                 >
-                                <ng-template pTemplate="caption">
+                                    <ng-template pTemplate="caption">
                                     <div class="step1 flex flex-column w-12 justify-content-between lg:w-12 lg:flex-row">
-                                        <div class="w-2 text-left">
+                                        <div class="flex w-8 text-left gap-5">
                                             <p-multiselect
                                                 [(ngModel)]="materiaisSelecionados"
                                                 [options]="materiaisFiltro"
@@ -206,8 +211,6 @@
                                                     <p-tag [value]="option.value" [severity]="getSeverity(option.value)" />
                                                 </ng-template>
                                             </p-multiselect>
-                                        </div>
-                                        <div class="w-4' text-left">
                                             <p-multiselect
                                                 [(ngModel)]="tipoSelecionados"
                                                 [options]="tipoFiltro"
@@ -233,6 +236,9 @@
                                                 </ng-template>
                                             </p-multiselect>
                                         </div>
+                                        <!-- <div class="w-4' text-left">
+                                            
+                                        </div> -->
                                         <!-- <div class=" flex w-2 gap-3 mt-3 justify-content-end text-right">
                                             Finalizada 
                                             <p-columnFilter 
@@ -260,7 +266,7 @@
                                              >   
                                             </p-columnFilter>
                                         </div> -->
-                                        <div class=" flex w-2 gap-3 justify-content-end text-right">
+                                        <div class=" flex w-4 gap-3 justify-content-end text-right">
                                             <p-floatlabel variant="on">
                                                 <p-iconfield>
                                                     <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
@@ -305,44 +311,45 @@
                                          -->
                                         </tr>
                                     </ng-template>
+  
+                                    <ng-template pTemplate="loadingbody">
+                                        <tr *ngFor="let s of [1,2,3,4,5,6,7,8,9,10]">
+                                            <td><p-skeleton width="80px" height="18px" /></td>
+                                            <td><p-skeleton width="100px" height="18px" /></td>
+                                            <td><p-skeleton width="90px" height="18px" /></td>
+                                            <td><p-skeleton width="120px" height="18px" /></td>
+                                            <td><p-skeleton width="140px" height="18px" /></td>
+                                            <td><p-skeleton width="70px" height="18px" /></td>
+                                            <td>
+                                                <div class="flex justify-content-center gap-2">
+                                                    <p-skeleton width="30px" height="30px" shape="circle" />
+                                                    <p-skeleton width="30px" height="30px" shape="circle" />
+                                                    <p-skeleton width="30px" height="30px" shape="circle" />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
 
-                                    
                                     <ng-template pTemplate="body" let-analise>
                                         <tr>
                                             <td style="text-align: left;">
                                                 <p-tag
-                                                [value]="analise.amostra_detalhes.material"
-                                                [severity]="getSeverity(analise.amostra_detalhes.material)"
+                                                  [value]="analise.amostra_detalhes?.material"
+                                                  [severity]="getSeverity(analise.amostra_detalhes?.material)"
                                                 />
                                             </td>
                                             <td style="text-align: left;"> {{ analise.amostra_detalhes?.numero }} </td>
-                                            <ng-container *ngIf="analise?.amostra_detalhes?.expressa_detalhes; else ensaioDetalhes">
-                                                <td style="text-align: left;">
-                                                    {{ analise.amostra_detalhes?.expressa_detalhes?.data | date:'dd/MM/yy' }}
-                                                </td>
-                                                <td style="text-align: left;"> {{ analise.amostra_detalhes.expressa_detalhes.classificacao }} </td>
-                                                <td style="text-align: left;"> {{ analise.amostra_detalhes.expressa_detalhes.responsavel }} </td>
-                                                <td style="text-align: left;"> 
-                                                    <p-tag
-                                                        [value]="'Expressa'"
-                                                        [severity]="getTipoOrdem('Expressa')"
-                                                    />
-                                                </td>
-                                            </ng-container>
-                                            <ng-template #ensaioDetalhes>
-                                                <td style="text-align: left;">
-                                                    {{ analise.amostra_detalhes?.ordem_detalhes?.data | date:'dd/MM/yy' }}
-                                                </td>
-                                                <td style="text-align: left;"> {{ analise.amostra_detalhes.ordem_detalhes.classificacao }} </td>
-                                                <td style="text-align: left;"> {{ analise.amostra_detalhes.ordem_detalhes.responsavel }} </td>
-                                                <td style="text-align: left;">
-                                                    <p-tag
-                                                        [value]="'Plano'"
-                                                        [severity]="getTipoOrdem('normal')"
-                                                    />
-                                                </td>
-                                            </ng-template>
-                                        
+                                            <td style="text-align: left;">
+                                                {{ (analise.amostra_detalhes?.expressa_detalhes?.data || analise.amostra_detalhes?.ordem_detalhes?.data) | date:'dd/MM/yy' }}
+                                            </td>
+                                            <td style="text-align: left;"> {{ analise.amostra_detalhes?.expressa_detalhes?.classificacao || analise.amostra_detalhes?.ordem_detalhes?.classificacao }} </td>
+                                            <td style="text-align: left;"> {{ analise.amostra_detalhes?.expressa_detalhes?.responsavel || analise.amostra_detalhes?.ordem_detalhes?.responsavel }} </td>
+                                            <td style="text-align: left;">
+                                                <p-tag
+                                                    [value]="analise?.amostra_detalhes?.expressa_detalhes ? 'Expressa' : 'Plano'"
+                                                    [severity]="analise?.amostra_detalhes?.expressa_detalhes ? getTipoOrdem('Expressa') : getTipoOrdem('normal')"
+                                                />
+                                            </td>
                                             <td style="text-align: center;">
                                                 <div style="display: flex; justify-content: center;">
 
@@ -471,7 +478,6 @@
                                                         </a>
                                                     </div>
                                                 </div>
-
                                             </td>
                                             <!-- <td style="text-align: center;">
                                                 <i 
@@ -981,3 +987,109 @@
 
 
 
+<p-drawer 
+        header="Imagens da Amostra" 
+        [(visible)]="modalImagensVisible" 
+        position="right" 
+        [style]="{ width: '80vw' }">
+        
+        <div *ngIf="amostraImagensSelecionada" class="mb-4">
+            <h3>Amostra: {{ amostraImagensSelecionada.numero }}</h3>
+            <p><strong>Material:</strong> {{ amostraImagensSelecionada.material_detalhes?.nome }}</p>
+            <p><strong>Data de Coleta:</strong> {{ amostraImagensSelecionada.data_coleta }}</p>
+        </div>
+
+        <div *ngIf="imagensAmostra.length > 0" class="image-viewer">
+            <!-- Navegação de imagens -->
+            <div class="flex justify-content-between align-items-center mb-3">
+            <p-button 
+                icon="pi pi-chevron-left" 
+                [disabled]="imagemAtualIndex === 0"
+                (onClick)="imagemAnterior()"
+                [rounded]="true">
+            </p-button>
+            
+            <span class="text-lg font-semibold">
+                {{ imagemAtualIndex + 1 }} de {{ imagensAmostra.length }}
+            </span>
+            
+            <p-button 
+                icon="pi pi-chevron-right" 
+                [disabled]="imagemAtualIndex === imagensAmostra.length - 1"
+                (onClick)="proximaImagem()"
+                [rounded]="true">
+            </p-button>
+            </div>
+
+            <!-- Imagem principal -->
+            <div class="text-center mb-4">
+            <img 
+                [src]="imagensAmostra[imagemAtualIndex]?.image" 
+                [alt]="imagensAmostra[imagemAtualIndex]?.descricao || 'Imagem da amostra'"
+                style="max-width: 100%; max-height: 60vh; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            </div>
+
+            <!-- Informações da imagem -->
+            <div class="bg-gray-50 p-3 border-round mb-4">
+            <p><strong>Descrição:</strong> {{ imagensAmostra[imagemAtualIndex]?.descricao || 'Sem descrição' }}</p>
+            <p><strong>Data do Upload:</strong> {{ imagensAmostra[imagemAtualIndex]?.data_upload | date:'dd/MM/yyyy HH:mm' }}</p>
+            <div class="bg-gray-50 p-3 border-round mb-4">
+                <div class="w-full mb-3">
+                    <p-floatLabel variant="on">
+                        <input 
+                            pInputText 
+                            [(ngModel)]="imagensAmostra[imagemAtualIndex].descricao" 
+                            type="text" 
+                            id="edit-descricao"
+                            [style]="{'width':'100%'}" 
+                            autocomplete="off" 
+                            variant="filled"
+                            (ngModelChange)="onDescricaoChange(imagensAmostra[imagemAtualIndex])"
+                        />
+                        <label for="edit-descricao">Descrição da imagem</label>
+                    </p-floatLabel>
+                </div>
+                <p><strong>Data do Upload:</strong> {{ imagensAmostra[imagemAtualIndex]?.data_upload | date:'dd/MM/yyyy HH:mm' }}</p>
+            </div>
+            </div>
+
+            <!-- Ações da imagem -->
+            <div class="flex justify-content-center gap-2 mb-4">
+            <p-button 
+                label="Download" 
+                icon="pi pi-download" 
+                severity="info"
+                (onClick)="downloadImagem(imagensAmostra[imagemAtualIndex])">
+            </p-button>
+            
+            <p-button 
+                label="Deletar" 
+                icon="pi pi-trash" 
+                severity="danger"
+                (onClick)="deletarImagem(imagensAmostra[imagemAtualIndex].id)">
+            </p-button>
+            </div>
+
+            <!-- Thumbnails (miniaturas) -->
+            <div class="flex flex-wrap gap-2 justify-content-center" *ngIf="imagensAmostra.length > 1">
+            <div 
+                *ngFor="let imagem of imagensAmostra; let i = index"
+                class="cursor-pointer border-2 border-round overflow-hidden"
+                [class.border-primary]="i === imagemAtualIndex"
+                [class.border-gray-300]="i !== imagemAtualIndex"
+                (click)="irParaImagem(i)"
+                style="width: 80px; height: 80px;">
+                <img 
+                [src]="imagem.image" 
+                [alt]="'Miniatura ' + (i + 1)"
+                style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            </div>
+        </div>
+
+        <!-- Mensagem quando não há imagens -->
+        <div *ngIf="imagensAmostra.length === 0" class="text-center p-5">
+            <i class="pi pi-images text-6xl text-gray-400 mb-3"></i>
+            <p class="text-xl text-gray-600">Esta amostra não possui imagens anexadas.</p>
+        </div>
+        </p-drawer>

@@ -477,6 +477,7 @@ proximaImagem(): void {
   }
 }
 
+
 imagemAnterior(): void {
   if (this.imagemAtualIndex > 0) {
     this.imagemAtualIndex--;

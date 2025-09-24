@@ -46,12 +46,13 @@ import { TagModule } from 'primeng/tag';
 import { CheckboxModule } from 'primeng/checkbox';
 import { Amostra } from '../amostra/amostra.component';
 import { TreeTableModule } from 'primeng/treetable';
-
+import { SkeletonModule } from 'primeng/skeleton';
 import { TreeNode } from 'primeng/api';
-
 import jsPDF from 'jspdf';
 import autoTable, { CellInput } from "jspdf-autotable";
 import { Chart } from 'chart.js';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 
 interface OrdemForm {
@@ -91,7 +92,7 @@ export interface Ordem {
     MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, 
     MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule,
     NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule, 
-    TagModule, CheckboxModule,TreeTableModule
+    TagModule, CheckboxModule,TreeTableModule,ProgressSpinnerModule,SkeletonModule
   ],
   animations: [
     trigger('efeitoFade',[
@@ -145,7 +146,7 @@ export interface Ordem {
 export class OrdemComponent implements OnInit {
   @ViewChild('graficoCanvas', { static: true }) graficoCanvas!: ElementRef<HTMLCanvasElement>;
   chart!: Chart;
-
+  loading: boolean = true;
   @ViewChild('dt1') dt1!: Table;
   inputValue: string = '';
 
@@ -161,6 +162,11 @@ export class OrdemComponent implements OnInit {
   ordens: Ordem[]=[];
   analises: any[] = [];
   uploadedFilesWithInfo: FileWithInfo[] = [];
+
+  amostraImagensSelecionada: any;
+  imagensAmostra: any[] = [];
+  imagemAtualIndex: number = 0;
+  modalImagensVisible = false;
 
   // Propriedades para dados da amostra recebida
   amostraData: any = null;
@@ -639,6 +645,9 @@ gerarNumero(materialNome: string, sequencial: number): string {
   analisesFiltradas: any[] = []; // array para exibir na tabela
   materiaisSelecionados: string[] = []; // valores escolhidos no multiselect
   loadAnalises(): void {
+    this.loading=true;
+    // Limpa lista para forçar exibição de skeletonRows imediatamente
+    this.analisesFiltradas = [];
     this.analiseService.getAnalisesAbertas().subscribe(
       (response: any[]) => {
         // Mapeia e cria campos "planos" para facilitar o filtro global
@@ -667,7 +676,8 @@ gerarNumero(materialNome: string, sequencial: number): string {
             (item, index, self) =>
               index === self.findIndex((opt) => opt.value === item.value)
           );
-
+        // Define lista filtrada e libera carregamento (skeleton some)
+        this.loading=false;
         // ✅ NOVO: Carregar dados completos e verificar alertas de rompimento
         this.carregarDadosCompletosEVerificarAlertas();
       },
@@ -3187,14 +3197,12 @@ gerarNumero(materialNome: string, sequencial: number): string {
   }
 
   getTipoOrdem(tipoOrdem: string): 'warn' | 'contrast' | undefined {
-
     switch (tipoOrdem) {
       case 'Expressa':
         return 'warn';
       default:
         return 'contrast';
     }
-
   }
 
   imprimirCalculoPDF(analise: any) {
@@ -3623,50 +3631,62 @@ gerarNumero(materialNome: string, sequencial: number): string {
     //   // doc.save("Etiqueta.pdf");
   }
 
-  excluirAmostraOrdem(id: any): void {
-    this.confirmationService.confirm({
-      message: `Tem certeza que deseja excluir a os ${id}?`,
-      header: 'Confirmar Exclusão',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Sim',
-      rejectLabel: 'Não',
-      accept: () => {
-        this.amostraService.deleteAmostraOrdem(id).subscribe({
-          next: () => {
-            this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Amostra excluída com sucesso!!', life: 1000 });
-            setTimeout(() => {
-              window.location.reload(); // Atualiza a página após a exclusão
-            }, 1000); // Tempo em milissegundos (1 segundo de atraso)
-          },
-          error: (err) => {
-            if (err.status === 403) {
-              this.messageService.add({ severity: 'error', summary: 'Erro de autorização!', detail: 'Você não tem permissão para realizar esta ação.', life: 2000 });
-            } 
-            if (err.status === 500) {
-              this.messageService.add({ severity: 'error', summary: 'Erro de exclusão!', detail: 'Não é possível excluir, pois esta OS já está associada a uma análise! ', life: 2000 });
-            } 
-          }
-        });
+  deleteOrdem(id: any): void {
+    this.ordemService.deleteOrdem(id).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Ordem de serviço excluída com sucesso!!', life: 1000 });
+        setTimeout(() => {
+          window.location.reload(); // Atualiza a página após a exclusão
+        }, 1000); // Tempo em milissegundos (1 segundo de atraso)
       },
-      reject: () => {
-        this.messageService.add({ severity: 'error', summary: 'Cancelado', detail: 'Exclusão Cancelada', life: 1000 });
+      error: (err) => {
+        if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro de autorização!', detail: 'Você não tem permissão para realizar esta ação.', life: 2000 });
+        } 
+        if (err.status === 500) {
+          this.messageService.add({ severity: 'error', summary: 'Erro de exclusão!', detail: 'Não é possível excluir, pois esta OS já está associada a uma análise! ', life: 2000 });
+        } 
       }
-    });
+    }); 
   }
 
-  excluirAmostraExpressa(id: any): void {
+  deleteExpressa(id: any): void {
+    this.ordemService.deleteExpressa(id).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Ordem de serviço excluída com sucesso!!', life: 1000 });
+        setTimeout(() => {
+          window.location.reload(); // Atualiza a página após a exclusão
+        }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+      },
+      error: (err) => {
+        if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro de autorização!', detail: 'Você não tem permissão para realizar esta ação.', life: 2000 });
+        } 
+        if (err.status === 500) {
+          this.messageService.add({ severity: 'error', summary: 'Erro de exclusão!', detail: 'Não é possível excluir, pois esta OS já está associ ada a uma análise! ', life: 2000 });
+        } 
+      }
+    }); 
+  } 
+
+  excluirAnalise(analise: any): void {
     this.confirmationService.confirm({
-      message: `Tem certeza que deseja excluir a os ${id}?`,
+      message: `Tem certeza que deseja excluir essa Análise?`,
       header: 'Confirmar Exclusão',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Sim',
       rejectLabel: 'Não',
       accept: () => {
-        this.amostraService.deleteAmostraExpressa(id).subscribe({
+        this.analiseService.deleteAnalise(analise.id).subscribe({
           next: () => {
             this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Amostra excluída com sucesso!!', life: 1000 });
             setTimeout(() => {
-              window.location.reload(); // Atualiza a página após a exclusão
+              if (analise.amostra_detalhes.expressa_detalhes) {
+                this.deleteExpressa(analise.amostra_detalhes.expressa_detalhes.id);
+              } else {
+                this.deleteOrdem(analise.amostra_detalhes.ordem_detalhes.id);
+              }
+              //window.location.reload(); // Atualiza a página após a exclusão
             }, 1000); // Tempo em milissegundos (1 segundo de atraso)
           },
           error: (err) => {
@@ -3690,15 +3710,9 @@ gerarNumero(materialNome: string, sequencial: number): string {
       { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(analise), tooltip: 'Visualizar OS', tooltipPosition: 'top' },
       { label: 'Imprimir', icon: 'pi pi-print', command: () => this.abrirModalImpressao(analise) },
       { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(analise.amostra_detalhes) },
-      { label: 'Excluir', icon: 'pi pi-trash', command: () => { 
-        if (analise.expressa_detalhes) {
-          this.excluirAmostraExpressa(analise.amostra_detalhes.expressa_detalhes.id);
-        } else {
-          this.excluirAmostraOrdem(analise.amostra_detalhes.ordem_detalhes.id);
-        }} 
-      },
-      { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise.amostra_detalhes) },
-      { label: 'Duplicata', icon: 'pi pi-file-import', command: () => this.duplicata(analise.amostra_detalhes) },
+      { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluirAnalise(analise) },
+      { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise.amostra_detalhes.id) },
+      //{ label: 'Duplicata', icon: 'pi pi-file-import', command: () => this.duplicata(analise.amostra_detalhes) },
     ];
     return menuItems;
   }
@@ -3723,20 +3737,147 @@ gerarNumero(materialNome: string, sequencial: number): string {
     });
   }
 
-  /**
-   * Visualiza imagens da amostra
-   */
-  visualizarImagens(analise: any): void {
-    console.log('Visualizando imagens:', analise);
-    // Implementar visualização de imagens
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Informação',
-      detail: 'Funcionalidade em desenvolvimento'
-    });
-  }
+//======================IMAGENS DA AMOSTRA =======================
+ visualizarImagens(amostraId: any): void {
+  console.log('Visualizando imagens da amostra:', amostraId);
+  this.amostraImagensSelecionada = amostraId;
+  this.carregarImagensAmostra(amostraId);
+}
 
+  carregarImagensAmostra(amostraId: number): void {
+  this.amostraService.getImagensAmostra(amostraId).subscribe({
+    next: (imagens) => {
+      // Usar image_url em vez de image para ter a URL completa
+      this.imagensAmostra = imagens.map((img: { image_url: any; image: any; }) => ({
+        ...img,
+        image: img.image_url || img.image // Usar image_url se disponível, senão fallback para image
+      }));
+      this.imagemAtualIndex = 0;
+      this.modalImagensVisible = true;
+      
+      if (imagens.length === 0) {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Informação',
+          detail: 'Esta amostra não possui imagens anexadas.'
+        });
+      }
+    },
+    error: (error) => {
+      console.error('Erro ao carregar imagens:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Erro ao carregar imagens da amostra.'
+      });
+    }
+  });
+}
+
+// Métodos para navegação entre imagens
+proximaImagem(): void {
+  if (this.imagemAtualIndex < this.imagensAmostra.length - 1) {
+    this.imagemAtualIndex++;
+  }
+}
+imagemAnterior(): void {
+  if (this.imagemAtualIndex > 0) {
+    this.imagemAtualIndex--;
+  }
+}
+
+// Método para ir para uma imagem específica
+irParaImagem(index: number): void {
+  this.imagemAtualIndex = index;
+}
+
+// Método para deletar uma imagem
+deletarImagem(imageId: number): void {
+  this.confirmationService.confirm({
+    message: 'Tem certeza que deseja deletar esta imagem?',
+    header: 'Confirmação',
+    icon: 'pi pi-exclamation-triangle',
+    accept: () => {
+      this.amostraService.deleteImagem(this.amostraImagensSelecionada.id, imageId).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: 'Imagem deletada com sucesso!'
+          });
+          
+          
+          this.carregarImagensAmostra(this.amostraImagensSelecionada.id);
+        },
+        error: (error) => {
+          console.error('Erro ao deletar imagem:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Erro ao deletar imagem.'
+          });
+        }
+      });
+    }
+  });
+}
   
+downloadImagem(imagem: any): void {
+  const link = document.createElement('a');
+  link.href = imagem.image;
+  link.download = `amostra_${this.amostraImagensSelecionada.numero}_imagem_${imagem.id}`;
+  link.target = '_blank';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+onDescricaoChange(imagem: any): void {
+  // Debounce para não fazer muitas requisições
+  if (this.descricaoTimeout) {
+    clearTimeout(this.descricaoTimeout);
+  }
+  
+  this.descricaoTimeout = setTimeout(() => {
+    this.salvarDescricaoImagem(imagem);
+  }, 3000); // Salva após 3 segundos sem alterações
+}
+
+private descricaoTimeout: any;
+
+salvarDescricaoImagem(imagem: any): void {
+  // método no service para atualizar descrição
+  this.amostraService.atualizarDescricaoImagem(imagem.id, imagem.descricao).subscribe({
+    next: () => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Sucesso',
+        detail: 'Descrição atualizada com sucesso!'
+      });
+    },
+    error: (error) => {
+      console.error('Erro ao atualizar descrição:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Erro ao atualizar descrição da imagem.'
+      });
+    }
+  });
+}
+
+// Método para capturar mudanças na descrição durante o upload
+onDescricaoInput(index: number, event: Event): void {
+  const target = event.target as HTMLInputElement;
+  const descricao = target.value;
+  
+  if (this.uploadedFilesWithInfo[index]) {
+    this.uploadedFilesWithInfo[index].descricao = descricao;
+    console.log(`Descrição atualizada para arquivo ${index}: "${descricao}"`);
+    console.log('Estado atual dos arquivos:', this.uploadedFilesWithInfo);
+  }
+}  
+
   //Finalizar análise
   finalizarAnalise(analise: any): void {
     this.confirmationService.confirm({
@@ -3865,8 +4006,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
       }
     });
   }
-
-
 
   gerarLaudo(analise: any): void {
     console.log('Gerando laudo para análise:', analise);

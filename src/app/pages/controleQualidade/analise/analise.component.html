@@ -348,7 +348,7 @@
                                             </span>
                                         </div>
                                         <div 
-                                            *ngIf="ensaioTemVariavelData(ensaio)" 
+                                            *ngIf="ensaioTemVariavelData(ensaio) && ensaio.tipo_ensaio_detalhes?.nome !== 'Resistencia'" 
                                             class="text-xs text-500 mt-1"
                                         >
                                             {{ ensaioTemVariavelData(ensaio) ? 'Rompimento' : 'Resultado' }}
@@ -450,14 +450,16 @@
                                                         <div 
                                                             class="resultado flex flex-column mt-3 w-6 justify-content-end"
                                                             [ngClass]="{ negativo: (+ensaio.valor || 0) < 0 }"
+                                                            *ngIf="ensaio.tipo_ensaio_detalhes.nome !== 'Resistencia'"
                                                         >
                                                             <div class="bg-gray-50 border-round mt-2 text-center">
                                                                 <label class="text-sm font-medium">Resultado Final</label>
                                                             </div>
                                                             <div class="bg-gray-50 border-round mt-2 text-center">
                                                                 <span 
-                                                                class="text-2xl font-bold text-primary resultado-valor">
-                                                                {{ ensaioTemVariavelData(ensaio) ? (formatarDataExibicao(ensaio.valorTimestamp || ensaio.valor) || '—') : (ensaio.valor || 0) }}
+                                                                    class="text-2xl font-bold text-primary resultado-valor"
+                                                                >
+                                                                    {{ ensaioTemVariavelData(ensaio) ? (formatarDataExibicao(ensaio.valorTimestamp || ensaio.valor) || '—') : (ensaio.valor || 0) }}
                                                                 </span>
                                                                 <span class="ml-2 text-lg text-600">{{ ensaio.unidade }}</span>
                                                             </div>
@@ -957,7 +959,7 @@
                                                 <div 
                                                     class="resultado flex flex-column  w-8 justify-content-end m-3"
                                                     [ngClass]="{ negativo: (+calc.resultado || 0) < 0 }"
-                                                >
+                                                >   
                                                     <div class="bg-gray-50 border-round mt-2 text-center">
                                                         <label class="text-sm font-medium">Resultado Final do Cálculo</label>
                                                     </div>
