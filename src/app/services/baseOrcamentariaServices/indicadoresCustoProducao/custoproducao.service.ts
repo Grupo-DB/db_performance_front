@@ -7,9 +7,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class CustoproducaoService {
-  private apiUrl = 'http://localhost:8000/custoproducao/custoproducao/';
-  private calcUrl = 'http://localhost:8000/custoproducao/custoproducao/calculosCustoProducao/';
-  private pedraUrl = 'http://localhost:8000/britagem/calcular_pedras/';
+  private apiUrl = 'http://172.50.10.79:8008/custoproducao/custoproducao/';
+  private calcUrl = 'http://172.50.10.79:8008/custoproducao/custoproducao/calculosCustoProducao/';
+  private pedraUrl = 'http://172.50.10.79:8008/britagem/calcular_pedras/';
   constructor(
     private http: HttpClient,
     private router: Router
