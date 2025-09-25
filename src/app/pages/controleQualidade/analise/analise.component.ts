@@ -670,6 +670,22 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
     }
   }
 
+  // Detecta se o resultado de um cálculo representa uma data
+  calcResultadoEhData(calc: any): boolean {
+    if (!calc) return false;
+    const v = calc.resultado;
+    if (!v && v !== 0) return false;
+    if (typeof v === 'number') {
+      // timestamp após 2000 e antes de 2100
+      return v > 946684800000 && v < 4102444800000; // ~ ano 2100
+    }
+    if (typeof v === 'string') {
+      if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return true;
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(v)) return true;
+    }
+    return false;
+  }
+
   // Arredonda números para N casas decimais
   private roundN(value: any, n: number): number {
     const num = typeof value === 'number' ? value : Number(value);
@@ -3205,84 +3221,89 @@ calcularDatasAutomaticas(ensaio: any, variavelAlterada: any) {
 
 
 // Inicializar datas nas variáveis
+private inicializarDatasDeEnsaio(ensaio: any): boolean {
+  let hasDateVariables = false;
+  ensaio?.variavel_detalhes?.forEach((variavel: any) => {
+    if (this.isVariavelTipoData(variavel)) {
+      hasDateVariables = true;
+      if (variavel.valor) {
+        try {
+          let dataObj: Date | null = null;
+          if (typeof variavel.valor === 'string') {
+            if (variavel.valor.includes('/')) {
+              const [d, m, y] = variavel.valor.split('/');
+              dataObj = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+            } else if (variavel.valor.match(/^\d{4}-\d{2}-\d{2}$/)) {
+              dataObj = this.parseDateLocal(variavel.valor);
+            } else {
+              const tmp = new Date(variavel.valor);
+              dataObj = isNaN(tmp.getTime()) ? null : tmp;
+            }
+          } else if (typeof variavel.valor === 'number') {
+            // segundos -> ms
+            const valNum = variavel.valor < 1e11 ? variavel.valor * 1000 : variavel.valor;
+            const tmp = new Date(valNum);
+            dataObj = isNaN(tmp.getTime()) ? null : tmp;
+          } else if (variavel.valorData instanceof Date) {
+            dataObj = variavel.valorData;
+          }
+          if (dataObj && !isNaN(dataObj.getTime())) {
+            // normalizar para meia-noite local para evitar -1 dia
+            dataObj = new Date(dataObj.getFullYear(), dataObj.getMonth(), dataObj.getDate());
+            variavel.valorData = dataObj;
+            variavel.valorTimestamp = dataObj.getTime();
+            variavel.valor = this.toLocalYYYYMMDD(dataObj);
+          }
+        } catch {}
+      }
+    }
+  });
+  return hasDateVariables;
+}
+
 inicializarDatasVariaveis() {
-  console.log('🗓️ Inicializando variáveis de data...');
-  
+  console.log('🗓️ Inicializando variáveis de data (diretos + internos)...');
+
   this.analisesSimplificadas?.forEach(analise => {
     analise.planoDetalhes?.forEach((plano: any) => {
+
+      // Ensaios diretos
       plano.ensaio_detalhes?.forEach((ensaio: any) => {
-        let hasDateVariables = false;
-        
-        ensaio.variavel_detalhes?.forEach((variavel: any) => {
-          if (this.isVariavelTipoData(variavel)) {
-            hasDateVariables = true;
-            console.log(`🗓️ Processando variável de data: ${variavel.nome}`, {
-              valor: variavel.valor,
-              tipo: typeof variavel.valor
-            });
-            
-            if (variavel.valor) {
-              let dataObj: Date | null = null;
-              
-              try {
-                // Tentar diferentes formatos de data
-                if (typeof variavel.valor === 'string') {
-                  // Se for string, pode ser ISO (YYYY-MM-DD) ou brasileiro (DD/MM/YYYY)
-                  if (variavel.valor.includes('/')) {
-                    // Formato brasileiro DD/MM/YYYY
-                    const [dia, mes, ano] = variavel.valor.split('/');
-                    dataObj = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
-                  } else if (variavel.valor.includes('-')) {
-                    // Formato ISO YYYY-MM-DD (tratar como local)
-                    dataObj = this.parseDateLocal(variavel.valor);
-                  } else {
-                    // Tentar criar data diretamente
-                    dataObj = this.parseDateLocal(variavel.valor);
-                  }
-                } else if (typeof variavel.valor === 'number') {
-                  // Se for timestamp
-                  dataObj = this.parseDateLocal(variavel.valor);
-                } else {
-                  // Tentar criar data diretamente
-                  dataObj = this.parseDateLocal(variavel.valor);
-                }
-                
-                // Verificar se a data é válida
-                if (dataObj && !isNaN(dataObj.getTime())) {
-                  variavel.valorData = dataObj;
-                  variavel.valorTimestamp = dataObj.getTime();
-                  
-                  // Garantir que o valor está no formato local yyyy-mm-dd para o backend
-                  variavel.valor = this.toLocalYYYYMMDD(dataObj);
-                  
-                  console.log(`✅ Data inicializada: ${variavel.nome} = ${dataObj.toLocaleDateString('pt-BR')}`);
-                } else {
-                  console.warn(`⚠️ Data inválida para variável ${variavel.nome}:`, variavel.valor);
-                }
-              } catch (error) {
-                console.error(`❌ Erro ao inicializar data para variável ${variavel.nome}:`, error, variavel.valor);
-              }
-            }
-          }
-        });
-        
-        // Se o ensaio tem variáveis de data e uma função, recalcular
-        if (hasDateVariables && ensaio.funcao) {
-          console.log(`🔄 Recalculando ensaio com datas: ${ensaio.descricao}`);
-          this.calcularEnsaioDireto(ensaio);
+        const has = this.inicializarDatasDeEnsaio(ensaio);
+        if (has && ensaio.funcao) {
+          this.calcularEnsaioDireto(ensaio, plano);
         }
       });
+
+      // Ensaios internos de cada cálculo
+      plano.calculo_ensaio_detalhes?.forEach((calc: any) => {
+        let precisaRecalcularInternos = false;
+        calc.ensaios_detalhes?.forEach((ensaioInt: any) => {
+          const has = this.inicializarDatasDeEnsaio(ensaioInt);
+            if (has && ensaioInt.funcao) {
+              precisaRecalcularInternos = true;
+            }
+        });
+        // Recalcula cadeia interna apenas uma vez se alguma variável de data mudou
+        if (precisaRecalcularInternos) {
+          this.recalcularEnsaiosInternosDoCalculo(calc, plano);
+          // Recalcula o próprio cálculo para refletir mudanças de datas
+          this.calcular(calc, plano);
+        }
+      });
+
     });
   });
-  
-  // Forçar recálculo de todos os cálculos após inicializar as datas
+
+  // Recalcular todos os cálculos novamente para garantir consistência cruzada
   setTimeout(() => {
     this.recalcularTodosCalculos();
     this.cd.detectChanges();
-  }, 200);
-  
-  console.log('🗓️ Inicialização de datas concluída');
+  }, 150);
+
+  console.log('🗓️ Inicialização de datas concluída (incluindo internos).');
 }
+
 
 forcarDeteccaoMudancas() {
   this.cd.detectChanges();
@@ -3584,11 +3605,171 @@ salvarAnaliseResultados() {
     tipo: analiseData.ordemTipo,
     planoDetalhes: planoDetalhes
   });
+
+  // PASSO 0: Normalização antecipada de todos os ensaios e variáveis de data
+  planoDetalhes.forEach((pl: any) => {
+    (pl.ensaio_detalhes || []).forEach((ensaio: any) => {
+      const tipoEnsaioLowerNorm = ((ensaio.tipo_ensaio_detalhes?.nome || ensaio.tipo_ensaio || '')+'').toLowerCase();
+      const ehData = tipoEnsaioLowerNorm === 'data' || /data|rompimento|modelagem|moldagem/.test(ensaio.unidade || '') || /adicionarDias|hoje|diasEntre/i.test(ensaio.funcao || '');
+      // Variáveis
+      if (Array.isArray(ensaio.variavel_detalhes)) {
+        ensaio.variavel_detalhes.forEach((v: any) => {
+          if (this.isVariavelTipoData(v)) {
+            // Se tem valorData
+            if (v.valorData instanceof Date && !isNaN(v.valorData.getTime())) {
+              const d = new Date(v.valorData.getFullYear(), v.valorData.getMonth(), v.valorData.getDate());
+              v.valorTimestamp = d.getTime();
+              v.valor = this.toLocalYYYYMMDD(d);
+            } else if (typeof v.valorTimestamp === 'number' && v.valorTimestamp > 946684800000) {
+              const d = new Date(v.valorTimestamp);
+              v.valor = this.toLocalYYYYMMDD(new Date(d.getFullYear(), d.getMonth(), d.getDate()));
+            } else if (typeof v.valor === 'string' && /(\d{4}-\d{2}-\d{2})|(\d{2}\/\d{2}\/\d{4})/.test(v.valor)) {
+              const d = this.parseDateLocal(v.valor);
+              if (d) {
+                v.valorTimestamp = d.getTime();
+                v.valor = this.toLocalYYYYMMDD(new Date(d.getFullYear(), d.getMonth(), d.getDate()));
+              }
+            }
+          }
+        });
+      }
+      // Ensaio de data: garantir timestamp antes de qualquer transformação
+      if (ehData) {
+        if (typeof ensaio.valorTimestamp !== 'number' || ensaio.valorTimestamp < 946684800000) {
+          // Tentar extrair de valor se string de data
+          if (typeof ensaio.valor === 'string' && /(\d{4}-\d{2}-\d{2})|(\d{2}\/\d{2}\/\d{4})/.test(ensaio.valor)) {
+            const d = this.parseDateLocal(ensaio.valor);
+            if (d) {
+              const dLoc = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+              ensaio.valorTimestamp = dLoc.getTime();
+              ensaio.valor = this.toLocalYYYYMMDD(dLoc); // manter normalizado internamente
+            }
+          }
+        }
+        // Se ainda não há timestamp e tem função adicionarDias reconstruir
+        if ((typeof ensaio.valorTimestamp !== 'number' || ensaio.valorTimestamp < 946684800000) && /adicionarDias/i.test(ensaio.funcao || '')) {
+          try {
+            const mDias = (ensaio.funcao || '').match(/adicionarDias\s*\(\s*(var\d+)\s*,\s*(\d+)\s*\)/i);
+            if (mDias) {
+              const varTk = mDias[1];
+              const dias = parseInt(mDias[2], 10) || 0;
+              const variavelBase = ensaio.variavel_detalhes?.find((v: any) => v.tecnica === varTk);
+              if (variavelBase) {
+                let baseDate: Date | null = null;
+                if (variavelBase.valorData instanceof Date) baseDate = variavelBase.valorData;
+                else if (typeof variavelBase.valorTimestamp === 'number') baseDate = new Date(variavelBase.valorTimestamp);
+                else if (typeof variavelBase.valor === 'string') baseDate = this.parseDateLocal(variavelBase.valor);
+                if (baseDate) {
+                  const nrm = new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate());
+                  const res = new Date(nrm.getFullYear(), nrm.getMonth(), nrm.getDate() + dias);
+                  ensaio.valorTimestamp = res.getTime();
+                  ensaio.valor = this.toLocalYYYYMMDD(res);
+                  console.log('[Normalize][EnsaioData] Reconst. via funcao', ensaio.descricao, ensaio.valor, ensaio.valorTimestamp);
+                }
+              }
+            }
+          } catch(errN) {
+            console.warn('[Normalize][EnsaioData] Falha reconstruindo', ensaio.descricao, errN);
+          }
+        }
+      }
+    });
+  });
   // Montar ensaios (incluindo valores calculados dos ensaios diretos)
   const todosEnsaios = planoDetalhes.flatMap((plano: any) =>
     (plano.ensaio_detalhes || []).map((ensaio: any) => {
-      // Para ensaios diretos (com função), usar o valor calculado
-      const valorFinal = ensaio.funcao ? ensaio.valor : ensaio.valor;
+      // Normalizar variáveis de data antes de qualquer reconstrução
+      if (Array.isArray(ensaio.variavel_detalhes)) {
+        ensaio.variavel_detalhes.forEach((v: any) => {
+          const nomeLower = (v?.nome || '').toLowerCase();
+          const isVarData = this.isVariavelTipoData(v) || /data|modelagem|moldagem|rompimento/.test(nomeLower);
+          if (isVarData) {
+            if (!v.valor || v.valor === 0) {
+              if (v.valorData instanceof Date) {
+                const d = new Date(v.valorData.getFullYear(), v.valorData.getMonth(), v.valorData.getDate());
+                v.valorTimestamp = d.getTime();
+                v.valorData = d;
+                v.valor = this.toLocalYYYYMMDD(d);
+              } else if (typeof v.valorTimestamp === 'number') {
+                const d = new Date(v.valorTimestamp);
+                if (!isNaN(d.getTime())) {
+                  const dLoc = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+                  v.valorData = dLoc;
+                  v.valor = this.toLocalYYYYMMDD(dLoc);
+                }
+              } else if (typeof v.valor === 'string' && /^(\d{4}-\d{2}-\d{2})$/.test(v.valor)) {
+                // já está ok
+              }
+            }
+          }
+        });
+      }
+
+      // Se o próprio ensaio é de data e possui timestamp mas valor textual vazio/0, gerar a string
+      const tipoEnsaioLower = ((ensaio.tipo_ensaio_detalhes?.nome || ensaio.tipo_ensaio || '')+'').toLowerCase();
+      if ((tipoEnsaioLower === 'data' || /data/.test(ensaio.unidade || '')) && (ensaio.valor === 0 || ensaio.valor === null || ensaio.valor === '' || typeof ensaio.valor === 'number' && ensaio.valor > 946684800000)) {
+        if (typeof ensaio.valorTimestamp === 'number' && ensaio.valorTimestamp > 946684800000) {
+          const d = new Date(ensaio.valorTimestamp);
+          if (!isNaN(d.getTime())) {
+            ensaio.valor = this.toLocalYYYYMMDD(new Date(d.getFullYear(), d.getMonth(), d.getDate()));
+          }
+        } else if (typeof ensaio.valor === 'number' && ensaio.valor > 946684800000) {
+          const d = new Date(ensaio.valor);
+          if (!isNaN(d.getTime())) {
+            ensaio.valorTimestamp = ensaio.valor;
+            ensaio.valor = this.toLocalYYYYMMDD(new Date(d.getFullYear(), d.getMonth(), d.getDate()));
+          }
+        }
+      }
+
+      // ====== Reconstrução/garantia de resultado para ensaios de DATA com função adicionarDias ======
+      const isFuncaoAdicionarDias = typeof ensaio.funcao === 'string' && /adicionarDias/i.test(ensaio.funcao || '');
+      const isTipoData = ((ensaio.tipo_ensaio_detalhes?.nome || ensaio.tipo_ensaio || '') + '').toLowerCase() === 'data'
+        || /data|rompimento|modelagem|moldagem/i.test(ensaio.unidade || '')
+        || isFuncaoAdicionarDias;
+      // Se for data e ainda não temos valor string de data, tentar reconstruir
+      if (isTipoData && (!ensaio.valor || ensaio.valor === 0)) {
+        try {
+          // Extrair dias da função: adicionarDias ( varXX , 28 )
+          let diasAdd = 0;
+          const mDias = (ensaio.funcao || '').match(/adicionarDias\s*\(\s*var\d+\s*,\s*(\d+)\s*\)/i);
+          if (mDias) diasAdd = parseInt(mDias[1], 10) || 0;
+          // Achar variável base (primeira var citada na função ou nomes conhecidos)
+          let baseVarToken: string | null = null;
+          const mVar = (ensaio.funcao || '').match(/adicionarDias\s*\(\s*(var\d+)/i);
+          if (mVar) baseVarToken = mVar[1];
+          let baseDate: Date | null = null;
+          if (baseVarToken && Array.isArray(ensaio.variavel_detalhes)) {
+            const variavelBase = ensaio.variavel_detalhes.find((v: any) => v.tecnica === baseVarToken || v.nome === baseVarToken);
+            if (variavelBase) {
+              if (variavelBase.valorData instanceof Date) baseDate = variavelBase.valorData;
+              else if (typeof variavelBase.valorTimestamp === 'number') baseDate = new Date(variavelBase.valorTimestamp);
+              else if (typeof variavelBase.valor === 'string' && variavelBase.valor) {
+                baseDate = this.parseDateLocal(variavelBase.valor) || null;
+              }
+            }
+          }
+          // fallback: variaveis_utilizadas (payload anterior)
+            if (!baseDate && Array.isArray(ensaio.variaveis_utilizadas)) {
+              const vU = ensaio.variaveis_utilizadas.find((vu: any) => /modelagem|moldagem|data/i.test(vu.nome || '')) || ensaio.variaveis_utilizadas[0];
+              if (vU && typeof vU.valor === 'string') {
+                baseDate = this.parseDateLocal(vU.valor) || null;
+              }
+            }
+          if (baseDate) {
+            const normalizada = new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate());
+            const dataResultado = new Date(normalizada.getFullYear(), normalizada.getMonth(), normalizada.getDate() + diasAdd);
+            const pad = (n:number)=>String(n).padStart(2,'0');
+            ensaio.valorTimestamp = dataResultado.getTime();
+            ensaio.valor = `${dataResultado.getFullYear()}-${pad(dataResultado.getMonth()+1)}-${pad(dataResultado.getDate())}`;
+            console.log('[Rebuild][Data] Ensaio', ensaio.descricao, 'reconstruído:', ensaio.valor, '(+dias=', diasAdd, ')');
+          }
+        } catch (re) {
+          console.warn('Falha ao reconstruir data de ensaio:', ensaio.descricao, re);
+        }
+      }
+      // Para ensaios diretos (com função), usar o valor calculado (já potencialmente reconstruído)
+      const valorFinal = ensaio.valor;
 
       // Salvar sempre o campo tecnica nas variáveis utilizadas
       const variaveisUtilizadas = ensaio.funcao && ensaio.variavel_detalhes
@@ -3632,11 +3813,115 @@ salvarAnaliseResultados() {
         console.log(`  ⚠️ Nenhuma variável específica encontrada para o ensaio "${ensaio.descricao}"`);
       }
 
-  const valorParaSalvar = this.round2(this.parseNumeroFlex(valorFinal));
+  // Se o valorFinal é uma data normalizada (YYYY-MM-DD) ou DD/MM/YYYY preservar como string e gerar timestamp
+      let valorParaSalvar: any;
+      let valorTimestampSalvar: number | null = null;
+      if (typeof valorFinal === 'string' && /^(\d{4}-\d{2}-\d{2})$/.test(valorFinal)) {
+        const [y,m,d] = valorFinal.split('-').map(n=>parseInt(n,10));
+        const dt = new Date(y, m-1, d);
+        valorParaSalvar = valorFinal; // manter formato YYYY-MM-DD
+        valorTimestampSalvar = dt.getTime();
+      } else if (typeof valorFinal === 'string' && /^(\d{2}\/\d{2}\/\d{4})$/.test(valorFinal)) {
+        const [d,m,y] = valorFinal.split('/').map(n=>parseInt(n,10));
+        const dt = new Date(y, m-1, d);
+        valorParaSalvar = valorFinal; // manter como entrou
+        valorTimestampSalvar = dt.getTime();
+      } else if (typeof valorFinal === 'number' && valorFinal > 946684800000) { // timestamp ms
+        const dt = new Date(valorFinal);
+        const pad = (n:number)=>String(n).padStart(2,'0');
+        valorParaSalvar = `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}`;
+        valorTimestampSalvar = valorFinal;
+      } else {
+        // numérico comum
+        valorParaSalvar = this.round2(this.parseNumeroFlex(valorFinal));
+      }
+      // Fallback extra: se é data e ainda ficou 0 ou inválido, tentar reconstruir novamente
+      if (isTipoData && (valorParaSalvar === 0 || valorParaSalvar === null || valorParaSalvar === ''
+          || (typeof valorParaSalvar === 'number' && valorParaSalvar < 946684800000))) {
+        // 1) Se já existe timestamp no ensaio, usar
+        const stampCandidate = (typeof valorTimestampSalvar === 'number' ? valorTimestampSalvar : (typeof ensaio.valorTimestamp === 'number' ? ensaio.valorTimestamp : null));
+        if (stampCandidate && stampCandidate > 946684800000) {
+          const d = new Date(stampCandidate);
+          valorParaSalvar = this.toLocalYYYYMMDD(new Date(d.getFullYear(), d.getMonth(), d.getDate()));
+          valorTimestampSalvar = stampCandidate;
+          console.log('[Fallback-Data] Usando timestamp existente para', ensaio.descricao, valorParaSalvar, stampCandidate);
+        } else {
+          // 2) Tentar reconstruir manualmente a partir da função adicionarDias (se não ocorreu antes)
+          try {
+            if (ensaio.funcao && /adicionarDias/i.test(ensaio.funcao)) {
+              let diasAdd2 = 0;
+              const mDias2 = (ensaio.funcao || '').match(/adicionarDias\s*\(\s*var\d+\s*,\s*(\d+)\s*\)/i);
+              if (mDias2) diasAdd2 = parseInt(mDias2[1], 10) || 0;
+              const mVar2 = (ensaio.funcao || '').match(/adicionarDias\s*\(\s*(var\d+)/i);
+              let baseDate2: Date | null = null;
+              if (mVar2 && Array.isArray(ensaio.variavel_detalhes)) {
+                const baseVarToken2 = mVar2[1];
+                const variavelBase2 = ensaio.variavel_detalhes.find((v: any) => v.tecnica === baseVarToken2);
+                if (variavelBase2) {
+                  if (variavelBase2.valorData instanceof Date) baseDate2 = variavelBase2.valorData;
+                  else if (typeof variavelBase2.valorTimestamp === 'number') baseDate2 = new Date(variavelBase2.valorTimestamp);
+                  else if (typeof variavelBase2.valor === 'string') baseDate2 = this.parseDateLocal(variavelBase2.valor);
+                }
+              }
+              // fallback: procurar primeira variável de data se token não encontrado
+              if (!baseDate2 && Array.isArray(ensaio.variavel_detalhes)) {
+                const varData = ensaio.variavel_detalhes.find((v: any) => this.isVariavelTipoData(v));
+                if (varData) {
+                  if (varData.valorData instanceof Date) baseDate2 = varData.valorData;
+                  else if (typeof varData.valorTimestamp === 'number') baseDate2 = new Date(varData.valorTimestamp);
+                  else if (typeof varData.valor === 'string') baseDate2 = this.parseDateLocal(varData.valor);
+                }
+              }
+              if (baseDate2) {
+                const norm = new Date(baseDate2.getFullYear(), baseDate2.getMonth(), baseDate2.getDate());
+                const res = new Date(norm.getFullYear(), norm.getMonth(), norm.getDate() + diasAdd2);
+                valorTimestampSalvar = res.getTime();
+                valorParaSalvar = this.toLocalYYYYMMDD(res);
+                console.log('[Fallback-Data] Reconstruído via adicionarDias para', ensaio.descricao, valorParaSalvar, valorTimestampSalvar);
+              }
+            }
+          } catch (errFb) {
+            console.warn('[Fallback-Data] Falha reconstruindo data final para', ensaio.descricao, errFb);
+          }
+        }
+      }
+  const isData = isTipoData;
+      // Timestamp final consolidado para ensaio de data
+      const tsFinal = isData
+        ? (valorTimestampSalvar !== null
+            ? valorTimestampSalvar
+            : (typeof ensaio.valorTimestamp === 'number'
+                ? ensaio.valorTimestamp
+                : (typeof valorParaSalvar === 'string'
+                    ? (this.parseDateLocal(valorParaSalvar)?.getTime() || undefined)
+                    : undefined)))
+        : undefined;
+      if (isData) {
+        console.log('[Serialize][EnsaioData]', ensaio.descricao, {
+          valorOriginal: ensaio.valor,
+          valorParaSalvar,
+          valorTimestampSalvar,
+          tsFinal,
+          valorCampoFinal: tsFinal || 0
+        });
+      }
       return {
-        id: ensaio.id,
-        descricao: ensaio.descricao,
-  valor: typeof valorParaSalvar === 'number' ? valorParaSalvar : (Number(valorParaSalvar) || 0),
+    id: ensaio.id,
+    descricao: ensaio.descricao,
+        // Para ensaio de data: 'valor' = timestamp (ou 0 se falhou) e 'valor_data' = string
+        valor: isData ? (tsFinal || 0) : valorParaSalvar,
+        valor_data: isData
+          ? (typeof valorParaSalvar === 'string'
+              ? valorParaSalvar
+              : (tsFinal
+                  ? this.toLocalYYYYMMDD(new Date(tsFinal))
+                  : (typeof ensaio.valorTimestamp === 'number'
+                      ? this.toLocalYYYYMMDD(new Date(ensaio.valorTimestamp))
+                      : (typeof ensaio.valor === 'string'
+                          ? ensaio.valor
+                          : ''))))
+          : undefined,
+        // Removidos valorTimestamp / valor_bruto conforme solicitado
         tecnica: ensaio.tecnica || `ensaio${String(ensaio.id).padStart(2, '0')}`,
         tipo: 'ENSAIO',
         responsavel: typeof ensaio.responsavel === 'object' && ensaio.responsavel !== null
@@ -3652,9 +3937,43 @@ salvarAnaliseResultados() {
         numero_cadinho: ensaio.numero_cadinho || null, // NOVO: Adicionar número do cadinho
         variaveis_utilizadas: variaveisUtilizadas,
         variaveis: variaveisDoEnsaio.reduce((acc: any, v: any) => {
+          const isVarData = this.isVariavelTipoData(v) || /data|modelagem|moldagem|rompimento/i.test(v.nome || '');
+          let valorStr: string | null = null;
+          let valorTs: number | null = null;
+          // Normalizar origem
+          if (isVarData) {
+            if (v.valorData instanceof Date && !isNaN(v.valorData.getTime())) {
+              const d = new Date(v.valorData.getFullYear(), v.valorData.getMonth(), v.valorData.getDate());
+              valorTs = d.getTime();
+              valorStr = this.toLocalYYYYMMDD(d);
+            } else if (typeof v.valorTimestamp === 'number' && v.valorTimestamp > 946684800000) {
+              const d = new Date(v.valorTimestamp);
+              valorTs = v.valorTimestamp;
+              valorStr = this.toLocalYYYYMMDD(new Date(d.getFullYear(), d.getMonth(), d.getDate()));
+            } else if (typeof v.valor === 'string' && /(\d{4}-\d{2}-\d{2})|(\d{2}\/\d{2}\/\d{4})/.test(v.valor)) {
+              const d = this.parseDateLocal(v.valor);
+              if (d) {
+                valorTs = d.getTime();
+                valorStr = /(\d{4}-\d{2}-\d{2})/.test(v.valor) ? v.valor : this.toLocalYYYYMMDD(d);
+              }
+            }
+          }
+          let valorSerializado: any;
+            if (isVarData) {
+              // Para variável de data: valor numérico = timestamp, valor_data separado
+              valorSerializado = valorTs !== null ? valorTs : (valorStr || null);
+            } else {
+              if (v.valor !== undefined && v.valor !== null) {
+                const n = Number(v.valor);
+                valorSerializado = isNaN(n) ? v.valor : n;
+              } else {
+                valorSerializado = null;
+              }
+            }
           acc[v.tecnica] = {
             descricao: v.nome,
-            valor: v.valor !== undefined && v.valor !== null ? Number(v.valor) : 0
+            valor: valorSerializado,
+            valor_data: isVarData ? valorStr : undefined
           };
           return acc;
         }, {})
@@ -3678,8 +3997,13 @@ salvarAnaliseResultados() {
  const calculos = planoDetalhes.flatMap((plano: any) =>
   (plano.calculo_ensaio_detalhes || []).map((calc: any) => ({
     calculos: calc.descricao,
-    valores: (calc.ensaios_detalhes || []).map((e: any) => this.round4(e.valor)),
-    resultados: typeof calc.resultado === 'number' ? parseFloat(this.formatForDisplay(calc.resultado)) : calc.resultado,
+    resultados: (() => {
+      const r = calc.resultado;
+      if (typeof r === 'string' && /^(\d{4}-\d{2}-\d{2})$/.test(r)) return r;
+      if (typeof r === 'string' && /^(\d{2}\/\d{2}\/\d{4})$/.test(r)) return r;
+      if (typeof r === 'number') return parseFloat(this.formatForDisplay(r));
+      return r;
+    })(),
     responsavel: (typeof calc.responsavel === 'object' && calc.responsavel !== null) ? (calc.responsavel as any).value : (calc.responsavel || null),
     digitador: this.digitador,
     ensaios_utilizados: (calc.ensaios_detalhes || []).map((e: any) => {
@@ -3721,17 +4045,77 @@ salvarAnaliseResultados() {
       }
 
       const variaveisDict = variaveisFiltradas.reduce((acc: any, v: any) => {
+        const varEhData = this.isVariavelTipoData(v) || /data|modelagem|moldagem|rompimento/i.test(v.nome || '');
+        let valorTs: number | null = null;
+        let valorStr: string | null = null;
+        if (varEhData) {
+          if (v.valorData instanceof Date && !isNaN(v.valorData.getTime())) {
+            const d = new Date(v.valorData.getFullYear(), v.valorData.getMonth(), v.valorData.getDate());
+            valorTs = d.getTime();
+            valorStr = this.toLocalYYYYMMDD(d);
+          } else if (typeof v.valorTimestamp === 'number' && v.valorTimestamp > 946684800000) {
+            const d = new Date(v.valorTimestamp);
+            valorTs = v.valorTimestamp;
+            valorStr = this.toLocalYYYYMMDD(new Date(d.getFullYear(), d.getMonth(), d.getDate()));
+          } else if (typeof v.valor === 'string' && /(\d{4}-\d{2}-\d{2})|(\d{2}\/\d{2}\/\d{4})/.test(v.valor)) {
+            const d = this.parseDateLocal(v.valor);
+            if (d) {
+              valorTs = d.getTime();
+              valorStr = this.toLocalYYYYMMDD(new Date(d.getFullYear(), d.getMonth(), d.getDate()));
+            }
+          }
+        }
         acc[v.tecnica] = {
           descricao: v.nome,
-          valor: v.valor !== undefined && v.valor !== null ? Number(v.valor) : 0
+          valor: varEhData ? (valorTs !== null ? valorTs : (valorStr || null)) : (v.valor !== undefined && v.valor !== null ? Number(v.valor) : 0),
+          valor_data: varEhData ? valorStr : undefined,
+          valorTimestamp: varEhData && valorTs !== null ? valorTs : undefined
         };
         return acc;
       }, {});
 
+      // Determinar se o ensaio interno é de data
+      const eEhData = ((e.tipo_ensaio_detalhes?.nome || e.tipo_ensaio || '')+ '').toLowerCase() === 'data'
+        || /data|modelagem|moldagem|rompimento/.test(e.unidade || '')
+        || /adicionarDias|hoje|diasEntre/i.test(e.funcao || '');
+
+      // Consolidar timestamp final para ensaio interno
+      let tsInterno: number | null = null;
+      if (typeof e.valorTimestamp === 'number' && e.valorTimestamp > 946684800000) tsInterno = e.valorTimestamp;
+      else if (typeof e.valor === 'number' && e.valor > 946684800000) tsInterno = e.valor;
+      else if (typeof e.valor === 'string' && /(\d{4}-\d{2}-\d{2})|(\d{2}\/\d{2}\/\d{4})/.test(e.valor)) {
+        const d = this.parseDateLocal(e.valor);
+        if (d) tsInterno = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+      }
+      // Se ainda não tem e há função adicionarDias, tentar reconstruir
+      if (eEhData && (tsInterno === null || tsInterno < 946684800000) && /adicionarDias/i.test(e.funcao || '') && Array.isArray(e.variavel_detalhes)) {
+        try {
+          const mDias = (e.funcao || '').match(/adicionarDias\s*\(\s*(var\d+)\s*,\s*(\d+)\s*\)/i);
+          if (mDias) {
+            const varTk = mDias[1];
+            const diasAdd = parseInt(mDias[2], 10) || 0;
+            const varBase = e.variavel_detalhes.find((v: any) => v.tecnica === varTk);
+            if (varBase) {
+              let baseDate: Date | null = null;
+              if (varBase.valorData instanceof Date) baseDate = varBase.valorData;
+              else if (typeof varBase.valorTimestamp === 'number') baseDate = new Date(varBase.valorTimestamp);
+              else if (typeof varBase.valor === 'string') baseDate = this.parseDateLocal(varBase.valor);
+              if (baseDate) {
+                const norm = new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate());
+                const res = new Date(norm.getFullYear(), norm.getMonth(), norm.getDate() + diasAdd);
+                tsInterno = res.getTime();
+              }
+            }
+          }
+        } catch {}
+      }
+      const valorDataInterno = eEhData && tsInterno ? this.toLocalYYYYMMDD(new Date(tsInterno)) : undefined;
+
       return {
         id: e.id,
         descricao: e.descricao,
-        valor: this.round2(e.valor),
+  valor: eEhData ? (tsInterno || 0) : this.round2(e.valor),
+  valor_data: eEhData ? valorDataInterno : undefined,
         variavel: e.variavel || e.tecnica,
         responsavel: typeof e.responsavel === 'object' && e.responsavel !== null
           ? e.responsavel.value
@@ -4881,6 +5265,7 @@ verificarRompimentos(): void {
   hoje.setHours(0, 0, 0, 0);
   
   const novosAlertas: any[] = [];
+  const chaveUnica = new Set<string>();
   
   this.analisesSimplificadas.forEach(analise => {
     analise.planoDetalhes?.forEach((plano: any) => {
@@ -4888,9 +5273,30 @@ verificarRompimentos(): void {
         if (this.ensaioTemVariavelData(ensaio) && ensaio.valor) {
           const alerta = this.analisarDataRompimento(ensaio, hoje);
           if (alerta) {
-            novosAlertas.push(alerta);
+            if (!chaveUnica.has(alerta.id)) {
+              chaveUnica.add(alerta.id);
+              novosAlertas.push(alerta);
+            }
           }
         }
+      });
+
+      // Incluir ensaios internos dos cálculos
+      (plano.calculo_ensaio_detalhes || []).forEach((calc: any) => {
+        (calc.ensaios_detalhes || []).forEach((ensaioInt: any) => {
+          // Considerar como data se possui valor_data, valor timestamp grande ou unidade/descricao sugestiva
+          const ehData = this.ensaioTemVariavelData(ensaioInt) ||
+            (typeof ensaioInt.valor === 'number' && ensaioInt.valor > 946684800000) ||
+            (typeof ensaioInt.valor_data === 'string' && /\d{4}-\d{2}-\d{2}/.test(ensaioInt.valor_data)) ||
+            /(data|rompimento|modelagem|moldagem)/i.test(ensaioInt.unidade || '');
+          if (ehData && (ensaioInt.valor || ensaioInt.valor_data)) {
+            const alerta = this.analisarDataRompimento(ensaioInt, hoje, true, calc);
+            if (alerta && !chaveUnica.has(alerta.id)) {
+              chaveUnica.add(alerta.id);
+              novosAlertas.push(alerta);
+            }
+          }
+        });
       });
     });
   });
@@ -4905,24 +5311,39 @@ verificarRompimentos(): void {
 /**
  * Analisa uma data de rompimento específica
  */
-analisarDataRompimento(ensaio: any, hoje: Date): any | null {
+analisarDataRompimento(ensaio: any, hoje: Date, interno: boolean = false, calcRef?: any): any | null {
   try {
-    let dataRompimento: Date;
-    
-    // Tentar converter o valor do ensaio para data
-    if (typeof ensaio.valor === 'string') {
-      // Se for string no formato DD/MM/YYYY
-      if (ensaio.valor.includes('/')) {
-        const [dia, mes, ano] = ensaio.valor.split('/');
-        dataRompimento = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
+    // Estratégias de obtenção da data:
+    // 1. Se houver valor_data (YYYY-MM-DD) usar
+    // 2. Se valor é timestamp numérico grande, usar
+    // 3. Se valor string DD/MM/YYYY ou YYYY-MM-DD, parsear
+    // 4. fallback: tentar Date(valor)
+    let dataRompimento: Date | null = null;
+    const brute = ensaio.valor;
+    const valorDataStr = ensaio.valor_data;
+
+    if (typeof valorDataStr === 'string' && /^(\d{4})-(\d{2})-(\d{2})$/.test(valorDataStr)) {
+      const [y,m,d] = valorDataStr.split('-').map((n: string)=>parseInt(n,10));
+      dataRompimento = new Date(y, m-1, d);
+    } else if (typeof brute === 'number' && brute > 946684800000) {
+      dataRompimento = new Date(brute);
+    } else if (typeof brute === 'string') {
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(brute)) {
+        const [d,m,y] = brute.split('/').map(n=>parseInt(n,10));
+        dataRompimento = new Date(y, m-1, d);
+      } else if (/^\d{4}-\d{2}-\d{2}$/.test(brute)) {
+        const [y,m,d] = brute.split('-').map(n=>parseInt(n,10));
+        dataRompimento = new Date(y, m-1, d);
       } else {
-        dataRompimento = new Date(ensaio.valor);
+        const t = new Date(brute);
+        if (!isNaN(t.getTime())) dataRompimento = t; else dataRompimento = null;
       }
-    } else {
-      dataRompimento = new Date(ensaio.valor);
+    } else if (brute) {
+      const t = new Date(brute);
+      if (!isNaN(t.getTime())) dataRompimento = t;
     }
-    
-    if (isNaN(dataRompimento.getTime())) return null;
+
+    if (!dataRompimento || isNaN(dataRompimento.getTime())) return null;
     
     dataRompimento.setHours(0, 0, 0, 0);
     
@@ -4933,24 +5354,26 @@ analisarDataRompimento(ensaio: any, hoje: Date): any | null {
     
     if (diferencaDias < 0) {
       tipo = 'vencido';
-      mensagem = `Ensaio ${ensaio.descricao} VENCIDO há ${Math.abs(diferencaDias)} dia(s)!`;
+      mensagem = `Ensaio ${ensaio.descricao}${interno && calcRef ? ' (Cálculo: ' + calcRef.descricao + ')' : ''} VENCIDO há ${Math.abs(diferencaDias)} dia(s)!`;
     } else if (diferencaDias <= this.configAlerta.diasCritico) {
       tipo = 'critico';
-      mensagem = `Ensaio ${ensaio.descricao} deve ser rompido HOJE!`;
+      mensagem = `Ensaio ${ensaio.descricao}${interno && calcRef ? ' (Cálculo: ' + calcRef.descricao + ')' : ''} deve ser rompido HOJE!`;
     } else if (diferencaDias <= this.configAlerta.diasAviso) {
       tipo = 'aviso';
-      mensagem = `Ensaio ${ensaio.descricao} deve ser rompido em ${diferencaDias} dia(s)`;
+      mensagem = `Ensaio ${ensaio.descricao}${interno && calcRef ? ' (Cálculo: ' + calcRef.descricao + ')' : ''} deve ser rompido em ${diferencaDias} dia(s)`;
     }
     
     if (tipo) {
       return {
-        id: `${ensaio.id}_${dataRompimento.getTime()}`,
+        id: `${interno ? 'INT' : 'DIR'}_${ensaio.id}_${dataRompimento.getTime()}`,
         ensaio: ensaio.descricao,
         dataRompimento: dataRompimento.toLocaleDateString('pt-BR'),
         diasRestantes: diferencaDias,
         tipo,
         mensagem,
-        timestamp: new Date()
+        timestamp: new Date(),
+        interno: interno,
+        calculo: interno && calcRef ? calcRef.descricao : undefined
       };
     }
     

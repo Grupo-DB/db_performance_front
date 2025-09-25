@@ -169,7 +169,7 @@
                             </p-floatlabel> 
                         </div>
                     </div>
-                    <div *ngIf="analise.amostra_detalhes.material==='argamassa'" class="flex flex-column mt-3 lg:flex-row w-full lg:justify-content-around">
+                    <div *ngIf="analise.amostra_detalhes.material==='Argamassa'" class="flex flex-column mt-3 lg:flex-row w-full lg:justify-content-around">
                         <div class="flex flex-column w-5 gap-3">
                             <p-floatLabel variant="on"> 
                                 <p-select
@@ -726,7 +726,7 @@
                                     <td style="text-align: end;">
                                         <div class="flex align-items-end justify-content-end gap-2">
                                             <span class="valor-result font-bold text-lg text-primary">
-                                                {{ typeof calc.resultado === 'number' ? formatForDisplay(calc.resultado) : (calc.resultado || 0) }}
+                                                {{ calcResultadoEhData(calc) ? formatarDataExibicao(calc.resultado) : (typeof calc.resultado === 'number' ? formatForDisplay(calc.resultado) : (calc.resultado || 0)) }}
                                             </span>
                                             <span class="text-sm text-600" *ngIf="calc.unidade">
                                                 {{ calc.unidade }}
@@ -862,11 +862,10 @@
                                                                             </div>
                                                                             <div class="bg-gray-50 border-round mt-2 text-center">
                                                                                 <span class="text-2xl font-bold text-primary">
-                                                                                    {{
-                                                                                    ensaio.valor || 0 }}
+                                                                                   {{ ensaioTemVariavelData(ensaio) ? (formatarDataExibicao(ensaio.valorTimestamp || ensaio.valor) || '—') :  ensaio.valor || 0 }}
                                                                                 </span>
-                                                                                <span class="ml-2 text-lg text-600">{{ ensaio.unidade
-                                                                                    }}</span>
+                                                                                <!-- <span class="ml-2 text-lg text-600">{{ ensaio.unidade
+                                                                                    }}</span> -->
                                                                             </div>
                                                                         </div>
                                                                     </div>           
@@ -886,7 +885,7 @@
                                                                                     <label>Responsável</label>
                                                                                 </p-floatLabel>
                                                                             </div>
-                                                                            <div class="flex w-2 ">
+                                                                            <div class="flex w-2 " *ngIf="ensaio.tipo_ensaio_detalhes.nome === 'Calculado'">
                                                                                 <p-floatLabel variant="in">
                                                                                     <p-inputnumber 
                                                                                         [(ngModel)]="ensaio.numero_cadinho"
@@ -966,11 +965,16 @@
                                                     class="resultado flex flex-column  w-8 justify-content-end m-3"
                                                     [ngClass]="{ negativo: (+calc.resultado || 0) < 0 }"
                                                 >   
-                                                    <div class="bg-gray-50 border-round mt-2 text-center">
+                                                    <div class="bg-gray-50 border-round mt-2 text-center" *ngIf="calc.descricao && calc.descricao.toLowerCase().includes('ensaio')">
+                                                        <label class="text-sm font-medium">Data de Rompimento Prevista</label>
+                                                    </div>
+                                                    <div class="bg-gray-50 border-round mt-2 text-center" *ngIf="!calc.descricao || !calc.descricao.toLowerCase().includes('ensaio')">
                                                         <label class="text-sm font-medium">Resultado Final do Cálculo</label>
                                                     </div>
                                                     <div class="bg-gray-50 border-round mt-2 text-center">
-                                                        <span class="text-2xl font-bold text-primary">{{ typeof calc.resultado === 'number' ? formatForDisplay(calc.resultado) : (calc.resultado || 0) }}</span>
+                                                            <span class="text-2xl font-bold text-primary">
+                                                                {{ calcResultadoEhData(calc) ? formatarDataExibicao(calc.resultado) : (typeof calc.resultado === 'number' ? formatForDisplay(calc.resultado) : (calc.resultado || 0)) }}
+                                                            </span>
                                                         <span class="ml-2 text-lg text-600">{{ calc.unidade }}</span>
                                                     </div>
                 

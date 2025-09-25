@@ -732,22 +732,43 @@ gerarNumero(materialNome: string, sequencial: number): string {
   private verificarRompimentosAnalise(analise: any, alertasArray: any[], configAlerta: any): void {
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
-    
-    
-    if (analise.ultimo_ensaio?.ensaios_utilizados) {      
-      analise.ultimo_ensaio.ensaios_utilizados.forEach((ensaio: any, index: number) => {
+    const chaveUnica = new Set<string>();
 
-        if (ensaio.tipo_ensaio === 'data' && ensaio.valor) {
-          
-          const alerta = this.analisarDataRompimentoOrdem(ensaio, hoje, analise, configAlerta);
-          if (alerta) {
-           
+    // Ensaios diretos (ultimo_ensaio)
+    if (analise.ultimo_ensaio?.ensaios_utilizados) {
+      analise.ultimo_ensaio.ensaios_utilizados.forEach((ensaio: any) => {
+        const ehData = (ensaio.tipo_ensaio === 'data') ||
+          (typeof ensaio.valor === 'number' && ensaio.valor > 946684800000) ||
+          (typeof ensaio.valor_data === 'string' && /\d{4}-\d{2}-\d{2}/.test(ensaio.valor_data)) ||
+          this.ensaioTemVariavelDataOrdem(ensaio);
+        if (ehData && (ensaio.valor || ensaio.valor_data)) {
+          const alerta = this.analisarDataRompimentoOrdem(ensaio, hoje, analise, configAlerta, false);
+          if (alerta && !chaveUnica.has(alerta.id)) {
+            chaveUnica.add(alerta.id);
             alertasArray.push(alerta);
           }
         }
       });
-    } else {
-      // console.log(`❌ ultimo_ensaio.ensaios_utilizados não encontrado para análise ${analise.id}`);
+    }
+
+    // Ensaios internos em cálculos (ultimo_calculo pode ser array)
+    if (analise.ultimo_calculo && Array.isArray(analise.ultimo_calculo)) {
+      analise.ultimo_calculo.forEach((calc: any) => {
+        (calc.ensaios_utilizados || []).forEach((ensaioInt: any) => {
+          const ehData = (ensaioInt.tipo_ensaio === 'data') ||
+            (typeof ensaioInt.valor === 'number' && ensaioInt.valor > 946684800000) ||
+            (typeof ensaioInt.valor_data === 'string' && /\d{4}-\d{2}-\d{2}/.test(ensaioInt.valor_data)) ||
+            this.ensaioTemVariavelDataOrdem(ensaioInt) ||
+            /(data|rompimento|modelagem|moldagem)/i.test(ensaioInt.descricao || '');
+          if (ehData && (ensaioInt.valor || ensaioInt.valor_data)) {
+            const alerta = this.analisarDataRompimentoOrdem(ensaioInt, hoje, analise, configAlerta, true, calc);
+            if (alerta && !chaveUnica.has(alerta.id)) {
+              chaveUnica.add(alerta.id);
+              alertasArray.push(alerta);
+            }
+          }
+        });
+      });
     }
   }
 
@@ -764,37 +785,61 @@ gerarNumero(materialNome: string, sequencial: number): string {
            variavel.nome?.toLowerCase().includes('rompimento');
   }
 
-  private analisarDataRompimentoOrdem(ensaio: any, hoje: Date, analise: any, configAlerta: any): any | null {
+  private analisarDataRompimentoOrdem(ensaio: any, hoje: Date, analise: any, configAlerta: any, interno: boolean = false, calcRef?: any): any | null {
     try {
-      console.log(`📅 Analisando rompimento para ensaio ID ${ensaio.id}: ${ensaio.valor}`);
-      
-      let dataModelagem: Date;
-      
-      if (typeof ensaio.valor === 'string') {
-        if (ensaio.valor.includes('/')) {
-          // Formato brasileiro DD/MM/YYYY
-          const [dia, mes, ano] = ensaio.valor.split('/');
-          dataModelagem = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
-         
+      console.log(`📅 Analisando rompimento para ensaio ID ${ensaio.id}: valor=${ensaio.valor} valor_data=${ensaio.valor_data}`);
+
+      // Estratégia robusta para obter data base (modelagem) e somar 28 dias
+      let dataModelagem: Date | null = null;
+      const brute = ensaio.valor;
+      const valorDataStr = ensaio.valor_data;
+
+      if (typeof valorDataStr === 'string' && /^(\d{4})-(\d{2})-(\d{2})$/.test(valorDataStr)) {
+        const [y,m,d] = valorDataStr.split('-').map((n: string)=>parseInt(n,10));
+        dataModelagem = new Date(y, m-1, d);
+      } else if (typeof brute === 'number' && brute > 946684800000) { // timestamp ms > year 2000
+        dataModelagem = new Date(brute);
+      } else if (typeof brute === 'string') {
+        if (/^\d{2}\/\d{2}\/\d{4}$/.test(brute)) {
+          const [d,m,y] = brute.split('/').map(n=>parseInt(n,10));
+            dataModelagem = new Date(y, m-1, d);
+        } else if (/^\d{4}-\d{2}-\d{2}$/.test(brute)) {
+          const [y,m,d] = brute.split('-').map(n=>parseInt(n,10));
+          dataModelagem = new Date(y, m-1, d);
         } else {
-          dataModelagem = new Date(ensaio.valor);
-          
+          const t = new Date(brute);
+          if (!isNaN(t.getTime())) dataModelagem = t;
         }
-      } else {
-        dataModelagem = new Date(ensaio.valor);
+      } else if (brute) {
+        const t = new Date(brute);
+        if (!isNaN(t.getTime())) dataModelagem = t;
       }
-      
-      if (isNaN(dataModelagem.getTime())) {
-        return null;
-      }
-      
-      dataModelagem.setHours(0, 0, 0, 0);
-      
-      // APLICAR A FUNÇÃO DO ENSAIO: "adicionarDias ( var24 , 28 )"
-      const dataRompimentoFinal = new Date(dataModelagem);
+
+      if (!dataModelagem || isNaN(dataModelagem.getTime())) return null;
+
+      dataModelagem.setHours(0,0,0,0);
+
+      // Base difference (caso a data já seja data de rompimento)
+      const diffBaseDias = Math.ceil((dataModelagem.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));
+
+      // APLICAR REGRA: adicionar 28 dias assumindo que dataModelagem é de moldagem
+      let dataRompimentoFinal = new Date(dataModelagem);
       dataRompimentoFinal.setDate(dataRompimentoFinal.getDate() + 28);
-      
-      const diferencaDias = Math.ceil((dataRompimentoFinal.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));
+      let diferencaDias = Math.ceil((dataRompimentoFinal.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));
+
+      // Heurística para detectar duplicidade (data já era de rompimento):
+      // - diffBaseDias é negativo (data passada) indicando já passou
+      // - diferencaDias ficou pequeno ou positivo (<= 7) após somar 28
+      // - magnitude do atraso original é > 7 (evita interferir em moldagens recentes)
+      // - ou a descrição indica que é diretamente um ensaio de rompimento
+      const descLower = (ensaio.descricao || '').toLowerCase();
+      const nomeLower = (ensaio.nome || '').toLowerCase();
+      const pareceRuptura = /rompimento|compress[aã]o|flex[aã]o/.test(descLower + ' ' + nomeLower);
+      if ((diffBaseDias < -7 && diferencaDias >= 0 && diferencaDias <= 7) || pareceRuptura) {
+        // Tratar dataModelagem como data de rompimento final sem adicionar 28 dias
+        dataRompimentoFinal = dataModelagem;
+        diferencaDias = diffBaseDias; // recalcular para a data original
+      }
       
       let tipo: 'critico' | 'aviso' | 'vencido' | null = null;
       let mensagem = '';
@@ -802,27 +847,33 @@ gerarNumero(materialNome: string, sequencial: number): string {
       // ✅ OBTER NÚMERO DA AMOSTRA PARA INCLUIR NA MENSAGEM
       const numeroAmostra = analise.amostra_detalhes?.numero || analise.numero || 'N/A';
       
+      // Preparar label de cálculo seguro (evitar undefined)
+      const calcLabelRaw = interno ? (calcRef?.descricao || calcRef?.nome || (calcRef?.id ? 'Cálculo ' + calcRef.id : '')) : '';
+      const calcLabel = calcLabelRaw ? ` (Cálculo: ${calcLabelRaw})` : '';
+
       if (diferencaDias < 0) {
         tipo = 'vencido';
-        mensagem = `Amostra ${numeroAmostra} - ${ensaio.descricao || 'Ensaio de data'} VENCIDO há ${Math.abs(diferencaDias)} dia(s)!`;
+        mensagem = `Amostra ${numeroAmostra} - ${ensaio.descricao || 'Ensaio de data'}${calcLabel} VENCIDO há ${Math.abs(diferencaDias)} dia(s)!`;
       } else if (diferencaDias <= configAlerta.diasCritico) {
         tipo = 'critico';
-        mensagem = `Amostra ${numeroAmostra} - ${ensaio.descricao || 'Ensaio de data'} deve ser rompido HOJE!`;
+        mensagem = `Amostra ${numeroAmostra} - ${ensaio.descricao || 'Ensaio de data'}${calcLabel} deve ser rompido HOJE!`;
       } else if (diferencaDias <= configAlerta.diasAviso) {
         tipo = 'aviso';
-        mensagem = `Amostra ${numeroAmostra} - ${ensaio.descricao || 'Ensaio de data'} deve ser rompido em ${diferencaDias} dia(s)`;
+        mensagem = `Amostra ${numeroAmostra} - ${ensaio.descricao || 'Ensaio de data'}${calcLabel} deve ser rompido em ${diferencaDias} dia(s)`;
       }
       
       if (tipo) {
         return {
-          id: `${analise.id}_${ensaio.id}_${dataRompimentoFinal.getTime()}`,
+          id: `${interno ? 'INT' : 'DIR'}_${analise.id}_${ensaio.id}_${dataRompimentoFinal.getTime()}`,
           analiseId: analise.id,
           ensaio: ensaio.descricao || 'Ensaio de data',
           dataRompimento: dataRompimentoFinal.toLocaleDateString('pt-BR'),
           diasRestantes: diferencaDias,
           tipo,
           mensagem,
-          timestamp: new Date()
+          timestamp: new Date(),
+          interno: interno,
+          calculo: interno && calcRef ? calcRef.descricao : undefined
         };
       }
       
