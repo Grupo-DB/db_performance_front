@@ -1282,13 +1282,16 @@ submitAmostra() {
       });
       
       // Faz upload das imagens se houver 
-      if (this.uploadedFilesWithInfo.length > 0) {
-        this.uploadImages();
-      } else {
-        this.clearForm();
-        this.loadAmostras();
-        this.activeStep = 2;
-      }
+      setTimeout(() => {
+
+        if (this.uploadedFilesWithInfo.length > 0) {
+          this.uploadImages();
+        } else {
+          this.clearForm();
+          this.loadAmostras();
+          this.activeStep = 2;
+        }
+      }, 2000);
     },
     error: (err) => {
       console.error('Erro ao registrar amostra:', err);
