@@ -1282,13 +1282,16 @@ submitAmostra() {
       });
       
       // Faz upload das imagens se houver 
-      if (this.uploadedFilesWithInfo.length > 0) {
-        this.uploadImages();
-      } else {
-        this.clearForm();
-        this.loadAmostras();
-        this.activeStep = 3;
-      }
+      setTimeout(() => {
+
+        if (this.uploadedFilesWithInfo.length > 0) {
+          this.uploadImages();
+        } else {
+          this.clearForm();
+          this.loadAmostras();
+          this.activeStep = 2;
+        }
+      }, 2000);
     },
     error: (err) => {
       console.error('Erro ao registrar amostra:', err);
@@ -2082,6 +2085,12 @@ voltarParaStep1() {
   this.activeStep = 1;
   // NÃO limpar this.amostraData aqui para permitir edições
   console.log('🔙 Voltou para step 1, dados preservados');
+}
+
+voltarParaStep2() {
+  this.activeStep = 2;
+  // NÃO limpar this.amostraData aqui para permitir edições
+  console.log('🔙 Voltou para step 2, dados preservados');
 }
 
 limparDadosFormulario() {
