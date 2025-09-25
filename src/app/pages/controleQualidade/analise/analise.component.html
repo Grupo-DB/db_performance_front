@@ -409,6 +409,7 @@
                                                                         id="variavel_{{variavel.id || variavel.nome}}" [(ngModel)]="variavel.valorData"
                                                                         (ngModelChange)="atualizarVariavelData(ensaio, variavel, $event)"
                                                                         dateFormat="dd/mm/yy"
+                                                                        appendTo="body"
                                                                     >
                                                                     </p-datepicker>
                                                                     <!-- Input numérico (padrão) -->
@@ -453,7 +454,7 @@
                                                             *ngIf="ensaio.tipo_ensaio_detalhes.nome !== 'Resistencia'"
                                                         >
                                                             <div class="bg-gray-50 border-round mt-2 text-center">
-                                                                <label class="text-sm font-medium">Resultado Final</label>
+                                                                <label class="text-sm font-medium">Resultado</label>
                                                             </div>
                                                             <div class="bg-gray-50 border-round mt-2 text-center">
                                                                 <span 
@@ -823,16 +824,18 @@
                                                                                 class="flex flex-row"
                                                                                 *ngFor="let variavel of getVariaveisOrdenadas(ensaio.variavel_detalhes)"
                                                                             >
-                                                                                <p-datepicker 
-                                                                                    *ngIf="isVariavelTipoData(variavel)"
-                                                                                    [(ngModel)]="variavel.valorData"
-                                                                                    (ngModelChange)="atualizarVariavelEnsaioDentroCalculo(plano, ensaio, variavel, $event)"
-                                                                                    dateFormat="dd/mm/yy" [showIcon]="true"
-                                                                                    inputId="variavel_{{variavel.id || variavel.nome}}"
-                                                                                    [style]="{'width':'100%'}"
-                                                                                >
-                                                                                </p-datepicker>
                                                                                 <p-floatlabel variant="in">
+                                                                                    <p-datepicker 
+                                                                                        *ngIf="isVariavelTipoData(variavel)"
+                                                                                        [showIcon]="true"
+                                                                                        [(ngModel)]="variavel.valorData"
+                                                                                        (ngModelChange)="atualizarVariavelEnsaioDentroCalculo(plano, ensaio, variavel, $event)"
+                                                                                        dateFormat="dd/mm/yy" [showIcon]="true"
+                                                                                        inputId="variavel_{{variavel.id || variavel.nome}}"
+                                                                                        [style]="{'width':'100%'}"
+                                                                                        appendTo="body"
+                                                                                    >
+                                                                                    </p-datepicker>
                                                                                     <p-inputnumber 
                                                                                         *ngIf="!isVariavelTipoData(variavel)"
                                                                                         mode="decimal" [minFractionDigits]="2"
@@ -852,13 +855,16 @@
                                                                         <div 
                                                                             class="resultado flex flex-column mt-3 w-6 justify-content-end"
                                                                             [ngClass]="{ negativo: (+ensaio.valor || 0) < 0 }"
+                                                                            *ngIf="ensaio.tipo_ensaio_detalhes.nome !== 'Resistencia'"
                                                                         >
                                                                             <div class="bg-gray-50 border-round mt-2 text-center">
                                                                                 <label class="text-sm font-medium">Resultado</label>
                                                                             </div>
                                                                             <div class="bg-gray-50 border-round mt-2 text-center">
-                                                                                <span class="text-2xl font-bold text-primary">{{
-                                                                                    ensaio.valor || 0 }}</span>
+                                                                                <span class="text-2xl font-bold text-primary">
+                                                                                    {{
+                                                                                    ensaio.valor || 0 }}
+                                                                                </span>
                                                                                 <span class="ml-2 text-lg text-600">{{ ensaio.unidade
                                                                                     }}</span>
                                                                             </div>
