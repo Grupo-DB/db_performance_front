@@ -45,7 +45,10 @@ import { Amostra } from '../amostra/amostra.component';
 import { Ordem } from '../ordem/ordem.component';
 import { AnaliseService } from '../../../services/controleQualidade/analise.service';
 import { AmostraService } from '../../../services/controleQualidade/amostra.service';
-
+import { TreeTableModule } from 'primeng/treetable';
+import { TreeNode } from 'primeng/api';
+import jsPDF from 'jspdf';
+import autoTable, { CellInput } from "jspdf-autotable";
 interface FileWithInfo {
   file: File;
   descricao: string;
@@ -54,58 +57,50 @@ interface FileWithInfo {
 @Component({
   selector: 'app-arquivo',
   imports: [
-    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule,
-    InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule, 
-    CardModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, 
-    InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, 
-    DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, 
-    MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, 
-    MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule,
-    NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule, 
-    TagModule, CheckboxModule
+    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule, CardModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule,NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule, TagModule, CheckboxModule, TreeTableModule
   ],
   animations:[
     trigger('efeitoFade',[
-          transition(':enter',[
-            style({ opacity: 0 }),
-            animate('2s', style({ opacity:1 }))
-          ])
-        ]),
-        trigger('efeitoZoom', [
-          transition(':enter', [
-            style({ transform: 'scale(0)' }),
-            animate('2s', style({ transform: 'scale(1)' })),
-          ]),
-        ]),
-        trigger('bounceAnimation', [
-          transition(':enter', [
-            animate('4.5s ease-out', keyframes([
-              style({ transform: 'scale(0.5)', offset: 0 }),
-              style({ transform: 'scale(1.2)', offset: 0.5 }),
-              style({ transform: 'scale(1)', offset: 1 }),
-            ])),
-          ]),
-        ]),
-        trigger('swipeAnimation', [
-          transition(':enter', [
-            style({ transform: 'translateX(-100%)' }),
-            animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
-          ]),
-          transition(':leave', [
-            style({ transform: 'translateX(0)' }),
-            animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
-          ]),
-        ]),
-        trigger('swipeAnimationReverse', [
-          transition(':enter', [
-            style({ transform: 'translateX(100%)' }),
-            animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
-          ]),
-          transition(':leave', [
-            style({ transform: 'translateX(0)' }),
-            animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
-          ]),
-        ]),
+      transition(':enter',[
+        style({ opacity: 0 }),
+        animate('2s', style({ opacity:1 }))
+      ])
+    ]),
+    trigger('efeitoZoom', [
+      transition(':enter', [
+        style({ transform: 'scale(0)' }),
+        animate('2s', style({ transform: 'scale(1)' })),
+      ]),
+    ]),
+    trigger('bounceAnimation', [
+      transition(':enter', [
+        animate('4.5s ease-out', keyframes([
+          style({ transform: 'scale(0.5)', offset: 0 }),
+          style({ transform: 'scale(1.2)', offset: 0.5 }),
+          style({ transform: 'scale(1)', offset: 1 }),
+        ])),
+      ]),
+    ]),
+    trigger('swipeAnimation', [
+      transition(':enter', [
+        style({ transform: 'translateX(-100%)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+      ]),
+    ]),
+    trigger('swipeAnimationReverse', [
+      transition(':enter', [
+        style({ transform: 'translateX(100%)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+      ]),
+    ]),
   ],
   providers: [
       MessageService,ConfirmationService
@@ -154,6 +149,9 @@ export class ArquivoComponent implements OnInit {
   imagensAmostra: any[] = [];
   imagemAtualIndex: number = 0;
   modalImagensVisible = false;
+
+  selectedEnsaios: TreeNode[] = []; // aqui ficam os selecionados
+  
 
   tipoFiltro = [
     { value: 'Expressa' },
@@ -321,7 +319,7 @@ private confirmationService: ConfirmationService,
     getMenuItems(analise: any) {
     const menuItems = [
       { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(analise), tooltip: 'Visualizar OS', tooltipPosition: 'top' },
-      { label: 'Imprimir', icon: 'pi pi-print', command: () => this.abrirModalImpressao(analise.amostra_detalhes) },
+      { label: 'Imprimir', icon: 'pi pi-print', command: () => this.abrirModalImpressao(analise) },
       { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise.amostra_detalhes) },
     ];
     return menuItems;
@@ -335,31 +333,663 @@ private confirmationService: ConfirmationService,
     console.log('Drawer deve abrir', analise); 
   }
 
-  abrirModalImpressao(amostra_detalhes: any) {
-    this.amostra_detalhes_selecionada = amostra_detalhes;
-    this.ensaios_laudo.pop(); // Remove ULTIMO ELEMENTO
-    while (this.ensaios_selecionados.length > 0) {
-        this.ensaios_laudo.pop(); 
-    }
-    if(amostra_detalhes.expressa_detalhes){
-      amostra_detalhes.expressa_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
-        this.ensaios_laudo.push({
-            id: ensaio_detalhes.id,
-            descricao: ensaio_detalhes.descricao,
+  imprimirVisualizar(analise: any){
+      const doc = new jsPDF();
+  
+      let y = 10; // posição inicial Y
+  
+      doc.setFontSize(20);
+      const pageWidth = doc.internal.pageSize.getWidth(); // largura da página
+      doc.text("OS", pageWidth / 2, y, { align: "center" });    
+      y += 15;
+  
+      // --- Dados ---
+      doc.setFontSize(16);
+      doc.text("Dados", 10, y);
+      y += 10;
+  
+      doc.setFontSize(12);
+      doc.text(`Número: ${analise.amostra_detalhes?.numero || 'N/D'}`, 10, y); y += 8;
+      doc.text(`Classificação: ${analise.amostra_detalhes?.expressa_detalhes?.classificacao 
+        || analise.amostra_detalhes?.ordem_detalhes?.classificacao || 'N/D'}`, 10, y); y += 8;
+      doc.text(`Responsável: ${analise.amostra_detalhes?.expressa_detalhes?.responsavel 
+        || analise.amostra_detalhes?.ordem_detalhes?.responsavel || 'N/D'}`, 10, y); y += 8;
+  
+      const dataAbertura = analise.amostra_detalhes?.expressa_detalhes?.data 
+        || analise.amostra_detalhes?.ordem_detalhes?.data;
+      doc.text(`Data de Abertura: ${dataAbertura ? new Date(dataAbertura).toLocaleDateString('pt-BR') : 'N/D'}`, 10, y); 
+      y += 15;
+  
+      // --- Cálculos ---
+      doc.setFontSize(16);
+      doc.text("Cálculos", 10, y); 
+      y += 10;
+  
+      doc.setFontSize(12);
+      if (analise?.ultimo_calculo?.length > 0) {
+        analise.ultimo_calculo.forEach((calc: any) => {
+          doc.text(`Descrição: ${calc.calculos}`, 10, y); y += 8;
+          doc.text(`Resultado: ${calc.resultados}`, 10, y); y += 8;
+          calc.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
+            doc.text(`Descrição: ${ensaios_utilizados.descricao}`, 30, y); y += 8;
+            doc.text(`Resultado: ${ensaios_utilizados.valor}`, 30, y); y += 8;
+            if(y>=290){
+              doc.addPage();
+              y=10;
+            }
           });
+          
+          y += 4; // espaço extra
+          if(y>=290){
+            doc.addPage();
+            y=10;
+          }
+        });
+      } else {
+        doc.text("N/D", 10, y);
+        y += 8;
+        if(y>=290){
+          doc.addPage();
+          y=10;
+        }
+      }
+  
+      y += 10;
+  
+      // --- Ensaios ---
+      doc.setFontSize(16);
+      doc.text("Ensaios", 10, y); 
+      y += 10;
+  
+      doc.setFontSize(12);
+      if (analise?.ultimo_ensaio?.ensaios_utilizados?.length > 0) {
+        analise.ultimo_ensaio.ensaios_utilizados.forEach((ensaio: any) => {
+          doc.text(`Descrição: ${ensaio.descricao}`, 10, y); y += 8;
+          doc.text(`Resultado: ${ensaio.valor}`, 10, y); y += 8;
+          y += 4;
+          if(y>=290){
+            doc.addPage();
+            y=10;
+          }
+        });
+      } else {
+        doc.text("N/D", 10, y);
+        if(y>=290){
+          doc.addPage();
+          y=10;
+        }
+      }
+  
+      const blobUrl = doc.output("bloburl");
+      window.open(blobUrl, "_blank");
+    }
+  
+
+  abrirModalImpressao(analise: any) {
+    console.log('analise', analise);
+    this.amostra_detalhes_selecionada = analise;
+
+    if(analise.amostra_detalhes.expressa_detalhes){
+
+      const calculos = analise.amostra_detalhes.expressa_detalhes.calculo_ensaio_detalhes.map(
+        (calculo: any) => {
+          const children = (calculo.ensaios_detalhes || []).map((ensaio: any) => ({
+            data: {
+              id: calculo.id + '/' + ensaio.id,
+              descricao: ensaio.id + ' - ' + ensaio.descricao,
+              disabled: false
+            },
+            leaf: true
+          }));
+
+          return {
+            data: {
+              id: '' + calculo.id,
+              descricao:calculo.descricao,
+              disabled: false
+            },
+            children: children.length > 0 ? children : undefined,
+            expanded: false,
+            partialSelected: false
+          };
+        }
+      );
+
+      const ensaios = analise.amostra_detalhes.expressa_detalhes.ensaio_detalhes.map(
+        (ensaio: any) => {
+          const children = (ensaio.variavel_detalhes || []).map((variavel: any) => ({
+            data: {
+              id: ensaio.id + '/' + variavel.id,
+              descricao: variavel.id + ' - ' + variavel.nome,
+              disabled: false
+            },
+            leaf: true
+          }));
+
+          return {
+            data: {
+              id: '' + ensaio.id,
+              descricao: ensaio.descricao,
+              disabled: false
+            },
+            children: children.length > 0 ? children : undefined,
+            expanded: false,
+            partialSelected: false
+          };
+        }
+      );
+
+      // separador
+      const separador = {
+        data: {
+          id: 'separador',
+          descricao: '---------- CÁLCULOS ---------',
+          disabled: true
+        },
+        leaf: true
+      };
+
+      this.ensaios_laudo = [...ensaios, separador, ...calculos];
+
+    }
+
+    if (analise?.amostra_detalhes?.ordem_detalhes) {
+      this.ensaios_laudo = [];
+
+      analise.amostra_detalhes.ordem_detalhes.plano_detalhes?.forEach((plano_detalhes: any) => {
+        if (plano_detalhes.ensaio_detalhes) {
+          this.ensaios_laudo.push(
+            ...plano_detalhes.ensaio_detalhes.map((ensaio_detalhes: any) => {
+              const children = (ensaio_detalhes.variavel_detalhes || []).map((variavel: any) => ({
+                data: {
+                  id: ensaio_detalhes.id + '/' + variavel.id,
+                  descricao: variavel.id + ' - ' + variavel.nome,
+                  disabled: false
+                },
+                leaf: true
+              }));
+
+              return {
+                data: {
+                  id: '' + ensaio_detalhes.id,
+                  descricao: ensaio_detalhes.descricao,
+                  disabled: false
+                },
+                children: children.length > 0 ? children : undefined,
+                expanded: false,
+                partialSelected: false
+              };
+            })
+          );
+        }
+
+        if (plano_detalhes.calculo_ensaio_detalhes) {
+          this.ensaios_laudo.push({
+            data: {
+              id: 'separador_' + plano_detalhes.id, // id único pra não dar conflito
+              descricao: '---------- CÁLCULOS ---------',
+              disabled: true
+            },
+            leaf: true
+          });
+
+          this.ensaios_laudo.push(
+            ...plano_detalhes.calculo_ensaio_detalhes.map((calculo: any) => {
+              const ensaiosChildren = (calculo.ensaios_detalhes || []).map((ensaio: any) => ({
+                data: {
+                  id: calculo.id+'/' + ensaio.id,
+                  descricao: ensaio.id + ' - ' + ensaio.descricao,
+                  disabled: false
+                },
+                leaf: true
+              }));
+
+              return {
+                data: {
+                  id: ''+calculo.id,
+                  descricao: calculo.descricao,
+                  disabled: false
+                },
+                children: ensaiosChildren.length > 0 ? ensaiosChildren : undefined,
+                expanded: false,
+                partialSelected: false
+              };
+            })
+          );
+        }
+
       });
     }
-    if(amostra_detalhes.ordem_detalhes){
-      amostra_detalhes.ordem_detalhes.plano_detalhes.forEach((plano_detalhes: any) => {
-        plano_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
-          this.ensaios_laudo.push({
-            id: ensaio_detalhes.id,
-            descricao: ensaio_detalhes.descricao,
+ 
+    console.log('this.ensaios_laudo', this.ensaios_laudo)
+    this.modalImpressao = true;
+  }
+
+  imprimirSelecionados() {
+    this.imprimirCalculoPDF(this.amostra_detalhes_selecionada);
+  }
+
+  imprimirCalculoPDF(analise: any) {
+    const resultado: { pai: string, filhos: string[] }[] = [];
+
+    this.selectedEnsaios.forEach((selectedEnsaios: any) => {
+      const id = String(selectedEnsaios.data.id);
+
+      if (id.includes("/")) {
+        const [pai, filho] = id.split("/");
+        let paiExistente = resultado.find(r => r.pai === pai);
+
+        if (!paiExistente) {
+          paiExistente = { pai, filhos: [] };
+          resultado.push(paiExistente);
+        }
+
+        paiExistente.filhos.push(filho);
+
+      } else {
+        const pai = id;
+        let paiExistente = resultado.find(r => r.pai === pai);
+        if (!paiExistente) {
+          resultado.push({ pai, filhos: [] });
+        }
+      }
+    });
+
+    console.log(resultado);
+
+    console.log('analise', analise);
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
+    let contadorLinhas = 45;
+    const data_entrada = formatDate(analise.amostra_detalhes.data_entrada, 'dd/MM/yyyy', 'en-US');
+    const data_coleta = formatDate(analise.amostra_detalhes.data_coleta, 'dd/MM/yyyy', 'en-US');
+
+    autoTable(doc, {
+      startY: 10,
+      body: [
+        [
+          { content: "Ordem de Serviço", styles: { halign: "left", fontStyle: "bold" } },
+          { content: analise.amostra_detalhes.numero, styles: { halign: "left", fontStyle: "bold" } },
+          { content: "Data de Entrada: "+data_entrada, styles: { halign: "left" } },
+        ],
+        [
+          { content: "Material da Amostra: "+analise.amostra_detalhes.material, colSpan: 2, styles: { halign: "left" } },
+          { content: "Data de Amostra: "+data_coleta, styles: { halign: "left" } }
+        ],
+        [
+          { content: "Tipo: "+analise.amostra_detalhes?.tipo_amostragem, styles: { halign: "left" } },
+          { content: "Sub-tipo: "+analise.amostra_detalhes?.subtipo, styles: { halign: "left" } },
+          { content: "Data de Conclusão: ", styles: { halign: "left" } }
+        ],
+        [
+          { content: "Local da Coleta: "+analise.amostra_detalhes.local_coleta, colSpan: 2, styles: { halign: "left" } },
+          { content: "Data de Descarte: ", styles: { halign: "left", fontStyle: "bold" } }
+        ]
+      ],
+      theme: "grid",
+      styles: {
+        fontSize: 9,
+        cellPadding: 2
+      }
+    });
+
+    if(analise.amostra_detalhes.expressa_detalhes){
+      
+      analise.amostra_detalhes.expressa_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
+
+        const existe = resultado.some(item => {
+          return item.pai == ensaio_detalhes.id;
+        });
+
+        if(existe){
+
+          let body: any[] = [];
+          let linha: any[] = [];
+          let linhaVazia: any[] = [];
+
+          linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold", fillColor: [220, 220, 220]  } });
+          linha.push({ content: 'Técnico', styles: { halign: "center", fontStyle: "bold" } });
+          linha.push({ content: 'Nº Cadinho', styles: { halign: "center", fontStyle: "bold" } });
+          
+          linhaVazia.push({ content: '', styles: { halign: "center", fillColor: [220, 220, 220]  } });
+          linhaVazia.push({ content: '', styles: { halign: "center" } });
+          linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+          body.push(linha);
+          body.push(linhaVazia);
+
+          autoTable(doc, {
+            startY: contadorLinhas,
+            body,
+            theme: "grid",
+            styles: { fontSize: 8, cellPadding: 2 }
           });
+          contadorLinhas = (doc as any).lastAutoTable.finalY;
+          
+          body = [];
+          linha = [];
+          linhaVazia = [];
+
+          ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
+            const pai = resultado.find(item => item.pai == ensaio_detalhes.id);
+            const filhoExiste = pai?.filhos.includes(String(variavel_detalhes.id));
+
+            // console.log(
+            //   "comparando -> filhos do pai:",
+            //   pai?.filhos,
+            //   "| variavel_detalhes.id:",
+            //   ''+variavel_detalhes.id,
+            //   "| existe?",
+            //   filhoExiste
+            // );
+
+            if (filhoExiste) {
+              linha.push({ content: variavel_detalhes.nome, styles: { halign: "center" } });
+              let variavel_valor = '';
+              if(variavel_detalhes.valor && variavel_detalhes.valor != 0){
+                variavel_valor = variavel_detalhes.valor;
+              }
+              linhaVazia.push({ content: variavel_valor, styles: { halign: "center" } });
+            }
+          });
+
+       
+
+          ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
+            let variavel_valor = '';
+            if(variavel_detalhes.valor && variavel_detalhes.valor != 0){
+              variavel_valor = variavel_detalhes.valor;
+            }
+            linhaVazia.push({ content: variavel_valor, styles: { halign: "center" } });
+          });
+
+          linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold", fillColor: [220, 220, 220]  } });
+          linhaVazia.push({ content: '', styles: { halign: "center", fillColor: [220, 220, 220]  } });
+
+          body.push(linha);
+          body.push(linhaVazia);
+          autoTable(doc, {
+            startY: contadorLinhas,
+            body,
+            theme: "grid",
+            styles: { fontSize: 8, cellPadding: 2 }
+          });
+          contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+        }
+        
+      });
+      
+      let contador_calculo = 0;
+      analise.amostra_detalhes.expressa_detalhes.calculo_ensaio_detalhes.forEach((calculo_ensaio_detalhes: any) => {
+
+        const existe = resultado.some(item => {
+          return item.pai == calculo_ensaio_detalhes.id;
+        });
+        if(existe){
+          if(contador_calculo == 0){
+              autoTable(doc, {
+                startY: contadorLinhas+5,
+                body: [
+                  [
+                    { content: "Cálculos", styles: { halign: "left", fontStyle: "bold" } },
+                  ],
+                ],
+                theme: "grid",
+                styles: {
+                  fontSize: 9,
+                  cellPadding: 2
+                }
+              });
+              contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+              contador_calculo = 1;
+          }
+
+          let body: any[] = [];
+          let linha: any[] = [];
+          let linhaVazia: any[] = [];
+
+          linha.push({ content: calculo_ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold" } });
+          linha.push({ content: 'Técnico', styles: { halign: "center", fontStyle: "bold" } });
+          linha.push({ content: 'Nº Cadinho', styles: { halign: "center", fontStyle: "bold" } });
+
+          linhaVazia.push({ content: '', styles: { halign: "center", fillColor: [220, 220, 220]  } });
+          linhaVazia.push({ content: '', styles: { halign: "center" } });
+          linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+          body.push(linha);
+          body.push(linhaVazia);
+
+          autoTable(doc, {
+            startY: contadorLinhas,
+            body,
+            theme: "grid",
+            styles: { fontSize: 8, cellPadding: 2 }
+          });
+          contadorLinhas = (doc as any).lastAutoTable.finalY;
+          
+          body = [];
+          linha = [];
+          linhaVazia = [];
+
+          let contador = 0;
+          calculo_ensaio_detalhes.ensaios_detalhes.forEach((ensaios_detalhes: any) => {
+            const pai = resultado.find(item => item.pai == calculo_ensaio_detalhes.id);
+            const filhoExiste = pai?.filhos.includes(String(ensaios_detalhes.id));
+
+            if (filhoExiste) {
+              linha.push({ content: ensaios_detalhes.descricao, styles: { halign: "center"} });
+              let variavel_valor = '';
+              if(ensaios_detalhes.valor && ensaios_detalhes.valor != 0){
+                variavel_valor = ensaios_detalhes.valor;
+              }
+              linhaVazia.push({ content: variavel_valor, styles: { halign: "center" } });
+              contador ++;
+              if(contador >= 4){
+                linhaVazia.push({ content: '', styles: { halign: "center" } });
+                linhaVazia.push({ content: '', styles: { halign: "center" } });
+                body.push(linha);
+                body.push(linhaVazia);
+                autoTable(doc, {
+                  startY: contadorLinhas,
+                  body,
+                  theme: "grid",
+                  styles: { fontSize: 8, cellPadding: 2 }
+                });
+                contadorLinhas = (doc as any).lastAutoTable.finalY;
+                body = [];
+                linha = [];
+                linhaVazia = [];
+                contador = 0;
+              }
+            }
+          });
+
+          linha.push({ content: calculo_ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold", fillColor: [220, 220, 220]  } });
+          linhaVazia.push({ content: '', styles: { halign: "center", fillColor: [220, 220, 220]  } });
+
+          body.push(linha);
+          body.push(linhaVazia);
+          autoTable(doc, {
+            startY: contadorLinhas,
+            body,
+            theme: "grid",
+            styles: { fontSize: 8, cellPadding: 2 }
+          });
+          contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+        }
+      });
+
+    }else{
+      
+      analise.amostra_detalhes.ordem_detalhes.plano_detalhes.forEach((plano_detalhes: any) => {
+              
+        plano_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
+          const existe = resultado.some(item => {
+            return item.pai == ensaio_detalhes.id;
+          });
+          if(existe){
+            let body: any[] = [];
+            let linha: any[] = [];
+            let linhaVazia: any[] = [];
+            
+            linha.push({ content:  ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold", fillColor: [220, 220, 220]  } });
+            linha.push({ content: 'Técnico', styles: { halign: "center", fontStyle: "bold" } });
+            linha.push({ content: 'Nº Cadinho', styles: { halign: "center", fontStyle: "bold" } });
+
+            linhaVazia.push({ content: '', styles: { halign: "center", fillColor: [220, 220, 220] } });
+            linhaVazia.push({ content: '', styles: { halign: "center" } });
+            linhaVazia.push({ content: '', styles: { halign: "center" } });
+            body.push(linha);
+            body.push(linhaVazia);
+
+            autoTable(doc, {
+              startY: contadorLinhas,
+              body,
+              theme: "grid",
+              styles: { fontSize: 8, cellPadding: 2 }
+            });
+            contadorLinhas = (doc as any).lastAutoTable.finalY;
+            
+            body = [];
+            linha = [];
+            linhaVazia = [];
+
+            ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
+              const pai = resultado.find(item => item.pai == ensaio_detalhes.id);
+              const filhoExiste = pai?.filhos.includes(String(variavel_detalhes.id));
+
+              if (filhoExiste) {
+                let variavel_valor = '';
+                if(variavel_detalhes.valor && variavel_detalhes.valor != 0){
+                  variavel_valor = variavel_detalhes.valor;
+                }
+                linha.push({ content: variavel_detalhes.nome, styles: { halign: "center"} });
+                linhaVazia.push({ content: variavel_valor, styles: { halign: "center" } });
+              }
+            });    
+
+            linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold", fillColor: [220, 220, 220] } });
+            linhaVazia.push({ content: '', styles: { halign: "center", fillColor: [220, 220, 220] } });
+            
+            body.push(linha);
+            body.push(linhaVazia);
+
+            autoTable(doc, {
+              startY: contadorLinhas,
+              body,
+              theme: "grid",
+              styles: { fontSize: 8, cellPadding: 2 }
+            });
+
+            contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+          }
+        });
+
+        let contador_calculo = 0;
+        plano_detalhes.calculo_ensaio_detalhes.forEach((calculo_ensaio_detalhes: any) => {
+          const existe = resultado.some(item => item.pai == calculo_ensaio_detalhes.id);
+
+          if (existe) {
+            if(contador_calculo == 0){
+              autoTable(doc, {
+                startY: contadorLinhas+5,
+                body: [
+                  [
+                    { content: "Cálculos", styles: { halign: "center", fontStyle: "bold" } },
+                  ],
+                ],
+                theme: "grid",
+                styles: {
+                  fontSize: 9,
+                  cellPadding: 2
+                }
+              });
+
+              contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+              contador_calculo = 1;
+            }
+
+            let body: any[] = [];
+            let linha: any[] = [];
+            let linhaVazia: any[] = [];
+
+            linha.push({ content: calculo_ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold", fillColor: [220, 220, 220] } });
+            linha.push({ content: 'Técnico', styles: { halign: "center", fontStyle: "bold" } });
+            linha.push({ content: 'Nº Cadinho', styles: { halign: "center", fontStyle: "bold" } });
+
+            linhaVazia.push({ content: '', styles: { halign: "center", fillColor: [220, 220, 220] } });
+            linhaVazia.push({ content: '', styles: { halign: "center" } });
+            linhaVazia.push({ content: '', styles: { halign: "center" } });
+            body.push(linha);
+            body.push(linhaVazia);
+
+            autoTable(doc, {
+              startY: contadorLinhas,
+              body,
+              theme: "grid",
+              styles: { fontSize: 8, cellPadding: 2 }
+            });
+            contadorLinhas = (doc as any).lastAutoTable.finalY;
+            
+            body = [];
+            linha = [];
+            linhaVazia = [];
+
+            let contador = 0;
+            calculo_ensaio_detalhes.ensaios_detalhes.forEach((ensaio_detalhes: any) => {
+              const pai = resultado.find(item => item.pai == calculo_ensaio_detalhes.id);
+              const filhoExiste = pai?.filhos.includes(String(ensaio_detalhes.id));
+
+              if (filhoExiste) {
+                linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center" } });
+                let variavel_valor = '';
+                if(ensaio_detalhes.valor && ensaio_detalhes.valor != 0){
+                  variavel_valor = ensaio_detalhes.valor;
+                }
+                linhaVazia.push({ content: variavel_valor, styles: { halign: "center" } });
+
+                contador ++;
+                if(contador >= 4){
+                  linhaVazia.push({ content: '', styles: { halign: "center" } });
+                  linhaVazia.push({ content: '', styles: { halign: "center" } });
+                  body.push(linha);
+                  body.push(linhaVazia);
+                  autoTable(doc, {
+                    startY: contadorLinhas,
+                    body,
+                    theme: "grid",
+                    styles: { fontSize: 8, cellPadding: 2 }
+                  });
+                  contadorLinhas = (doc as any).lastAutoTable.finalY;
+                  body = [];
+                  linha = [];
+                  linhaVazia = [];
+                  contador = 0;
+                }
+              }
+            });
+
+            linha.push({ content: calculo_ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold", fillColor: [220, 220, 220] } });
+            linhaVazia.push({ content: '', styles: { halign: "center" , fillColor: [220, 220, 220]} });
+
+            body.push(linha);
+            body.push(linhaVazia);
+
+            autoTable(doc, {
+              startY: contadorLinhas,
+              body,
+              theme: "grid",
+              styles: { fontSize: 8, cellPadding: 2 }
+            });
+            contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+          }
         });
       });
     }
-    this.modalImpressao = true;
+
+    const blobUrl = doc.output("bloburl");
+    window.open(blobUrl, "_blank");
+    
+    //   // doc.save("Etiqueta.pdf");
   }
 
   excluirAmostraExpressa(id: any): void {
