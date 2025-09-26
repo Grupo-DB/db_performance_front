@@ -862,7 +862,7 @@
                                                                             </div>
                                                                             <div class="bg-gray-50 border-round mt-2 text-center">
                                                                                 <span class="text-2xl font-bold text-primary">
-                                                                                   {{ ensaioTemVariavelData(ensaio) ? (formatarDataExibicao(ensaio.valorTimestamp || ensaio.valor) || '—') :  ensaio.valor || 0 }}
+                                                                                   {{ ensaioTemVariavelData(ensaio) || ensaio.tipo_ensaio_detalhes.nome=== 'data' ? (formatarDataExibicao(ensaio.valorTimestamp || ensaio.valor) || '—') :  ensaio.valor || 0 }}
                                                                                 </span>
                                                                                 <!-- <span class="ml-2 text-lg text-600">{{ ensaio.unidade
                                                                                     }}</span> -->
@@ -965,10 +965,13 @@
                                                     class="resultado flex flex-column  w-8 justify-content-end m-3"
                                                     [ngClass]="{ negativo: (+calc.resultado || 0) < 0 }"
                                                 >   
+                                                    <div class="bg-gray-50 border-round mt-2 text-center" *ngIf="calc.descricao && calc.descricao.toLowerCase().includes('dimensional')">
+                                                        <label class="text-sm font-medium">Data de Desmodelagem</label>
+                                                    </div>
                                                     <div class="bg-gray-50 border-round mt-2 text-center" *ngIf="calc.descricao && calc.descricao.toLowerCase().includes('ensaio')">
                                                         <label class="text-sm font-medium">Data de Rompimento Prevista</label>
                                                     </div>
-                                                    <div class="bg-gray-50 border-round mt-2 text-center" *ngIf="!calc.descricao || !calc.descricao.toLowerCase().includes('ensaio')">
+                                                    <div class="bg-gray-50 border-round mt-2 text-center" *ngIf="!calc.descricao && !calc.descricao.toLowerCase().includes('ensaio')">
                                                         <label class="text-sm font-medium">Resultado Final do Cálculo</label>
                                                     </div>
                                                     <div class="bg-gray-50 border-round mt-2 text-center">
