@@ -111,7 +111,7 @@
                                         <div class="flex flex-column w-6">    
                                             <div class="w-12 text-left m-2" *ngIf="!isOrdemExpressa">
                                                 <p-floatLabel variant="on">
-                                                    <p-multiselect 
+                                                    <p-select 
                                                         inputId="float-label" 
                                                         [style]="{'width':'100%'}"
                                                         [options]="planosAnalise" 
@@ -123,7 +123,7 @@
                                                         filterBy="nome" 
                                                         [showClear]="true"
                                                     >
-                                                    </p-multiselect>
+                                                    </p-select>
                                                     <label for="float-label">Selecione o Plano de Análise</label>
                                                 </p-floatLabel>
                                             </div>
@@ -182,56 +182,10 @@
                                 <ng-template pTemplate="caption">
                                     <div class="step1 flex flex-column w-12 justify-content-between lg:w-12 lg:flex-row">
                                         <div class="w-2 text-left">
-                                            <p-multiselect
-                                                [(ngModel)]="materiaisSelecionados"
-                                                [options]="materiaisFiltro"
-                                                (onChange)="filtrarPorMateriais()"
-                                                placeholder="Material"
-                                                [showClear]="true"
-                                                optionLabel="label"
-                                                optionValue="value"
-                                                [maxSelectedLabels]="3"
-                                                appendTo="body"
-                                            >
-                                                <ng-template pTemplate="selectedItems" let-selectedOptions>
-                                                    <div class="flex gap-1 flex-wrap">
-                                                    <p-tag
-                                                        *ngFor="let option of selectedOptions"
-                                                        [value]="option.value"
-                                                        [severity]="getSeverity(option.value)"
-                                                    />
-                                                    </div>
-                                                </ng-template>
-                                                <ng-template pTemplate="item" let-option>
-                                                    <p-tag [value]="option.value" [severity]="getSeverity(option.value)" />
-                                                </ng-template>
-                                            </p-multiselect>
+                                            
                                         </div>
                                         <div class="w-4' text-left">
-                                            <p-multiselect
-                                                [(ngModel)]="tipoSelecionados"
-                                                [options]="tipoFiltro"
-                                                (onChange)="filtrarPorTipo()"
-                                                placeholder="Tipo"
-                                                [showClear]="true"
-                                                optionLabel="label"
-                                                optionValue="value"
-                                                [maxSelectedLabels]="3"
-                                                appendTo="body"
-                                            >
-                                                <ng-template pTemplate="selectedItems" let-selectedOptions>
-                                                    <div class="flex gap-1 flex-wrap">
-                                                    <p-tag
-                                                        *ngFor="let option of selectedOptions"
-                                                        [value]="option.value"
-                                                        [severity]="getTipoOrdem(option.value)"
-                                                    />
-                                                    </div>
-                                                </ng-template>
-                                                <ng-template pTemplate="item" let-option>
-                                                    <p-tag [value]="option.value" [severity]="getTipoOrdem(option.value)" />
-                                                </ng-template>
-                                            </p-multiselect>
+                                            
                                         </div>
                                         <!-- <div class=" flex w-2 gap-3 mt-3 justify-content-end text-right">
                                             Finalizada 
@@ -281,7 +235,32 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr class="tabela">
-                                            <th style="width: 10%; text-align: left;">Material</th>
+                                            <th style="width: 10%; text-align: left;">
+                                                <p-multiselect
+                                                    [(ngModel)]="materiaisSelecionados"
+                                                    [options]="materiaisFiltro"
+                                                    (onChange)="filtrarPorMateriais()"
+                                                    placeholder="Material"
+                                                    [showClear]="true"
+                                                    optionLabel="label"
+                                                    optionValue="value"
+                                                    [maxSelectedLabels]="3"
+                                                    appendTo="body"
+                                                >
+                                                    <ng-template pTemplate="selectedItems" let-selectedOptions>
+                                                        <div class="flex gap-1 flex-wrap">
+                                                        <p-tag
+                                                            *ngFor="let option of selectedOptions"
+                                                            [value]="option.value"
+                                                            [severity]="getSeverity(option.value)"
+                                                        />
+                                                        </div>
+                                                    </ng-template>
+                                                    <ng-template pTemplate="item" let-option>
+                                                        <p-tag [value]="option.value" [severity]="getSeverity(option.value)" />
+                                                    </ng-template>
+                                                </p-multiselect>
+                                            </th>
                                             <th style="width: 15%; text-align: left;" type="text"field="fornecedor" display="menu">Número</th>
                                             <th pSortableColumn="data_entrada" style="width: 10%;">
                                                 <div class="flex justify-between items-left">
@@ -297,7 +276,32 @@
                                             </th>
                                             <th style="width: 15%; text-align: left;" type="text" field="numero" display="menu">Classificação da OS</th>
                                             <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">Responsável</th>
-                                            <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">Tipo</th>
+                                            <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">
+                                                <p-multiselect
+                                                    [(ngModel)]="tipoSelecionados"
+                                                    [options]="tipoFiltro"
+                                                    (onChange)="filtrarPorTipo()"
+                                                    placeholder="Tipo"
+                                                    [showClear]="true"
+                                                    optionLabel="label"
+                                                    optionValue="value"
+                                                    [maxSelectedLabels]="3"
+                                                    appendTo="body"
+                                                >
+                                                    <ng-template pTemplate="selectedItems" let-selectedOptions>
+                                                        <div class="flex gap-1 flex-wrap">
+                                                        <p-tag
+                                                            *ngFor="let option of selectedOptions"
+                                                            [value]="option.value"
+                                                            [severity]="getTipoOrdem(option.value)"
+                                                        />
+                                                        </div>
+                                                    </ng-template>
+                                                    <ng-template pTemplate="item" let-option>
+                                                        <p-tag [value]="option.value" [severity]="getTipoOrdem(option.value)" />
+                                                    </ng-template>
+                                                </p-multiselect>
+                                            </th>
                                             <th style="width: 24%; text-align: center;" type="text" field="acoes"display="menu">Opções</th>
                                             <!-- <th style="width: 2%; text-align: center;" type="text" field="finalizada" display="menu">Finalizada</th>
                                             <th style="width: 2%; text-align: center;" type="text" field="laudo" display="menu">Laudo</th>

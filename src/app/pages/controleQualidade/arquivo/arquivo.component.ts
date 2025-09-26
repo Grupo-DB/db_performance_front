@@ -193,6 +193,11 @@ private confirmationService: ConfirmationService,
 ){}
   ngOnInit(): void {
     this.loadAnalises();
+
+  }
+  ngAfterViewInit() {
+    this.dt1.filter(true, 'laudo', 'equals');
+    this.dt1.filter(true, 'aprovada', 'equals');
   }
 
   hasGroup(groups: string[]): boolean {
@@ -218,7 +223,7 @@ private confirmationService: ConfirmationService,
         
         }));
         // Inicializa a lista filtrada
-  this.analisesFiltradas = [...this.analises];
+      this.analisesFiltradas = [...this.analises];
 
         // Cria opções únicas para o MultiSelect
         this.materiaisFiltro = this.analises

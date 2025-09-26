@@ -74,6 +74,43 @@
                             <div class="step1 flex flex-column w-12 justify-content-between lg:w-12 lg:flex-row">
                                 <div class="flex gap-3 w-12">
                                     <div class="w-3 text-left">
+                                        
+                                    </div>
+
+                                    <div class="w-3 text-left">
+                                        
+                                    </div>
+                            
+                                
+                                    <div class=" flex w-2 mt-3 justify-content-end text-right">
+                                        
+                                    </div>
+                                    <div class=" flex w-2 mt-3 justify-content-end text-right">
+                                        
+                                    </div>
+                                </div>
+                                <div class=" flex w-2 gap-3 justify-content-end text-right">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
+                                            <input 
+                                                variant="filled" 
+                                                [(ngModel)]="inputValue"
+                                                [style]="{'width':'100%'}" 
+                                                pInputText id="on_label"
+                                                autocomplete="off" 
+                                                type="text" 
+                                                (input)="filterTable()"
+                                            />
+                                        </p-iconfield>
+                                        <label for="on_label" style="color: #1b91ff">Pesquisar</label>
+                                    </p-floatlabel>
+                                </div>
+                            </div>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr class="tabela">
+                                    <th style="width: 10%; text-align: left;">
                                         <p-multiselect
                                             [(ngModel)]="materiaisSelecionados"
                                             [options]="materiaisFiltro"
@@ -98,9 +135,29 @@
                                                 <p-tag [value]="option.value" [severity]="getSeverity(option.value)" />
                                             </ng-template>
                                         </p-multiselect>
-                                    </div>
-
-                                    <div class="w-3 text-left">
+                                    </th>
+                                    <th 
+                                        style="width: 15%; text-align: left;" 
+                                        type="text"
+                                        field="fornecedor" 
+                                        display="menu"
+                                    >Número</th>
+                                    <th pSortableColumn="data_entrada" style="width: 10%;">
+                                        <div class="flex justify-between items-left">
+                                            Data de Abertura
+                                            <p-sortIcon field="data_entrada" />
+                                            <p-columnFilter 
+                                                type="date" 
+                                                field="data_entrada" 
+                                                display="menu"  
+                                                class="ml-auto" 
+                                                showMenu="false" 
+                                            />
+                                        </div>
+                                    </th>
+                                    <th style="width: 15%; text-align: left;" type="text" field="numero" display="menu">Classificação da OS</th>
+                                    <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">Responsável</th>
+                                    <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">
                                         <p-multiselect
                                             [(ngModel)]="tipoSelecionados"
                                             [options]="tipoFiltro"
@@ -125,75 +182,27 @@
                                                 <p-tag [value]="option.value" [severity]="getTipoOrdem(option.value)" />
                                             </ng-template>
                                         </p-multiselect>
-                                    </div>
-                            
-                                
-                                    <div class=" flex w-2 mt-3 justify-content-end text-right">
-                                        Para Laudo
-                                            <p-columnFilter 
+                                    </th>
+                                    <th style="width: 24%; text-align: center;" type="text" field="acoes"display="menu">Opções</th>
+                                    <th style="width: 2%; text-align: center;" type="text" field="laudo" display="menu">
+                                        Laudo &nbsp;
+                                        <p-columnFilter 
                                             type="boolean" 
                                             field="laudo"
                                             showMenu="false"
                                             >   
                                         </p-columnFilter>
-                                    </div>
-                                    <div class=" flex w-2 mt-3 justify-content-end text-right">
-                                        Aprovada
-                                            <p-columnFilter 
+                                    </th>
+                                    <th style="width: 2%; text-align: center;" type="text" field="aprovada" display="menu">
+                                        Aprovada &nbsp;
+                                        <p-columnFilter 
                                             type="boolean" 
                                             field="aprovada"
                                             showMenu="false"
+                                            defautl
                                             >   
                                         </p-columnFilter>
-                                    </div>
-                                </div>
-                                <div class=" flex w-2 gap-3 justify-content-end text-right">
-                                    <p-floatlabel variant="on">
-                                        <p-iconfield>
-                                            <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
-                                            <input 
-                                                variant="filled" 
-                                                [(ngModel)]="inputValue"
-                                                [style]="{'width':'100%'}" 
-                                                pInputText id="on_label"
-                                                autocomplete="off" 
-                                                type="text" 
-                                                (input)="filterTable()"
-                                            />
-                                        </p-iconfield>
-                                        <label for="on_label" style="color: #1b91ff">Pesquisar</label>
-                                    </p-floatlabel>
-                                </div>
-                            </div>
-                            </ng-template>
-                            <ng-template pTemplate="header">
-                                <tr class="tabela">
-                                    <th style="width: 10%; text-align: left;">Material</th>
-                                    <th 
-                                        style="width: 15%; text-align: left;" 
-                                        type="text"
-                                        field="fornecedor" 
-                                        display="menu"
-                                    >Número</th>
-                                    <th pSortableColumn="data_entrada" style="width: 10%;">
-                                        <div class="flex justify-between items-left">
-                                            Data de Abertura
-                                            <p-sortIcon field="data_entrada" />
-                                            <p-columnFilter 
-                                                type="date" 
-                                                field="data_entrada" 
-                                                display="menu"  
-                                                class="ml-auto" 
-                                                showMenu="false" 
-                                            />
-                                        </div>
                                     </th>
-                                    <th style="width: 15%; text-align: left;" type="text" field="numero" display="menu">Classificação da OS</th>
-                                    <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">Responsável</th>
-                                    <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">Tipo</th>
-                                    <th style="width: 24%; text-align: center;" type="text" field="acoes"display="menu">Opções</th>
-                                    <th style="width: 2%; text-align: center;" type="text" field="laudo" display="menu">Laudo</th>
-                                    <th style="width: 2%; text-align: center;" type="text" field="aprovada" display="menu">Aprovada</th>
                                 
                                 </tr>
                             </ng-template>
