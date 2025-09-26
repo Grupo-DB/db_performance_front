@@ -357,44 +357,44 @@ receberDadosAmostra(): void {
   }
 
   criarAmostra(): void {
-  if (!this.amostraData) {
-    this.messageService.add({ 
-      severity: 'error', 
-      summary: 'Erro', 
-      detail: 'Nenhum dado da amostra foi recebido' 
-    });
-    return;
-  }
+    if (!this.amostraData) {
+      this.messageService.add({ 
+        severity: 'error', 
+        summary: 'Erro', 
+        detail: 'Nenhum dado da amostra foi recebido' 
+      });
+      return;
+    }
 
-  // Validar se o formulário está válido
-  if (!this.expressaForm.valid) {
-    this.messageService.add({ 
-      severity: 'error', 
-      summary: 'Erro', 
-      detail: 'Preencha todos os campos obrigatórios' 
-    });
-    return;
-  }
+    // Validar se o formulário está válido
+    if (!this.expressaForm.valid) {
+      this.messageService.add({ 
+        severity: 'error', 
+        summary: 'Erro', 
+        detail: 'Preencha todos os campos obrigatórios' 
+      });
+      return;
+    }
 
-  // Validar se pelo menos um ensaio ou cálculo foi selecionado
-  if (this.targetEnsaios.length === 0 && this.targetCalculos.length === 0) {
-    this.messageService.add({ 
-      severity: 'warn', 
-      summary: 'Atenção', 
-      detail: 'Selecione pelo menos um ensaio ou cálculo para a análise expressa' 
-    });
-    return;
-  }
+    // Validar se pelo menos um ensaio ou cálculo foi selecionado
+    if (this.targetEnsaios.length === 0 && this.targetCalculos.length === 0) {
+      this.messageService.add({ 
+        severity: 'warn', 
+        summary: 'Atenção', 
+        detail: 'Selecione pelo menos um ensaio ou cálculo para a análise expressa' 
+      });
+      return;
+    }
 
-  // Validar estrutura dos dados
-  if (!this.validarDadosEnvio()) {
-    this.messageService.add({ 
-      severity: 'error', 
-      summary: 'Erro', 
-      detail: 'Dados inválidos nos ensaios ou cálculos selecionados' 
-    });
-    return;
-  }
+    // Validar estrutura dos dados
+    if (!this.validarDadosEnvio()) {
+      this.messageService.add({ 
+        severity: 'error', 
+        summary: 'Erro', 
+        detail: 'Dados inválidos nos ensaios ou cálculos selecionados' 
+      });
+      return;
+    }
 
   // Verificar se é amostra EXISTENTE (vem da tabela) ou NOVA (do formulário)
   const isAmostraExistente = this.amostraData.id != null;
@@ -449,6 +449,7 @@ receberDadosAmostra(): void {
         // Criar amostra NOVA vinculada à ordem
         this.criarAmostraVinculada(ordemSalva.id);
       }
+      
     },
     error: (error) => {
       console.error('❌ Erro ao criar ordem expressa:', error);
@@ -594,7 +595,7 @@ receberDadosAmostra(): void {
         this.criarAnaliseVinculada(amostraCriada.id);
       },
       error: (error) => {
-        console.error('❌ Erro ao criar amostra:', error);
+        console.error('❌ Erro ao criar amostrffffa:', error);
         this.messageService.add({ 
           severity: 'error', 
           summary: 'Erro', 
@@ -625,7 +626,7 @@ receberDadosAmostra(): void {
         });
         
         // redirecionar
-        // this.router.navigate(['/welcome/controleQualidade/amostra']);
+        this.router.navigate(['/welcome/controleQualidade/ordem']);
       },
       error: (error) => {
         console.error('❌ Erro ao criar análise:', error);

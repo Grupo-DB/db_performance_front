@@ -1289,7 +1289,7 @@ submitAmostra() {
         } else {
           this.clearForm();
           this.loadAmostras();
-          this.activeStep = 2;
+          this.activeStep = 1;
         }
       }, 2000);
     },
@@ -2012,9 +2012,7 @@ criarOSDoFormulario() {
     'data': 'Data da Ordem',
     'numero': 'Número da Ordem',
     'planoAnalise': 'Plano de Análise',
-    'responsavel': 'Responsável',
     'digitador': 'Digitador',
-    'classificacao': 'Classificação'  // 
   };
   
   const camposVaziosOrdem = [];
@@ -2226,7 +2224,8 @@ limparDadosFormulario() {
         });
         
         // redirecionar
-        // this.router.navigate(['/welcome/controleQualidade/amostra']);
+        
+        this.router.navigate(['/welcome/controleQualidade/ordem']);
       },
       error: (error) => {
         console.error('❌ Erro ao criar análise:', error);
