@@ -169,6 +169,8 @@
                             <div class="w-12 text-left">
                                 <p-table 
                                     #dt1
+                                    sortField="id"
+                                    [sortOrder]="-1"
                                     [value]="analisesFiltradas"
                                     [paginator]="true"
                                     [rows]="30"

@@ -59,6 +59,8 @@
                         </ng-template>
                         <p-table 
                             #dt1
+                            sortField="id"
+                            [sortOrder]="-1"
                             [value]="analisesFiltradas"
                             [paginator]="true"
                             [rows]="30"

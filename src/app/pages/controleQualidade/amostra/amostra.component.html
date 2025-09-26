@@ -597,7 +597,9 @@
                                                             [globalFilterFields]="['data_entrada','data_coleta','produto_amostra','numero','material','tipo_amostra','status','local_coleta']"
                                                             [showCurrentPageReport]="true"
                                                             currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Ordens"
-                                                            scrollable="true"          
+                                                            scrollable="true"       
+                                                            sortField="id"
+                                                            [sortOrder]="-1"   
                                                             #dt1
                                                         >
                                                             <ng-template pTemplate="caption">
