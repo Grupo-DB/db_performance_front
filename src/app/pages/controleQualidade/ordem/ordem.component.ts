@@ -202,6 +202,12 @@ export class OrdemComponent implements OnInit {
   modalVisualizar: boolean = false;
   analiseSelecionada: any;
 
+
+  modalImagensVisible: boolean = false;
+  imagensAmostra: any[] = [];
+  imagemAtualIndex: number = 0;
+  amostraImagensSelecionada: any = null;
+
   tipoFiltro = [
     { value: 'Expressa' },
     { value: 'Plano' },
@@ -3715,13 +3721,132 @@ gerarNumero(materialNome: string, sequencial: number): string {
    * Visualiza imagens da amostra
    */
   visualizarImagens(analise: any): void {
+    this.amostraImagensSelecionada = analise;
+    this.carregarImagensAmostra(analise.id);
     console.log('Visualizando imagens:', analise);
-    // Implementar visualização de imagens
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Informação',
-      detail: 'Funcionalidade em desenvolvimento'
+  }
+
+  carregarImagensAmostra(amostraId: number): void {
+    this.amostraService.getImagensAmostra(amostraId).subscribe({
+      next: (imagens) => {
+        // Usar image_url em vez de image para ter a URL completa
+        this.imagensAmostra = imagens.map((img: { image_url: any; image: any; }) => ({
+          ...img,
+          image: img.image_url || img.image // Usar image_url se disponível, senão fallback para image
+        }));
+        this.imagemAtualIndex = 0;
+        this.modalImagensVisible = true;
+        
+        if (imagens.length === 0) {
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Informação',
+            detail: 'Esta amostra não possui imagens anexadas.'
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao carregar imagens:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao carregar imagens da amostra.'
+        });
+      }
     });
+  }
+
+  proximaImagem(): void {
+    if (this.imagemAtualIndex < this.imagensAmostra.length - 1) {
+      this.imagemAtualIndex++;
+    }
+  }
+
+  imagemAnterior(): void {
+    if (this.imagemAtualIndex > 0) {
+      this.imagemAtualIndex--;
+    }
+  }
+
+
+  onDescricaoChange(imagem: any): void {
+    // Debounce para não fazer muitas requisições
+    if (this.descricaoTimeout) {
+      clearTimeout(this.descricaoTimeout);
+    }
+    
+    this.descricaoTimeout = setTimeout(() => {
+      this.salvarDescricaoImagem(imagem);
+    }, 3000); // Salva após 3 segundos sem alterações
+  }
+
+  private descricaoTimeout: any;
+
+  salvarDescricaoImagem(imagem: any): void {
+    // método no service para atualizar descrição
+    this.amostraService.atualizarDescricaoImagem(imagem.id, imagem.descricao).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Descrição atualizada com sucesso!'
+        });
+      },
+      error: (error) => {
+        console.error('Erro ao atualizar descrição:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao atualizar descrição da imagem.'
+        });
+      }
+    });
+  }
+
+  downloadImagem(imagem: any): void {
+    const link = document.createElement('a');
+    link.href = imagem.image;
+    link.download = `amostra_${this.amostraImagensSelecionada.numero}_imagem_${imagem.id}`;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  // Método para deletar uma imagem
+  deletarImagem(imageId: number): void {
+    this.confirmationService.confirm({
+      message: 'Tem certeza que deseja deletar esta imagem?',
+      header: 'Confirmação',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.amostraService.deleteImagem(this.amostraImagensSelecionada.id, imageId).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Sucesso',
+              detail: 'Imagem deletada com sucesso!'
+            });
+            
+            
+            this.carregarImagensAmostra(this.amostraImagensSelecionada.id);
+          },
+          error: (error) => {
+            console.error('Erro ao deletar imagem:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: 'Erro ao deletar imagem.'
+            });
+          }
+        });
+      }
+    });
+  }
+
+  // Método para ir para uma imagem específica
+  irParaImagem(index: number): void {
+    this.imagemAtualIndex = index;
   }
 
   

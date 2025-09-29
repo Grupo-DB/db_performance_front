@@ -1183,7 +1183,7 @@
 >
   <div *ngIf="amostraImagensSelecionada" class="mb-4">
     <h3>Amostra: {{ amostraImagensSelecionada.numero }}</h3>
-    <p><strong>Material:</strong> {{ amostraImagensSelecionada.material_detalhes?.nome }}</p>
+    <p><strong>Material:</strong> {{ amostraImagensSelecionada.material }}</p>
     <p><strong>Data de Coleta:</strong> {{ amostraImagensSelecionada.data_coleta | date:'dd/MM/yyyy' }}</p>
   </div>
   <div *ngIf="imagensAmostra.length > 0" class="image-viewer">

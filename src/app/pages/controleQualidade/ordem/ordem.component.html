@@ -987,3 +987,109 @@
 
 
 
+<p-drawer 
+        header="Imagens da Amostra" 
+        [(visible)]="modalImagensVisible" 
+        position="right" 
+        [style]="{ width: '80vw' }">
+        
+        <div *ngIf="amostraImagensSelecionada" class="mb-4">
+            <h3>Amostra: {{ amostraImagensSelecionada.numero }}</h3>
+            <p><strong>Material:</strong> {{ amostraImagensSelecionada.material }}</p>
+            <p><strong>Data de Coleta:</strong> {{ amostraImagensSelecionada.data_coleta | date:'dd/MM/yyyy' }}</p>
+        </div>
+
+        <div *ngIf="imagensAmostra.length > 0" class="image-viewer">
+            <!-- Navegação de imagens -->
+            <div class="flex justify-content-between align-items-center mb-3">
+            <p-button 
+                icon="pi pi-chevron-left" 
+                [disabled]="imagemAtualIndex === 0"
+                (onClick)="imagemAnterior()"
+                [rounded]="true">
+            </p-button>
+            
+            <span class="text-lg font-semibold">
+                {{ imagemAtualIndex + 1 }} de {{ imagensAmostra.length }}
+            </span>
+            
+            <p-button 
+                icon="pi pi-chevron-right" 
+                [disabled]="imagemAtualIndex === imagensAmostra.length - 1"
+                (onClick)="proximaImagem()"
+                [rounded]="true">
+            </p-button>
+            </div>
+
+            <!-- Imagem principal -->
+            <div class="text-center mb-4">
+            <img 
+                [src]="imagensAmostra[imagemAtualIndex]?.image" 
+                [alt]="imagensAmostra[imagemAtualIndex]?.descricao || 'Imagem da amostra'"
+                style="max-width: 100%; max-height: 60vh; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            </div>
+
+            <!-- Informações da imagem -->
+            <div class="bg-gray-50 p-3 border-round mb-4">
+            <p><strong>Descrição:</strong> {{ imagensAmostra[imagemAtualIndex]?.descricao || 'Sem descrição' }}</p>
+            <p><strong>Data do Upload:</strong> {{ imagensAmostra[imagemAtualIndex]?.data_upload | date:'dd/MM/yyyy HH:mm' }}</p>
+            <div class="bg-gray-50 p-3 border-round mb-4">
+                <div class="w-full mb-3">
+                    <p-floatLabel variant="on">
+                        <input 
+                            pInputText 
+                            [(ngModel)]="imagensAmostra[imagemAtualIndex].descricao" 
+                            type="text" 
+                            id="edit-descricao"
+                            [style]="{'width':'100%'}" 
+                            autocomplete="off" 
+                            variant="filled"
+                            (ngModelChange)="onDescricaoChange(imagensAmostra[imagemAtualIndex])"
+                        />
+                        <label for="edit-descricao">Descrição da imagem</label>
+                    </p-floatLabel>
+                </div>
+                <p><strong>Data do Upload:</strong> {{ imagensAmostra[imagemAtualIndex]?.data_upload | date:'dd/MM/yyyy HH:mm' }}</p>
+            </div>
+            </div>
+
+            <!-- Ações da imagem -->
+            <div class="flex justify-content-center gap-2 mb-4">
+            <p-button 
+                label="Download" 
+                icon="pi pi-download" 
+                severity="info"
+                (onClick)="downloadImagem(imagensAmostra[imagemAtualIndex])">
+            </p-button>
+            
+            <p-button 
+                label="Deletar" 
+                icon="pi pi-trash" 
+                severity="danger"
+                (onClick)="deletarImagem(imagensAmostra[imagemAtualIndex].id)">
+            </p-button>
+            </div>
+
+            <!-- Thumbnails (miniaturas) -->
+            <div class="flex flex-wrap gap-2 justify-content-center" *ngIf="imagensAmostra.length > 1">
+            <div 
+                *ngFor="let imagem of imagensAmostra; let i = index"
+                class="cursor-pointer border-2 border-round overflow-hidden"
+                [class.border-primary]="i === imagemAtualIndex"
+                [class.border-gray-300]="i !== imagemAtualIndex"
+                (click)="irParaImagem(i)"
+                style="width: 80px; height: 80px;">
+                <img 
+                [src]="imagem.image" 
+                [alt]="'Miniatura ' + (i + 1)"
+                style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            </div>
+        </div>
+
+        <!-- Mensagem quando não há imagens -->
+        <div *ngIf="imagensAmostra.length === 0" class="text-center p-5">
+            <i class="pi pi-images text-6xl text-gray-400 mb-3"></i>
+            <p class="text-xl text-gray-600">Esta amostra não possui imagens anexadas.</p>
+        </div>
+    </p-drawer>
