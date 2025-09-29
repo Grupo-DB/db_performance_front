@@ -50,6 +50,10 @@ import { HttpClient } from '@angular/common/http';
 import { id } from 'date-fns/locale';
 import { TooltipModule } from 'primeng/tooltip';
 import { timeout } from 'rxjs';
+import { CalculosComponent } from '../calculos/calculos.component';
+import Handsontable from 'handsontable';
+import { HyperFormula } from 'hyperformula';
+import { HotTableModule } from '@handsontable/angular-wrapper';
 
 export interface Analise {
   id: number;
@@ -67,8 +71,15 @@ interface FileWithInfo {
 @Component({
   selector: 'app-analise',
   imports: [
-    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule, CardModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, AvatarModule, PopoverModule, BadgeModule, TooltipModule
-],
+    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule, 
+    CardModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, 
+    IconFieldModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, 
+    InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, 
+    RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, 
+    StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule,
+    SpeedDialModule, AvatarModule, PopoverModule, BadgeModule, TooltipModule,
+    HotTableModule,CalculosComponent
+  ],
   animations: [
     trigger('efeitoFade', [
       transition(':enter', [
@@ -126,6 +137,20 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
   private lastSavedState: string = '';
   //Atualiza nomes das variáveis ao editar a descrição do ensaio
    
+ public dadosTabela1 = [
+    ['Norte', 1500, 1800, '=SUM(B1:C1)'],
+    ['Sul', 2200, 2000, '=SUM(B2:C2)'],
+    ['Total', '=SUM(B1:B2)', '=SUM(C1:C2)', '=SUM(D1:D2)']
+];
+
+  // Defina os dados para a Tabela 2
+  public dadosTabela2 = [
+    ['Produto', 'Estoque', 'Mínimo'],
+    ['A', 50, 20],
+    ['B', 30, 45],
+  ];
+
+
   onDescricaoEnsaioChange(ensaio: any): void {
     this.atualizarNomesVariaveisEnsaio(ensaio);
   }
@@ -215,6 +240,15 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
   inputValue: string = '';
   inputCalculos: string = '';
   @ViewChild('dt1') dt1!: Table;
+    public hotSettings: Handsontable.GridSettings; 
+    private hyperformulaInstance: HyperFormula;
+
+    public data = [
+    ['Produtos', 200, 300, '=SUM(B1:C1)'],
+    ['Serviços', 150, 100, '=SUM(B2:C2)'],
+    ['Total', '=SUM(B1:B2)', '=SUM(C1:C2)', '=SUM(D1:D2)']
+  ];
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -230,7 +264,25 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
     private cd: ChangeDetectorRef,
     private datePipe: DatePipe,
     private httpClient: HttpClient
-  ) {}
+  ) {
+    this.hyperformulaInstance = HyperFormula.buildEmpty({
+      licenseKey: 'gpl-v3' 
+    });
+
+    this.hotSettings = {
+      data: this.data,
+      rowHeaders: true,
+      colHeaders: true,
+      height: 'auto',
+      licenseKey: 'non-commercial-and-evaluation', 
+      formulas: {
+        engine: this.hyperformulaInstance // Agora o TypeScript sabe que o valor existe
+      }
+    };
+
+  }
+
+  
 
   // Mapeia o tipo (ou descrição) do ensaio para uma classe de cor
   getClasseTipoEnsaio(ensaio: any): string | undefined {

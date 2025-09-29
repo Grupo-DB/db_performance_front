@@ -1069,6 +1069,31 @@
         </div>    
         <div class="step1 flex flex-column w-12 gap-3 mt-3 mb-5 justify-content-end lg:w-11 lg:flex-row">                        
             <div class="w-2 text-right">
+                <p-button
+                    label="Cálculos Auxiliares" 
+                    icon="pi pi-calculator" 
+                    iconPos="right" 
+                    [raised]="true"
+                    severity="primary"
+                    size="large" 
+                    (click)="popoverCalculosAuxiliares.toggle($event)"
+                    [pTooltip]="'Visualizar cálculos auxiliares'"
+                    tooltipPosition="top"
+                />
+                <p-popover #popoverCalculosAuxiliares 
+                    [appendTo]="'body'"
+                    [style]="{ width: '80vw', maxWidth: '1200px' }"
+                    styleClass="calculos-popover"
+                    [dismissable]="true"
+                >
+                    <ng-template pTemplate="content">
+                        <h2>Cálculos Auxiliares</h2>
+                        <app-calculos></app-calculos>
+                    </ng-template>
+                </p-popover>
+
+            </div>
+            <div class="w-2 text-right">
                 <p-button 
                     [label]="hasUnsavedChanges ? 'Salvar Resultados *' : 'Salvar Resultados'" 
                     [severity]="hasUnsavedChanges ? 'warn' : 'success'" 
@@ -1084,6 +1109,7 @@
             
     </div>
 </div>
+
 <!------------------------------------ Resultados Anteriores Calculos ---------------------------------------------------->
 <p-drawer [visible]="drawerResultadosVisivel" [modal]="true" [dismissible]="true" position="top"
     [style]="{ width: '100%',height: '50%' }">

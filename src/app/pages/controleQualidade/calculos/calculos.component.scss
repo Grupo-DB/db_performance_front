@@ -1,0 +1,306 @@
+/* Estilo personalizado para o container */
+.tabela-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.titulo-tabela {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.debug-info {
+  background: #f0f8ff;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  border-left: 4px solid #007bff;
+}
+
+.buttons-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.reload-btn, .add-btn, .calc-btn, .formula-btn, .financial-btn, .test-btn, .log-btn {
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.reload-btn {
+  background: #007bff;
+  color: white;
+}
+
+.reload-btn:hover {
+  background: #0056b3;
+}
+
+.add-btn {
+  background: #28a745;
+  color: white;
+}
+
+.add-btn:hover {
+  background: #218838;
+}
+
+.calc-btn {
+  background: #ffc107;
+  color: #212529;
+}
+
+.calc-btn:hover {
+  background: #e0a800;
+}
+
+.formula-btn {
+  background: #6f42c1;
+  color: white;
+}
+
+.formula-btn:hover {
+  background: #5a32a3;
+}
+
+.log-btn {
+  background: #17a2b8;
+  color: white;
+}
+
+.log-btn:hover {
+  background: #138496;
+}
+
+.financial-btn {
+  background: #dc3545;
+  color: white;
+}
+
+.financial-btn:hover {
+  background: #c82333;
+}
+
+.test-btn {
+  background: #6c757d;
+  color: white;
+}
+
+.test-btn:hover {
+  background: #545b62;
+}
+
+.tabela-wrapper {
+  width: 100%;
+  overflow: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+}
+
+.info-panel {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+}
+
+.info-panel h3 {
+  margin-bottom: 10px;
+  color: #495057;
+}
+
+.info-panel pre {
+  background: white;
+  padding: 10px;
+  border-radius: 4px;
+  overflow: auto;
+  font-size: 12px;
+}
+
+/* Estilos específicos para Handsontable com HyperFormula */
+:host ::ng-deep .handsontable {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 13px;
+}
+
+:host ::ng-deep .handsontable .htCore {
+  border: none;
+}
+
+:host ::ng-deep .handsontable .htCore td {
+  border-right: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 8px;
+  text-align: center;
+}
+
+:host ::ng-deep .handsontable .htCore th {
+  background: #f8f9fa;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  font-weight: 600;
+  text-align: center;
+  padding: 8px;
+}
+
+:host ::ng-deep .handsontable .htCore tbody tr:nth-child(odd) td {
+  background-color: #f9f9f9;
+}
+
+:host ::ng-deep .handsontable .htCore tbody tr:hover td {
+  background-color: #e8f4fd;
+}
+
+/* Células com fórmulas terão uma cor diferente */
+:host ::ng-deep .handsontable .htCore td.formula-cell {
+  background-color: #fff3cd !important;
+  font-style: italic;
+}
+
+/* Destacar células calculadas */
+:host ::ng-deep .handsontable .htCore td.calculated-cell {
+  background-color: #d4edda !important;
+  font-weight: bold;
+}
+
+// === ESTILOS PARA SISTEMA MULTI-TABELAS ===
+
+// Seletor de tipo de tabela
+.table-type-selector {
+  margin-bottom: 20px;
+  
+  .btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    
+    .btn {
+      flex: 1;
+      min-width: 140px;
+      padding: 10px 15px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      
+      &.active {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      }
+      
+      &:hover {
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+// Botões específicos por tipo
+.specialized-buttons {
+  margin: 15px 0;
+  
+  .button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+    
+    .btn {
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      border-radius: 4px;
+      
+      &.btn-success { background: linear-gradient(135deg, #28a745, #20c997); }
+      &.btn-info { background: linear-gradient(135deg, #17a2b8, #6610f2); }
+      &.btn-warning { background: linear-gradient(135deg, #ffc107, #fd7e14); }
+      &.btn-primary { background: linear-gradient(135deg, #007bff, #6f42c1); }
+    }
+  }
+}
+
+// Painel de métricas
+.metrics-panel {
+  margin-top: 20px;
+  
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+    
+    .metric-card {
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      }
+      
+      .metric-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+        
+        &.success { color: #28a745; }
+        &.warning { color: #ffc107; }
+        &.danger { color: #dc3545; }
+        &.info { color: #17a2b8; }
+      }
+      
+      .metric-label {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 3px;
+      }
+      
+      .metric-description {
+        font-size: 0.75rem;
+        color: #6c757d;
+        font-style: italic;
+      }
+    }
+  }
+}
+
+// Título da tabela
+.table-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e9ecef;
+  
+  h3 {
+    margin: 0;
+    color: #495057;
+    font-weight: 600;
+  }
+  
+  .export-btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+}

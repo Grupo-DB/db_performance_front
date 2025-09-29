@@ -73,6 +73,7 @@ import { ExpressaComponent } from './pages/controleQualidade/expressa/expressa.c
 import { VariavelComponent } from './pages/controleQualidade/variavel/variavel.component';
 import { OrdemComponent } from './pages/controleQualidade/ordem/ordem.component';
 import { ArquivoComponent } from './pages/controleQualidade/arquivo/arquivo.component';
+import { CalculosComponent } from './pages/controleQualidade/calculos/calculos.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -149,6 +150,7 @@ export const routes: Routes = [
       { path: 'controleQualidade/variavel', component: VariavelComponent },
       { path: 'controleQualidade/ordem', component: OrdemComponent },
       { path: 'controleQualidade/arquivo', component: ArquivoComponent  },
+      { path: 'controleQualidade/calculos', component: CalculosComponent  },
     ],
   },
   

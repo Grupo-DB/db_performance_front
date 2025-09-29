@@ -12,7 +12,8 @@ import { ButtonModule } from 'primeng/button';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, TermosComponent, RouterOutlet, NzIconModule, NzLayoutModule, NzMenuModule, ButtonModule],
+  imports: [CommonModule, TermosComponent, RouterOutlet, 
+    NzIconModule, NzLayoutModule, NzMenuModule, ButtonModule],
   animations:[ transition, trigger, state, style, animate],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
