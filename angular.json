@@ -39,7 +39,7 @@
               "./node_modules/ng-zorro-antd/ng-zorro-antd.css",
               "node_modules/primeflex/primeflex.css",
               "node_modules/primeicons/primeicons.css",
-              "node_modules/handsontable/dist/handsontable.full.min.css"
+              "src/styles.scss"
             ],
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"

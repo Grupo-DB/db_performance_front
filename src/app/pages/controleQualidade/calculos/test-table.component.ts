@@ -8,7 +8,7 @@ import { HotTableModule } from '@handsontable/angular-wrapper';
   template: `
     <div style="margin: 20px;">
       <h3>Teste Simples Handsontable</h3>
-      <hot-table [settings]="settings"></hot-table>
+  <hot-table themeName="ht-theme-main" [settings]="settings"></hot-table>
     </div>
   `
 })

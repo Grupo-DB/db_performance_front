@@ -1,7 +1,24 @@
-<div 
+<!-- <div 
   #hotContainer 
   id="example1" 
   class="hot" 
   style="height: 400px; width: 100%;"
 >
+</div> -->
+
+<div class="table-type-selector">
+  <div class="btn-group">
+    <button
+      type="button"
+      class="selector-btn"
+      *ngFor="let t of tables"
+      [class.active]="currentTableId === t.id"
+      (click)="onSelectTable(t.id)">
+      {{ t.label }}
+    </button>
+  </div>
+</div>
+
+<div class="tabela-wrapper">
+  <hot-table themeName="ht-theme-main" [data]="activeData" [settings]="activeSettings" />
 </div>

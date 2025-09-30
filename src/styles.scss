@@ -3,13 +3,10 @@
 @import "ng-zorro-antd/ng-zorro-antd.css";
 @import "../node_modules/quill/dist/quill.core.css";
 @import "../node_modules/quill/dist/quill.snow.css";
-@import "~ng-zorro-antd/ng-zorro-antd.dark.css";
-@import "~ng-zorro-antd/ng-zorro-antd.css"; // Import the default theme as well
-@import "~handsontable/dist/handsontable.full.min.css"; // Handsontable CSS
+/* Handsontable modern base styles and a selected theme (avoid legacy classic theme) */
+@import 'handsontable/styles/handsontable.css';
+@import 'handsontable/styles/ht-theme-main.css';
 
-.dark-theme {
-  @import "~ng-zorro-antd/ng-zorro-antd.dark.css";
-}
 
 * {
     margin: 0px;
@@ -22,20 +19,5 @@ html, body{
     height: 100%;
 }
 
-/* Popover de Cálculos Auxiliares - aumentar largura do overlay */
-.calculos-popover.p-popover {
-  width: 80vw !important;
-  max-width: 1200px !important;
-}
 
-/* Quando appendTo='body', o conteúdo fica dentro do overlay container */
-.p-popover.calculos-popover .p-popover-content,
-.p-popover .p-popover-content:has(.calculos-popover) {
-  width: 100% !important;
-}
 
-/* Garantir que o Handsontable estique dentro do popover */
-.calculos-popover .hot,
-.calculos-popover #example1 {
-  width: 100% !important;
-}

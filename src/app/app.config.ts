@@ -16,6 +16,7 @@ import { provideNzIcons } from './icons-provider';
 import { en_US, provideNzI18n } from 'ng-zorro-antd/i18n';
 import en from '@angular/common/locales/en';
 import { providePrimeNG } from 'primeng/config';
+import { HOT_GLOBAL_CONFIG } from '@handsontable/angular-wrapper';
 import { MyPreset } from './styles';
 
 
@@ -35,7 +36,8 @@ export const appConfig: ApplicationConfig = {
               }
             }
         }),
-    HttpClientModule,
+  HttpClientModule,
+  { provide: HOT_GLOBAL_CONFIG, useValue: { themeName: 'ht-theme-main' } },
     provideToastr(),
      importProvidersFrom(FormsModule), provideAnimationsAsync(), provideHttpClient(), provideNzIcons(), provideNzI18n(en_US), importProvidersFrom(FormsModule), provideAnimationsAsync(), provideHttpClient(), provideAnimationsAsync(),
       
