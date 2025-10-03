@@ -55,6 +55,44 @@ interface FileWithInfo {
   descricao: string;
 }
 
+interface Linha {
+  numero: number;
+  diametro: number | null;
+  area: number | null;
+  espessura: number | null;
+  subst: number | null;
+  junta: number | null;
+  carga: number | null;
+  resist: number | null;
+  validacao: string;
+  rupturas: {
+    sub: number | null;
+    subArga: number | null;
+    rupArga: number | null;
+    argaCola: number | null;
+    colarPastilha: number | null;
+  };
+}
+
+interface LinhaSuperficial {
+  numero: number;
+  diametro: number | null;
+  area: number | null;
+  espessura: number | null;
+  subst: number | null;
+  junta: number | null;
+  carga: number | null;
+  resist: number | null;
+  validacao: string;
+  rupturas: {
+    sub: number | null;
+    subArga: number | null;
+    rupArga: number | null;
+    argaCola: number | null;
+    colarPastilha: number | null;
+  };
+}
+
 @Component({
   selector: 'app-arquivo',
   imports: [
@@ -130,6 +168,17 @@ export class ArquivoComponent implements OnInit {
   modalImpressao: boolean = false;
   uploadedFilesWithInfo: FileWithInfo[] = [];
 
+
+
+  modalDadosLaudoSubstrato: boolean = false;
+  linhas: Linha[] = [];
+
+  modalDadosLaudoSuperficial: boolean = false;
+  linhasSuperficial: LinhaSuperficial[] = [];
+  analise_superficial: any[] = [];
+
+
+
   ensaios_laudo: any[] = [];
   ensaios_selecionados: any[] = [];
   amostra_detalhes_selecionada: any[] = [];
@@ -199,6 +248,47 @@ private confirmationService: ConfirmationService,
 ){}
   ngOnInit(): void {
     this.loadAnalises();
+    for (let i = 1; i <= 10; i++) {
+      this.linhas.push({
+        numero: i,
+        diametro: null,
+        area: null,
+        espessura: null,
+        subst: null,
+        junta: null,
+        carga: null,
+        resist: null,
+        validacao: "",
+        rupturas: {
+          sub: null,
+          subArga: null,
+          rupArga: null,
+          argaCola: null,
+          colarPastilha: null
+        }
+      });
+    }
+
+    for (let i = 1; i <= 10; i++) {
+      this.linhasSuperficial.push({
+        numero: i,
+        diametro: null,
+        area: null,
+        espessura: null,
+        subst: null,
+        junta: null,
+        carga: null,
+        resist: null,
+        validacao: "",
+        rupturas: {
+          sub: null,
+          subArga: null,
+          rupArga: null,
+          argaCola: null,
+          colarPastilha: null
+        }
+      });
+    }
 
   }
   ngAfterViewInit() {
@@ -210,6 +300,8 @@ private confirmationService: ConfirmationService,
     return this.loginService.hasAnyGroup(groups);
   }
   
+  
+
   analisesFiltradas: any[] = []; // array para exibir na tabela
   materiaisSelecionados: string[] = []; // valores escolhidos no multiselect
   loadAnalises(): void {
@@ -249,6 +341,7 @@ private confirmationService: ConfirmationService,
         console.error('Erro ao carregar análises', error);
       }
     );
+
   }
 
   // Filtro pelo MultiSelect
@@ -2199,65 +2292,65 @@ duplicata(amostra: any): void {
     contadorLinhas = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 10 : contadorLinhas + 10;
 
     autoTable(doc, {
-  startY: contadorLinhas,
-  head: [[
-    { content: 'CP' },
-    { content: 'Carga de Ruptura à Flexão (N)' },
-    { content: 'Resist. à Tração na Flexão (Mpa)' },
-    { content: 'Resist. Média (Mpa)' },
-    { content: 'Resist. Tração Flexão' },
-  ]],
-  body: [
-    ['1', '712', '1,67', '', ''],
-    ['2', '808', '1,89', '1,8', ''],
-    ['3', '740', '1,73', '', ''],
-    [
-      { content: 'Desvio-padrão (Mpa):', colSpan: 5, styles: { halign: 'left' } }
-    ],
-    [
-      { content: 'Desvio absoluto máximo (Mpa):', colSpan: 5, styles: { halign: 'left' } }
-    ],
-    [
-      { content: 'Coeficiente de variação (%):', colSpan: 5, styles: { halign: 'left' } }
-    ],
-  ],
-  theme: 'grid',
-  styles: { fontSize: 8, halign: 'center', cellPadding: 1 },
-  headStyles: { fillColor: [220,220,220], textColor: 0, fontStyle: 'bold' }
-});
+      startY: contadorLinhas,
+      head: [[
+        { content: 'CP' },
+        { content: 'Carga de Ruptura à Flexão (N)' },
+        { content: 'Resist. à Tração na Flexão (Mpa)' },
+        { content: 'Resist. Média (Mpa)' },
+        { content: 'Resist. Tração Flexão' },
+      ]],
+      body: [
+        ['1', '712', '1,67', '', ''],
+        ['2', '808', '1,89', '1,8', ''],
+        ['3', '740', '1,73', '', ''],
+        [
+          { content: 'Desvio-padrão (Mpa):', colSpan: 5, styles: { halign: 'left' } }
+        ],
+        [
+          { content: 'Desvio absoluto máximo (Mpa):', colSpan: 5, styles: { halign: 'left' } }
+        ],
+        [
+          { content: 'Coeficiente de variação (%):', colSpan: 5, styles: { halign: 'left' } }
+        ],
+      ],
+      theme: 'grid',
+      styles: { fontSize: 8, halign: 'center', cellPadding: 1 },
+      headStyles: { fillColor: [220,220,220], textColor: 0, fontStyle: 'bold' }
+    });
 
-contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+    contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
 
-// ====== TABELA RESISTÊNCIA COMPRESSÃO ======
-autoTable(doc, {
-  startY: contadorLinhas,
-  head: [[
-    { content: 'CP' },
-    { content: 'Carga de Ruptura à Compressão (N)' },
-    { content: 'Resist. à Tração na Compressão (Mpa)' },
-    { content: 'Resist. Média (Mpa)' },
-    { content: 'Resist. Tração Compressão' },
-  ]],
-  body: [
-    ['1', '10000', '5,66', '', ''],
-    ['2', '9900', '2,66', '5,9', ''],
-    ['3', '9000', '6,652', '', ''],
-    [
-      { content: 'Desvio-padrão (Mpa):', colSpan: 5, styles: { halign: 'left' } }
-    ],
-    [
-      { content: 'Desvio absoluto máximo (Mpa):', colSpan: 5, styles: { halign: 'left' } }
-    ],
-    [
-      { content: 'Coeficiente de variação (%):', colSpan: 5, styles: { halign: 'left' } }
-    ],
-  ],
-  theme: 'grid',
-  styles: { fontSize: 8, halign: 'center', cellPadding: 1 },
-  headStyles: { fillColor: [220,220,220], textColor: 0, fontStyle: 'bold' }
-});
+    // ====== TABELA RESISTÊNCIA COMPRESSÃO ======
+    autoTable(doc, {
+      startY: contadorLinhas,
+      head: [[
+        { content: 'CP' },
+        { content: 'Carga de Ruptura à Compressão (N)' },
+        { content: 'Resist. à Tração na Compressão (Mpa)' },
+        { content: 'Resist. Média (Mpa)' },
+        { content: 'Resist. Tração Compressão' },
+      ]],
+      body: [
+        ['1', '10000', '5,66', '', ''],
+        ['2', '9900', '2,66', '5,9', ''],
+        ['3', '9000', '6,652', '', ''],
+        [
+          { content: 'Desvio-padrão (Mpa):', colSpan: 5, styles: { halign: 'left' } }
+        ],
+        [
+          { content: 'Desvio absoluto máximo (Mpa):', colSpan: 5, styles: { halign: 'left' } }
+        ],
+        [
+          { content: 'Coeficiente de variação (%):', colSpan: 5, styles: { halign: 'left' } }
+        ],
+      ],
+      theme: 'grid',
+      styles: { fontSize: 8, halign: 'center', cellPadding: 1 },
+      headStyles: { fillColor: [220,220,220], textColor: 0, fontStyle: 'bold' }
+    });
 
-contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+    contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
     // ====== TABELA head2/body2 ==================================================
     const head2 = [
       [
@@ -3027,6 +3120,31 @@ contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
       });
     }
     this.modalLaudo = true;
+  }
+
+  abrirModalDadosLaudoSubstrato(amostra_detalhes: any) {
+    this.analise_superficial = amostra_detalhes;
+    this.modalDadosLaudoSubstrato = true;
+  }
+
+  abrirModalDadosLaudoSuperficial(amostra_detalhes: any) {
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: 'Determinação da resistência potencial de aderência a tração ao substrato salvo com sucesso!'
+    });
+    this.modalDadosLaudoSubstrato = false;
+    this.modalDadosLaudoSuperficial = true;
+  }
+
+  salvarSuperficial(amostra_detalhes: any) {
+    this.modalDadosLaudoSuperficial = false;
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: 'Determinação da resistência potencial de aderência a tração superficial salvo com sucesso!'
+    });
+    this.abrirModalLaudo(amostra_detalhes);
   }
 
   getStatusIcon(status: boolean): string {
