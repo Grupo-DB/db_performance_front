@@ -3019,7 +3019,7 @@ calcularEnsaios(ensaios: any[], produto: any) {
     });
     console.log('Função final para eval:', funcaoSubstituida);
     try {
-      calc.resultado = eval(funcaoSubstituida);
+      calc.resultado = evaluate(funcaoSubstituida);
     } catch (e) {
       calc.resultado = 'Erro no cálculo';
     }

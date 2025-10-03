@@ -1,3 +1,5 @@
+<!-- <app-arquivo [mostrarMenu]="false"></app-arquivo> -->
+
 <div class="menu">
     <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
         <li nz-menu-item nzMatchRouter="#">
@@ -46,15 +48,110 @@
     </ul>
 </div>
 
+    <div class="container flex flex-column align-items-center mb-4">
+        <div class="containerInterno w-12">
+            <div class="background-form" @swipeAnimation>
+                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                    <div class="fg1 flex flex-column w-12 align-items-center">
+                        <p-card class="card w-12 text-left exemplo">
+                            <ng-template #header>
+                                <div class="header w-full text-center">
+                                <h2>Controle de Qualidade</h2>
+                                </div>
+                            </ng-template>
+                            <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="w-full">
+                                <div class="lab-dashboard w-full">
+                                    <div class="main w-full">
+                                        <section class="content w-full">
 
-<div class="center-content" >
+                                            <div class="cards grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+                                                <div class="card p-4 shadow-md rounded-lg text-center bg-white">
+                                                    <div class="card-title font-semibold">
+                                                        Análises hoje
+                                                    </div>
+                                                    <div class="card-value text-2xl font-bold text-blue-600">
+                                                        128
+                                                    </div>
+                                                </div>
+                                                <div class="card p-4 shadow-md rounded-lg text-center bg-white">
+                                                    <div class="card-title font-semibold">
+                                                        Pendente
+                                                    </div>
+                                                    <div class="card-value text-2xl font-bold text-orange-500">
+                                                        34
+                                                    </div>
+                                                </div>
+                                                <div class="card p-4 shadow-md rounded-lg text-center bg-white">
+                                                    <div class="card-title font-semibold">
+                                                        Aprovadas
+                                                    </div>
+                                                    <div class="card-value text-2xl font-bold text-green-600">
+                                                        82
+                                                    </div>
+                                                </div>
+                                                <div class="card p-4 shadow-md rounded-lg text-center bg-white">
+                                                    <div class="card-title font-semibold">
+                                                        Laudos
+                                                    </div>
+                                                    <div class="card-value text-2xl font-bold text-purple-600">
+                                                        12
+                                                    </div>
+                                                </div>
+                                            </div>
 
-    <h1>Work in progress......</h1>
+                                            <div class="panel-row grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                                <div class="panel large col-span-2 p-4 bg-white shadow-md rounded-lg">
+                                                    <h3 class="mb-3 font-semibold">Gráfico de Resultado</h3>
+                                                    <canvas id="chart" class="w-full h-64"></canvas>
+                                                </div>
 
-</div>
+                                                <div class="panel small p-4 bg-white shadow-md rounded-lg">
+                                                    <h3 class="mb-3 font-semibold">
+                                                        Últimas Análises
+                                                    </h3>
+                                                    <table class="table w-full border-collapse">
+                                                        <thead>
+                                                            <tr class="bg-gray-100 text-sm">
+                                                                <th class="p-2 text-left">ID</th>
+                                                                <th class="p-2 text-left">Material</th>
+                                                                <th class="p-2 text-left">Data</th>
+                                                                <th class="p-2 text-left">Status</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr *ngFor="let r of exemplos" class="border-t hover:bg-gray-50">
+                                                                <td class="p-2">{{r.id}}</td>
+                                                                <td class="p-2">{{r.material}}</td>
+                                                                <td class="p-2">{{r.data}}</td>
+                                                                <td class="p-2">{{r.status}}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
 
+                                            <div class="cards grid grid-cols-1 sm:grid-cols-12 lg:grid-cols-12 gap-4 mb-5">
+                                                <div class="card p-4 shadow-md rounded-lg text-center bg-white tabela">
+                                                    <div class="card-title font-semibold">
+                                                        Banco de análises
+                                                    </div>
+                                                    <div class="card-value text-2xl font-bold text-blue-600">
+                                                        
+                                                        <!-- <app-arquivo [mostrarMenu]="false"></app-arquivo> -->
 
+                                                    </div>
+                                                </div>
+                                               
+                                            </div>
+                                        </section>
+                                    </div>
+                                </div>
+                            </div>
+                        </p-card>
+                    </div>
+                </div>
+            </div>
+        </div>  
+    </div>
 
-
-
-
+    

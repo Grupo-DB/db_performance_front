@@ -1289,7 +1289,7 @@ submitAmostra() {
         } else {
           this.clearForm();
           this.loadAmostras();
-          this.activeStep = 2;
+          this.activeStep = 1;
         }
       }, 2000);
     },
@@ -2012,9 +2012,7 @@ criarOSDoFormulario() {
     'data': 'Data da Ordem',
     'numero': 'Número da Ordem',
     'planoAnalise': 'Plano de Análise',
-    'responsavel': 'Responsável',
     'digitador': 'Digitador',
-    'classificacao': 'Classificação'  // 
   };
   
   const camposVaziosOrdem = [];
@@ -2226,7 +2224,8 @@ limparDadosFormulario() {
         });
         
         // redirecionar
-        // this.router.navigate(['/welcome/controleQualidade/amostra']);
+        
+        this.router.navigate(['/welcome/controleQualidade/ordem']);
       },
       error: (error) => {
         console.error('❌ Erro ao criar análise:', error);
@@ -2331,34 +2330,34 @@ sincronizarValoresEnsaios(produto: any, calc: any) {
   });
 }
 
-calcular(calc: any, produto?: any) {
-  if (produto) {
-    this.sincronizarValoresEnsaios(produto, calc);
-  }
-  if (!calc.ensaios_detalhes || !Array.isArray(calc.ensaios_detalhes)) {
-    calc.resultado = 'Sem ensaios para calcular';
-    return;
-  }
+// calcular(calc: any, produto?: any) {
+//   if (produto) {
+//     this.sincronizarValoresEnsaios(produto, calc);
+//   }
+//   if (!calc.ensaios_detalhes || !Array.isArray(calc.ensaios_detalhes)) {
+//     calc.resultado = 'Sem ensaios para calcular';
+//     return;
+//   }
 
-  // Descobre todos os varX usados na expressão
-  const varMatches = (calc.funcao.match(/var\d+/g) || []);
-  const varList = Array.from(new Set(varMatches));
+//   // Descobre todos os varX usados na expressão
+//   const varMatches = (calc.funcao.match(/var\d+/g) || []);
+//   const varList = Array.from(new Set(varMatches));
 
-  // Monta safeVars usando o valor correto para cada varX
-  const safeVars: any = {};
+//   // Monta safeVars usando o valor correto para cada varX
+//   const safeVars: any = {};
 
-  // safe var6 -> PNquimica %, var9 -> RE (reativ) %
-  safeVars['var6'] = calc.ensaios_detalhes[0]?.valor ?? 0;
-  safeVars['var9'] = calc.ensaios_detalhes[1]?.valor ?? 0;
+//   // safe var6 -> PNquimica %, var9 -> RE (reativ) %
+//   safeVars['var6'] = calc.ensaios_detalhes[0]?.valor ?? 0;
+//   safeVars['var9'] = calc.ensaios_detalhes[1]?.valor ?? 0;
 
-  // Avaliação
-  console.log('Função final para eval:', calc.funcao, safeVars);
-  try {
-    calc.resultado = evaluate(calc.funcao, safeVars);
-  } catch (e) {
-    calc.resultado = 'Erro no cálculo';
-  }
-}
+//   // Avaliação
+//   console.log('Função final para eval:', calc.funcao, safeVars);
+//   try {
+//     calc.resultado = evaluate(calc.funcao, safeVars);
+//   } catch (e) {
+//     calc.resultado = 'Erro no cálculo';
+//   }
+// }
 
 private normalize(str: string): string {
   if (!str) return '';
@@ -2411,44 +2410,44 @@ private atualizarDataDescarte(): void {
   }
 }
 
-recalcularTodosCalculos(produto: any) {
-  if (produto && produto.planoCalculos) {
-    produto.planoCalculos.forEach((calc: any) => this.calcular(calc));
-  }
-}
+// recalcularTodosCalculos(produto: any) {
+//   if (produto && produto.planoCalculos) {
+//     produto.planoCalculos.forEach((calc: any) => this.calcular(calc));
+//   }
+// }
 
-calcularEnsaios(ensaios: any[], produto: any) {
-  const planoCalculos = produto.planoCalculos || [];
-  if (!planoCalculos.length) {
-    produto.resultado = 'Sem função';
-    return;
-  }
+// calcularEnsaios(ensaios: any[], produto: any) {
+//   const planoCalculos = produto.planoCalculos || [];
+//   if (!planoCalculos.length) {
+//     produto.resultado = 'Sem função';
+//     return;
+//   }
 
-  planoCalculos.forEach((calc: { funcao: any; ensaios_detalhes: any[]; resultado: string; }) => {
-    let funcaoSubstituida = calc.funcao;
-    calc.ensaios_detalhes.forEach((ensaio: any) => {
-      const valor = ensaio.valor !== undefined && ensaio.valor !== null ? ensaio.valor : 0;
-      funcaoSubstituida = funcaoSubstituida.replace(
-        new RegExp('\\b' + ensaio.descricao + '\\b', 'gi'),
-        valor
-      );
-    });
-    console.log('Função final para eval:', funcaoSubstituida);
-    try {
-      calc.resultado = eval(funcaoSubstituida);
-    } catch (e) {
-      calc.resultado = 'Erro no cálculo';
-    }
-  });
+//   planoCalculos.forEach((calc: { funcao: any; ensaios_detalhes: any[]; resultado: string; }) => {
+//     let funcaoSubstituida = calc.funcao;
+//     calc.ensaios_detalhes.forEach((ensaio: any) => {
+//       const valor = ensaio.valor !== undefined && ensaio.valor !== null ? ensaio.valor : 0;
+//       funcaoSubstituida = funcaoSubstituida.replace(
+//         new RegExp('\\b' + ensaio.descricao + '\\b', 'gi'),
+//         valor
+//       );
+//     });
+//     console.log('Função final para eval:', funcaoSubstituida);
+//     try {
+//       calc.resultado = eval(funcaoSubstituida);
+//     } catch (e) {
+//       calc.resultado = 'Erro no cálculo';
+//     }
+//   });
 
-  produto.resultado = planoCalculos[0]?.resultado;
-}
+//   produto.resultado = planoCalculos[0]?.resultado;
+// }
 
-calcularTodosCalculosDoPlano(plano: any) {
-  if (plano && plano.calculo_ensaio_detalhes) {
-    plano.calculo_ensaio_detalhes.forEach((calc: any) => this.calcular(calc, plano));
-  }
-}
+// calcularTodosCalculosDoPlano(plano: any) {
+//   if (plano && plano.calculo_ensaio_detalhes) {
+//     plano.calculo_ensaio_detalhes.forEach((calc: any) => this.calcular(calc, plano));
+//   }
+// }
 
 salvarAnaliseResultados() {
   this.getDigitadorInfo();

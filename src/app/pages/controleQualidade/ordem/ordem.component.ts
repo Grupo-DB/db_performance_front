@@ -201,12 +201,13 @@ export class OrdemComponent implements OnInit {
   children?: TreeNode[];
   leaf?: boolean;
   expanded?: boolean;
-    partialSelected?: boolean;
+  partialSelected?: boolean;
 
-selectedEnsaios: TreeNode[] = []; // aqui ficam os selecionados
+  selectedEnsaios: TreeNode[] = []; // aqui ficam os selecionados
 
   modalVisualizar: boolean = false;
   analiseSelecionada: any;
+
 
   tipoFiltro = [
     { value: 'Expressa' },
@@ -3324,7 +3325,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
       analise.amostra_detalhes.expressa_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
 
         const existe = resultado.some(item => {
-          console.log("comparando -> item.pai:", ''+item.pai, "| ensaio_detalhes.id:", ''+ensaio_detalhes.id);
           return item.pai == ensaio_detalhes.id;
         });
 
@@ -3360,16 +3360,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
           ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
             const pai = resultado.find(item => item.pai == ensaio_detalhes.id);
             const filhoExiste = pai?.filhos.includes(String(variavel_detalhes.id));
-
-            // console.log(
-            //   "comparando -> filhos do pai:",
-            //   pai?.filhos,
-            //   "| variavel_detalhes.id:",
-            //   ''+variavel_detalhes.id,
-            //   "| existe?",
-            //   filhoExiste
-            // );
-
             if (filhoExiste) {
               linha.push({ content: variavel_detalhes.nome, styles: { halign: "center" } });
               let variavel_valor = '';
@@ -3410,7 +3400,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
       analise.amostra_detalhes.expressa_detalhes.calculo_ensaio_detalhes.forEach((calculo_ensaio_detalhes: any) => {
 
         const existe = resultado.some(item => {
-          console.log("comparando -> item.pai:", ''+item.pai, "| calculo_ensaio_detalhes.id:", ''+calculo_ensaio_detalhes.id);
           return item.pai == calculo_ensaio_detalhes.id;
         });
         if(existe){
@@ -3465,7 +3454,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
             const filhoExiste = pai?.filhos.includes(String(ensaios_detalhes.id));
 
             if (filhoExiste) {
-              linha.push({ content: ensaios_detalhes.nome, styles: { halign: "center"} });
+              linha.push({ content: ensaios_detalhes.descricao, styles: { halign: "center"} });
               let variavel_valor = '';
               if(ensaios_detalhes.valor && ensaios_detalhes.valor != 0){
                 variavel_valor = ensaios_detalhes.valor;
@@ -3513,7 +3502,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
               
         plano_detalhes.ensaio_detalhes.forEach((ensaio_detalhes: any) => {
           const existe = resultado.some(item => {
-            console.log("comparando -> item.pai:", ''+item.pai, "| ensaio_detalhes.id:", ''+ensaio_detalhes.id);
+            // console.log("comparando -> item.pai:", ''+item.pai, "| ensaio_detalhes.id:", ''+ensaio_detalhes.id);
             return item.pai == ensaio_detalhes.id;
           });
           if(existe){

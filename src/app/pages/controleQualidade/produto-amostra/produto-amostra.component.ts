@@ -59,7 +59,6 @@ export interface ProdutoAmostra {
     FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,
     ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink,
     InputNumberModule, AutoCompleteModule, MultiSelectModule, CardModule, InplaceModule,
-    CdkDragPlaceholder
 ],
   animations:[
     trigger('efeitoFade', [
