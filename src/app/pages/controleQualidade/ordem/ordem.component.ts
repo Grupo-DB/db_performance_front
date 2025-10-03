@@ -4207,6 +4207,7 @@ onDescricaoInput(index: number, event: Event): void {
         } else {
           this.finalizarComErro('Nenhuma amostra foi recebida para vincular à ordem');
         }
+        this.loadOrdens;
       },
       error: (err) => {
         this.isCreatingOrdem = false;
@@ -4336,7 +4337,11 @@ private criarAnaliseParaAmostra(amostraId: number): void {
       summary: 'Sucesso',
       detail: `Ordem Normal criada, amostra vinculada e análise criada! Redirecionando...`
     });
-    
+    this.loadOrdens();
+    this.loadAnalises();
+    this.loadPlanosAnalise();
+    this.carregarEnsaiosECalculosDisponiveis();
+
     // Redirecionar para a página de análise após delay
     setTimeout(() => {
       this.router.navigate(['/welcome/controleQualidade/analise'], {
@@ -4381,6 +4386,8 @@ private criarAnaliseParaAmostra(amostraId: number): void {
     
     // Resetar formulário
     this.registerOrdemForm.reset();
+    this.loadOrdens;
+
     this.configurarFormularioInicial();
   }
 
