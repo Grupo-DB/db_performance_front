@@ -24,6 +24,50 @@
   border: 1px solid #16A34A !important;
 }
 
+/* ===== Estilos Tabela 2 (Tempo em Aberto) ===== */
+:host ::ng-deep .handsontable .htCore td.section-title {
+  background: #f3f4f6 !important;
+  font-weight: 700;
+  text-align: center;
+  white-space: pre-wrap;
+}
+
+:host ::ng-deep .handsontable .htCore td.section-subtitle {
+  background: #f9fafb !important;
+  font-weight: 600;
+  text-align: center;
+}
+
+:host ::ng-deep .handsontable .htCore td.inner-header {
+  background: #eef2ff !important;
+  color: #1d4ed8 !important;
+  font-weight: 700;
+  text-align: center;
+  white-space: pre-wrap;
+}
+
+:host ::ng-deep .handsontable .htCore td.eval-valid {
+  color: #16a34a !important;
+  font-weight: 700;
+}
+
+:host ::ng-deep .handsontable .htCore td.eval-invalid {
+  color: #dc2626 !important;
+  font-weight: 700;
+}
+
+:host ::ng-deep .handsontable .htCore td.summary-cell {
+  background: #fff7ed !important;
+  color: #9a3412 !important;
+  font-weight: 700;
+}
+
+:host ::ng-deep .handsontable .htCore td.footer-row {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  font-weight: 600;
+}
+
 /* Seletor de tabelas (botões) */
 .table-type-selector {
   display: flex;
@@ -54,4 +98,10 @@
     color: #1d4ed8;
     font-weight: 600;
   }
+}
+
+/* Wrapper para evitar colunas muito largas e permitir scroll horizontal quando necessário */
+.tabela-wrapper {
+  overflow: auto;
+  max-width: 100%;
 }
