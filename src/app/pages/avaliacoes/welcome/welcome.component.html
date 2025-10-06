@@ -1,8 +1,8 @@
 
-<div *ngIf="isLoading" class="loading-animation flex align-items-center justify-content-center">
+<!-- <div *ngIf="isLoading" class="loading-animation flex align-items-center justify-content-center">
   <img src="assets/imagens/startmanager2.gif" alt="Loading..." class="w-6 md:w-4 lg:w-10">
-</div>
-<nz-layout *ngIf="!isLoading" class="app-layout w-full h-screen">
+</div> -->
+<nz-layout  class="app-layout w-full h-screen">
     <nz-sider class="menu-sidebar"
       nzCollapsible
       nzWidth="256px"
@@ -67,7 +67,7 @@
           </ul> 
           <ul>
             <li class="cor-menu" *ngIf="hasGroup(['Admin'])" nz-menu-item   nzMatchRouter>
-              <a class="cor-menu-a" href="http://172.50.10.79:8008/admin/" target="_blank"><span nz-icon nzType="user" nzTheme="outline"></span>  Admin</a>
+              <a class="cor-menu-a" href="http://localhost:8000/admin/" target="_blank"><span nz-icon nzType="user" nzTheme="outline"></span>  Admin</a>
             </li> 
           </ul>
         </li>
@@ -113,7 +113,7 @@
               ></span>
           </span>   
           <div class="inicio ">
-            <div class="divnot -ml-3">
+            <div class="divnot -ml-3" *ngIf="colaborador">
               <p>Olá, <b>{{ colaborador.nome }}</b>.</p>
               <p style="margin-top: -55px;">
                 <a routerLink="inicial">
@@ -125,7 +125,7 @@
           <div class="top">
             <strong>{{ hoje | date:' HH:mm' }}</strong>
           </div>
-          <div class="final">
+          <div class="final" *ngIf="colaborador?.empresa_detalhes && colaborador?.filial_detalhes">
             <div class="empresa">
               <p>Empresa:<strong> {{ colaborador.empresa_detalhes.nome }}</strong>
               <p style="margin-top: -55px;">Filial ativa:<strong> {{ colaborador.filial_detalhes.nome }}</strong></p>

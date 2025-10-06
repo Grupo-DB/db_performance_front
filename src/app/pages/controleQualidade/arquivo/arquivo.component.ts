@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { CommonModule, formatDate } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormGroup } from '@angular/forms';
@@ -145,45 +145,33 @@ interface LinhaSuperficial {
       MessageService,ConfirmationService
     ],
   templateUrl: './arquivo.component.html',
-  styleUrl: './arquivo.component.scss'
+  styleUrl: './arquivo.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArquivoComponent implements OnInit {
   @Input() mostrarMenu = true; 
-  
   @ViewChild('graficoCanvas', { static: true }) graficoCanvas!: ElementRef<HTMLCanvasElement>;
   chart!: Chart;
-
   @ViewChild('dt1') dt1!: Table;
   inputValue: string = '';
-
   amostras: Amostra[] = [];
   ordens: Ordem[] = [];
   analises: any[] = [];
-
   produtosFiltrados: any[] = [];
   materiaisFiltro: any[] = [];
-
   laudoForm!: FormGroup;
   modalLaudo: boolean = false;
   modalImpressao: boolean = false;
   uploadedFilesWithInfo: FileWithInfo[] = [];
-
-
-
   modalDadosLaudoSubstrato: boolean = false;
   linhas: Linha[] = [];
-
   modalDadosLaudoSuperficial: boolean = false;
   linhasSuperficial: LinhaSuperficial[] = [];
   analise_superficial: any[] = [];
-
-
-
   ensaios_laudo: any[] = [];
   ensaios_selecionados: any[] = [];
   amostra_detalhes_selecionada: any[] = [];
   analises_selecionadas: any[] = [];
-
   // Propriedades para ordem expressa
   isOrdemExpressa: boolean = false;
   ensaiosDisponiveis: any[] = [];
@@ -192,27 +180,19 @@ export class ArquivoComponent implements OnInit {
   calculosSelecionados: any[] = [];
   modalEnsaiosVisible: boolean = false;
   modalCalculosVisible: boolean = false;
-
   editFormVisible: boolean = false;
   modalVisualizar: boolean = false;
   analiseSelecionada: any;
-
   amostraImagensSelecionada: any;
   imagensAmostra: any[] = [];
   imagemAtualIndex: number = 0;
   modalImagensVisible = false;
-
-
   bodyTabelaObs: string = '';
-
   selectedEnsaios: TreeNode[] = []; // aqui ficam os selecionados
-  
-
   tipoFiltro = [
     { value: 'Expressa' },
     { value: 'Plano' },
   ];
-
   // Grafico Lauudo
   dadosTabela = [
     { tempo: '5min', valor: 2.3 },
@@ -223,7 +203,6 @@ export class ArquivoComponent implements OnInit {
     { tempo: '4h', valor: 12.0 },
     { tempo: '6h', valor: 14.0 }
   ];
-
   materiais: any[] = [
     { value: 'Aditivos' },
     { value: 'Acabamento' },
@@ -238,7 +217,6 @@ export class ArquivoComponent implements OnInit {
     { value: 'Mineracao' },
     { value: 'Areia' },
   ]
-
 constructor(
 private loginService: LoginService,
 private analiseService: AnaliseService,
@@ -295,13 +273,9 @@ private confirmationService: ConfirmationService,
     this.dt1.filter(true, 'laudo', 'equals');
     this.dt1.filter(true, 'aprovada', 'equals');
   }
-
   hasGroup(groups: string[]): boolean {
     return this.loginService.hasAnyGroup(groups);
   }
-  
-  
-
   analisesFiltradas: any[] = []; // array para exibir na tabela
   materiaisSelecionados: string[] = []; // valores escolhidos no multiselect
   loadAnalises(): void {
@@ -317,8 +291,6 @@ private confirmationService: ConfirmationService,
           responsavel: analise.amostra_detalhes?.expressa_detalhes?.responsavel ?? '',
           data_entrada: analise.amostra_detalhes?.data_entrada ?? '',
           data_coleta: analise.amostra_detalhes?.data_coleta ?? '',
-
-        
         }));
         // Inicializa a lista filtrada
       this.analisesFiltradas = [...this.analises];
@@ -333,9 +305,6 @@ private confirmationService: ConfirmationService,
             (item, index, self) =>
               index === self.findIndex((opt) => opt.value === item.value)
           );
-
-        // ✅ NOVO: Carregar dados completos e verificar alertas de rompimento
-        //this.carregarDadosCompletosEVerificarAlertas();
       },
       (error) => {
         console.error('Erro ao carregar análises', error);
@@ -343,7 +312,6 @@ private confirmationService: ConfirmationService,
     );
 
   }
-
   // Filtro pelo MultiSelect
   filtrarPorMateriais(): void {
     if (this.materiaisSelecionados.length === 0) {
@@ -354,7 +322,6 @@ private confirmationService: ConfirmationService,
       );
     }
   }
-
   //Normalização
   private normalize(str: string): string {
     if (!str) return '';
@@ -381,9 +348,7 @@ private confirmationService: ConfirmationService,
         return 'secondary';
     }
   }
-
   //////////////////////////////////////////////////
-  
   tipoSelecionados: string = ''; // valores escolhidos no multiselect
   // Filtro pelo MultiSelect
   filtrarPorTipo(): void {
@@ -401,7 +366,6 @@ private confirmationService: ConfirmationService,
       }
     }
   }
-
   //Tipos de Ordem
   getTipoOrdem(tipoOrdem: string): 'warn' | 'contrast' | undefined {
     switch (tipoOrdem) {
@@ -411,14 +375,12 @@ private confirmationService: ConfirmationService,
         return 'contrast';
     }
   }
-
   // Filtro Global
   filterTable(): void {
     if (this.dt1) {
       this.dt1.filterGlobal(this.inputValue, 'contains');
     }
   }
-  
   //Menu Items
     getMenuItems(analise: any) {
     const menuItems = [
@@ -434,14 +396,10 @@ private confirmationService: ConfirmationService,
   visualizar(analise: any) {
     this.analiseSelecionada = analise;
     this.modalVisualizar = true;
-    console.log('Drawer deve abrir', analise); 
   }
-
   imprimirVisualizar(analise: any){
       const doc = new jsPDF();
-  
       let y = 10; // posição inicial Y
-  
       doc.setFontSize(20);
       const pageWidth = doc.internal.pageSize.getWidth(); // largura da página
       doc.text("OS", pageWidth / 2, y, { align: "center" });    
@@ -527,8 +485,6 @@ private confirmationService: ConfirmationService,
       const blobUrl = doc.output("bloburl");
       window.open(blobUrl, "_blank");
     }
-  
-
   abrirModalImpressao(analise: any) {
     console.log('analise', analise);
     this.amostra_detalhes_selecionada = analise;

@@ -3,10 +3,11 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+  "start": "ng serve --proxy-config src/proxy.conf.json",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "start:api": "node server/azure-openai-proxy.cjs"
   },
   "private": true,
   "dependencies": {
@@ -25,7 +26,10 @@
     "@tailwindcss/postcss": "^4.0.2",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.7",
+    "cors": "^2.8.5",
     "date-fns": "^4.1.0",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
     "handsontable": "^16.1.1",
     "hyperformula": "^3.0.1",
     "jspdf": "^2.5.2",
@@ -35,6 +39,7 @@
     "ng-zorro-antd": "^19.0.2",
     "ngx-editor": "^18.0.0",
     "ngx-toastr": "^19.0.0",
+    "openai": "^6.1.0",
     "postcss": "^8.5.1",
     "primeflex": "^3.3.1",
     "primeicons": "^7.0.0",

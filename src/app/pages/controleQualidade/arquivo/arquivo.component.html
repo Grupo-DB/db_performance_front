@@ -45,7 +45,6 @@
         </li>
     </ul>
 </div>
-
     <div class="container flex flex-column align-items-center mb-4">
         <div class="containerInterno w-12">
             <div class="background-form" @swipeAnimation>
@@ -75,20 +74,13 @@
                             <ng-template pTemplate="caption">
                                 <div class="step1 flex flex-column w-12 justify-content-between lg:w-12 lg:flex-row">
                                     <div class="flex gap-3 w-12">
-                                        <div class="w-3 text-left">
-                                            
+                                        <div class="w-3 text-left">                                           
                                         </div>
-
                                         <div class="w-3 text-left">
-                                            
-                                        </div>
-                                
-                                    
-                                        <div class=" flex w-2 mt-3 justify-content-end text-right">
-                                            
                                         </div>
                                         <div class=" flex w-2 mt-3 justify-content-end text-right">
-                                            
+                                        </div>
+                                        <div class=" flex w-2 mt-3 justify-content-end text-right">
                                         </div>
                                     </div>
                                     <div class=" flex w-2 gap-3 justify-content-end text-right">
@@ -99,7 +91,7 @@
                                                     variant="filled" 
                                                     [(ngModel)]="inputValue"
                                                     [style]="{'width':'100%'}" 
-                                                    pInputText id="on_label"
+                                                     id="on_label"
                                                     autocomplete="off" 
                                                     type="text" 
                                                     (input)="filterTable()"
@@ -461,7 +453,7 @@
                 <div class="w-full mb-3">
                     <p-floatLabel variant="on">
                         <input 
-                            pInputText 
+                             
                             [(ngModel)]="imagensAmostra[imagemAtualIndex].descricao" 
                             type="text" 
                             id="edit-descricao"
@@ -714,7 +706,7 @@
                                                 <input
                                                     value="{{ ensaio.garantia }}"
                                                     type="text"
-                                                    pInputText
+                                                    
                                                     [(ngModel)]="ensaio.garantia"
                                                     placeholder="Digite a garantia"
                                                 />
@@ -785,19 +777,19 @@
                                         <ng-template pTemplate="body" let-linha let-i="rowIndex">
                                             <tr>
                                                 <td>{{ linha.numero }}</td>
-                                                <td><input pInputText [(ngModel)]="linha.diametro" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.area" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.espessura" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.subst" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.junta" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.carga" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.resist" type="number" step="0.01" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.validacao" type="text" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.rupturas.sub" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.rupturas.subArga" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.rupturas.rupArga" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.rupturas.argaCola" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.rupturas.colarPastilha" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.diametro" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.area" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.espessura" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.subst" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.junta" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.carga" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.resist" type="number" step="0.01" /></td>
+                                                <td><input  [(ngModel)]="linha.validacao" type="text" /></td>
+                                                <td><input  [(ngModel)]="linha.rupturas.sub" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.rupturas.subArga" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.rupturas.rupArga" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.rupturas.argaCola" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.rupturas.colarPastilha" type="number" /></td>
                                             </tr>
                                         </ng-template>
                                     </p-table>
@@ -868,19 +860,19 @@
                                         <ng-template pTemplate="body" let-linha let-i="rowIndex">
                                             <tr>
                                                 <td>{{ linha.numero }}</td>
-                                                <td><input pInputText [(ngModel)]="linha.diametro" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.area" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.espessura" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.subst" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.junta" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.carga" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.resist" type="number" step="0.01" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.validacao" type="text" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.rupturas.sub" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.rupturas.subArga" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.rupturas.rupArga" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.rupturas.argaCola" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.rupturas.colarPastilha" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.diametro" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.area" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.espessura" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.subst" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.junta" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.carga" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.resist" type="number" step="0.01" /></td>
+                                                <td><input  [(ngModel)]="linha.validacao" type="text" /></td>
+                                                <td><input  [(ngModel)]="linha.rupturas.sub" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.rupturas.subArga" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.rupturas.rupArga" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.rupturas.argaCola" type="number" /></td>
+                                                <td><input  [(ngModel)]="linha.rupturas.colarPastilha" type="number" /></td>
                                             </tr>
                                         </ng-template>
                                     </p-table>
