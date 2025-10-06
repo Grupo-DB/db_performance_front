@@ -3746,7 +3746,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
   }
 
   getMenuItems(analise: any) {
-    const menuItems = [
+    return [
       { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(analise), tooltip: 'Visualizar OS', tooltipPosition: 'top' },
       { label: 'Imprimir', icon: 'pi pi-print', command: () => this.abrirModalImpressao(analise) },
       { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(analise.amostra_detalhes) },
@@ -3754,7 +3754,8 @@ gerarNumero(materialNome: string, sequencial: number): string {
       { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise.amostra_detalhes.id) },
       //{ label: 'Duplicata', icon: 'pi pi-file-import', command: () => this.duplicata(analise.amostra_detalhes) },
     ];
-    return menuItems;
+
+    console.log('fdfd')
   }
 
   getStatusIcon(status: boolean): string {

@@ -991,6 +991,7 @@ getMenuItems(amostra: any) {
     { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluirAmostra(amostra.id), tooltip: 'Excluir amostra', tooltipPosition: 'top' },
     { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(amostra), tooltip: 'Visualizar imagens', tooltipPosition: 'top' },
   ];
+  console.log('fdsfd')
 }
 
 irLinkExterno(analise: any) {

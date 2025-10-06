@@ -168,7 +168,8 @@ export class ArquivoComponent implements OnInit {
   modalImpressao: boolean = false;
   uploadedFilesWithInfo: FileWithInfo[] = [];
 
-
+  // AQUI JIAN
+  descricaoApi: string = '';
 
   modalDadosLaudoSubstrato: boolean = false;
   linhas: Linha[] = [];
@@ -176,6 +177,11 @@ export class ArquivoComponent implements OnInit {
   modalDadosLaudoSuperficial: boolean = false;
   linhasSuperficial: LinhaSuperficial[] = [];
   analise_superficial: any[] = [];
+
+  jsonModal: {
+    substrato: any[];
+    superficial: any[];
+  } = { substrato: [], superficial: [] };
 
 
 
@@ -248,6 +254,7 @@ private confirmationService: ConfirmationService,
 ){}
   ngOnInit(): void {
     this.loadAnalises();
+    
     for (let i = 1; i <= 10; i++) {
       this.linhas.push({
         numero: i,
@@ -294,6 +301,7 @@ private confirmationService: ConfirmationService,
   ngAfterViewInit() {
     this.dt1.filter(true, 'laudo', 'equals');
     this.dt1.filter(true, 'aprovada', 'equals');
+    this.dt1.clear();
   }
 
   hasGroup(groups: string[]): boolean {
@@ -305,6 +313,7 @@ private confirmationService: ConfirmationService,
   analisesFiltradas: any[] = []; // array para exibir na tabela
   materiaisSelecionados: string[] = []; // valores escolhidos no multiselect
   loadAnalises(): void {
+    
     this.analiseService.getAnalisesFechadas().subscribe(
       (response: any[]) => {
         // Mapeia e cria campos "planos" para facilitar o filtro global
@@ -346,6 +355,7 @@ private confirmationService: ConfirmationService,
 
   // Filtro pelo MultiSelect
   filtrarPorMateriais(): void {
+    
     if (this.materiaisSelecionados.length === 0) {
       this.analisesFiltradas = [...this.analises];
     } else {
@@ -410,6 +420,7 @@ private confirmationService: ConfirmationService,
       default:
         return 'contrast';
     }
+    
   }
 
   // Filtro Global
@@ -417,16 +428,18 @@ private confirmationService: ConfirmationService,
     if (this.dt1) {
       this.dt1.filterGlobal(this.inputValue, 'contains');
     }
+    
   }
   
   //Menu Items
     getMenuItems(analise: any) {
-    const menuItems = [
+    return [
       { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(analise), tooltip: 'Visualizar OS', tooltipPosition: 'top' },
       { label: 'Imprimir', icon: 'pi pi-print', command: () => this.abrirModalImpressao(analise) },
       { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise.amostra_detalhes) },
     ];
-    return menuItems;
+        console.log('oi');
+
   }
 
   //=============================================MÉTODOS do MENU ITEM=============================================
@@ -1648,10 +1661,12 @@ duplicata(amostra: any): void {
     const head = [['Ensaio', 'Resultado', 'Unidade', 'Garantia', '', 'Norma']];
     const body: any[] = [];
 
+    // "text": "Produto: Calcário corretivo de Acidez; Perda ao Fogo: 88.89%; Re+ SiO2: 15.73%"
+
+    this.descricaoApi = 'Produto: '+amostra_detalhes_selecionada.amostra_detalhes.produto_amostra_detalhes.nome+'; ';
     amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
       this.ensaios_selecionados.forEach((selected: any) => {
         const linha: any[] = [];
-        console.log('teste ', selected);
         if (selected.id === ensaios_utilizados.id) {
           console.log(selected.id);
           let norma: string = '-';
@@ -1675,6 +1690,8 @@ duplicata(amostra: any): void {
             garantia_num = aux[0]; 
             garantia_texto = aux[1]; 
           }
+
+          this.descricaoApi += ensaios_utilizados.descricao+': '+valor+''+unidade+'; ';
           
           linha.push({ content: ensaios_utilizados.descricao });
           linha.push({ content: valor });
@@ -1702,7 +1719,6 @@ duplicata(amostra: any): void {
           const linha: any[] = [];
 
           if (selected.id === ensaios_utilizados.id) {
-            console.log(selected.id);
             let norma: string = '-';
             if (ensaios_utilizados.norma) {
               norma = ensaios_utilizados.norma;
@@ -1725,6 +1741,8 @@ duplicata(amostra: any): void {
               garantia_texto = aux[1]; 
             }
           
+          this.descricaoApi += ensaios_utilizados.descricao+': '+valor+''+unidade+'; ';
+
             linha.push({ content: ensaios_utilizados.descricao });
             linha.push({ content: valor });
             linha.push({ content: unidade });
@@ -1856,6 +1874,8 @@ duplicata(amostra: any): void {
       year: '2-digit'
     });
 
+    this.descricaoApi = 'Produto: '+amostra_detalhes_selecionada.amostra_detalhes.produto_amostra_detalhes.nome+'; ';
+
     //Dados amostra
     const linhas = [
       ['Material: '+amostra_detalhes_selecionada.material, "Tipo: "+amostra_detalhes_selecionada.tipo_amostragem, ""],
@@ -1906,6 +1926,8 @@ duplicata(amostra: any): void {
             garantia_num = aux[0]; 
             garantia_texto = aux[1]; 
           }
+
+          this.descricaoApi += ensaios_utilizados.descricao+': '+valor+''+unidade+'; ';
           
           linha.push({ content: ensaios_utilizados.descricao });
           linha.push({ content: valor });
@@ -1956,6 +1978,8 @@ duplicata(amostra: any): void {
               garantia_texto = aux[1]; 
             }
           
+            this.descricaoApi += ensaios_utilizados.descricao+': '+valor+''+unidade+'; ';
+
             linha.push({ content: ensaios_utilizados.descricao });
             linha.push({ content: valor });
             linha.push({ content: unidade });
@@ -2216,7 +2240,9 @@ duplicata(amostra: any): void {
             garantia_num = aux[0]; 
             garantia_texto = aux[1]; 
           }
-          
+
+          this.descricaoApi += ensaios_utilizados.descricao+': '+valor+''+unidade+'; ';
+
           linha.push({ content: ensaios_utilizados.descricao });
           linha.push({ content: valor });
           linha.push({ content: unidade });
@@ -2265,7 +2291,9 @@ duplicata(amostra: any): void {
               garantia_num = aux[0]; 
               garantia_texto = aux[1]; 
             }
-          
+
+            this.descricaoApi += ensaios_utilizados.descricao+': '+valor+''+unidade+'; ';
+
             linha.push({ content: ensaios_utilizados.descricao });
             linha.push({ content: valor });
             linha.push({ content: unidade });
@@ -2680,6 +2708,8 @@ duplicata(amostra: any): void {
 
     let y = 52;
 
+    this.descricaoApi = 'Produto: '+amostra_detalhes_selecionada.amostra_detalhes.produto_amostra_detalhes.nome+'; ';
+
     //Dados amostra
     const linhas = [
       ['Material: '+amostra_detalhes_selecionada.material, "Tipo: "+amostra_detalhes_selecionada.tipo_amostragem, ""],
@@ -2718,6 +2748,7 @@ duplicata(amostra: any): void {
             if(ensaio_detalhes.unidade){
               const unidade = ensaio_detalhes.unidade;
             }
+            
             const linha: any[] = [];
             linha.push({ content: ensaio_detalhes.descricao });
             linha.push({ content: unidade });
@@ -3129,6 +3160,9 @@ duplicata(amostra: any): void {
   }
 
   abrirModalDadosLaudoSuperficial(amostra_detalhes: any) {
+  
+    this.jsonModal.substrato = this.linhas;
+  
     this.messageService.add({
       severity: 'success',
       summary: 'Sucesso',
@@ -3139,6 +3173,9 @@ duplicata(amostra: any): void {
   }
 
   salvarSuperficial(amostra_detalhes: any) {
+    this.jsonModal.superficial = this.linhasSuperficial;
+  
+    console.log(this.jsonModal);
     this.modalDadosLaudoSuperficial = false;
     this.messageService.add({
       severity: 'success',
