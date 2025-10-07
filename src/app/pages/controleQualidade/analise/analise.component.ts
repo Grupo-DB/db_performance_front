@@ -48,7 +48,6 @@ import { CardModule } from 'primeng/card';
 import { PopoverModule } from 'primeng/popover';
 import { HttpClient } from '@angular/common/http';
 import { TooltipModule } from 'primeng/tooltip';
-import { CalculosComponent } from '../calculos/calculos.component';
 import Handsontable from 'handsontable';
 import { HyperFormula } from 'hyperformula';
 import { HotTableModule } from '@handsontable/angular-wrapper';
@@ -68,7 +67,7 @@ interface FileWithInfo {
 }
 @Component({
   selector: 'app-analise',
-  imports: [
+  imports:[
     ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule, 
     CardModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, 
     IconFieldModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, 
@@ -76,7 +75,7 @@ interface FileWithInfo {
     RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, 
     StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule,
     SpeedDialModule, AvatarModule, PopoverModule, BadgeModule, TooltipModule,
-    HotTableModule,CalculosComponent
+    HotTableModule
   ],
   animations: [
     trigger('efeitoFade', [

@@ -11,14 +11,14 @@ import { da } from 'date-fns/locale';
 })
 export class AmostraService {
 
-  private amostraExpressaUrl = 'http://localhost:8000/ordem/expressa/';
-  private amostraOrdemUrl = 'http://localhost:8000/ordem/ordem/';
-  private tipoAmostraUrl = 'http://localhost:8000/amostra/tipoAmostra/';
-  private amostraUrl = 'http://localhost:8000/amostra/amostra/';
-  private imageUrl = 'http://localhost:8000/amostra/amostraImagem/';
-  private produtoUrl = 'http://localhost:8000/amostra/produto/';
-  private sequencialUrl = 'http://localhost:8000/amostra/amostra/proximo-sequencial/';
-  private representatividadeUrl = 'http://localhost:8000/cal/representatividade/';
+  private amostraExpressaUrl = 'http://172.50.10.79:8008/ordem/expressa/';
+  private amostraOrdemUrl = 'http://172.50.10.79:8008/ordem/ordem/';
+  private tipoAmostraUrl = 'http://172.50.10.79:8008/amostra/tipoAmostra/';
+  private amostraUrl = 'http://172.50.10.79:8008/amostra/amostra/';
+  private imageUrl = 'http://172.50.10.79:8008/amostra/amostraImagem/';
+  private produtoUrl = 'http://172.50.10.79:8008/amostra/produto/';
+  private sequencialUrl = 'http://172.50.10.79:8008/amostra/amostra/proximo-sequencial/';
+  private representatividadeUrl = 'http://172.50.10.79:8008/cal/representatividade/';
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'

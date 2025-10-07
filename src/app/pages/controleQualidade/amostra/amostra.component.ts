@@ -533,7 +533,7 @@ export class AmostraComponent implements OnInit {
       codDB: amostra.cod_db,
       fornecedor: amostra.fornecedor,
       periodoHora: amostra.periodo_hora,
-      periodoTurno: amostra.periodo_turno,
+      periodoTurno: amostra.periodo_turno ? Number(amostra.periodo_turno) : null,
       tipoAmostragem: amostra.tipo_amostragem,
       representatividadeLote: amostra.representatividade_lote,
       registroEp: amostra.registro_ep,
@@ -991,6 +991,7 @@ getMenuItems(amostra: any) {
     { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluirAmostra(amostra.id), tooltip: 'Excluir amostra', tooltipPosition: 'top' },
     { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(amostra), tooltip: 'Visualizar imagens', tooltipPosition: 'top' },
   ];
+  console.log('fdsfd')
 }
 
 irLinkExterno(analise: any) {
@@ -1281,6 +1282,8 @@ submitAmostra() {
         detail: 'Amostra registrada com sucesso.' 
       });
       
+      this.loadAmostras();
+
       // Faz upload das imagens se houver 
       setTimeout(() => {
 

@@ -7,7 +7,8 @@ import { Analise } from '../../pages/controleQualidade/analise/analise.component
   providedIn: 'root'
 })
 export class AnaliseService {
-  private analiseUrl = 'http://localhost:8000/analise/analise/';
+  private analiseUrl = 'http://172.50.10.79:8008/analise/analise/';
+  private parecerUrl = 'http://172.50.10.79:8008/analise/chat/completions/';
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
@@ -54,6 +55,11 @@ export class AnaliseService {
     return this.httpClient.post(`${this.analiseUrl}${analiseId}/update_aprovada/`, {});
   }
   //////
+  //EMITIR PARECER
+  emitirParecer(prompt: any): Observable<any> {
+    return this.httpClient.post<any>(this.parecerUrl,{ prompt:prompt});
+  }
+  ////////////////////////////////-------------------------------------------------------------
   registerAnaliseComOrdem(amostraId: number, ordemId: number, estado: string): Observable<any> {
   const payload = {
     amostra: amostraId,
@@ -78,7 +84,7 @@ export class AnaliseService {
   //---------------------RESULTADOS---------------------
 
 getResultadosAnteriores(calculoDescricao: string, ensaioIds: number[], limit: number = 5): Observable<any[]> {
-  const url = `http://localhost:8000/analise/analise/resultados-anteriores/`;
+  const url = `http://172.50.10.79:8008/analise/analise/resultados-anteriores/`;
   
   // Corpo da requisição POST
   const body = {
@@ -91,7 +97,7 @@ getResultadosAnteriores(calculoDescricao: string, ensaioIds: number[], limit: nu
 }
 
 getResultadosAnterioresEnsaios(ensaioDescricao: string, ensaioIds: number[], limit: number = 5): Observable<any[]> {
-  const url = `http://localhost:8000/analise/analise/resultados-anteriores/`;
+  const url = `http://172.50.10.79:8008/analise/analise/resultados-anteriores/`;
   
   // Corpo da requisição POST
   const body = {

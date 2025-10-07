@@ -54,7 +54,6 @@ import { Chart } from 'chart.js';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
-
 interface OrdemForm {
   data: FormControl,
   numero: FormControl,
@@ -63,12 +62,10 @@ interface OrdemForm {
   digitador: FormControl,
   classificacao: FormControl,
 }
-
 interface FileWithInfo {
   file: File;
   descricao: string;
 }
-
 export interface Ordem {
   id: number;
   numero: number;
@@ -79,7 +76,6 @@ export interface Ordem {
   modificacoes: any;
   classificacao: any;
 }
-
 
 @Component({
   selector: 'app-ordem',
@@ -149,20 +145,16 @@ export class OrdemComponent implements OnInit {
   loading: boolean = true;
   @ViewChild('dt1') dt1!: Table;
   inputValue: string = '';
-
   produtosFiltrados: any[] = [];
   materiaisFiltro: any[] = [];
   amostras: Amostra[] = [];
-
   laudoForm!: FormGroup;
   modalLaudo: boolean = false;
   modalImpressao: boolean = false;
   modalImpressao2: boolean = false;
-
   ordens: Ordem[]=[];
   analises: any[] = [];
   uploadedFilesWithInfo: FileWithInfo[] = [];
-
   amostraImagensSelecionada: any;
   imagensAmostra: any[] = [];
   imagemAtualIndex: number = 0;
@@ -208,13 +200,10 @@ export class OrdemComponent implements OnInit {
   modalVisualizar: boolean = false;
   analiseSelecionada: any;
 
-
   tipoFiltro = [
     { value: 'Expressa' },
     { value: 'Plano' },
   ]
-
-
   dadosTabela = [
     { tempo: '5min', valor: 2.3 },
     { tempo: '20min', valor: 4.1 },
@@ -268,7 +257,6 @@ export class OrdemComponent implements OnInit {
     { id: 2, nome: 'Desenvolvimento de Produtos' },
   ]
   
-
   router: any;
   constructor(
     private loginService: LoginService,
@@ -318,7 +306,7 @@ export class OrdemComponent implements OnInit {
     this.loadOrdens();
     this.loadAnalises();
     this.loadPlanosAnalise();
-    this.carregarEnsaiosECalculosDisponiveis();
+    //this.carregarEnsaiosECalculosDisponiveis();
     this.configurarFormularioInicial();
   }
 
@@ -495,7 +483,6 @@ export class OrdemComponent implements OnInit {
     this.ensaioService.getPlanoAnalise().subscribe(
       response => {
         this.planosAnalise = response;
-
       },
       error => {
         console.log('Erro ao carregar planos de análise', error);
@@ -3746,7 +3733,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
   }
 
   getMenuItems(analise: any) {
-    const menuItems = [
+    return [
       { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(analise), tooltip: 'Visualizar OS', tooltipPosition: 'top' },
       { label: 'Imprimir', icon: 'pi pi-print', command: () => this.abrirModalImpressao(analise) },
       { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(analise.amostra_detalhes) },
@@ -3754,7 +3741,8 @@ gerarNumero(materialNome: string, sequencial: number): string {
       { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise.amostra_detalhes.id) },
       //{ label: 'Duplicata', icon: 'pi pi-file-import', command: () => this.duplicata(analise.amostra_detalhes) },
     ];
-    return menuItems;
+
+    console.log('fdfd')
   }
 
   getStatusIcon(status: boolean): string {
@@ -4207,6 +4195,7 @@ onDescricaoInput(index: number, event: Event): void {
         } else {
           this.finalizarComErro('Nenhuma amostra foi recebida para vincular à ordem');
         }
+        this.loadOrdens;
       },
       error: (err) => {
         this.isCreatingOrdem = false;
@@ -4336,7 +4325,11 @@ private criarAnaliseParaAmostra(amostraId: number): void {
       summary: 'Sucesso',
       detail: `Ordem Normal criada, amostra vinculada e análise criada! Redirecionando...`
     });
-    
+    this.loadOrdens();
+    this.loadAnalises();
+    this.loadPlanosAnalise();
+    this.carregarEnsaiosECalculosDisponiveis();
+
     // Redirecionar para a página de análise após delay
     setTimeout(() => {
       this.router.navigate(['/welcome/controleQualidade/analise'], {
@@ -4381,6 +4374,8 @@ private criarAnaliseParaAmostra(amostraId: number): void {
     
     // Resetar formulário
     this.registerOrdemForm.reset();
+    this.loadOrdens;
+
     this.configurarFormularioInicial();
   }
 

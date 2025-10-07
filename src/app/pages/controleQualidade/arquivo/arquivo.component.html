@@ -91,7 +91,7 @@
                                                     variant="filled" 
                                                     [(ngModel)]="inputValue"
                                                     [style]="{'width':'100%'}" 
-                                                     id="on_label"
+                                                    id="on_label"
                                                     autocomplete="off" 
                                                     type="text" 
                                                     (input)="filterTable()"
@@ -210,7 +210,7 @@
                                             [severity]="getSeverity(analise.amostra_detalhes.material)"
                                             />
                                         </td>
-                                        <td style="text-align: left;"> {{ analise.amostra_detalhes?.numero }} </td>
+                                        <td style="text-align: left;"> {{ analise.amostra_detalhes?.tipo_amostra }} </td>
                                         <ng-container *ngIf="analise?.amostra_detalhes?.expressa_detalhes; else ensaioDetalhes">
                                             <td style="text-align: left;">
                                                 {{ analise.amostra_detalhes?.expressa_detalhes?.data | date:'dd/MM/yy' }}
@@ -318,13 +318,25 @@
                                                         class="ml-2"
                                                     >
                                                         <p-button 
-                                                            icon="pi pi-clipboard"
-                                                            severity="warn"
-                                                            (onClick)="laudoAnalise(analise)" 
+                                                            *ngIf="analise.amostra_detalhes.material == 'Calcário'; else outroBotao"
+                                                            icon="pi pi-book"
+                                                            severity="success"
                                                             [rounded]="true" 
-                                                            pTooltip="Encaminhar para Laudo"
-                                                            tooltipPosition="top" 
-                                                        />
+                                                            pTooltip="Colocar dados Laudo"
+                                                            (onClick)="abrirModalDadosLaudoSubstrato(analise)"
+                                                            tooltipPosition="top">
+                                                        </p-button>
+
+                                                        <ng-template #outroBotao>
+                                                        <p-button 
+                                                            icon="pi pi-print"
+                                                            severity="help"
+                                                            [rounded]="true" 
+                                                            pTooltip="Imprimir Laudo"
+                                                            (onClick)="abrirModalLaudo(analise)"
+                                                            tooltipPosition="top">
+                                                        </p-button>
+                                                        </ng-template>
                                                     </a>
                                                 </div>
                                                 <div 
@@ -354,7 +366,7 @@
                                                         class="ml-2"
                                                     >
                                                         <p-button 
-                                                            *ngIf="analise.amostra_detalhes.material == 'Cal' && analise.amostra_detalhes.tipo_amostra == 'Pintura'; else outroBotao"
+                                                            *ngIf="analise.amostra_detalhes.material == 'Calcário'; else outroBotao"
                                                             icon="pi pi-book"
                                                             severity="success"
                                                             [rounded]="true" 
@@ -857,22 +869,22 @@
                                             </tr>
                                         </ng-template>
 
-                                        <ng-template pTemplate="body" let-linha let-i="rowIndex">
+                                        <ng-template pTemplate="body" let-numero let-i="rowIndex">
                                             <tr>
-                                                <td>{{ linha.numero }}</td>
-                                                <td><input  [(ngModel)]="linha.diametro" type="number" /></td>
-                                                <td><input  [(ngModel)]="linha.area" type="number" /></td>
-                                                <td><input  [(ngModel)]="linha.espessura" type="number" /></td>
-                                                <td><input  [(ngModel)]="linha.subst" type="number" /></td>
-                                                <td><input  [(ngModel)]="linha.junta" type="number" /></td>
-                                                <td><input  [(ngModel)]="linha.carga" type="number" /></td>
-                                                <td><input  [(ngModel)]="linha.resist" type="number" step="0.01" /></td>
-                                                <td><input  [(ngModel)]="linha.validacao" type="text" /></td>
-                                                <td><input  [(ngModel)]="linha.rupturas.sub" type="number" /></td>
-                                                <td><input  [(ngModel)]="linha.rupturas.subArga" type="number" /></td>
-                                                <td><input  [(ngModel)]="linha.rupturas.rupArga" type="number" /></td>
-                                                <td><input  [(ngModel)]="linha.rupturas.argaCola" type="number" /></td>
-                                                <td><input  [(ngModel)]="linha.rupturas.colarPastilha" type="number" /></td>
+                                                <td>{{ numero.numero }}</td>
+                                                <td><input pInputText [(ngModel)]="numero.diametro" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="numero.area" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="numero.espessura" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="numero.subst" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="numero.junta" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="numero.carga" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="numero.resist" type="number" step="0.01" /></td>
+                                                <td><input pInputText [(ngModel)]="numero.validacao" type="text" /></td>
+                                                <td><input pInputText [(ngModel)]="numero.rupturas.sub" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="numero.rupturas.subArga" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="numero.rupturas.rupArga" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="numero.rupturas.argaCola" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="numero.rupturas.colarPastilha" type="number" /></td>
                                             </tr>
                                         </ng-template>
                                     </p-table>
