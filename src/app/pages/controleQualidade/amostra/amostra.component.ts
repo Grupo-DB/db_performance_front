@@ -469,7 +469,7 @@ export class AmostraComponent implements OnInit {
       numeroLote: [''],
       status: [''],
       localColeta: [''],
-
+      produtoAmostra: [''],
       material: [''],
       tipoAmostra: [''],
       subtipo: [''],
@@ -494,36 +494,28 @@ export class AmostraComponent implements OnInit {
     });
 
   }
-
   abrirModalEdicao(amostra: Amostra) {
-    console.log('azqaui');
-    console.log(amostra);
     this.editFormVisible = true;
-
     const dataEntrada = amostra.data_entrada ? new Date(amostra.data_entrada) : null;
     const dataColeta = amostra.data_coleta ? new Date(amostra.data_coleta) : null;
     const dataEnvio = amostra.data_envio ? new Date(amostra.data_envio) : null;
     const dataRecebimento = amostra.data_recebida ? new Date(amostra.data_recebida) : null;
-    
     // Calcular data de descarte se não existir ou usar a existente
     let dataDescarte = amostra.data_descarte ? new Date(amostra.data_descarte) : null;
     if (!dataDescarte && dataEntrada && amostra.material) {
       dataDescarte = this.calcularDataDescarte(dataEntrada, amostra.material);
     }
-
     this.editForm.patchValue({
       id: amostra.id,
       dataEntrada: dataEntrada,
       dataColeta: dataColeta,
       dataEnvio: dataEnvio,
       dataRecebimento: dataRecebimento,
-
       numero:  amostra.numero,
       finalidade:  amostra.finalidade,
       numeroLote:  amostra.numero_lote,
       status:  amostra.status,
       localColeta:  amostra.local_coleta,
-      
       material:  amostra.material,
       //nnao sei
       // produto_amostra
@@ -544,10 +536,8 @@ export class AmostraComponent implements OnInit {
       observacoes: amostra.observacoes,
       reter: amostra.reter,
       dataDescarte: dataDescarte
-      
     });
   }
-
   hasGroup(groups: string[]): boolean {
     return this.loginService.hasAnyGroup(groups);
   }
@@ -559,40 +549,28 @@ export class AmostraComponent implements OnInit {
     this.loadAnalises();
     this.loadAmostras();
     this.cd.markForCheck();
-
     //número da OS
     this.ordemService.getProximoNumero().subscribe(numero => {
     this.registerOrdemForm.get('numero')?.setValue(numero);
-    console.log('Número da ordem de serviço gerado:', numero);   
   });
-
     // Chama sempre que algum campo relevante mudar
   this.registerForm.get('material')?.valueChanges.subscribe(() => this.onCamposRelevantesChange());
   this.registerForm.get('tipoAmostragem')?.valueChanges.subscribe(() => this.onCamposRelevantesChange());
   this.registerForm.get('dataColeta')?.valueChanges.subscribe(() => this.onCamposRelevantesChange());
-
   // Listeners para atualizar data de descarte automaticamente
   this.registerForm.get('dataEntrada')?.valueChanges.subscribe(() => this.atualizarDataDescarte());
   this.registerForm.get('material')?.valueChanges.subscribe(() => this.atualizarDataDescarte());
-
   // Chamada inicial para calcular data de descarte se houver dados
   setTimeout(() => this.atualizarDataDescarte(), 100);
-
     // Configuração das colunas da tabela
     this.cols = [
       { field: 'planoEnsaios', header: 'Ensaios do Plano' },
     ];
-    // Inicializa as colunas selecionadas com todas as colunas
-    this.selectedColumns = this.cols;// Copia todas as colunas para a seleção inicial
-  
   }
-
-
   getSeverity(materialNome: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | undefined {
     if (!materialNome) {
       return 'secondary';
     }
-
     switch (materialNome.toLowerCase()) {
       case 'calcario':
         return 'warn';
@@ -609,7 +587,7 @@ export class AmostraComponent implements OnInit {
     }
 
   }
-  
+
   loadAmostras(): void {
     this.amostraService.getAmostrasSemOrdem().subscribe(
       response => {
@@ -618,7 +596,6 @@ export class AmostraComponent implements OnInit {
           label: amostra.material,
           value: amostra.material
         }));
-        console.log('Amostras carregadas:', this.amostras);
       },
       error => {
         console.error('Erro ao carregar amostras:', error);
@@ -630,7 +607,6 @@ export class AmostraComponent implements OnInit {
     this.ordemService.getOrdens().subscribe(
       response => {
         this.ordens = response;
-        console.log('Ordens carregadas:', this.ordens);
       },
       error => {
         console.error('Erro ao carregar ordens:', error);
@@ -653,39 +629,32 @@ export class AmostraComponent implements OnInit {
   }
 
   saveEdit(){
-
     const id = this.editForm.value.id;
-
     let dataEntradaFormatada = null;
     const dataEntrada = this.editForm.value.dataEntrada;
     if (dataEntrada instanceof Date) {
       dataEntradaFormatada = formatDate(dataEntrada, 'yyyy-MM-dd', 'en-US');
     }
-
     let dataColetaFormatada = null;
     const dataColeta = this.editForm.value.dataColeta;
     if (dataColeta instanceof Date) {
       dataColetaFormatada = formatDate(dataColeta, 'yyyy-MM-dd', 'en-US');
     }
-
     let dataEnvioFormatada = null;
     const dataEnvio = this.editForm.value.dataEnvio;
     if (dataEnvio instanceof Date) {
       dataEnvioFormatada = formatDate(dataEnvio, 'yyyy-MM-dd', 'en-US');
     }
-
     let dataRecebimentoFormatada = null;
     const dataRecebimento = this.editForm.value.dataRecebimento;
     if (dataRecebimento instanceof Date) {
       dataRecebimentoFormatada = formatDate(dataRecebimento, 'yyyy-MM-dd', 'en-US');
     }
-
     let dataDescarteFormatada = null;
     const dataDescarte = this.editForm.value.dataDescarte;
     if (dataDescarte instanceof Date) {
       dataDescarteFormatada = formatDate(dataDescarte, 'yyyy-MM-dd', 'en-US');
     }
-
     const dadosAtualizados: Partial<Amostra> = {
       data_entrada: dataEntradaFormatada,
       data_coleta: dataColetaFormatada,
@@ -715,7 +684,6 @@ export class AmostraComponent implements OnInit {
       observacoes: this.editForm.value.observacoes,
       reter: this.editForm.value.reter,
     };
-    console.log(dadosAtualizados);
     this.amostraService.editAmostra(id, dadosAtualizados).subscribe({
       next:() =>{       
         this.editFormVisible = false;
@@ -723,8 +691,7 @@ export class AmostraComponent implements OnInit {
         this.loadAmostras();
       },
       error: (err) => {
-        console.error('Login error:', err); 
-      
+        console.error('Login error:', err);       
         if (err.status === 401) {
           this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
         } else if (err.status === 403) {
@@ -777,24 +744,19 @@ export class AmostraComponent implements OnInit {
       this.digitador = data.nome;
       this.registerOrdemForm.get('digitador')?.setValue(data.nome);
       this.registerForm.get('digitador')?.setValue(data.nome);
-
       // Verificar se existe análises simplificadas e plano detalhes antes de acessar
       if (this.analisesSimplificadas && 
           this.analisesSimplificadas.length > 0 && 
           this.analisesSimplificadas[0] && 
           this.analisesSimplificadas[0].planoDetalhes) {
-        
-        console.log('Preenchendo digitador nos ensaios já carregados...');
-        
-        this.analisesSimplificadas[0].planoDetalhes.forEach((plano: any) => {
+          this.analisesSimplificadas[0].planoDetalhes.forEach((plano: any) => {
           // Verificar se existem ensaios antes de iterar
           if (plano.ensaio_detalhes && Array.isArray(plano.ensaio_detalhes)) {
             plano.ensaio_detalhes.forEach((ensaio: any) => {
               ensaio.digitador = this.digitador;
-              console.log('Digitador do ensaio:', ensaio.digitador);
+              
             });
           }
-          
           // Verificar se existem cálculos antes de iterar
           if (plano.calculo_ensaio_detalhes && Array.isArray(plano.calculo_ensaio_detalhes)) {
             plano.calculo_ensaio_detalhes.forEach((calc: any) => {
@@ -826,32 +788,20 @@ export class AmostraComponent implements OnInit {
         this.planosAnalise = response;
       },
       error => {
-        console.log('Erro ao carregar planos de análise', error);
+        console.error('Erro ao carregar planos de análise', error);
       }
     );
   }
 
-onMaterialChange(materialNome: string) {
-  console.log('Material selecionado:', materialNome);
-  console.log('Valor atual no FormControl antes:', this.registerForm.get('material')?.value);
-  
+onMaterialChange(materialNome: string) {  
   if (materialNome) {
     // Normaliza o nome apenas para operações internas, mas mantém o valor original no form
-    const materialNormalizado = this.normalize(materialNome);
-    console.log('Material normalizado:', materialNormalizado);
-    console.log('Material original para form:', materialNome);
-    console.log('Valor atual no FormControl depois:', this.registerForm.get('material')?.value);
-    
-    // Mantém o valor original no formulário para que o p-select funcione corretamente
-    // Não precisamos usar setValue aqui pois o FormControl já foi atualizado pelo p-select
-    
+    const materialNormalizado = this.normalize(materialNome);    
     // Usa a versão normalizada para todas as operações de backend
     this.amostraService.getProximoSequencialPorNome(materialNormalizado).subscribe({
       next: (sequencial) => {
-        console.log('Sequencial recebido do backend:', sequencial);
         const numero = this.gerarNumero(materialNormalizado, sequencial);
         this.registerForm.get('numero')?.setValue(numero);
-        console.log('Número da amostra gerado:', numero);
         this.loadProdutosPorMaterial(materialNormalizado);
         this.loadTiposAmostraPorMaterial(materialNormalizado);
         // Atualizar data de descarte quando material mudar
@@ -873,7 +823,7 @@ onMaterialChange(materialNome: string) {
 }
 
 private gerarSequencialFallback(materialNome: string): number {
-  // Você pode usar timestamp + hash do nome do material
+  // usa timestamp + hash do nome do material
   const timestamp = Date.now();
   const hash = materialNome.split('').reduce((a, b) => {
     a = ((a << 5) - a) + b.charCodeAt(0);
@@ -883,25 +833,23 @@ private gerarSequencialFallback(materialNome: string): number {
   // Combina timestamp com hash para gerar um número único
   return Math.abs((timestamp + hash) % 999999) + 1;
 }
-
   loadTiposAmostra() {
     this.amostraService.getTiposAmostra().subscribe(
       response => {
         this.tiposAmostra = response;
       },
       error => {
-        console.log('Erro ao carregar tipos de amostra', error);
+        console.error('Erro ao carregar tipos de amostra', error);
       }
     );
   }
-
   loadProdutosAmostra(): void{
     this.amostraService.getProdutos().subscribe(
       response => {
         this.produtosAmostra = response;
       }
       , error => {
-        console.log('Erro ao carregar produtos de amostra', error);
+        console.error('Erro ao carregar produtos de amostra', error);
       }
     )
   }
@@ -911,11 +859,9 @@ private gerarSequencialFallback(materialNome: string): number {
       this.produtosFiltrados = [];
       return;
     }
-
     this.amostraService.getProdutosPorMaterial(materialNome).subscribe({
       next: (response) => {
         this.produtosFiltrados = response;
-        console.log('Produtos filtrados por material:', this.produtosFiltrados);
       },
       error: (err) => {
         console.error('Erro ao carregar produtos por material:', err);
@@ -934,11 +880,9 @@ private gerarSequencialFallback(materialNome: string): number {
       this.tiposFiltrados = [];
       return;
     }
-
     this.amostraService.getTiposAmostraPorMaterial(materialNome).subscribe({
       next: (response) => {
         this.tiposFiltrados = response;
-        console.log('Tipos filtrados por material:', this.tiposFiltrados);
       },
       error: (err) => {
         console.error('Erro ao carregar tipos por material:', err);
@@ -951,8 +895,6 @@ private gerarSequencialFallback(materialNome: string): number {
       }
     });
   }
-
-
 
   mostrarTodosProdutos(): void {
     this.produtosFiltrados = [...this.produtosAmostra];
@@ -974,16 +916,13 @@ gerarNumero(materialNome: string, sequencial: number): string {
   const parte2 = sequencialFormatado.slice(2);    // '0008' 
   return `${materialNome} ${parte1}.${parte2}`;
 }
-
 onCamposRelevantesChange() {
-  console.log('Campos relevantes alterados, verificando exibição de representatividade do lote...');
   if (this.exibirRepresentatividadeLote()) {
     this.consultarProducao();
   } else {
     this.registerForm.get('representatividadeLote')?.setValue('');
   }
 }
-
 getMenuItems(amostra: any) {
   return [
     { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(amostra), tooltip: 'Visualizar amostra', tooltipPosition: 'top' },
@@ -991,7 +930,6 @@ getMenuItems(amostra: any) {
     { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluirAmostra(amostra.id), tooltip: 'Excluir amostra', tooltipPosition: 'top' },
     { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(amostra), tooltip: 'Visualizar imagens', tooltipPosition: 'top' },
   ];
-  console.log('fdsfd')
 }
 
 irLinkExterno(analise: any) {
@@ -1001,21 +939,17 @@ irLinkExterno(analise: any) {
 visualizar(amostra: any) {
   this.amostraSelecionada = amostra;
   this.modalVisualizar = true;
-  console.log('Drawer deve abrir', amostra); 
 }
 
 imprimirAmostraVisualizar() {
   const doc = new jsPDF();
-
   let y = 15;
-
   const addTitle = (title: string) => {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(14);
     doc.text(title, 10, y);
     y += 8;
   };
-
   const addField = (label: string, value: any) => {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
@@ -1098,9 +1032,7 @@ abrirOS(amostra: any) {
 exibirRepresentatividadeLote(): boolean {
   const materialNome = this.registerForm.get('material')?.value;
   const tipoAmostragem = this.registerForm.get('tipoAmostragem')?.value?.toLowerCase();
-  
   if (!materialNome || !tipoAmostragem) return false;
-  
   const nomeMaterialNormalizado = this.normalize(materialNome);
   return (
     (nomeMaterialNormalizado === 'calcario' || nomeMaterialNormalizado === 'finaliza') &&
@@ -1145,7 +1077,6 @@ isDate(value: string): boolean {
 // Método para quando o produto de amostra for selecionado
 onProdutoAmostraChange(produtoId: number) {
   const produtoSelecionado = this.produtosAmostra.find(produto => produto.id === produtoId);
-  
   if (produtoSelecionado) {
     // Preenche os campos do formulário com os dados do produto
     this.registerForm.patchValue({
@@ -1160,13 +1091,11 @@ onProdutoAmostraChange(produtoId: number) {
 
 submitOrdem(){ 
   const formData = new FormData();
-
   let dataFormatada = '';
   const dataValue = this.registerOrdemForm.value.data;
       if (dataValue instanceof Date && !isNaN(dataValue.getTime())) {
       dataFormatada = formatDate(dataValue, 'yyyy-MM-dd', 'en-US');
   }
-
   this.ordemService.registerOrdem(
     //this.registerOrdemForm.value.data,
     dataFormatada,
@@ -1182,10 +1111,8 @@ submitOrdem(){
       this.registerOrdemForm.reset();
       //this.activeStep = 3; // Avança para o próximo passo
     }
-
     , error: (err) => {
         console.error('Login error:', err); 
-      
         if (err.status === 401) {
           this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
         } else if (err.status === 403) {
@@ -1273,7 +1200,6 @@ submitAmostra() {
     dataDescarteFormatada
   ).subscribe({
     next: (amostraCriada) => {
-      console.log('Amostra criada:', amostraCriada);
       this.amostraId = amostraCriada.id; // Armazena o ID da amostra criada
       
       this.messageService.add({ 
@@ -1314,33 +1240,21 @@ submitAmostra() {
 // Método para fazer upload das imagens
 uploadImages(): void {
     if (!this.amostraId || this.uploadedFilesWithInfo.length === 0) {
-      console.log('Sem amostra ID ou arquivos para upload');
       this.activeStep = 3;
       return;
     }
-
     // Verificar estado dos arquivos antes do upload
     this.verificarEstadoArquivos();
-
     const formData = new FormData();
-    
     // Adiciona arquivos com suas descrições
     this.uploadedFilesWithInfo.forEach((fileInfo, index) => {
       formData.append('images', fileInfo.file, fileInfo.file.name);
       // Garante que a descrição não seja undefined ou null
       const descricao = fileInfo.descricao || '';
       formData.append(`descricao_${index}`, descricao);
-      
-      // verificar o que está sendo enviado
-      console.log(`Arquivo ${index}: ${fileInfo.file.name}`);
-      console.log(`Descrição ${index}: "${descricao}"`);
     });
-
-    console.log('Fazendo upload de', this.uploadedFilesWithInfo.length, 'arquivos para amostra', this.amostraId);
-
     this.amostraService.uploadImagens(this.amostraId, formData).subscribe({
       next: (response) => {
-        console.log('Imagens enviadas com sucesso:', response);
         this.messageService.add({
           severity: 'success',
           summary: 'Sucesso',
@@ -1369,14 +1283,12 @@ removeFile(index: number): void {
 
 // Previne o upload automático
 beforeUpload = (file: NzUploadFile, fileList: NzUploadFile[]): boolean => {
-  console.log('Arquivo selecionado:', file.name);
   return false; // Retorna false para não fazer upload automático
 };
 
 navegarParaExpressa() {
   const formData = this.registerForm.value;
   const dadosEnriquecidos = this.enriquecerDadosFormulario(formData);
-  
   // Adiciona as imagens aos dados enriquecidos
   dadosEnriquecidos.imagens = this.uploadedFilesWithInfo.map(fileInfo => ({
     file: fileInfo.file,
@@ -1385,14 +1297,10 @@ navegarParaExpressa() {
     tamanho: fileInfo.file.size,
     tipo: fileInfo.file.type
   }));
-   
   // Salva no sessionStorage como backup (sem as imagens por limitação de tamanho)
   const dadosSemImagens = { ...dadosEnriquecidos };
   delete dadosSemImagens.imagens;
   sessionStorage.setItem('amostraData', JSON.stringify(dadosSemImagens));
-  
-  console.log('Enviando dados para expressa:', dadosEnriquecidos);
-  
   // Navega para a rota expressa passando os dados via state
   this.router.navigate(['/welcome/controleQualidade/expressa'], {
     state: { amostraData: dadosEnriquecidos }
@@ -1402,7 +1310,6 @@ navegarParaExpressa() {
 // Método para preencher os dados do formulário
 enriquecerDadosFormulario(formData: any): any {
   const dadosEnriquecidos = { ...formData };
-  
   if (formData.tipoAmostra && this.tiposAmostra.length > 0) {
     const tipoSelecionado = this.tiposAmostra.find(t => t.id === formData.tipoAmostra);
     dadosEnriquecidos.tipoAmostraInfo = {
@@ -1462,8 +1369,6 @@ enriquecerDadosFormulario(formData: any): any {
 
 //////////////////////////////////////////////OS EXPRESSA APARTIR DA TABELA //////////////////
 criarExpressaDeAmostra(amostra: any) {
-  console.log('Criando expressa a partir da amostra:', amostra);
-
   // Converter os dados da amostra para o formato esperado pela expressa
   const dadosAmostraParaExpressa = this.converterAmostraSalvaParaFormulario(amostra);
   //enriquecer dados
@@ -1508,7 +1413,6 @@ converterAmostraSalvaParaFormulario(amostra: any): any {
     status: amostra.status || ''
   };
 }
-
 // Método para carregar imagens da amostra 
 carregarImagensParaExpressa(amostraId: number, dadosEnriquecidos: any) {
   this.amostraService.getImagensAmostra(amostraId).subscribe({
@@ -1523,9 +1427,7 @@ carregarImagensParaExpressa(amostraId: number, dadosEnriquecidos: any) {
           // Para imagens existentes, 
           isExistente: true
         }));
-        console.log('Imagens carregadas para expressa:', dadosEnriquecidos.imagensExistentes);
       }
-      
       this.navegarParaExpressaComDados(dadosEnriquecidos);
     },
     error: (error) => {
@@ -1543,9 +1445,7 @@ navegarParaExpressaComDados(dadosEnriquecidos: any) {
   delete dadosSemImagens.imagens;
   delete dadosSemImagens.imagensExistentes;
   sessionStorage.setItem('amostraData', JSON.stringify(dadosSemImagens));
-  
-  console.log('Navegando para expressa com dados da amostra salva:', dadosEnriquecidos);
-  
+    
   // Navegar para a rota expressa passando os dados via state
   this.router.navigate(['/welcome/controleQualidade/expressa'], {
     state: { amostraData: dadosEnriquecidos }
@@ -1556,7 +1456,6 @@ navegarParaExpressaComDados(dadosEnriquecidos: any) {
 
 //////////////////OS COM PLANO APARTIR DA AMOSTRA SELECIONADA DA TABELA //////////////
 criarOrdemDeAmostra(amostra: any) {
-  console.log('Criando ordem a partir da amostra:', amostra);
 
   // Converter os dados da amostra para o formato esperado pela ordem
   const dadosAmostraParaOrdem = this.converterAmostraSalvaParaFormulario(amostra);
@@ -1565,7 +1464,6 @@ criarOrdemDeAmostra(amostra: any) {
   //carregar imagens se tiver
   this.carregarImagensParaOrdemNormal(amostra.id, dadosEnriquecidos);
 }
-
 // Método para carregar imagens da amostra para ordem normal
 carregarImagensParaOrdemNormal(amostraId: number, dadosEnriquecidos: any) {
   this.amostraService.getImagensAmostra(amostraId).subscribe({
@@ -1579,7 +1477,6 @@ carregarImagensParaOrdemNormal(amostraId: number, dadosEnriquecidos: any) {
           nome: `imagem_${img.id}`,
           isExistente: true
         }));
-        console.log('Imagens carregadas para ordem normal:', dadosEnriquecidos.imagensExistentes);
       }
       
       this.navegarParaOrdemComDados(dadosEnriquecidos);
@@ -1591,17 +1488,13 @@ carregarImagensParaOrdemNormal(amostraId: number, dadosEnriquecidos: any) {
     }
   });
 }
-
 // Método para navegar para ordem normal com dados preparados
 navegarParaOrdemComDados(dadosEnriquecidos: any) {
   // Salvar no sessionStorage como backup
   const dadosSemImagens = { ...dadosEnriquecidos };
   delete dadosSemImagens.imagens;
   delete dadosSemImagens.imagensExistentes;
-  sessionStorage.setItem('amostraData', JSON.stringify(dadosSemImagens));
-  
-  console.log('Navegando para ordem normal com dados da amostra salva:', dadosEnriquecidos);
-  
+  sessionStorage.setItem('amostraData', JSON.stringify(dadosSemImagens));  
   // Navegar para a rota ordem passando os dados via state
   this.router.navigate(['/welcome/controleQualidade/ordem'], {
     state: { amostraData: dadosEnriquecidos }
@@ -1613,7 +1506,6 @@ navegarParaOrdemComDados(dadosEnriquecidos: any) {
 
 criarOrdemServico(amostra: any){  
   this.amostraSelecionada = amostra;
-
   // Preenche automaticamente alguns campos da OS baseados na amost
   this.preencherFormularioOSComAmostra(amostra);
   this.activeStep = 3;
@@ -1624,9 +1516,7 @@ criarOrdemServico(amostra: any){
   });
 }
 
-preencherFormularioOSComAmostra(amostra: any) {
-  console.log('Preenchendo formulário OS com dados da amostra:', amostra);
-  
+preencherFormularioOSComAmostra(amostra: any) {  
   // Busca o próximo número de OS
   this.ordemService.getProximoNumero().subscribe(numero => {
     this.registerOrdemForm.patchValue({
@@ -1638,7 +1528,6 @@ preencherFormularioOSComAmostra(amostra: any) {
   });
   
 }
-
 salvarOrdemEAssociarAmostra() {
   if (!this.amostraSelecionada) {
     this.messageService.add({
@@ -1648,7 +1537,6 @@ salvarOrdemEAssociarAmostra() {
     });
     return;
   }
-
   if (!this.registerOrdemForm.valid) {
     this.messageService.add({
       severity: 'error',
@@ -1657,16 +1545,12 @@ salvarOrdemEAssociarAmostra() {
     });
     return;
   }
-
   // Formatar a data da ordem
   let dataFormatada = '';
   const dataValue = this.registerOrdemForm.value.data;
   if (dataValue instanceof Date && !isNaN(dataValue.getTime())) {
     dataFormatada = formatDate(dataValue, 'yyyy-MM-dd', 'en-US');
   }
-
-  console.log('🚀 Iniciando criação de OS para amostra existente:', this.amostraSelecionada.id);
-
   // Criar a ordem de serviço
   this.ordemService.registerOrdem(
     dataFormatada,
@@ -1676,9 +1560,7 @@ salvarOrdemEAssociarAmostra() {
     this.registerOrdemForm.value.digitador,
     this.registerOrdemForm.value.classificacao
   ).subscribe({
-    next: (ordemSalva) => {
-      console.log('✅ Ordem criada:', ordemSalva);
-      
+    next: (ordemSalva) => {      
       // Associar a amostra existente a ordem criada
       this.associarAmostraAOrdem(this.amostraSelecionada.id, ordemSalva.id);
     },
@@ -1689,14 +1571,10 @@ salvarOrdemEAssociarAmostra() {
   });
 }
 
-associarAmostraAOrdem(amostraId: number, ordemId: number) {
-  console.log(`🔗 Associando amostra ${amostraId} à ordem ${ordemId}`);
-  
+associarAmostraAOrdem(amostraId: number, ordemId: number) {  
   // Atualizar a amostra para incluir a referência da ordem
   this.amostraService.associarAmostraAOrdem(amostraId, ordemId).subscribe({
-    next: (amostraAtualizada) => {
-      console.log('✅ Amostra associada à ordem:', amostraAtualizada);
-      
+    next: (amostraAtualizada) => {      
       // Criar análise para a amostra
       this.criarAnaliseParaAmostra(amostraId);
     },
@@ -1709,9 +1587,7 @@ associarAmostraAOrdem(amostraId: number, ordemId: number) {
   });
 }
 
-atualizarAmostraComOrdem(amostraId: number, ordemId: number) {
-  console.log(`🔄 Atualizando amostra ${amostraId} com ordem ${ordemId} (método alternativo)`);
-  
+atualizarAmostraComOrdem(amostraId: number, ordemId: number) {  
   // Preparar dados para atualização
   const dadosAtualizacao = {
     ordem: ordemId
@@ -1720,8 +1596,6 @@ atualizarAmostraComOrdem(amostraId: number, ordemId: number) {
   // Se tiver um método de update na amostra service
   this.amostraService.updateAmostra(amostraId, dadosAtualizacao).subscribe({
     next: (amostraAtualizada) => {
-      console.log('✅ Amostra atualizada com ordem:', amostraAtualizada);
-      
       // Criar análise para a amostra
       this.criarAnaliseParaAmostra(amostraId);
     },
@@ -1734,14 +1608,10 @@ atualizarAmostraComOrdem(amostraId: number, ordemId: number) {
   });
 }
 
-criarAnaliseParaAmostra(amostraId: number) {
-  console.log(`📊 Criando análise para amostra ${amostraId}`);
-  
+criarAnaliseParaAmostra(amostraId: number) {  
   // Buscar a amostra atualizada para garantir que tem a ordem associada
   this.amostraService.getAmostraById(amostraId).subscribe({
-    next: (amostraAtualizada) => {
-      console.log('📋 Amostra recuperada:', amostraAtualizada);
-      
+    next: (amostraAtualizada) => {      
       // Verificar se a amostra tem ordem associada
       if (!amostraAtualizada.ordem && !amostraAtualizada.ordem_detalhes) {
         console.warn('⚠️ Amostra não tem ordem associada');
@@ -1752,24 +1622,16 @@ criarAnaliseParaAmostra(amostraId: number) {
         });
         return;
       }
-      
       // Criar análise com a amostra e ordem
       const ordemId = amostraAtualizada.ordem || amostraAtualizada.ordem_detalhes?.id;
-      console.log(`🔗 Criando análise para amostra ${amostraId} com ordem ${ordemId}`);
-      
       this.analiseService.registerAnalise(amostraId, 'PENDENTE').subscribe({
-        next: (analiseCriada) => {
-          console.log('✅ Análise criada:', analiseCriada);
-          
+        next: (analiseCriada) => {          
           // Atualizar a lista de amostras para refletir as mudanças
           this.loadAmostras();
-          
           // Limpar seleção e resetar formulários
           this.limparSelecaoEFormularios();
-          
           // Voltar para o step 1
           this.activeStep = 1;
-          
           this.messageService.add({
             severity: 'success',
             summary: 'Sucesso',
@@ -1778,32 +1640,24 @@ criarAnaliseParaAmostra(amostraId: number) {
         },
         error: (err) => {
           console.error('❌ Erro ao criar análise:', err);
-          
           // Mesmo se der erro na análise, a ordem foi criada
           this.messageService.add({
             severity: 'warn',
             summary: 'Atenção',
             detail: 'Ordem criada e associada, mas houve erro ao criar a análise. Verifique manualmente.'
           });
-          
           this.limparSelecaoEFormularios();
           this.activeStep = 1;
         }
       });
     },
     error: (err) => {
-      console.error('❌ Erro ao recuperar amostra atualizada:', err);
-      
-      // Se não  recuperar a amostra, tenta criar análise só com amostraId
-      console.log('🔄 Tentando criar análise apenas com amostraId como fallback');
+      console.error('❌ Erro ao recuperar amostra atualizada:', err); 
       this.analiseService.registerAnalise(amostraId, 'PENDENTE').subscribe({
-        next: (analiseCriada) => {
-          console.log('✅ Análise criada (fallback):', analiseCriada);
-          
+        next: (analiseCriada) => {          
           this.loadAmostras();
           this.limparSelecaoEFormularios();
           this.activeStep = 1;
-          
           this.messageService.add({
             severity: 'success',
             summary: 'Sucesso',
@@ -1841,7 +1695,6 @@ limparSelecaoEFormularios() {
 
 tratarErroOperacao(err: any, operacao: string) {
   console.error(`Erro ao ${operacao}:`, err);
-  
   if (err.status === 401) {
     this.messageService.add({ 
       severity: 'error', 
@@ -1873,9 +1726,7 @@ tratarErroOperacao(err: any, operacao: string) {
 
 
 /////////////////////// ORDEM DE SERVIÇO COM PLANO APARTIR DO FORMULAŔIO////////////////////
-navegarParaOs() {
-  console.log('🚀 Navegando para OS na mesma página');
-  
+navegarParaOs() {  
   // Capturar dados do formulário atual
   const formData = this.registerForm.value;
   const dadosEnriquecidos = this.enriquecerDadosFormulario(formData);
@@ -1888,64 +1739,33 @@ navegarParaOs() {
     tamanho: fileInfo.file.size,
     tipo: fileInfo.file.type
   }));
-  
   // ARMAZENAR OS DADOS LOCALMENTE para o fluxo interno
   this.amostraData = dadosEnriquecidos;
-  
-  // Debug
-  console.log('Estado do formulário antes de navegar:', formData);
-  console.log('Dados enriquecidos com imagens:', dadosEnriquecidos);
-  console.log('✅ Dados armazenados em amostraData:', this.amostraData);
-  
   // Salva no sessionStorage como backup
   const dadosSemImagens = { ...dadosEnriquecidos };
   delete dadosSemImagens.imagens;
   sessionStorage.setItem('amostraData', JSON.stringify(dadosSemImagens));
-  
   // Ir para step 2
   this.activeStep = 2;
 }
 receberDadosAmostra(): void {
-    
-  // Debug: Verificar estado do formulário
-  console.log('🔍 Estado do formulário:', {
-    valid: this.registerForm.valid,
-    invalid: this.registerForm.invalid,
-    touched: this.registerForm.touched,
-    dirty: this.registerForm.dirty
-  });
-  
-  // Debug: Verificar campos inválidos
-  console.log('🔍 Campos inválidos:');
   Object.keys(this.registerForm.controls).forEach(key => {
     const control = this.registerForm.get(key);
     if (control && control.invalid) {
-      console.log(`❌ ${key}:`, {
-        value: control.value,
-        errors: control.errors,
-        touched: control.touched,
-        dirty: control.dirty
-      });
     }
   });
-
   if (window.history.state && window.history.state.amostraData) {
-    this.amostraData = window.history.state.amostraData;
-    console.log('✅ Dados da amostra recebidos via history.state:', this.amostraData);
-    
+    this.amostraData = window.history.state.amostraData;    
     // Lidar com imagens novas do formulário
     if (this.amostraData.imagens && this.amostraData.imagens.length > 0) {
-      console.log('📸 Extraindo imagens dos dados recebidos:', this.amostraData.imagens);
       this.uploadedFilesWithInfo = this.amostraData.imagens.map((imagem: any) => ({
         file: imagem.file,
         descricao: imagem.descricao || ''
       }));
-      console.log('📸 Imagens carregadas no uploadedFilesWithInfo:', this.uploadedFilesWithInfo);
     }
     
     // Lidar com imagens existentes de amostra salva
     if (this.amostraData.imagensExistentes && this.amostraData.imagensExistentes.length > 0) {
-      console.log('📸 Imagens existentes encontradas:', this.amostraData.imagensExistentes);
       //criar uma propriedade separada para exibir essas imagens
       this.imagensExistentes = this.amostraData.imagensExistentes;
     }
@@ -1953,13 +1773,8 @@ receberDadosAmostra(): void {
     return;
   }
   this.activeStep = 3;
-  console.log('Nenhum dado da amostra foi recebido');
 }
-
-
 criarOSDoFormulario() {
-  console.log('🚀 Iniciando criação de OS do formulário');
-
   // Validação para campos  mínimos
   const camposEssenciais = {
     'material': 'Material',
@@ -1969,10 +1784,8 @@ criarOSDoFormulario() {
     'finalidade': 'Finalidade',
     'fornecedor': 'Fornecedor',
     'status': 'Status'
-  };
-  
+  }; 
   const camposVazios = [];
-  
   // Verificar campos 
   for (const [campo, nome] of Object.entries(camposEssenciais)) {
     const control = this.registerForm.get(campo);
@@ -1980,7 +1793,6 @@ criarOSDoFormulario() {
       camposVazios.push(nome);
     }
   }
-  
   if (camposVazios.length > 0) {
     this.messageService.add({
       severity: 'warn',
@@ -1992,8 +1804,6 @@ criarOSDoFormulario() {
 
   // VERIFICAR OU CAPTURAR DADOS DA AMOSTRA
   if (!this.amostraData) {
-    console.log('⚠️ amostraData não encontrada, capturando dados do formulário atual...');
-    
     const formData = this.registerForm.value;
     this.amostraData = this.enriquecerDadosFormulario(formData);
     
@@ -2006,10 +1816,7 @@ criarOSDoFormulario() {
         tipo: fileInfo.file.type
       }));
     }
-    
-    console.log('✅ Dados capturados do formulário:', this.amostraData);
   }
-
   // Validação customizada 
   const camposEssenciaisOrdem = {
     'data': 'Data da Ordem',
@@ -2017,16 +1824,13 @@ criarOSDoFormulario() {
     'planoAnalise': 'Plano de Análise',
     'digitador': 'Digitador',
   };
-  
   const camposVaziosOrdem = [];
-  
   for (const [campo, nome] of Object.entries(camposEssenciaisOrdem)) {
     const control = this.registerOrdemForm.get(campo);
     if (!control || !control.value || control.value === '') {
       camposVaziosOrdem.push(nome);
     }
   }
-  
   if (camposVaziosOrdem.length > 0) {
     this.messageService.add({
       severity: 'warn',
@@ -2036,25 +1840,11 @@ criarOSDoFormulario() {
     return;
   }
 
-  // ADICIONAR DEBUG PARA VER OS VALORES ENVIADOS
-  console.log('🔍 Valores do formulário de ordem:', {
-    data: this.registerOrdemForm.value.data,
-    numero: this.registerOrdemForm.value.numero,
-    planoAnalise: this.registerOrdemForm.value.planoAnalise,
-    responsavel: this.registerOrdemForm.value.responsavel,
-    digitador: this.registerOrdemForm.value.digitador,
-    classificacao: this.registerOrdemForm.value.classificacao  // ← Verificar este valor
-  });
-
-  console.log('🚀 Iniciando criação da amostra - Fluxo: Ordem → Amostra → Análise');
-
   let dataFormatada = '';
   const dataValue = this.registerOrdemForm.value.data;
   if (dataValue instanceof Date && !isNaN(dataValue.getTime())) {
     dataFormatada = formatDate(dataValue, 'yyyy-MM-dd', 'en-US');
   }
-
-  console.log('📝 Criando ordem ...');
 
   this.ordemService.registerOrdem(
     dataFormatada,
@@ -2065,7 +1855,6 @@ criarOSDoFormulario() {
     this.registerOrdemForm.value.classificacao
   ).subscribe({
     next: (ordemSalva) => {
-      console.log('✅ Ordem criada:', ordemSalva);
       const idOrdem = ordemSalva.id;
       
       // Criar amostra vinculada à ordem
@@ -2084,14 +1873,10 @@ criarOSDoFormulario() {
 
 voltarParaStep1() {
   this.activeStep = 1;
-  // NÃO limpar this.amostraData aqui para permitir edições
-  console.log('🔙 Voltou para step 1, dados preservados');
 }
 
 voltarParaStep2() {
   this.activeStep = 2;
-  // NÃO limpar this.amostraData aqui para permitir edições
-  console.log('🔙 Voltou para step 2, dados preservados');
 }
 
 limparDadosFormulario() {
@@ -2099,13 +1884,10 @@ limparDadosFormulario() {
   this.amostraSelecionada = null;
   this.amostraDoFormulario = null;
   sessionStorage.removeItem('amostraData');
-  console.log('🧹 Dados do formulário limpos');
 }
 
   // Método auxiliar para criar amostra vinculada à ordem
   private criarAmostraVinculada(idOrdem: string | number): void {
-    console.log('📝 Criando amostra vinculada à ordem:', idOrdem);
-
     // Formatar datas para o backend
     let dataColetaFormatada = null;
     const dataColetaValue = this.amostraData.dataColeta;
@@ -2182,20 +1964,12 @@ limparDadosFormulario() {
       dataDescarteFormatada
     ).subscribe({
       next: (amostraCriada) => {
-      console.log('✅ Amostra criada:', amostraCriada);
-
       // Define o ID da amostra criada ANTES do upload
       this.amostraId = amostraCriada.id;
-      console.log('🆔 ID da amostra definido:', this.amostraId);
-
         // Faz upload das imagens se houver arquivos selecionados
       if (this.uploadedFilesWithInfo.length > 0) {
-        console.log('📸 Iniciando upload de', this.uploadedFilesWithInfo.length, 'imagens');
         this.uploadImages();
-      } else {
-        console.log('📸 Nenhuma imagem para enviar');
-      }
-    
+      } 
         // Criar análise vinculada à amostra
         this.criarAnaliseVinculada(amostraCriada.id);
       },
@@ -2212,22 +1986,15 @@ limparDadosFormulario() {
 
   // Método auxiliar para criar análise vinculada à amostra
   private criarAnaliseVinculada(idAmostra: number): void {
-    console.log('📝 Criando análise vinculada à amostra:', idAmostra);
-
     this.analiseService.registerAnalise(idAmostra, 'PENDENTE').subscribe({
       next: (analiseCriada) => {
-        console.log('✅ Análise criada:', analiseCriada);
-         
-        
         // Sucesso final
         this.messageService.add({ 
           severity: 'success', 
           summary: 'Sucesso', 
           detail: 'Amostra expressa criada com sucesso! (Ordem → Amostra → Análise)'
         });
-        
-        // redirecionar
-        
+        // redirecionar  
         this.router.navigate(['/welcome/controleQualidade/ordem']);
       },
       error: (error) => {
@@ -2242,8 +2009,6 @@ limparDadosFormulario() {
   }
 
 preencherFormularioOSComAmostraFormulario(dadosFormulario: any) {
-  console.log('Preenchendo formulário OS com dados do formulário:', dadosFormulario);
-
   // Buscar próximo número de OS
   this.ordemService.getProximoNumero().subscribe(numero => {
     this.registerOrdemForm.patchValue({
@@ -2260,16 +2025,11 @@ loadAnalises(){
   this.analiseService.getAnalises().subscribe(
     response => {
       this.analises = response;
-      
     },
     error => {
-      console.log('Erro ao carregar análises', error);
+      console.error('Erro ao carregar análises', error);
     }
   );
-}
-
-osExpressa(){
-  //TEM QUE IMPLEMENTAR A FUNÇÃO
 }
 
 loadUltimaAnalise(){
@@ -2280,7 +2040,6 @@ loadUltimaAnalise(){
         // Pega a última análise (assumindo que o array está ordenado por criação)
         const ultimaAnalise = response[response.length - 1];
         this.idUltimaAanalise = ultimaAnalise.id;
-        console.log('Última análise:', ultimaAnalise);
         this.analisesSimplificadas = [{
           amostraDataEntrada: ultimaAnalise.amostra_detalhes?.data_entrada,
           amostraDataColeta: ultimaAnalise.amostra_detalhes?.data_coleta,
@@ -2311,13 +2070,13 @@ loadUltimaAnalise(){
           planoEnsaios: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.plano_detalhes?.ensaio_detalhes,
 
           //planoCalculos: ultimaAnalise.amostra_detalhes?.ordem_detalhes?.plano_detalhes?.calculo_ensaio_detalhes,
-        }];console.log('Numero da Ordem:', this.analisesSimplificadas[0].ordemNumero);
+        }];
       } else {
         this.analisesSimplificadas = [];
       }
     },
     error => {
-      console.log('Erro ao carregar análises', error);
+      console.error('Erro ao carregar análises', error);
       this.analisesSimplificadas = [];
     }
   );
@@ -2333,35 +2092,6 @@ sincronizarValoresEnsaios(produto: any, calc: any) {
   });
 }
 
-// calcular(calc: any, produto?: any) {
-//   if (produto) {
-//     this.sincronizarValoresEnsaios(produto, calc);
-//   }
-//   if (!calc.ensaios_detalhes || !Array.isArray(calc.ensaios_detalhes)) {
-//     calc.resultado = 'Sem ensaios para calcular';
-//     return;
-//   }
-
-//   // Descobre todos os varX usados na expressão
-//   const varMatches = (calc.funcao.match(/var\d+/g) || []);
-//   const varList = Array.from(new Set(varMatches));
-
-//   // Monta safeVars usando o valor correto para cada varX
-//   const safeVars: any = {};
-
-//   // safe var6 -> PNquimica %, var9 -> RE (reativ) %
-//   safeVars['var6'] = calc.ensaios_detalhes[0]?.valor ?? 0;
-//   safeVars['var9'] = calc.ensaios_detalhes[1]?.valor ?? 0;
-
-//   // Avaliação
-//   console.log('Função final para eval:', calc.funcao, safeVars);
-//   try {
-//     calc.resultado = evaluate(calc.funcao, safeVars);
-//   } catch (e) {
-//     calc.resultado = 'Erro no cálculo';
-//   }
-// }
-
 private normalize(str: string): string {
   if (!str) return '';
   return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
@@ -2372,7 +2102,6 @@ private calcularDataDescarte(dataEntrada: Date, material: string): Date | null {
   if (!dataEntrada || !material) {
     return null;
   }
-
   const materialNormalizado = this.normalize(material);
   const dataDescarte = new Date(dataEntrada);
   
@@ -2392,65 +2121,21 @@ private calcularDataDescarte(dataEntrada: Date, material: string): Date | null {
   else {
     dataDescarte.setDate(dataDescarte.getDate() + 90);
   }
-
   return dataDescarte;
 }
 
 // Função para atualizar a data de descarte no formulário
 private atualizarDataDescarte(): void {
   const dataEntrada = this.registerForm.get('dataEntrada')?.value;
-  const material = this.registerForm.get('material')?.value;
-  
-  console.log('🗓️ Atualizando data de descarte - Data Entrada:', dataEntrada, 'Material:', material);
-  
+  const material = this.registerForm.get('material')?.value;  
   if (dataEntrada && material) {
     const dataDescarte = this.calcularDataDescarte(dataEntrada, material);
-    console.log('📅 Data de descarte calculada:', dataDescarte);
     this.registerForm.get('dataDescarte')?.setValue(dataDescarte, { emitEvent: false });
   } else {
     // Limpar campo se não tiver dados suficientes
     this.registerForm.get('dataDescarte')?.setValue(null, { emitEvent: false });
   }
 }
-
-// recalcularTodosCalculos(produto: any) {
-//   if (produto && produto.planoCalculos) {
-//     produto.planoCalculos.forEach((calc: any) => this.calcular(calc));
-//   }
-// }
-
-// calcularEnsaios(ensaios: any[], produto: any) {
-//   const planoCalculos = produto.planoCalculos || [];
-//   if (!planoCalculos.length) {
-//     produto.resultado = 'Sem função';
-//     return;
-//   }
-
-//   planoCalculos.forEach((calc: { funcao: any; ensaios_detalhes: any[]; resultado: string; }) => {
-//     let funcaoSubstituida = calc.funcao;
-//     calc.ensaios_detalhes.forEach((ensaio: any) => {
-//       const valor = ensaio.valor !== undefined && ensaio.valor !== null ? ensaio.valor : 0;
-//       funcaoSubstituida = funcaoSubstituida.replace(
-//         new RegExp('\\b' + ensaio.descricao + '\\b', 'gi'),
-//         valor
-//       );
-//     });
-//     console.log('Função final para eval:', funcaoSubstituida);
-//     try {
-//       calc.resultado = eval(funcaoSubstituida);
-//     } catch (e) {
-//       calc.resultado = 'Erro no cálculo';
-//     }
-//   });
-
-//   produto.resultado = planoCalculos[0]?.resultado;
-// }
-
-// calcularTodosCalculosDoPlano(plano: any) {
-//   if (plano && plano.calculo_ensaio_detalhes) {
-//     plano.calculo_ensaio_detalhes.forEach((calc: any) => this.calcular(calc, plano));
-//   }
-// }
 
 salvarAnaliseResultados() {
   this.getDigitadorInfo();
@@ -2472,9 +2157,6 @@ salvarAnaliseResultados() {
       }))
     })) || []
   );
-
- 
-
   const calculos = this.analisesSimplificadas[0].planoDetalhes
   .flatMap((plano: { calculo_ensaio_detalhes: any[]; }) =>
     plano.calculo_ensaio_detalhes?.map(calc => ({
@@ -2491,17 +2173,12 @@ salvarAnaliseResultados() {
     })) || []
   );
 
-
-
-
   const idAnalise = this.idUltimaAanalise;
-  console.log('ID da análise:', idAnalise);
   const payload = {
     estado: 'PENDENTE',
     ensaios: ensaios,
     calculos: calculos
   };
-
   this.analiseService.registerAnaliseResultados(idAnalise, payload).subscribe({
     next: () => {
       this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Análise registrada com sucesso.' });
@@ -2525,8 +2202,6 @@ salvarAnaliseResultados() {
 
 // Método para criar amostra normal- sem criar ordem
 criarAmostraNormal(): void {
-  console.log('🚀 Criando amostra normal (sem ordem)');
-  
   // Validar se o formulário está válido
   if (!this.registerForm.valid) {
     this.messageService.add({ 
@@ -2570,10 +2245,7 @@ criarAmostraNormal(): void {
     if (dataDescarteValue) {
       dataDescarteFormatada = formatDate(dataDescarteValue, 'yyyy-MM-dd', 'en-US');
     }
-  }
-
-  console.log('📝 Criando amostra normal...');
-  
+  }  
   // Criar amostra normal (sem ordem)
   this.amostraService.registerAmostra(
     this.registerForm.value.material,
@@ -2609,9 +2281,7 @@ criarAmostraNormal(): void {
     this.registerForm.value.status,
     dataDescarteFormatada
   ).subscribe({
-    next: (amostraCriada) => {
-      console.log('✅ Amostra normal criada:', amostraCriada);
-      
+    next: (amostraCriada) => {      
       this.messageService.add({ 
         severity: 'success', 
         summary: 'Sucesso', 
@@ -2643,7 +2313,6 @@ handleChange(info: any): void {
       descricao: '' // Descrição inicial vazia
     }));
   
-  console.log('Arquivos processados:', this.uploadedFilesWithInfo);
   this.validateFiles();
 }
 
@@ -2680,7 +2349,6 @@ validateFiles(): void {
     });
     
     this.uploadedFilesWithInfo = validFiles;
-    console.log('Arquivos válidos:', this.uploadedFilesWithInfo);
   }
 
 // Método para interceptar requisições e não fazer upload automático
@@ -2828,20 +2496,12 @@ onDescricaoInput(index: number, event: Event): void {
   
   if (this.uploadedFilesWithInfo[index]) {
     this.uploadedFilesWithInfo[index].descricao = descricao;
-    console.log(`Descrição atualizada para arquivo ${index}: "${descricao}"`);
-    console.log('Estado atual dos arquivos:', this.uploadedFilesWithInfo);
   }
 }
 
 // Método para verificar o estado antes do upload
 verificarEstadoArquivos(): void {
-  console.log('Estado final dos arquivos antes do upload:');
   this.uploadedFilesWithInfo.forEach((fileInfo, index) => {
-    console.log(`Arquivo ${index}:`, {
-      nome: fileInfo.file.name,
-      descricao: fileInfo.descricao,
-      tamanho: fileInfo.file.size
-    });
   });
 }
 

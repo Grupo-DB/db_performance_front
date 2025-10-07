@@ -19,12 +19,13 @@
     }
 }
 
-.card-substrato{
-    // box-shadow: 1px 1px 20px 10px #9fe653;
-}
-.card-superficial{
-    // box-shadow: 1px 1px 20px 10px #7256cf;
-}
+// Estilos desabilitados para cards específicos
+// .card-substrato {
+//     box-shadow: 1px 1px 20px 10px #9fe653;
+// }
+// .card-superficial {
+//     box-shadow: 1px 1px 20px 10px #7256cf;
+// }
 .card{
     border-radius: 10px;
     .header{
@@ -128,4 +129,111 @@
     border-radius: 20px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
+}
+
+// Estilos para o modal de parecer da IA
+:host ::ng-deep .parecer-modal {
+    .p-dialog {
+        min-width: 60vw;
+        max-width: 80vw;
+        
+        @media (max-width: 768px) {
+            width: 95vw;
+            min-width: 95vw;
+        }
+    }
+    
+    .p-dialog-header {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: white;
+        border-radius: 8px 8px 0 0;
+        
+        .p-dialog-title {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+    }
+}
+
+.parecer-container {
+    .parecer-header {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+        border-radius: 8px;
+        border-left: 4px solid #3b82f6;
+        
+        i {
+            font-size: 1.5rem;
+        }
+    }
+    
+    .parecer-conteudo {
+        font-family: system-ui, -apple-system, sans-serif;
+        font-size: 14px;
+        line-height: 1.6;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 1rem;
+        max-height: 60vh;
+        overflow-y: auto;
+        word-wrap: break-word;
+    }
+    
+    .parecer-loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 200px;
+        
+        p {
+            color: #6b7280;
+            font-weight: 500;
+            margin: 0;
+        }
+        
+        small {
+            color: #9ca3af;
+            margin: 0;
+        }
+    }
+    
+    .parecer-empty {
+        min-height: 150px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        
+        i {
+            color: #f59e0b;
+        }
+        
+        p {
+            margin: 0;
+            color: #6b7280;
+        }
+    }
+    
+    .parecer-footer {
+        padding: 0.75rem;
+        background: #f9fafb;
+        border-radius: 6px;
+        border: 1px solid #f3f4f6;
+        
+        small {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #6b7280;
+            
+            i {
+                color: #3b82f6;
+            }
+        }
+    }
 }

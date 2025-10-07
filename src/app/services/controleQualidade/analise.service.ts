@@ -56,8 +56,27 @@ export class AnaliseService {
   }
   //////
   //EMITIR PARECER
-  emitirParecer(prompt: any): Observable<any> {
-    return this.httpClient.post<any>(this.parecerUrl,{ prompt:prompt});
+  emitirParecer(payload: any): Observable<any> {
+    // Converter payload para string formatada
+    let promptString = "";
+    
+    // Adicionar dados principais
+    if (payload.Produto) promptString += `Produto: "${payload.Produto}"\n`;
+    if (payload.Tipo) promptString += `Tipo: "${payload.Tipo}"\n`;
+    if (payload.Subtipo) promptString += `Subtipo: "${payload.Subtipo}"\n`;
+    
+    promptString += "\nEnsaios e Cálculos:\n";
+    
+    // Adicionar todos os outros campos
+    Object.keys(payload).forEach(chave => {
+      if (chave !== 'Produto' && chave !== 'Tipo' && chave !== 'Subtipo') {
+        promptString += `${chave}: ${payload[chave]}\n`;
+      }
+    });
+    
+    console.log('Prompt final:', promptString);
+    
+    return this.httpClient.post<any>(this.parecerUrl, { prompt: promptString });
   }
   ////////////////////////////////-------------------------------------------------------------
   registerAnaliseComOrdem(amostraId: number, ordemId: number, estado: string): Observable<any> {
@@ -66,9 +85,7 @@ export class AnaliseService {
     ordem: ordemId,
     estado: estado
   };
-  
-  console.log('📤 Enviando payload para criar análise:', payload);
-  
+   
   return this.httpClient.post(`${this.analiseUrl}`, payload, this.httpOptions);
 }
 

@@ -38,6 +38,7 @@ import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TooltipModule } from 'primeng/tooltip';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { Chart } from 'chart.js';
@@ -96,7 +97,7 @@ interface LinhaSuperficial {
 @Component({
   selector: 'app-arquivo',
   imports: [
-    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule, CardModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule,NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule, TagModule, CheckboxModule, TreeTableModule
+    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule, CardModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule,NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule, TagModule, CheckboxModule, TreeTableModule, ProgressSpinnerModule
   ],
   animations:[
     trigger('efeitoFade',[
@@ -201,6 +202,11 @@ export class ArquivoComponent implements OnInit {
   modalImagensVisible = false;
   bodyTabelaObs: string = '';
   selectedEnsaios: TreeNode[] = []; // aqui ficam os selecionados
+  
+  // Propriedades para o parecer da IA
+  parecerResposta: string = '';
+  mostrarParecer: boolean = false;
+  parecerCarregando: boolean = false;
   tipoFiltro = [
     { value: 'Expressa' },
     { value: 'Plano' },
@@ -229,6 +235,8 @@ export class ArquivoComponent implements OnInit {
     { value: 'Mineracao' },
     { value: 'Areia' },
   ]
+  listaEnsaios: any;
+  listaCalculos: any;
 constructor(
 private loginService: LoginService,
 private analiseService: AnaliseService,
@@ -410,9 +418,143 @@ private confirmationService: ConfirmationService,
         console.log('oi');
 
   }
+// ============================== CONSULTAR IA ====================================================
+consultarParecer(analise: any) {
+  console.log('analiseId', analise);
+  console.log('Dados completos da análise:', analise);
+  
+  // Iniciar loading
+  this.parecerCarregando = true;
+  this.mostrarParecer = true;
+  this.parecerResposta = '';
+  // Montar payload no formato plano com chaves individuais
+  const payload: any = {
+    "Produto": analise.amostra_detalhes?.produto_amostra_detalhes?.nome || "",
+    "Tipo": analise.amostra_detalhes?.produto_amostra_detalhes?.tipo || "", 
+    "Subtipo": analise.amostra_detalhes?.produto_amostra_detalhes?.subtipo || ""
+  };
+
+  console.log('Verificando ultimo_ensaio:', analise.ultimo_ensaio);
+  console.log('Verificando ultimo_calculo:', analise.ultimo_calculo);
+
+  // Adicionar ensaios do ultimo_ensaio
+  if (analise.ultimo_ensaio) {
+    // Se ultimo_ensaio tem ensaios_utilizados (array)
+    if (analise.ultimo_ensaio.ensaios_utilizados && Array.isArray(analise.ultimo_ensaio.ensaios_utilizados)) {
+      console.log('Ensaios utilizados encontrados:', analise.ultimo_ensaio.ensaios_utilizados);
+      analise.ultimo_ensaio.ensaios_utilizados.forEach((ensaio: any) => {
+        console.log('Processando ensaio:', ensaio);
+        const nome = ensaio.descricao || ensaio.nome || ensaio.tipo_ensaio;
+        const valor = ensaio.valor || ensaio.resultado || ensaio.media;
+        const unidade = ensaio.unidade || ensaio.simbolo || '';
+        
+        if (nome && valor !== null && valor !== undefined) {
+          payload[nome] = `${valor}${unidade}`;
+          console.log(`Ensaio adicionado: ${nome} = ${valor}${unidade}`);
+        }
+      });
+    }
+    // Se ultimo_ensaio é um objeto direto com propriedades
+    else if (typeof analise.ultimo_ensaio === 'object') {
+      console.log('ultimo_ensaio é objeto direto:', analise.ultimo_ensaio);
+      Object.keys(analise.ultimo_ensaio).forEach(chave => {
+        const valor = analise.ultimo_ensaio[chave];
+        if (valor !== null && valor !== undefined && chave !== 'id') {
+          payload[chave] = valor;
+          console.log(`Propriedade adicionada: ${chave} = ${valor}`);
+        }
+      });
+    }
+  }
+
+  // Adicionar cálculos do ultimo_calculo
+  if (analise.ultimo_calculo && Array.isArray(analise.ultimo_calculo)) {
+    console.log('Cálculos encontrados:', analise.ultimo_calculo);
+    analise.ultimo_calculo.forEach((calculo: any) => {
+      console.log('Processando cálculo:', calculo);
+      const nome = calculo.descricao || calculo.nome || calculo.tipo_calculo;
+      const valor = calculo.valor || calculo.resultado || calculo.media;
+      const unidade = calculo.unidade || calculo.simbolo || '';
+      
+      if (nome && valor !== null && valor !== undefined) {
+        payload[nome] = `${valor}${unidade}`;
+        console.log(`Cálculo adicionado: ${nome} = ${valor}${unidade}`);
+      }
+    });
+  }
+
+  console.log('Payload final montado:', payload);
+
+  this.analiseService.emitirParecer(payload).subscribe(
+    (response) => {
+      console.log('Parecer recebido:', response);
+      
+      // Finalizar loading
+      this.parecerCarregando = false;
+      
+      // Extrair a resposta do objeto retornado do backend Django
+      let parecerTexto = '';
+      if (typeof response === 'string') {
+        parecerTexto = response;
+      } else if (response && response.message) {
+        // Resposta do backend Django
+        if (typeof response.message === 'string') {
+          parecerTexto = response.message;
+        } else {
+          parecerTexto = JSON.stringify(response.message);
+        }
+      } else if (response && response.choices && response.choices[0] && response.choices[0].message) {
+        parecerTexto = response.choices[0].message.content;
+      } else if (response && response.reply) {
+        parecerTexto = response.reply;
+      } else if (response && response.content) {
+        parecerTexto = response.content;
+      } else if (response && response.response) {
+        parecerTexto = response.response;
+      } else {
+        parecerTexto = JSON.stringify(response, null, 2);
+      }
+      
+      // Limpar caracteres de escape e formatação JSON indesejada
+      parecerTexto = parecerTexto.replace(/\\n/g, '\n').replace(/\\"/g, '"');
+      if (parecerTexto.startsWith('"') && parecerTexto.endsWith('"')) {
+        parecerTexto = parecerTexto.slice(1, -1);
+      }
+      
+      this.parecerResposta = parecerTexto;
+      
+    },
+    (error) => {
+      console.error('Erro ao buscar parecer:', error);
+      this.parecerCarregando = false;
+      this.parecerResposta = 'Erro ao obter parecer da IA. Tente novamente.';
+    }
+  );
+}
+private montarEnsaios(): any {
+  const ensaios: any = {};
+  
+  // Assumindo que você tem uma lista de ensaios
+  this.listaEnsaios?.forEach((ensaio: { nome: string | number; resultado: any; unidade: any; }) => {
+    ensaios[ensaio.nome] = `${ensaio.resultado}${ensaio.unidade || ''}`;
+  });
+  console.log('ensaios', ensaios);
+  return ensaios;
+}
+
+private montarCalculos(): any {
+  const calculos: any = {};
+  
+  // Assumindo que você tem uma lista de cálculos
+  this.listaCalculos?.forEach((calculo: { nome: string | number; resultado: any; unidade: any; }) => {
+    calculos[calculo.nome] = `${calculo.resultado}${calculo.unidade || ''}`;
+  });
+  
+  return calculos;
+}
+
 
   //=============================================MÉTODOS do MENU ITEM=============================================
-
   visualizar(analise: any) {
     this.analiseSelecionada = analise;
     this.modalVisualizar = true;
@@ -3153,6 +3295,50 @@ duplicata(amostra: any): void {
 
   getStatusColor(status: boolean): string {
     return status ? '#22c55e' : '#ef4444';
+  }
+
+  // Método otimizado para formatar o parecer rapidamente
+  formatarParecer(texto: string): string {
+    if (!texto) return '';
+
+    // Limpeza básica e rápida
+    let textoLimpo = texto.replace(/\\n/g, '\n').replace(/\\"/g, '"');
+    if (textoLimpo.startsWith('"') && textoLimpo.endsWith('"')) {
+      textoLimpo = textoLimpo.slice(1, -1);
+    }
+
+    // Formatação simples e rápida
+    return textoLimpo
+      .replace(/\n/g, '<br>')
+      .replace(/•\s*([^\n]+)/g, '<div style="margin: 5px 0;">• $1</div>')
+      .replace(/(Norma aplicada|Resultado|Verificação|Conclusão)/gi, '<strong style="color: #2563eb;">$1</strong>')
+      .replace(/(\d+[,.]?\d*\s*%)/g, '<span style="background: #dbeafe; color: #1e40af; padding: 2px 4px; border-radius: 3px;">$1</span>');
+  }
+
+  // Método para fechar o modal do parecer
+  fecharParecer(): void {
+    this.mostrarParecer = false;
+    this.parecerResposta = '';
+    this.parecerCarregando = false;
+  }
+
+  // Método para copiar o parecer para a área de transferência
+  copiarParecer(): void {
+    if (this.parecerResposta) {
+      navigator.clipboard.writeText(this.parecerResposta).then(() => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Copiado!',
+          detail: 'Parecer copiado para a área de transferência'
+        });
+      }).catch(() => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Não foi possível copiar o texto'
+        });
+      });
+    }
   }
 
 }  
