@@ -33,6 +33,15 @@ export class AnaliseService {
     const url = `${this.analiseUrl}${id}/`;
     return this.httpClient.get<Analise>(url);
   }
+
+
+
+  editAnaliseSuperficial(id: number, dadosAtualizados: Partial<any>): Observable<any>{
+    const url = `${this.analiseUrl}${id}/`;
+    return this.httpClient.patch<any>(url, dadosAtualizados);
+  }
+
+
   editAnalise(id: number, dadosAtualizados: Partial<Analise>): Observable<any>{
     const url = `${this.analiseUrl}${id}/`;
     return this.httpClient.patch<any>(url, dadosAtualizados);
@@ -83,30 +92,30 @@ export class AnaliseService {
 
   //---------------------RESULTADOS---------------------
 
-getResultadosAnteriores(calculoDescricao: string, ensaioIds: number[], limit: number = 5): Observable<any[]> {
-  const url = `http://172.50.10.79:8008/analise/analise/resultados-anteriores/`;
-  
-  // Corpo da requisição POST
-  const body = {
-    calculo: calculoDescricao,
-    ensaioIds: ensaioIds,
-    limit: limit
-  };
-  
-  return this.httpClient.post<any[]>(url, body);
-}
+  getResultadosAnteriores(calculoDescricao: string, ensaioIds: number[], limit: number = 5): Observable<any[]> {
+    const url = `http://172.50.10.79:8008/analise/analise/resultados-anteriores/`;
+    
+    // Corpo da requisição POST
+    const body = {
+      calculo: calculoDescricao,
+      ensaioIds: ensaioIds,
+      limit: limit
+    };
+    
+    return this.httpClient.post<any[]>(url, body);
+  }
 
-getResultadosAnterioresEnsaios(ensaioDescricao: string, ensaioIds: number[], limit: number = 5): Observable<any[]> {
-  const url = `http://172.50.10.79:8008/analise/analise/resultados-anteriores/`;
-  
-  // Corpo da requisição POST
-  const body = {
-    ensaio_nome: ensaioDescricao,
-    ensaioIds: ensaioIds,
-    limit: limit
-  };
-  
-  return this.httpClient.post<any[]>(url, body);
-}
+  getResultadosAnterioresEnsaios(ensaioDescricao: string, ensaioIds: number[], limit: number = 5): Observable<any[]> {
+    const url = `http://172.50.10.79:8008/analise/analise/resultados-anteriores/`;
+    
+    // Corpo da requisição POST
+    const body = {
+      ensaio_nome: ensaioDescricao,
+      ensaioIds: ensaioIds,
+      limit: limit
+    };
+    
+    return this.httpClient.post<any[]>(url, body);
+  }
   
 }

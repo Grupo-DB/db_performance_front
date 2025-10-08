@@ -210,7 +210,7 @@
                                             [severity]="getSeverity(analise.amostra_detalhes.material)"
                                             />
                                         </td>
-                                        <td style="text-align: left;"> {{ analise.amostra_detalhes?.tipo_amostra }} </td>
+                                        <td style="text-align: left;"> {{ analise.amostra_detalhes?.tipo_amostra+" - - - "+analise.id }} </td>
                                         <ng-container *ngIf="analise?.amostra_detalhes?.expressa_detalhes; else ensaioDetalhes">
                                             <td style="text-align: left;">
                                                 {{ analise.amostra_detalhes?.expressa_detalhes?.data | date:'dd/MM/yy' }}
@@ -811,7 +811,7 @@
                             <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
                                 <p-button 
                                     label="Salvar e ir para tração superficial" 
-                                    (onClick)="abrirModalDadosLaudoSuperficial(analise_superficial)"
+                                    (onClick)="abrirModalDadosLaudoSuperficial()"
                                     severity="warn"
                                     icon="pi pi-check" 
                                     iconPos="right" 
@@ -872,19 +872,19 @@
                                         <ng-template pTemplate="body" let-numero let-i="rowIndex">
                                             <tr>
                                                 <td>{{ numero.numero }}</td>
-                                                <td><input pInputText [(ngModel)]="numero.diametro" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.area" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.espessura" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.subst" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.junta" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.carga" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.resist" type="number" step="0.01" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.validacao" type="text" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.rupturas.sub" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.rupturas.subArga" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.rupturas.rupArga" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.rupturas.argaCola" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.rupturas.colarPastilha" type="number" /></td>
+                                                <td><input  [(ngModel)]="numero.diametro" type="number" /></td>
+                                                <td><input  [(ngModel)]="numero.area" type="number" /></td>
+                                                <td><input  [(ngModel)]="numero.espessura" type="number" /></td>
+                                                <td><input  [(ngModel)]="numero.subst" type="number" /></td>
+                                                <td><input  [(ngModel)]="numero.junta" type="number" /></td>
+                                                <td><input  [(ngModel)]="numero.carga" type="number" /></td>
+                                                <td><input  [(ngModel)]="numero.resist" type="number" step="0.01" /></td>
+                                                <td><input  [(ngModel)]="numero.validacao" type="text" /></td>
+                                                <td><input  [(ngModel)]="numero.rupturas.sub" type="number" /></td>
+                                                <td><input  [(ngModel)]="numero.rupturas.subArga" type="number" /></td>
+                                                <td><input  [(ngModel)]="numero.rupturas.rupArga" type="number" /></td>
+                                                <td><input  [(ngModel)]="numero.rupturas.argaCola" type="number" /></td>
+                                                <td><input  [(ngModel)]="numero.rupturas.colarPastilha" type="number" /></td>
                                             </tr>
                                         </ng-template>
                                     </p-table>
@@ -895,7 +895,7 @@
                             <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
                                 <p-button 
                                     label="Salvar tração superficial" 
-                                    (onClick)="salvarSuperficial(analise_superficial)"
+                                    (onClick)="salvarSuperficial()"
                                     severity="info"
                                     icon="pi pi-check" 
                                     iconPos="right" 
