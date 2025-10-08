@@ -48,8 +48,6 @@ import { CardModule } from 'primeng/card';
 import { PopoverModule } from 'primeng/popover';
 import { HttpClient } from '@angular/common/http';
 import { TooltipModule } from 'primeng/tooltip';
-import Handsontable from 'handsontable';
-import { HyperFormula } from 'hyperformula';
 import { HotTableModule } from '@handsontable/angular-wrapper';
 
 export interface Analise {
@@ -196,6 +194,8 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
   inputValue: string = '';
   inputCalculos: string = '';
 
+  produtoId: any;
+
   responsaveis = [
     { value: 'Antonio Carlos Vargas Sito' },
     { value: 'Fabiula Bueno' },
@@ -220,6 +220,8 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
   ];
   
   @ViewChild('dt1') dt1!: Table;
+  garantias: any;
+modalGarantiasVisible: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -315,9 +317,23 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
       );
     }
   }
+/////////==========CONSULTAR GARANTIA POR PRODUTO ===========///////////////////////////////////////
+  consultarGarantia(): void{
+    this.modalGarantiasVisible = true;
+    this.amostraService.consultarGarantiaPorProduto(this.produtoId).subscribe(
+      response => {
+        this.garantias = response;
+      },
+      error => {
+        console.log('Erro ao carregar garantias de produto:', error);
+      }
+    )
+  }
 
 //================================= GET ANÁLISE POR ID ===========================
 loadAnalisePorId(analise: any) {  
+  this.produtoId = analise.amostra_detalhes.produto_amostra_detalhes?.id || null;
+  console.log('Produto da amostra:', this.produtoId);
   if (!analise || !analise.amostra_detalhes) {
     this.analisesSimplificadas = [];
     return;
@@ -336,6 +352,7 @@ loadAnalisePorId(analise: any) {
   let detalhesOrdem: any = {};
   let ensaioDetalhes: any[] = [];
   let calculoDetalhes: any[] = [];
+  
   if (isOrdemExpressa) {
     // Processar dados da ordem expressa
     const expressaDetalhes = analise.amostra_detalhes.expressa_detalhes;
@@ -4606,7 +4623,10 @@ fecharDrawerResultados(): void {
   this.calculoSelecionadoParaPesquisa = null;
   this.cd.detectChanges();
 }
-
+fecharDrawerGarantias(): void {
+  this.modalGarantiasVisible = false;
+  this.cd.detectChanges();
+}
 // =============================== Drawer de Resultados (Ensaios) =============================
 abrirDrawerResultadosEnsaios(ensaio: any): void {
   this.ensaioSelecionadoParaPesquisa = ensaio;

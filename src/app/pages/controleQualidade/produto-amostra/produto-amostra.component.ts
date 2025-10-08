@@ -224,8 +224,8 @@ export class ProdutoAmostraComponent implements OnInit {
       tipo: produtoAmostra.tipo,
       subtipo: produtoAmostra.subtipo
     });
-    console.log(this.editForm);
   }
+
 
   saveEdit(){
     const id = this.editForm.value.id;

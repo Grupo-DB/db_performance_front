@@ -11,14 +11,16 @@ import { da } from 'date-fns/locale';
 })
 export class AmostraService {
 
-  private amostraExpressaUrl = 'http://172.50.10.79:8008/ordem/expressa/';
-  private amostraOrdemUrl = 'http://172.50.10.79:8008/ordem/ordem/';
-  private tipoAmostraUrl = 'http://172.50.10.79:8008/amostra/tipoAmostra/';
-  private amostraUrl = 'http://172.50.10.79:8008/amostra/amostra/';
-  private imageUrl = 'http://172.50.10.79:8008/amostra/amostraImagem/';
-  private produtoUrl = 'http://172.50.10.79:8008/amostra/produto/';
-  private sequencialUrl = 'http://172.50.10.79:8008/amostra/amostra/proximo-sequencial/';
-  private representatividadeUrl = 'http://172.50.10.79:8008/cal/representatividade/';
+  private amostraExpressaUrl = 'http://localhost:8000/ordem/expressa/';
+  private amostraOrdemUrl = 'http://localhost:8000/ordem/ordem/';
+  private tipoAmostraUrl = 'http://localhost:8000/amostra/tipoAmostra/';
+  private amostraUrl = 'http://localhost:8000/amostra/amostra/';
+  private garantiaProdutoUrl = 'http://localhost:8000/amostra/garantiaProduto/';
+  private consultaGarantiaUrl = 'http://localhost:8000/amostra/garantiaProduto/por-produto/';
+  private imageUrl = 'http://localhost:8000/amostra/amostraImagem/';
+  private produtoUrl = 'http://localhost:8000/amostra/produto/';
+  private sequencialUrl = 'http://localhost:8000/amostra/amostra/proximo-sequencial/';
+  private representatividadeUrl = 'http://localhost:8000/cal/representatividade/';
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
@@ -43,12 +45,46 @@ export class AmostraService {
   registerTipoAmostra(nome: string, natureza: string, material: string){
     return this.http.post<TipoAmostra>(this.tipoAmostraUrl,{ nome: nome, natureza: natureza, material: material });
   }
+////////////////////////////////////////////////////
+getGarantiaProdutos(): Observable<any>{
+  return this.http.get<any[]>(this.garantiaProdutoUrl);
+}
+editGarantiaProduto(id: number, dadosAtualizados: Partial<Produto>): Observable<any>{
+  const url = `${this.garantiaProdutoUrl}${id}/`;
+  return this.http.patch<any>(url, dadosAtualizados);
+}
+deleteGarantiaProduto(id: number): Observable<any>{
+  const url = `${this.garantiaProdutoUrl}${id}/`;
+  return this.http.delete(url);
+}
+registerGarantiaProduto(
+  produto: any, 
+  requisito: string, 
+  norma: string, 
+  classe: string, 
+  especificacao: string,
+  minimo: any,
+  maximo: any,
+  unidade: string
+): Observable<any> {
+  const url = this.garantiaProdutoUrl;
+  return this.http.post(url, {
+    produto: produto,
+    requisito: requisito,
+    norma: norma,
+    classe: classe,
+    especificacao: especificacao,
+    minimo: minimo,
+    maximo: maximo,
+    unidade: unidade
+  });
+}
 
+consultarGarantiaPorProduto(produtoId: number){
+  return this.http.post<any>(this.consultaGarantiaUrl, {produto_id: produtoId});
+}
 
-
-  ///upload imagens
-  // ...existing code...
-
+/////upload imagens
 uploadImagens(amostraId: number, formData: FormData): Observable<any> {
   return this.http.post(`${this.amostraUrl}${amostraId}/upload_images/`, formData);
 }

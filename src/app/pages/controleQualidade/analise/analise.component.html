@@ -153,6 +153,17 @@
                             (onClick)="visualizarImagens(analise.amostra_detalhes?.id)">
                             </p-button>
                         </div>
+                        <div class="col-12 lg:col-4 flex justify-content-center lg:justify-content-start">
+                            <p-button
+                            class="w-full lg:w-auto"
+                            label="Garantias"
+                            [raised]="true"
+                            severity="warn"
+                            icon="pi pi-shield"
+                            iconPos="right"
+                            (onClick)="consultarGarantia()">
+                            </p-button>
+                        </div>
 
                         <div class="text-left w-8"> 
                             <p-floatlabel variant="on"> 
@@ -1498,3 +1509,49 @@
     </div>
   </div>
 </p-dialog>
+
+<!------------ Modal para visualizar garantias de produto -------------------->
+<p-drawer 
+    [(visible)]="modalGarantiasVisible" 
+    header="Garantias do Produto"
+    [modal]="true" 
+    [dismissible]="true"   
+    position="top"
+    [style]="{ width: '100%', height: '50%' }"
+>
+    <p-table 
+        [value]="garantias" 
+        [paginator]="true" 
+        [rows]="10" 
+        [scrollable]="true" 
+        scrollHeight="400px"
+        class="tabela"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Requisito</th>
+                <th>Norma</th>
+                <th>Classe</th>
+                <th>Especificação</th>
+                <th>Mínimo</th>
+                <th>Máximo</th>
+                <th>Unidade</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-garantia>
+            <tr>
+                <td>{{ garantia.requisito }}</td>
+                <td>{{ garantia.norma }}</td>
+                <td>{{ garantia.classe }}</td>
+                <td>{{ garantia.especificacao }}</td>
+                <td>{{ garantia.minimo }}</td>
+                <td>{{ garantia.maximo }}</td>
+                <td>{{ garantia.unidade }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <ng-template pTemplate="footer">
+        <p-button label="Fechar" icon="pi pi-times" (onClick)="fecharDrawerGarantias()">
+        </p-button>
+    </ng-template>
+</p-drawer>
