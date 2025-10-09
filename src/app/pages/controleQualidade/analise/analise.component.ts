@@ -1017,6 +1017,7 @@ getClasseTipoEnsaio(ensaio: any): string | undefined {
       const desc = (e?.descricao || '').toString().toLowerCase();
       const und = (e?.unidade || '').toString().toLowerCase();
       const norma = (e?.norma || '').toString().toLowerCase();
+      const estado = (e?.estado || '').toString().toLowerCase();
       const resp = (e?.responsavel || '').toString().toLowerCase();
       const cad = (e?.numero_cadinho ?? '').toString().toLowerCase();
       const val = (e?.valor ?? '').toString().toLowerCase();
@@ -1024,6 +1025,7 @@ getClasseTipoEnsaio(ensaio: any): string | undefined {
         desc.includes(termo) ||
         und.includes(termo) ||
         norma.includes(termo) ||
+        estado.includes(termo) ||
         resp.includes(termo) ||
         cad.includes(termo) ||
         val.includes(termo)
@@ -3353,6 +3355,7 @@ salvarAnaliseResultados() {
         tipo_ensaio: ensaio.tipo_ensaio_detalhes?.nome,
         funcao: ensaio.funcao || null,
         norma: ensaio.norma || null,
+        estado: ensaio.estado || null,
         unidade: ensaio.unidade || null,
         garantia: ensaio.garantia || null,
         numero_cadinho: ensaio.numero_cadinho || null, // NOVO: Adicionar número do cadinho
@@ -3532,12 +3535,13 @@ salvarAnaliseResultados() {
         garantia: e.garantia || ensaioCompleto?.garantia || ensaioDireto?.garantia || null,
         tipo_ensaio: e.tipo_ensaio_detalhes?.nome || ensaioCompleto?.tipo_ensaio_detalhes?.nome || ensaioDireto?.tipo_ensaio_detalhes?.nome || null,
         norma: e.norma || ensaioCompleto?.norma || ensaioDireto?.norma || null,
+        estado: e.estado || ensaioCompleto?.estado || ensaioDireto?.estado || null,
         unidade: e.unidade || ensaioCompleto?.unidade || ensaioDireto?.unidade || null,    
         // Campos adicionais que podem ser úteis**
         tempo_previsto: e.tempo_previsto || ensaioCompleto?.tempo_previsto || ensaioDireto?.tempo_previsto || null,
         tecnica: e.tecnica || ensaioCompleto?.tecnica || ensaioDireto?.tecnica || `ensaio${String(e.id).padStart(2, '0')}`,
         variaveis_utilizadas: variaveisFiltradas,
-        variaveis: variaveisDict
+        variaveis: variaveisDict,
       };
     })
   }))
@@ -3680,7 +3684,8 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
           funcao: calcAtual.funcao,
           variaveis,
           variaveis_utilizadas: variaveisUtilizadas,
-          ensaios_utilizados: ensaiosUtilizadosMap
+          ensaios_utilizados: ensaiosUtilizadosMap,
+          estado: item.estado || 'N/A',
         };
         analiseData.ensaiosUtilizados.push(calculoItem);
       }
@@ -3695,7 +3700,7 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
         funcao: calcAtual.funcao,
         variaveis,
         variaveis_utilizadas: variaveisUtilizadas,
-        ensaios_utilizados: ensaiosUtilizadosMap
+        ensaios_utilizados: ensaiosUtilizadosMap,
       };
     } 
     if (item.tipo === 'ENSAIO' && item.ensaio_descricao) {
