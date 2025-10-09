@@ -58,6 +58,7 @@ export interface Analise {
   metodoModelagem: string;
   metodoMuro: string;
   observacoesMuro: string;
+  parecer: any;
 }
 interface FileWithInfo {
   file: File;
@@ -66,14 +67,7 @@ interface FileWithInfo {
 @Component({
   selector: 'app-analise',
   imports:[
-    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule, 
-    CardModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, 
-    IconFieldModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, 
-    InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, 
-    RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, 
-    StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule,
-    SpeedDialModule, AvatarModule, PopoverModule, BadgeModule, TooltipModule,
-    HotTableModule
+    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule, CardModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule,SpeedDialModule, AvatarModule, PopoverModule, BadgeModule, TooltipModule,HotTableModule
   ],
   animations: [
     trigger('efeitoFade', [

@@ -19,13 +19,6 @@
     }
 }
 
-// Estilos desabilitados para cards específicos
-// .card-substrato {
-//     box-shadow: 1px 1px 20px 10px #9fe653;
-// }
-// .card-superficial {
-//     box-shadow: 1px 1px 20px 10px #7256cf;
-// }
 .card{
     border-radius: 10px;
     .header{
@@ -50,6 +43,28 @@
     }
     .header-superficial{
         background-color: #0ea5e9 !important;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        h2{
+            color: #ffffff;
+            font-weight: 700;
+        }
+    }
+
+    .header-flexao{
+        background-color: purple !important;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        h2{
+            color: #ffffff;
+            font-weight: 700;
+        }
+    }
+
+    .header-compressao{
+        background-color: brown !important;
         color: #ffffff;
         padding: 10px;
         border-radius: 10px 10px 0 0;
