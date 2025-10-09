@@ -94,6 +94,22 @@ interface LinhaSuperficial {
   };
 }
 
+interface LinhaFlexao {
+  cp: number;
+  flexao_n: number | null;
+  flexao_mpa: number | null;
+  media_mpa: number | null;
+  tracao_flexao: number | null;
+}
+
+interface LinhaCompressao {
+  cp: number;
+  compressao_n: number | null;
+  compressao_mpa: number | null;
+  media_mpa: number | null;
+  tracao_compressao: number | null;
+}
+
 @Component({
   selector: 'app-arquivo',
   imports: [
@@ -178,11 +194,28 @@ export class ArquivoComponent implements OnInit {
   jsonModal: {
     substrato: any[];
     superficial: any[];
-  } = { substrato: [], superficial: [] };
-
-
+    flexao: any[];
+    compressao: any[];
+  } = {
+    substrato: [],
+    superficial: [],
+    flexao: [],
+    compressao: []
+  };
 
   laudoAnaliseLinhasId: number = 0;
+
+
+
+
+  modalDadosLaudoFlexao: boolean = false;
+  linhasFlexao: LinhaFlexao[] = [];
+  linhasCompressao: LinhaCompressao[] = [];
+  modalDadosLaudoCompressao: boolean = false;
+  parecer_flexao: any = null;
+  parecer_compressao: any = null;
+
+
 
 
   ensaios_laudo: any[] = [];
@@ -283,6 +316,26 @@ private confirmationService: ConfirmationService,
           argaCola: null,
           colarPastilha: null
         }
+      });
+    }
+
+    for (let i = 1; i <= 3; i++) {
+      this.linhasFlexao.push({
+        cp: i,
+        flexao_n: null,
+        flexao_mpa: null,
+        media_mpa: null,
+        tracao_flexao: null,
+      });
+    }
+
+    for (let i = 1; i <= 3; i++) {
+      this.linhasCompressao.push({
+        cp: i,
+        compressao_n: null,
+        compressao_mpa: null,
+        media_mpa: null,
+        tracao_compressao: null,
       });
     }
 
@@ -2238,8 +2291,6 @@ duplicata(amostra: any): void {
       });
     });
 
-    console.log('TEM ou NÃO SUBSTRATO e SUPERFICIAL?', amostra_detalhes_selecionada);
-
     amostra_detalhes_selecionada.ultimo_calculo.forEach((ultimo_calculo: any) => {
       ultimo_calculo.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
         this.ensaios_selecionados.forEach((selected: any) => {
@@ -2295,63 +2346,153 @@ duplicata(amostra: any): void {
     // Posição após a última tabela de ensaios
     contadorLinhas = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 10 : contadorLinhas + 10;
 
-    autoTable(doc, {
-      startY: contadorLinhas,
-      head: [[
+    // === Tabela de FLEXÃO ===
+    const headFlexao = [
+      [
+        { content: 'Determinação da resistência potencial à flexão', colSpan: 5 }
+      ],
+      [
         { content: 'CP' },
         { content: 'Carga de Ruptura à Flexão (N)' },
         { content: 'Resist. à Tração na Flexão (Mpa)' },
         { content: 'Resist. Média (Mpa)' },
-        { content: 'Resist. Tração Flexão' },
-      ]],
-      body: [
-        ['1', '712', '1,67', '', ''],
-        ['2', '808', '1,89', '1,8', ''],
-        ['3', '740', '1,73', '', ''],
-        [
-          { content: 'Desvio-padrão (Mpa):', colSpan: 5, styles: { halign: 'left' } }
-        ],
-        [
-          { content: 'Desvio absoluto máximo (Mpa):', colSpan: 5, styles: { halign: 'left' } }
-        ],
-        [
-          { content: 'Coeficiente de variação (%):', colSpan: 5, styles: { halign: 'left' } }
-        ],
+        { content: 'Resist. Tração na Flexão' },
+      ]
+    ];
+
+    // --- Cálculos das colunas de flexão ---
+    const flexaoValores = amostra_detalhes_selecionada.parecer.flexao
+      .map((item: any) => item.flexao_mpa)
+      .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
+
+    const mediaFlexao = flexaoValores.length
+      ? flexaoValores.reduce((a: number, b: number) => a + b, 0) / flexaoValores.length
+      : 0;
+
+    const maxFlexao = flexaoValores.length ? Math.max(...flexaoValores) : 0;
+    const minFlexao = flexaoValores.length ? Math.min(...flexaoValores) : 0;
+
+    // Formatados com 2 casas decimais
+    const media_flexao = mediaFlexao.toFixed(2);
+    const maximo_flexao = maxFlexao.toFixed(2);
+    const minimo_flexao = minFlexao.toFixed(2);
+
+    const bodyFlexao = [
+      ...amostra_detalhes_selecionada.parecer.flexao.map((item: any) => [
+        item.cp ?? item.cp ?? item.cp ?? '',
+        item.flexao_n ?? '',
+        item.flexao_mpa ?? '',
+        item.media_mpa ?? '',
+        item.tracao_flexao ?? '',
+      ]),
+
+      [
+        { content: 'Média Flexão (MPa)', colSpan: 3, styles: { halign: 'left' } },
+        media_flexao
       ],
-      theme: 'grid',
-      styles: { fontSize: 8, halign: 'center', cellPadding: 1 },
-      headStyles: { fillColor: [220,220,220], textColor: 0, fontStyle: 'bold' }
+      [
+        { content: 'Resultado Máx (MPa)', colSpan: 3, styles: { halign: 'left' } },
+        maximo_flexao
+      ],
+      [
+        { content: 'Resultado Mín (MPa)', colSpan: 3, styles: { halign: 'left' } },
+        minimo_flexao
+      ],
+     
+    ];
+
+    // --- Inserir no PDF ---
+    autoTable(doc, {
+      head: headFlexao,
+      body: bodyFlexao,
+      startY: contadorLinhas, // ou a posição desejada
+      styles: {
+        fontSize: 8,
+        halign: 'center',
+        valign: 'middle',
+        cellPadding: 1,
+      },
+      headStyles: {
+        fillColor: [220, 220, 220],
+        textColor: 0,
+        lineWidth: 0.1,
+      },
+      bodyStyles: {
+        lineWidth: 0.1,
+      },
     });
 
     contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
 
-    // ====== TABELA RESISTÊNCIA COMPRESSÃO ======
-    autoTable(doc, {
-      startY: contadorLinhas,
-      head: [[
-        { content: 'CP' },
-        { content: 'Carga de Ruptura à Compressão (N)' },
-        { content: 'Resist. à Tração na Compressão (Mpa)' },
-        { content: 'Resist. Média (Mpa)' },
-        { content: 'Resist. Tração Compressão' },
-      ]],
-      body: [
-        ['1', '10000', '5,66', '', ''],
-        ['2', '9900', '2,66', '5,9', ''],
-        ['3', '9000', '6,652', '', ''],
-        [
-          { content: 'Desvio-padrão (Mpa):', colSpan: 5, styles: { halign: 'left' } }
-        ],
-        [
-          { content: 'Desvio absoluto máximo (Mpa):', colSpan: 5, styles: { halign: 'left' } }
-        ],
-        [
-          { content: 'Coeficiente de variação (%):', colSpan: 5, styles: { halign: 'left' } }
-        ],
+    const headCompressao = [
+      [
+        { content: 'Determinação da resistência potencial à compressão', colSpan: 5 }
       ],
-      theme: 'grid',
-      styles: { fontSize: 8, halign: 'center', cellPadding: 1 },
-      headStyles: { fillColor: [220,220,220], textColor: 0, fontStyle: 'bold' }
+      [
+        { content: 'CP' },
+        { content: 'Compressão (N)'},
+        { content: 'Compressão (MPa)' },
+        { content: 'Média (MPa)' },
+        { content: 'Tração na Compressão (MPa)' },
+      ]
+    ];
+
+    // --- Cálculos das colunas de compressão ---
+    const compressaoValores = amostra_detalhes_selecionada.parecer.compressao
+      .map((item: any) => item.compressao_mpa)
+      .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
+
+    const mediaCompressao = compressaoValores.length
+      ? compressaoValores.reduce((a: number, b: number) => a + b, 0) / compressaoValores.length
+      : 0;
+
+    const maxCompressao = compressaoValores.length ? Math.max(...compressaoValores) : 0;
+    const minCompressao = compressaoValores.length ? Math.min(...compressaoValores) : 0;
+
+    console.log('compressao data =>', amostra_detalhes_selecionada.parecer.compressao);
+
+    const bodyCompressao = [
+      ...amostra_detalhes_selecionada.parecer.compressao.map((item: any) => [
+        item.cp ?? item.cp ?? item.cp ?? '',
+        item.compressao_n ?? '',
+        item.compressao_mpa ?? '',
+        item.media_mpa ?? '',
+        item.tracao_compressao ?? '',
+      ]),
+
+      [
+        { content: 'Média Compressão (MPa)', colSpan: 3, styles: { halign: 'left' } },
+        mediaCompressao.toFixed(2)
+      ],
+      [
+        { content: 'Resultado Máx (MPa)', colSpan: 3, styles: { halign: 'left' } },
+        maxCompressao.toFixed(2)
+      ],
+      [
+        { content: 'Resultado Mín (MPa)', colSpan: 3, styles: { halign: 'left' } },
+        minCompressao.toFixed(2)
+      ],
+     
+    ];
+
+    autoTable(doc, {
+      head: headCompressao,
+      body: bodyCompressao,
+      startY: contadorLinhas, 
+      styles: {
+        fontSize: 8,
+        halign: 'center',
+        valign: 'middle',
+        cellPadding: 1,
+      },
+      headStyles: {
+        fillColor: [220, 220, 220],
+        textColor: 0,
+        lineWidth: 0.1,
+      },
+      bodyStyles: {
+        lineWidth: 0.1,
+      },
     });
 
     contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
@@ -3417,11 +3558,10 @@ duplicata(amostra: any): void {
     this.jsonModal.superficial = this.linhasSuperficial;
     this.parecer_superficial = this.linhasSuperficial;
 
-    console.log('AQUI',this.jsonModal);
     const dadosAtualizados: Partial<Analise> = {
       parecer: this.jsonModal
     };
-     this.analiseService.editAnaliseSuperficial(this.laudoAnaliseLinhasId, dadosAtualizados).subscribe({
+    this.analiseService.editAnaliseSuperficial(this.laudoAnaliseLinhasId, dadosAtualizados).subscribe({
       next: () => {
         this.messageService.add({
           severity: 'success',
@@ -3447,9 +3587,168 @@ duplicata(amostra: any): void {
       }
     });
 
+    if(this.parecer_flexao){
+      this.linhasFlexao = this.parecer_flexao.map((item: any, index: number) => ({
+        cp: item.cp ?? index + 1,
+        flexao_n: item.flexao_n ?? null,
+        flexao_mpa: item.flexao_mpa ?? null,
+        media_mpa: item.media_mpa ?? null,
+        tracao_flexao: item.tracao_flexao ?? null
+      }));
+    }else if (this.amostra_detalhes_selecionada?.parecer?.flexao && Array.isArray(this.amostra_detalhes_selecionada.parecer.flexao)) {
+      this.linhasFlexao = this.amostra_detalhes_selecionada.parecer.flexao.map((item: any, index: number) => ({
+        cp: item.cp ?? index + 1,
+        flexao_n: item.flexao_n ?? null,
+        flexao_mpa: item.flexao_mpa ?? null,
+        media_mpa: item.media_mpa ?? null,
+        tracao_flexao: item.tracao_flexao ?? null
+      }));
+      while (this.linhasFlexao.length < 3) {
+        const cp = this.linhasFlexao.length + 1;
+        this.linhasFlexao.push({
+          cp,
+          flexao_n: null,
+          flexao_mpa: null,
+          media_mpa: null,
+          tracao_flexao: null,      
+        });
+      }
+    } else {
+      // Caso não exista parecer ou substrato, cria as 10 linhas padrão
+      this.linhasFlexao = [];
+      for (let i = 1; i <= 3; i++) {
+        this.linhasFlexao.push({
+          cp: i,
+          flexao_n: null,
+          flexao_mpa: null,
+          media_mpa: null,
+          tracao_flexao: null,   
+        });
+      }
+    }
+
     this.modalDadosLaudoSuperficial = false;
-    this.abrirModalLaudo(this.amostra_detalhes_selecionada);
+    this.modalDadosLaudoFlexao = true;
+    
   }
+
+
+  salvarRupturaFlexao() {
+    this.jsonModal.flexao = this.linhasFlexao;
+    this.parecer_flexao = this.linhasFlexao;
+
+    const dadosAtualizados: Partial<Analise> = {
+      parecer: this.jsonModal
+    };
+    this.analiseService.editAnaliseSuperficial(this.laudoAnaliseLinhasId, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Carga de Ruptura a Flexão salva com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });
+
+     if(this.parecer_compressao){
+      this.linhasCompressao = this.parecer_compressao.map((item: any, index: number) => ({
+        cp: item.cp ?? index + 1,
+        compressao_n: item.compressao_n ?? null,
+        compressao_mpa: item.compressao_mpa ?? null,
+        media_mpa: item.media_mpa ?? null,
+        tracao_compressao: item.tracao_compressao ?? null
+      }));
+    }else if (this.amostra_detalhes_selecionada?.parecer?.compressao && Array.isArray(this.amostra_detalhes_selecionada.parecer.compressao)) {
+      this.linhasCompressao = this.amostra_detalhes_selecionada.parecer.compressao.map((item: any, index: number) => ({
+        cp: item.cp ?? index + 1,
+        compressao_n: item.compressao_n ?? null,
+        compressao_mpa: item.compressao_mpa ?? null,
+        media_mpa: item.media_mpa ?? null,
+        tracao_compressao: item.tracao_compressao ?? null
+      }));
+      while (this.linhasCompressao.length < 3) {
+        const cp = this.linhasCompressao.length + 1;
+        this.linhasCompressao.push({
+          cp,
+          compressao_n: null,
+          compressao_mpa: null,
+          media_mpa: null,
+          tracao_compressao: null,      
+        });
+      }
+    } else {
+      // Caso não exista parecer ou substrato, cria as 10 linhas padrão
+      this.linhasCompressao = [];
+      for (let i = 1; i <= 3; i++) {
+        this.linhasCompressao.push({
+          cp: i,
+          compressao_n: null,
+          compressao_mpa: null,
+          media_mpa: null,
+          tracao_compressao: null,   
+        });
+      }
+    }
+
+    this.modalDadosLaudoFlexao = false;
+    this.modalDadosLaudoCompressao = true;
+  }
+
+  salvarRupturaCompressao(){
+    this.jsonModal.compressao = this.linhasCompressao;
+    this.parecer_compressao = this.linhasCompressao;
+    console.log('aiaiaiai', this.linhasCompressao);
+
+    const dadosAtualizados: Partial<Analise> = {
+      parecer: this.jsonModal
+    };
+    this.analiseService.editAnaliseSuperficial(this.laudoAnaliseLinhasId, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Carga de Ruptura a Compressão salva com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });
+
+    this.modalDadosLaudoCompressao = false;
+    this.abrirModalLaudo(this.amostra_detalhes_selecionada);
+
+  }
+  
 
   getStatusIcon(status: boolean): string {
     return status ? 'pi-check-circle' : 'pi-times-circle';
