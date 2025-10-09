@@ -11,11 +11,11 @@ import { Variavel } from '../../pages/controleQualidade/variavel/variavel.compon
   providedIn: 'root'
 })
 export class EnsaioService {
-  private apiUrl = 'http://localhost:8000/ensaio/tipos_ensaio/';
-  private apiUrlEnsaio = 'http://localhost:8000/ensaio/ensaio/';
-  private apiUrlVariaveisEnsaio = 'http://localhost:8000/ensaio/variavel/';
-  private apiUrlCalculoEnsaio = 'http://localhost:8000/calculosEnsaio/calculoEnsaio/';
-  private apiUrlPlano = 'http://localhost:8000/plano/planoAnalise/';
+  private apiUrl = 'http://172.50.10.79:8008/ensaio/tipos_ensaio/';
+  private apiUrlEnsaio = 'http://172.50.10.79:8008/ensaio/ensaio/';
+  private apiUrlVariaveisEnsaio = 'http://172.50.10.79:8008/ensaio/variavel/';
+  private apiUrlCalculoEnsaio = 'http://172.50.10.79:8008/calculosEnsaio/calculoEnsaio/';
+  private apiUrlPlano = 'http://172.50.10.79:8008/plano/planoAnalise/';
   constructor(
     private http: HttpClient,
   ) { }
@@ -47,8 +47,8 @@ export class EnsaioService {
     const url = `${this.apiUrlEnsaio}${id}/`;
     return this.http.delete(url);
   }
-  registerEnsaio(descricao: string,  valor: number, tipoEnsaio: any, tempoPrevisto: any, unidade:any, variavel: any, funcao: any, norma: any, garantia: any, tecnica: any){
-    return this.http.post<Ensaio>(this.apiUrlEnsaio, { descricao: descricao, valor: valor, tipo_ensaio: tipoEnsaio, tempo_previsto: tempoPrevisto, unidade: unidade, variavel: variavel, funcao: funcao, norma: norma, garantia: garantia, tecnica: tecnica });
+  registerEnsaio(descricao: string,  valor: number, tipoEnsaio: any, tempoPrevisto: any, unidade:any, variavel: any, funcao: any, norma: any, garantia: any, tecnica: any, estado: string){
+    return this.http.post<Ensaio>(this.apiUrlEnsaio, { descricao: descricao, valor: valor, tipo_ensaio: tipoEnsaio, tempo_previsto: tempoPrevisto, unidade: unidade, variavel: variavel, funcao: funcao, norma: norma, garantia: garantia, tecnica: tecnica, estado: estado });
   }
 
   //Calculo Ensaio

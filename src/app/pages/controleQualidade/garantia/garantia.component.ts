@@ -48,8 +48,8 @@ export interface GarantiaProduto{
   norma: string,
   classe: string,
   especificacao: string,
-  minimo: number,
-  maximo: number,
+  minimo: number | null,
+  maximo: number | null,
   unidade: string,
 }
 
@@ -133,11 +133,11 @@ export class GarantiaComponent implements OnInit{
     this.registerForm = new FormGroup<GarantiaProdutoForm>({
       produto: new FormControl('', Validators.required),
       requisito: new FormControl('', Validators.required),
-      norma: new FormControl('', Validators.required),
-      classe: new FormControl('', Validators.required),
-      especificacao: new FormControl('', Validators.required),
-      minimo: new FormControl(0, [Validators.required, Validators.min(0)]),
-      maximo: new FormControl(0, [Validators.required, Validators.min(0)]),
+      norma: new FormControl('',),
+      classe: new FormControl('',),
+      especificacao: new FormControl('',),
+      minimo: new FormControl('',),
+      maximo: new FormControl(''),
       unidade: new FormControl('', Validators.required),
     });
     this.editForm = this.fb.group({
@@ -214,8 +214,8 @@ export class GarantiaComponent implements OnInit{
       norma: this.editForm.value.norma,
       classe: this.editForm.value.classe,
       especificacao: this.editForm.value.especificacao,
-      minimo: this.editForm.value.minimo,
-      maximo: this.editForm.value.maximo,
+      minimo: this.editForm.value.minimo ? Number(this.editForm.value.minimo) : null,
+      maximo: this.editForm.value.maximo ? Number(this.editForm.value.maximo) : null,
       unidade: this.editForm.value.unidade,
     };
     this.amostraService.editGarantiaProduto(id, dadosAtualizados).subscribe({ 
@@ -273,15 +273,25 @@ export class GarantiaComponent implements OnInit{
   }
 
   submit(){
+    const formData = {
+    produto: this.registerForm.value.produto,
+    requisito: this.registerForm.value.requisito,
+    norma: this.registerForm.value.norma || null,
+    classe: this.registerForm.value.classe || null,
+    especificacao: this.registerForm.value.especificacao || null,
+    minimo: this.registerForm.value.minimo ? Number(this.registerForm.value.minimo) : null,
+    maximo: this.registerForm.value.maximo ? Number(this.registerForm.value.maximo) : null,
+    unidade: this.registerForm.value.unidade,
+  };
     this.amostraService.registerGarantiaProduto(
-      this.registerForm.value.produto,
-      this.registerForm.value.requisito,
-      this.registerForm.value.norma,
-      this.registerForm.value.classe,
-      this.registerForm.value.especificacao,
-      this.registerForm.value.minimo,
-      this.registerForm.value.maximo,
-      this.registerForm.value.unidade,
+      formData.produto,
+      formData.requisito,
+      formData.norma,
+      formData.classe,
+      formData.especificacao,
+      formData.minimo,
+      formData.maximo,
+      formData.unidade,
     ).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Garantia registrada com sucesso!' });

@@ -254,7 +254,7 @@
                         [paginator]="true"
                         [rows]="10"
                         [rowsPerPageOptions]="[10, 20, 50]"
-                        [globalFilterFields]="['produto','requisito', 'norma', 'classe','especificacao', 'minimo', 'maximo', 'unidade']"
+                        [globalFilterFields]="['produto_detalhes.nome','requisito', 'norma', 'classe','especificacao', 'minimo', 'maximo', 'unidade']"
                         scrollable="true"
                         currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"                        
                     >
@@ -279,7 +279,7 @@
                         </ng-template> 
                         <ng-template pTemplate="header">
                             <tr class="tabela">
-                                <th style="width: 20%; text-align: center;" type="text" field="produto" display="menu">Produto</th>
+                                <th style="width: 20%; text-align: center;" type="text" field="produto_detalhes.nome" display="menu">Produto</th>
                                 <th style="width: 20%; text-align: center;" type="text" field="requisito" display="menu">Requisito</th>
                                 <th style="width: 20%; text-align: center;" type="text" field="norma" display="menu">Norma</th>
                                 <th style="width: 20%; text-align: center;" type="text" field="classe" display="menu">Classe</th>

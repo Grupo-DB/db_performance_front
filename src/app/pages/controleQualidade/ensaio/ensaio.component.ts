@@ -45,6 +45,7 @@ interface RegisterEnsaioForm {
   norma: FormControl;
   garantia: FormControl;
   tipoGarantia: FormControl;
+  estado: FormControl;
 }
 
 export interface Ensaio {
@@ -62,6 +63,7 @@ export interface Ensaio {
   norma: any;
   garantia: string
   ensaioTecnico?: string;
+  estado?: string;
 }
 
 export interface Responsaveis {
@@ -233,6 +235,7 @@ export class EnsaioComponent implements OnInit{
       norma: new FormControl(''),
       garantia: new FormControl(''),
       tipoGarantia: new FormControl(''),
+      estado: new FormControl(''),
     });
     this.editForm = this.fb.group({
       id: [''],
@@ -246,6 +249,7 @@ export class EnsaioComponent implements OnInit{
       funcao: [''],
       norma: [''],
       garantia: [''],
+      estado: [''],
     });
   }
 
@@ -783,7 +787,8 @@ filterVariaveis(event: any) {
     variavel: ensaio.variavel,
     funcao: ensaio.funcao,
     norma: ensaio.norma,
-    garantia: ensaio.garantia
+    garantia: ensaio.garantia,
+    estado: ensaio.estado,
   });
 }
  saveEdit(){
@@ -808,7 +813,8 @@ filterVariaveis(event: any) {
     variavel: this.editForm.value.variavel,
     funcao: this.editForm.value.funcao,
     norma: this.editForm.value.norma,
-    garantia: this.editForm.value.garantia
+    garantia: this.editForm.value.garantia,
+    estado: this.editForm.value.estado,
   };
   
   this.ensaioService.editEnsaio(id, dadosAtualizados).subscribe({
@@ -905,7 +911,8 @@ filterVariaveis(event: any) {
       this.registerForm.value.funcao,
       this.registerForm.value.norma,
       garantia,
-      ensaioTecnico
+      ensaioTecnico,
+      this.registerForm.value.estado
     ).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Ensaio cadastrado com sucesso!!', life: 1000 });
