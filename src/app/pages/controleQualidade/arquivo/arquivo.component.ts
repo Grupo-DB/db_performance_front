@@ -2306,7 +2306,26 @@ duplicata(amostra: any): void {
       year: '2-digit'
     });
 
+    const dataColetaFormatada3 = new Date(amostra_detalhes_selecionada.data_entrada).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit'
+    });
+
     const dataColetaFormatada2 = new Date(amostra_detalhes_selecionada.data_coleta).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit'
+    });
+
+    const dataColeta = new Date(amostra_detalhes_selecionada.data_coleta);
+
+    // cria uma cópia e adiciona 28 dias
+    const dataColeta28Dias = new Date(dataColeta);
+    dataColeta28Dias.setDate(dataColeta28Dias.getDate() + 28);
+
+    // formata no padrão pt-BR (dd/mm/aa)
+    const dataColetaFormatada = dataColeta28Dias.toLocaleDateString('pt-BR', {
       day: '2-digit',
       month: '2-digit',
       year: '2-digit'
@@ -2325,9 +2344,9 @@ duplicata(amostra: any): void {
     let y = 52;
 
     const linhas = [
-      ['Material: '+amostra_detalhes_selecionada.amostra_detalhes.material, "Sub-Tipo: "+amostra_detalhes_selecionada.amostra_detalhes.subtipo, "Data da Amostra: "+amostra_detalhes_selecionada.amostra_detalhes.data_entrada],
-      ['Fornecedor: '+amostra_detalhes_selecionada.amostra_detalhes.fornecedor, "Tipo: "+amostra_detalhes_selecionada.amostra_detalhes.tipo_amostragem, "Data da Amostra: "+amostra_detalhes_selecionada.amostra_detalhes.data_entrada],
-      ['', "", "Data da Amostra: "+amostra_detalhes_selecionada.amostra_detalhes.data_entrada],
+      ['Material: '+amostra_detalhes_selecionada.amostra_detalhes.material, "Sub-Tipo: "+amostra_detalhes_selecionada.amostra_detalhes.subtipo, "Data da Amostra: "+dataColetaFormatada3],
+      ['Fornecedor: '+amostra_detalhes_selecionada.amostra_detalhes.fornecedor, "Tipo: "+amostra_detalhes_selecionada.amostra_detalhes.tipo_amostragem, "Data de modelagem: "+dataColetaFormatada2],
+      ['', "", "Data do Ensaio (28 dias): "+dataColetaFormatada],
     ];
     doc.rect(15, 48, 182, 20); // moldura
     linhas.forEach((linha) => {
@@ -2378,63 +2397,24 @@ duplicata(amostra: any): void {
     contadorLinhas = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 10 : contadorLinhas + 10;
 
 
-
-    // ====== TABELA DE ENSAIOS ===================================================
-    const head = [['Ensaio', 'Unid', 'Resultado', 'Método']];
+// ====== TABELA DE fresco ===================================================
+    const head = [
+      [
+        { content: 'Ensaio no estado fresco', colSpan: 6 }
+      ],
+       [
+        { content: 'Ensaio' },
+        { content: 'Valor' },
+        { content: 'Unid' },
+        { content: 'Garantia' },
+        { content: ''},
+        { content: 'Norma'},
+      ]
+    ];
     const body: any[] = [];
 
     amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
-      this.ensaios_selecionados.forEach((selected: any) => {
-        const linha: any[] = [];
-
-        if (selected.id === ensaios_utilizados.id) {
-          console.log(selected.id);
-          let norma: string = '-';
-          if (ensaios_utilizados.norma) {
-            norma = ensaios_utilizados.norma;
-          }
-          let unidade: string = '-';
-          if (ensaios_utilizados.unidade) {
-            unidade = ensaios_utilizados.unidade;
-          }
-          let valor: string = '-';
-          if (ensaios_utilizados.valor) {
-            valor = ensaios_utilizados.valor;
-          }
-
-          let garantia_num: string = '-';
-          let garantia_texto: string = '-';
-          if (selected.garantia) {
-            const aux = selected.garantia.split(' ');
-
-            garantia_num = aux[0]; 
-            garantia_texto = aux[1]; 
-          }
-
-          this.descricaoApi += ensaios_utilizados.descricao+': '+valor+''+unidade+'; ';
-
-          linha.push({ content: ensaios_utilizados.descricao });
-          linha.push({ content: valor });
-          linha.push({ content: unidade });
-          linha.push({ content: garantia_num });
-          linha.push({ content: garantia_texto });
-          linha.push({ content: norma });
-          body.push(linha);
-        }
-      });
-      
-      autoTable(doc, {
-        startY: contadorLinhas,
-        head,
-        body: body,
-        theme: "grid",
-        styles: { fontSize: 8, halign: 'left', cellPadding: 1 },
-        headStyles: { halign: 'left', fillColor: [200, 200, 200], textColor: [0, 0, 0], fontStyle: 'bold' },
-      });
-    });
-
-    amostra_detalhes_selecionada.ultimo_calculo.forEach((ultimo_calculo: any) => {
-      ultimo_calculo.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
+      if(ensaios_utilizados.estado == 'Fresco'){
         this.ensaios_selecionados.forEach((selected: any) => {
           const linha: any[] = [];
 
@@ -2479,9 +2459,397 @@ duplicata(amostra: any): void {
           head,
           body: body,
           theme: "grid",
-          styles: { fontSize: 8, halign: 'left', cellPadding: 1 },
-          headStyles: { halign: 'left', fillColor: [200, 200, 200], textColor: [0, 0, 0], fontStyle: 'bold' },
+          styles: {
+            fontSize: 8,
+            halign: 'left',   // 🔹 alinhamento horizontal à esquerda
+            valign: 'middle',
+            cellPadding: 1,
+          },
+          headStyles: {
+            fillColor: [220, 220, 220],
+            textColor: 0,
+            lineWidth: 0.1,
+            halign: 'left',   // 🔹 também no cabeçalho
+          },
+          bodyStyles: {
+            lineWidth: 0.1,
+            halign: 'left',   // 🔹 e no corpo
+          },
         });
+      }
+    });
+
+    amostra_detalhes_selecionada.ultimo_calculo.forEach((ultimo_calculo: any) => {
+      ultimo_calculo.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
+        if(ensaios_utilizados.estado == 'Fresco'){
+          this.ensaios_selecionados.forEach((selected: any) => {
+            const linha: any[] = [];
+
+            if (selected.id === ensaios_utilizados.id) {
+              console.log(selected.id);
+              let norma: string = '-';
+              if (ensaios_utilizados.norma) {
+                norma = ensaios_utilizados.norma;
+              }
+              let unidade: string = '-';
+              if (ensaios_utilizados.unidade) {
+                unidade = ensaios_utilizados.unidade;
+              }
+              let valor: string = '-';
+              if (ensaios_utilizados.valor) {
+                valor = ensaios_utilizados.valor;
+              }
+
+              let garantia_num: string = '-';
+              let garantia_texto: string = '-';
+              if (selected.garantia) {
+                const aux = selected.garantia.split(' ');
+
+                garantia_num = aux[0]; 
+                garantia_texto = aux[1]; 
+              }
+
+              this.descricaoApi += ensaios_utilizados.descricao+': '+valor+''+unidade+'; ';
+
+              linha.push({ content: ensaios_utilizados.descricao });
+              linha.push({ content: valor });
+              linha.push({ content: unidade });
+              linha.push({ content: garantia_num });
+              linha.push({ content: garantia_texto });
+              linha.push({ content: norma });
+              body.push(linha);
+            }
+          });
+          
+          autoTable(doc, {
+            startY: contadorLinhas,
+            head,
+            body: body,
+            theme: "grid",
+            styles: {
+              fontSize: 8,
+              halign: 'left',   // 🔹 alinhamento horizontal à esquerda
+              valign: 'middle',
+              cellPadding: 1,
+            },
+            headStyles: {
+              fillColor: [220, 220, 220],
+              textColor: 0,
+              lineWidth: 0.1,
+              halign: 'left',   // 🔹 também no cabeçalho
+            },
+            bodyStyles: {
+              lineWidth: 0.1,
+              halign: 'left',   // 🔹 e no corpo
+            },
+          });
+        }
+      });
+    });
+      
+    // Posição após a última tabela de ensaios
+    contadorLinhas = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 10 : contadorLinhas + 10;
+
+     // ====== TABELA DE solto ===================================================
+    const headSolto = [
+      [
+        { content: 'Ensaio no estado solto', colSpan: 6 }
+      ],
+       [
+        { content: 'Ensaio' },
+        { content: 'Valor' },
+        { content: 'Unid' },
+        { content: 'Garantia' },
+        { content: ''},
+        { content: 'Norma'},
+      ]
+    ];
+    const bodySolto: any[] = [];
+
+    amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
+      if(ensaios_utilizados.estado == 'Solto'){
+        this.ensaios_selecionados.forEach((selected: any) => {
+          const linha: any[] = [];
+
+          if (selected.id === ensaios_utilizados.id) {
+            console.log(selected.id);
+            let norma: string = '-';
+            if (ensaios_utilizados.norma) {
+              norma = ensaios_utilizados.norma;
+            }
+            let unidade: string = '-';
+            if (ensaios_utilizados.unidade) {
+              unidade = ensaios_utilizados.unidade;
+            }
+            let valor: string = '-';
+            if (ensaios_utilizados.valor) {
+              valor = ensaios_utilizados.valor;
+            }
+
+            let garantia_num: string = '-';
+            let garantia_texto: string = '-';
+            if (selected.garantia) {
+              const aux = selected.garantia.split(' ');
+
+              garantia_num = aux[0]; 
+              garantia_texto = aux[1]; 
+            }
+
+            this.descricaoApi += ensaios_utilizados.descricao+': '+valor+''+unidade+'; ';
+
+            linha.push({ content: ensaios_utilizados.descricao });
+            linha.push({ content: valor });
+            linha.push({ content: unidade });
+            linha.push({ content: garantia_num });
+            linha.push({ content: garantia_texto });
+            linha.push({ content: norma });
+            bodySolto.push(linha);
+          }
+        });
+        
+        autoTable(doc, {
+          startY: contadorLinhas,
+          head: headSolto,
+          body: bodySolto,
+          theme: "grid",
+          styles: {
+            fontSize: 8,
+            halign: 'left',   // 🔹 alinhamento horizontal à esquerda
+            valign: 'middle',
+            cellPadding: 1,
+          },
+          headStyles: {
+            fillColor: [220, 220, 220],
+            textColor: 0,
+            lineWidth: 0.1,
+            halign: 'left',   // 🔹 também no cabeçalho
+          },
+          bodyStyles: {
+            lineWidth: 0.1,
+            halign: 'left',   // 🔹 e no corpo
+          },
+        });
+      }
+    });
+
+    amostra_detalhes_selecionada.ultimo_calculo.forEach((ultimo_calculo: any) => {
+      ultimo_calculo.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
+        if(ensaios_utilizados.estado == 'Solto'){
+          this.ensaios_selecionados.forEach((selected: any) => {
+            const linha: any[] = [];
+
+            if (selected.id === ensaios_utilizados.id) {
+              console.log(selected.id);
+              let norma: string = '-';
+              if (ensaios_utilizados.norma) {
+                norma = ensaios_utilizados.norma;
+              }
+              let unidade: string = '-';
+              if (ensaios_utilizados.unidade) {
+                unidade = ensaios_utilizados.unidade;
+              }
+              let valor: string = '-';
+              if (ensaios_utilizados.valor) {
+                valor = ensaios_utilizados.valor;
+              }
+
+              let garantia_num: string = '-';
+              let garantia_texto: string = '-';
+              if (selected.garantia) {
+                const aux = selected.garantia.split(' ');
+
+                garantia_num = aux[0]; 
+                garantia_texto = aux[1]; 
+              }
+
+              this.descricaoApi += ensaios_utilizados.descricao+': '+valor+''+unidade+'; ';
+
+              linha.push({ content: ensaios_utilizados.descricao });
+              linha.push({ content: valor });
+              linha.push({ content: unidade });
+              linha.push({ content: garantia_num });
+              linha.push({ content: garantia_texto });
+              linha.push({ content: norma });
+              bodySolto.push(linha);
+            }
+          });
+          
+          autoTable(doc, {
+            startY: contadorLinhas,
+            head: headSolto,
+            body: bodySolto,
+            theme: "grid",
+            styles: {
+              fontSize: 8,
+              halign: 'left',   // 🔹 alinhamento horizontal à esquerda
+              valign: 'middle',
+              cellPadding: 1,
+            },
+            headStyles: {
+              fillColor: [220, 220, 220],
+              textColor: 0,
+              lineWidth: 0.1,
+              halign: 'left',   // 🔹 também no cabeçalho
+            },
+            bodyStyles: {
+              lineWidth: 0.1,
+              halign: 'left',   // 🔹 e no corpo
+            },
+          });
+        }
+      });
+    });
+      
+    // Posição após a última tabela de ensaios
+    contadorLinhas = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 10 : contadorLinhas + 10;
+
+         // ====== TABELA DE endurecido ===================================================
+    const headEndurecido = [
+      [
+        { content: 'Ensaio no estado endurecido', colSpan: 6 }
+      ],
+       [
+        { content: 'Ensaio' },
+        { content: 'Valor' },
+        { content: 'Unid' },
+        { content: 'Garantia' },
+        { content: ''},
+        { content: 'Norma'},
+      ]
+    ];
+    const bodyEndurecido: any[] = [];
+
+    amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
+      if(ensaios_utilizados.estado == 'Endurecido'){
+        this.ensaios_selecionados.forEach((selected: any) => {
+          const linha: any[] = [];
+
+          if (selected.id === ensaios_utilizados.id) {
+            console.log(selected.id);
+            let norma: string = '-';
+            if (ensaios_utilizados.norma) {
+              norma = ensaios_utilizados.norma;
+            }
+            let unidade: string = '-';
+            if (ensaios_utilizados.unidade) {
+              unidade = ensaios_utilizados.unidade;
+            }
+            let valor: string = '-';
+            if (ensaios_utilizados.valor) {
+              valor = ensaios_utilizados.valor;
+            }
+
+            let garantia_num: string = '-';
+            let garantia_texto: string = '-';
+            if (selected.garantia) {
+              const aux = selected.garantia.split(' ');
+
+              garantia_num = aux[0]; 
+              garantia_texto = aux[1]; 
+            }
+
+            this.descricaoApi += ensaios_utilizados.descricao+': '+valor+''+unidade+'; ';
+
+            linha.push({ content: ensaios_utilizados.descricao });
+            linha.push({ content: valor });
+            linha.push({ content: unidade });
+            linha.push({ content: garantia_num });
+            linha.push({ content: garantia_texto });
+            linha.push({ content: norma });
+            bodyEndurecido.push(linha);
+          }
+        });
+        
+        autoTable(doc, {
+          startY: contadorLinhas,
+          head: headEndurecido,
+          body: bodyEndurecido,
+          theme: "grid",
+          styles: {
+            fontSize: 8,
+            halign: 'left',   // 🔹 alinhamento horizontal à esquerda
+            valign: 'middle',
+            cellPadding: 1,
+          },
+          headStyles: {
+            fillColor: [220, 220, 220],
+            textColor: 0,
+            lineWidth: 0.1,
+            halign: 'left',   // 🔹 também no cabeçalho
+          },
+          bodyStyles: {
+            lineWidth: 0.1,
+            halign: 'left',   // 🔹 e no corpo
+          },
+        });
+      }
+    });
+
+    amostra_detalhes_selecionada.ultimo_calculo.forEach((ultimo_calculo: any) => {
+      ultimo_calculo.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
+        if(ensaios_utilizados.estado == 'Endurecido'){
+          this.ensaios_selecionados.forEach((selected: any) => {
+            const linha: any[] = [];
+
+            if (selected.id === ensaios_utilizados.id) {
+              console.log(selected.id);
+              let norma: string = '-';
+              if (ensaios_utilizados.norma) {
+                norma = ensaios_utilizados.norma;
+              }
+              let unidade: string = '-';
+              if (ensaios_utilizados.unidade) {
+                unidade = ensaios_utilizados.unidade;
+              }
+              let valor: string = '-';
+              if (ensaios_utilizados.valor) {
+                valor = ensaios_utilizados.valor;
+              }
+
+              let garantia_num: string = '-';
+              let garantia_texto: string = '-';
+              if (selected.garantia) {
+                const aux = selected.garantia.split(' ');
+
+                garantia_num = aux[0]; 
+                garantia_texto = aux[1]; 
+              }
+
+              this.descricaoApi += ensaios_utilizados.descricao+': '+valor+''+unidade+'; ';
+
+              linha.push({ content: ensaios_utilizados.descricao });
+              linha.push({ content: valor });
+              linha.push({ content: unidade });
+              linha.push({ content: garantia_num });
+              linha.push({ content: garantia_texto });
+              linha.push({ content: norma });
+              bodyEndurecido.push(linha);
+            }
+          });
+          
+          autoTable(doc, {
+            startY: contadorLinhas,
+            head: headEndurecido,
+            body: bodyEndurecido,
+            theme: "grid",
+            styles: {
+              fontSize: 8,
+              halign: 'left',   // 🔹 alinhamento horizontal à esquerda
+              valign: 'middle',
+              cellPadding: 1,
+            },
+            headStyles: {
+              fillColor: [220, 220, 220],
+              textColor: 0,
+              lineWidth: 0.1,
+              halign: 'left',   // 🔹 também no cabeçalho
+            },
+            bodyStyles: {
+              lineWidth: 0.1,
+              halign: 'left',   // 🔹 e no corpo
+            },
+          });
+        }
       });
     });
       
@@ -2529,11 +2897,11 @@ duplicata(amostra: any): void {
       ]),
 
       [
-        { content: 'Média Flexão (MPa)', colSpan: 3, styles: { halign: 'left' } },
+        { content: 'Média Flexão (Mpa)', colSpan: 3, styles: { halign: 'left' } },
         media_flexao
       ],
       [
-        { content: 'Resultado Máx (MPa)', colSpan: 3, styles: { halign: 'left' } },
+        { content: 'Resultado Máx (Mpa)', colSpan: 3, styles: { halign: 'left' } },
         maximo_flexao
       ],
       [
@@ -2573,9 +2941,9 @@ duplicata(amostra: any): void {
       [
         { content: 'CP' },
         { content: 'Compressão (N)'},
-        { content: 'Compressão (MPa)' },
-        { content: 'Média (MPa)' },
-        { content: 'Tração na Compressão (MPa)' },
+        { content: 'Compressão (Mpa)' },
+        { content: 'Média (Mpa)' },
+        { content: 'Tração na Compressão (Mpa)' },
       ]
     ];
 
@@ -2592,6 +2960,7 @@ duplicata(amostra: any): void {
     const minCompressao = compressaoValores.length ? Math.min(...compressaoValores) : 0;
 
     console.log('compressao data =>', amostra_detalhes_selecionada.parecer.compressao);
+    console.log('amostra_detalhes_selecionada =>', amostra_detalhes_selecionada);
 
     const bodyCompressao = [
       ...amostra_detalhes_selecionada.parecer.compressao.map((item: any) => [
@@ -2603,15 +2972,15 @@ duplicata(amostra: any): void {
       ]),
 
       [
-        { content: 'Média Compressão (MPa)', colSpan: 3, styles: { halign: 'left' } },
+        { content: 'Média Compressão (Mpa)', colSpan: 3, styles: { halign: 'left' } },
         mediaCompressao.toFixed(2)
       ],
       [
-        { content: 'Resultado Máx (MPa)', colSpan: 3, styles: { halign: 'left' } },
+        { content: 'Resultado Máx (Mpa)', colSpan: 3, styles: { halign: 'left' } },
         maxCompressao.toFixed(2)
       ],
       [
-        { content: 'Resultado Mín (MPa)', colSpan: 3, styles: { halign: 'left' } },
+        { content: 'Resultado Mín (Mpa)', colSpan: 3, styles: { halign: 'left' } },
         minCompressao.toFixed(2)
       ],
      
