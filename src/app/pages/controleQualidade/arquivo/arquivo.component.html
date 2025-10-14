@@ -210,7 +210,7 @@
                                             [severity]="getSeverity(analise.amostra_detalhes.material)"
                                             />
                                         </td>
-                                        <td style="text-align: left;"> {{ analise.amostra_detalhes?.tipo_amostra+" - - - "+analise.id }} </td>
+                                        <td style="text-align: left;"> {{ analise.id +' - - - - '+ analise.amostra_detalhes?.tipo_amostra }} </td>
                                         <ng-container *ngIf="analise?.amostra_detalhes?.expressa_detalhes; else ensaioDetalhes">
                                             <td style="text-align: left;">
                                                 {{ analise.amostra_detalhes?.expressa_detalhes?.data | date:'dd/MM/yy' }}
@@ -1035,7 +1035,9 @@
                                     iconPos="right" 
                                     tooltipPosition="top"
                                     pTooltip="Salvar Ruptura a Flexão"
+                                    [style]="{'background-color': 'purple', 'border-color': 'purple'}"
                                 />
+                                
                             </div>
                         </p-card>
                     </div>    
@@ -1101,6 +1103,137 @@
                                     iconPos="right" 
                                     tooltipPosition="top"
                                     pTooltip="Salvar Ruptura a Compressão"
+                                    [style]="{'background-color': 'brown', 'border-color': 'purple'}"
+                                />
+                            </div>
+                        </p-card>
+                    </div>    
+                </div>
+            </div>
+        </div>
+       
+    </p-drawer>
+
+    <!-- retacao -->
+    <p-drawer 
+        [(visible)]="modalDadosLaudoRetacao" 
+        position="full" >
+        <p-toast />
+        <p-confirmDialog />
+         <div class="containerInterno w-12">
+            <div class="background-form">
+                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                    <div class="fg1 flex flex-column w-12 align-items-center">
+
+                        <p-card class="card w-12 text-center card-superficial">
+                            <ng-template #header>
+                                <div class="header-retacao w-full text-center">
+                                    <b>Determinação da Variação Dimencional Linear (Retação/Expansão)</b>
+                                </div>
+                            </ng-template>
+                            <div class="flex flex-row w-12 gap-3">
+                                <div class="w-12">
+                                    <p-table 
+                                        [value]="linhasRetacao" 
+                                        stripedRows
+                                    >
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th>Data</th>
+                                                <th>Idade</th>
+                                                <th>Média (mm/m)</th>
+                                                <th>Desvio Máximo (mm/m)</th>
+                                             
+                                            </tr>
+                                        </ng-template>
+
+                                        <ng-template pTemplate="body" let-retacao let-i="rowIndex">
+                                            <tr>
+                                                <td><input [(ngModel)]="retacao.data" type="date" /></td>
+                                                <td><input [(ngModel)]="retacao.idade" type="number" /></td>
+                                                <td><input [(ngModel)]="retacao.media" type="number" /></td>
+                                                <td><input [(ngModel)]="retacao.desvio" type="number" /></td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+
+                                </div>
+                            </div>
+                            
+                            <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                                <p-button 
+                                    label="Salvar Variação Dimencional Linear" 
+                                    (onClick)="salvarRetacao()"
+                                    severity="info"
+                                    icon="pi pi-check" 
+                                    iconPos="right" 
+                                    tooltipPosition="top"
+                                    pTooltip="Salvar Variação Dimencional Linear"
+                                    [style]="{'background-color': 'rgb(108, 165, 42)', 'border-color': 'rgb(108, 165, 42)'}"
+                                />
+                            </div>
+                        </p-card>
+                    </div>    
+                </div>
+            </div>
+        </div>
+       
+    </p-drawer>
+
+    <!-- elasticidade -->
+    <p-drawer 
+        [(visible)]="modalDadosLaudoElasticidade" 
+        position="full" >
+        <p-toast />
+        <p-confirmDialog />
+         <div class="containerInterno w-12">
+            <div class="background-form">
+                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                    <div class="fg1 flex flex-column w-12 align-items-center">
+
+                        <p-card class="card w-12 text-center card-superficial">
+                            <ng-template #header>
+                                <div class="header-elasticidade w-full text-center">
+                                    <b>Módulo de Elasticidade Dinâmico</b>
+                                </div>
+                            </ng-template>
+                            <div class="flex flex-row w-12 gap-3">
+                                <div class="w-12">
+                                    <p-table 
+                                        [value]="linhasElasticidade" 
+                                        stripedRows
+                                    >
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th>Individual</th>
+                                                <th>Média (Mpa)</th>
+                                                <th>Desvio Padrão (%)</th>
+                                             
+                                            </tr>
+                                        </ng-template>
+
+                                        <ng-template pTemplate="body" let-elasticidade let-i="rowIndex">
+                                            <tr>
+                                                <td><input [(ngModel)]="elasticidade.individual" type="number" /></td>
+                                                <td><input [(ngModel)]="elasticidade.media" type="number" /></td>
+                                                <td><input [(ngModel)]="elasticidade.desvio_padrao" type="number" /></td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+
+                                </div>
+                            </div>
+                            
+                            <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                                <p-button 
+                                    label="Salvar Módulo de Elasticidade Dinâmico" 
+                                    (onClick)="salvarElasticidade()"
+                                    severity="info"
+                                    icon="pi pi-check" 
+                                    iconPos="right" 
+                                    tooltipPosition="top"
+                                    pTooltip="Salvar Módulo de Elasticidade Dinâmico"
+                                    [style]="{'background-color': ' rgb(182, 109, 32)', 'border-color': ' rgb(182, 109, 32)'}"
                                 />
                             </div>
                         </p-card>
