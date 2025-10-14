@@ -703,7 +703,6 @@
                                                                                 [style]="{ position: 'relative', top: '0', right: 0 }" 
                                                                                 [buttonProps]="{ severity: 'info', rounded: true }"
                                                                                 tooltipPosition="top"
-                                                                                pTooltip="Ações"
                                                                             ></p-speeddial>
                                                                             <p-button
                                                                                 icon="pi pi-arrow-right"
@@ -739,7 +738,7 @@
                                 <p-step-panel [value]="2">
                                     <ng-template #content let-activateCallback="activateCallback">
                                         <div class="form-geral mb-6 flex flex-column align-items-center">
-                                            <div class="button-imprimir flex flex-wrap mt-6 mb-6 md:flex-row justify-content-around" (click)="downloadPdf()">
+                                            <div class="button-imprimir flex flex-wrap mt-6 mb-6 md:flex-row justify-content-around" (click)="imprimirEtiquetaForm()">
                                                 <!-- <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" routerLink="../feedback"> -->
                                                 <div *ngIf="hasGroup(['Admin','Master','RHGestor'])">
                                                     <p> Imprimir Etiqueta </p>
