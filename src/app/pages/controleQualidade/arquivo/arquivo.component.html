@@ -210,7 +210,7 @@
                                             [severity]="getSeverity(analise.amostra_detalhes.material)"
                                             />
                                         </td>
-                                        <td style="text-align: left;"> {{ analise.id +' - - - - '+ analise.amostra_detalhes?.tipo_amostra }} </td>
+                                        <td style="text-align: left;"> {{analise.amostra_detalhes?.tipo_amostra }} </td>
                                         <ng-container *ngIf="analise?.amostra_detalhes?.expressa_detalhes; else ensaioDetalhes">
                                             <td style="text-align: left;">
                                                 {{ analise.amostra_detalhes?.expressa_detalhes?.data | date:'dd/MM/yy' }}
@@ -754,7 +754,7 @@
             </div>
         </div>
     </p-dialog>
-    <canvas #graficoCanvas></canvas>
+    <canvas #graficoCanvas style="display: none;"></canvas>
 
     <!-- substrato -->
     <p-drawer 

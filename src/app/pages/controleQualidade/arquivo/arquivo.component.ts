@@ -1772,18 +1772,16 @@ duplicata(amostra: any): void {
   }
 
   imprimirLaudoPDF(amostra_detalhes_selecionada: any){
-            this.imprimirLaudoArgPDF(amostra_detalhes_selecionada);
-
-    // if(this.normalize(amostra_detalhes_selecionada.amostra_detalhes.material) === 'argamassa'){
-    //   if(this.normalize(amostra_detalhes_selecionada.amostra_detalhes.tipo_amostra) === 'colante'){
-    //     this.imprimirLaudoArgColantePDF(amostra_detalhes_selecionada);
-    //   }else{
-    //     this.imprimirLaudoArgPDF(amostra_detalhes_selecionada);
-    //   }
+    if(this.normalize(amostra_detalhes_selecionada.amostra_detalhes.material) === 'argamassa'){
+      if(this.normalize(amostra_detalhes_selecionada.amostra_detalhes.tipo_amostra) === 'colante'){
+        this.imprimirLaudoArgColantePDF(amostra_detalhes_selecionada);
+      }else{
+        this.imprimirLaudoArgPDF(amostra_detalhes_selecionada);
+      }
       
-    // }else{
-    //   this.imprimirLaudoCalcPDF(amostra_detalhes_selecionada);
-    // }
+    }else{
+      this.imprimirLaudoCalcPDF(amostra_detalhes_selecionada);
+    }
   }
 
   ///////AQUIIII
