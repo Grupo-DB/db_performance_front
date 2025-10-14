@@ -159,6 +159,9 @@ export class OrdemComponent implements OnInit {
   imagensAmostra: any[] = [];
   imagemAtualIndex: number = 0;
   modalImagensVisible = false;
+  
+  // Cache para menu items para evitar recriação constante
+  private menuItemsCache = new Map<number, any[]>();
 
   // Propriedades para dados da amostra recebida
   amostraData: any = null;
@@ -204,6 +207,13 @@ export class OrdemComponent implements OnInit {
     { value: 'Expressa' },
     { value: 'Plano' },
   ]
+
+  classificacoes = [
+  { id: 0, nome: 'Controle de Qualidade' },
+  { id: 1, nome: 'SAC' },
+  { id: 2, nome: 'Desenvolvimento de Produtos' },
+]
+
   dadosTabela = [
     { tempo: '5min', valor: 2.3 },
     { tempo: '20min', valor: 4.1 },
@@ -213,12 +223,6 @@ export class OrdemComponent implements OnInit {
     { tempo: '4h', valor: 12.0 },
     { tempo: '6h', valor: 14.0 }
   ];
-
-  classificacoes = [
-  { id: 0, nome: 'Controle de Qualidade' },
-  { id: 1, nome: 'SAC' },
-  { id: 2, nome: 'Desenvolvimento de Produtos' },
-]
 
   responsaveis = [
     { value: 'Antonio Carlos Vargas Sito' },
@@ -299,7 +303,6 @@ export class OrdemComponent implements OnInit {
     this.receberDadosAmostra();
     setTimeout(() => {
       if (!this.amostraData) {
-        console.log('Tentando novamente após delay...');
         this.receberDadosAmostra();
       }
     }, 100);
@@ -312,7 +315,6 @@ export class OrdemComponent implements OnInit {
 
   visualizar(analise: any) {
     this.analiseSelecionada = analise;
-    console.log('this.analiseSelecionada', this.analiseSelecionada  );
     this.modalVisualizar = true;
   }
 
@@ -325,8 +327,6 @@ export class OrdemComponent implements OnInit {
     let isExpressa = false;
     let idSalvar = '';
     let plano_analise = '';
-
-    console.log('AmOsTrAssss', amostra)
 
     if(amostra.expressa_detalhes){
       classificacao = amostra.expressa_detalhes.classificacao;
@@ -359,12 +359,9 @@ export class OrdemComponent implements OnInit {
   clearEditForm(){
     this.editForm.reset();
   }
-
   saveEditOrdem(idSalvar: number ){
     let dataFormatada = null;    
-    console.log(this.editForm.value);
     alert('Atualizar API');
-
     if (this.editForm.value.data instanceof Date) {
         dataFormatada = formatDate(this.editForm.value.data, 'yyyy-MM-dd', 'en-US');
     }else{
@@ -381,7 +378,6 @@ export class OrdemComponent implements OnInit {
       responsavel: this.editForm.value.responsavel,
       plano_analise: this.editForm.value.plano_analise,
     };
-    console.log('dadosAtualizados', dadosAtualizados);
     this.ordemService.editOrdens(idSalvar, dadosAtualizados).subscribe({
       next:() =>{       
         this.editFormVisible = false;
@@ -390,7 +386,6 @@ export class OrdemComponent implements OnInit {
       },
       error: (err) => {
         console.error('Login error:', err); 
-      
         if (err.status === 401) {
           this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
         } else if (err.status === 403) {
@@ -405,23 +400,17 @@ export class OrdemComponent implements OnInit {
   }
 
   saveEditExpressa(idSalvar: number ){
-  
-
     let dataFormatada = null;
-    
     // Formato brasileiro DD/MM/YYYY
     const [dia, mes, ano] = this.editForm.value.data.split('/');
     dataFormatada = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
     dataFormatada = formatDate(dataFormatada, 'yyyy-MM-dd', 'en-US');
-
     const dadosAtualizados: Partial<Amostra> = {
-     
       data: dataFormatada,
       numero: this.editForm.value.numero,
       classificacao: this.editForm.value.classificacao,
       responsavel: this.editForm.value.responsavel,
     };
-    console.log(dadosAtualizados);
     this.amostraService.editAmostraExpressa(idSalvar, dadosAtualizados).subscribe({
       next:() =>{       
         this.editFormVisible = false;
@@ -444,29 +433,22 @@ export class OrdemComponent implements OnInit {
       }
     });
   }
-
   receberDadosAmostra(): void {
     // Tentar receber via navigation state
     if (window.history.state && window.history.state.amostraData) {
-      this.amostraData = window.history.state.amostraData;
-      console.log('✅ Dados da amostra recebidos via history.state:', this.amostraData);
-      
+      this.amostraData = window.history.state.amostraData;      
       // Carregar imagens existentes se houver
       if (this.amostraData.imagensExistentes && this.amostraData.imagensExistentes.length > 0) {
-        console.log('📸 Imagens existentes encontradas:', this.amostraData.imagensExistentes);
         this.imagensExistentes = this.amostraData.imagensExistentes;
       }
-      
       this.preencherFormularioComDadosAmostra();
       return;
     }
-
     // Tentar receber via sessionStorage como fallback
     const amostraDataSession = sessionStorage.getItem('amostraData');
     if (amostraDataSession) {
       try {
         this.amostraData = JSON.parse(amostraDataSession);
-        console.log('✅ Dados da amostra recebidos via sessionStorage:', this.amostraData);
         this.preencherFormularioComDadosAmostra();
         // Limpar sessionStorage após uso
         sessionStorage.removeItem('amostraData');
@@ -475,8 +457,6 @@ export class OrdemComponent implements OnInit {
         console.error('❌ Erro ao processar dados do sessionStorage:', error);
       }
     }
-
-    console.log('ℹ️ Nenhum dado da amostra foi recebido - criando ordem normal sem amostra pré-existente');
   }
 
   loadPlanosAnalise() {
@@ -485,7 +465,7 @@ export class OrdemComponent implements OnInit {
         this.planosAnalise = response;
       },
       error => {
-        console.log('Erro ao carregar planos de análise', error);
+        console.error('Erro ao carregar planos de análise', error);
       }
     );
   }
@@ -498,7 +478,6 @@ export class OrdemComponent implements OnInit {
           ...ensaio,
           selecionado: false
         }));
-        console.log('Ensaios carregados:', this.ensaiosDisponiveis);
       },
       error: (error) => {
         console.error('Erro ao carregar ensaios:', error);
@@ -517,7 +496,6 @@ export class OrdemComponent implements OnInit {
           ...calculo,
           selecionado: false
         }));
-        console.log('Cálculos carregados:', this.calculosDisponiveis);
       },
       error: (error: any) => {
         console.error('Erro ao carregar cálculos:', error);
@@ -548,22 +526,16 @@ export class OrdemComponent implements OnInit {
   }
 
 onMaterialChange(materialNome: string) {
-  console.log('Material selecionado:', materialNome);
   if (materialNome) {
     // Normaliza o nome e atualiza o formulário
-    const materialNormalizado = this.normalize(materialNome);
-    console.log('Material normalizado:', materialNormalizado);
-    
+    const materialNormalizado = this.normalize(materialNome);    
     // Atualiza o valor no formulário com a versão normalizada
-    // this.registerOrdemForm.get('material')?.setValue(materialNormalizado, { emitEvent: false });
-    
+
     // Usa a versão normalizada para todas as operações
     this.amostraService.getProximoSequencialPorNome(materialNormalizado).subscribe({
       next: (sequencial) => {
-        console.log('Sequencial recebido do backend:', sequencial);
         const numero = this.gerarNumero(materialNormalizado, sequencial);
         this.registerOrdemForm.get('numero')?.setValue(numero);
-        console.log('Número da amostra gerado:', numero);
         this.loadProdutosPorMaterial(materialNormalizado);
       },
       error: (err) => {
@@ -602,7 +574,6 @@ loadProdutosPorMaterial(materialNome: string): void {
   this.amostraService.getProdutosPorMaterial(materialNome).subscribe({
     next: (response) => {
       this.produtosFiltrados = response;
-      console.log('Produtos filtrados por material:', this.produtosFiltrados);
     },
     error: (err) => {
       console.error('Erro ao carregar produtos por material:', err);
@@ -653,6 +624,9 @@ gerarNumero(materialNome: string, sequencial: number): string {
         }));
         // Inicializa a lista filtrada
         this.analisesFiltradas = [...this.analises];
+        
+        // Limpar cache de menu items quando dados são atualizados
+        this.menuItemsCache.clear();
 
         // Cria opções únicas para o MultiSelect
         this.materiaisFiltro = this.analises
@@ -775,8 +749,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
 
   private analisarDataRompimentoOrdem(ensaio: any, hoje: Date, analise: any, configAlerta: any, interno: boolean = false, calcRef?: any): any | null {
     try {
-      console.log(`📅 Analisando rompimento para ensaio ID ${ensaio.id}: valor=${ensaio.valor} valor_data=${ensaio.valor_data}`);
-
       // Estratégia robusta para obter data base (modelagem) e somar 28 dias
       let dataModelagem: Date | null = null;
       const brute = ensaio.valor;
@@ -832,7 +804,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
       let tipo: 'critico' | 'aviso' | 'vencido' | null = null;
       let mensagem = '';
       
-      // ✅ OBTER NÚMERO DA AMOSTRA PARA INCLUIR NA MENSAGEM
+      //  OBTER NÚMERO DA AMOSTRA PARA INCLUIR NA MENSAGEM
       const numeroAmostra = analise.amostra_detalhes?.numero || analise.numero || 'N/A';
       
       // Preparar label de cálculo seguro (evitar undefined)
@@ -865,7 +837,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
         };
       }
       
-      console.log(`✅ Rompimento OK: ${diferencaDias} dias restantes`);
       return null;
     } catch (error) {
       console.error(`❌ Erro ao analisar rompimento do ensaio ${ensaio.id}:`, error);
@@ -1152,7 +1123,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
   private verificarAlertasRompimento(): void {
  
     if (!this.analises || this.analises.length === 0) {
-      console.log('❌ Nenhuma análise para verificar');
       return;
     }
 
@@ -1430,7 +1400,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
     this.ordemService.getOrdens().subscribe(
       response => {
         this.ordens = response;
-        console.log("Resposta: ", this.ordens);
       }, error => {
         console.log('Mensagem', error);
       }
@@ -1438,8 +1407,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
   }
 
   abrirModalLaudo(amostra_detalhes: any) {
-  
-    console.log('laudo', amostra_detalhes);
     this.amostra_detalhes_selecionada = amostra_detalhes;
 
     while (this.ensaios_laudo.length > 0) {
@@ -1470,11 +1437,8 @@ gerarNumero(materialNome: string, sequencial: number): string {
   }
 
   abrirModalImpressao(analise: any) {
-    console.log('analise', analise);
     this.amostra_detalhes_selecionada = analise;
-
     if(analise.amostra_detalhes.expressa_detalhes){
-
       const calculos = analise.amostra_detalhes.expressa_detalhes.calculo_ensaio_detalhes.map(
         (calculo: any) => {
           const children = (calculo.ensaios_detalhes || []).map((ensaio: any) => ({
@@ -1604,16 +1568,12 @@ gerarNumero(materialNome: string, sequencial: number): string {
 
       });
     }
- 
-    console.log('this.ensaios_laudo', this.ensaios_laudo)
     this.modalImpressao2 = true;
   }
 
   imprimirVisualizar(analise: any){
     const doc = new jsPDF();
-
     let y = 10; // posição inicial Y
-
     doc.setFontSize(20);
     const pageWidth = doc.internal.pageSize.getWidth(); // largura da página
     doc.text("OS", pageWidth / 2, y, { align: "center" });    
@@ -1767,7 +1727,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
 
     let y = 52;
 
-    console.log('amostra_detalhes_selecionada',amostra_detalhes_selecionada);
     const dataColetaFormatada = new Date(amostra_detalhes_selecionada.data_coleta);
     const dataColetaFormatada2 = dataColetaFormatada.toLocaleDateString('pt-BR', {
       day: '2-digit',
@@ -1802,9 +1761,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
     amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
       this.ensaios_selecionados.forEach((selected: any) => {
         const linha: any[] = [];
-        console.log('teste ', selected);
         if (selected.id === ensaios_utilizados.id) {
-          console.log(selected.id);
           let norma: string = '-';
           if (ensaios_utilizados.norma) {
             norma = ensaios_utilizados.norma;
@@ -1853,7 +1810,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
           const linha: any[] = [];
 
           if (selected.id === ensaios_utilizados.id) {
-            console.log(selected.id);
             let norma: string = '-';
             if (ensaios_utilizados.norma) {
               norma = ensaios_utilizados.norma;
@@ -1999,7 +1955,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
 
     let y = 52;
 
-    console.log(amostra_detalhes_selecionada);
     const dataColetaFormatada = new Date(amostra_detalhes_selecionada.data_coleta);
     const dataColetaFormatada2 = dataColetaFormatada.toLocaleDateString('pt-BR', {
       day: '2-digit',
@@ -2035,7 +1990,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
         const linha: any[] = [];
 
         if (selected.id === ensaios_utilizados.id) {
-          console.log(selected.id);
           let norma: string = '-';
           if (ensaios_utilizados.norma) {
             norma = ensaios_utilizados.norma;
@@ -2084,7 +2038,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
           const linha: any[] = [];
 
           if (selected.id === ensaios_utilizados.id) {
-            console.log(selected.id);
             let norma: string = '-';
             if (ensaios_utilizados.norma) {
               norma = ensaios_utilizados.norma;
@@ -2307,7 +2260,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
         const linha: any[] = [];
 
         if (selected.id === ensaios_utilizados.id) {
-          console.log(selected.id);
           let norma: string = '-';
           if (ensaios_utilizados.norma) {
             norma = ensaios_utilizados.norma;
@@ -2356,7 +2308,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
           const linha: any[] = [];
 
           if (selected.id === ensaios_utilizados.id) {
-            console.log(selected.id);
             let norma: string = '-';
             if (ensaios_utilizados.norma) {
               norma = ensaios_utilizados.norma;
@@ -3156,10 +3107,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
         const novaAmostra = JSON.parse(JSON.stringify(amostra));
         //zera id
         delete novaAmostra.id;
-        
-        
-          console.log(novaAmostra);
-
           // Calcular data de descarte se necessário
           let dataDescarteFormatada = novaAmostra.data_descarte;
           if (!dataDescarteFormatada && novaAmostra.data_entrada && novaAmostra.material) {
@@ -3207,8 +3154,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
             dataDescarteFormatada
           ).subscribe({
             next: (amostraCriada) => {
-              console.log('Amostra duplicada:', amostraCriada);
-              
               this.messageService.add({ 
                 severity: 'success', 
                 summary: 'Sucesso', 
@@ -3270,9 +3215,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
       }
     });
 
-    console.log(resultado);
-
-    console.log('analise', analise);
     const doc = new jsPDF({ unit: "mm", format: "a4" });
     let contadorLinhas = 45;
     const data_entrada = formatDate(analise.amostra_detalhes.data_entrada, 'dd/MM/yyyy', 'en-US');
@@ -3733,16 +3675,22 @@ gerarNumero(materialNome: string, sequencial: number): string {
   }
 
   getMenuItems(analise: any) {
-    return [
-      { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(analise), tooltip: 'Visualizar OS', tooltipPosition: 'top' },
-      { label: 'Imprimir', icon: 'pi pi-print', command: () => this.abrirModalImpressao(analise) },
-      { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(analise.amostra_detalhes) },
-      { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluirAnalise(analise) },
-      { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise.amostra_detalhes.id) },
-      //{ label: 'Duplicata', icon: 'pi pi-file-import', command: () => this.duplicata(analise.amostra_detalhes) },
-    ];
-
-    console.log('fdfd')
+    // Usar cache para evitar recriação constante dos menu items
+    const analiseId = analise.id;
+    
+    if (!this.menuItemsCache.has(analiseId)) {
+      const menuItems = [
+        { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(analise), tooltip: 'Visualizar OS', tooltipPosition: 'top' },
+        { label: 'Imprimir', icon: 'pi pi-print', command: () => this.abrirModalImpressao(analise) },
+        { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(analise.amostra_detalhes) },
+        { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluirAnalise(analise) },
+        { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise.amostra_detalhes.id) },
+        //{ label: 'Duplicata', icon: 'pi pi-file-import', command: () => this.duplicata(analise.amostra_detalhes) },
+      ];
+      this.menuItemsCache.set(analiseId, menuItems);
+    }
+    
+    return this.menuItemsCache.get(analiseId) || [];
   }
 
   getStatusIcon(status: boolean): string {
@@ -3756,7 +3704,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
   // ================ MÉTODOS DE AÇÕES DAS ANÁLISES ================
 
   abrirOrdemServico(analise: any): void {
-    console.log('Abrindo ordem de serviço:', analise);
     // Implementar navegação para detalhes da ordem
     this.messageService.add({
       severity: 'info',
@@ -3767,7 +3714,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
 
 //======================IMAGENS DA AMOSTRA =======================
  visualizarImagens(amostraId: any): void {
-  console.log('Visualizando imagens da amostra:', amostraId);
   this.amostraImagensSelecionada = amostraId;
   this.carregarImagensAmostra(amostraId);
 }
@@ -3901,8 +3847,6 @@ onDescricaoInput(index: number, event: Event): void {
   
   if (this.uploadedFilesWithInfo[index]) {
     this.uploadedFilesWithInfo[index].descricao = descricao;
-    console.log(`Descrição atualizada para arquivo ${index}: "${descricao}"`);
-    console.log('Estado atual dos arquivos:', this.uploadedFilesWithInfo);
   }
 }  
 
@@ -4036,8 +3980,6 @@ onDescricaoInput(index: number, event: Event): void {
   }
 
   gerarLaudo(analise: any): void {
-    console.log('Gerando laudo para análise:', analise);
-    
     this.messageService.add({
       severity: 'info',
       summary: 'Gerando Laudo',
@@ -4162,20 +4104,12 @@ onDescricaoInput(index: number, event: Event): void {
       return;
     }
 
-    console.log('🚀 Iniciando criação da ordem - Fluxo: Ordem → Amostra → Análise');
-
     //Criar ordem expressa
     let dataFormatada = '';
     const dataValue = this.registerOrdemForm.value.data;
     if (dataValue instanceof Date && !isNaN(dataValue.getTime())) {
       dataFormatada = formatDate(dataValue, 'yyyy-MM-dd', 'en-US');
     }
-
-    console.log('📝 Criando ordem expressa...');
-
-    console.log('🚀 Iniciando criação de Ordem Normal');
-    console.log('📋 Dados da ordem:', this.registerOrdemForm.value);
-    console.log('📋 Dados da amostra recebida:', this.amostraData);
 
     // Criar a ordem de serviço normal
     this.ordemService.registerOrdem(
@@ -4186,9 +4120,7 @@ onDescricaoInput(index: number, event: Event): void {
       this.registerOrdemForm.value.digitador,
       this.registerOrdemForm.value.classificacao
     ).subscribe({
-      next: (ordemSalva) => {
-        console.log('✅ Ordem Normal criada:', ordemSalva);
-        
+      next: (ordemSalva) => {        
         if (this.amostraData) {
           // Vincular amostra EXISTENTE à ordem recém-criada
           this.vincularAmostraExistenteAOrdem(ordemSalva.id);

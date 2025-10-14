@@ -192,9 +192,7 @@ export class ProdutoAmostraComponent implements OnInit {
 
   onMaterialChange(materialValue: string, formType: 'register' | 'edit' = 'register'): void {
     if (materialValue) {
-      const materialNormalizado = this.normalize(materialValue);
-      console.log('Material normalizado:', materialNormalizado);
-      
+      const materialNormalizado = this.normalize(materialValue);      
       if (formType === 'register') {
         this.registerForm.get('material')?.setValue(materialNormalizado, { emitEvent: false });
       } else {

@@ -618,9 +618,7 @@ salvarFormulaEditada() {
   }
 
   saveEdit(){
-
-      const expressao = this.editForm.value.funcao;
-
+    const expressao = this.editForm.value.funcao;
     if (!expressao || expressao.trim() === '') {
       this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'A expressão não pode estar vazia.' });
       return;
@@ -749,9 +747,6 @@ salvarFormulaEditada() {
       valor: this.registerForm.value.valor,
       tecnica: calculoTecnico
     };
-
-    console.log('Enviando cálculo de ensaio:', payload);
-    console.log('Código técnico gerado:', calculoTecnico);
     this.ensaioService.registerCalculoEnsaio(
       payload.descricao,
       payload.funcao,
@@ -806,7 +801,6 @@ validarExpressaoComValores(expr: string): boolean {
     let fakeExpr = exprSegura.replace(/(ens\d+|ensaio\d+|calculo\d+)/g, '1');
     fakeExpr = fakeExpr.replace(/\s+/g, ' ');
     fakeExpr = fakeExpr.replace(/1\s+1/g, '1');
-    console.log('Expressão para validação:', fakeExpr);
     evaluate(fakeExpr);
     this.messageService.add({
       severity: 'info',

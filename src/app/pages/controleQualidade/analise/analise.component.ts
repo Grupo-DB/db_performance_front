@@ -31,7 +31,7 @@ import { StepperModule } from 'primeng/stepper';
 import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { ColaboradorService } from '../../../services/avaliacoesServices/colaboradores/registercolaborador.service';
-import { evaluate } from 'mathjs';
+import { evaluate, create, all } from 'mathjs';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { ProjecaoService } from '../../../services/baseOrcamentariaServices/dre/projecao.service';
@@ -138,6 +138,9 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
   //images
   imagensAmostra: any[] = [];
   imagemAtualIndex: number = 0;
+  
+  // Instância personalizada do MathJS com funções bitwise seguras
+  private mathjs: any;
   modalImagensVisible = false;
   uploadedFilesWithInfo: FileWithInfo[] = [];
   // Controle de mudanças não salvas
@@ -165,7 +168,7 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
 
   // Sistema de alertas de rompimento
   alertasRompimento: any[] = [];
-  intervaloPadrao = 300000; // 5 minutos
+  intervaloPadrao = 9500000; // 5 minutos
   intervalId: any = null;
   configAlerta = {
     diasAviso: 3, // Avisar 3 dias antes
@@ -232,7 +235,10 @@ modalGarantiasVisible: any;
     private cd: ChangeDetectorRef,
     private datePipe: DatePipe,
     private httpClient: HttpClient
-  ) {}
+  ) {
+    // Configurar funções bitwise seguras globalmente
+    this.configurarFuncoesBitwiseSeguras();
+  }
   
    hasGroup(groups: string[]): boolean {
     return this.loginService.hasAnyGroup(groups);
@@ -282,6 +288,24 @@ modalGarantiasVisible: any;
     }
   );
 }
+
+ private configurarFuncoesBitwiseSeguras() {
+    // Criar instância personalizada do MathJS com funções bitwise seguras
+    this.mathjs = create(all, {});
+    
+    // Sobrescrever funções bitwise para lidar com decimais
+    this.mathjs.import({
+      bitOr: (a: number, b: number) => Math.trunc(a) | Math.trunc(b),
+      bitAnd: (a: number, b: number) => Math.trunc(a) & Math.trunc(b),
+      bitXor: (a: number, b: number) => Math.trunc(a) ^ Math.trunc(b),
+      bitNot: (a: number) => ~Math.trunc(a)
+    }, { override: true });
+  }
+
+  // Método de evaluate seguro para usar em toda a aplicação
+  private evaluateSeguro(expressao: string, escopo?: any): any {
+    return this.mathjs.evaluate(expressao, escopo);
+  }
 //===============================GET ANALISE==================================
   getAnalise(): void {
     if (this.analiseId !== undefined) {
@@ -327,7 +351,6 @@ modalGarantiasVisible: any;
 //================================= GET ANÁLISE POR ID ===========================
 loadAnalisePorId(analise: any) {  
   this.produtoId = analise.amostra_detalhes.produto_amostra_detalhes?.id || null;
-  console.log('Produto da amostra:', this.produtoId);
   if (!analise || !analise.amostra_detalhes) {
     this.analisesSimplificadas = [];
     return;
@@ -1915,16 +1938,22 @@ recalcularTodosCalculos() {
         return novaData.getTime();
       },
       diasEntre: (data1: string | number, data2: string | number) => {
-        const d1 = new Date(data1);
+        const d1 = new Date(data2);
         const d2 = new Date(data2);
         const diffTime = Math.abs(d2.getTime() - d1.getTime());
         return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       },
       hoje: () => new Date().getTime()
     };
-    const scope = { ...safeVars, ...funcoesDatas };
+    const funcoesBitwise = {
+      bitOr: (a: number, b: number) => Math.trunc(a) | Math.trunc(b),
+      bitAnd: (a: number, b: number) => Math.trunc(a) & Math.trunc(b),
+      bitXor: (a: number, b: number) => Math.trunc(a) ^ Math.trunc(b),
+      bitNot: (a: number) => ~Math.trunc(a)
+    };
+    const scope = { ...safeVars, ...funcoesDatas, ...funcoesBitwise };
     try {
-      const resultado = evaluate(ensaio.funcao, scope);
+      const resultado = this.evaluateSeguro(ensaio.funcao, scope);
       if (ensaio.funcao.includes('adicionarDias') || ensaio.funcao.includes('hoje')) {
         if (typeof resultado === 'number' && resultado > 946684800000) {
           const dataResultado = new Date(resultado);
@@ -2056,9 +2085,15 @@ recalcularTodosCalculos() {
       },
       hoje: () => new Date().getTime()
     };
-    const scope = { ...safeVars, ...funcoesDatas };
+    const funcoesBitwise = {
+      bitOr: (a: number, b: number) => Math.trunc(a) | Math.trunc(b),
+      bitAnd: (a: number, b: number) => Math.trunc(a) & Math.trunc(b),
+      bitXor: (a: number, b: number) => Math.trunc(a) ^ Math.trunc(b),
+      bitNot: (a: number) => ~Math.trunc(a)
+    };
+    const scope = { ...safeVars, ...funcoesDatas, ...funcoesBitwise };
     try {
-      const resultado = evaluate(calc.funcao, scope);
+      const resultado = this.evaluateSeguro(calc.funcao, scope);
       if (calc.funcao.includes('adicionarDias') || calc.funcao.includes('hoje')) {
         if (typeof resultado === 'number' && resultado > 946684800000) {
           const dataResultado = new Date(resultado);
@@ -2424,8 +2459,14 @@ recalcularTodosCalculos() {
         },
         hoje: () => new Date().getTime()
       };
-      const scope = { ...safeVars, ...funcoesDatas };
-      const resultado = evaluate(ensaio.funcao, scope);
+      const funcoesBitwise = {
+        bitOr: (a: number, b: number) => Math.trunc(a) | Math.trunc(b),
+        bitAnd: (a: number, b: number) => Math.trunc(a) & Math.trunc(b),
+        bitXor: (a: number, b: number) => Math.trunc(a) ^ Math.trunc(b),
+        bitNot: (a: number) => ~Math.trunc(a)
+      };
+      const scope = { ...safeVars, ...funcoesDatas, ...funcoesBitwise };
+      const resultado = this.evaluateSeguro(ensaio.funcao, scope);
       if (ensaio.funcao.includes('adicionarDias') || ensaio.funcao.includes('hoje') || ensaio.funcao.includes('diasEntre')) {
         if (typeof resultado === 'number' && resultado > 946684800000) {
           const dataResultado = new Date(resultado);
@@ -2514,7 +2555,13 @@ calcularEnsaios(ensaios: any[], produto: any) {
       );
     });
     try {
-      calc.resultado = evaluate(funcaoSubstituida);
+      const funcoesBitwise = {
+        bitOr: (a: number, b: number) => Math.trunc(a) | Math.trunc(b),
+        bitAnd: (a: number, b: number) => Math.trunc(a) & Math.trunc(b),
+        bitXor: (a: number, b: number) => Math.trunc(a) ^ Math.trunc(b),
+        bitNot: (a: number) => ~Math.trunc(a)
+      };
+      calc.resultado = this.evaluateSeguro(funcaoSubstituida);
     } catch (e) {
       calc.resultado = 'Erro no cálculo';
     }
@@ -2889,10 +2936,17 @@ calcularEnsaioDireto(ensaio: any, planoRef?: any) {
         return new Date().getTime();
       }
     };
+    const funcoesBitwise = {
+      bitOr: (a: number, b: number) => Math.trunc(a) | Math.trunc(b),
+      bitAnd: (a: number, b: number) => Math.trunc(a) & Math.trunc(b),
+      bitXor: (a: number, b: number) => Math.trunc(a) ^ Math.trunc(b),
+      bitNot: (a: number) => ~Math.trunc(a)
+    };
     // Combinar variáveis e funções de data
     const scope = {
       ...safeVars,
-      ...funcoesDatas
+      ...funcoesDatas,
+      ...funcoesBitwise
     } as any;
     // Permitir referências por descrição de outros ensaios (ex.: "Ensaio A * 10").
     // Substitui ocorrências exatas da descrição por seus valores numéricos antes de avaliar.
@@ -2923,7 +2977,7 @@ calcularEnsaioDireto(ensaio: any, planoRef?: any) {
     }
     // Se não há tokens (varX/ensaioNN), ainda assim avalie a expressão.
     // Ex.: função "1.2794" (constante) ou somente funções de data.
-    const resultado = evaluate(expressao, scope);
+    const resultado = this.evaluateSeguro(expressao, scope);
     // Se o resultado é um timestamp (resultado de função de data), converter para data legível
   if (ensaio.funcao.includes('adicionarDias') || ensaio.funcao.includes('hoje') || ensaio.funcao.includes('diasEntre')) {
       // Verificar se o resultado é um timestamp válido
@@ -4338,7 +4392,7 @@ iniciarSistemaAlertas(): void {
   // Verificação inicial
   setTimeout(() => {
     this.verificarRompimentos();
-  }, 3000); // Aguarda 3 segundos para dados carregarem
+  }, 9000); // Aguarda 3 segundos para dados carregarem
   // Configurar verificações periódicas
   this.intervalId = setInterval(() => {
     this.verificarRompimentos();

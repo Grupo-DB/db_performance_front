@@ -462,7 +462,7 @@
                                                         <div 
                                                             class="resultado flex flex-column mt-3 w-6 justify-content-end"
                                                             [ngClass]="{ negativo: (+ensaio.valor || 0) < 0 }"
-                                                            *ngIf="ensaio.tipo_ensaio_detalhes.nome !== 'Resistencia'"
+                                                           
                                                         >
                                                             <div class="bg-gray-50 border-round mt-2 text-center">
                                                                 <label class="text-sm font-medium">Resultado</label>
@@ -866,14 +866,15 @@
                                                                         <div 
                                                                             class="resultado flex flex-column mt-3 w-6 justify-content-end"
                                                                             [ngClass]="{ negativo: (+ensaio.valor || 0) < 0 }"
-                                                                            *ngIf="ensaio.tipo_ensaio_detalhes.nome !== 'Resistencia'"
+                                                                            
                                                                         >
                                                                             <div class="bg-gray-50 border-round mt-2 text-center">
-                                                                                <label class="text-sm font-medium">Resultado</label>
+                                                                                <label class="text-sm font-medium">Resultado </label>
+                                                                                <label class="text-sm font-medium" *ngIf="ensaio.descricao.toLowerCase()==='data moldagem'">Data Rompimento</label>
                                                                             </div>
                                                                             <div class="bg-gray-50 border-round mt-2 text-center">
                                                                                 <span class="text-2xl font-bold text-primary">
-                                                                                   {{ ensaioTemVariavelData(ensaio) || ensaio.tipo_ensaio_detalhes.nome=== 'data' ? (formatarDataExibicao(ensaio.valorTimestamp || ensaio.valor) || '—') :  ensaio.valor || 0 }}
+                                                                                   {{ ensaioTemVariavelData(ensaio) || ensaio.tipo_ensaio_detalhes.nome=== 'data' && !ensaio.descricao.toLowerCase().includes('variação') ? (formatarDataExibicao(ensaio.valorTimestamp || ensaio.valor) || '—') :  ensaio.valor || 0 }}
                                                                                 </span>
                                                                                 <!-- <span class="ml-2 text-lg text-600">{{ ensaio.unidade
                                                                                     }}</span> -->
@@ -977,7 +978,7 @@
                                                     [ngClass]="{ negativo: (+calc.resultado || 0) < 0 }"
                                                 >   
                                                     <div class="bg-gray-50 border-round mt-2 text-center" *ngIf="calc.descricao && calc.descricao.toLowerCase().includes('dimensional')">
-                                                        <label class="text-sm font-medium">Data de Desmodelagem</label>
+                                                        <label class="text-sm font-medium">Data de Desmoldagem</label>
                                                     </div>
                                                     <div class="bg-gray-50 border-round mt-2 text-center" *ngIf="calc.descricao && calc.descricao.toLowerCase().includes('ensaio')">
                                                         <label class="text-sm font-medium">Data de Rompimento Prevista</label>

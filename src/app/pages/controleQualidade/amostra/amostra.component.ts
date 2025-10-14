@@ -771,9 +771,7 @@ export class AmostraComponent implements OnInit {
             });
           }
         });
-      } else {
-        console.log('Nenhuma análise simplificada carregada ainda. Digitador será preenchido quando as análises forem carregadas.');
-      }
+      } 
     },
     error => {
       console.error('Erro ao obter informações do colaborador:', error);

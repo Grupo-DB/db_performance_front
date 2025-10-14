@@ -354,9 +354,7 @@ export class EnsaioComponent implements OnInit{
   loadVariaveis() {
   this.ensaioService.getVariaveis().subscribe(
     response => {
-      this.variaveis = response;
-      console.log('Variáveis carregadas:', this.variaveis);
-      
+      this.variaveis = response;      
       // Verificar se todas as variáveis têm ID numérico
       const variaveisComIdInvalido = this.variaveis.filter(v => typeof v.id !== 'number' || isNaN(v.id));
       if (variaveisComIdInvalido.length > 0) {
@@ -367,7 +365,6 @@ export class EnsaioComponent implements OnInit{
     }
   )
 }
-
 
   // Gera nomes seguros
 getValoresPorTipo(tipo: string): any[] {
@@ -471,7 +468,6 @@ private atualizarEnsaiosDoForm() {
 
 
 onBlocoChange(index: number) {
-  console.log(`Bloco ${index} alterado:`, this.expressaoDinamica[index]);
   
   // Limpar o valor quando o tipo mudar
   if (this.expressaoDinamica[index].tipo !== 'Valor') {
@@ -604,14 +600,8 @@ validarExpressaoComValores(expr: string): boolean {
         fakeExpr = fakeExpr.replace(re3, valorTeste.toString());
         scope[fallback] = valorTeste;
       }
-    });
-    
-    console.log('Expressão para validação:', fakeExpr);
-    console.log('Escopo de teste:', scope);
-    
+    });        
     const resultado = evaluate(fakeExpr, scope);
-    console.log('Resultado da validação:', resultado);
-    
     this.messageService.add({
       severity: 'info',
       summary: 'Expressão válida!',
@@ -638,71 +628,48 @@ salvarFormula() {
 }
 
 // Cria um método específico para buscar variáveis na expressão
-private buscarVariaveisNaExpressao(expressao: string) {
-  console.log('=== BUSCANDO VARIÁVEIS NA EXPRESSÃO ===');
-  console.log('Expressão recebida:', expressao);
-  console.log('Variáveis disponíveis:', this.variaveis);
-  
+private buscarVariaveisNaExpressao(expressao: string) {  
   if (!expressao || expressao.trim() === '') {
-    console.log('Expressão vazia, definindo array vazio');
     this.registerForm.get('variavel')?.setValue([]);
     return;
   }
   
   // Separar a expressão em palavras, removendo operadores
   const palavras = expressao.split(/[\s\+\-\*\/\(\)]+/).filter(p => p.trim() !== '');
-  console.log('Palavras extraídas da expressão:', palavras);
-  
+
   // Buscar variáveis que correspondem às palavras
   const variaveisEncontradas = [];
   
   for (const palavra of palavras) {
-    console.log(`Procurando variável com nome: "${palavra}"`);
     const variavel = this.variaveis.find(v => v.nome === palavra);
-    console.log(`Variável encontrada:`, variavel);
-    
     if (variavel) {
       variaveisEncontradas.push(variavel);
     }
-  }
-  
-  console.log('Todas as variáveis encontradas:', variaveisEncontradas);
-  
+  }  
   // Remover duplicatas
   const variaveisUnicas = variaveisEncontradas.filter((v, index, arr) => 
     arr.findIndex(item => item.id === v.id) === index
   );
-  
-  console.log('Variáveis únicas:', variaveisUnicas);
-  
+                
   // Extrair os IDs
   const ids = variaveisUnicas.map(v => {
-    console.log(`Extraindo ID da variável ${v.nome}: ${v.id} (tipo: ${typeof v.id})`);
     return v.id;
   });
-  
-  console.log('IDs extraídos:', ids);
-  
+    
   // Verificar se todos os IDs são válidos
   const idsValidos = ids.every(id => {
     const isValid = typeof id === 'number' && !isNaN(id);
-    console.log(`ID ${id} é válido? ${isValid}`);
     return isValid;
   });
-  
-  console.log('Todos os IDs são válidos?', idsValidos);
-  
+    
   if (idsValidos && ids.length > 0) {
-    console.log('Definindo IDs no formulário:', ids);
     this.registerForm.get('variavel')?.setValue(ids);
   } else {
-    console.log('IDs inválidos ou array vazio, definindo array vazio');
     this.registerForm.get('variavel')?.setValue([]);
   }
   
   // Verificar o valor final definido no formulário
   const valorFinal = this.registerForm.get('variavel')?.value;
-  console.log('Valor final definido no formulário:', valorFinal);
 }
 
 // Crie um método específico para atualizar as variáveis baseado na expressão
@@ -721,9 +688,7 @@ private atualizarVariaveisComExpressao(expressao: string) {
     .filter((palavra, index, arr) => arr.indexOf(palavra) === index) // remover duplicatas
     .map(palavra => this.variaveis.find(v => v.nome === palavra))
     .filter(v => v !== undefined);
-  
-  console.log('Variáveis encontradas na expressão:', variaveisUsadas);
-  
+    
   const variaveisIds = variaveisUsadas.map(v => v.id);
   
   // Verificar se todos os IDs são válidos
@@ -731,7 +696,6 @@ private atualizarVariaveisComExpressao(expressao: string) {
   
   if (idsValidos) {
     this.registerForm.get('variavel')?.setValue(variaveisIds);
-    console.log('IDs das variáveis definidos:', variaveisIds);
   } else {
     console.error('IDs inválidos:', variaveisIds);
     this.registerForm.get('variavel')?.setValue([]);
@@ -895,8 +859,6 @@ filterVariaveis(event: any) {
 
     // Gera o nome técnico de forma única consultando o backend
     const ensaioTecnico = await this.gerarEnsaioTecnico();
-    console.log('Enviando VVVVVV:', variaveis, 'Ensaio técnico:', ensaioTecnico);
-
     let garantia = this.registerForm.value.garantia;
     if(this.registerForm.value.garantia && this.registerForm.value.tipoGarantia){
       garantia = this.registerForm.value.garantia+' '+this.registerForm.value.tipoGarantia;

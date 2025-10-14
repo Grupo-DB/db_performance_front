@@ -152,9 +152,9 @@ export class ExpressaComponent implements OnInit, OnDestroy {
   expressaForm!: FormGroup<ExpressaForm>;
 
   classificacoes = [
-  { id: 0, nome: 'Controle de Qualidade' },
-  { id: 1, nome: 'SAC' },
-  { id: 2, nome: 'Desenvolvimento de Produtos' },
+  { id: 0, nome: 'Análise Individual' },
+  { id: 1, nome: 'Ajustes' },
+  { id: 2, nome: 'Teste Rápido' },
 ]
 
 responsaveis = [
@@ -205,7 +205,6 @@ responsaveis = [
     // Tenta novamente após delay para garantir que a navegação foi processada
     setTimeout(() => {
       if (!this.amostraData) {
-        console.log('Tentando novamente após delay...');
         this.receberDadosAmostra();
       }
     }, 100);
@@ -220,25 +219,19 @@ responsaveis = [
     this.loadCalculos();
   }
 
-receberDadosAmostra(): void {
-  
+receberDadosAmostra(): void { 
   if (window.history.state && window.history.state.amostraData) {
     this.amostraData = window.history.state.amostraData;
-    console.log('✅ Dados da amostra recebidos via history.state:', this.amostraData);
-    
     // Lidar com imagens novas (do formulário)
     if (this.amostraData.imagens && this.amostraData.imagens.length > 0) {
-      console.log('📸 Extraindo imagens dos dados recebidos:', this.amostraData.imagens);
       this.uploadedFilesWithInfo = this.amostraData.imagens.map((imagem: any) => ({
         file: imagem.file,
         descricao: imagem.descricao || ''
       }));
-      console.log('📸 Imagens carregadas no uploadedFilesWithInfo:', this.uploadedFilesWithInfo);
     }
     
     // Lidar com imagens existentes (de amostra salva)
     if (this.amostraData.imagensExistentes && this.amostraData.imagensExistentes.length > 0) {
-      console.log('📸 Imagens existentes encontradas:', this.amostraData.imagensExistentes);
       // Você pode criar uma propriedade separada para exibir essas imagens
       this.imagensExistentes = this.amostraData.imagensExistentes;
     }
@@ -246,7 +239,6 @@ receberDadosAmostra(): void {
     this.preencherFormularioComDadosAmostra();
     return;
   }
-  console.log('Nenhum dado da amostra foi recebido');
 }
 
   loadEnsaios(): void {
@@ -275,9 +267,7 @@ receberDadosAmostra(): void {
 
   // Método para preencher o formulário expressa com dados da amostra
   preencherFormularioComDadosAmostra(): void {
-    if (this.amostraData) {
-      console.log('Preenchendo formulário com dados da amostra');
-      
+    if (this.amostraData) {      
       // Preencher campos do formulário com valores padrão ou da amostra
       this.expressaForm.patchValue({
         data: new Date(), // Data atual
@@ -287,7 +277,6 @@ receberDadosAmostra(): void {
         digitador: this.amostraData.digitador || 'Sistema'
       });
       
-      console.log('Formulário preenchido:', this.expressaForm.value);
     }
   }
 
@@ -303,13 +292,10 @@ receberDadosAmostra(): void {
       observacoes: new FormControl(''),
       prioridade: new FormControl('ALTA')
     });
-
-    console.log('Formulário de amostra expressa criado:', this.amostraExpressaForm.value);
   }
 
   uploadImages(): void {
     if (!this.amostraId || this.uploadedFilesWithInfo.length === 0) {
-      console.log('Sem amostra ID ou arquivos para upload');
       return;
     }
 
@@ -324,17 +310,11 @@ receberDadosAmostra(): void {
       // Garantir que a descrição não seja undefined ou null
       const descricao = fileInfo.descricao || '';
       formData.append(`descricao_${index}`, descricao);
-      
-      // Debug: verificar o que está sendo enviado
-      console.log(`Arquivo ${index}: ${fileInfo.file.name}`);
-      console.log(`Descrição ${index}: "${descricao}"`);
+  
     });
-
-    console.log('Fazendo upload de', this.uploadedFilesWithInfo.length, 'arquivos para amostra', this.amostraId);
 
     this.amostraService.uploadImagens(this.amostraId, formData).subscribe({
       next: (response) => {
-        console.log('Imagens enviadas com sucesso:', response);
         this.messageService.add({
           severity: 'success',
           summary: 'Sucesso',
@@ -398,23 +378,12 @@ receberDadosAmostra(): void {
 
   // Verificar se é amostra EXISTENTE (vem da tabela) ou NOVA (do formulário)
   const isAmostraExistente = this.amostraData.id != null;
-  
-  if (isAmostraExistente) {
-    console.log('🔗 Amostra EXISTENTE detectada - Fluxo: Ordem → Vincular Amostra → Análise');
-    console.log('📋 ID da amostra existente:', this.amostraData.id);
-  } else {
-    console.log('🆕 Amostra NOVA detectada - Fluxo: Ordem → Criar Amostra → Análise');
-  }
-
   // Preparar dados da ordem
   let dataFormatada = '';
   const dataValue = this.expressaForm.value.data;
   if (dataValue instanceof Date && !isNaN(dataValue.getTime())) {
     dataFormatada = formatDate(dataValue, 'yyyy-MM-dd', 'en-US');
-  }
-
-  console.log('📝 Criando ordem expressa...');
-  
+  }  
   // Preparar os IDs dos ensaios e cálculos selecionados
   const ensaiosSelecionados = this.targetEnsaios
     .map(ensaio => ensaio.id)
@@ -425,10 +394,7 @@ receberDadosAmostra(): void {
     .map(calculo => calculo.id)
     .filter(id => id != null && !isNaN(Number(id)))
     .map(id => Number(id));
-  
-  console.log('🔢 IDs dos ensaios selecionados:', ensaiosSelecionados);
-  console.log('🔢 IDs dos cálculos selecionados:', calculosSelecionados);
-  
+    
   // Criar ordem expressa
   this.ordemService.registerExpressa(
     dataFormatada,
@@ -439,9 +405,7 @@ receberDadosAmostra(): void {
     this.expressaForm.value.digitador,
     this.expressaForm.value.classificacao
   ).subscribe({
-    next: (ordemSalva) => {
-      console.log('✅ Ordem expressa criada:', ordemSalva);
-      
+    next: (ordemSalva) => {      
       if (isAmostraExistente) {
         // Vincular amostra EXISTENTE à ordem
         this.vincularAmostraExistenteAOrdem(ordemSalva.id);
@@ -462,24 +426,18 @@ receberDadosAmostra(): void {
   });
 }
   private vincularAmostraExistenteAOrdem(idOrdem: string | number): void {
-  console.log('🔗 Vinculando amostra EXISTENTE à ordem:', idOrdem);
-  console.log('📋 ID da amostra existente:', this.amostraData.id);
-
   // Atualizar amostra existente para incluir referência da ordem expressa
   const dadosAtualizacao = {
     expressa: idOrdem  // Vincular à ordem expressa
   };
   
   this.amostraService.updateAmostra(this.amostraData.id, dadosAtualizacao).subscribe({
-    next: (amostraAtualizada) => {
-      console.log('✅ Amostra existente vinculada à ordem expressa:', amostraAtualizada);
-      
+    next: (amostraAtualizada) => {      
       // Definir o ID da amostra para possível upload de imagens
       this.amostraId = amostraAtualizada.id;
       
       // Upload de imagens se houver arquivos novos
       if (this.uploadedFilesWithInfo.length > 0) {
-        console.log('📸 Fazendo upload de imagens adicionais...');
         this.uploadImages();
       }
       
@@ -499,8 +457,6 @@ receberDadosAmostra(): void {
 
   // Método auxiliar para criar amostra vinculada à ordem
   private criarAmostraVinculada(idOrdem: string | number): void {
-    console.log('📝 Criando amostra vinculada à ordem:', idOrdem);
-
     // Formatar datas para o backend
     let dataColetaFormatada = null;
     const dataColetaValue = this.amostraData.dataColeta;
@@ -577,20 +533,12 @@ receberDadosAmostra(): void {
       dataDescarteFormatada
     ).subscribe({
       next: (amostraCriada) => {
-      console.log('✅ Amostra criada:', amostraCriada);
-
       // Define o ID da amostra criada ANTES do upload
       this.amostraId = amostraCriada.id;
-      console.log('🆔 ID da amostra definido:', this.amostraId);
-
         // Faz upload das imagens se houver arquivos selecionados
       if (this.uploadedFilesWithInfo.length > 0) {
-        console.log('📸 Iniciando upload de', this.uploadedFilesWithInfo.length, 'imagens');
         this.uploadImages();
-      } else {
-        console.log('📸 Nenhuma imagem para enviar');
-      }
-    
+      } 
         // Criar análise vinculada à amostra
         this.criarAnaliseVinculada(amostraCriada.id);
       },
@@ -607,11 +555,8 @@ receberDadosAmostra(): void {
 
   // Método auxiliar para criar análise vinculada à amostra
   private criarAnaliseVinculada(idAmostra: number): void {
-    console.log('📝 Criando análise vinculada à amostra:', idAmostra);
-
     this.analiseService.registerAnalise(idAmostra, 'PENDENTE').subscribe({
       next: (analiseCriada) => {
-        console.log('✅ Análise criada:', analiseCriada);
         
         // Opcional: Associar ensaios e cálculos à análise se necessário
         if (this.targetEnsaios.length > 0 || this.targetCalculos.length > 0) {
@@ -641,7 +586,6 @@ receberDadosAmostra(): void {
 
   // Método auxiliar para associar ensaios e cálculos à análise (se necessário)
   private associarEnsaiosECalculos(idAnalise: number): void {
-    console.log('📝 Associando ensaios e cálculos à análise:', idAnalise);
     
     // Preparar dados dos ensaios e cálculos selecionados para a análise
     const ensaiosParaAnalise = this.targetEnsaios.map(ensaio => ({
@@ -669,69 +613,10 @@ receberDadosAmostra(): void {
       ensaios: ensaiosParaAnalise,
       calculos: calculosParaAnalise
     };
-    
-    console.log('Payload completo para associar à análise:', payload);
-    
-   
-    // this.analiseService.registerAnaliseResultados(idAnalise, payload).subscribe({
-    //   next: () => {
-    //     console.log('✅ Ensaios e cálculos associados à análise com sucesso');
-    //   },
-    //   error: (error) => {
-    //     console.error('❌ Erro ao associar ensaios/cálculos à análise:', error);
-    //   }
-    // });
-    
-    // Por enquanto, apenas logamos os dados preparados
-    console.log('✅ Ensaios e cálculos preparados para associação à análise');
-    console.log(`📊 Total de ensaios: ${ensaiosParaAnalise.length}`);
-    console.log(`🧮 Total de cálculos: ${calculosParaAnalise.length}`);
   }
-
-  // debug para pick lists
-  debugPickLists(): void {
-    console.log('=== DEBUG PICK LISTS ===');
-    console.log('📋 Ensaios Disponíveis:', this.ensaios.length);
-    console.log('✅ Ensaios Selecionados:', this.targetEnsaios.length);
-    console.log('📋 Cálculos Disponíveis:', this.calculos.length);
-    console.log('✅ Cálculos Selecionados:', this.targetCalculos.length);
-    
-    if (this.targetEnsaios.length > 0) {
-      console.log('🔬 Ensaios Selecionados Detalhados:');
-      this.targetEnsaios.forEach((ensaio, index) => {
-        console.log(`  ${index + 1}. ${ensaio.descricao} (ID: ${ensaio.id})`);
-      });
-      
-      // Mostrar array de IDs que será enviado
-      const ensaiosIds = this.targetEnsaios.map(ensaio => ensaio.id);
-      console.log('📤 Array de IDs dos ensaios que será enviado:', ensaiosIds);
-    }
-    
-    if (this.targetCalculos.length > 0) {
-      console.log('🧮 Cálculos Selecionados Detalhados:');
-      this.targetCalculos.forEach((calculo, index) => {
-        console.log(`  ${index + 1}. ${calculo.descricao} (ID: ${calculo.id})`);
-      });
-      
-      // Mostrar array de IDs que será enviado
-      const calculosIds = this.targetCalculos.map(calculo => calculo.id);
-      console.log('📤 Array de IDs dos cálculos que será enviado:', calculosIds);
-    }
-    
-    // Verificar tipos de dados
-    if (this.targetEnsaios.length > 0) {
-      console.log('🔍 Tipo do primeiro ID de ensaio:', typeof this.targetEnsaios[0].id, this.targetEnsaios[0].id);
-    }
-    if (this.targetCalculos.length > 0) {
-      console.log('🔍 Tipo do primeiro ID de cálculo:', typeof this.targetCalculos[0].id, this.targetCalculos[0].id);
-    }
-    
-    console.log('========================');
-  }
-
+  
   // Método para validar estrutura dos dados antes do envio
   validarDadosEnvio(): boolean {
-    console.log('🔍 Validando estrutura dos dados...');
     
     // Verificar se existem dados selecionados
     if (this.targetEnsaios.length === 0 && this.targetCalculos.length === 0) {
@@ -741,11 +626,7 @@ receberDadosAmostra(): void {
     
     // Verificar estrutura dos ensaios
     if (this.targetEnsaios.length > 0) {
-      console.log('📊 Verificando estrutura dos ensaios...');
-      const primeiroEnsaio = this.targetEnsaios[0];
-      console.log('🔬 Primeiro ensaio:', primeiroEnsaio);
-      console.log('🆔 ID do primeiro ensaio:', primeiroEnsaio.id, typeof primeiroEnsaio.id);
-      
+      const primeiroEnsaio = this.targetEnsaios[0];      
       const idsInvalidos = this.targetEnsaios.filter(ensaio => 
         ensaio.id == null || isNaN(Number(ensaio.id))
       );
@@ -758,11 +639,7 @@ receberDadosAmostra(): void {
     
     // Verificar estrutura dos cálculos
     if (this.targetCalculos.length > 0) {
-      console.log('🧮 Verificando estrutura dos cálculos...');
       const primeiroCalculo = this.targetCalculos[0];
-      console.log('📊 Primeiro cálculo:', primeiroCalculo);
-      console.log('🆔 ID do primeiro cálculo:', primeiroCalculo.id, typeof primeiroCalculo.id);
-      
       const idsInvalidos = this.targetCalculos.filter(calculo => 
         calculo.id == null || isNaN(Number(calculo.id))
       );
@@ -772,19 +649,11 @@ receberDadosAmostra(): void {
         return false;
       }
     }
-    
-    console.log('✅ Estrutura dos dados válida');
     return true;
   }
 
   verificarEstadoArquivos(): void {
-  console.log('Estado final dos arquivos antes do upload:');
-  this.uploadedFilesWithInfo.forEach((fileInfo, index) => {
-    console.log(`Arquivo ${index}:`, {
-      nome: fileInfo.file.name,
-      descricao: fileInfo.descricao,
-      tamanho: fileInfo.file.size
-    });
+  this.uploadedFilesWithInfo.forEach((fileInfo, index) => {;
   });
 }
 

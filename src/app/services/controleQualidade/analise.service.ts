@@ -69,19 +69,32 @@ export class AnaliseService {
     // Converter payload para string formatada
     let promptString = "";
     
-    // Adicionar dados principais
+    // Adicionar dados principais do produto
     if (payload.Produto) promptString += `Produto: "${payload.Produto}"\n`;
     if (payload.Tipo) promptString += `Tipo: "${payload.Tipo}"\n`;
-    if (payload.Subtipo) promptString += `Subtipo: "${payload.Subtipo}"\n`;
+    if (payload.Subtipo) promptString += `Subtipo: "${payload.Subtipo}"\n\n`;
     
-    promptString += "\nEnsaios e Cálculos:\n";
+    // Adicionar ficha técnica separadamente
+    if (payload['Ficha Técnica']) {
+      promptString += `Ficha Técnica:\n${payload['Ficha Técnica']}\n\n`;
+    }
     
-    // Adicionar todos os outros campos
-    Object.keys(payload).forEach(chave => {
-      if (chave !== 'Produto' && chave !== 'Tipo' && chave !== 'Subtipo') {
-        promptString += `${chave}: ${payload[chave]}\n`;
+    // Adicionar resultados separadamente
+    if (payload.Resultados) {
+      promptString += `Resultados:\n${payload.Resultados}\n`;
+    } else {
+      // Fallback: adicionar outros campos como resultados
+      const outrosCampos = Object.keys(payload).filter(chave => 
+        !['Produto', 'Tipo', 'Subtipo', 'Ficha Técnica', 'Resultados'].includes(chave)
+      );
+      
+      if (outrosCampos.length > 0) {
+        promptString += "Resultados:\n";
+        outrosCampos.forEach(chave => {
+          promptString += `${chave}: ${payload[chave]}\n`;
+        });
       }
-    });
+    }
     
     console.log('Prompt final:', promptString);
     

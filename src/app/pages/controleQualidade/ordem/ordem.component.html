@@ -46,8 +46,6 @@
     </ul>
 </div>
 
-
-
 <div class="container flex flex-column align-items-center mb-4">
     <div class="containerInterno w-12">
         <div class="background-form" @swipeAnimation>
@@ -166,9 +164,6 @@
                         </p-inplace>
 
                         <div class="flex flex-column w-12 gap-3 mt-3">
-                            <!-- <div class="w-12 text-center" style="margin: auto;" *ngIf="loading">
-                                <p-progress-spinner strokeWidth="6" fill="transparent" animationDuration=".8s" [style]="{ width: '350px', height: '350px' }" />
-                            </div> -->
                             <div class="w-12 text-left">
                                 <p-table 
                                     #dt1
@@ -179,6 +174,7 @@
                                     [rows]="30"
                                     [rowsPerPageOptions]="[20, 30, 50]"
                                     [globalFilterFields]="[
+                                        'data_entrada',
                                         'fornecedor',
                                         'numero',
                                         'status',
@@ -189,41 +185,9 @@
                                     <ng-template pTemplate="caption">
                                     <div class="step1 flex flex-column w-12 justify-content-between lg:w-12 lg:flex-row">
                                         <div class="w-2 text-left">
-                                            
                                         </div>
                                         <div class="w-4' text-left">
-                                            
                                         </div>
-                                        <!-- <div class="w-4' text-left">
-                                            
-                                        </div> -->
-                                        <!-- <div class=" flex w-2 gap-3 mt-3 justify-content-end text-right">
-                                            Finalizada 
-                                            <p-columnFilter 
-                                                type="boolean" 
-                                                field="finalizada"
-                                                showMenu="false"
-                                             >   
-                                            </p-columnFilter>
-                                        </div>
-                                        <div class=" flex w-2 gap-3 mt-3 justify-content-end text-right">
-                                            Para Laudo
-                                             <p-columnFilter 
-                                                type="boolean" 
-                                                field="laudo"
-                                                showMenu="false"
-                                             >   
-                                            </p-columnFilter>
-                                        </div>
-                                        <div class=" flex w-2 gap-3 mt-3 justify-content-end text-right">
-                                            Aprovada
-                                             <p-columnFilter 
-                                                type="boolean" 
-                                                field="aprovada"
-                                                showMenu="false"
-                                             >   
-                                            </p-columnFilter>
-                                        </div> -->
                                         <div class=" flex w-4 gap-3 justify-content-end text-right">
                                             <p-floatlabel variant="on">
                                                 <p-iconfield>
@@ -313,10 +277,6 @@
                                                 </p-multiselect>
                                             </th>
                                             <th style="width: 24%; text-align: center;" type="text" field="acoes"display="menu">Opções</th>
-                                            <!-- <th style="width: 2%; text-align: center;" type="text" field="finalizada" display="menu">Finalizada</th>
-                                            <th style="width: 2%; text-align: center;" type="text" field="laudo" display="menu">Laudo</th>
-                                            <th style="width: 2%; text-align: center;" type="text" field="aprovada" display="menu">Aprovada</th>
-                                         -->
                                         </tr>
                                     </ng-template>
   
@@ -370,7 +330,7 @@
                                                         [style]="{ position: 'relative', top: 0, right: 0 }" 
                                                         [buttonProps]="{ severity: 'info', rounded: true }"
                                                         [tooltipOptions]="{ tooltipPosition: 'bottom' }"
-                                                        
+                                                        pTooltip="Ações"
                                                     ></p-speeddial>
                                                     <div 
                                                         style="position: relative;"
@@ -487,28 +447,6 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <!-- <td style="text-align: center;">
-                                                <i 
-                                                    class="pi" 
-                                                    [ngClass]="getStatusIcon(analise.finalizada)"
-                                                    [style.color]="getStatusColor(analise.finalizada)">
-                                                </i>
-                                            </td>
-                                            <td style="text-align: center;">
-                                                <i 
-                                                    class="pi" 
-                                                    [ngClass]="getStatusIcon(analise.laudo)"
-                                                    [style.color]="getStatusColor(analise.laudo)">
-                                                </i>
-                                            </td>
-                                            <td style="text-align: center;">
-                                                <i 
-                                                    class="pi" 
-                                                    [ngClass]="getStatusIcon(analise.aprovada)"
-                                                    [style.color]="getStatusColor(analise.aprovada)">
-                                                </i>
-                                            </td>              -->
-
                                         </tr>
                                     </ng-template>
                                 </p-table>
