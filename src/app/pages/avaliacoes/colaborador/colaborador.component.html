@@ -650,10 +650,13 @@
                                                 formControlName="empresa"
                                                 optionLabel="nome"
                                                 (onChange)="onEmpresaSelecionada($event.value)"
+                                                optionValue="id"
                                             >
                                             </p-select>
                                             <label for="float-label" style="margin-left: 15px;">Selecione a Empresa</label>
                                         </p-floatLabel>
+
+                                       
                                     </div>
                                     <div class="filial w-12 text-left mt-1">
                                         <p-floatLabel variant="on">
@@ -667,6 +670,7 @@
                                                 optionLabel="nome"
                                                 [disabled]="true"
                                                 (onChange)="onFilialSelecionada($event.value)"
+                                                optionValue="id"
                                             >
                                             </p-select>
                                             <label for="float-label" style="margin-left: 15px;">Selecione a Filial</label>
@@ -684,6 +688,7 @@
                                                 inputId="float-label"
                                                 [disabled]="true"
                                                 (onChange)="onAreaSelecionada($event.value)"
+                                                optionValue="id"
                                                 >
                                             </p-select>
                                             <label for="float-label" style="margin-left: 15px;">Selecione a Área</label>
@@ -701,6 +706,7 @@
                                                 inputId="float-label"
                                                 [disabled]="true"
                                                 (onChange)="onSetorSelecionado($event.value)"
+                                                optionValue="id"
                                                 >
                                             </p-select>
                                             <label for="float-label" style="margin-left: 15px;">Selecione o Ambiente</label>
@@ -718,6 +724,7 @@
                                                 [disabled]="true"
                                                 inputId="float-label"
                                                 (onChange)="onAmbienteSelecionado($event.value)"
+                                                optionValue="id"
                                             >
                                             </p-select>
                                             <label for="float-label" style="margin-left: 15px;">Selecione o Setor</label>
@@ -735,6 +742,7 @@
                                                 [disabled]="true"
                                                 inputId="float-label"
                                                 (onChange)="onCargoSelecionado($event.value)"
+                                                optionValue="id"
                                             >
                                             </p-select>
                                             <label for="float-label" style="margin-left: 15px;">Selecione o Cargo</label>
@@ -750,6 +758,7 @@
                                                 formControlName="tipocontrato"
                                                 optionLabel="nome"
                                                 inputId="float-label"
+                                                optionValue="nome"
                                             >
                                             </p-select>
                                             <label for="float-label" style="margin-left: 15px;">Selecione o Tipo de Contrato</label>
@@ -764,6 +773,7 @@
                                                 [options]="racas"
                                                 formControlName="raca"
                                                 optionLabel="nome"
+                                                optionValue="nome"
                                                 inputId="float-label"
                                             >
                                             </p-select>
@@ -780,6 +790,8 @@
                                                 formControlName="instrucao"
                                                 optionLabel="nome"
                                                 inputId="float-label"
+                                                optionValue="nome"
+                                                
                                             >
                                             </p-select>
                                             <label for="float-label" style="margin-left: 15px;">Selecione o Grau de Instrução</label>
@@ -858,6 +870,7 @@
                                                 formControlName="categoria"
                                                 optionLabel="nome"
                                                 inputId="float-label"
+                                                optionValue="nome"
                                             >
                                             </p-select>
                                             <label for="float-label" style="margin-left: 5px;">Selecione a Categoria</label>
@@ -888,6 +901,7 @@
                                                 formControlName="genero"
                                                 optionLabel="nome"
                                                 inputId="float-label"
+                                                optionValue="nome"
                                             >
                                             </p-select>
                                             <label for="float-label" >Selecione o Gênero</label>
@@ -903,6 +917,7 @@
                                                 formControlName="estado_civil"
                                                 optionLabel="nome"
                                                 inputId="float-label"
+                                                optionValue="nome"
                                             >
                                             </p-select>
                                             <label for="float-label" style="margin-left: 5px;">Selecione o Estado Civil</label>
@@ -988,8 +1003,48 @@
                                                     <p><label for="sit">Gestor de Orçamento</label></p>
                                             </div> 
                                         </div>
-                                    
+
+                                    <div class="tituseredit w-10 text-left">
+                                        <p><strong>Editar Usuário</strong></p>
+                                    </div>
+
+
+                                    <div class="dvusedit w-10 text-left">
+                                        <p-floatlabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-user" />
+                                                <input
+                                                    variant="filled"
+                                                    [style]="{'width':'100%'}"
+                                                    pInputText id="on_label"
+                                                    autocomplete="off"
+                                                    formControlName="username"
+                                                    type="text"
+                                                />
+                                            </p-iconfield>
+                                            <label for="on_label">Digite o nome de usuário</label>
+                                        </p-floatlabel>
+
+                                        <p-floatlabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-user" />
+                                                <input
+                                                    variant="filled"
+                                                    class="mt-2"
+                                                    [style]="{'width':'100%'}"
+                                                    pInputText id="on_label"
+                                                    autocomplete="off"
+                                                    formControlName="password"
+                                                    type="text"
+                                                />
+                                            </p-iconfield>
+                                            <label for="on_label">Digite a senha</label>
+                                        </p-floatlabel>
+                                    </div>
+                                  
                                 </div>
+
+                                
                             </div>
 
                             <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">

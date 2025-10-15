@@ -50,6 +50,34 @@ import { HttpClient } from '@angular/common/http';
 import { TooltipModule } from 'primeng/tooltip';
 import { HotTableModule } from '@handsontable/angular-wrapper';
 
+interface LinhaSubstrato {
+  numero: number;
+  diametro: number | null;
+  area: number | null;
+  espessura: number | null;
+  subst: number | null;
+  junta: number | null;
+  carga: number | null;
+  resist: number | null;
+  validacao: string;
+  rupturas: {
+    sub: number | null;
+    subArga: number | null;
+    rupArga: number | null;
+    argaCola: number | null;
+    colarPastilha: number | null;
+  };
+}
+
+
+
+
+
+
+
+
+
+
 export interface Analise {
   id: number;
   data: string;
@@ -119,6 +147,22 @@ interface FileWithInfo {
   styleUrl: './analise.component.scss'
 })
 export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactivate {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
   planosAnalise: Plano[] = [];
   produtosAmostra: ProdutoAmostra[] = [];
   materiais: Produto[] = [];
@@ -215,7 +259,18 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
   
   @ViewChild('dt1') dt1!: Table;
   garantias: any;
-modalGarantiasVisible: any;
+  modalGarantiasVisible: any;
+
+
+
+
+
+  modalDadosLaudoSubstrato = false;
+  linhasSubstrato: LinhaSubstrato[] = [];
+
+
+
+
 
   constructor(
     private route: ActivatedRoute,
@@ -244,7 +299,44 @@ modalGarantiasVisible: any;
     this.getAnalise();
     this.carregarEnsaiosECalculosDisponiveis();
     // Inicializar sistema de alertas
-    this.iniciarSistemaAlertas();
+    // this.iniciarSistemaAlertas();
+
+
+
+
+
+
+    for (let i = 1; i <= 10; i++) {
+      this.linhasSubstrato.push({
+        numero: i,
+        diametro: null,
+        area: null,
+        espessura: null,
+        subst: null,
+        junta: null,
+        carga: null,
+        resist: null,
+        validacao: "",
+        rupturas: {
+          sub: null,
+          subArga: null,
+          rupArga: null,
+          argaCola: null,
+          colarPastilha: null
+        }
+      });
+    }
+
+
+
+
+
+
+
+
+
+
+
   }
   getDigitadorInfo(): void {
   this.colaboradorService.getColaboradorInfo().subscribe(
@@ -4713,6 +4805,28 @@ canDeactivate(): boolean | Promise<boolean> {
     if (currentState !== this.lastSavedState && this.lastSavedState !== '') {
       this.hasUnsavedChanges = true;
     }
+  }
+
+   getItensArgamassa(analise: any) {
+    return [
+      { label: 'Determinação da Resistência Potencial de Aderência à Tração ao Substrato - Mpa', icon: 'pi pi-eye', command: () => this.abrirModalSubstrato(analise), tooltip: 'Visualizar OS', tooltipPosition: 'top' },
+      { label: 'Determinação da Resistência Potencial de Aderência à Tração Superficial', icon: 'pi pi-eye', tooltip: 'Visualizar OS', tooltipPosition: 'top' },
+      { label: 'Determinação da Variação Dimencional Linear (Retação/Expansão)', icon: 'pi pi-eye', tooltip: 'Visualizar OS', tooltipPosition: 'top' },
+      { label: 'Módulo de Elasticidade Dinâmico', icon: 'pi pi-eye', tooltip: 'Visualizar OS', tooltipPosition: 'top' },
+      { label: 'Determinação do Coeficiente de Absorção de Água por Capilaridade', icon: 'pi pi-eye', tooltip: 'Visualizar OS', tooltipPosition: 'top' },
+    ];
+  }
+
+
+
+  abrirModalSubstrato(analise: any){
+    this.modalDadosLaudoSubstrato = true;
+    this.salvarSubstrato();
+  }
+
+  salvarSubstrato(){
+    this.modalDadosLaudoSubstrato = false;
+    alert('Salvo!');
   }
 
 }
