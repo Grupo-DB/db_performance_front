@@ -253,6 +253,10 @@ export class AmostraComponent implements OnInit {
   cols!: Column[];
   selectedColumns!: Column[];  
   amostras: Amostra[] = [];
+  
+  // Cache para menu items para evitar recriação constante
+  private menuItemsCache = new Map<number, MenuItem[]>();
+  
   registerForm!: FormGroup<AmostraForm>;
   registerOrdemForm!: FormGroup<OrdemForm>;
   tiposAmostra: TipoAmostra[] = [];
@@ -596,6 +600,9 @@ export class AmostraComponent implements OnInit {
           label: amostra.material,
           value: amostra.material
         }));
+        
+        // Limpar cache de menu items quando dados são atualizados
+        this.menuItemsCache.clear();
       },
       error => {
         console.error('Erro ao carregar amostras:', error);
@@ -922,13 +929,21 @@ onCamposRelevantesChange() {
   }
 }
 getMenuItems(amostra: any) {
-  return [
-    { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(amostra), tooltip: 'Visualizar amostra', tooltipPosition: 'top' },
-    { label: 'Imprimir Etiqueta', icon: 'pi pi-file-pdf', command: () => this.imprimirEtiqueta(amostra), tooltip: 'Visualizar amostra', tooltipPosition: 'top' },
-    { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(amostra), tooltip: 'Editar amostra', tooltipPosition: 'top' },
-    { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluirAmostra(amostra.id), tooltip: 'Excluir amostra', tooltipPosition: 'top' },
-    { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(amostra), tooltip: 'Visualizar imagens', tooltipPosition: 'top' },
-  ];
+  // Usar cache para evitar recriação constante dos menu items
+  const amostraId = amostra.id;
+  
+  if (!this.menuItemsCache.has(amostraId)) {
+    const menuItems = [
+      { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(amostra), tooltip: 'Visualizar amostra', tooltipPosition: 'top' },
+      { label: 'Imprimir Etiqueta', icon: 'pi pi-file-pdf', command: () => this.imprimirEtiqueta(amostra), tooltip: 'Visualizar amostra', tooltipPosition: 'top' },
+      { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(amostra), tooltip: 'Editar amostra', tooltipPosition: 'top' },
+      { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluirAmostra(amostra.id), tooltip: 'Excluir amostra', tooltipPosition: 'top' },
+      { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(amostra), tooltip: 'Visualizar imagens', tooltipPosition: 'top' },
+    ];
+    this.menuItemsCache.set(amostraId, menuItems);
+  }
+  
+  return this.menuItemsCache.get(amostraId) || [];
 }
 
 irLinkExterno(analise: any) {
@@ -1217,7 +1232,7 @@ submitAmostra() {
         } else {
           this.clearForm();
           this.loadAmostras();
-          this.activeStep = 1;
+          //this.activeStep = 1;
         }
       }, 2000);
     },

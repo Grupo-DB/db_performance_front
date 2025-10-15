@@ -26,6 +26,9 @@
                 <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/controleQualidade/produtoAmostra" >Produto de Amostra</a>
                 </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/garantia" >Garantias</a>
+                </li>
             </ul>
         </li >
         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
@@ -281,13 +284,13 @@
                                         <p-iconfield>
                                             <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
                                                 <input 
-                                                variant="filled" 
-                                                [(ngModel)]="inputValue"
-                                                [style]="{'width':'100%'}" 
-                                                pInputText id="on_label"
-                                                autocomplete="off" 
-                                                type="text" 
-                                                (ngModelChange)="dt1.filterGlobal($event, 'contains')"
+                                                    variant="filled" 
+                                                    [(ngModel)]="inputValue"
+                                                    [style]="{'width':'100%'}" 
+                                                    pInputText id="on_label"
+                                                    autocomplete="off" 
+                                                    type="text" 
+                                                    (ngModelChange)="dt1.filterGlobal($event, 'contains')"
                                                 />
                                         </p-iconfield>
                                         <label for="on_label" style="color: #1b91ff">Pesquisar</label>
@@ -399,9 +402,9 @@
                                                 <h2 class="text-2xl font-bold text-primary"><i class="pi pi-objects-column"></i> {{ ensaio.descricao }}
                                                 </h2>
                                             </div>                                
-                                            <div class="flex flex-column lg:flex-row">
+                                            <div class="flex flex-column w-12 lg:flex-row">
                                                 <!-- Variáveis -->
-                                                <div class="flex flex-column w-8">
+                                                <div class="flex flex-column w-7">
                                                     <div class="flex  gap-1" *ngIf="ensaio.variavel_detalhes && ensaio.variavel_detalhes.length > 0">
                                                         <div class="flex flex-wrap w-12 gap-1">
                                                             <div 
@@ -478,13 +481,15 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="flex flex-column w-4">
-                                                    <div class="flex flex-row gap-1">
+                                                <div class="flex flex-column w-5">
+                                                    <div   
+                                                        class="flex flex-column gap-1 w-12 lg:flex-row" 
+                                                    >
                                                         <!-- Técnico -->
-                                                        <div class="flex flex-column w-8">
+                                                        <div class="w-6">
                                                             <p-floatLabel variant="in">
                                                                 <p-select 
-                                                                    [style]="{'width':'100%'}" 
+                                                                    [style]="{'width':'100%'}"
                                                                     [options]="responsaveis" 
                                                                     optionLabel="value"
                                                                     optionValue="value" 
@@ -499,7 +504,7 @@
                                                             </p-floatLabel>
                                                         </div>
                                                         <!-- Nº Cadinho -->
-                                                        <div class="flex w-6 justify-content-end">
+                                                        <div class="w-6">
                                                             <p-floatLabel variant="in">
                                                                 <p-inputnumber 
                                                                     [(ngModel)]="ensaio.numero_cadinho" 
@@ -507,8 +512,9 @@
                                                                     [min]="1"
                                                                     [max]="9999" 
                                                                     mode="decimal" 
-                                                                    [useGrouping]="false" 
-                                                                    [style]="{'width':'100%'}">
+                                                                    [useGrouping]="false"
+                                                                    [size]="'small' " 
+                                                                >
                                                                 </p-inputnumber>
                                                                 <label for="float-label">Nº Cadinho</label>
                                                             </p-floatLabel>
@@ -829,7 +835,7 @@
                                                                 *ngIf="ensaio.variavel_detalhes || ensaio.variavel_detalhes.length"
                                                             >
                                                                 <div class="flex flex-column w-12 lg:flex-row">
-                                                                    <div class="flex flex-column w-6 gap-1">
+                                                                    <div class="flex flex-column w-8 gap-1">
                                                                         <div class="flex flex-wrap gap-1">
                                                                             <div 
                                                                                 class="flex flex-row"
@@ -881,37 +887,39 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>           
-                                                                    <div class="flex flex-column w-6">
-                                                                        <div class="flex flex-column justify-content-between w-10 lg:flex-row">
-                                                                            <div class="flex flex-column w-8">
+                                                                    <div class="flex flex-column w-4">
+                                                                        <div class="flex flex-column w-12 gap-1">
+                                                                            <div class="w-10">
                                                                                 <p-floatLabel variant="in">
                                                                                     <p-select 
                                                                                         [style]="{'width':'100%'}"
                                                                                         [options]="responsaveis" optionLabel="value"
+                                                                                        inputId="label"
                                                                                         optionValue="value"
                                                                                         [(ngModel)]="ensaio.responsavel"
                                                                                         (ngModelChange)="onResponsavelEnsaioDentroCalculoChange(plano, ensaio, $event)"
                                                                                         appendTo="body" [filter]="true" filterBy="value"
                                                                                         [showClear]="true">
                                                                                     </p-select>
-                                                                                    <label>Responsável</label>
+                                                                                    <label for="label">Responsável</label>
                                                                                 </p-floatLabel>
                                                                             </div>
-                                                                            <div class="flex w-2 " *ngIf="ensaio.tipo_ensaio_detalhes.nome === 'Calculado'">
+                                                                            <div class="w-2" *ngIf="ensaio.tipo_ensaio_detalhes.nome === 'Calculado'">
                                                                                 <p-floatLabel variant="in">
                                                                                     <p-inputnumber 
                                                                                         [(ngModel)]="ensaio.numero_cadinho"
                                                                                         (ngModelChange)="onNumeroCadinhoDentroCalculoChange(plano, ensaio, $event)"
                                                                                         [showButtons]="true" [min]="1" [max]="9999"
-                                                                                        mode="decimal" [useGrouping]="false"
-                                                                                        [style]="{'width':'100%'}">
+                                                                                        mode="decimal" [useGrouping]="false" size="small"
+                                                                                        [style]="{'width':'100%'}"
+                                                                                    >
                                                                                     </p-inputnumber>
                                                                                     <label>Nº Cadinho</label>
                                                                                 </p-floatLabel>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="flex flex-column mt-3 w-12 lg:flex-row">
-                                                                            <div class="flex gap-1 mt-5 w-4">
+                                                                        <div class="flex flex-column w-12  lg:flex-row">
+                                                                            <div class="flex gap-1 mt-2 w-4">
                                                                                 <p-button 
                                                                                     icon="pi pi-book" 
                                                                                     severity="warn"

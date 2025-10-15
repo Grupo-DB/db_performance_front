@@ -250,7 +250,7 @@ modalGarantiasVisible: any;
     this.getAnalise();
     this.carregarEnsaiosECalculosDisponiveis();
     // Inicializar sistema de alertas
-    this.iniciarSistemaAlertas();
+   // //COMENTADO PARA PRODUÇÂO =======  this.iniciarSistemaAlertas();
   }
   getDigitadorInfo(): void {
   this.colaboradorService.getColaboradorInfo().subscribe(

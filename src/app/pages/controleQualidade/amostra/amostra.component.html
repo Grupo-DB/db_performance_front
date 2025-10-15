@@ -26,10 +26,13 @@
                 <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/controleQualidade/produtoAmostra" >Produto de Amostra</a>
                 </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/garantia" >Garantias</a>
+                </li>
             </ul>
         </li >
         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
-            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/amostra">Amostras/Ordens de Serviço</a>
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/amostra">Amostras</a>
         </li>
 
         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
@@ -53,7 +56,7 @@
                     <p-card class="card w-12 text-center">
                         <ng-template #header>
                             <div class="header w-full text-center">
-                                <h2>Amostras e Ordens de Serviços</h2>
+                                <h2>Cadastrar Amostra</h2>
                             </div>
                         </ng-template>
                         <p-stepper [(value)]="activeStep" [linear]="true">

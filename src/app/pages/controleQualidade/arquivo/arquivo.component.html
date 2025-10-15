@@ -26,6 +26,9 @@
                 <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/controleQualidade/produtoAmostra" >Produto de Amostra</a>
                 </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/garantia" >Garantias</a>
+                </li>
             </ul>
         </li >
         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
@@ -96,9 +99,10 @@
                                                     autocomplete="off" 
                                                     type="text" 
                                                     (input)="filterTable()"
+                                                    pInputText
                                                 />
                                             </p-iconfield>
-                                            <label for="on_label" style="color: #1b91ff">Pesquisar</label>
+                                            <label  for="on_label" style="color: #1b91ff">Pesquisar</label>
                                         </p-floatlabel>
                                     </div>
                                 </div>
@@ -150,8 +154,8 @@
                                                 />
                                             </div>
                                         </th>
-                                        <!-- <th style="width: 15%; text-align: left;" type="text" field="numero" display="menu">Classificação da OS</th> -->
-                                        <!-- <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">Responsável</th> -->
+                                        <th style="width: 15%; text-align: left;" type="text" field="numero" display="menu">Classificação da OS</th>
+                                        <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">Responsável</th>
                                         <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">
                                             <p-multiselect
                                                 [(ngModel)]="tipoSelecionados"
@@ -215,8 +219,8 @@
                                             <td style="text-align: left;">
                                                 {{ analise.amostra_detalhes?.expressa_detalhes?.data | date:'dd/MM/yy' }}
                                             </td>
-                                            <!-- <td style="text-align: left;"> {{ analise.amostra_detalhes.expressa_detalhes.classificacao }} </td> -->
-                                            <!-- <td style="text-align: left;"> {{ analise.amostra_detalhes.expressa_detalhes.responsavel }} </td> -->
+                                            <td style="text-align: left;"> {{ analise.amostra_detalhes.expressa_detalhes.classificacao }} </td>
+                                            <td style="text-align: left;"> {{ analise.amostra_detalhes.expressa_detalhes.responsavel }} </td>
                                             <td style="text-align: left;"> 
                                                 <p-tag
                                                     [value]="'Expressa'"
@@ -228,8 +232,8 @@
                                             <td style="text-align: left;">
                                                 {{ analise.amostra_detalhes?.ordem_detalhes?.data | date:'dd/MM/yy' }}
                                             </td>
-                                            <!-- <td style="text-align: left;"> {{ analise.amostra_detalhes.ordem_detalhes.classificacao }} </td> -->
-                                            <!-- <td style="text-align: left;"> {{ analise.amostra_detalhes.ordem_detalhes.responsavel }} </td> -->
+                                            <td style="text-align: left;"> {{ analise.amostra_detalhes.ordem_detalhes.classificacao }} </td>
+                                            <td style="text-align: left;"> {{ analise.amostra_detalhes.ordem_detalhes.responsavel }} </td>
                                             <td style="text-align: left;">
                                                 <p-tag
                                                     [value]="'Plano'"
@@ -776,7 +780,7 @@
             </div>
         </div>
     </p-dialog>
-    <canvas #graficoCanvas></canvas>
+    <canvas #graficoCanvas style="display: none;"></canvas>
 
     <!-- substrato -->
     <p-drawer 
@@ -819,7 +823,7 @@
                                         <ng-template pTemplate="body" let-linha let-i="rowIndex">
                                             <tr>
                                                 <td>{{ linha.numero }}</td>
-                                                <td><input pInputText [(ngModel)]="linha.diametro" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="linha.diametro" type="number"/></td>
                                                 <td><input pInputText [(ngModel)]="linha.area" type="number" /></td>
                                                 <td><input pInputText [(ngModel)]="linha.espessura" type="number" /></td>
                                                 <td><input pInputText [(ngModel)]="linha.subst" type="number" /></td>
@@ -1047,10 +1051,10 @@
                                         <ng-template pTemplate="body" let-flexao let-i="rowIndex">
                                             <tr>
                                                 <td>{{ flexao.cp }}</td>
-                                                <td><input  [(ngModel)]="flexao.flexao_n" type="number" /></td>
-                                                <td><input  [(ngModel)]="flexao.flexao_mpa" type="number" /></td>
-                                                <td><input  [(ngModel)]="flexao.media_mpa" type="number" /></td>
-                                                <td><input  [(ngModel)]="flexao.tracao_flexao" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="flexao.flexao_n" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="flexao.flexao_mpa" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="flexao.media_mpa" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="flexao.tracao_flexao" type="number" /></td>
                                             </tr>
                                         </ng-template>
                                     </p-table>
@@ -1115,10 +1119,10 @@
                                         <ng-template pTemplate="body" let-compressao let-i="rowIndex">
                                             <tr>
                                                 <td>{{ compressao.cp }}</td>
-                                                <td><input  [(ngModel)]="compressao.compressao_n" type="number" /></td>
-                                                <td><input  [(ngModel)]="compressao.compressao_mpa" type="number" /></td>
-                                                <td><input  [(ngModel)]="compressao.media_mpa" type="number" /></td>
-                                                <td><input  [(ngModel)]="compressao.tracao_compressao" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="compressao.compressao_n" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="compressao.compressao_mpa" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="compressao.media_mpa" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="compressao.tracao_compressao" type="number" /></td>
                                             </tr>
                                         </ng-template>
                                     </p-table>
@@ -1181,10 +1185,10 @@
 
                                         <ng-template pTemplate="body" let-retacao let-i="rowIndex">
                                             <tr>
-                                                <td><input [(ngModel)]="retacao.data" type="date" /></td>
-                                                <td><input [(ngModel)]="retacao.idade" type="number" /></td>
-                                                <td><input [(ngModel)]="retacao.media" type="number" /></td>
-                                                <td><input [(ngModel)]="retacao.desvio" type="number" /></td>
+                                                <td><input pInputText  [(ngModel)]="retacao.data" type="date" /></td>
+                                                <td><input pInputText [(ngModel)]="retacao.idade" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="retacao.media" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="retacao.desvio" type="number" /></td>
                                             </tr>
                                         </ng-template>
                                     </p-table>
@@ -1246,9 +1250,9 @@
 
                                         <ng-template pTemplate="body" let-elasticidade let-i="rowIndex">
                                             <tr>
-                                                <td><input [(ngModel)]="elasticidade.individual" type="number" /></td>
-                                                <td><input [(ngModel)]="elasticidade.media" type="number" /></td>
-                                                <td><input [(ngModel)]="elasticidade.desvio_padrao" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="elasticidade.individual" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="elasticidade.media" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="elasticidade.desvio_padrao" type="number" /></td>
                                             </tr>
                                         </ng-template>
                                     </p-table>

@@ -84,7 +84,7 @@
             </li> 
           </ul>
         </li>
-        <li class="cor-menu" *ngIf="hasGroup(['Admin','Master','GestorOperacoes'])" nz-submenu style="background-color: #4c5264;" nzTitle="Gestão Operacional" nzIcon="bar-chart">
+        <li class="cor-menu" *ngIf="hasGroup(['Admin','Master','GestorOperacoes','LabGestor','LabOperacoes','LabMaster'])" nz-submenu style="background-color: #4c5264;" nzTitle="Gestão Operacional" nzIcon="bar-chart">
           <ul>
             <li class="cor-menu" *ngIf="hasGroup(['Admin','Master','GestorOperacoes'])" nz-menu-item   nzMatchRouter>
               <a class="cor-menu-a" routerLink="homeoperacoes"><span nz-icon nzType="line-chart" nzTheme="outline"></span> Painel Operacional</a>
@@ -96,7 +96,7 @@
             </li> 
           </ul>
           <ul>
-            <li class="cor-menu" *ngIf="hasGroup(['Admin','Master','LabOperacoes','LabMaster'])" nz-menu-item   nzMatchRouter nzIcon="Experiment">
+            <li class="cor-menu" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOperacoes','LabMaster'])" nz-menu-item   nzMatchRouter nzIcon="Experiment">
               <a class="cor-menu-a" routerLink="/welcome/controleQualidade/dashControle"><span nz-icon nzType="experiment" nzTheme="outline"></span> Controle de Qualidade</a>
             </li>
           </ul>

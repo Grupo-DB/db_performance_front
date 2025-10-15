@@ -641,7 +641,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
         // Define lista filtrada e libera carregamento (skeleton some)
         this.loading=false;
         // ✅ NOVO: Carregar dados completos e verificar alertas de rompimento
-        this.carregarDadosCompletosEVerificarAlertas();
+        //COMENTADO PARA PRODUÇÂO =======      this.carregarDadosCompletosEVerificarAlertas();
       },
       (error) => {
         console.error('Erro ao carregar análises', error);
@@ -856,7 +856,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
           severity: 'info',
           summary: '📊 Resumo de Alertas',
           detail: `Total: ${alertas.length} alertas de rompimento encontrados`,
-          life: 10000
+          life: 3000
         });
       }, 2000);
     } else {
@@ -1223,6 +1223,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
     const isData = tipo === 'data' || 
            descricao.includes('compressão') ||
            descricao.includes('compressao') ||
+
            descricao.includes('rompimento') ||
            descricao.includes('resistência') ||
            descricao.includes('resistencia') ||
