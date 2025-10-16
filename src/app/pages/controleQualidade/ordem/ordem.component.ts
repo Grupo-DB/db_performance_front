@@ -4687,6 +4687,34 @@ private criarAnaliseParaAmostra(amostraId: number): void {
     // doc.save("Etiqueta.pdf");
   }
 
+  isAllSelected(): boolean {
+    const allNodes = this.flattenNodes(this.ensaios_laudo);
+    return allNodes.length > 0 && allNodes.every(node =>
+      this.selectedEnsaios.includes(node)
+    );
+  }
+
+  toggleSelectAll(event: any): void {
+    const allNodes = this.flattenNodes(this.ensaios_laudo);
+    
+    if (this.isAllSelected()) {
+      this.selectedEnsaios = [];
+    } else {
+      this.selectedEnsaios = [...allNodes];
+    }
+  }
+
+  flattenNodes(nodes: any[]): any[] {
+    let all: any[] = [];
+    for (let node of nodes) {
+      all.push(node);
+      if (node.children) {
+        all = all.concat(this.flattenNodes(node.children));
+      }
+    }
+    return all;
+  }
+
 }
 
 

@@ -956,18 +956,28 @@
 
                                     <ng-template pTemplate="header">
                                         <tr>
-                                        <th>Descrição</th>
+                                            <th>
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <p-checkbox
+                                                binary="true"
+                                                [indeterminate]="!isAllSelected() && selectedEnsaios.length > 0"
+                                                [ngModel]="isAllSelected()"
+                                                (onChange)="toggleSelectAll($event)"
+                                            ></p-checkbox>
+                                            <span class="ml-2">Análises</span>
+                                            </th>
                                         </tr>
                                     </ng-template>
 
                                     <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
                                         <tr>
-                                        <td>
-                                            <!-- 👇 toggler fica em TODAS as linhas -->
-                                            <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
-                                            <p-treeTableCheckbox [value]="rowNode"></p-treeTableCheckbox>
+                                            <td>
+                                                <!-- 👇 toggler fica em TODAS as linhas -->
+                                                <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                                                <p-treeTableCheckbox [value]="rowNode"></p-treeTableCheckbox>
 
-                                            {{ rowData?.descricao }}</td>
+                                                {{ rowData?.descricao }}
+                                            </td>
                                         </tr>
                                     </ng-template>
                                 </p-treeTable>
