@@ -69,9 +69,53 @@ interface LinhaSubstrato {
   };
 }
 
+interface LinhaSuperficial {
+  numero: number;
+  diametro: number | null;
+  area: number | null;
+  espessura: number | null;
+  subst: number | null;
+  junta: number | null;
+  carga: number | null;
+  resist: number | null;
+  validacao: string;
+  rupturas: {
+    sub: number | null;
+    subArga: number | null;
+    rupArga: number | null;
+    argaCola: number | null;
+    colarPastilha: number | null;
+  };
+}
 
+interface LinhaRetacao {
+  data: string;
+  idade: number | null;
+  media: number | null;
+  desvio_maximo: number | null;
+}
 
+interface LinhaElasticidade {
+  individual: number | null;
+  media: number | null;
+  desvio_padrao: number | null;
+}
 
+interface LinhaFlexao {
+  cp: number;
+  flexao_n: number | null;
+  flexao_mpa: number | null;
+  media_mpa: number | null;
+  tracao_flexao: number | null;
+}
+
+interface LinhaCompressao {
+  cp: number;
+  compressao_n: number | null;
+  compressao_mpa: number | null;
+  media_mpa: number | null;
+  tracao_compressao: number | null;
+}
 
 
 
@@ -265,8 +309,50 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
 
 
 
+
+
+
+
+
+
+
+
+
   modalDadosLaudoSubstrato = false;
   linhasSubstrato: LinhaSubstrato[] = [];
+  parecer_substrato: any = null;
+
+  modalDadosLaudoSuperficial = false;
+  linhasSuperficial: LinhaSuperficial[] = [];
+  parecer_superficial: any = null;
+
+  modalDadosLaudoRetacao = false;
+  linhasRetacao: LinhaRetacao[] = [];
+  parecer_retacao: any = null;
+
+  modalDadosLaudoElasticidade = false;
+  linhasElasticidade: LinhaElasticidade[] = [];
+  parecer_elasticidade: any = null;
+
+  modalDadosLaudoFlexao = false;
+  linhasFlexao: LinhaFlexao[] = [];
+  parecer_flexao: any = null;
+
+  modalDadosLaudoCompressao = false;
+  linhasCompressao: LinhaCompressao[] = [];
+  parecer_compressao: any = null;
+
+
+
+
+
+
+
+
+
+
+
+  menuArgamassa: any[] = [];
 
 
 
@@ -301,41 +387,8 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
     // Inicializar sistema de alertas
     // this.iniciarSistemaAlertas();
 
-
-
-
-
-
-    for (let i = 1; i <= 10; i++) {
-      this.linhasSubstrato.push({
-        numero: i,
-        diametro: null,
-        area: null,
-        espessura: null,
-        subst: null,
-        junta: null,
-        carga: null,
-        resist: null,
-        validacao: "",
-        rupturas: {
-          sub: null,
-          subArga: null,
-          rupArga: null,
-          argaCola: null,
-          colarPastilha: null
-        }
-      });
-    }
-
-
-
-
-
-
-
-
-
-
+    //chamo os itens aqui para não ficar chamamdo toda hora
+    this.menuArgamassa = this.getItensArgamassa(this.analise);
 
   }
   getDigitadorInfo(): void {
@@ -1128,7 +1181,7 @@ getClasseTipoEnsaio(ensaio: any): string | undefined {
     this.atualizarNomesVariaveisEnsaio(ensaio);
   }
 //filtro TABELA  
-filterTable() {
+  filterTable() {
     this.dt1.filterGlobal(this.inputValue,'contains');
   }
   // Verifica se todas as variáveis exigidas por uma função possuem valores numéricos default
@@ -1405,7 +1458,7 @@ aplicarResponsavelPadrao(): void {
   // Forçar detecção de mudanças
   this.cd.detectChanges();
 }
- loadPlanosAnalise() {
+  loadPlanosAnalise() {
     this.ensaioService.getPlanoAnalise().subscribe(
       response => {
         this.planosAnalise = response;
@@ -4807,26 +4860,373 @@ canDeactivate(): boolean | Promise<boolean> {
     }
   }
 
-   getItensArgamassa(analise: any) {
+  getItensArgamassa(analise: any) {
     return [
-      { label: 'Determinação da Resistência Potencial de Aderência à Tração ao Substrato - Mpa', icon: 'pi pi-eye', command: () => this.abrirModalSubstrato(analise), tooltip: 'Visualizar OS', tooltipPosition: 'top' },
-      { label: 'Determinação da Resistência Potencial de Aderência à Tração Superficial', icon: 'pi pi-eye', tooltip: 'Visualizar OS', tooltipPosition: 'top' },
-      { label: 'Determinação da Variação Dimencional Linear (Retação/Expansão)', icon: 'pi pi-eye', tooltip: 'Visualizar OS', tooltipPosition: 'top' },
-      { label: 'Módulo de Elasticidade Dinâmico', icon: 'pi pi-eye', tooltip: 'Visualizar OS', tooltipPosition: 'top' },
-      { label: 'Determinação do Coeficiente de Absorção de Água por Capilaridade', icon: 'pi pi-eye', tooltip: 'Visualizar OS', tooltipPosition: 'top' },
+      { label: 'Determinação da Resistência Potencial de Aderência à Tração ao Substrato - Mpa', icon: 'pi pi-eye', command: () => this.abrirModalSubstrato(analise) },
+      { label: 'Determinação da Resistência Potencial de Aderência à Tração Superficial', icon: 'pi pi-eye', command: () => this.abrirModalSuperficial(analise) },
+      { label: 'Determinação da Variação Dimencional Linear (Retação/Expansão)', icon: 'pi pi-eye', command: () => this.abrirModalRetacao(analise) },
+      { label: 'Módulo de Elasticidade Dinâmico', icon: 'pi pi-eye', command: () => this.abrirModalElasticidade(analise) },
+      { label: 'Flexão', icon: 'pi pi-eye', command: () => this.abrirModalFlexao(analise) },
+      { label: 'Compressão', icon: 'pi pi-eye', command: () => this.abrirModalCompressao(analise) },
+      { label: 'Determinação do Coeficiente de Absorção de Água por Capilaridade', icon: 'pi pi-eye' },
     ];
   }
 
 
 
   abrirModalSubstrato(analise: any){
+    if(this.parecer_substrato){
+      this.linhasSubstrato = this.parecer_substrato.map((item: any, index: number) => ({
+        numero: item.numero ?? index + 1,
+        diametro: item.diametro ?? null,
+        area: item.area ?? null,
+        espessura: item.espessura ?? null,
+        subst: item.subst ?? null,
+        junta: item.junta ?? null,
+        carga: item.carga ?? null,
+        resist: item.resist ?? null,
+        validacao: item.validacao ?? "",
+        rupturas: {
+          sub: item.rupturas?.sub ?? null,
+          subArga: item.rupturas?.subArga ?? null,
+          rupArga: item.rupturas?.rupArga ?? null,
+          argaCola: item.rupturas?.argaCola ?? null,
+          colarPastilha: item.rupturas?.colarPastilha ?? null
+        }
+      }));
+    }else if (analise?.parecer?.substrato && Array.isArray(analise.parecer.substrato)) {
+      this.linhasSubstrato = analise.parecer.substrato.map((item: any, index: number) => ({
+        numero: item.numero ?? index + 1,
+        diametro: item.diametro ?? null,
+        area: item.area ?? null,
+        espessura: item.espessura ?? null,
+        subst: item.subst ?? null,
+        junta: item.junta ?? null,
+        carga: item.carga ?? null,
+        resist: item.resist ?? null,
+        validacao: item.validacao ?? "",
+        rupturas: {
+          sub: item.rupturas?.sub ?? null,
+          subArga: item.rupturas?.subArga ?? null,
+          rupArga: item.rupturas?.rupArga ?? null,
+          argaCola: item.rupturas?.argaCola ?? null,
+          colarPastilha: item.rupturas?.colarPastilha ?? null
+        }
+      }));
+      while (this.linhasSubstrato.length < 10) {
+        const numero = this.linhasSubstrato.length + 1;
+        this.linhasSubstrato.push({
+          numero,
+          diametro: null,
+          area: null,
+          espessura: null,
+          subst: null,
+          junta: null,
+          carga: null,
+          resist: null,
+          validacao: "",
+          rupturas: {
+            sub: null,
+            subArga: null,
+            rupArga: null,
+            argaCola: null,
+            colarPastilha: null
+          }
+        });
+      }
+    } else {
+      this.linhasSubstrato = [];
+      for (let i = 1; i <= 10; i++) {
+        this.linhasSubstrato.push({
+          numero: i,
+          diametro: null,
+          area: null,
+          espessura: null,
+          subst: null,
+          junta: null,
+          carga: null,
+          resist: null,
+          validacao: "",
+          rupturas: {
+            sub: null,
+            subArga: null,
+            rupArga: null,
+            argaCola: null,
+            colarPastilha: null
+          }
+        });
+      }
+    }
     this.modalDadosLaudoSubstrato = true;
-    this.salvarSubstrato();
   }
-
   salvarSubstrato(){
+    this.parecer_substrato = this.linhasSubstrato;
     this.modalDadosLaudoSubstrato = false;
     alert('Salvo!');
   }
 
+  abrirModalSuperficial(analise: any){
+    if(this.parecer_superficial){
+      this.linhasSuperficial = this.parecer_superficial.map((item: any, index: number) => ({
+        numero: item.numero ?? index + 1,
+        diametro: item.diametro ?? null,
+        area: item.area ?? null,
+        espessura: item.espessura ?? null,
+        subst: item.subst ?? null,
+        junta: item.junta ?? null,
+        carga: item.carga ?? null,
+        resist: item.resist ?? null,
+        validacao: item.validacao ?? "",
+        rupturas: {
+          sub: item.rupturas?.sub ?? null,
+          subArga: item.rupturas?.subArga ?? null,
+          rupArga: item.rupturas?.rupArga ?? null,
+          argaCola: item.rupturas?.argaCola ?? null,
+          colarPastilha: item.rupturas?.colarPastilha ?? null
+        }
+      }));
+    }else if (analise?.parecer?.superficial && Array.isArray(analise.parecer.superficial)) {
+      this.linhasSuperficial = analise.parecer.superficial.map((item: any, index: number) => ({
+        numero: item.numero ?? index + 1,
+        diametro: item.diametro ?? null,
+        area: item.area ?? null,
+        espessura: item.espessura ?? null,
+        subst: item.subst ?? null,
+        junta: item.junta ?? null,
+        carga: item.carga ?? null,
+        resist: item.resist ?? null,
+        validacao: item.validacao ?? "",
+        rupturas: {
+          sub: item.rupturas?.sub ?? null,
+          subArga: item.rupturas?.subArga ?? null,
+          rupArga: item.rupturas?.rupArga ?? null,
+          argaCola: item.rupturas?.argaCola ?? null,
+          colarPastilha: item.rupturas?.colarPastilha ?? null
+        }
+      }));
+      while (this.linhasSuperficial.length < 10) {
+        const numero = this.linhasSuperficial.length + 1;
+        this.linhasSuperficial.push({
+          numero,
+          diametro: null,
+          area: null,
+          espessura: null,
+          subst: null,
+          junta: null,
+          carga: null,
+          resist: null,
+          validacao: "",
+          rupturas: {
+            sub: null,
+            subArga: null,
+            rupArga: null,
+            argaCola: null,
+            colarPastilha: null
+          }
+        });
+      }
+    } else {
+      this.linhasSuperficial = [];
+      for (let i = 1; i <= 10; i++) {
+        this.linhasSuperficial.push({
+          numero: i,
+          diametro: null,
+          area: null,
+          espessura: null,
+          subst: null,
+          junta: null,
+          carga: null,
+          resist: null,
+          validacao: "",
+          rupturas: {
+            sub: null,
+            subArga: null,
+            rupArga: null,
+            argaCola: null,
+            colarPastilha: null
+          }
+        });
+      }
+    }
+    this.modalDadosLaudoSuperficial = true;
+  }
+  salvarSuperficial(){
+    this.parecer_superficial = this.linhasSuperficial;
+    this.modalDadosLaudoSuperficial = false;
+    alert('Salvo!');
+  }
+
+  abrirModalRetacao(analise: any){
+    if(this.parecer_retacao){
+      this.linhasRetacao = this.parecer_retacao.map((item: any, index: number) => ({
+        data: item.data ?? '',
+        idade: item.idade ?? null,
+        media: item.media ?? null,
+        desvio_maximo: item.desvio_maximo ?? null
+      }));
+    }else if (analise?.parecer?.retacao && Array.isArray(analise.parecer.retacao)) {
+      this.linhasRetacao = analise.parecer.retacao.map((item: any, index: number) => ({
+        data: item.data ?? '',
+        idade: item.idade ?? null,
+        media: item.media ?? null,
+        desvio_maximo: item.desvio_maximo ?? null
+      }));
+      while (this.linhasRetacao.length < 3) {
+        this.linhasRetacao.push({
+          data: '',
+          idade: null,
+          media: null,
+          desvio_maximo: null,      
+        });
+      }
+    } else {
+      this.linhasRetacao = [];
+      for (let i = 1; i <= 3; i++) {
+        this.linhasRetacao.push({
+          data: '',
+          idade: null,
+          media: null,
+          desvio_maximo: null,   
+        });
+      }
+    }
+    this.modalDadosLaudoRetacao = true;
+  }
+  salvarRetacao(){
+    this.parecer_retacao = this.linhasRetacao;
+    this.modalDadosLaudoRetacao = false;
+    alert('Salvo!');
+  }
+
+  abrirModalElasticidade(analise: any){
+    if(this.parecer_elasticidade){
+      this.linhasElasticidade = this.parecer_elasticidade.map((item: any, index: number) => ({
+        individual: item.individual ?? null,
+        media: item.media ?? null,
+        desvio_padrao: item.desvio_padrao ?? null
+      }));
+    }else if (analise?.parecer?.elasticidade && Array.isArray(analise.parecer.elasticidade)) {
+      this.linhasElasticidade = analise.parecer.elasticidade.map((item: any, index: number) => ({
+        individual: item.individual ?? null,
+        media: item.media ?? null,
+        desvio_padrao: item.desvio_padrao ?? null
+      }));
+      while (this.linhasElasticidade.length < 3) {
+        this.linhasElasticidade.push({
+          individual: null,
+          media: null,
+          desvio_padrao: null,      
+        });
+      }
+    } else {
+      this.linhasElasticidade = [];
+      for (let i = 1; i <= 3; i++) {
+        this.linhasElasticidade.push({
+          individual: null,
+          media: null,
+          desvio_padrao: null,   
+        });
+      }
+    }
+    this.modalDadosLaudoElasticidade = true;
+  }
+  salvarElasticidade(){
+    this.parecer_elasticidade = this.linhasElasticidade;
+    this.modalDadosLaudoElasticidade = false;
+    alert('Salvo!');
+  }
+
+  abrirModalFlexao(analise: any){
+    if(this.parecer_flexao){
+      this.linhasFlexao = this.parecer_flexao.map((item: any, index: number) => ({
+        cp: item.cp ?? index + 1,
+        flexao_n: item.flexao_n ?? null,
+        flexao_mpa: item.flexao_mpa ?? null,
+        media_mpa: item.media_mpa ?? null,
+        tracao_flexao: item.tracao_flexao ?? null
+      }));
+    }else if (analise?.parecer?.flexao && Array.isArray(analise.parecer.flexao)) {
+      this.linhasFlexao = analise.parecer.flexao.map((item: any, index: number) => ({
+        cp: item.cp ?? index + 1,
+        flexao_n: item.flexao_n ?? null,
+        flexao_mpa: item.flexao_mpa ?? null,
+        media_mpa: item.media_mpa ?? null,
+        tracao_flexao: item.tracao_flexao ?? null
+      }));
+      while (this.linhasFlexao.length < 3) {
+        const cp = this.linhasFlexao.length + 1;
+        this.linhasFlexao.push({
+          cp,
+          flexao_n: null,
+          flexao_mpa: null,
+          media_mpa: null,
+          tracao_flexao: null,      
+        });
+      }
+    } else {
+      this.linhasFlexao = [];
+      for (let i = 1; i <= 3; i++) {
+        this.linhasFlexao.push({
+          cp: i,
+          flexao_n: null,
+          flexao_mpa: null,   
+          media_mpa: null,   
+          tracao_flexao: null,   
+        });
+      }
+    }
+    this.modalDadosLaudoFlexao = true;
+  }
+  salvarFlexao(){
+    this.parecer_flexao = this.linhasFlexao;
+    this.modalDadosLaudoFlexao = false;
+    alert('Salvo!');
+  }
+
+  abrirModalCompressao(analise: any){
+    if(this.parecer_compressao){
+      this.linhasCompressao = this.parecer_compressao.map((item: any, index: number) => ({
+        cp: item.cp ?? index + 1,
+        compressao_n: item.compressao_n ?? null,
+        compressao_mpa: item.compressao_mpa ?? null,
+        media_mpa: item.media_mpa ?? null,
+        tracao_compressao: item.tracao_compressao ?? null
+      }));
+    }else if (analise?.parecer?.compressao && Array.isArray(analise.parecer.compressao)) {
+      this.linhasCompressao = analise.parecer.compressao.map((item: any, index: number) => ({
+        cp: item.cp ?? index + 1,
+        compressao_n: item.compressao_n ?? null,
+        compressao_mpa: item.compressao_mpa ?? null,
+        media_mpa: item.media_mpa ?? null,
+        tracao_compressao: item.tracao_compressao ?? null
+      }));
+      while (this.linhasCompressao.length < 3) {
+        const cp = this.linhasCompressao.length + 1;
+        this.linhasCompressao.push({
+          cp,
+          compressao_n: null,
+          compressao_mpa: null,
+          media_mpa: null,
+          tracao_compressao: null,      
+        });
+      }
+    } else {
+      this.linhasCompressao = [];
+      for (let i = 1; i <= 3; i++) {
+        this.linhasCompressao.push({
+          cp: i,
+          compressao_n: null,
+          compressao_mpa: null,
+          media_mpa: null,
+          tracao_compressao: null,   
+        });
+      }
+    }
+    this.modalDadosLaudoCompressao = true;
+  }
+  salvarCompressao(){
+    this.parecer_compressao = this.linhasCompressao;
+    this.modalDadosLaudoCompressao = false;
+    alert('Salvo!');
+  }
 }
