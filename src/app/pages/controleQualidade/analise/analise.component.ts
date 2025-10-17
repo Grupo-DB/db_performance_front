@@ -342,7 +342,21 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
   linhasCompressao: LinhaCompressao[] = [];
   parecer_compressao: any = null;
 
-
+  jsonModal: {
+    substrato: any[];
+    superficial: any[];
+    flexao: any[];
+    compressao: any[];
+    retacao: any[];
+    elasticidade: any[];
+  } = {
+    substrato: [],
+    superficial: [],
+    flexao: [],
+    compressao: [],
+    retacao: [],
+    elasticidade: [],
+  };
 
 
 
@@ -388,7 +402,8 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
     // this.iniciarSistemaAlertas();
 
     //chamo os itens aqui para não ficar chamamdo toda hora
-    this.menuArgamassa = this.getItensArgamassa(this.analise);
+    //AQUI NÃO FUNCIONOU______na linha 454 funcionou
+    // this.menuArgamassa = this.getItensArgamassa(this.analise);
 
   }
   getDigitadorInfo(): void {
@@ -449,12 +464,15 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
             this.cd.detectChanges();
             this.cd.markForCheck();
           }, 0);
+          //AQUI CARREGOU
+          this.menuArgamassa = this.getItensArgamassa(analise);
         },
         (error) => {
           // console.error('Erro ao buscar análise:', error);
         }
       );
     }
+
   }
 /////////==========CONSULTAR GARANTIA POR PRODUTO ===========///////////////////////////////////////
   consultarGarantia(): void{
@@ -4872,9 +4890,20 @@ canDeactivate(): boolean | Promise<boolean> {
     ];
   }
 
+  getAnaliseParecer(id: any){
+     this.analiseService.getAnaliseById(id).subscribe
+    (
+      (analise) => {
+        console.log('dentro',analise);
+        console.log('dentro_parecer',analise.parecer);
+        return analise.parecer;
+      },
+    );
+  }
 
 
   abrirModalSubstrato(analise: any){
+
     if(this.parecer_substrato){
       this.linhasSubstrato = this.parecer_substrato.map((item: any, index: number) => ({
         numero: item.numero ?? index + 1,
@@ -4959,11 +4988,55 @@ canDeactivate(): boolean | Promise<boolean> {
     }
     this.modalDadosLaudoSubstrato = true;
   }
-  salvarSubstrato(){
+  salvarSubstrato(analise: any){
+    let parecer = this.getAnaliseParecer(analise.id);
+
+ 
+    console.log('prearfeder', parecer);
     this.parecer_substrato = this.linhasSubstrato;
     this.modalDadosLaudoSubstrato = false;
-    alert('Salvo!');
+
+
+    this.jsonModal.substrato = this.linhasSubstrato;   
+
+    const dadosAtualizados: Partial<Analise> = {
+      parecer: this.jsonModal
+    };
+   
+    this.analiseService.editAnaliseSuperficial(analise.id, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Determinação da resistência potencial de aderência a tração ao substrato salvo com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });
+
+
+
+
+
+
+    
   }
+
 
   abrirModalSuperficial(analise: any){
     if(this.parecer_superficial){
@@ -5050,11 +5123,12 @@ canDeactivate(): boolean | Promise<boolean> {
     }
     this.modalDadosLaudoSuperficial = true;
   }
-  salvarSuperficial(){
+  salvarSuperficial(analise: any){
     this.parecer_superficial = this.linhasSuperficial;
     this.modalDadosLaudoSuperficial = false;
     alert('Salvo!');
   }
+
 
   abrirModalRetacao(analise: any){
     if(this.parecer_retacao){
@@ -5092,11 +5166,12 @@ canDeactivate(): boolean | Promise<boolean> {
     }
     this.modalDadosLaudoRetacao = true;
   }
-  salvarRetacao(){
+  salvarRetacao(analise: any){
     this.parecer_retacao = this.linhasRetacao;
     this.modalDadosLaudoRetacao = false;
     alert('Salvo!');
   }
+
 
   abrirModalElasticidade(analise: any){
     if(this.parecer_elasticidade){
@@ -5130,11 +5205,12 @@ canDeactivate(): boolean | Promise<boolean> {
     }
     this.modalDadosLaudoElasticidade = true;
   }
-  salvarElasticidade(){
+  salvarElasticidade(analise: any){
     this.parecer_elasticidade = this.linhasElasticidade;
     this.modalDadosLaudoElasticidade = false;
     alert('Salvo!');
   }
+
 
   abrirModalFlexao(analise: any){
     if(this.parecer_flexao){
@@ -5177,11 +5253,12 @@ canDeactivate(): boolean | Promise<boolean> {
     }
     this.modalDadosLaudoFlexao = true;
   }
-  salvarFlexao(){
+  salvarFlexao(analise: any){
     this.parecer_flexao = this.linhasFlexao;
     this.modalDadosLaudoFlexao = false;
     alert('Salvo!');
   }
+
 
   abrirModalCompressao(analise: any){
     if(this.parecer_compressao){
@@ -5224,7 +5301,8 @@ canDeactivate(): boolean | Promise<boolean> {
     }
     this.modalDadosLaudoCompressao = true;
   }
-  salvarCompressao(){
+  salvarCompressao(analise: any){
+
     this.parecer_compressao = this.linhasCompressao;
     this.modalDadosLaudoCompressao = false;
     alert('Salvo!');
