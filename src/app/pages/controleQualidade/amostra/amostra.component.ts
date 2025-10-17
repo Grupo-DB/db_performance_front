@@ -935,7 +935,7 @@ getMenuItems(amostra: any) {
   if (!this.menuItemsCache.has(amostraId)) {
     const menuItems = [
       { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(amostra), tooltip: 'Visualizar amostra', tooltipPosition: 'top' },
-      { label: 'Imprimir Etiqueta', icon: 'pi pi-file-pdf', command: () => this.imprimirEtiqueta(amostra), tooltip: 'Visualizar amostra', tooltipPosition: 'top' },
+      { label: 'Imprimir Etiqueta', icon: 'pi pi-file-pdf', command: () => this.imprimirEtiqueta(amostra), tooltip: 'IMprimir Etiqueta', tooltipPosition: 'top' },
       { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(amostra), tooltip: 'Editar amostra', tooltipPosition: 'top' },
       { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluirAmostra(amostra.id), tooltip: 'Excluir amostra', tooltipPosition: 'top' },
       { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(amostra), tooltip: 'Visualizar imagens', tooltipPosition: 'top' },

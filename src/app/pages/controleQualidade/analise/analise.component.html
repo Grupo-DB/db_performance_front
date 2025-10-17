@@ -1092,20 +1092,50 @@
                 </div>
             </div>
         </div>    
-        <div class="step1 flex flex-column w-12 gap-3 mt-3 mb-5 justify-content-end lg:w-11 lg:flex-row">                        
+        <div class="step1 flex justify-content-between align-items-center w-12 mt-3 mb-5">
+  
+            <div>
+                
+                <!-- <p-speeddial 
+                    showIcon="pi pi-bars" hideIcon="pi pi-times"
+                    [model]="getItensArgamassa(analise)"
+                    [radius]="80"
+                    type="linear" 
+                    direction="right"
+                    [style]="{ position: 'relative', top: 0, right: 0 }" 
+                    [buttonProps]="{ severity: 'info', rounded: true }"
+                    [tooltipOptions]="{ tooltipPosition: 'right' }"
+                    pTooltip="Ações"
+                ></p-speeddial>
+                                <span>Ações</span> -->
+                <p-menu 
+                    #menu 
+                    [model]="menuArgamassa" 
+                    popup="true" 
+                    styleClass="menu-up">
+                </p-menu>
 
-            <div class="w-2 text-right">
                 <p-button 
-                    [label]="hasUnsavedChanges ? 'Salvar Resultados *' : 'Salvar Resultados'" 
-                    [severity]="hasUnsavedChanges ? 'warn' : 'success'" 
-                    icon="pi pi-check" 
-                    iconPos="right" 
-                    [raised]="true"
-                    size="large" 
-                    (onClick)="salvarAnaliseResultados()" 
-                    [pTooltip]="hasUnsavedChanges ? 'Há alterações não salvas' : 'Salvar análise'" 
-                />
+                label="Ações Argamassa"
+                icon="pi pi-chevron-up"
+                (click)="menu.toggle($event)"
+                severity="info"
+                ></p-button>
             </div>
+
+            <div>
+                <p-button 
+                [label]="hasUnsavedChanges ? 'Salvar Resultados *' : 'Salvar Resultados'" 
+                [severity]="hasUnsavedChanges ? 'warn' : 'success'" 
+                icon="pi pi-check" 
+                iconPos="right" 
+                [raised]="true"
+                size="large" 
+                (onClick)="salvarAnaliseResultados()" 
+                [pTooltip]="hasUnsavedChanges ? 'Há alterações não salvas' : 'Salvar análise'" 
+                ></p-button>
+            </div>
+
         </div>
             
     </div>
@@ -1568,4 +1598,437 @@
         <p-button label="Fechar" icon="pi pi-times" (onClick)="fecharDrawerGarantias()">
         </p-button>
     </ng-template>
+</p-drawer>
+
+
+
+
+
+
+<!-- SUbstrato Mpa -->
+<p-drawer 
+    [(visible)]="modalDadosLaudoSubstrato" 
+    position="full" >
+
+        <div class="containerInterno w-12">
+        <div class="background-form">
+            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                <div class="fg1 flex flex-column w-12 align-items-center">
+
+                    <p-card class="card w-12 text-center card-substrato">
+                        <ng-template #header>
+                            <div class="header-substrato w-full text-center">
+                                <b>Determinação da resistência potencial de aderência a tração ao substrato</b>
+                            </div>
+                        </ng-template>
+                        <div class="flex flex-row w-12 gap-3">
+                            <div class="w-12">
+                                <p-table [value]="linhasSubstrato" stripedRows>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Nº</th>
+                                            <th>Diâmetro mm</th>
+                                            <th>Área mm²</th>
+                                            <th>Espessura mm</th>
+                                            <th>Subst</th>
+                                            <th>Junta</th>
+                                            <th>Carga kgf</th>
+                                            <th>RESIST. Mpa</th>
+                                            <th>Validação</th>
+                                            <th>(A) Sub</th>
+                                            <th>(B) Sub/Arga</th>
+                                            <th>(C) Rup Arga</th>
+                                            <th>(D) Arga Cola</th>
+                                            <th>(E) Colar pastilha</th>
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="body" let-linha let-i="rowIndex">
+                                        <tr>
+                                            <td>{{ linha.numero }}</td>
+                                            <td><input pInputText [(ngModel)]="linha.diametro" type="number"/></td>
+                                            <td><input pInputText [(ngModel)]="linha.area" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="linha.espessura" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="linha.subst" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="linha.junta" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="linha.carga" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="linha.resist" type="number" step="0.01" /></td>
+                                            <td><input pInputText [(ngModel)]="linha.validacao" type="text" /></td>
+                                            <td><input pInputText [(ngModel)]="linha.rupturas.sub" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="linha.rupturas.subArga" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="linha.rupturas.rupArga" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="linha.rupturas.argaCola" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="linha.rupturas.colarPastilha" type="number" /></td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </div>
+                        
+                        <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                            <p-button 
+                                label="Salvar e ir para tração superficial" 
+                                severity="warn"
+                                icon="pi pi-check" 
+                                iconPos="right" 
+                                tooltipPosition="top"
+                                pTooltip="Salvar e ir para tração superficial"
+                                (onClick)="salvarSubstrato(analise)"
+                            />
+                        </div>
+                    </p-card>
+                </div>    
+            </div>
+        </div>
+    </div>
+    
+</p-drawer>
+
+<!-- superficial -->
+<p-drawer 
+    [(visible)]="modalDadosLaudoSuperficial" 
+    position="full" >
+    <p-toast />
+    <p-confirmDialog />
+        <div class="containerInterno w-12">
+        <div class="background-form">
+            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                <div class="fg1 flex flex-column w-12 align-items-center">
+
+                    <p-card class="card w-12 text-center card-superficial">
+                        <ng-template #header>
+                            <div class="header-superficial w-full text-center">
+                                <b>Determinação da resistência potencial de aderência a tração superficial</b>
+                            </div>
+                        </ng-template>
+                        <div class="flex flex-row w-12 gap-3">
+                            <div class="w-12">
+                                <p-table 
+                                    [value]="linhasSuperficial" 
+                                    stripedRows
+                                >
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Nº</th>
+                                            <th>Diâmetro mm</th>
+                                            <th>Área mm²</th>
+                                            <th>Espessura mm</th>
+                                            <th>Subst</th>
+                                            <th>Junta</th>
+                                            <th>Carga kgf</th>
+                                            <th>RESIST. Mpa</th>
+                                            <th>Validação</th>
+                                            <th>(A) Sub</th>
+                                            <th>(B) Sub/Arga</th>
+                                            <th>(C) Rup Arga</th>
+                                            <th>(D) Arga Cola</th>
+                                            <th>(E) Colar pastilha</th>
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="body" let-numero let-i="rowIndex">
+                                        <tr>
+                                            <td>{{ numero.numero }}</td>
+                                            <td><input pInputText [(ngModel)]="numero.diametro" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="numero.area" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="numero.espessura" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="numero.subst" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="numero.junta" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="numero.carga" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="numero.resist" type="number" step="0.01" /></td>
+                                            <td><input pInputText [(ngModel)]="numero.validacao" type="text" /></td>
+                                            <td><input pInputText [(ngModel)]="numero.rupturas.sub" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="numero.rupturas.subArga" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="numero.rupturas.rupArga" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="numero.rupturas.argaCola" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="numero.rupturas.colarPastilha" type="number" /></td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+
+                            </div>
+                        </div>
+                        
+                        <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                            <p-button 
+                                label="Salvar tração superficial" 
+                                (onClick)="salvarSuperficial(analise)"
+                                severity="info"
+                                icon="pi pi-check" 
+                                iconPos="right" 
+                                tooltipPosition="top"
+                                pTooltip="Salvar tração superficial"
+                            />
+                        </div>
+                    </p-card>
+                </div>    
+            </div>
+        </div>
+    </div>
+    
+</p-drawer>
+
+<!-- retacao -->
+<p-drawer 
+    [(visible)]="modalDadosLaudoRetacao" 
+    position="full" >
+    <p-toast />
+    <p-confirmDialog />
+        <div class="containerInterno w-12">
+        <div class="background-form">
+            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                <div class="fg1 flex flex-column w-12 align-items-center">
+
+                    <p-card class="card w-12 text-center card-superficial">
+                        <ng-template #header>
+                            <div class="header-retacao w-full text-center">
+                                <b>Determinação da Variação Dimencional Linear (Retação/Expansão)</b>
+                            </div>
+                        </ng-template>
+                        <div class="flex flex-row w-12 gap-3">
+                            <div class="w-12">
+                                <p-table 
+                                    [value]="linhasRetacao" 
+                                    stripedRows
+                                >
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Data</th>
+                                            <th>Idade</th>
+                                            <th>Média (mm/m)</th>
+                                            <th>Desvio Máximo (mm/m)</th>
+                                            
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="body" let-retacao let-i="rowIndex">
+                                        <tr>
+                                            <td><input pInputText  [(ngModel)]="retacao.data" type="date" /></td>
+                                            <td><input pInputText [(ngModel)]="retacao.idade" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="retacao.media" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="retacao.desvio" type="number" /></td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+
+                            </div>
+                        </div>
+                        
+                        <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                            <p-button 
+                                label="Salvar Variação Dimencional Linear" 
+                                (onClick)="salvarRetacao(analise)"
+                                severity="info"
+                                icon="pi pi-check" 
+                                iconPos="right" 
+                                tooltipPosition="top"
+                                pTooltip="Salvar Variação Dimencional Linear"
+                                [style]="{'background-color': 'rgb(108, 165, 42)', 'border-color': 'rgb(108, 165, 42)'}"
+                            />
+                        </div>
+                    </p-card>
+                </div>    
+            </div>
+        </div>
+    </div>
+    
+</p-drawer>
+
+<!-- elasticidade -->
+<p-drawer 
+    [(visible)]="modalDadosLaudoElasticidade" 
+    position="full" >
+    <p-toast />
+    <p-confirmDialog />
+        <div class="containerInterno w-12">
+        <div class="background-form">
+            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                <div class="fg1 flex flex-column w-12 align-items-center">
+
+                    <p-card class="card w-12 text-center card-superficial">
+                        <ng-template #header>
+                            <div class="header-elasticidade w-full text-center">
+                                <b>Módulo de Elasticidade Dinâmico</b>
+                            </div>
+                        </ng-template>
+                        <div class="flex flex-row w-12 gap-3">
+                            <div class="w-12">
+                                <p-table 
+                                    [value]="linhasElasticidade" 
+                                    stripedRows
+                                >
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Individual</th>
+                                            <th>Média (Mpa)</th>
+                                            <th>Desvio Padrão (%)</th>
+                                            
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="body" let-elasticidade let-i="rowIndex">
+                                        <tr>
+                                            <td><input pInputText [(ngModel)]="elasticidade.individual" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="elasticidade.media" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="elasticidade.desvio_padrao" type="number" /></td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+
+                            </div>
+                        </div>
+                        
+                        <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                            <p-button 
+                                label="Salvar Módulo de Elasticidade Dinâmico" 
+                                (onClick)="salvarElasticidade(analise)"
+                                severity="info"
+                                icon="pi pi-check" 
+                                iconPos="right" 
+                                tooltipPosition="top"
+                                pTooltip="Salvar Módulo de Elasticidade Dinâmico"
+                                [style]="{'background-color': ' rgb(182, 109, 32)', 'border-color': ' rgb(182, 109, 32)'}"
+                            />
+                        </div>
+                    </p-card>
+                </div>    
+            </div>
+        </div>
+    </div>
+    
+</p-drawer>
+
+<!-- ruptura a flexao -->
+<p-drawer 
+    [(visible)]="modalDadosLaudoFlexao" 
+    position="full" >
+    <p-toast />
+    <p-confirmDialog />
+        <div class="containerInterno w-12">
+        <div class="background-form">
+            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                <div class="fg1 flex flex-column w-12 align-items-center">
+
+                    <p-card class="card w-12 text-center card-superficial">
+                        <ng-template #header>
+                            <div class="header-flexao w-full text-center">
+                                <b>Carga de Ruptura a Flexão</b>
+                            </div>
+                        </ng-template>
+                        <div class="flex flex-row w-12 gap-3">
+                            <div class="w-12">
+                                <p-table 
+                                    [value]="linhasFlexao" 
+                                    stripedRows
+                                >
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>CP</th>
+                                            <th>Carga de Ruptura à Flexão (N)</th>
+                                            <th>Resist. à Tração na Flexão (Mpa)</th>
+                                            <th>Resist. Média (Mpa)</th>
+                                            <th>Resist. Tração Flexão</th>
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="body" let-flexao let-i="rowIndex">
+                                        <tr>
+                                            <td>{{ flexao.cp }}</td>
+                                            <td><input pInputText [(ngModel)]="flexao.flexao_n" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="flexao.flexao_mpa" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="flexao.media_mpa" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="flexao.tracao_flexao" type="number" /></td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+
+                            </div>
+                        </div>
+                        
+                        <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                            <p-button 
+                                label="Salvar Ruptura a Flexão" 
+                                (onClick)="salvarFlexao(analise)"
+                                severity="info"
+                                icon="pi pi-check" 
+                                iconPos="right" 
+                                tooltipPosition="top"
+                                pTooltip="Salvar Ruptura a Flexão"
+                                [style]="{'background-color': 'purple', 'border-color': 'purple'}"
+                            />
+                            
+                        </div>
+                    </p-card>
+                </div>    
+            </div>
+        </div>
+    </div>
+    
+</p-drawer>
+
+<!-- ruptura a compressao -->
+<p-drawer 
+    [(visible)]="modalDadosLaudoCompressao" 
+    position="full" >
+    <p-toast />
+    <p-confirmDialog />
+        <div class="containerInterno w-12">
+        <div class="background-form">
+            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                <div class="fg1 flex flex-column w-12 align-items-center">
+
+                    <p-card class="card w-12 text-center card-superficial">
+                        <ng-template #header>
+                            <div class="header-compressao w-full text-center">
+                                <b>Carga de Ruptura a Compressão</b>
+                            </div>
+                        </ng-template>
+                        <div class="flex flex-row w-12 gap-3">
+                            <div class="w-12">
+                                <p-table 
+                                    [value]="linhasCompressao" 
+                                    stripedRows
+                                >
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>CP</th>
+                                            <th>Carga de Ruptura à Compressão (N)</th>
+                                            <th>Resist. à Tração na Compressão (Mpa)</th>
+                                            <th>Resist. Média (Mpa)</th>
+                                            <th>Resist. Tração Compressão</th>
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="body" let-compressao let-i="rowIndex">
+                                        <tr>
+                                            <td>{{ compressao.cp }}</td>
+                                            <td><input pInputText [(ngModel)]="compressao.compressao_n" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="compressao.compressao_mpa" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="compressao.media_mpa" type="number" /></td>
+                                            <td><input pInputText [(ngModel)]="compressao.tracao_compressao" type="number" /></td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+
+                            </div>
+                        </div>
+                        
+                        <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                            <p-button 
+                                label="Salvar Ruptura a Compressão" 
+                                (onClick)="salvarCompressao(analise)"
+                                severity="info"
+                                icon="pi pi-check" 
+                                iconPos="right" 
+                                tooltipPosition="top"
+                                pTooltip="Salvar Ruptura a Compressão"
+                                [style]="{'background-color': 'brown', 'border-color': 'purple'}"
+                            />
+                        </div>
+                    </p-card>
+                </div>    
+            </div>
+        </div>
+    </div>
+    
 </p-drawer>
