@@ -250,7 +250,7 @@ modalGarantiasVisible: any;
     this.getAnalise();
     this.carregarEnsaiosECalculosDisponiveis();
     // Inicializar sistema de alertas
-   // //COMENTADO PARA PRODUÇÂO =======  this.iniciarSistemaAlertas();
+    this.iniciarSistemaAlertas();
   }
   getDigitadorInfo(): void {
   this.colaboradorService.getColaboradorInfo().subscribe(
@@ -4230,7 +4230,7 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
   //Verifica se a análise permite edição (apenas para análises expressas)
   podeEditarEnsaiosCalculos(): boolean {
     const isExpressa = this.isAnaliseExpressa();
-    const hasPermission = this.hasGroup(['Admin', 'Master', 'Analista']);    
+    const hasPermission = this.hasGroup(['Admin', 'Master', 'LabGestor']);    
     return isExpressa && hasPermission;
   }
   // Cria variáveis iniciais para um ensaio com função
@@ -4268,13 +4268,16 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
     if (!this.analisesSimplificadas || !this.analisesSimplificadas.length) {
       return this.ensaiosDisponiveis;
     }
+
     const analiseData = this.analisesSimplificadas[0];
     const planoDetalhes = analiseData?.planoDetalhes || [];
     const ensaiosExistentesIds = planoDetalhes.flatMap((plano: any) => 
       (plano.ensaio_detalhes || []).map((e: any) => e.id)
     );
     return this.ensaiosDisponiveis.filter(ensaio => 
-      !ensaiosExistentesIds.includes(ensaio.id)
+      !ensaiosExistentesIds.includes(ensaio.id) && 
+      ensaio.tipo_ensaio_detalhes?.nome !== 'Auxiliar' && 
+      ensaio.tipo_ensaio_detalhes?.nome !== 'Resistencia'
     );
   }
   // Obtém cálculos disponíveis para adicionar (exclui os já presentes na análise)
@@ -4288,7 +4291,10 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
       (plano.calculo_ensaio_detalhes || []).map((c: any) => c.id)
     );
     return this.calculosDisponiveis.filter(calculo => 
-      !calculosExistentesIds.includes(calculo.id)
+      !calculosExistentesIds.includes(calculo.id) && 
+      !calculo.descricao.includes('(Cálculo composto Cal)') && 
+      !calculo.descricao.includes('(Calc PN Cal)') && 
+      !calculo.descricao.includes('(Calc PN Calc Cal)')
     );
   }
   //Fecha o modal de adicionar ensaios

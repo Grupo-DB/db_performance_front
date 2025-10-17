@@ -240,16 +240,18 @@ receberDadosAmostra(): void {
     return;
   }
 }
-
-  loadEnsaios(): void {
+  loadEnsaios(){
     this.ensaioService.getEnsaios().subscribe(
       response => {
-        this.ensaios = response;
+        this.ensaios = response.filter((ensaio: Ensaio) => 
+          ensaio.tipo_ensaio_detalhes.nome !== 'Auxiliar' && 
+          ensaio.tipo_ensaio_detalhes.nome !== 'Resistencia',
+        );
       }, error => {
         console.error('Erro ao carregar os ensaios:', error);
       }
     )
-  }
+}
 
   loadCalculos(): void{
     this.ensaioService.getCalculoEnsaio().subscribe(

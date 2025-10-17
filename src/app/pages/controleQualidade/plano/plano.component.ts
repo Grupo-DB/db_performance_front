@@ -167,7 +167,10 @@ export class PlanoComponent implements OnInit {
   loadEnsaios(){
     this.ensaioService.getEnsaios().subscribe(
       response => {
-        this.ensaios = response;
+        this.ensaios = response.filter((ensaio: Ensaio) => 
+          ensaio.tipo_ensaio_detalhes.nome !== 'Auxiliar' && 
+          ensaio.tipo_ensaio_detalhes.nome !== 'Resistencia',
+        );
       }, error => {
         console.error('Erro ao carregar os ensaios:', error);
       }

@@ -22,16 +22,17 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
+import { TagModule } from 'primeng/tag';
+import { CardModule } from 'primeng/card';
+import { InplaceModule } from 'primeng/inplace';
+import { TooltipModule } from 'primeng/tooltip';
 import { TipoEnsaio } from '../tipo-ensaio/tipo-ensaio.component';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { EnsaioService } from '../../../services/controleQualidade/ensaio.service';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { evaluate } from 'mathjs';
 import { Variavel } from '../variavel/variavel.component';
-import { CardModule } from 'primeng/card';
-import { InplaceModule } from 'primeng/inplace';
 import { CdkDragPlaceholder } from "@angular/cdk/drag-drop";
-import { TooltipModule } from 'primeng/tooltip';
 
 interface RegisterEnsaioForm {
   descricao:FormControl;
@@ -78,7 +79,8 @@ export interface Unidades {
   imports: [
     ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule, InputMaskModule, DialogModule, ConfirmDialogModule, 
     SelectModule, IconFieldModule, FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule, ButtonModule, 
-    DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, InputNumberModule, CardModule, InplaceModule,TooltipModule
+    DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, InputNumberModule, CardModule, InplaceModule, TooltipModule, 
+    TagModule
 ],
   providers:[
      MessageService,ConfirmationService
@@ -123,6 +125,7 @@ export interface Unidades {
 export class EnsaioComponent implements OnInit{
   ensaios: Ensaio[] = [];
   tiposEnsaio: TipoEnsaio[] = [];
+  tiposEnsaioFiltro: any[] = []; // Para o filtro da tabela
   variaveis: Variavel[] = [];
   editForm!: FormGroup;
   editFormVisible: boolean = false;
@@ -345,6 +348,12 @@ export class EnsaioComponent implements OnInit{
     this.ensaioService.getTiposEnsaio().subscribe(
       response => {
         this.tiposEnsaio = response;
+        
+        // Criar opções para o filtro da tabela
+        this.tiposEnsaioFiltro = response.map((tipo: any) => ({
+          label: tipo.nome,
+          value: tipo.nome
+        }));
       }, error => {
         console.error('Erro ao carregar os tipos de ensaio:', error);
       }

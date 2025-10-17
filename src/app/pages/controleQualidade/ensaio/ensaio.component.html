@@ -346,7 +346,27 @@
                                 <th style="width: 20%; text-align: center;" type="text" field="valor" display="menu">Unidade</th>
                                 <th style="width: 20%; text-align: center;" type="text" field="tempo_previsto" display="menu">Tempo Previsto</th>
                                 <th style="width: 20%; text-align: center;" type="text" field="norma" display="menu">Norma</th>
-                                <th style="width: 20%; text-align: center;" type="text" field="tipo_ensaio_detalhes.nome" display="menu">Tipo de Ensaio</th>
+                                <th style="width: 20%; text-align: center;">
+                                    <p-columnFilter field="tipo_ensaio_detalhes.nome" matchMode="equals" [showMenu]="false">
+                                        <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                            <p-select 
+                                                [ngModel]="value" 
+                                                [options]="tiposEnsaioFiltro" 
+                                                (ngModelChange)="filter($event)" 
+                                                placeholder="Selecionar Tipo" 
+                                                [showClear]="true" 
+                                                optionLabel="label"
+                                                optionValue="value"
+                                                appendTo="body"
+                                                styleClass="p-column-filter"
+                                            >
+                                            </p-select>
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            Tipo de Ensaio
+                                        </ng-template>
+                                    </p-columnFilter>
+                                </th>
                                 <th style="width: 20%; text-align: center;" type="text" field="tipo_ensaio_detalhes.nome" display="menu">Garantia</th>
                                 <th style="width: 20%; text-align: center;" type="text" field="estado" display="menu">Estado</th>
                                 <th style="width: 20%; text-align: center;" type="text" field="acoes" display="menu">Ações</th>
@@ -358,7 +378,7 @@
                                 <td style="text-align: center;">{{ ensaios.unidade }}</td>
                                 <td style="text-align: center;">{{ ensaios.tempo_previsto }}</td>
                                 <td style="text-align: center;">{{ ensaios.norma }}</td>
-                                <td style="text-align: center;">{{ ensaios.tipo_ensaio_detalhes.nome }}</td>
+                                <td style="text-align: start;">{{ ensaios.tipo_ensaio_detalhes.nome }}</td>
                                 <td style="text-align: center;">{{ ensaios.garantia }}</td>
                                 <td style="text-align: center;">{{ ensaios.estado }}</td>
                                 <td class="flex justify-content-center gap-1">

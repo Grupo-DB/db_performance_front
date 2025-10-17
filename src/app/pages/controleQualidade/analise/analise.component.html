@@ -449,14 +449,16 @@
                                                     <div *ngIf="!ensaio.variavel_detalhes || ensaio.variavel_detalhes.length === 0">
                                                         <div class="flex flex-column">
                                                             <p-floatlabel variant="in">
-                                                                <p-inputnumber 
+                                                                <input
+                                                                    variant="filled"
+                                                                    pInputText
+                                                                    showButtons="false"
+                                                                    type="number"
                                                                     [(ngModel)]="ensaio.valor" 
-                                                                    showButtons="true" 
-                                                                    [style]="{'width':'100%'}"
-                                                                    placeholder="Digite o valor" 
+                                                                    [style]="{'width':'30%'}"
+                                                                    id="ensaio_valor_{{ensaio.id}}"
                                                                     (ngModelChange)="onValorEnsaioChange(ensaio, $event)"
-                                                                >
-                                                                </p-inputnumber>
+                                                                />
                                                                 <label>{{ ensaio.descricao }}</label>
                                                             </p-floatlabel>
                                                         </div>
@@ -504,7 +506,7 @@
                                                             </p-floatLabel>
                                                         </div>
                                                         <!-- Nº Cadinho -->
-                                                        <div class="w-6">
+                                                        <div class="w-6"  *ngIf="ensaio.descricao.includes('PF - Perda ao Fogo') || ensaio.descricao.includes('Ri + SiO₂')">
                                                             <p-floatLabel variant="in">
                                                                 <p-inputnumber 
                                                                     [(ngModel)]="ensaio.numero_cadinho" 
@@ -853,13 +855,16 @@
                                                                                         appendTo="body"
                                                                                     >
                                                                                     </p-datepicker>
-                                                                                    <p-inputnumber 
+                                                                                    <input 
                                                                                         *ngIf="!isVariavelTipoData(variavel)"
-                                                                                        mode="decimal" [minFractionDigits]="2"
-                                                                                        [maxFractionDigits]="5" variant="filled"
-                                                                                        size="large" [style]="{'width':'100%'}"
+                                                                                        pInputText
+                                                                                        type="number"
+                                                                                        variant="filled"
+                                                                                        size="small" 
+                                                                                        [style]="{'width':'100%'}"
                                                                                         id="variavel_{{variavel.id || variavel.nome}}"
-                                                                                        showButtons="false" [(ngModel)]="variavel.valor"
+                                                                                        showButtons="false" 
+                                                                                        [(ngModel)]="variavel.valor"
                                                                                         (ngModelChange)="atualizarVariavelEnsaio(ensaio, variavel, $event)" 
                                                                                     />
                                                                                     <label
@@ -904,7 +909,7 @@
                                                                                     <label for="label">Responsável</label>
                                                                                 </p-floatLabel>
                                                                             </div>
-                                                                            <div class="w-2" *ngIf="ensaio.tipo_ensaio_detalhes.nome === 'Calculado'">
+                                                                            <div class="w-2" *ngIf="ensaio.descricao.includes('PF - Perda ao Fogo') || ensaio.descricao.includes('Ri + SiO₂')">
                                                                                 <p-floatLabel variant="in">
                                                                                     <p-inputnumber 
                                                                                         [(ngModel)]="ensaio.numero_cadinho"
@@ -1331,7 +1336,7 @@
         <div class="p-4">            
             <p-table 
                 #dtEnsaios
-                [value]="getEnsaiosDisponiveis()" 
+                [value]="getEnsaiosDisponiveis()"
                 selectionMode="multiple" 
                 [(selection)]="ensaiosSelecionadosParaAdicionar"
                 [paginator]="true"
