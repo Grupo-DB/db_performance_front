@@ -113,7 +113,7 @@ interface LinhaCompressao {
 
 }
 
-interface LinhaRetacao {
+interface LinhaRetracao {
   data: string;
   idade: number | null;
   media: number | null;
@@ -211,14 +211,14 @@ export class ArquivoComponent implements OnInit {
     superficial: any[];
     flexao: any[];
     compressao: any[];
-    retacao: any[];
+    retracao: any[];
     elasticidade: any[];
   } = {
     substrato: [],
     superficial: [],
     flexao: [],
     compressao: [],
-    retacao: [],
+    retracao: [],
     elasticidade: [],
   };
 
@@ -231,9 +231,9 @@ export class ArquivoComponent implements OnInit {
   parecer_flexao: any = null;
   parecer_compressao: any = null;
 
-  modalDadosLaudoRetacao: boolean = false;
-  linhasRetacao: LinhaRetacao[] = [];
-  parecer_retacao: any = null;
+  modalDadosLaudoRetracao: boolean = false;
+  linhasRetracao: LinhaRetracao[] = [];
+  parecer_retracao: any = null;
 
   modalDadosLaudoElasticidade: boolean = false;
   linhasElasticidade: LinhaElasticidade[] = [];
@@ -376,7 +376,7 @@ private cdr: ChangeDetectorRef
     }
 
     for (let i = 1; i <= 3; i++) {
-      this.linhasRetacao.push({
+      this.linhasRetracao.push({
         data: '',
         idade: null,
         media: null,
@@ -4523,22 +4523,22 @@ duplicata(amostra: any): void {
       }
     });
     
-    if(this.parecer_retacao){
-      this.linhasRetacao = this.parecer_retacao.map((item: any, index: number) => ({
+    if(this.parecer_retracao){
+      this.linhasRetracao = this.parecer_retracao.map((item: any, index: number) => ({
         data: item.data ?? '',
         idade: item.idade ?? null,
         media: item.media ?? null,
         desvio_maximo: item.desvio_maximo ?? null
       }));
-    }else if (this.amostra_detalhes_selecionada?.parecer?.retacao && Array.isArray(this.amostra_detalhes_selecionada.parecer.retacao)) {
-      this.linhasRetacao = this.amostra_detalhes_selecionada.parecer.retacao.map((item: any, index: number) => ({
+    }else if (this.amostra_detalhes_selecionada?.parecer?.retracao && Array.isArray(this.amostra_detalhes_selecionada.parecer.retracao)) {
+      this.linhasRetracao = this.amostra_detalhes_selecionada.parecer.retracao.map((item: any, index: number) => ({
         data: item.data ?? '',
         idade: item.idade ?? null,
         media: item.media ?? null,
         desvio_maximo: item.desvio_maximo ?? null
       }));
-      while (this.linhasRetacao.length < 3) {
-        this.linhasRetacao.push({
+      while (this.linhasRetracao.length < 3) {
+        this.linhasRetracao.push({
           data: '',
           idade: null,
           media: null,
@@ -4546,9 +4546,9 @@ duplicata(amostra: any): void {
         });
       }
     } else {
-      this.linhasRetacao = [];
+      this.linhasRetracao = [];
       for (let i = 1; i <= 3; i++) {
-        this.linhasRetacao.push({
+        this.linhasRetracao.push({
           data: '',
           idade: null,
           media: null,
@@ -4559,14 +4559,14 @@ duplicata(amostra: any): void {
 
     this.modalDadosLaudoCompressao = false;
 
-    this.modalDadosLaudoRetacao = true;
+    this.modalDadosLaudoRetracao = true;
     // this.abrirModalLaudo(this.amostra_detalhes_selecionada);
 
   }
 
-  salvarRetacao(){
-    this.jsonModal.retacao = this.linhasRetacao;
-    this.parecer_retacao = this.linhasRetacao;
+  salvarRetracao(){
+    this.jsonModal.retracao = this.linhasRetracao;
+    this.parecer_retracao = this.linhasRetracao;
 
     const dadosAtualizados: Partial<Analise> = {
       parecer: this.jsonModal
@@ -4628,7 +4628,7 @@ duplicata(amostra: any): void {
     }
     
 
-    this.modalDadosLaudoRetacao = false;
+    this.modalDadosLaudoRetracao = false;
 
     this.modalDadosLaudoElasticidade = true;
     // this.abrirModalLaudo(this.amostra_detalhes_selecionada);

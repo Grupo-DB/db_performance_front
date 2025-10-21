@@ -1150,9 +1150,9 @@
        
     </p-drawer>
 
-    <!-- retacao -->
+    <!-- retracao -->
     <p-drawer 
-        [(visible)]="modalDadosLaudoRetacao" 
+        [(visible)]="modalDadosLaudoRetracao" 
         position="full" >
         <p-toast />
         <p-confirmDialog />
@@ -1163,14 +1163,14 @@
 
                         <p-card class="card w-12 text-center card-superficial">
                             <ng-template #header>
-                                <div class="header-retacao w-full text-center">
+                                <div class="header-retracao w-full text-center">
                                     <b>Determinação da Variação Dimencional Linear (Retação/Expansão)</b>
                                 </div>
                             </ng-template>
                             <div class="flex flex-row w-12 gap-3">
                                 <div class="w-12">
                                     <p-table 
-                                        [value]="linhasRetacao" 
+                                        [value]="linhasRetracao" 
                                         stripedRows
                                     >
                                         <ng-template pTemplate="header">
@@ -1183,12 +1183,12 @@
                                             </tr>
                                         </ng-template>
 
-                                        <ng-template pTemplate="body" let-retacao let-i="rowIndex">
+                                        <ng-template pTemplate="body" let-retracao let-i="rowIndex">
                                             <tr>
-                                                <td><input pInputText  [(ngModel)]="retacao.data" type="date" /></td>
-                                                <td><input pInputText [(ngModel)]="retacao.idade" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="retacao.media" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="retacao.desvio" type="number" /></td>
+                                                <td><input pInputText  [(ngModel)]="retracao.data" type="date" /></td>
+                                                <td><input pInputText [(ngModel)]="retracao.idade" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="retracao.media" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="retracao.desvio" type="number" /></td>
                                             </tr>
                                         </ng-template>
                                     </p-table>
@@ -1199,7 +1199,7 @@
                             <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
                                 <p-button 
                                     label="Salvar Variação Dimencional Linear" 
-                                    (onClick)="salvarRetacao()"
+                                    (onClick)="salvarRetracao()"
                                     severity="info"
                                     icon="pi pi-check" 
                                     iconPos="right" 

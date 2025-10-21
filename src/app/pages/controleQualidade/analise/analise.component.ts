@@ -74,8 +74,6 @@ interface LinhaSuperficial {
   diametro: number | null;
   area: number | null;
   espessura: number | null;
-  subst: number | null;
-  junta: number | null;
   carga: number | null;
   resist: number | null;
   validacao: string;
@@ -88,7 +86,7 @@ interface LinhaSuperficial {
   };
 }
 
-interface LinhaRetacao {
+interface LinhaRetracao {
   data: string;
   idade: number | null;
   media: number | null;
@@ -131,6 +129,14 @@ export interface Analise {
   metodoMuro: string;
   observacoesMuro: string;
   parecer: any;
+
+  substrato: any;
+  superficial: any;
+  retracao: any;
+  elasticidade: any;
+  flexao: any;
+  compressao: any;
+
 }
 interface FileWithInfo {
   file: File;
@@ -329,9 +335,9 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
   linhasSuperficial: LinhaSuperficial[] = [];
   parecer_superficial: any = null;
 
-  modalDadosLaudoRetacao = false;
-  linhasRetacao: LinhaRetacao[] = [];
-  parecer_retacao: any = null;
+  modalDadosLaudoRetracao = false;
+  linhasRetracao: LinhaRetracao[] = [];
+  parecer_retracao: any = null;
 
   modalDadosLaudoElasticidade = false;
   linhasElasticidade: LinhaElasticidade[] = [];
@@ -350,14 +356,14 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
     superficial: any[];
     flexao: any[];
     compressao: any[];
-    retacao: any[];
+    retracao: any[];
     elasticidade: any[];
   } = {
     substrato: [],
     superficial: [],
     flexao: [],
     compressao: [],
-    retacao: [],
+    retracao: [],
     elasticidade: [],
   };
 
@@ -4942,25 +4948,13 @@ canDeactivate(): boolean | Promise<boolean> {
     return [
       { label: 'Determinação da Resistência Potencial de Aderência à Tração ao Substrato - Mpa', icon: 'pi pi-eye', command: () => this.abrirModalSubstrato(analise) },
       { label: 'Determinação da Resistência Potencial de Aderência à Tração Superficial', icon: 'pi pi-eye', command: () => this.abrirModalSuperficial(analise) },
-      { label: 'Determinação da Variação Dimencional Linear (Retação/Expansão)', icon: 'pi pi-eye', command: () => this.abrirModalRetacao(analise) },
+      { label: 'Determinação da Variação Dimencional Linear (Retração/Expansão)', icon: 'pi pi-eye', command: () => this.abrirModalRetracao(analise) },
       { label: 'Módulo de Elasticidade Dinâmico', icon: 'pi pi-eye', command: () => this.abrirModalElasticidade(analise) },
-      { label: 'Flexão', icon: 'pi pi-eye', command: () => this.abrirModalFlexao(analise) },
-      { label: 'Compressão', icon: 'pi pi-eye', command: () => this.abrirModalCompressao(analise) },
-      { label: 'Determinação do Coeficiente de Absorção de Água por Capilaridade', icon: 'pi pi-eye' },
+      // { label: 'Carga de Ruptura à Flexão', icon: 'pi pi-eye', command: () => this.abrirModalFlexao(analise) },
+      // { label: 'Carga de Ruptura à Compressão', icon: 'pi pi-eye', command: () => this.abrirModalCompressao(analise) },
+      // { label: 'Determinação do Coeficiente de Absorção de Água por Capilaridade GRÁFICO', icon: 'pi pi-eye' },
     ];
   }
-
-  getAnaliseParecer(id: any){
-     this.analiseService.getAnaliseById(id).subscribe
-    (
-      (analise) => {
-        console.log('dentro',analise);
-        console.log('dentro_parecer',analise.parecer);
-        return analise.parecer;
-      },
-    );
-  }
-
 
   abrirModalSubstrato(analise: any){
 
@@ -4983,8 +4977,8 @@ canDeactivate(): boolean | Promise<boolean> {
           colarPastilha: item.rupturas?.colarPastilha ?? null
         }
       }));
-    }else if (analise?.parecer?.substrato && Array.isArray(analise.parecer.substrato)) {
-      this.linhasSubstrato = analise.parecer.substrato.map((item: any, index: number) => ({
+    }else if (analise?.substrato && Array.isArray(analise.substrato)) {
+      this.linhasSubstrato = analise.substrato.map((item: any, index: number) => ({
         numero: item.numero ?? index + 1,
         diametro: item.diametro ?? null,
         area: item.area ?? null,
@@ -5049,29 +5043,23 @@ canDeactivate(): boolean | Promise<boolean> {
     this.modalDadosLaudoSubstrato = true;
   }
   salvarSubstrato(analise: any){
-    let parecer = this.getAnaliseParecer(analise.id);
 
- 
-    console.log('prearfeder', parecer);
     this.parecer_substrato = this.linhasSubstrato;
     this.modalDadosLaudoSubstrato = false;
 
-
-    this.jsonModal.substrato = this.linhasSubstrato;   
-
     const dadosAtualizados: Partial<Analise> = {
-      parecer: this.jsonModal
+      substrato: this.linhasSubstrato
     };
    
-    this.analiseService.editAnaliseSuperficial(analise.id, dadosAtualizados).subscribe({
+    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
       next: () => {
         this.messageService.add({
           severity: 'success',
           summary: 'Sucesso',
-          detail: 'Determinação da resistência potencial de aderência a tração ao substrato salvo com sucesso!'
+          detail: 'Determinação da resistência potencial de aderência a tração ao SUBSTRATO salvo com sucesso!'
         });
         setTimeout(() => {
-        }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+        }, 1000);
       },
       error: (err) => {
         console.error('Login error:', err); 
@@ -5088,13 +5076,6 @@ canDeactivate(): boolean | Promise<boolean> {
         } 
       }
     });
-
-
-
-
-
-
-    
   }
 
 
@@ -5105,8 +5086,6 @@ canDeactivate(): boolean | Promise<boolean> {
         diametro: item.diametro ?? null,
         area: item.area ?? null,
         espessura: item.espessura ?? null,
-        subst: item.subst ?? null,
-        junta: item.junta ?? null,
         carga: item.carga ?? null,
         resist: item.resist ?? null,
         validacao: item.validacao ?? "",
@@ -5118,14 +5097,12 @@ canDeactivate(): boolean | Promise<boolean> {
           colarPastilha: item.rupturas?.colarPastilha ?? null
         }
       }));
-    }else if (analise?.parecer?.superficial && Array.isArray(analise.parecer.superficial)) {
-      this.linhasSuperficial = analise.parecer.superficial.map((item: any, index: number) => ({
+    }else if (analise?.superficial && Array.isArray(analise.superficial)) {
+      this.linhasSuperficial = analise.superficial.map((item: any, index: number) => ({
         numero: item.numero ?? index + 1,
         diametro: item.diametro ?? null,
         area: item.area ?? null,
         espessura: item.espessura ?? null,
-        subst: item.subst ?? null,
-        junta: item.junta ?? null,
         carga: item.carga ?? null,
         resist: item.resist ?? null,
         validacao: item.validacao ?? "",
@@ -5144,8 +5121,6 @@ canDeactivate(): boolean | Promise<boolean> {
           diametro: null,
           area: null,
           espessura: null,
-          subst: null,
-          junta: null,
           carga: null,
           resist: null,
           validacao: "",
@@ -5166,8 +5141,6 @@ canDeactivate(): boolean | Promise<boolean> {
           diametro: null,
           area: null,
           espessura: null,
-          subst: null,
-          junta: null,
           carga: null,
           resist: null,
           validacao: "",
@@ -5186,27 +5159,56 @@ canDeactivate(): boolean | Promise<boolean> {
   salvarSuperficial(analise: any){
     this.parecer_superficial = this.linhasSuperficial;
     this.modalDadosLaudoSuperficial = false;
-    alert('Salvo!');
+
+    const dadosAtualizados: Partial<Analise> = {
+      superficial: this.linhasSuperficial
+    };
+   
+    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Determinação da resistência potencial de aderência a tração SUPERFICIAL salva com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });
   }
 
 
-  abrirModalRetacao(analise: any){
-    if(this.parecer_retacao){
-      this.linhasRetacao = this.parecer_retacao.map((item: any, index: number) => ({
+  abrirModalRetracao(analise: any){
+    if(this.parecer_retracao){
+      this.linhasRetracao = this.parecer_retracao.map((item: any, index: number) => ({
         data: item.data ?? '',
         idade: item.idade ?? null,
         media: item.media ?? null,
         desvio_maximo: item.desvio_maximo ?? null
       }));
-    }else if (analise?.parecer?.retacao && Array.isArray(analise.parecer.retacao)) {
-      this.linhasRetacao = analise.parecer.retacao.map((item: any, index: number) => ({
+    }else if (analise?.retracao && Array.isArray(analise.retracao)) {
+      this.linhasRetracao = analise.retracao.map((item: any, index: number) => ({
         data: item.data ?? '',
         idade: item.idade ?? null,
         media: item.media ?? null,
         desvio_maximo: item.desvio_maximo ?? null
       }));
-      while (this.linhasRetacao.length < 3) {
-        this.linhasRetacao.push({
+      while (this.linhasRetracao.length < 3) {
+        this.linhasRetracao.push({
           data: '',
           idade: null,
           media: null,
@@ -5214,9 +5216,9 @@ canDeactivate(): boolean | Promise<boolean> {
         });
       }
     } else {
-      this.linhasRetacao = [];
+      this.linhasRetracao = [];
       for (let i = 1; i <= 3; i++) {
-        this.linhasRetacao.push({
+        this.linhasRetracao.push({
           data: '',
           idade: null,
           media: null,
@@ -5224,12 +5226,41 @@ canDeactivate(): boolean | Promise<boolean> {
         });
       }
     }
-    this.modalDadosLaudoRetacao = true;
+    this.modalDadosLaudoRetracao = true;
   }
-  salvarRetacao(analise: any){
-    this.parecer_retacao = this.linhasRetacao;
-    this.modalDadosLaudoRetacao = false;
-    alert('Salvo!');
+  salvarRetracao(analise: any){
+    this.parecer_retracao = this.linhasRetracao;
+    this.modalDadosLaudoRetracao = false;
+
+    const dadosAtualizados: Partial<Analise> = {
+      retracao: this.linhasRetracao
+    };
+   
+    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Determinação da Variação Dimencional Linear (Retração/Expansão) salva com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });
   }
 
 
@@ -5240,8 +5271,8 @@ canDeactivate(): boolean | Promise<boolean> {
         media: item.media ?? null,
         desvio_padrao: item.desvio_padrao ?? null
       }));
-    }else if (analise?.parecer?.elasticidade && Array.isArray(analise.parecer.elasticidade)) {
-      this.linhasElasticidade = analise.parecer.elasticidade.map((item: any, index: number) => ({
+    }else if (analise?.elasticidade && Array.isArray(analise.elasticidade)) {
+      this.linhasElasticidade = analise.elasticidade.map((item: any, index: number) => ({
         individual: item.individual ?? null,
         media: item.media ?? null,
         desvio_padrao: item.desvio_padrao ?? null
@@ -5268,7 +5299,36 @@ canDeactivate(): boolean | Promise<boolean> {
   salvarElasticidade(analise: any){
     this.parecer_elasticidade = this.linhasElasticidade;
     this.modalDadosLaudoElasticidade = false;
-    alert('Salvo!');
+
+    const dadosAtualizados: Partial<Analise> = {
+      elasticidade: this.linhasElasticidade
+    };
+   
+    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Módulo de Elasticidade Dinâmico salvo com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });
   }
 
 
@@ -5281,8 +5341,8 @@ canDeactivate(): boolean | Promise<boolean> {
         media_mpa: item.media_mpa ?? null,
         tracao_flexao: item.tracao_flexao ?? null
       }));
-    }else if (analise?.parecer?.flexao && Array.isArray(analise.parecer.flexao)) {
-      this.linhasFlexao = analise.parecer.flexao.map((item: any, index: number) => ({
+    }else if (analise?.flexao && Array.isArray(analise.flexao)) {
+      this.linhasFlexao = analise.flexao.map((item: any, index: number) => ({
         cp: item.cp ?? index + 1,
         flexao_n: item.flexao_n ?? null,
         flexao_mpa: item.flexao_mpa ?? null,
@@ -5316,7 +5376,36 @@ canDeactivate(): boolean | Promise<boolean> {
   salvarFlexao(analise: any){
     this.parecer_flexao = this.linhasFlexao;
     this.modalDadosLaudoFlexao = false;
-    alert('Salvo!');
+
+    const dadosAtualizados: Partial<Analise> = {
+      flexao: this.linhasFlexao
+    };
+   
+    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Carga de Ruptura a Flexão salva com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });
   }
 
 
@@ -5329,8 +5418,8 @@ canDeactivate(): boolean | Promise<boolean> {
         media_mpa: item.media_mpa ?? null,
         tracao_compressao: item.tracao_compressao ?? null
       }));
-    }else if (analise?.parecer?.compressao && Array.isArray(analise.parecer.compressao)) {
-      this.linhasCompressao = analise.parecer.compressao.map((item: any, index: number) => ({
+    }else if (analise?.compressao && Array.isArray(analise.compressao)) {
+      this.linhasCompressao = analise.parecer.map((item: any, index: number) => ({
         cp: item.cp ?? index + 1,
         compressao_n: item.compressao_n ?? null,
         compressao_mpa: item.compressao_mpa ?? null,
@@ -5365,6 +5454,49 @@ canDeactivate(): boolean | Promise<boolean> {
 
     this.parecer_compressao = this.linhasCompressao;
     this.modalDadosLaudoCompressao = false;
-    alert('Salvo!');
+
+    const dadosAtualizados: Partial<Analise> = {
+      compressao: this.linhasCompressao
+    };
+   
+    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Carga de Ruptura a Compressão salva com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });
   }
+
+
+  atualizarArea(numero: any) {
+    const diametro = Number(numero.diametro);
+
+    if (!isNaN(diametro) && diametro > 0) {
+      const raio = diametro / 2;
+      const area = 3.14 * Math.pow(raio, 2);
+      numero.area = parseFloat(area.toFixed(2));
+    } else {
+      numero.area = null;
+    }
+  }
+
 }
