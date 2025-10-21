@@ -1,9 +1,9 @@
-import { ChangeDetectorRef, Component, OnInit, OnDestroy, HostListener, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy, HostListener, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CanComponentDeactivate } from '../../../guards/can-deactivate.guard';
 import { AnaliseService } from '../../../services/controleQualidade/analise.service';
 import { CommonModule, DatePipe, formatDate } from '@angular/common';
-import { ReactiveFormsModule, FormsModule, FormGroup } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
@@ -31,7 +31,7 @@ import { StepperModule } from 'primeng/stepper';
 import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { ColaboradorService } from '../../../services/avaliacoesServices/colaboradores/registercolaborador.service';
-import { evaluate, create, all } from 'mathjs';
+import { evaluate, create, all, to } from 'mathjs';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { ProjecaoService } from '../../../services/baseOrcamentariaServices/dre/projecao.service';
@@ -49,6 +49,17 @@ import { PopoverModule } from 'primeng/popover';
 import { HttpClient } from '@angular/common/http';
 import { TooltipModule } from 'primeng/tooltip';
 import { HotTableModule } from '@handsontable/angular-wrapper';
+//
+import { Chart, ScatterController, LinearScale, PointElement, LineElement, Tooltip, Legend, plugins } from 'chart.js';
+import { linearRegression, linearRegressionLine, rSquared } from 'simple-statistics';
+import AnnotationPlugin from 'chartjs-plugin-annotation';
+
+Chart.register(ScatterController, LinearScale, PointElement, LineElement, Tooltip, Legend, AnnotationPlugin);
+
+interface DataPoint {
+  x: number;
+  y: number;
+}
 
 interface LinhaSubstrato {
   numero: number;
@@ -117,11 +128,6 @@ interface LinhaCompressao {
   tracao_compressao: number | null;
 }
 
-
-
-
-
-
 export interface Analise {
   id: number;
   data: string;
@@ -139,7 +145,14 @@ interface FileWithInfo {
 @Component({
   selector: 'app-analise',
   imports:[
-    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule, CardModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule,SpeedDialModule, AvatarModule, PopoverModule, BadgeModule, TooltipModule,HotTableModule
+    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule, 
+    CardModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule,
+    FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,
+    ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,
+    InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, 
+    StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule,
+    SpeedDialModule, AvatarModule, PopoverModule, BadgeModule, TooltipModule,HotTableModule,
+
   ],
   animations: [
     trigger('efeitoFade', [
@@ -190,28 +203,13 @@ interface FileWithInfo {
   templateUrl: './analise.component.html',
   styleUrl: './analise.component.scss'
 })
-export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactivate {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
+export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivate {  
   planosAnalise: Plano[] = [];
   produtosAmostra: ProdutoAmostra[] = [];
   materiais: Produto[] = [];
   ensaioSelecionado: any;
   modalOrdemVariaveisVisible: any;
+  dataForm!: FormGroup;
   analise: any;
   idAnalise: any;
   analisesSimplificadas: any[] = [];
@@ -307,20 +305,6 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
   @ViewChild('dt1') dt1!: Table;
   garantias: any;
   modalGarantiasVisible: any;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   modalDadosLaudoSubstrato = false;
   linhasSubstrato: LinhaSubstrato[] = [];
   parecer_substrato: any = null;
@@ -361,19 +345,32 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
     elasticidade: [],
   };
 
-
-
-
-
-
-
-
-
   menuArgamassa: any[] = [];
 
-
-
-
+  // GRAFICO
+  @ViewChild('meuGrafico') chartRef!: ElementRef<HTMLCanvasElement>;
+  chartInstance: any;
+  awCalculado: number | null = null;
+  r2Calculado: number | null = null;
+  modalGrafico: boolean = false;
+  awLaboratorioCalculado: number | null = null;
+  bIntercepto: number | null = null;
+  
+  // Controle para salvamento de imagem do gráfico
+  salvandoImagemGrafico: boolean = false;
+  
+  // Dados Experimentais filtrados para a fase linear
+ dadosIniciais: { raizT: number | string | null, deltaMt: number | string | null, tLabel: string }[] = [
+    { raizT: 0.29, deltaMt: 2.30, tLabel: '5min' },
+    { raizT: 0.57, deltaMt: 4.10, tLabel: '20min' },
+    { raizT: 1.00, deltaMt: 6.85, tLabel: '1h' },
+    { raizT: 1.41, deltaMt: 8.35, tLabel: '2h' },
+    { raizT: 1.41, deltaMt: 12.00, tLabel: '4h' },
+    { raizT: '', deltaMt: '', tLabel: '6h' },
+    { raizT: '', deltaMt: '', tLabel: '8h' },
+    { raizT: '', deltaMt: '', tLabel: '22:30h' },
+    { raizT: '', deltaMt: '', tLabel: '24h' },
+  ];
 
   constructor(
     private route: ActivatedRoute,
@@ -389,7 +386,8 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
     private ensaioService: EnsaioService,
     private cd: ChangeDetectorRef,
     private datePipe: DatePipe,
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private fb: FormBuilder
   ) {
     // Configurar funções bitwise seguras globalmente
     this.configurarFuncoesBitwiseSeguras();
@@ -411,7 +409,517 @@ export class AnaliseComponent implements OnInit, OnDestroy, CanComponentDeactiva
     //AQUI NÃO FUNCIONOU______na linha 454 funcionou
     // this.menuArgamassa = this.getItensArgamassa(this.analise);
 
+    // Inicializar o formulário de dados do gráfico
+    this.createForm();
   }
+
+//==============================GRAFICO====================================
+exibirGrafico(): void {
+    this.modalGrafico = true;
+    this.calculateAndDrawRegression();
+  }
+createForm() {
+    this.dataForm = this.fb.group({
+      dataRows: this.fb.array([]) // O FormArray que conterá as linhas de input
+    });
+    // Popula o FormArray com os dados iniciais
+    this.dadosIniciais.forEach(data => this.addDataRow(data));
+
+    // Monitora as mudanças no formulário para recalcular o gráfico
+    this.dataForm.valueChanges.subscribe(() => {
+        // Atraso para evitar recalculo excessivo durante a digitação
+        setTimeout(() => this.calculateAndDrawRegression(), 100); 
+    });
+  }
+ 
+get dataRows(): FormArray {
+    if (!this.dataForm) {
+      return this.fb.array([]);
+    }
+    return this.dataForm.get('dataRows') as FormArray;
+  }  
+
+// Cria um FormGroup para uma nova linha de dados
+  private createDataRowGroup(data: { raizT: number | string | null, deltaMt: number | string | null, tLabel: string }): FormGroup {
+    const parseFlex = (v: number | string | null): number | null => {
+      if (v === null || v === '') return null;
+      if (typeof v === 'number') return v;
+      if (typeof v === 'string') {
+        const s = v.replace(',', '.').trim();
+        const n = Number(s);
+        return isNaN(n) ? null : n;
+      }
+      return null;
+    };
+    const raiz = parseFlex(data.raizT);
+    const delta = parseFlex(data.deltaMt);
+    return this.fb.group({
+      // valores inputáveis raizT e deltaMt
+      raizT: [raiz, [Validators.required, Validators.min(0)]], 
+      deltaMt: [delta, [Validators.required, Validators.min(0)]],
+      tLabel: [data.tLabel] 
+    });
+  }
+  // Adiciona uma nova linha
+  addDataRow(data?: { raizT: number | string | null, deltaMt: number | string | null, tLabel: string }) {
+    const defaultData = data || { 
+      raizT: 0, 
+      deltaMt: 0, 
+      tLabel: `Extra ${this.dataRows.length - this.dadosIniciais.length + 1}` 
+    };
+    this.dataRows.push(this.createDataRowGroup(defaultData));
+  }
+  removeDataRow(index: number) {
+    // Adiciona uma trava para não permitir remover as linhas de dados obrigatórios
+    if (index >= this.dadosIniciais.length) { 
+        this.dataRows.removeAt(index);
+    } else {
+        alert('Não é possível remover dados de ensaios obrigatórios.');
+    }
+  }
+  // Função para Regressão Forçada Pela Origem (b=0)
+calculateRegressionThroughOrigin(points: [number, number][]): number {
+    let sumXY = 0;
+    let sumXX = 0;
+    for (const p of points) {
+        sumXY += p[0] * p[1]; // Soma de x * y
+        sumXX += p[0] * p[0]; // Soma de x * x
+    }
+    if (sumXX === 0) {
+        return 0; // Evita divisão por zero
+    }
+    return sumXY / sumXX; // m = (Soma XY) / (Soma X²)
+}
+
+calculateAndDrawRegression(): void {
+    const rawData = this.dataRows.value;
+    const AW_INTERCEPTO_FIXO = 0.8807; // Mantemos a constante para o cálculo final do Aw Lab
+    
+    // 1. Extração de Dados
+    const todosOsPontos: DataPoint[] = rawData
+        .filter((row: any) => parseFloat(row.raizT) > 0 && parseFloat(row.deltaMt) >= 0)
+        .map((row: any) => ({ x: parseFloat(row.raizT), y: parseFloat(row.deltaMt) }));
+
+    if (todosOsPontos.length < 2) { 
+        // Lógica de limpeza em caso de erro/poucos dados
+        this.awCalculado = null;
+        this.bIntercepto = null;
+        this.r2Calculado = null;
+        this.awLaboratorioCalculado = null;
+        if (this.chartInstance) this.chartInstance.destroy();
+        this.renderChart(todosOsPontos, []);
+        return;
+    }
+
+    // 2. DEFINIR DADOS PARA REGRESSÃO
+    // Usa todos os pontos exceto o 5min para obter a linha 15.44x
+    const dadosParaRegressao = todosOsPontos;
+    const dataForRegression: [number, number][] = dadosParaRegressao.map(p => [p.x, p.y]);
+    
+    // --- 3. CÁLCULO ESTATÍSTICO (REGRESSÃO NORMAL - LINHA DE TENDÊNCIA) ---
+    // Esta regressão calcula o melhor 'm' (15.44) e o melhor 'b' (-0.337)
+    const regression = linearRegression(dataForRegression);
+    const lineFunction = linearRegressionLine(regression);
+    
+    // VARIÁVEIS PARA A ANOTAÇÃO DO GRÁFICO:
+    this.awCalculado = regression.m;  
+    this.bIntercepto = regression.b; 
+
+    const interceptoB = regression.b; 
+    this.r2Calculado = rSquared(dataForRegression, lineFunction);
+
+    // --- 4. CÁLCULO Aw PELA FÓRMULA DO EXCEL/LABORATÓRIO (VALOR FINAL) ---
+    
+    const pontoMaximo = todosOsPontos.reduce((max, p) => {
+        if (p.x > max.x) return p;
+        if (p.x === max.x && p.y > max.y) return p;
+        return max;
+    }, todosOsPontos[0]); 
+    
+    const deltaM_max = pontoMaximo.y;
+    const raizT_max = pontoMaximo.x;     
+  
+    // Fórmula final do laboratório: Aw = (Máximo Delta M - Coeficiente Fixo) / Máxima Raiz t
+    if (raizT_max > 0) {
+        this.awLaboratorioCalculado = (deltaM_max - AW_INTERCEPTO_FIXO) / raizT_max; 
+    } else {
+        this.awLaboratorioCalculado = 0;
+    }
+    
+    // 5. Gerar pontos da Linha (usa a Regressão Normal para desenhar)
+    const xMin = 0; 
+    const xMax = raizT_max + 0.1;
+
+    const regressionLineData = [
+        // A linha começa no intercepto normal (-0.337)
+        { x: xMin, y: interceptoB }, 
+        { x: xMax, y: lineFunction(xMax) } 
+    ];
+
+    // 6. Renderizar o Gráfico
+    this.renderChart(todosOsPontos, regressionLineData);
+}
+
+renderChart(todosOsPontos: DataPoint[], regressionLineData: DataPoint[]) {
+    const ctx = this.chartRef.nativeElement.getContext('2d');
+    
+    // 1. DADOS PROTEGIDOS PARA FORMATAÇÃO
+    const m = this.awLaboratorioCalculado ?? 0; 
+    const b = this.bIntercepto ?? 0; 
+    let equacaoFormatada: string;
+
+    // Garante que o cálculo Aw da Inclinação seja válido
+    if (this.awLaboratorioCalculado !== null && !isNaN(this.awLaboratorioCalculado)) {
+        equacaoFormatada = `f(x) = ${m.toFixed(8)}x ${b >= 0 ? '+' : '-'} ${Math.abs(b).toFixed(4)}`;
+    } else {
+        equacaoFormatada = 'f(x) = Cálculo Indisponível';
+    }
+    
+    // 2. CÁLCULO DE POSICIONAMENTO PROTEGIDO
+    let xPos = 0.5; // Valor padrão seguro
+    let yPos = 25.0; // Valor padrão seguro (topo do gráfico)
+    let regressionDataLabel = 'Linha de Tendência Linear'; // Rótulo padrão
+
+    if (todosOsPontos.length >= 2) {
+        const primeiroPonto = todosOsPontos[0];
+        const ultimoPonto = todosOsPontos[todosOsPontos.length - 1];
+
+        // Centraliza o rótulo da anotação entre o primeiro e último ponto
+        xPos = (primeiroPonto.x + ultimoPonto.x) / 6;
+        yPos = ultimoPonto.y * 0.90; // 90% do Delta M máximo (para posicionar no topo)
+    }
+
+    // Rótulo da linha de tendência (Usamos o Aw Lab para exibir o resultado final)
+    if (this.awLaboratorioCalculado !== null && this.awLaboratorioCalculado !== undefined) {
+        regressionDataLabel = `Linha de Tendência Linear (Aw=${this.awLaboratorioCalculado.toFixed(2)})`;
+    }
+
+    // 3. DEFINIR O OBJETO DE CONFIGURAÇÃO DO GRÁFICO
+    const config: any = { 
+        type: 'scatter',
+        data: {
+            datasets: [
+                {
+                    label: 'Pontos Experimentais',
+                    data: todosOsPontos, 
+                    backgroundColor: 'rgba(54, 162, 235, 1)',
+                    pointRadius: 5,
+                    pointStyle: 'circle'
+                },
+                // Dataset 2: Linha de Regressão
+                {
+                    label: regressionDataLabel,
+                    data: regressionLineData,
+                    type: 'line', 
+                    borderColor: 'red',
+                    borderWidth: 2,
+                    fill: false,
+                    pointRadius: 0,
+                    showLine: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 0 // Desabilita animação para melhor exportação
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            scales: {
+                 x: {
+                     type: 'linear', 
+                     title: { display: true, text: 'Raiz t (h¹/²)' },
+                     grid: {
+                         display: true,
+                         color: 'rgba(0, 0, 0, 0.1)',
+                         lineWidth: 1,
+                         drawOnChartArea: true,
+                         drawTicks: true
+                     },
+                     ticks: {
+                         display: true,
+                         color: '#666'
+                     }
+                 },
+                 y: {
+                     type: 'linear', 
+                     title: { display: true, text: 'Δm (kg/m²)' }, 
+                     beginAtZero: true,
+                     grid: {
+                         display: true,
+                         color: 'rgba(0, 0, 0, 0.1)',
+                         lineWidth: 1,
+                         drawOnChartArea: true,
+                         drawTicks: true
+                     },
+                     ticks: {
+                         display: true,
+                         color: '#666'
+                     }
+                 }
+             },
+            plugins: {
+                legend:{
+                  display:true,
+                  position: 'top'
+                },
+                tooltip:{
+                  mode: 'index',
+                  intersect: false
+                },
+                annotation: {
+                    annotations: {
+                        formulaLabel: {
+                            type: 'label',
+                            xValue: xPos, 
+                            yValue: yPos, 
+                            content: equacaoFormatada,
+                            font: { size: 14, weight: 'bold' },
+                            color: 'green',
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            borderRadius: 6,
+                            borderWidth: 1,
+                            borderColor: 'green',
+                            padding: 8
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    // 4. ATUALIZAR/CRIAR GRÁFICO
+    if (this.chartInstance) {
+        this.chartInstance.data = config.data;
+        this.chartInstance.options = config.options;
+        this.chartInstance.update();
+    } else {
+        this.chartInstance = new Chart(ctx!, config);
+    }
+}
+
+/**
+ * Gera uma imagem PNG do gráfico atual e salva no banco de dados
+ */
+gerarESalvarImagemGrafico(): void {
+  if (!this.chartInstance) {
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Aviso',
+      detail: 'Nenhum gráfico disponível para capturar. Por favor, gere o gráfico primeiro.'
+    });
+    return;
+  }
+
+  if (!this.analise?.amostra_detalhes?.id) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Erro',
+      detail: 'Amostra não identificada. Não é possível salvar a imagem.'
+    });
+    return;
+  }
+
+  this.salvandoImagemGrafico = true;
+
+  try {
+    // Gerar imagem JPEG do gráfico
+    const canvas = this.chartRef.nativeElement;
+    
+    // Forçar re-renderização para garantir que as linhas de grade estejam visíveis
+    if (this.chartInstance) {
+      this.chartInstance.update('none'); // Update sem animação
+    }
+    
+    // Aguardar a renderização completa do gráfico incluindo linhas de grade
+    setTimeout(() => {
+      try {
+        // Converter canvas para blob PNG
+        canvas.toBlob((blob: Blob | null) => {
+          if (!blob) {
+            this.salvandoImagemGrafico = false;
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: 'Falha ao gerar imagem do gráfico.'
+            });
+            return;
+          }
+
+          // Criar FormData para envio
+          const formData = new FormData();
+          
+          // Gerar nome descritivo para o arquivo
+          const timestamp = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+          const nomeArquivo = `grafico-capilaridade-${timestamp}.png`;
+          
+          // Adicionar arquivo ao FormData
+          formData.append('images', blob, nomeArquivo);
+          
+          // Adicionar descrição detalhada
+          const descricao = this.gerarDescricaoGrafico();
+          formData.append('descricoes', descricao);
+
+          // Enviar para o servidor
+          this.amostraService.uploadImagens(this.analise.amostra_detalhes.id, formData).subscribe({
+            next: (response) => {
+              this.salvandoImagemGrafico = false;
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Sucesso',
+                detail: 'Imagem do gráfico salva com sucesso!'
+              });
+              
+              // Atualizar lista de imagens se estiver visualizando
+              if (this.modalImagensVisible && this.amostraImagensSelecionada) {
+                this.carregarImagensAmostra(this.amostraImagensSelecionada.id);
+              }
+            },
+            error: (error) => {
+              this.salvandoImagemGrafico = false;
+              console.error('Erro ao salvar imagem do gráfico:', error);
+              
+              if (error.status === 401) {
+                this.messageService.add({
+                  severity: 'error',
+                  summary: 'Erro de Autenticação',
+                  detail: 'Sessão expirada. Faça login novamente.'
+                });
+              } else if (error.status === 413) {
+                this.messageService.add({
+                  severity: 'error',
+                  summary: 'Arquivo muito grande',
+                  detail: 'A imagem gerada é muito grande. Tente reduzir a resolução.'
+                });
+              } else {
+                this.messageService.add({
+                  severity: 'error',
+                  summary: 'Erro',
+                  detail: 'Falha ao salvar imagem do gráfico. Tente novamente.'
+                });
+              }
+            }
+          });
+        }, 'image/png', 0.95); // Qualidade 95% para PNG
+      } catch (error) {
+        this.salvandoImagemGrafico = false;
+        console.error('Erro ao converter gráfico para imagem:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Falha ao processar imagem do gráfico.'
+        });
+      }
+    }, 800); // Aguardar 800ms para garantir renderização completa das linhas de grade
+    
+  } catch (error) {
+    this.salvandoImagemGrafico = false;
+    console.error('Erro geral ao gerar imagem:', error);
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Erro',
+      detail: 'Erro inesperado ao gerar imagem do gráfico.'
+    });
+  }
+}
+
+/**
+ * Gera descrição detalhada do gráfico para salvar junto com a imagem
+ */
+private gerarDescricaoGrafico(): string {
+  const dados = this.dataRows.value || [];
+  const pontosValidos = dados.filter((row: any) => 
+    parseFloat(row.raizT) > 0 && parseFloat(row.deltaMt) >= 0
+  );
+
+  let descricao = `Gráfico de Absorção de Água por Capilaridade\n`;
+  descricao += `Data de geração: ${new Date().toLocaleString('pt-BR')}\n`;
+  descricao += `Amostra: ${this.analise?.amostra_detalhes?.numero || 'N/A'}\n`;
+  descricao += `Formato: PNG (Qualidade 95%)\n\n`;
+  
+  // Informações dos resultados calculados
+  if (this.awLaboratorioCalculado !== null) {
+    descricao += `Coeficiente Aw (Laboratório): ${this.awLaboratorioCalculado.toFixed(4)}\n`;
+  }
+  if (this.awCalculado !== null) {
+    descricao += `Inclinação da linha: ${this.awCalculado.toFixed(4)}\n`;
+  }
+  if (this.bIntercepto !== null) {
+    descricao += `Intercepto: ${this.bIntercepto.toFixed(4)}\n`;
+  }
+  if (this.r2Calculado !== null) {
+    descricao += `R²: ${this.r2Calculado.toFixed(4)}\n`;
+  }
+  
+  descricao += `\nPontos experimentais utilizados: ${pontosValidos.length}\n`;
+  
+  // Adicionar dados dos pontos se não for muitos
+  if (pontosValidos.length <= 10) {
+    descricao += `\nDados experimentais:\n`;
+    pontosValidos.forEach((ponto: any, index: number) => {
+      descricao += `${ponto.tLabel}: Raiz t = ${ponto.raizT}, Δm = ${ponto.deltaMt}\n`;
+    });
+  }
+
+  return descricao;
+}
+
+/**
+ * Download direto da imagem do gráfico (sem salvar no banco)
+ */
+downloadImagemGrafico(): void {
+  if (!this.chartInstance) {
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Aviso',
+      detail: 'Nenhum gráfico disponível para download.'
+    });
+    return;
+  }
+
+  try {
+    const canvas = this.chartRef.nativeElement;
+    const timestamp = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+    const nomeArquivo = `grafico-capilaridade-${timestamp}.png`;
+
+    // Forçar re-renderização para garantir linhas de grade visíveis
+    if (this.chartInstance) {
+      this.chartInstance.update('none');
+    }
+
+    // Aguardar renderização e criar link de download
+    setTimeout(() => {
+      const link = document.createElement('a');
+      link.download = nomeArquivo;
+      link.href = canvas.toDataURL('image/png', 0.95);
+      
+      // Triggerar download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Download iniciado',
+        detail: 'Imagem do gráfico baixada com sucesso!'
+      });
+    }, 200); // Pequeno delay para garantir renderização
+  } catch (error) {
+    console.error('Erro ao fazer download da imagem:', error);
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Erro',
+      detail: 'Falha ao baixar imagem do gráfico.'
+    });
+  }
+}
+
+
+//===========================================================================
   getDigitadorInfo(): void {
   this.colaboradorService.getColaboradorInfo().subscribe(
     data => {
@@ -4947,6 +5455,7 @@ canDeactivate(): boolean | Promise<boolean> {
       { label: 'Flexão', icon: 'pi pi-eye', command: () => this.abrirModalFlexao(analise) },
       { label: 'Compressão', icon: 'pi pi-eye', command: () => this.abrirModalCompressao(analise) },
       { label: 'Determinação do Coeficiente de Absorção de Água por Capilaridade', icon: 'pi pi-eye' },
+      { label: 'Gráfico Capilaridade', icon: 'pi pi-eye', command: () => this.exibirGrafico() },
     ];
   }
 
@@ -5087,14 +5596,7 @@ canDeactivate(): boolean | Promise<boolean> {
           this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
         } 
       }
-    });
-
-
-
-
-
-
-    
+    });    
   }
 
 
@@ -5367,4 +5869,58 @@ canDeactivate(): boolean | Promise<boolean> {
     this.modalDadosLaudoCompressao = false;
     alert('Salvo!');
   }
+
+  // Getters para resolver erros de template
+  get detalhesDialogo(): any {
+    return this.analise || {};
+  }
+
+  get planoDetails(): any {
+    return this.analisesSimplificadas?.[0]?.planoDetalhes || [];
+  }
+
+  get detalhesInternalAttached(): any {
+    return this.analise?.detalhes || {};
+  }
+
+  get detalhesChangeInternalAttached(): any {
+    return this.analise?.mudancas || {};
+  }
+
+  get detalhesCardQualifyComponent(): any {
+    return this.analise?.qualificacao || {};
+  }
+
+  get detalhesInlineView(): any {
+    return this.analise?.visualizacao || {};
+  }
+
+  get detalhesChangeInlineView(): any {
+    return this.analise?.mudancas_visualizacao || {};
+  }
+
+  get detalhesInlineChange(): any {
+    return this.analise?.mudancas_inline || {};
+  }
+
+  get detalhesDialogueShowContent(): any {
+    return this.analise?.conteudo || {};
+  }
+
+  get detalhesExecuteTemplate(): any {
+    return this.analise?.template || {};
+  }
+
+  get detalhesChangeDialogueShowContent(): any {
+    return this.analise?.mudancas_conteudo || {};
+  }
+
+  get detalhesChangeExecuteTemplate(): any {
+    return this.analise?.mudancas_template || {};
+  }
+
+  get welcomeComponentDialog(): any {
+    return { visible: false };
+  }
+
 }

@@ -141,6 +141,7 @@ export class EnsaioComponent implements OnInit{
    { label: 'Condicional', value:'Condicional' }, 
    { label: 'Delimitador', value:'Delimitador' }, 
    { label: 'Operador Lógico', value:'Operador Lógico' },
+   { label: 'Função Matemática', value:'FuncaoMatematica' },
    { label: 'Valor', value:'Valor' },
    { label: 'Função Data', value:'Funcao Data' }
   ];
@@ -197,6 +198,43 @@ export class EnsaioComponent implements OnInit{
     { label: '{', value: '{' },
     { label: '}', value: '}' },
     { label: ',', value: ',' },
+  ];
+
+  funcoesMatematicas = [
+    // Funções básicas
+    { label: 'Raiz Quadrada', value: 'sqrt' },
+    { label: 'Potência (x^y)', value: 'pow' },
+    { label: 'Logaritmo Natural', value: 'log' },
+    { label: 'Logaritmo Base 10', value: 'log10' },
+    { label: 'Exponencial', value: 'exp' },
+    
+    // Funções trigonométricas
+    { label: 'Seno', value: 'sin' },
+    { label: 'Cosseno', value: 'cos' },
+    { label: 'Tangente', value: 'tan' },
+    { label: 'Arco Seno', value: 'asin' },
+    { label: 'Arco Cosseno', value: 'acos' },
+    { label: 'Arco Tangente', value: 'atan' },
+    
+    // Funções de arredondamento
+    { label: 'Arredondar', value: 'round' },
+    { label: 'Piso (menor inteiro)', value: 'floor' },
+    { label: 'Teto (maior inteiro)', value: 'ceil' },
+    { label: 'Valor Absoluto', value: 'abs' },
+    
+    // Funções estatísticas
+    { label: 'Média', value: 'mean' },
+    { label: 'Mediana', value: 'median' },
+    { label: 'Modo', value: 'mode' },
+    { label: 'Desvio Padrão', value: 'std' },
+    { label: 'Variância', value: 'var' },
+    { label: 'Mínimo', value: 'min' },
+    { label: 'Máximo', value: 'max' },
+    { label: 'Soma', value: 'sum' },
+    
+    // Constantes matemáticas
+    { label: 'PI (π)', value: 'pi' },
+    { label: 'Euler (e)', value: 'e' },
   ];
 
   tipo_garantia = [
@@ -266,6 +304,11 @@ export class EnsaioComponent implements OnInit{
     this.loadEnsaios();
     this.loadTiposEnsaio();
     this.loadVariaveis();
+    
+    // Para teste - adiciona método global para depuração
+    (window as any).testarExpressaoMedia = () => {
+      this.testarExpressaoMedia();
+    };
   }
 
   async gerarEnsaioTecnico(): Promise<string> {
@@ -390,6 +433,7 @@ getValoresPorTipo(tipo: string): any[] {
     case 'Condicional': return this.condicionais;
     case 'Delimitador': return this.delimitadores;
     case 'Operador Lógico': return this.operadoresLogicos;
+    case 'FuncaoMatematica': return this.funcoesMatematicas;
     case 'Valor': return [];
     case 'Funcao Data': return this.funcoesData;
     default: return [];
@@ -514,16 +558,30 @@ avaliarExpressao() {
 
   this.gerarSafeVarsPorTecnica();
   
-  // Combine variáveis normais com funções de data
+  // Combine variáveis normais com funções de data e constantes matemáticas
   const scope = {
     ...this.safeVars,
-    ...this.funcoesDatas
+    ...this.funcoesDatas,
+    pi: Math.PI,
+    e: Math.E
   };
 
   try {
-    const resultado = evaluate(expressao, scope);
+    // Processar a expressão para garantir que arrays funcionem corretamente
+    let processedExpr = expressao;
+    
+    // Normalizar espaços em arrays
+    processedExpr = processedExpr.replace(/\[\s*([^\]]+)\s*\]/g, (match: string, content: string) => {
+      const items = content.split(',').map((item: string) => item.trim()).join(',');
+      return `[${items}]`;
+    });
+
+    const resultado = evaluate(processedExpr, scope);
     return resultado;
   } catch (e) {
+    console.error('Erro na avaliação da expressão:', e);
+    console.log('Expressão:', expressao);
+    console.log('Scope:', scope);
     this.messageService.add({
       severity: 'error',
       summary: 'Erro ao calcular',
@@ -549,13 +607,28 @@ editarFormula(){
 // O método converterFuncaoParaBlocos agora trata nomes tecnicos diretamente
 converterFuncaoParaBlocos(funcao: string): { tipo: string, valor: string }[] {
   const tokens = funcao.split(' ');
+  
+  // Lista de funções matemáticas
+  const mathFunctions = [
+    'sqrt', 'pow', 'log', 'log10', 'exp', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan',
+    'round', 'floor', 'ceil', 'abs', 'mean', 'median', 'mode', 'std', 'var', 'min', 'max', 'sum'
+  ];
+  
+  // Constantes matemáticas
+  const mathConstants = ['pi', 'e'];
+  
   return tokens.map(token => {
-    if (["+", "-", "*", "/"].includes(token)) {
+    if (["+", "-", "*", "/", "^"].includes(token)) {
       return { tipo: 'Operador', valor: token };
-    }else if(["(", ")", ","].includes(token)) {
+    } else if(['&&','||','!','==','!=','<','>','<=','>='].includes(token)) {
+      return { tipo: 'Operador Lógico', valor: token };
+    } else if(['?', ':'].includes(token)) {
+      return { tipo: 'Condicional', valor: token };
+    } else if(["(", ")", ",", "[", "]", "{", "}"].includes(token)) {
       return { tipo: 'Delimitador', valor: token };
-    } 
-    else if (!isNaN(Number(token))) {
+    } else if (mathFunctions.includes(token) || mathConstants.includes(token)) {
+      return { tipo: 'FuncaoMatematica', valor: token };
+    } else if (!isNaN(Number(token))) {
       return { tipo: 'Valor', valor: token };
     } else if (Object.keys(this.funcoesDatas).includes(token)) {
       return { tipo: 'Funcao Data', valor: token };
@@ -572,19 +645,47 @@ validarExpressaoComValores(expr: string): boolean {
     return true; // Permite expressões vazias
   }
 
+  let fakeExpr = '';
+  let scope: any = {};
+
   try {
     this.gerarSafeVarsPorTecnica();
     
     // Criar um escopo de teste com valores fictícios
-    let fakeExpr = expr;
-    const scope: any = { ...this.funcoesDatas };
+    fakeExpr = expr;
+    scope = { 
+      ...this.funcoesDatas,
+      // Adicionar constantes matemáticas
+      pi: Math.PI,
+      e: Math.E
+    };
+    
+    // Substitui referências específicas de ensaios por valores de teste
+    fakeExpr = fakeExpr.replace(/ensaio(\d+)/g, (match, num) => {
+      // Procura o ensaio pelo ID e usa seu valor, ou valor padrão
+      const ensaio = this.ensaios.find((e: any) => e.id == num);
+      let valor = ensaio?.valor || Math.random() * 10 + 5; // valor aleatório entre 5-15 para teste
+      
+      // Para alguns ensaios específicos, usar valores conhecidos
+      if (num === '206') valor = 12.5;
+      if (num === '207') valor = 8.3;
+      if (num === '211') valor = 15.7;
+      
+      return valor.toString();
+    });
+    
+    // Limpa espaços extras em arrays para normalizar
+    fakeExpr = fakeExpr.replace(/\[\s*([^\]]+)\s*\]/g, (match, content) => {
+      const items = content.split(',').map((item: string) => item.trim()).join(',');
+      return `[${items}]`;
+    });
     
     // Substituir variáveis por valores de teste
     this.variaveis.forEach(v => {
       if (v.tecnica) {
         const regex = new RegExp(v.tecnica.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
         // Para variáveis de data, usar timestamp atual
-        const valorTeste = v.tipo === 'data' ? new Date().getTime() : 1;
+        const valorTeste = v.tipo === 'data' ? new Date().getTime() : Math.random() * 10 + 1;
         fakeExpr = fakeExpr.replace(regex, valorTeste.toString());
         scope[v.tecnica] = valorTeste;
       }
@@ -610,33 +711,62 @@ validarExpressaoComValores(expr: string): boolean {
         scope[fallback] = valorTeste;
       }
     });        
+    console.log('Expressão original:', expr);
+    console.log('Expressão processada:', fakeExpr);
+    console.log('Scope disponível:', scope);
+    
     const resultado = evaluate(fakeExpr, scope);
+    
     this.messageService.add({
       severity: 'info',
       summary: 'Expressão válida!',
-      detail: `Expressão testada com sucesso`,
+      detail: `Resultado: ${resultado}`,
       life: 3000
     });
     return true;
   } catch (error) {
     console.error('Erro na validação:', error);
+    console.error('Expressão que falhou:', fakeExpr);
+    console.error('Scope:', scope);
+    
     this.messageService.add({
       severity: 'error',
       summary: 'Expressão inválida!',
-      detail: 'A expressão montada possui erro de sintaxe ou operadores inválidos.',
+      detail: `Erro: ${error}`,
       life: 5000
     });
     return false;
   }
 }
 
-salvarFormula() {
-  const novaExpressao = this.getExpressaoString(); // monta a expressão a partir dos blocos
-  this.registerForm.get('funcao')?.setValue(novaExpressao);
-  this.montarFormulaVisivel = false;
-}
+  testarExpressao() {
+    const expressao = this.getExpressaoString();
+    if (!expressao || expressao.trim() === '') {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Atenção',
+        detail: 'Monte uma expressão primeiro para testar',
+        life: 3000
+      });
+      return;
+    }
+    
+    console.log('Testando expressão:', expressao);
+    this.validarExpressaoComValores(expressao);
+  }
 
-// Cria um método específico para buscar variáveis na expressão
+  // Método para testar a expressão específica que estava dando erro
+  testarExpressaoMedia() {
+    const expressaoTeste = 'mean ( [ ensaio206 , ensaio207 , ensaio211 ] )';
+    console.log('Testando expressão de média específica:', expressaoTeste);
+    this.validarExpressaoComValores(expressaoTeste);
+  }
+
+  salvarFormula() {
+    const novaExpressao = this.getExpressaoString(); // monta a expressão a partir dos blocos
+    this.registerForm.get('funcao')?.setValue(novaExpressao);
+    this.montarFormulaVisivel = false;
+  }// Cria um método específico para buscar variáveis na expressão
 private buscarVariaveisNaExpressao(expressao: string) {  
   if (!expressao || expressao.trim() === '') {
     this.registerForm.get('variavel')?.setValue([]);

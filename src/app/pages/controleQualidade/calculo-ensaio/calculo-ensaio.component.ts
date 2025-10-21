@@ -195,6 +195,7 @@ export class CalculoEnsaioComponent implements OnInit {
    { label: 'Condicional', value:'Condicional' }, 
    { label: 'Delimitador', value:'Delimitador' }, 
    { label: 'Operador Lógico', value:'Operador Lógico' },
+   { label: 'Função Matemática', value:'FuncaoMatematica' },
    { label: 'Valor', value:'Valor' }
   ];
   condicionais = [
@@ -229,6 +230,43 @@ export class CalculoEnsaioComponent implements OnInit {
     { label: 'menor ou igual a', value: '<=' },
     { label: 'maior ou igual a', value: '>=' },
     { label: 'recebe', value: '=' },
+  ];
+
+  funcoesMatematicas = [
+    // Funções básicas
+    { label: 'Raiz Quadrada', value: 'sqrt' },
+    { label: 'Potência (x^y)', value: 'pow' },
+    { label: 'Logaritmo Natural', value: 'log' },
+    { label: 'Logaritmo Base 10', value: 'log10' },
+    { label: 'Exponencial', value: 'exp' },
+    
+    // Funções trigonométricas
+    { label: 'Seno', value: 'sin' },
+    { label: 'Cosseno', value: 'cos' },
+    { label: 'Tangente', value: 'tan' },
+    { label: 'Arco Seno', value: 'asin' },
+    { label: 'Arco Cosseno', value: 'acos' },
+    { label: 'Arco Tangente', value: 'atan' },
+    
+    // Funções de arredondamento
+    { label: 'Arredondar', value: 'round' },
+    { label: 'Piso (menor inteiro)', value: 'floor' },
+    { label: 'Teto (maior inteiro)', value: 'ceil' },
+    { label: 'Valor Absoluto', value: 'abs' },
+    
+    // Funções estatísticas
+    { label: 'Média', value: 'mean' },
+    { label: 'Mediana', value: 'median' },
+    { label: 'Modo', value: 'mode' },
+    { label: 'Desvio Padrão', value: 'std' },
+    { label: 'Variância', value: 'var' },
+    { label: 'Mínimo', value: 'min' },
+    { label: 'Máximo', value: 'max' },
+    { label: 'Soma', value: 'sum' },
+    
+    // Constantes matemáticas
+    { label: 'PI (π)', value: 'pi' },
+    { label: 'Euler (e)', value: 'e' },
   ];
 
   expressaoDinamica: { tipo?: string, valor?: string }[] = [
@@ -321,6 +359,7 @@ export class CalculoEnsaioComponent implements OnInit {
       case 'Condicional': return this.condicionais;
       case 'Delimitador': return this.delimitadores;
       case 'Operador Lógico': return this.operadoresLogicos;
+      case 'FuncaoMatematica': return this.funcoesMatematicas;
       case 'Valor': return [];
       default: return [];
     }
@@ -513,11 +552,19 @@ private tokenizeExpressao(expr: string): string[] {
   const twoCharOps = ['>=', '<=', '==', '!=', '&&', '||'];
   const oneCharOps = new Set(['+', '-', '*', '/', '^', '?', ':', '=', ',', '<', '>']);
   const delims = new Set(['(', ')', '[', ']', '{', '}']);
+  
+  // Lista de funções matemáticas a serem reconhecidas
+  const mathFunctions = [
+    'sqrt', 'pow', 'log', 'log10', 'exp', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan',
+    'round', 'floor', 'ceil', 'abs', 'mean', 'median', 'mode', 'std', 'var', 'min', 'max', 'sum'
+  ];
+  
   let i = 0;
   const n = expr.length;
   while (i < n) {
     const ch = expr[i];
     if (ch === ' ' || ch === '\t' || ch === '\n' || ch === '\r') { i++; continue; }
+    
     // quoted names as a single token
     if (ch === '"') {
       i++;
@@ -527,11 +574,29 @@ private tokenizeExpressao(expr: string): string[] {
       tokens.push('"' + buf + '"');
       continue;
     }
+    
     const next2 = expr.slice(i, i + 2);
     if (twoCharOps.includes(next2)) { tokens.push(next2); i += 2; continue; }
     if (delims.has(ch) || oneCharOps.has(ch)) { tokens.push(ch); i++; continue; }
-    // função como 'sqrt' deve ser tratada como token
-    if (expr.startsWith('sqrt', i)) { tokens.push('sqrt'); i += 4; continue; }
+    
+    // Verifica constantes matemáticas
+    if (expr.startsWith('pi', i)) { tokens.push('pi'); i += 2; continue; }
+    if (expr.startsWith('e', i) && (i + 1 >= n || !/[a-zA-Z_]/.test(expr[i + 1]))) { 
+      tokens.push('e'); i += 1; continue; 
+    }
+    
+    // Verifica funções matemáticas
+    let foundFunction = false;
+    for (const func of mathFunctions) {
+      if (expr.startsWith(func, i)) {
+        tokens.push(func);
+        i += func.length;
+        foundFunction = true;
+        break;
+      }
+    }
+    if (foundFunction) continue;
+    
     // Coletar nome/numero até o próximo operador ou delimitador
     let buf = '';
     while (i < n) {
@@ -539,6 +604,15 @@ private tokenizeExpressao(expr: string): string[] {
       const look2 = expr.slice(i, i + 2);
       if (c === ' ' && buf.length === 0) { i++; continue; }
       if (twoCharOps.includes(look2) || delims.has(c) || oneCharOps.has(c)) break;
+      // Para para não pegar parte de uma função matemática
+      let isPartOfFunction = false;
+      for (const func of mathFunctions) {
+        if (expr.startsWith(func, i)) {
+          isPartOfFunction = true;
+          break;
+        }
+      }
+      if (isPartOfFunction) break;
       buf += c;
       i++;
     }
@@ -559,24 +633,38 @@ private normalizeText(txt: string): string {
 
 converterFuncaoParaBlocos(funcao: string): { tipo: string, valor: string }[] {
   const tokens = this.tokenizeExpressao(funcao);
+  
+  // Lista de funções matemáticas
+  const mathFunctions = [
+    'sqrt', 'pow', 'log', 'log10', 'exp', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan',
+    'round', 'floor', 'ceil', 'abs', 'mean', 'median', 'mode', 'std', 'var', 'min', 'max', 'sum'
+  ];
+  
+  // Constantes matemáticas
+  const mathConstants = ['pi', 'e'];
+  
   // Conjunto de descrições de Cálculos vindas tanto da lista quanto do nameMap
   const calcFromList = (this.caculosEnsaio || []).map((c: any) => this.normalizeText(c?.descricao));
   const calcFromMap = Object.entries(this.nameMap || {})
     .filter(([nome, tecnica]) => typeof tecnica === 'string' && /^calculo\d+$/i.test(tecnica))
     .map(([nome]) => this.normalizeText(nome));
   const calculoDescricoesNorm = new Set([...calcFromList, ...calcFromMap]);
+  
   return tokens.map(token => {
     const isQuoted = token.startsWith('"') && token.endsWith('"');
     const raw = isQuoted ? token.slice(1, -1) : token;
     const tokenNorm = this.normalizeText(raw);
-    if (['+', '-', '*', '/'].includes(token)) {
+    
+    if (['+', '-', '*', '/', '^'].includes(token)) {
       return { tipo: 'Operador', valor: token };
     } else if(['&&','||','!','==','!=','<','>','<=','>='].includes(token)) {
       return { tipo: 'Operador Lógico', valor: token };
     } else if(['?', ':'].includes(token)) {
       return { tipo: 'Condicional', valor: token };
-    } else if(["(", ")", ","].includes(token)) {
+    } else if(["(", ")", ",", "[", "]", "{", "}"].includes(token)) {
       return { tipo: 'Delimitador', valor: token };
+    } else if (mathFunctions.includes(token) || mathConstants.includes(token)) {
+      return { tipo: 'FuncaoMatematica', valor: token };
     } else if (!isNaN(Number(token))) {
       return { tipo: 'Valor', valor: token };
     } else if (token.startsWith('calculo')) {
@@ -785,7 +873,7 @@ salvarFormulaEditada() {
     this.editForm.reset();
   }
 
-// Valida a expressão substituindo variáveis seguras por 1
+// Valida a expressão substituindo variáveis seguras por valores de teste
 validarExpressaoComValores(expr: string): boolean {
   try {
     // Gere nomes seguros e substitua na expressão
@@ -797,19 +885,40 @@ validarExpressaoComValores(expr: string): boolean {
       exprSegura = exprSegura.replace(regex, this.nameMap[origName]);
     });
 
-    // Substitui nomes técnicos do tipo ensXX, ensaioXX ou calculoXX por 1
-    let fakeExpr = exprSegura.replace(/(ens\d+|ensaio\d+|calculo\d+)/g, '1');
+    // Cria um contexto de teste com valores simulados
+    const testContext: any = {
+      // Valores de teste para variáveis
+      ...Object.fromEntries(
+        Object.keys(this.safeVars).map(key => [key, Math.random() * 10 + 1])
+      ),
+      // Constantes matemáticas
+      pi: Math.PI,
+      e: Math.E
+    };
+
+    // Substitui nomes técnicos por valores de teste se não estiverem no contexto
+    let fakeExpr = exprSegura.replace(/(ens\d+|ensaio\d+|calculo\d+)/g, (match) => {
+      return testContext[match] !== undefined ? match : '5';
+    });
+
+    // Para funções que precisam de arrays (como mean, std, etc.), 
+    // vamos simular com arrays de teste quando necessário
+    fakeExpr = fakeExpr.replace(/\b(mean|median|mode|std|var|min|max|sum)\s*\(/g, (match, func) => {
+      return `${func}([1,2,3,4,5]`;
+    });
+
     fakeExpr = fakeExpr.replace(/\s+/g, ' ');
-    fakeExpr = fakeExpr.replace(/1\s+1/g, '1');
-    evaluate(fakeExpr);
+    const resultado = evaluate(fakeExpr, testContext);
+    
     this.messageService.add({
       severity: 'info',
       summary: 'Expressão válida!',
-      detail: `Expressão testada: ${fakeExpr}`,
+      detail: `Expressão testada com sucesso. Resultado: ${resultado}`,
       life: 5000
     });
     return true;
   } catch (error) {
+    console.error('Erro na validação:', error);
     this.messageService.add({
       severity: 'error',
       summary: 'Expressão inválida!',

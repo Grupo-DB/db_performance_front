@@ -1,4 +1,58 @@
 @import "primeicons/primeicons.css";
+
+// Estilos para o modal do gráfico
+.chart-area {
+  .resultados {
+    text-align: center;
+    margin-top: 20px;
+    
+    h3 {
+      color: #333;
+      margin-bottom: 15px;
+    }
+    
+    p {
+      font-size: 1.1em;
+      margin: 8px 0;
+    }
+    
+    .flex {
+      .p-button {
+        min-width: 180px;
+        
+        &[aria-label*="Salvar"] {
+          .p-button-icon {
+            color: #fff;
+          }
+        }
+        
+        &[aria-label*="Download"] {
+          .p-button-icon {
+            color: #fff;
+          }
+        }
+        
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}
+
+// Estilos para loading no botão de salvar
+.p-button.p-button-loading {
+  .p-button-icon {
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .container{
     max-width: 100%;
     background-color: #F7F8FA;
