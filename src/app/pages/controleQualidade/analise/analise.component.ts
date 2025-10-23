@@ -5495,8 +5495,55 @@ canDeactivate(): boolean | Promise<boolean> {
       const area = 3.14 * Math.pow(raio, 2);
       numero.area = parseFloat(area.toFixed(2));
     } else {
-      numero.area = null;
+      numero.area = '!#REF';
     }
+    this.atualizarCalculosSubstrato(numero);
+  }
+
+  atualizarCalculosSubstrato(linha: any) {
+    const carga = Number(linha.carga);
+    const area = Number(linha.area);
+
+    if (!isNaN(carga) && carga > 0 && !isNaN(area) && area > 0) {
+      const resist = (carga * 10) / area;
+      linha.resist = parseFloat(resist.toFixed(2));
+    } else {
+      linha.resist = '!#REF';
+    }
+
+
+    let mediaResistSubstrato: any;
+
+    const resistValidos = this.linhasSubstrato.map(l => l.resist).filter((v: any) => v !== null && v !== undefined && v !== '' && v !== '!#REF' && !isNaN(Number(v))).map((v: any) => Number(v));
+
+    if (resistValidos.length > 0) {
+      const soma = resistValidos.reduce((acc, val) => acc + Number(val), 0);
+      mediaResistSubstrato = parseFloat((soma / resistValidos.length).toFixed(2));
+    } else {
+      mediaResistSubstrato = null;
+    }
+  
+    let valor_vezes_03: any;
+    let linha_mais_03: any;
+    let linha_menos_03: any;
+
+    //BC linhas.resist
+    if (resistValidos.length > 0) {
+      valor_vezes_03 = 0.3*mediaResistSubstrato;//BD
+      if (linha.resist != '!#REF') {
+        linha_mais_03 = mediaResistSubstrato+valor_vezes_03; //BE        
+        linha_menos_03 = mediaResistSubstrato-valor_vezes_03;//BF
+
+        if(linha.resist > linha_mais_03){
+          linha.validacao = 'Inválido'
+        }else if(linha.resist < linha_menos_03){
+          linha.validacao = 'Inválido'
+        }else{
+          linha.validacao = 'Válido'
+        }
+      }
+    }
+    
   }
 
 }

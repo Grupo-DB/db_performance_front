@@ -2017,11 +2017,11 @@ duplicata(amostra: any): void {
 
   imprimirLaudoPDF(amostra_detalhes_selecionada: any){
     if(this.normalize(amostra_detalhes_selecionada.amostra_detalhes.material) === 'argamassa'){
-      if(this.normalize(amostra_detalhes_selecionada.amostra_detalhes.tipo_amostra) === 'colante'){
-        this.imprimirLaudoArgColantePDF(amostra_detalhes_selecionada);
-      }else{
+      // if(this.normalize(amostra_detalhes_selecionada.amostra_detalhes.tipo_amostra) === 'colante'){
+      //   this.imprimirLaudoArgColantePDF(amostra_detalhes_selecionada);
+      // }else{
         this.imprimirLaudoArgPDF(amostra_detalhes_selecionada);
-      }
+      // }
       
     }else{
       this.imprimirLaudoCalcPDF(amostra_detalhes_selecionada);
@@ -2686,73 +2686,9 @@ duplicata(amostra: any): void {
     ];
     const body: any[] = [];
 
-    amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
-      if(ensaios_utilizados.estado == 'Fresco'){
-        this.ensaios_selecionados.forEach((selected: any) => {
-          const linha: any[] = [];
-
-        if (selected.id === ensaios_utilizados.id) {
-          let norma: string = '-';
-          if (ensaios_utilizados.norma) {
-            norma = ensaios_utilizados.norma;
-          }
-          let unidade: string = '-';
-          if (ensaios_utilizados.unidade) {
-            unidade = ensaios_utilizados.unidade;
-          }
-          let valor: string = '-';
-          if (ensaios_utilizados.valor) {
-            valor = ensaios_utilizados.valor;
-          }
-
-            let garantia_num: string = '-';
-            let garantia_texto: string = '-';
-            if (selected.garantia) {
-              const aux = selected.garantia.split(' ');
-
-              garantia_num = aux[0]; 
-              garantia_texto = aux[1]; 
-            }
-
-            this.descricaoApi += ensaios_utilizados.descricao+': '+valor+''+unidade+'; ';
-
-            linha.push({ content: ensaios_utilizados.descricao });
-            linha.push({ content: valor });
-            linha.push({ content: unidade });
-            linha.push({ content: garantia_num });
-            linha.push({ content: garantia_texto });
-            linha.push({ content: norma });
-            body.push(linha);
-          }
-        });
-        
-        autoTable(doc, {
-          startY: contadorLinhas,
-          head,
-          body: body,
-          theme: "grid",
-          styles: {
-            fontSize: 8,
-            halign: 'left',   // 🔹 alinhamento horizontal à esquerda
-            valign: 'middle',
-            cellPadding: 1,
-          },
-          headStyles: {
-            fillColor: [220, 220, 220],
-            textColor: 0,
-            lineWidth: 0.1,
-            halign: 'left',   // 🔹 também no cabeçalho
-          },
-          bodyStyles: {
-            lineWidth: 0.1,
-            halign: 'left',   // 🔹 e no corpo
-          },
-        });
-      }
-    });
-
-    amostra_detalhes_selecionada.ultimo_calculo.forEach((ultimo_calculo: any) => {
-      ultimo_calculo.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
+    console.log(amostra_detalhes_selecionada);
+    if(amostra_detalhes_selecionada.ultimo_ensaio && amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados){
+      amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
         if(ensaios_utilizados.estado == 'Fresco'){
           this.ensaios_selecionados.forEach((selected: any) => {
             const linha: any[] = [];
@@ -2816,8 +2752,75 @@ duplicata(amostra: any): void {
           });
         }
       });
-    });
-      
+    }
+    if(amostra_detalhes_selecionada.ultimo_calculo){
+      amostra_detalhes_selecionada.ultimo_calculo.forEach((ultimo_calculo: any) => {
+        ultimo_calculo.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
+          if(ensaios_utilizados.estado == 'Fresco'){
+            this.ensaios_selecionados.forEach((selected: any) => {
+              const linha: any[] = [];
+
+            if (selected.id === ensaios_utilizados.id) {
+              let norma: string = '-';
+              if (ensaios_utilizados.norma) {
+                norma = ensaios_utilizados.norma;
+              }
+              let unidade: string = '-';
+              if (ensaios_utilizados.unidade) {
+                unidade = ensaios_utilizados.unidade;
+              }
+              let valor: string = '-';
+              if (ensaios_utilizados.valor) {
+                valor = ensaios_utilizados.valor;
+              }
+
+                let garantia_num: string = '-';
+                let garantia_texto: string = '-';
+                if (selected.garantia) {
+                  const aux = selected.garantia.split(' ');
+
+                  garantia_num = aux[0]; 
+                  garantia_texto = aux[1]; 
+                }
+
+                this.descricaoApi += ensaios_utilizados.descricao+': '+valor+''+unidade+'; ';
+
+                linha.push({ content: ensaios_utilizados.descricao });
+                linha.push({ content: valor });
+                linha.push({ content: unidade });
+                linha.push({ content: garantia_num });
+                linha.push({ content: garantia_texto });
+                linha.push({ content: norma });
+                body.push(linha);
+              }
+            });
+            
+            autoTable(doc, {
+              startY: contadorLinhas,
+              head,
+              body: body,
+              theme: "grid",
+              styles: {
+                fontSize: 8,
+                halign: 'left',   // 🔹 alinhamento horizontal à esquerda
+                valign: 'middle',
+                cellPadding: 1,
+              },
+              headStyles: {
+                fillColor: [220, 220, 220],
+                textColor: 0,
+                lineWidth: 0.1,
+                halign: 'left',   // 🔹 também no cabeçalho
+              },
+              bodyStyles: {
+                lineWidth: 0.1,
+                halign: 'left',   // 🔹 e no corpo
+              },
+            });
+          }
+        });
+      });
+    }
     // Posição após a última tabela de ensaios
     contadorLinhas = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 10 : contadorLinhas + 10;
 
@@ -2837,74 +2840,8 @@ duplicata(amostra: any): void {
     ];
     const bodySolto: any[] = [];
 
-    amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
-      if(ensaios_utilizados.estado == 'Solto'){
-        this.ensaios_selecionados.forEach((selected: any) => {
-          const linha: any[] = [];
-
-          if (selected.id === ensaios_utilizados.id) {
-            console.log(selected.id);
-            let norma: string = '-';
-            if (ensaios_utilizados.norma) {
-              norma = ensaios_utilizados.norma;
-            }
-            let unidade: string = '-';
-            if (ensaios_utilizados.unidade) {
-              unidade = ensaios_utilizados.unidade;
-            }
-            let valor: string = '-';
-            if (ensaios_utilizados.valor) {
-              valor = ensaios_utilizados.valor;
-            }
-
-            let garantia_num: string = '-';
-            let garantia_texto: string = '-';
-            if (selected.garantia) {
-              const aux = selected.garantia.split(' ');
-
-              garantia_num = aux[0]; 
-              garantia_texto = aux[1]; 
-            }
-
-            this.descricaoApi += ensaios_utilizados.descricao+': '+valor+''+unidade+'; ';
-
-            linha.push({ content: ensaios_utilizados.descricao });
-            linha.push({ content: valor });
-            linha.push({ content: unidade });
-            linha.push({ content: garantia_num });
-            linha.push({ content: garantia_texto });
-            linha.push({ content: norma });
-            bodySolto.push(linha);
-          }
-        });
-        
-        autoTable(doc, {
-          startY: contadorLinhas,
-          head: headSolto,
-          body: bodySolto,
-          theme: "grid",
-          styles: {
-            fontSize: 8,
-            halign: 'left',   // 🔹 alinhamento horizontal à esquerda
-            valign: 'middle',
-            cellPadding: 1,
-          },
-          headStyles: {
-            fillColor: [220, 220, 220],
-            textColor: 0,
-            lineWidth: 0.1,
-            halign: 'left',   // 🔹 também no cabeçalho
-          },
-          bodyStyles: {
-            lineWidth: 0.1,
-            halign: 'left',   // 🔹 e no corpo
-          },
-        });
-      }
-    });
-
-    amostra_detalhes_selecionada.ultimo_calculo.forEach((ultimo_calculo: any) => {
-      ultimo_calculo.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
+    if(amostra_detalhes_selecionada.ultimo_ensaio && amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados){
+      amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
         if(ensaios_utilizados.estado == 'Solto'){
           this.ensaios_selecionados.forEach((selected: any) => {
             const linha: any[] = [];
@@ -2969,8 +2906,78 @@ duplicata(amostra: any): void {
           });
         }
       });
-    });
-      
+    }
+
+    if(amostra_detalhes_selecionada.ultimo_calculo){
+      amostra_detalhes_selecionada.ultimo_calculo.forEach((ultimo_calculo: any) => {
+        ultimo_calculo.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
+          if(ensaios_utilizados.estado == 'Solto'){
+            this.ensaios_selecionados.forEach((selected: any) => {
+              const linha: any[] = [];
+
+              if (selected.id === ensaios_utilizados.id) {
+                console.log(selected.id);
+                let norma: string = '-';
+                if (ensaios_utilizados.norma) {
+                  norma = ensaios_utilizados.norma;
+                }
+                let unidade: string = '-';
+                if (ensaios_utilizados.unidade) {
+                  unidade = ensaios_utilizados.unidade;
+                }
+                let valor: string = '-';
+                if (ensaios_utilizados.valor) {
+                  valor = ensaios_utilizados.valor;
+                }
+
+                let garantia_num: string = '-';
+                let garantia_texto: string = '-';
+                if (selected.garantia) {
+                  const aux = selected.garantia.split(' ');
+
+                  garantia_num = aux[0]; 
+                  garantia_texto = aux[1]; 
+                }
+
+                this.descricaoApi += ensaios_utilizados.descricao+': '+valor+''+unidade+'; ';
+
+                linha.push({ content: ensaios_utilizados.descricao });
+                linha.push({ content: valor });
+                linha.push({ content: unidade });
+                linha.push({ content: garantia_num });
+                linha.push({ content: garantia_texto });
+                linha.push({ content: norma });
+                bodySolto.push(linha);
+              }
+            });
+            
+            autoTable(doc, {
+              startY: contadorLinhas,
+              head: headSolto,
+              body: bodySolto,
+              theme: "grid",
+              styles: {
+                fontSize: 8,
+                halign: 'left',   // 🔹 alinhamento horizontal à esquerda
+                valign: 'middle',
+                cellPadding: 1,
+              },
+              headStyles: {
+                fillColor: [220, 220, 220],
+                textColor: 0,
+                lineWidth: 0.1,
+                halign: 'left',   // 🔹 também no cabeçalho
+              },
+              bodyStyles: {
+                lineWidth: 0.1,
+                halign: 'left',   // 🔹 e no corpo
+              },
+            });
+          }
+        });
+      });
+    }  
+
     // Posição após a última tabela de ensaios
     contadorLinhas = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 10 : contadorLinhas + 10;
 
@@ -2990,74 +2997,8 @@ duplicata(amostra: any): void {
     ];
     const bodyEndurecido: any[] = [];
 
-    amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
-      if(ensaios_utilizados.estado == 'Endurecido'){
-        this.ensaios_selecionados.forEach((selected: any) => {
-          const linha: any[] = [];
-
-          if (selected.id === ensaios_utilizados.id) {
-            console.log(selected.id);
-            let norma: string = '-';
-            if (ensaios_utilizados.norma) {
-              norma = ensaios_utilizados.norma;
-            }
-            let unidade: string = '-';
-            if (ensaios_utilizados.unidade) {
-              unidade = ensaios_utilizados.unidade;
-            }
-            let valor: string = '-';
-            if (ensaios_utilizados.valor) {
-              valor = ensaios_utilizados.valor;
-            }
-
-            let garantia_num: string = '-';
-            let garantia_texto: string = '-';
-            if (selected.garantia) {
-              const aux = selected.garantia.split(' ');
-
-              garantia_num = aux[0]; 
-              garantia_texto = aux[1]; 
-            }
-
-            this.descricaoApi += ensaios_utilizados.descricao+': '+valor+''+unidade+'; ';
-
-            linha.push({ content: ensaios_utilizados.descricao });
-            linha.push({ content: valor });
-            linha.push({ content: unidade });
-            linha.push({ content: garantia_num });
-            linha.push({ content: garantia_texto });
-            linha.push({ content: norma });
-            bodyEndurecido.push(linha);
-          }
-        });
-        
-        autoTable(doc, {
-          startY: contadorLinhas,
-          head: headEndurecido,
-          body: bodyEndurecido,
-          theme: "grid",
-          styles: {
-            fontSize: 8,
-            halign: 'left',   // 🔹 alinhamento horizontal à esquerda
-            valign: 'middle',
-            cellPadding: 1,
-          },
-          headStyles: {
-            fillColor: [220, 220, 220],
-            textColor: 0,
-            lineWidth: 0.1,
-            halign: 'left',   // 🔹 também no cabeçalho
-          },
-          bodyStyles: {
-            lineWidth: 0.1,
-            halign: 'left',   // 🔹 e no corpo
-          },
-        });
-      }
-    });
-
-    amostra_detalhes_selecionada.ultimo_calculo.forEach((ultimo_calculo: any) => {
-      ultimo_calculo.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
+    if(amostra_detalhes_selecionada.ultimo_ensaio && amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados){
+      amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
         if(ensaios_utilizados.estado == 'Endurecido'){
           this.ensaios_selecionados.forEach((selected: any) => {
             const linha: any[] = [];
@@ -3122,8 +3063,77 @@ duplicata(amostra: any): void {
           });
         }
       });
-    });
-      
+    }
+
+    if(amostra_detalhes_selecionada.ultimo_calculo){
+      amostra_detalhes_selecionada.ultimo_calculo.forEach((ultimo_calculo: any) => {
+        ultimo_calculo.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
+          if(ensaios_utilizados.estado == 'Endurecido'){
+            this.ensaios_selecionados.forEach((selected: any) => {
+              const linha: any[] = [];
+
+              if (selected.id === ensaios_utilizados.id) {
+                console.log(selected.id);
+                let norma: string = '-';
+                if (ensaios_utilizados.norma) {
+                  norma = ensaios_utilizados.norma;
+                }
+                let unidade: string = '-';
+                if (ensaios_utilizados.unidade) {
+                  unidade = ensaios_utilizados.unidade;
+                }
+                let valor: string = '-';
+                if (ensaios_utilizados.valor) {
+                  valor = ensaios_utilizados.valor;
+                }
+
+                let garantia_num: string = '-';
+                let garantia_texto: string = '-';
+                if (selected.garantia) {
+                  const aux = selected.garantia.split(' ');
+
+                  garantia_num = aux[0]; 
+                  garantia_texto = aux[1]; 
+                }
+
+                this.descricaoApi += ensaios_utilizados.descricao+': '+valor+''+unidade+'; ';
+
+                linha.push({ content: ensaios_utilizados.descricao });
+                linha.push({ content: valor });
+                linha.push({ content: unidade });
+                linha.push({ content: garantia_num });
+                linha.push({ content: garantia_texto });
+                linha.push({ content: norma });
+                bodyEndurecido.push(linha);
+              }
+            });
+            
+            autoTable(doc, {
+              startY: contadorLinhas,
+              head: headEndurecido,
+              body: bodyEndurecido,
+              theme: "grid",
+              styles: {
+                fontSize: 8,
+                halign: 'left',   // 🔹 alinhamento horizontal à esquerda
+                valign: 'middle',
+                cellPadding: 1,
+              },
+              headStyles: {
+                fillColor: [220, 220, 220],
+                textColor: 0,
+                lineWidth: 0.1,
+                halign: 'left',   // 🔹 também no cabeçalho
+              },
+              bodyStyles: {
+                lineWidth: 0.1,
+                halign: 'left',   // 🔹 e no corpo
+              },
+            });
+          }
+        });
+      });
+    }
     // Posição após a última tabela de ensaios
     contadorLinhas = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 10 : contadorLinhas + 10;
 
@@ -3142,68 +3152,72 @@ duplicata(amostra: any): void {
     ];
 
     // --- Cálculos das colunas de flexão ---
-    const flexaoValores = amostra_detalhes_selecionada.parecer.flexao
-      .map((item: any) => item.flexao_mpa)
-      .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
+    if(amostra_detalhes_selecionada.flexao){
+      const flexaoValores =
+        amostra_detalhes_selecionada.flexao
+          ?.map((item: any) => item.flexao_mpa)
+          .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor))
+        || [];
 
-    const mediaFlexao = flexaoValores.length
-      ? flexaoValores.reduce((a: number, b: number) => a + b, 0) / flexaoValores.length
-      : 0;
+      const mediaFlexao = flexaoValores.length
+        ? flexaoValores.reduce((a: number, b: number) => a + b, 0) / flexaoValores.length
+        : 0;
 
-    const maxFlexao = flexaoValores.length ? Math.max(...flexaoValores) : 0;
-    const minFlexao = flexaoValores.length ? Math.min(...flexaoValores) : 0;
+      const maxFlexao = flexaoValores.length ? Math.max(...flexaoValores) : 0;
+      const minFlexao = flexaoValores.length ? Math.min(...flexaoValores) : 0;
 
-    // Formatados com 2 casas decimais
-    const media_flexao = mediaFlexao.toFixed(2);
-    const maximo_flexao = maxFlexao.toFixed(2);
-    const minimo_flexao = minFlexao.toFixed(2);
+      // Formatados com 2 casas decimais
+      const media_flexao = mediaFlexao.toFixed(2);
+      const maximo_flexao = maxFlexao.toFixed(2);
+      const minimo_flexao = minFlexao.toFixed(2);
 
-    const bodyFlexao = [
-      ...amostra_detalhes_selecionada.parecer.flexao.map((item: any) => [
-        item.cp ?? item.cp ?? item.cp ?? '',
-        item.flexao_n ?? '',
-        item.flexao_mpa ?? '',
-        item.media_mpa ?? '',
-        item.tracao_flexao ?? '',
-      ]),
+      const bodyFlexao = [
+        ...amostra_detalhes_selecionada.flexao?.map((item: any) => [
+          item.cp ?? item.cp ?? item.cp ?? '',
+          item.flexao_n ?? '',
+          item.flexao_mpa ?? '',
+          item.media_mpa ?? '',
+          item.tracao_flexao ?? '',
+        ]),
 
-      [
-        { content: 'Média Flexão (Mpa)', colSpan: 3, styles: { halign: 'left' } },
-        media_flexao
-      ],
-      [
-        { content: 'Resultado Máx (Mpa)', colSpan: 3, styles: { halign: 'left' } },
-        maximo_flexao
-      ],
-      [
-        { content: 'Resultado Mín (MPa)', colSpan: 3, styles: { halign: 'left' } },
-        minimo_flexao
-      ],
-     
-    ];
+        [
+          { content: 'Média Flexão (Mpa)', colSpan: 3, styles: { halign: 'left' } },
+          media_flexao
+        ],
+        [
+          { content: 'Resultado Máx (Mpa)', colSpan: 3, styles: { halign: 'left' } },
+          maximo_flexao
+        ],
+        [
+          { content: 'Resultado Mín (MPa)', colSpan: 3, styles: { halign: 'left' } },
+          minimo_flexao
+        ],
+      
+      ];
 
-    // --- Inserir no PDF ---
-    autoTable(doc, {
-      head: headFlexao,
-      body: bodyFlexao,
-      startY: contadorLinhas, // ou a posição desejada
-      styles: {
-        fontSize: 8,
-        halign: 'center',
-        valign: 'middle',
-        cellPadding: 1,
-      },
-      headStyles: {
-        fillColor: [220, 220, 220],
-        textColor: 0,
-        lineWidth: 0.1,
-      },
-      bodyStyles: {
-        lineWidth: 0.1,
-      },
-    });
+      // --- Inserir no PDF ---
+      autoTable(doc, {
+        head: headFlexao,
+        body: bodyFlexao,
+        startY: contadorLinhas, // ou a posição desejada
+        styles: {
+          fontSize: 8,
+          halign: 'center',
+          valign: 'middle',
+          cellPadding: 1,
+        },
+        headStyles: {
+          fillColor: [220, 220, 220],
+          textColor: 0,
+          lineWidth: 0.1,
+        },
+        bodyStyles: {
+          lineWidth: 0.1,
+        },
+      });
 
-    contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+    }
 
     const headCompressao = [
       [
@@ -3219,62 +3233,65 @@ duplicata(amostra: any): void {
     ];
 
     // --- Cálculos das colunas de compressão ---
-    const compressaoValores = amostra_detalhes_selecionada.parecer.compressao
-      .map((item: any) => item.compressao_mpa)
-      .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
+    if(amostra_detalhes_selecionada.compressao){
+      const compressaoValores = amostra_detalhes_selecionada.compressao
+        .map((item: any) => item.compressao_mpa)
+        .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
 
-    const mediaCompressao = compressaoValores.length
-      ? compressaoValores.reduce((a: number, b: number) => a + b, 0) / compressaoValores.length
-      : 0;
+      const mediaCompressao = compressaoValores.length
+        ? compressaoValores.reduce((a: number, b: number) => a + b, 0) / compressaoValores.length
+        : 0;
 
-    const maxCompressao = compressaoValores.length ? Math.max(...compressaoValores) : 0;
-    const minCompressao = compressaoValores.length ? Math.min(...compressaoValores) : 0;
+      const maxCompressao = compressaoValores.length ? Math.max(...compressaoValores) : 0;
+      const minCompressao = compressaoValores.length ? Math.min(...compressaoValores) : 0;
 
-    const bodyCompressao = [
-      ...amostra_detalhes_selecionada.parecer.compressao.map((item: any) => [
-        item.cp ?? item.cp ?? item.cp ?? '',
-        item.compressao_n ?? '',
-        item.compressao_mpa ?? '',
-        item.media_mpa ?? '',
-        item.tracao_compressao ?? '',
-      ]),
+      const bodyCompressao = [
+        ...amostra_detalhes_selecionada.compressao.map((item: any) => [
+          item.cp ?? item.cp ?? item.cp ?? '',
+          item.compressao_n ?? '',
+          item.compressao_mpa ?? '',
+          item.media_mpa ?? '',
+          item.tracao_compressao ?? '',
+        ]),
 
-      [
-        { content: 'Média Compressão (Mpa)', colSpan: 3, styles: { halign: 'left' } },
-        mediaCompressao.toFixed(2)
-      ],
-      [
-        { content: 'Resultado Máx (Mpa)', colSpan: 3, styles: { halign: 'left' } },
-        maxCompressao.toFixed(2)
-      ],
-      [
-        { content: 'Resultado Mín (Mpa)', colSpan: 3, styles: { halign: 'left' } },
-        minCompressao.toFixed(2)
-      ],
-     
-    ];
+        [
+          { content: 'Média Compressão (Mpa)', colSpan: 3, styles: { halign: 'left' } },
+          mediaCompressao.toFixed(2)
+        ],
+        [
+          { content: 'Resultado Máx (Mpa)', colSpan: 3, styles: { halign: 'left' } },
+          maxCompressao.toFixed(2)
+        ],
+        [
+          { content: 'Resultado Mín (Mpa)', colSpan: 3, styles: { halign: 'left' } },
+          minCompressao.toFixed(2)
+        ],
+      
+      ];
 
-    autoTable(doc, {
-      head: headCompressao,
-      body: bodyCompressao,
-      startY: contadorLinhas, 
-      styles: {
-        fontSize: 8,
-        halign: 'center',
-        valign: 'middle',
-        cellPadding: 1,
-      },
-      headStyles: {
-        fillColor: [220, 220, 220],
-        textColor: 0,
-        lineWidth: 0.1,
-      },
-      bodyStyles: {
-        lineWidth: 0.1,
-      },
-    });
+      autoTable(doc, {
+        head: headCompressao,
+        body: bodyCompressao,
+        startY: contadorLinhas, 
+        styles: {
+          fontSize: 8,
+          halign: 'center',
+          valign: 'middle',
+          cellPadding: 1,
+        },
+        headStyles: {
+          fillColor: [220, 220, 220],
+          textColor: 0,
+          lineWidth: 0.1,
+        },
+        bodyStyles: {
+          lineWidth: 0.1,
+        },
+      });
 
-    contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+    }
+
     // ====== TABELA head2/body2 ==================================================
     const head2 = [
       [
@@ -3302,98 +3319,106 @@ duplicata(amostra: any): void {
     ];
 
     // --- Cálculos da coluna 'resist' ---
-    const resistencias = amostra_detalhes_selecionada.parecer.substrato
-      .map((item: any) => item.resist)
-      .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
+    console.log(amostra_detalhes_selecionada);
+    if(amostra_detalhes_selecionada.substrato){
+      const resistencias = amostra_detalhes_selecionada.substrato
+        .map((item: any) => item.resist)
+        .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
 
-    const mediaResist = resistencias.length
-      ? resistencias.reduce((a: number, b: number) => a + b, 0) / resistencias.length
-      : 0;
+      const mediaResist = resistencias.length
+        ? resistencias.reduce((a: number, b: number) => a + b, 0) / resistencias.length
+        : 0;
 
-    const maxResist = resistencias.length ? Math.max(...resistencias) : 0;
-    const minResist = resistencias.length ? Math.min(...resistencias) : 0;
+      const maxResist = resistencias.length ? Math.max(...resistencias) : 0;
+      const minResist = resistencias.length ? Math.min(...resistencias) : 0;
 
-    // Formatar para 2 casas decimais
-    const media = mediaResist.toFixed(2);
-    const maximo = maxResist.toFixed(2);
-    const minimo = minResist.toFixed(2);
+      const desvioPadrao = resistencias.length > 1 ? Math.sqrt(resistencias.map((valor: number) => Math.pow(valor - mediaResist, 2)).reduce((a: number, b: number) => a + b, 0) / (resistencias.length - 1)) : 0;
 
-    const body2 = [
-      // espalha as linhas geradas pelo map
-      ...amostra_detalhes_selecionada.parecer.substrato.map((item: any) => [
-        item.numero ?? '',
-        item.diametro ?? '',
-        item.area ?? '',
-        item.espessura ?? '',
-        item.subst ?? '',
-        item.junta ?? '',
-        item.carga ?? '',
-        item.resist ?? '',
-        item.validacao ?? '',
-        item.rupturas?.sub ?? '',
-        item.rupturas?.subArga ?? '',
-        item.rupturas?.rupArga ?? '',
-        item.rupturas?.argaCola ?? '',
-        item.rupturas?.colarPastilha ?? ''
-      ]),
 
-      [
-        { content: 'Média Resistência Substrato', colSpan: 7, styles: { halign: 'right' } },
-        media,
-        { content: 'Observações', colSpan: 6, rowSpan: 5, styles: { halign: 'left', valign: 'top' } }
-      ],
-      [
-        { content: 'Resultado MAX', colSpan: 7, styles: { halign: 'right' } },
-        maximo
-      ],
-      [
-        { content: 'Resultado MIN', colSpan: 7, styles: { halign: 'right' } },
-        minimo
-      ],
-      [
-        { content: 'Tipo de Ruptura', colSpan: 7 }
-      ],
-    ];
+      // Formatar para 2 casas decimais
+      const media = mediaResist.toFixed(2);
+      const maximo = maxResist.toFixed(2);
+      const minimo = minResist.toFixed(2);
+      const desvio2 = desvioPadrao.toFixed(2);
 
-    autoTable(doc, {
-      head: head2,
-      body: body2,
-      startY: contadorLinhas,
-      styles: {
-        fontSize: 8,
-        halign: 'center',
-        valign: 'middle',
-        cellPadding: 1,
-      },
-      headStyles: {
-        fillColor: [220, 220, 220],
-        textColor: 0,
-        lineWidth: 0.1,
-      },
-      bodyStyles: {
-        lineWidth: 0.1,
-      },
-    });
+      const body2 = [
+        // espalha as linhas geradas pelo map
+        ...amostra_detalhes_selecionada.substrato.map((item: any) => [
+          item.numero ?? '',
+          item.diametro ?? '',
+          item.area ?? '',
+          item.espessura ?? '',
+          item.subst ?? '',
+          item.junta ?? '',
+          item.carga ?? '',
+          item.resist ?? '',
+          item.validacao ?? '',
+          item.rupturas?.sub ?? '',
+          item.rupturas?.subArga ?? '',
+          item.rupturas?.rupArga ?? '',
+          item.rupturas?.argaCola ?? '',
+          item.rupturas?.colarPastilha ?? ''
+        ]),
 
-    // Depois da head2/body2
-    contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+        [
+          { content: 'Média Resistência Substrato', colSpan: 7, styles: { halign: 'right' } },
+          media,
+          { content: 'Observações', colSpan: 6, rowSpan: 5, styles: { halign: 'left', valign: 'top' } }
+        ],
+        [
+          { content: 'Resultado MAX', colSpan: 7, styles: { halign: 'right' } },
+          maximo
+        ],
+        [
+          { content: 'Resultado MIN', colSpan: 7, styles: { halign: 'right' } },
+          minimo
+        ],
+        [
+          { content: 'Desvio Padrão (Mpa)', colSpan: 4, styles: { halign: 'right' } },
+          desvio2
+        ],
+        [
+          { content: 'Tipo de Ruptura', colSpan: 7 }
+        ],
+      ];
 
-    // Primeira imagem
-    doc.addImage(primeira_imgagem_arg, 'PNG', 14, contadorLinhas, 182, 40); // x, y, w, h
-    contadorLinhas += 50;
+      autoTable(doc, {
+        head: head2,
+        body: body2,
+        startY: contadorLinhas,
+        styles: {
+          fontSize: 8,
+          halign: 'center',
+          valign: 'middle',
+          cellPadding: 1,
+        },
+        headStyles: {
+          fillColor: [220, 220, 220],
+          textColor: 0,
+          lineWidth: 0.1,
+        },
+        bodyStyles: {
+          lineWidth: 0.1,
+        },
+      });
+
+      // Depois da head2/body2
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+
+      // Primeira imagem
+      doc.addImage(primeira_imgagem_arg, 'PNG', 14, contadorLinhas, 182, 40); // x, y, w, h
+      contadorLinhas += 50;
+    }
 
     // ====== TABELA head3/body3 ==================================================
     const head3 = [
       [
-        {content: 'Determinação da resistência potencial de aderência à tração superficial', colSpan: 14}
+        {content: 'Determinação da resistência potencial de aderência à tração superficial', colSpan: 11}
       ],
       [
         { content: 'N°', rowSpan: 2 },
         { content: 'Diâmetro mm', rowSpan: 2 },
         { content: 'Área mm²', rowSpan: 2 },
-        { content: 'Espessura mm', rowSpan: 2 },
-        { content: 'Subst', rowSpan: 2 },
-        { content: 'Junta', rowSpan: 2 },
         { content: 'Carga kgf', rowSpan: 2 },
         { content: 'RESIST. Mpa', rowSpan: 2 },
         { content: 'Validação', rowSpan: 2 },
@@ -3408,167 +3433,307 @@ duplicata(amostra: any): void {
       ],
     ];
 
-     const resistencias2 = amostra_detalhes_selecionada.parecer.superficial
-      .map((item: any) => item.resist)
-      .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
+    if(amostra_detalhes_selecionada.superficial){
+      const resistencias2 = amostra_detalhes_selecionada.superficial
+        .map((item: any) => item.resist)
+        .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
 
-    const mediaResist2 = resistencias2.length
-      ? resistencias2.reduce((a: number, b: number) => a + b, 0) / resistencias2.length
-      : 0;
+      const mediaResist2 = resistencias2.length
+        ? resistencias2.reduce((a: number, b: number) => a + b, 0) / resistencias2.length
+        : 0;
 
-    const maxResist2 = resistencias2.length ? Math.max(...resistencias2) : 0;
-    const minResist2 = resistencias2.length ? Math.min(...resistencias2) : 0;
+      const maxResist2 = resistencias2.length ? Math.max(...resistencias2) : 0;
+      const minResist2 = resistencias2.length ? Math.min(...resistencias2) : 0;
 
-    // Formatar para 2 casas decimais
-    const media2 = mediaResist2.toFixed(2);
-    const maximo2 = maxResist2.toFixed(2);
-    const minimo2 = minResist2.toFixed(2);
+      const desvioPadrao2 = resistencias2.length > 1 ? Math.sqrt(resistencias2.map((valor: number) => Math.pow(valor - mediaResist2, 2)).reduce((a: number, b: number) => a + b, 0) / (resistencias2.length - 1)) : 0;
 
-    const body3 = [
-      // espalha as linhas geradas pelo map
-      ...amostra_detalhes_selecionada.parecer.superficial.map((item: any) => [
-        item.numero ?? '',
-        item.diametro ?? '',
-        item.area ?? '',
-        item.espessura ?? '',
-        item.subst ?? '',
-        item.junta ?? '',
-        item.carga ?? '',
-        item.resist ?? '',
-        item.validacao ?? '',
-        item.rupturas?.sub ?? '',
-        item.rupturas?.subArga ?? '',
-        item.rupturas?.rupArga ?? '',
-        item.rupturas?.argaCola ?? '',
-        item.rupturas?.colarPastilha ?? ''
-      ]),
+      // Formatar para 2 casas decimais
+      const media2 = mediaResist2.toFixed(2);
+      const maximo2 = maxResist2.toFixed(2);
+      const minimo2 = minResist2.toFixed(2);
+      const desvio2 = desvioPadrao2.toFixed(2);
 
-        [
-          { content: 'Média Resistência Substrato', colSpan: 7, styles: { halign: 'right' } },
-          media2,
-          { content: 'Observações', colSpan: 6, rowSpan: 5, styles: { halign: 'left', valign: 'top' } }
-        ],
-        [
-          { content: 'Resultado MAX', colSpan: 7, styles: { halign: 'right' } },
-          maximo2
-        ],
-        [
-          { content: 'Resultado MIN', colSpan: 7, styles: { halign: 'right' } },
-          minimo2
-        ],
-        [
-          { content: 'Tipo de Ruptura', colSpan: 7 }
-        ],
+      const body3 = [
+        // espalha as linhas geradas pelo map
+        ...amostra_detalhes_selecionada.superficial.map((item: any) => [
+          item.numero ?? '',
+          item.diametro ?? '',
+          item.area ?? '',
+          item.carga ?? '',
+          item.resist ?? '',
+          item.validacao ?? '',
+          item.rupturas?.sub ?? '',
+          item.rupturas?.subArga ?? '',
+          item.rupturas?.rupArga ?? '',
+          item.rupturas?.argaCola ?? '',
+          item.rupturas?.colarPastilha ?? ''
+        ]),
+
+          [
+            { content: 'Média Resistência Substrato', colSpan: 4, styles: { halign: 'right' } },
+            media2,
+            { content: 'Observações', colSpan: 6, rowSpan: 5, styles: { halign: 'left', valign: 'top' } }
+          ],
+          [
+            { content: 'Resultado MAX', colSpan: 4, styles: { halign: 'right' } },
+            maximo2
+          ],
+          [
+            { content: 'Resultado MIN', colSpan: 4, styles: { halign: 'right' } },
+            minimo2
+          ], 
+          [
+            { content: 'Desvio Padrão (Mpa)', colSpan: 4, styles: { halign: 'right' } },
+            desvio2
+          ],
+          [
+            { content: 'Tipo de Ruptura', colSpan: 4 }
+          ],
+      ];
+
+      autoTable(doc, {
+        head: head3,
+        body: body3,
+        startY: contadorLinhas,
+        styles: {
+          fontSize: 8,
+          halign: 'center',
+          valign: 'middle',
+          cellPadding: 1,
+        },
+        headStyles: {
+          fillColor: [220, 220, 220],
+          textColor: 0,
+          lineWidth: 0.1,
+        },
+        bodyStyles: {
+          lineWidth: 0.1,
+        },
+      });
+
+      // Depois da head3/body3
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+
+      // Segunda imagem
+      doc.addImage(segunda_imagem_arg, 'PNG', 14, contadorLinhas, 182, 40);
+
+      doc.addPage();
+      contadorLinhas = 10;
+    }
+
+    // ====== TABELA headRetracao/bodyRetracao ==================================================
+    const headRetracao = [
+      [
+        { content: 'Determinação da retração linear', colSpan: 4 }
+      ],
+      [
+        { content: 'Data' },
+        { content: 'Idade (dias)' },
+        { content: 'Média (mm/m)' },
+        { content: 'Desvio Máximo (%)' },
+      ]
     ];
 
-    autoTable(doc, {
-      head: head3,
-      body: body3,
-      startY: contadorLinhas,
-      styles: {
-        fontSize: 8,
-        halign: 'center',
-        valign: 'middle',
-        cellPadding: 1,
-      },
-      headStyles: {
-        fillColor: [220, 220, 220],
-        textColor: 0,
-        lineWidth: 0.1,
-      },
-      bodyStyles: {
-        lineWidth: 0.1,
-      },
-    });
+    // --- Cálculos das colunas de retração ---
+    if (amostra_detalhes_selecionada.retracao) {
+      const retracaoMedias = amostra_detalhes_selecionada.retracao
+        .map((item: any) => item.media)
+        .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
 
-    // Depois da head3/body3
-    contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+      const retracaoDesvios = amostra_detalhes_selecionada.retracao
+        .map((item: any) => item.desvio_maximo)
+        .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
 
-    // Segunda imagem
-    doc.addImage(segunda_imagem_arg, 'PNG', 14, contadorLinhas, 182, 40);
+      const mediaRetracao = retracaoMedias.length
+        ? retracaoMedias.reduce((a: number, b: number) => a + b, 0) / retracaoMedias.length
+        : 0;
 
-    doc.addPage();
-    contadorLinhas = 10;
+      const maxRetracao = retracaoMedias.length ? Math.max(...retracaoMedias) : 0;
+      const minRetracao = retracaoMedias.length ? Math.min(...retracaoMedias) : 0;
 
-    // ====== Gráfico + tabela pequena ===========================================
-    await this.montarGrafico();
-    const canvas = this.graficoCanvas.nativeElement;
-    const imgData = canvas.toDataURL('image/png');
+      const desvioMedioRetracao = retracaoDesvios.length
+        ? retracaoDesvios.reduce((a: number, b: number) => a + b, 0) / retracaoDesvios.length
+        : 0;
 
-    // Tabela pequena (2 colunas)
-    autoTable(doc, {
-      startY: contadorLinhas,
-      head: [['t', 'Δmt (kg/m²)']],
-      body: this.dadosTabela.map((d: any) => [d.tempo, d.valor.toString()]),
-      theme: 'grid',
-      styles: { fontSize: 9, cellPadding: 2, halign: 'center' },
-      headStyles: { fontStyle: 'bold', fillColor: [255, 255, 255], textColor: 0 },
-      columnStyles: {
-        0: { cellWidth: 25 },
-        1: { cellWidth: 30 }
-      },
-      tableWidth: 55,
-      margin: { left: 14 }
-    } as any);
+      const bodyRetracao = [
+        ...amostra_detalhes_selecionada.retracao.map((item: any) => [
+          item.data ?? '',
+          item.idade ?? '',
+          item.media ?? '',
+          item.desvio_maximo ?? '',
+        ]),
+
+        [
+          { content: 'Média Retração (mm/m)', colSpan: 3, styles: { halign: 'left' } },
+          mediaRetracao.toFixed(2)
+        ],
+        [
+          { content: 'Resultado Máx (mm/m)', colSpan: 3, styles: { halign: 'left' } },
+          maxRetracao.toFixed(2)
+        ],
+        [
+          { content: 'Resultado Mín (mm/m)', colSpan: 3, styles: { halign: 'left' } },
+          minRetracao.toFixed(2)
+        ],
+        [
+          { content: 'Desvio Médio (%)', colSpan: 3, styles: { halign: 'left' } },
+          desvioMedioRetracao.toFixed(2)
+        ],
+      ];
+
+      autoTable(doc, {
+        head: headRetracao,
+        body: bodyRetracao,
+        startY: contadorLinhas,
+        styles: {
+          fontSize: 8,
+          halign: 'center',
+          valign: 'middle',
+          cellPadding: 1,
+        },
+        headStyles: {
+          fillColor: [220, 220, 220],
+          textColor: 0,
+          lineWidth: 0.1,
+        },
+        bodyStyles: {
+          lineWidth: 0.1,
+        },
+      });
+
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+    }
+
+    // ====== TABELA headElasticidade/bodyElasticidade ==================================================
+    const headElasticidade = [
+      [
+        { content: 'Determinação do módulo de elasticidade', colSpan: 3 }
+      ],
+      [
+        { content: 'Média' },
+        { content: 'Individual' },
+        { content: 'Desvio Padrão' },
+      ]
+    ];
+
+    // --- Cálculos das colunas de elasticidade ---
+    if (amostra_detalhes_selecionada.elasticidade) {
+      const elasticidadeModulos = amostra_detalhes_selecionada.elasticidade
+        .map((item: any) => item.modulo)
+        .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
+
+      const elasticidadeDesvios = amostra_detalhes_selecionada.elasticidade
+        .map((item: any) => item.desvio_maximo)
+        .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
+
+      const mediaElasticidade = elasticidadeModulos.length
+        ? elasticidadeModulos.reduce((a: number, b: number) => a + b, 0) / elasticidadeModulos.length
+        : 0;
+
+      const maxElasticidade = elasticidadeModulos.length ? Math.max(...elasticidadeModulos) : 0;
+      const minElasticidade = elasticidadeModulos.length ? Math.min(...elasticidadeModulos) : 0;
+
+      const desvioMedioElasticidade = elasticidadeDesvios.length
+        ? elasticidadeDesvios.reduce((a: number, b: number) => a + b, 0) / elasticidadeDesvios.length
+        : 0;
+
+      const bodyElasticidade = [
+        ...amostra_detalhes_selecionada.elasticidade.map((item: any) => [
+          item.media ?? '',
+          item.individual ?? '',
+          item.desvio_padrao ?? '',
+        ]),
+
+        [
+          { content: 'Média Módulo (MPa)', colSpan: 2, styles: { halign: 'left' } },
+          mediaElasticidade.toFixed(2)
+        ],
+        [
+          { content: 'Resultado Máx (MPa)', colSpan: 2, styles: { halign: 'left' } },
+          maxElasticidade.toFixed(2)
+        ],
+        [
+          { content: 'Resultado Mín (MPa)', colSpan: 2, styles: { halign: 'left' } },
+          minElasticidade.toFixed(2)
+        ],
+        [
+          { content: 'Desvio Médio (%)', colSpan: 2, styles: { halign: 'left' } },
+          desvioMedioElasticidade.toFixed(2)
+        ],
+      ];
+
+      autoTable(doc, {
+        head: headElasticidade,
+        body: bodyElasticidade,
+        startY: contadorLinhas,
+        styles: {
+          fontSize: 8,
+          halign: 'center',
+          valign: 'middle',
+          cellPadding: 1,
+        },
+        headStyles: {
+          fillColor: [220, 220, 220],
+          textColor: 0,
+          lineWidth: 0.1,
+        },
+        bodyStyles: {
+          lineWidth: 0.1,
+        },
+      });
+
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+    }
 
 
-    // posição para o gráfico ao lado 
-    const tableX = 14;
-    const graphX = tableX + 60; // à direita da tabela
-    const graphY = 8;       
-    const graphW = 120;
-    const graphH = 70; 
-    let finalY = (doc as any).lastAutoTable.finalY + 15;
+ const imagens = amostra_detalhes_selecionada.amostra_detalhes.imagens;
 
-    doc.addImage(imgData, 'PNG', graphX, graphY, graphW, graphH);
+const ultimaImagem = imagens.length
+  ? imagens.reduce((prev: any, curr: any) => (curr.id > prev.id ? curr : prev))
+  : null;
 
-    const textoPrincipal = 'Coeficiente de absorção de água por capilaridade (Wh): 5,4 kg/m²·h^0.5';
-    doc.setFontSize(10);
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const marginX = 14;
-    const boxWidth = pageWidth - marginX * 2;
-    const boxHeight = 8;
-    doc.rect(marginX, finalY - 5, boxWidth, boxHeight);
-    doc.text(textoPrincipal, pageWidth / 2, finalY, { align: 'center' });
-    finalY += boxHeight + 2;
+if (ultimaImagem && ultimaImagem.image_url) {
+  const imageUrl = ultimaImagem.image_url;
 
-    // ====== Bloco de informações ===============================================
-    doc.setFontSize(9);
-    const lineSpacing = 4.5;
-    doc.text('Data do ensaio: 1 e 2/7/2025', marginX, finalY);
-    finalY += lineSpacing;
-    doc.text('Tipo de gráfico: Tipo A', marginX, finalY);
-    finalY += lineSpacing;
-    doc.text('Quantidade de corpos de prova (CP): 05', marginX, finalY);
-    finalY += lineSpacing;
-    doc.text(
-      'Duração do ensaio: 6h Na medição de 6h, foi verificada umidade nas faces superiores dos CP\'s.',
-      marginX,
-      finalY
-    );
-    finalY += lineSpacing;
-    doc.text(
-      'Não foram registrados valores com diferença superior a +/- 20% da média entre os CP\'s.',
-      marginX,
-      finalY
-    );
+  try {
+    const img = await fetch(imageUrl)
+      .then(res => res.blob())
+      .then(blob => new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(blob);
+      }));
 
-    finalY += 15;
+    const imgWidth = 100;
+    const imgHeight = 60;
+    const x = (doc.internal.pageSize.getWidth() - imgWidth) / 2;
+    const y = contadorLinhas;
+
+    doc.addImage(img, 'JPEG', x, y, imgWidth, imgHeight);
+
+    contadorLinhas = y + imgHeight + 10;
+
+  } catch (error) {
+    console.error('Erro ao carregar imagem:', error);
+  }
+}
+
+    
 
     // ====== Segunda página: Observações e rodapé ===============================
-    doc.addImage(logoAssinaturaBase64, 'PNG', 84, finalY, 40, 30); // assinatura
+    doc.addImage(logoAssinaturaBase64, 'PNG', 84, contadorLinhas, 40, 30); // assinatura
 
-    finalY +=42;
+    contadorLinhas +=42;
     // Moldura Observações
-    doc.rect(14, finalY, 182, 20);
+    doc.rect(14, contadorLinhas, 182, 20);
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.text('Observações', 95, finalY);
+    doc.text('Observações', 95, contadorLinhas);
 
-    finalY +=30;
+    contadorLinhas +=30;
     autoTable(doc, {
       body: [[this.bodyTabelaObs]],
-      startY: finalY,
+      startY: contadorLinhas,
       theme: 'grid',
       styles: {
         fontSize: 8,
@@ -3590,14 +3755,14 @@ duplicata(amostra: any): void {
       }
     });
 
-    finalY +=10;
+    contadorLinhas +=5;
 
     // Aviso original assinado
     autoTable(doc, {
       body: [
         ['Somente o original assinado tem valor de laudo. A representatividade da amostra é de responsabilidade do executor da coleta da mesma. Os resultados presentes referem-se unicamente a amostra analisada']
       ],
-      startY: finalY,
+      startY: contadorLinhas,
       theme: 'grid',
       styles: {
         fontSize: 8,
@@ -3606,14 +3771,14 @@ duplicata(amostra: any): void {
       },
     });
 
-    finalY +=12;
+    contadorLinhas +=12;
 
     // Rodapé
     doc.setFontSize(7);
     doc.setFont("helvetica", "normal");
-    doc.text('Validade do Laudo: ' + dataFormatadaValidade, 16, finalY);
-    doc.text("DB Arg Plan", 100, finalY);
-    doc.text("Vesão: 9.0", 180, finalY);
+    doc.text('Validade do Laudo: ' + dataFormatadaValidade, 16, contadorLinhas);
+    doc.text("DB Arg Plan", 100, contadorLinhas);
+    doc.text("Vesão: 9.0", 180, contadorLinhas);
 
     const blobUrl = doc.output("bloburl");
     window.open(blobUrl, "_blank");
@@ -4138,8 +4303,8 @@ duplicata(amostra: any): void {
           colarPastilha: item.rupturas?.colarPastilha ?? null
         }
       }));
-    }else if (analise?.parecer?.substrato && Array.isArray(analise.parecer.substrato)) {
-      this.linhas = analise.parecer.substrato.map((item: any, index: number) => ({
+    }else if (analise?.substrato && Array.isArray(analise.substrato)) {
+      this.linhas = analise.substrato.map((item: any, index: number) => ({
         numero: item.numero ?? index + 1,
         diametro: item.diametro ?? null,
         area: item.area ?? null,
@@ -4211,8 +4376,8 @@ duplicata(amostra: any): void {
 
     this.jsonModal.substrato = this.linhas;   
     this.parecer_substrato = this.linhas;
-    if (this.amostra_detalhes_selecionada?.parecer?.superficial){
-      this.jsonModal.superficial = this.amostra_detalhes_selecionada?.parecer?.superficial;
+    if (this.amostra_detalhes_selecionada?.superficial){
+      this.jsonModal.superficial = this.amostra_detalhes_selecionada?.superficial;
     }
 
     const dadosAtualizados: Partial<Analise> = {
@@ -4264,8 +4429,8 @@ duplicata(amostra: any): void {
           colarPastilha: item.rupturas?.colarPastilha ?? null
         }
       }));
-    }else if (this.amostra_detalhes_selecionada?.parecer?.superficial && Array.isArray(this.amostra_detalhes_selecionada.parecer.superficial)) {
-      this.linhasSuperficial = this.amostra_detalhes_selecionada.parecer.superficial.map((item: any, index: number) => ({
+    }else if (this.amostra_detalhes_selecionada?.superficial && Array.isArray(this.amostra_detalhes_selecionada.superficial)) {
+      this.linhasSuperficial = this.amostra_detalhes_selecionada.superficial.map((item: any, index: number) => ({
         numero: item.numero ?? index + 1,
         diametro: item.diametro ?? null,
         area: item.area ?? null,
@@ -4375,8 +4540,8 @@ duplicata(amostra: any): void {
         media_mpa: item.media_mpa ?? null,
         tracao_flexao: item.tracao_flexao ?? null
       }));
-    }else if (this.amostra_detalhes_selecionada?.parecer?.flexao && Array.isArray(this.amostra_detalhes_selecionada.parecer.flexao)) {
-      this.linhasFlexao = this.amostra_detalhes_selecionada.parecer.flexao.map((item: any, index: number) => ({
+    }else if (this.amostra_detalhes_selecionada?.flexao && Array.isArray(this.amostra_detalhes_selecionada.flexao)) {
+      this.linhasFlexao = this.amostra_detalhes_selecionada.flexao.map((item: any, index: number) => ({
         cp: item.cp ?? index + 1,
         flexao_n: item.flexao_n ?? null,
         flexao_mpa: item.flexao_mpa ?? null,
@@ -4454,8 +4619,8 @@ duplicata(amostra: any): void {
         media_mpa: item.media_mpa ?? null,
         tracao_compressao: item.tracao_compressao ?? null
       }));
-    }else if (this.amostra_detalhes_selecionada?.parecer?.compressao && Array.isArray(this.amostra_detalhes_selecionada.parecer.compressao)) {
-      this.linhasCompressao = this.amostra_detalhes_selecionada.parecer.compressao.map((item: any, index: number) => ({
+    }else if (this.amostra_detalhes_selecionada?.compressao && Array.isArray(this.amostra_detalhes_selecionada.compressao)) {
+      this.linhasCompressao = this.amostra_detalhes_selecionada.compressao.map((item: any, index: number) => ({
         cp: item.cp ?? index + 1,
         compressao_n: item.compressao_n ?? null,
         compressao_mpa: item.compressao_mpa ?? null,
@@ -4530,8 +4695,8 @@ duplicata(amostra: any): void {
         media: item.media ?? null,
         desvio_maximo: item.desvio_maximo ?? null
       }));
-    }else if (this.amostra_detalhes_selecionada?.parecer?.retracao && Array.isArray(this.amostra_detalhes_selecionada.parecer.retracao)) {
-      this.linhasRetracao = this.amostra_detalhes_selecionada.parecer.retracao.map((item: any, index: number) => ({
+    }else if (this.amostra_detalhes_selecionada?.retracao && Array.isArray(this.amostra_detalhes_selecionada.retracao)) {
+      this.linhasRetracao = this.amostra_detalhes_selecionada.retracao.map((item: any, index: number) => ({
         data: item.data ?? '',
         idade: item.idade ?? null,
         media: item.media ?? null,
@@ -4603,8 +4768,8 @@ duplicata(amostra: any): void {
         media: item.media ?? null,
         desvio_padrao: item.desvio_padrao ?? null
       }));
-    }else if (this.amostra_detalhes_selecionada?.parecer?.elasticidade && Array.isArray(this.amostra_detalhes_selecionada.parecer.elasticidade)) {
-      this.linhasElasticidade = this.amostra_detalhes_selecionada.parecer.elasticidade.map((item: any, index: number) => ({
+    }else if (this.amostra_detalhes_selecionada?.elasticidade && Array.isArray(this.amostra_detalhes_selecionada.elasticidade)) {
+      this.linhasElasticidade = this.amostra_detalhes_selecionada.elasticidade.map((item: any, index: number) => ({
         individual: item.individual ?? null,
         media: item.media ?? null,
         desvio_padrao: item.desvio_padrao ?? null
