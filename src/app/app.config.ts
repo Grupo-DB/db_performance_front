@@ -7,7 +7,6 @@ import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideToastr } from 'ngx-toastr';
 import { provideAnimations } from '@angular/platform-browser/animations'
 import Lara from '@primeng/themes/lara';
-
 import { registerLocaleData } from '@angular/common';
 import pt from '@angular/common/locales/pt';
 import { FormsModule } from '@angular/forms';
@@ -17,7 +16,7 @@ import { en_US, provideNzI18n } from 'ng-zorro-antd/i18n';
 import en from '@angular/common/locales/en';
 import { providePrimeNG } from 'primeng/config';
 import { HOT_GLOBAL_CONFIG } from '@handsontable/angular-wrapper';
-import { MyPreset } from './styles';
+import Aura from '@primeng/themes/aura'
 
 
 registerLocaleData(pt);
@@ -30,10 +29,8 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
         providePrimeNG({
             theme: {
-                preset: MyPreset,
-                options: {
-                  darkModeSelector: '.my-app-dark',
-              }
+                preset: Aura,
+                
             }
         }),
   HttpClientModule,

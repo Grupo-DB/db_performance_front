@@ -1,5 +1,8 @@
 <div class="menu">
-    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+    <ul 
+        nz-menu 
+        nzMode="horizontal" 
+        >
         <li nz-menu-item nzMatchRouter="#">
             <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/dashControle">Início</a>
         </li>
@@ -32,7 +35,7 @@
             </ul>
         </li >
         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
-            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/amostra">Amostras/Ordens de Serviço</a>
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/amostra">Amostras</a>
         </li>
 
         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
@@ -66,7 +69,8 @@
                                 <p-button 
                                     label="Formulário de OS" 
                                     tooltipPosition="top"
-                                    pTooltip="Formulário de OS"    
+                                    pTooltip="Formulário de OS"
+                                    severity="success"    
                                 >
                                     <div class="inline-flex align-items-center">
                                         <span><i class="pi pi-angle-down"></i></span>
@@ -80,10 +84,10 @@
                                     class="flex flex-column"
                                 >                 
                                     <div 
-                                        class="flex flex-column w-12 gap-3 justify-content-center lg:flex-row"
+                                        class="step1 flex flex-column w-12 gap-3 justify-content-center lg:flex-row"
                                     >
-                                        <div class="flex flex-column w-6">
-                                            <div class="w-12 m-2">
+                                        <div class="bloco flex flex-column align-items-center w-6">
+                                            <div class="w-11 m-2">
                                                 <p-floatlabel variant="on">
                                                     <p-iconfield>
                                                         <p-inputicon class="pi pi-file-edit" />
@@ -93,7 +97,7 @@
                                                     <label for="on_label">Número</label>
                                                 </p-floatlabel>
                                             </div>            
-                                            <div class="w-12 text-left m-2">
+                                            <div class="w-11 text-left m-2">
                                                 <p-floatLabel variant="on">
                                                     <p-datepicker 
                                                         variant="filled" 
@@ -109,8 +113,8 @@
                                                 </p-floatLabel>
                                             </div>
                                         </div>
-                                        <div class="flex flex-column w-6">    
-                                            <div class="w-12 text-left m-2" *ngIf="!isOrdemExpressa">
+                                        <div class="bloco flex flex-column align-items-center w-6">    
+                                            <div class="w-11 text-left m-2" *ngIf="!isOrdemExpressa">
                                                 <p-floatLabel variant="on">
                                                     <p-select 
                                                         inputId="float-label" 
@@ -129,7 +133,7 @@
                                                 </p-floatLabel>
                                             </div>
 
-                                            <div class="w-12 text-left m-2">
+                                            <div class="w-11 text-left m-2">
                                                 <p-floatLabel variant="on">
                                                     <p-select 
                                                         inputId="float-label" 
@@ -166,8 +170,8 @@
                             </ng-template>
                         </p-inplace>
 
-                        <div class="flex flex-column w-12 gap-3 mt-3">
-                            <div class="w-12 text-left">
+                        <div class="step1 flex flex-column w-12 gap-3 mt-3">
+                            <div class="bloco w-12 text-left">
                                 <p-table 
                                     #dt1
                                     sortField="id"
@@ -364,7 +368,7 @@
                                                         >
                                                             <p-button 
                                                                 icon="pi pi-lock"
-                                                                severity="primary"
+                                                                severity="warn"
                                                                 (onClick)="finalizarAnalise(analise)" 
                                                                 [rounded]="true" 
                                                                 [disabled]="analise.finalizada"
@@ -386,7 +390,7 @@
                                                                 severity="contrast"
                                                                 (onClick)="reabrirAnalise(analise)" 
                                                                 [rounded]="true" 
-                                                            
+                                                                
                                                                 pTooltip="Reabrir OS"
                                                                 tooltipPosition="top" 
                                                             />
@@ -478,7 +482,7 @@
     >
 
         <div *ngIf="analiseSelecionada">
-            <h2>Dados</h2>
+            <p style="font-size: 24px; font-weight: bold">Dados</p>
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                 <div class="text-left w-12">
                     <b>Número:</b> {{ analiseSelecionada.amostra_detalhes.numero }}<br>
@@ -490,7 +494,7 @@
 
             <br>
 
-            <h2>Cálculos</h2>
+            <p style="font-size: 24px; font-weight: bold">Cálculos</p>
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                 <div class="text-left w-12" >
                     <span *ngIf="analiseSelecionada?.ultimo_calculo?.length > 0">
@@ -515,7 +519,7 @@
 
             <br>
 
-            <h2>Ensaios</h2>
+            <p style="font-size: 24px; font-weight: bold">Ensaios</p>
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                 <div class="text-left w-12" >
                     <span *ngIf="analiseSelecionada?.ultimo_ensaio?.ensaios_utilizados?.length > 0">
@@ -566,20 +570,26 @@
                                     <b>Editar Ordem de Serviço</b>
                                 </div>
                             </ng-template>
-                            <div class="flex flex-column w-12 gap-3">
+                            <div class="bloco flex flex-column align-items-center w-12 gap-3">
 
-                                <div class="w-12 text-left">
+                                <div class="w-11 text-left mt-3">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
                                             <p-inputicon class="pi pi-file-edit" />
-                                            <input variant="filled" [style]="{'width':'100%'}" pInputText id="on_label"
-                                                autocomplete="off" formControlName="numero" type="text" />
+                                            <input 
+                                                variant="filled" [style]="{'width':'100%'}" 
+                                                pInputText id="on_label"
+                                                autocomplete="off" 
+                                                formControlName="numero" 
+                                                type="text" 
+                                                readonly    
+                                            />
                                         </p-iconfield>
                                         <label for="on_label">Número</label>
                                     </p-floatlabel>
                                 </div>
 
-                                <div class="w-12 text-left">
+                                <div class="w-11 text-left">
                                     <p-floatLabel variant="on">
                                         <p-select inputId="float-label" [style]="{'width':'100%'}"
                                             [options]="finalidades" formControlName="classificacao" optionLabel="nome"
@@ -590,7 +600,7 @@
                                     </p-floatLabel>
                                 </div>
 
-                                <div class="w-12 text-left">
+                                <div class="w-11 text-left">
                                     <p-floatLabel variant="on">
                                         <p-select inputId="float-label" [style]="{'width':'100%'}"
                                             [options]="responsaveis" formControlName="responsavel" optionLabel="value"
@@ -601,7 +611,7 @@
                                     </p-floatLabel>
                                 </div>
 
-                                <div class="w-12 text-left">
+                                <div class="w-11 text-left mb-3">
                                     <p-floatLabel variant="on">
                                         <p-datepicker variant="filled" [style]="{'width':'100%'}" id="da"
                                             formControlName="data" dateFormat="dd/mm/yy" inputId="float-label"
@@ -610,7 +620,7 @@
                                         <label for="float-label">Data de Abertura</label>
                                     </p-floatLabel>
                                 </div>
-                                <div class="w-12 text-left" *ngIf="editForm.get('plano_analise')?.value">
+                                <div class="w-11 text-left mb-3" *ngIf="editForm.get('plano_analise')?.value">
                                     <p-floatLabel variant="on">
                                         <p-select 
                                             inputId="float-label" 
@@ -632,6 +642,8 @@
                                     iconPos="right"  
                                     tooltipPosition="top"
                                     pTooltip="Limpar"
+                                    icon="pi pi-eraser"
+                                    severity="danger"
                                     (onClick)="clearEditForm()" 
                                 />
                                 <p-button 
@@ -950,10 +962,11 @@
         header="Imagens da Amostra" 
         [(visible)]="modalImagensVisible" 
         position="right" 
-        [style]="{ width: '80vw' }">
-        
+        [style]="{ width: '80vw' }"
+>
+   <div class="class">     
         <div *ngIf="amostraImagensSelecionada" class="mb-4">
-            <h3>Amostra: {{ amostraImagensSelecionada.numero }}</h3>
+            <p>Amostra: {{ amostraImagensSelecionada.numero }}</p>
             <p><strong>Material:</strong> {{ amostraImagensSelecionada.material }}</p>
             <p><strong>Data de Coleta:</strong> {{ amostraImagensSelecionada.data_coleta | date:'dd/MM/yyyy' }}</p>
         </div>
@@ -1051,4 +1064,5 @@
             <i class="pi pi-images text-6xl text-gray-400 mb-3"></i>
             <p class="text-xl text-gray-600">Esta amostra não possui imagens anexadas.</p>
         </div>
-    </p-drawer>
+    </div>    
+</p-drawer>

@@ -500,6 +500,9 @@ export class AmostraComponent implements OnInit {
   }
   abrirModalEdicao(amostra: Amostra) {
     this.editFormVisible = true;
+    // Limpa arquivos de upload anteriores e define o ID da amostra
+    this.uploadedFilesWithInfo = [];
+    this.amostraId = amostra.id;
     const dataEntrada = amostra.data_entrada ? new Date(amostra.data_entrada) : null;
     const dataColeta = amostra.data_coleta ? new Date(amostra.data_coleta) : null;
     const dataEnvio = amostra.data_envio ? new Date(amostra.data_envio) : null;
@@ -633,6 +636,8 @@ export class AmostraComponent implements OnInit {
   }
   clearEditForm(){
     this.editForm.reset();
+    // Também limpar os arquivos de upload
+    this.uploadedFilesWithInfo = [];
   }
 
   saveEdit(){
@@ -693,9 +698,15 @@ export class AmostraComponent implements OnInit {
     };
     this.amostraService.editAmostra(id, dadosAtualizados).subscribe({
       next:() =>{       
-        this.editFormVisible = false;
-        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Amostra atualizada com sucesso!!', life: 1000 });
-        this.loadAmostras();
+        // Se há arquivos para upload, fazer upload das imagens
+        if (this.uploadedFilesWithInfo.length > 0) {
+          this.amostraId = id; // Define o ID da amostra para o upload
+          this.uploadImagesForEdit(id);
+        } else {
+          this.editFormVisible = false;
+          this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Amostra atualizada com sucesso!!', life: 1000 });
+          this.loadAmostras();
+        }
       },
       error: (err) => {
         console.error('Login error:', err);       
@@ -1289,6 +1300,52 @@ uploadImages(): void {
       }
     });
   }
+
+// Método para fazer upload das imagens durante edição
+uploadImagesForEdit(amostraId: number): void {
+  if (!amostraId || this.uploadedFilesWithInfo.length === 0) {
+    this.editFormVisible = false;
+    this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Amostra atualizada com sucesso!!', life: 1000 });
+    this.loadAmostras();
+    return;
+  }
+
+  // Verificar estado dos arquivos antes do upload
+  this.verificarEstadoArquivos();
+  const formData = new FormData();
+  
+  // Adiciona arquivos com suas descrições
+  this.uploadedFilesWithInfo.forEach((fileInfo, index) => {
+    formData.append('images', fileInfo.file, fileInfo.file.name);
+    // Garante que a descrição não seja undefined ou null
+    const descricao = fileInfo.descricao || '';
+    formData.append(`descricao_${index}`, descricao);
+  });
+
+  this.amostraService.uploadImagens(amostraId, formData).subscribe({
+    next: (response) => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Sucesso',
+        detail: `Amostra atualizada e ${this.uploadedFilesWithInfo.length} imagem(ns) enviada(s) com sucesso!`
+      });
+      
+      this.uploadedFilesWithInfo = [];
+      this.editFormVisible = false;
+      this.loadAmostras();
+    },
+    error: (error) => {
+      console.error('Erro ao enviar imagens durante edição:', error);
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Aviso',
+        detail: 'Amostra foi atualizada, mas houve erro ao enviar as imagens. Tente novamente.'
+      });
+      this.editFormVisible = false;
+      this.loadAmostras();
+    }
+  });
+}
 
 // Método para remover arquivo da lista antes do envio
 removeFile(index: number): void {

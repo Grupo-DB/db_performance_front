@@ -228,6 +228,7 @@ export class EnsaioComponent implements OnInit{
     { label: 'Modo', value: 'mode' },
     { label: 'Desvio Padrão', value: 'std' },
     { label: 'Variância', value: 'var' },
+    { label: 'Desvio Absoluto Máximo', value: 'mad' },
     { label: 'Mínimo', value: 'min' },
     { label: 'Máximo', value: 'max' },
     { label: 'Soma', value: 'sum' },
@@ -558,10 +559,12 @@ avaliarExpressao() {
 
   this.gerarSafeVarsPorTecnica();
   
-  // Combine variáveis normais com funções de data e constantes matemáticas
+  // Combine variáveis normais com funções de data, constantes matemáticas e funções personalizadas
   const scope = {
     ...this.safeVars,
     ...this.funcoesDatas,
+    // Adicionar função de desvio absoluto máximo
+    mad: this.calcularDesvioAbsolutoMaximo.bind(this),
     pi: Math.PI,
     e: Math.E
   };
@@ -592,6 +595,123 @@ avaliarExpressao() {
   }
 }
 
+/**
+ * Calcula o Desvio Absoluto Máximo (MAD - Maximum Absolute Deviation)
+ * Fórmula: max(|xi - média|)
+ * @param valores Array de números ou argumentos individuais
+ * @returns Desvio absoluto máximo
+ */
+private calcularDesvioAbsolutoMaximo(...args: any[]): number {
+  console.log('🔥 MAD FUNÇÃO CHAMADA - VERSÃO NOVA!'); // Log forçado para debug
+  // Debug: mostrar o que está sendo recebido
+  console.log('MAD - Argumentos recebidos:', args);
+  console.log('MAD - Tipos dos argumentos:', args.map(arg => typeof arg));
+  console.log('MAD - Quantidade de argumentos:', args.length);
+  
+  let valores: number[];
+  
+  // Caso especial: se não há argumentos, retornar erro específico
+  if (args.length === 0) {
+    console.log('MAD - Erro: nenhum argumento fornecido');
+    throw new Error('Desvio absoluto máximo requer ao menos um valor');
+  }
+  
+  // Se o primeiro argumento é um array, usa ele. Caso contrário, usa todos os argumentos
+  if (args.length === 1) {
+    const firstArg = args[0];
+    console.log('MAD - Primeiro argumento:', firstArg);
+    console.log('MAD - É array?', Array.isArray(firstArg));
+    console.log('MAD - Tem propriedade _data?', firstArg && firstArg._data);
+    console.log('MAD - Tem método valueOf?', firstArg && typeof firstArg.valueOf === 'function');
+    
+    // Verificar se é um Matrix do MathJS ou objeto similar
+    if (firstArg && typeof firstArg === 'object') {
+      // Tentar extrair dados de Matrix do MathJS
+      if (firstArg._data && Array.isArray(firstArg._data)) {
+        valores = firstArg._data;
+        console.log('MAD - Usando _data do Matrix:', valores);
+      } else if (typeof firstArg.valueOf === 'function') {
+        const converted = firstArg.valueOf();
+        if (Array.isArray(converted)) {
+          valores = converted;
+          console.log('MAD - Usando valueOf():', valores);
+        } else {
+          valores = [converted];
+          console.log('MAD - valueOf() retornou valor único:', valores);
+        }
+      } else if (Array.isArray(firstArg)) {
+        valores = firstArg;
+        console.log('MAD - Usando array padrão:', valores);
+      } else {
+        // Tentar converter objeto para array de seus valores
+        const objectValues = Object.values(firstArg);
+        if (objectValues.length > 0 && objectValues.every(v => typeof v === 'number')) {
+          valores = objectValues as number[];
+          console.log('MAD - Usando Object.values():', valores);
+        } else {
+          valores = [firstArg];
+          console.log('MAD - Tratando como valor único:', valores);
+        }
+      }
+    } else if (Array.isArray(firstArg)) {
+      valores = firstArg;
+      console.log('MAD - Usando array do primeiro argumento:', valores);
+    } else {
+      valores = args;
+      console.log('MAD - Usando todos os argumentos como array:', valores);
+    }
+  } else {
+    valores = args;
+    console.log('MAD - Usando todos os argumentos como array:', valores);
+  }
+  
+  // Verificação adicional para arrays vazios
+  if (Array.isArray(valores) && valores.length === 0) {
+    console.log('MAD - Erro: array está vazio');
+    throw new Error('Desvio absoluto máximo requer ao menos um valor');
+  }
+  
+  // Se não for array, tentar converter
+  if (!Array.isArray(valores)) {
+    console.log('MAD - Convertendo valor único em array:', valores);
+    valores = [valores];
+  }
+  
+  // Filtrar valores válidos (números)
+  const valoresValidos = valores.filter(v => {
+    const isValid = typeof v === 'number' && !isNaN(v) && isFinite(v);
+    console.log(`MAD - Valor ${v} (tipo: ${typeof v}) é válido: ${isValid}`);
+    return isValid;
+  });
+  
+  console.log('MAD - Valores válidos encontrados:', valoresValidos);
+  
+  if (valoresValidos.length === 0) {
+    console.log('MAD - Erro: nenhum valor numérico válido encontrado após filtragem');
+    throw new Error('Nenhum valor numérico válido encontrado para calcular o desvio absoluto máximo');
+  }
+  
+  // Caso especial: se só há um valor, o desvio é 0
+  if (valoresValidos.length === 1) {
+    console.log('MAD - Apenas um valor, retornando 0');
+    return 0;
+  }
+  
+  // Calcular a média
+  const media = valoresValidos.reduce((soma, valor) => soma + valor, 0) / valoresValidos.length;
+  console.log('MAD - Média calculada:', media);
+  
+  // Calcular os desvios absolutos
+  const desviosAbsolutos = valoresValidos.map(valor => Math.abs(valor - media));
+  console.log('MAD - Desvios absolutos:', desviosAbsolutos);
+  
+  // Retornar o máximo dos desvios absolutos
+  const resultado = Math.max(...desviosAbsolutos);
+  console.log('MAD - Resultado final:', resultado);
+  
+  return resultado;
+}
+
 ////////////-------------------------Montagem de Fórmula-------------------------////////////
 montarFormula(){
     this.montarFormulaVisivel = true
@@ -611,7 +731,7 @@ converterFuncaoParaBlocos(funcao: string): { tipo: string, valor: string }[] {
   // Lista de funções matemáticas
   const mathFunctions = [
     'sqrt', 'pow', 'log', 'log10', 'exp', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan',
-    'round', 'floor', 'ceil', 'abs', 'mean', 'median', 'mode', 'std', 'var', 'min', 'max', 'sum'
+    'round', 'floor', 'ceil', 'abs', 'mean', 'median', 'mode', 'std', 'var', 'mad', 'min', 'max', 'sum'
   ];
   
   // Constantes matemáticas
@@ -655,6 +775,8 @@ validarExpressaoComValores(expr: string): boolean {
     fakeExpr = expr;
     scope = { 
       ...this.funcoesDatas,
+      // Adicionar função de desvio absoluto máximo
+      mad: this.calcularDesvioAbsolutoMaximo.bind(this),
       // Adicionar constantes matemáticas
       pi: Math.PI,
       e: Math.E

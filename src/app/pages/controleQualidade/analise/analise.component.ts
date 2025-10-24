@@ -53,6 +53,7 @@ import { HotTableModule } from '@handsontable/angular-wrapper';
 import { Chart, ScatterController, LinearScale, PointElement, LineElement, Tooltip, Legend, plugins } from 'chart.js';
 import { linearRegression, linearRegressionLine, rSquared } from 'simple-statistics';
 import AnnotationPlugin from 'chartjs-plugin-annotation';
+import { MessageModule } from 'primeng/message';
 
 Chart.register(ScatterController, LinearScale, PointElement, LineElement, Tooltip, Legend, AnnotationPlugin);
 
@@ -149,7 +150,7 @@ interface FileWithInfo {
     CardModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule,
     FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,
     ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,
-    InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, 
+    InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, MessageModule,
     StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule,
     SpeedDialModule, AvatarModule, PopoverModule, BadgeModule, TooltipModule,HotTableModule,
 
@@ -599,14 +600,17 @@ renderChart(todosOsPontos: DataPoint[], regressionLineData: DataPoint[]) {
         type: 'scatter',
         data: {
             datasets: [
-                {
-                    label: 'Pontos Experimentais',
-                    data: todosOsPontos, 
+                // Criar um dataset individual para cada ponto experimental
+                ...todosOsPontos.map((ponto: DataPoint, index: number) => ({
+                    label: `Δm: ${ponto.y.toFixed(2)} kg/m²`,
+                    data: [ponto],
                     backgroundColor: 'rgba(54, 162, 235, 1)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
                     pointRadius: 5,
-                    pointStyle: 'circle'
-                },
-                // Dataset 2: Linha de Regressão
+                    pointStyle: 'circle',
+                    showLine: false
+                })),
+                // Dataset da Linha de Regressão
                 {
                     label: regressionDataLabel,
                     data: regressionLineData,
@@ -664,12 +668,36 @@ renderChart(todosOsPontos: DataPoint[], regressionLineData: DataPoint[]) {
              },
             plugins: {
                 legend:{
-                  display:true,
-                  position: 'top'
+                  display: true,
+                  position: 'right',
+                  labels: {
+                    padding: 10,
+                    usePointStyle: true,
+                    boxWidth: 12,
+                    font: {
+                      size: 11
+                    },
+                    // Filtrar a legenda para organizar melhor
+                    filter: function(legendItem: any, chartData: any) {
+                      // Manter todos os itens da legenda
+                      return true;
+                    }
+                  }
                 },
                 tooltip:{
                   mode: 'index',
-                  intersect: false
+                  intersect: false,
+                  callbacks: {
+                    title: (context: any) => {
+                      const point = context[0];
+                      return `Raiz t: ${point.parsed.x.toFixed(2)} h¹/²`;
+                    },
+                    label: (context: any) => {
+                      const datasetLabel = context.dataset.label || '';
+                      const value = context.parsed.y.toFixed(2);
+                      return `${datasetLabel}: Δm = ${value} kg/m²`;
+                    }
+                  }
                 },
                 annotation: {
                     annotations: {

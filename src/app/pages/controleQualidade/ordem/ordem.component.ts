@@ -3686,7 +3686,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
         { label: 'Imprimir Etiqueta', icon: 'pi pi-file-pdf', command: () => this.imprimirEtiqueta(analise.amostra_detalhes), tooltip: 'Imprimir Etiqueta', tooltipPosition: 'top' },
       { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(analise.amostra_detalhes) },
         { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluirAnalise(analise) },
-        { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise.amostra_detalhes.id) },
+        { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise.amostra_detalhes) },
         //{ label: 'Duplicata', icon: 'pi pi-file-import', command: () => this.duplicata(analise.amostra_detalhes) },
       ];
       this.menuItemsCache.set(analiseId, menuItems);
@@ -3717,7 +3717,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
 //======================IMAGENS DA AMOSTRA =======================
  visualizarImagens(amostraId: any): void {
   this.amostraImagensSelecionada = amostraId;
-  this.carregarImagensAmostra(amostraId);
+  this.carregarImagensAmostra(amostraId.id);
 }
 
   carregarImagensAmostra(amostraId: number): void {

@@ -10,14 +10,14 @@
 
 .app-layout {
   min-height: 100vh;
-  background-color: #f2f1f0;
+  background-color: #2C323A;
 }
 
 .menu-sidebar {
   position: relative;
   z-index: 2;
   min-height: 100vh;
-  background-color: #444959;
+  background-color: #2C323A;
 }
 
 .header-trigger {
@@ -38,7 +38,7 @@
   padding-left: 10px;
   overflow: hidden;
   line-height: 64px;
-  background: #444959;
+  background: #2C323A;
   transition: all .3s;
 }
 
@@ -69,14 +69,15 @@ nz-header {
   display: flex;
   height: 64px;
   padding: 0;
-  background: #E3E7EC;
+  //background: #E3E7EC;
+  background-color: #2C323A;
   box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
 }
 .app-header .inicio {
   display: flex;
   position: absolute;
   margin-left: 70px;
-
+  color: #ffffff;
   .divnot {
     display: block;
     margin-top: -5px;
@@ -96,7 +97,16 @@ nz-header {
   font-size: 25px;
   padding-left: 15px;
   cursor: pointer;
-
+  color: #ffffff; // Cor padrão do ícone (branco)
+  
+  .trigger {
+    color: #ffffff; // Cor do ícone
+    transition: color 0.3s ease;
+    
+    &:hover {
+      color: #1890ff; // Cor azul no hover
+    }
+  }
 }
 
 .app-header .top {
@@ -105,13 +115,14 @@ nz-header {
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 18px;
+  color: #ffffff;
 }
 
 .app-header .final {
   display: flex;
   position: absolute;
   right: 120px;
-
+  color: #ffffff;
   .empresa {
     display: block;
     font-size: 12px;
@@ -128,7 +139,6 @@ nz-header {
 }
 
 nz-content {
-  margin: 12px;
   background-color: #fff;
   overflow-y: scroll;
 }
@@ -145,7 +155,7 @@ nz-sider {
   }
 
   li {
-    background-color: #4c5264;
+    background-color: #2C323A;
     color: #e0ede9;
     margin: 0 0 0 0px;
     border-bottom: 0.5px solid;
@@ -163,7 +173,8 @@ nz-sider {
   display: flex;
   justify-content: center;
   font-size: 10px;
-  margin-bottom: 5px;
+  color: #ffffff;
+  background-color: #2C323A;
 }
 
 .loading-animation {

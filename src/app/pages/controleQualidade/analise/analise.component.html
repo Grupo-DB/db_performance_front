@@ -32,7 +32,7 @@
             </ul>
         </li >
         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
-            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/amostra">Amostras/Ordens de Serviço</a>
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/amostra">Amostras</a>
         </li>
 
         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
@@ -150,7 +150,7 @@
                             class="w-full lg:w-auto"
                             label="Imagens"
                             [raised]="true"
-                            severity="primary"
+                            severity="success"
                             icon="pi pi-image"
                             iconPos="right"
                             (onClick)="visualizarImagens(analise.amostra_detalhes?.id)">
@@ -245,15 +245,15 @@
         <!-- TABELAS ENSAIOS E CALCULOS-->
         <div class="w-12 mt-4">
             <div *ngFor="let plano of analisesSimplificadas[0]?.planoDetalhes">
-                <p-divider align="left" type="solid" class="title">
-                    <div class="title">
+                <div class="step1 mb-5">    
+                    <p-message severity="info" class="w-11">
                         Plano de Análise: <b> {{ plano.descricao }}</b>
-                    </div>
-                </p-divider>
+                    </p-message>
+                </div>    
                 <!-- Tabela para cada ensaio fixo (fora dos cálculos) -->
                 <div class="step1">     
                     <div class=" w-full flex justify-content-between align-items-center">
-                        <h2 >Ensaios Diretos</h2>
+                        <h2 style="color: #ffffff">Ensaios Diretos</h2>
                         <div class="flex gap-2" *ngIf="podeEditarEnsaiosCalculos()">
                             <p-button 
                                 icon="pi pi-plus" 
@@ -371,7 +371,7 @@
                                     <td style="text-align: end;">
                                         <p-button 
                                             icon="pi pi-history" 
-                                            severity="primary" 
+                                            severity="success" 
                                             size="small" 
                                             [raised]="true"
                                             (onClick)="abrirDrawerResultadosEnsaios(ensaio)"
@@ -396,13 +396,13 @@
                                 </tr>                    
                                 <!-- Linha expandida (condicional) - Separada para não interferir no reordenamento -->
                                 <tr *ngIf="ensaio.expanded" class="expanded-row">
-                                    <td [attr.colspan]="podeEditarEnsaiosCalculos() ? 6 : 5" style="background-color: #f8f9fa; padding: 0;">
-                                        <div class="p-3" style="background-color: #f8f9fa;">
+                                    <td [attr.colspan]="podeEditarEnsaiosCalculos() ? 6 : 5" style="background-color: #2C323A; padding: 0;">
+                                        <div class="p-3" style="background-color: #2C323A;">
                                             <div class="header flex justify-content-between align-items-center">
                                                 <h2 class="text-2xl font-bold text-primary"><i class="pi pi-objects-column"></i> {{ ensaio.descricao }}
                                                 </h2>
                                             </div>                                
-                                            <div class="flex flex-column w-12 lg:flex-row">
+                                            <div class="expanded-row flex flex-column w-12 lg:flex-row">
                                                 <!-- Variáveis -->
                                                 <div class="flex flex-column w-7">
                                                     <div class="flex  gap-1" *ngIf="ensaio.variavel_detalhes && ensaio.variavel_detalhes.length > 0">
@@ -534,7 +534,7 @@
                                                         >
                                                         </p-button>
                                                         <p-button 
-                                                            severity="primary" 
+                                                            severity="success" 
                                                             pTooltip="Alterar ordem das variáveis" 
                                                             tooltipPosition="top"
                                                             size="small" 
@@ -646,7 +646,7 @@
                 <!-- Tabela de Cálculos -->
                 <div class="step1 mt-5">
                     <div class="header w-full flex justify-content-between align-items-center">
-                        <h2>Cálculos</h2>
+                        <h2 style="color: #ffffff">Cálculos</h2>
                         <div class="flex gap-2" *ngIf="podeEditarEnsaiosCalculos()">
                             <p-button 
                                 icon="pi pi-plus" 
@@ -755,7 +755,7 @@
                                     <td style="text-align: end;">
                                         <p-button 
                                             icon="pi pi-history" 
-                                            severity="primary" 
+                                            severity="success" 
                                             size="small" 
                                             [raised]="true"
                                             (onClick)="abrirDrawerResultados(calc, plano)"
@@ -782,11 +782,11 @@
                                 <tr *ngIf="calc.expanded" class="expanded-row">
                                     <td 
                                         [attr.colspan]="podeEditarEnsaiosCalculos() ? 6 : 5"
-                                        style="background-color: #f8f9fa; padding: 0;"
+                                        style="background-color: #2C323A; padding: 0;"
                                     >
                                         <div class="p-3">
                                             <div class="header flex justify-content-between align-items-center">
-                                                <h2>Ensaios pertencentes ao Cálculo: {{ calc.descricao }}</h2>
+                                                <h2 style="color: #ffffff">Ensaios pertencentes ao Cálculo: <b>{{ calc.descricao }}</b></h2>
                                             </div>
                                             <div class="flex flex-column lg:flex-row lg:w-12">
                                                 <div class="flex flex-column w-12">
@@ -817,9 +817,9 @@
                                                             (dragstart)="onDragStartEnsaioInterno($event, ensaio, i, calc, plano)"
                                                             (dragover)="onDragOver($event)"
                                                             (drop)="onDropEnsaioInterno($event, ensaio, i, calc, plano)"
-                                                            style="cursor: grab;"
+
                                                         >
-                                                            <div class="flex align-items-center gap-2">
+                                                            <div class="align-items-center gap-2">
                                                                 <div class="flex align-items-center gap-2">
                                                                     <i class="pi pi-flask text-primary"></i>
                                                                     <span class="font-bold">{{ ensaio.descricao }}</span>
@@ -934,7 +934,7 @@
                                                                                 >
                                                                                 </p-button>
                                                                                 <p-button 
-                                                                                    severity="primary"
+                                                                                    severity="success"
                                                                                     pTooltip="Alterar ordem das variáveis"
                                                                                     tooltipPosition="top" size="small" [raised]="true"
                                                                                     icon="pi pi-arrows-v"
@@ -1094,19 +1094,6 @@
         <div class="step1 flex justify-content-between align-items-center w-12 mt-3 mb-5">
   
             <div>
-                
-                <!-- <p-speeddial 
-                    showIcon="pi pi-bars" hideIcon="pi pi-times"
-                    [model]="getItensArgamassa(analise)"
-                    [radius]="80"
-                    type="linear" 
-                    direction="right"
-                    [style]="{ position: 'relative', top: 0, right: 0 }" 
-                    [buttonProps]="{ severity: 'info', rounded: true }"
-                    [tooltipOptions]="{ tooltipPosition: 'right' }"
-                    pTooltip="Ações"
-                ></p-speeddial>
-                                <span>Ações</span> -->
                 <p-menu 
                     #menu 
                     [model]="menuArgamassa" 
@@ -1312,7 +1299,7 @@
       <p-button 
         label="Download" 
         icon="pi pi-download" 
-        severity="primary"
+        severity="success"
         (onClick)="downloadImagem(imagensAmostra[imagemAtualIndex])">
       </p-button>
       
@@ -1328,7 +1315,7 @@
       <div 
         *ngFor="let imagem of imagensAmostra; let i = index"
         class="cursor-pointer border-2 border-round overflow-hidden"
-        [class.border-primary]="i === imagemAtualIndex"
+        [class.border-success]="i === imagemAtualIndex"
         [class.border-gray-300]="i !== imagemAtualIndex"
         (click)="irParaImagem(i)"
         style="width: 80px; height: 80px;">
