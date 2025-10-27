@@ -472,4 +472,84 @@ h2{
       color: #9CA3AF !important;
     }
   }
+}
+
+// Estilos específicos para o layout do gráfico 
+.data-input-area {
+  .data-table {
+    .p-table {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .p-inputnumber {
+      width: 100%;
+      
+      input {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  }
+}
+
+// Estilos para o container do gráfico
+.chart-area {
+  canvas {
+    max-width: 100%;
+    height: auto !important;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .resultados {
+    .bg-gray-50 {
+      background-color: #f9fafb;
+      border: 1px solid #e5e7eb;
+    }
+  }
+}
+
+// Responsive design para telas menores
+@media (max-width: 992px) {
+  .flex.flex-column.lg\\:flex-row {
+    flex-direction: column !important;
+    
+    .flex-1 {
+      width: 100%;
+      margin-bottom: 2rem;
+    }
+    
+    .chart-area canvas {
+      height: 400px !important;
+    }
+  }
+}
+
+// Melhorias para telas muito pequenas
+@media (max-width: 576px) {
+  .data-table {
+    .p-table {
+      font-size: 0.875rem;
+    }
+    
+    .p-inputnumber input {
+      font-size: 0.875rem;
+      padding: 0.5rem;
+    }
+  }
+  
+  .chart-area canvas {
+    height: 300px !important;
+  }
+  
+  .flex.flex-column.sm\\:flex-row {
+    flex-direction: column !important;
+    
+    .p-button {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+  }
 } 

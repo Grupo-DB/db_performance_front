@@ -50,25 +50,20 @@
 </div>
 
 <div class="container flex flex-column align-items-center mb-4">
-
-    <div class="containerInterno w-12">
-        <div @swipeAnimation>
+    <div class="containerInterno w-12" @swipeAnimation>
             <form
                 [formGroup]="registerForm" title="Cadastrar novo tipo de amostra" class="flex flex-column gap-4" 
                 
             >
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-
                     <div class="fg1 flex flex-column w-12 align-items-center">
-
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
                                 <div class="header w-full text-center">
                                     <h2>Inserir Novo Tipo de Amostra</h2>
                                 </div>
                             </ng-template>
-                            <div class="flex flex-column w-12 gap-3">
-
+                            <div class="bloco flex flex-column w-12 gap-3">
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
@@ -101,7 +96,8 @@
                                 <p-button 
                                     (onClick)="clearForm()" 
                                     label="Limpar"
-                                    iconPos="right"  
+                                    iconPos="right"
+                                    severity="info"  
                                     tooltipPosition="top"
                                     pTooltip="Limpar"
                                     icon="pi pi-eraser" 
@@ -121,108 +117,106 @@
                 </div>
             </form>
 
-        </div>
-
-        <div class="background-form mt-4 w-12" @swipeAnimation>
-            <div class="text-left w-12">
-                <p-toast />
-                <p-confirmDialog />
-                <p-inplace closable="true" closeIcon="pi pi-angle-up">
-                    <ng-template pTemplate="display">
-                        <p-button 
-                            label="Tipos de Amostras" 
-                            tooltipPosition="top"
-                            pTooltip="Exibir Tipos de Amostras"      
-                        >
-                            <div class="inline-flex align-items-center">
-                                <span><i class="pi pi-angle-down"></i></span>
-                            </div>
-                        </p-button>
-
-                    </ng-template>
-                    <ng-template pTemplate="content">
-                    <p-table
-                            #dt1
-                            [value]="tiposAmostra"
-                            [paginator]="true"
-                            [rows]="10"
-                            [rowsPerPageOptions]="[10, 20, 50]"
-                            [globalFilterFields]="['nome', 'natureza', 'material']"
-                            [showCurrentPageReport]="true"
-                            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Tipos de Amostra"
-                            scrollable="true"
-                            
-                        >
-                            <ng-template pTemplate="caption">
-                                <div class="flex flex-row md: justify-content-end">
-                                    <p-floatlabel variant="on">
-                                        <p-iconfield>
-                                            <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
-                                                <input 
-                                                variant="filled" 
-                                                [(ngModel)]="inputValue"
-                                                [style]="{'width':'100%'}" 
-                                                pInputText id="on_label"
-                                                autocomplete="off" 
-                                                type="text" 
-                                                (keydown)="filterTable()"
-                                                />
-                                        </p-iconfield>
-                                        <label for="on_label" style="color: #1b91ff">Pesquisar</label>
-                                    </p-floatlabel>
+            <div class="background-form mt-4 w-12" @swipeAnimation>
+                <div class="text-left w-12">
+                    <p-toast />
+                    <p-confirmDialog />
+                    <p-inplace closable="true" closeIcon="pi pi-angle-up">
+                        <ng-template pTemplate="display">
+                            <p-button 
+                                label="Tipos de Amostras" 
+                                tooltipPosition="top"
+                                pTooltip="Exibir Tipos de Amostras"
+                                severity="info"      
+                            >
+                                <div class="inline-flex align-items-center">
+                                    <span><i class="pi pi-angle-down"></i></span>
                                 </div>
-                            </ng-template>
-                            <ng-template pTemplate="header">
-                                <tr class="tabela">
-                                    <th style="width: 33%; text-align: center;" type="text" field="nome" display="menu">Nome</th>
-                                    <th style="width: 33%; text-align: center;" type="text" field="material" display="menu">Material</th>
-                                    <th style="width: 33%; text-align: center;" type="text" field="acoes" display="menu">Ações</th>
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="body" let-tiposAmostra>
-                                <tr>
-                                    <td style="text-align: center;">{{ tiposAmostra.nome }}</td>
-                                    <td style="text-align: center;">{{ tiposAmostra.material }}</td>
-                                    <td style="text-align: center;">
-                                        <div class="flex justify-content-center gap-2">
-                                            <p-button
-                                                icon="pi pi-file-edit" 
-                                                severity="primary" 
-                                                size="small" 
-                                                [raised]="true"
-                                                pTooltip="Editar" 
-                                                tooltipPosition="top"
-                                                (onClick)="abrirModalEdicao(tiposAmostra)"
-                                            ></p-button>
-                                            <p-button 
-                                                icon="pi pi-trash" 
-                                                severity="danger" 
-                                                size="small" 
-                                                [raised]="true"
-                                                pTooltip="Excluir" 
-                                                tooltipPosition="top"
-                                                (onClick)="excluirTipoAmostra(tiposAmostra.id)"
-                                            ></p-button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="paginatorleft">
-                                <p-button type="button"  styleClass="p-button-text"></p-button>
-                            </ng-template>
-                            <ng-template pTemplate="paginatorright">
-                                <p-button type="button"  styleClass="p-button-text"></p-button>
-                            </ng-template> 
-                        </p-table>
+                            </p-button>
 
-                    </ng-template>
-                </p-inplace>
+                        </ng-template>
+                        <ng-template pTemplate="content">
+                        <p-table
+                                #dt1
+                                [value]="tiposAmostra"
+                                [paginator]="true"
+                                [rows]="10"
+                                [rowsPerPageOptions]="[10, 20, 50]"
+                                [globalFilterFields]="['nome', 'natureza', 'material']"
+                                [showCurrentPageReport]="true"
+                                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Tipos de Amostra"
+                                scrollable="true"
+                                
+                            >
+                                <ng-template pTemplate="caption">
+                                    <div class="flex flex-row md: justify-content-end">
+                                        <p-floatlabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
+                                                    <input 
+                                                    variant="filled" 
+                                                    [(ngModel)]="inputValue"
+                                                    [style]="{'width':'100%'}" 
+                                                    pInputText id="on_label"
+                                                    autocomplete="off" 
+                                                    type="text" 
+                                                    (keydown)="filterTable()"
+                                                    />
+                                            </p-iconfield>
+                                            <label for="on_label" style="color: #1b91ff">Pesquisar</label>
+                                        </p-floatlabel>
+                                    </div>
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr class="tabela">
+                                        <th style="width: 33%; text-align: center;" type="text" field="nome" display="menu">Nome</th>
+                                        <th style="width: 33%; text-align: center;" type="text" field="material" display="menu">Material</th>
+                                        <th style="width: 33%; text-align: center;" type="text" field="acoes" display="menu">Ações</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-tiposAmostra>
+                                    <tr>
+                                        <td style="text-align: center;">{{ tiposAmostra.nome }}</td>
+                                        <td style="text-align: center;">{{ tiposAmostra.material }}</td>
+                                        <td style="text-align: center;">
+                                            <div class="flex justify-content-center gap-2">
+                                                <p-button
+                                                    icon="pi pi-file-edit" 
+                                                    severity="primary" 
+                                                    size="small" 
+                                                    [raised]="true"
+                                                    pTooltip="Editar" 
+                                                    tooltipPosition="top"
+                                                    (onClick)="abrirModalEdicao(tiposAmostra)"
+                                                ></p-button>
+                                                <p-button 
+                                                    icon="pi pi-trash" 
+                                                    severity="danger" 
+                                                    size="small" 
+                                                    [raised]="true"
+                                                    pTooltip="Excluir" 
+                                                    tooltipPosition="top"
+                                                    (onClick)="excluirTipoAmostra(tiposAmostra.id)"
+                                                ></p-button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="paginatorleft">
+                                    <p-button type="button"  styleClass="p-button-text"></p-button>
+                                </ng-template>
+                                <ng-template pTemplate="paginatorright">
+                                    <p-button type="button"  styleClass="p-button-text"></p-button>
+                                </ng-template> 
+                            </p-table>
+
+                        </ng-template>
+                    </p-inplace>
+                </div>
             </div>
-        </div>
-
     </div>
-    
 </div>
+
 
 <!------------------------------------ Modal de Edição ----------------------------------------------->
 
@@ -232,23 +226,19 @@
     [style]="{ width: '60vw' }"
     styleClass="w-full md:w-12 lg:w-4"
 >
-
-    <div class="containerInterno w-12">
         <div class="background-form">
             <form
                 [formGroup]="editForm" title="Editar Tipo de Amostra" class="flex flex-column gap-4" 
             >
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                     <div class="fg1 flex flex-column w-12 align-items-center">
-
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
                                 <div class="header w-full text-center">
                                     <b>Editar Tipo de Amostra</b>
                                 </div>
                             </ng-template>
-                            <div class="flex flex-column w-12 gap-3">
-
+                            <div class="bloco flex flex-column w-12 gap-3">
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
@@ -266,7 +256,7 @@
                                     </p-floatlabel>
                                 </div>
 
-                                <div class="w-12 text-left">
+                                <div class="bloco w-12 text-left">
                                     <p-floatLabel variant="on">
                                         <p-select inputId="float-label" [style]="{'width':'100%'}" [options]="materiais" formControlName="material"
                                             optionLabel="display" optionValue="value" appendTo="body" [filter]="true" filterBy="value" [showClear]="true"
@@ -286,6 +276,7 @@
                                     tooltipPosition="top"
                                     pTooltip="Limpar"
                                     icon="pi pi-eraser"
+                                    severity="info"
                                 />
                                 <p-button 
                                     (onClick)="saveEdit()" 
@@ -301,7 +292,5 @@
                     </div>    
                 </div>
             </form>
-        </div>
-    </div>
-  
+        </div>  
 </p-drawer>

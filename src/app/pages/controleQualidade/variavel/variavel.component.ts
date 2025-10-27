@@ -23,7 +23,6 @@ import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { EnsaioService } from '../../../services/controleQualidade/ensaio.service';
-
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
 
@@ -241,7 +240,7 @@ export class VariavelComponent implements OnInit {
         acceptLabel: 'Sim',
         rejectLabel: 'Cancelar',
         acceptButtonStyleClass: 'p-button-info',
-        rejectButtonStyleClass: 'p-button-secondary',
+        rejectButtonStyleClass: 'p-button-warn',
         accept: () => {
           this.ensaioService.deleteVariavel(id).subscribe({
             next: () => {

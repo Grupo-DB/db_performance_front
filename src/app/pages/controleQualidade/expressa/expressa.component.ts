@@ -41,6 +41,7 @@ import { AmostraService } from '../../../services/controleQualidade/amostra.serv
 import { OrdemService } from '../../../services/controleQualidade/ordem.service';
 import { AnaliseService } from '../../../services/controleQualidade/analise.service';
 import { CardModule } from 'primeng/card';
+import { MessageModule } from 'primeng/message';
 
 interface ExpressaForm {
   data: FormControl,
@@ -84,7 +85,7 @@ export interface Expressa {
     InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,CardModule,
     FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,
     ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,IconField,
-    InputNumberModule,AutoCompleteModule,MultiSelectModule,DatePickerModule,StepperModule,
+    InputNumberModule,AutoCompleteModule,MultiSelectModule,DatePickerModule,StepperModule,MessageModule,
     InputIcon,FieldsetModule,MenuModule,SplitButtonModule,DrawerModule,SpeedDialModule, InplaceModule
   ],
   providers:[

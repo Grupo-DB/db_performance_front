@@ -1,8 +1,64 @@
 @import "primeicons/primeicons.css";
-:host ::ng-deep .p-card-body{
-    background-color: #f8f9fa;
-    border-radius: 0 0 10px 10px;
+:host ::ng-deep .p-card-body {
+  background-color: #2C323A;
+  border-radius: 12px;
+  color: #ffffff;
 }
+::ng-deep .bloco {
+  // Inputs de texto
+  .p-inputtext {
+    background-color: #3B3E44 !important;
+    border: 1px solid #4A5157 !important;
+    color: #F8F9FA !important;
+    
+    &:enabled:focus {
+      border-color: #0ea5e9 !important;
+      box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.2) !important;
+    }
+    
+    &:enabled:hover {
+      border-color: #5A6069 !important;
+    }
+    
+    &::placeholder {
+      color: #9CA3AF !important;
+    }
+  }
+  .p-select{
+    background-color: #3B3E44;
+    .p-select-overlay{
+        background-color: #3B3E44;
+    }
+    .p-select-list-container{
+        background-color: #3B3E44;
+        color: #F8F9FA;
+    }
+}
+.p-select-overlay{
+        background-color: #3B3E44;
+    }
+    .p-select-option-group-label{
+        background-color: #3B3E44;
+        color: #F8F9FA;
+    }
+}
+:host ::ng-deep .p-select{
+    background-color: #3B3E44;
+    .p-select-overlay{
+        background-color: #3B3E44;
+    }
+    .p-select-list-container{
+        background-color: #3B3E44;
+        color: #F8F9FA;
+    }
+}
+.p-select-overlay{
+        background-color: #3B3E44;
+    }
+    .p-select-option-group-label{
+        background-color: #3B3E44;
+        color: #F8F9FA;
+    }
 .container{
     max-width: 100%;
 }
@@ -79,8 +135,8 @@
 }   
 
 .background-form{
-    background-color: #F7F8FA;
-    border-radius: 20px;
+    background-color: #2C323A;
+    border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
 }

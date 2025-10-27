@@ -22,13 +22,9 @@ import { LoginService } from '../../../services/avaliacoesServices/login/login.s
 import { EnsaioService } from '../../../services/controleQualidade/ensaio.service';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { RouterLink } from '@angular/router';
-
-
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
 import { DrawerModule } from 'primeng/drawer';
-
-
 interface RegisterTipoEnsaioForm {
   nome: FormControl,
 }
@@ -198,7 +194,7 @@ export class TipoEnsaioComponent implements OnInit{
       acceptLabel: 'Sim',
       rejectLabel: 'Cancelar',
       acceptButtonStyleClass: 'p-button-info',
-      rejectButtonStyleClass: 'p-button-secondary',
+      rejectButtonStyleClass: 'p-button-warn',
       
       accept: () => {
         this.ensaioService.deleteTipoEnsaio(id).subscribe({

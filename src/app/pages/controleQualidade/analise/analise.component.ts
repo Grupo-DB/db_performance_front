@@ -272,6 +272,9 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   private alertasExibidos = new Set<string>();
   private timerLimpezaAlertas: any;
   editFormVisible = false;
+  
+  // Controle para evitar múltiplas confirmações
+  private confirmacoesAbertas = new Set<string>();
   ensaiosDisponiveis: any[] = [];
   calculosDisponiveis: any[] = [];
   
@@ -604,9 +607,9 @@ renderChart(todosOsPontos: DataPoint[], regressionLineData: DataPoint[]) {
                 ...todosOsPontos.map((ponto: DataPoint, index: number) => ({
                     label: `Δm: ${ponto.y.toFixed(2)} kg/m²`,
                     data: [ponto],
-                    backgroundColor: 'rgba(54, 162, 235, 1)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    pointRadius: 5,
+                    backgroundColor: '#0ea5e9', // Azul claro para boa visibilidade
+                    borderColor: '#0284c7', // Borda um pouco mais escura
+                    pointRadius: 6,
                     pointStyle: 'circle',
                     showLine: false
                 })),
@@ -615,8 +618,8 @@ renderChart(todosOsPontos: DataPoint[], regressionLineData: DataPoint[]) {
                     label: regressionDataLabel,
                     data: regressionLineData,
                     type: 'line', 
-                    borderColor: 'red',
-                    borderWidth: 2,
+                    borderColor: '#1e3a8a', // Azul escuro para harmonizar com a tabela
+                    borderWidth: 3,
                     fill: false,
                     pointRadius: 0,
                     showLine: true
@@ -707,11 +710,11 @@ renderChart(todosOsPontos: DataPoint[], regressionLineData: DataPoint[]) {
                             yValue: yPos, 
                             content: equacaoFormatada,
                             font: { size: 14, weight: 'bold' },
-                            color: 'green',
+                            color: 'blue',
                             backgroundColor: 'rgba(255, 255, 255, 0.8)',
                             borderRadius: 6,
                             borderWidth: 1,
-                            borderColor: 'green',
+                            borderColor: 'darkblue',
                             padding: 8
                         }
                     }
@@ -2147,11 +2150,25 @@ irParaImagem(index: number): void {
 }
 // Método para deletar uma imagem
 deletarImagem(imageId: number): void {
+  // Criar chave única para esta imagem
+  const chaveConfirmacao = `imagem_${imageId}`;
+  
+  // Verificar se já há uma confirmação aberta para esta imagem
+  if (this.confirmacoesAbertas.has(chaveConfirmacao)) {
+    return; // Evitar múltiplas confirmações
+  }
+  
+  // Marcar confirmação como aberta
+  this.confirmacoesAbertas.add(chaveConfirmacao);
+  
   this.confirmationService.confirm({
     message: 'Tem certeza que deseja deletar esta imagem?',
     header: 'Confirmação',
     icon: 'pi pi-exclamation-triangle',
     accept: () => {
+      // Remover da lista de confirmações abertas
+      this.confirmacoesAbertas.delete(chaveConfirmacao);
+      
       this.amostraService.deleteImagem(this.amostraImagensSelecionada.id, imageId).subscribe({
         next: () => {
           this.messageService.add({
@@ -2170,6 +2187,10 @@ deletarImagem(imageId: number): void {
           });
         }
       });
+    },
+    reject: () => {
+      // Remover da lista de confirmações abertas quando cancelar
+      this.confirmacoesAbertas.delete(chaveConfirmacao);
     }
   });
 }
@@ -4855,14 +4876,32 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
     window.location.reload();
     this.cd.detectChanges();
   }
-  removerEnsaio(ensaio: any, plano: any): void {    
+  removerEnsaio(ensaio: any, plano: any): void {
+    // Criar chave única para este ensaio
+    const chaveConfirmacao = `ensaio_${ensaio.id}`;
+    
+    // Verificar se já há uma confirmação aberta para este ensaio
+    if (this.confirmacoesAbertas.has(chaveConfirmacao)) {
+      return; // Evitar múltiplas confirmações
+    }
+    
+    // Marcar confirmação como aberta
+    this.confirmacoesAbertas.add(chaveConfirmacao);
+    
     this.confirmationService.confirm({
       message: `Tem certeza que deseja remover o ensaio "${ensaio.descricao}" da análise?`,
       header: 'Confirmação',
-      icon: 'pi pi-exclamation-triangle',
+      icon: 'pi pi-check-circle',
+      acceptIcon: 'pi pi-check',
+      rejectIcon: 'pi pi-times',
       acceptLabel: 'Sim',
       rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-info',
+      rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
+        // Remover da lista de confirmações abertas
+        this.confirmacoesAbertas.delete(chaveConfirmacao);
+        
         if (!plano.ensaio_detalhes) {
           return;
         }
@@ -4888,18 +4927,40 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
           }
           this.cd.detectChanges();
         }
+      },
+      reject: () => {
+        // Remover da lista de confirmações abertas quando cancelar
+        this.confirmacoesAbertas.delete(chaveConfirmacao);
       }
     });
   }
   //Remove um cálculo da análise
-  removerCalculo(calculo: any, plano: any): void {    
+  removerCalculo(calculo: any, plano: any): void {
+    // Criar chave única para este cálculo
+    const chaveConfirmacao = `calculo_${calculo.id}`;
+    
+    // Verificar se já há uma confirmação aberta para este cálculo
+    if (this.confirmacoesAbertas.has(chaveConfirmacao)) {
+      return; // Evitar múltiplas confirmações
+    }
+    
+    // Marcar confirmação como aberta
+    this.confirmacoesAbertas.add(chaveConfirmacao);
+    
     this.confirmationService.confirm({
       message: `Tem certeza que deseja remover o cálculo "${calculo.descricao}" da análise?`,
       header: 'Confirmação',
-      icon: 'pi pi-exclamation-triangle',
+      icon: 'pi pi-check-circle',
+      acceptIcon: 'pi pi-check',
+      rejectIcon: 'pi pi-times',
       acceptLabel: 'Sim',
       rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-info',
+      rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
+        // Remover da lista de confirmações abertas
+        this.confirmacoesAbertas.delete(chaveConfirmacao);
+        
         if (!plano.calculo_ensaio_detalhes) {
           return;
         }
@@ -4917,6 +4978,10 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
           }
           this.cd.detectChanges();
         }
+      },
+      reject: () => {
+        // Remover da lista de confirmações abertas quando cancelar
+        this.confirmacoesAbertas.delete(chaveConfirmacao);
       }
     });
   }
@@ -5090,6 +5155,7 @@ ngOnDestroy(): void {
     clearTimeout(this._calculoChangeTimer);
   }
   this.alertasExibidos.clear();
+  this.confirmacoesAbertas.clear();
 }
 //Inicializa o sistema de alertas de rompimento
 iniciarSistemaAlertas(): void {
@@ -5427,15 +5493,37 @@ canDeactivate(): boolean | Promise<boolean> {
     if (!this.hasUnsavedChanges) {
       return true;
     }
+    
+    // Criar chave única para confirmação de saída
+    const chaveConfirmacao = 'sair_sem_salvar';
+    
+    // Verificar se já há uma confirmação aberta
+    if (this.confirmacoesAbertas.has(chaveConfirmacao)) {
+      return false; // Evitar múltiplas confirmações
+    }
+    
     return new Promise((resolve) => {
+      // Marcar confirmação como aberta
+      this.confirmacoesAbertas.add(chaveConfirmacao);
+      
       this.confirmationService.confirm({
         message: 'Você tem alterações não salvas. Deseja sair sem salvar?',
         header: 'Confirmação',
-        icon: 'pi pi-exclamation-triangle',
-        acceptLabel: 'Sair sem salvar',
-        rejectLabel: 'Continuar editando',
-        accept: () => resolve(true),
-        reject: () => resolve(false)
+        icon: 'pi pi-check-circle',
+        acceptIcon: 'pi pi-check',
+        rejectIcon: 'pi pi-times',
+        acceptLabel: 'Sim',
+        rejectLabel: 'Cancelar',
+        acceptButtonStyleClass: 'p-button-info',
+        rejectButtonStyleClass: 'p-button-warn',    
+        accept: () => {
+          this.confirmacoesAbertas.delete(chaveConfirmacao);
+          resolve(true);
+        },
+        reject: () => {
+          this.confirmacoesAbertas.delete(chaveConfirmacao);
+          resolve(false);
+        }
       });
     });
 }
@@ -5950,5 +6038,29 @@ canDeactivate(): boolean | Promise<boolean> {
   get welcomeComponentDialog(): any {
     return { visible: false };
   }
+
+  /**
+   * Sistema de controle de confirmações múltiplas implementado:
+   * 
+   * Problema resolvido: Múltiplas mensagens de confirmação aparecendo quando o usuário
+   * clica rapidamente nos botões de remover ensaio/cálculo ou há propagação de eventos.
+   * 
+   * Solução: 
+   * - Adicionada propriedade `confirmacoesAbertas: Set<string>` para rastrear confirmações ativas
+   * - Cada método que usa confirmationService.confirm() agora:
+   *   1. Cria uma chave única para o item (ex: "ensaio_123", "calculo_456")
+   *   2. Verifica se já existe confirmação aberta para aquela chave
+   *   3. Se existir, retorna sem abrir nova confirmação
+   *   4. Se não existir, marca como aberta e prossegue
+   *   5. Remove da lista tanto no accept() quanto no reject()
+   * 
+   * Métodos protegidos:
+   * - removerEnsaio()
+   * - removerCalculo() 
+   * - deletarImagem()
+   * - canDeactivate()
+   * 
+   * Limpeza: O Set é limpo automaticamente no ngOnDestroy()
+   */
 
 }

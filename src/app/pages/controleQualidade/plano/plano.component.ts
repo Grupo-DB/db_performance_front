@@ -27,11 +27,11 @@ import { EnsaioService } from '../../../services/controleQualidade/ensaio.servic
 import { Ensaio } from '../ensaio/ensaio.component';
 import { CalculoEnsaio } from '../calculo-ensaio/calculo-ensaio.component';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
-import { MultiSelect, MultiSelectModule } from 'primeng/multiselect';
-import { id } from 'date-fns/locale';
+import { MultiSelectModule } from 'primeng/multiselect';
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
 import { PickListModule } from 'primeng/picklist';
+import { MessageModule } from 'primeng/message';
 
 interface RegisterPlanoForm{
   descricao: FormControl,
@@ -51,7 +51,11 @@ export interface Plano{
 @Component({
   selector: 'app-plano',
   imports: [
-    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,InputNumberModule,AutoCompleteModule,MultiSelectModule, CardModule, InplaceModule, PickListModule
+    ReactiveFormsModule,FormsModule,CommonModule,DividerModule,InputIconModule,FloatLabelModule,
+    InputMaskModule,DialogModule,ConfirmDialogModule,SelectModule,IconFieldModule,
+    TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,
+    DropdownModule,ToastModule,NzMenuModule,DrawerModule,RouterLink,InputNumberModule,
+    AutoCompleteModule,MultiSelectModule, CardModule, InplaceModule, PickListModule,MessageModule
   ],
   animations:[
     trigger('efeitoFade',[
@@ -246,7 +250,7 @@ export class PlanoComponent implements OnInit {
       acceptLabel: 'Sim',
       rejectLabel: 'Cancelar',
       acceptButtonStyleClass: 'p-button-info',
-      rejectButtonStyleClass: 'p-button-secondary',
+      rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
         this.ensaioService.deletePlanoAnalise(id).subscribe({
           next:() => {

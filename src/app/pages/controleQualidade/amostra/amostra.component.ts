@@ -734,7 +734,7 @@ export class AmostraComponent implements OnInit {
       acceptLabel: 'Sim',
       rejectLabel: 'Cancelar',
       acceptButtonStyleClass: 'p-button-info',
-      rejectButtonStyleClass: 'p-button-secondary',
+      rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
         this.amostraService.deleteAmostra(id).subscribe({
           next: () => {

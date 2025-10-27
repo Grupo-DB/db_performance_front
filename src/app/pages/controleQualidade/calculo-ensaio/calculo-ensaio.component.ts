@@ -439,13 +439,13 @@ converterExpressaoParaNomes(expr: string): string {
   );
   // Substitui códigos por nomes com fallback
   return expr.replace(/(ens\d+|ensaio\d+|calculo\d+)/g, (match) => {
-    if (reverseMap[match]) return '"' + reverseMap[match] + '"';
+    if (reverseMap[match]) return reverseMap[match]  ;
     if (match.startsWith('calculo')) {
       const calc = this.caculosEnsaio.find((c: any) => c?.tecnica === match || `calculo${c?.id}` === match);
-      return calc?.descricao ? '"' + calc.descricao + '"' : match;
+      return calc?.descricao ? calc.descricao : match;
     } else {
       const ens = this.ensaios.find((e: any) => e?.ensaioTecnico === match || e?.tecnica === match || `ens${e?.id}` === match || `ensaio${e?.id}` === match);
-      return ens?.descricao ? '"' + ens.descricao + '"' : match;
+      return ens?.descricao ? ens.descricao : match;
     }
   });
 }
@@ -888,7 +888,7 @@ salvarFormulaEditada() {
       acceptLabel: 'Sim',
       rejectLabel: 'Cancelar',
       acceptButtonStyleClass: 'p-button-info',
-      rejectButtonStyleClass: 'p-button-secondary',
+      rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
         this.ensaioService.deleteCalculoEnsaio(id).subscribe({
           next: () => {

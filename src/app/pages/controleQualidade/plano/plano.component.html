@@ -52,24 +52,20 @@
 <div class="container flex flex-column align-items-center mb-4">
     <div class="containerInterno w-12">
         <div @swipeAnimation>
-
             <form
                 [formGroup]="registerForm"
                 title="Cadastrar novo Plano de Análise" 
                 class="flex flex-column gap-4" 
             >
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-
                     <div class="fg1 flex flex-column w-12 align-items-center">
-
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
                                 <div class="header w-full text-center">
-                                    <h2>Inserir Novo Plano de Análise</h2>
+                                    <h2>Plano de Análise</h2>
                                 </div>
                             </ng-template>
                             <div class="flex flex-column w-12 gap-3">
-
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
@@ -88,10 +84,10 @@
                                 </div>
 
                                 <div class="w-12 text-left">
-                                    <div class="mt-2 mb-0 w-12 ">
-                                        <p-divider align="left" type="solid">
-                                            <b>Selecione os Ensaios para OS</b>
-                                        </p-divider>
+                                    <div class="step1 mt-2 mb-5 w-12 ">
+                                        <p-message severity="info" class="w-11">
+                                            <b>Selecione os Ensaios</b>
+                                        </p-message>
                                     </div>
                                     <p-pickList 
                                         [source]="ensaios" 
@@ -121,10 +117,10 @@
                                 </div>
 
                                 <div class="w-12 text-left">
-                                    <div class="mt-2 mb-0 w-12 ">
-                                        <p-divider align="left" type="solid">
-                                            <b>Selecione os Cálculos para OS</b>
-                                        </p-divider>
+                                    <div class="step1 mt-2 mb-5 w-12 ">
+                                        <p-message severity="info" class="w-11">
+                                            <b>Selecione os Cálculos</b>
+                                        </p-message>
                                     </div>
                                     <p-pickList 
                                         [source]="calculosEnsaio" 
@@ -159,6 +155,7 @@
                                 <p-button 
                                     (onClick)="clearForm()" 
                                     label="Limpar"
+                                    severity="info"
                                     iconPos="right"  
                                     tooltipPosition="top"
                                     pTooltip="Limpar"
@@ -190,6 +187,7 @@
                         <p-button 
                             label="Planos de Análise" 
                             tooltipPosition="top"
+                            severity="info"
                             pTooltip="Exibir Planose de Análise"      
                         >
                             <div class="inline-flex align-items-center">
@@ -257,7 +255,7 @@
                                         <div class="flex justify-content-center gap-2">
                                             <p-button
                                             icon="pi pi-file-edit" 
-                                            severity="primary" 
+                                            severity="success" 
                                             size="small" 
                                             [raised]="true"
                                             pTooltip="Editar" 
@@ -301,8 +299,6 @@
     [style]="{ width: '60vw' }"
     styleClass="w-full md:w-12 lg:w-4"
 >
-
-    <div class="containerInterno w-12">
         <div class="background-form">
             <form
                 [formGroup]="editForm" title="Editar Plano de Análise" class="flex flex-column gap-4" 
@@ -316,8 +312,7 @@
                                     <b>Editar Plano de Análise</b>
                                 </div>
                             </ng-template>
-                            <div class="flex flex-column w-12 gap-3">
-
+                            <div class="bloco flex flex-column w-12 gap-3">
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
@@ -379,7 +374,8 @@
                                 <p-button 
                                     (onClick)="clearEditForm()" 
                                     label="Limpar"
-                                    iconPos="right"  
+                                    iconPos="right"
+                                    severity="info"  
                                     tooltipPosition="top"
                                     pTooltip="Limpar"
                                     icon="pi pi-eraser"
@@ -399,6 +395,4 @@
                 </div>
             </form>
         </div>
-    </div>
-  
 </p-drawer>

@@ -1074,7 +1074,7 @@ filterVariaveis(event: any) {
       acceptLabel: 'Sim',
       rejectLabel: 'Cancelar',
       acceptButtonStyleClass: 'p-button-info',
-      rejectButtonStyleClass: 'p-button-secondary',
+      rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
         this.ensaioService.deleteEnsaio(id).subscribe({
           next:() =>{

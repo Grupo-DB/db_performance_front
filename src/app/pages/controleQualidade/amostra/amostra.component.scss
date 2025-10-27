@@ -64,6 +64,44 @@
     background-color: #2C323A;
     border-radius: 8px;    
 }
+::ng-deep .bloco {
+  // Inputs de texto
+  .p-inputtext {
+    background-color: #3B3E44 !important;
+    border: 1px solid #4A5157 !important;
+    color: #F8F9FA !important;
+    
+    &:enabled:focus {
+      border-color: #0ea5e9 !important;
+      box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.2) !important;
+    }
+    
+    &:enabled:hover {
+      border-color: #5A6069 !important;
+    }
+    
+    &::placeholder {
+      color: #9CA3AF !important;
+    }
+  }
+  .p-select{
+    background-color: #3B3E44;
+    .p-select-overlay{
+        background-color: #3B3E44;
+    }
+    .p-select-list-container{
+        background-color: #3B3E44;
+        color: #F8F9FA;
+    }
+}
+.p-select-overlay{
+        background-color: #3B3E44;
+    }
+    .p-select-option-group-label{
+        background-color: #3B3E44;
+        color: #F8F9FA;
+    }
+}
 
 .titulo{
     display: flex;
@@ -94,17 +132,17 @@
     
     // Ícone para Informações Gerais
     &.titulo-info::before {
-        content: '\e923'; // pi-info-circle
+        content: '\e95d'; // pi-tags
     }
     
     // Ícone para Material
     &.titulo-material::before {
-        content: '\e91f'; // pi-box
+         content: '\e9d9'; // pi-box 
     }
     
     // Ícone para Complementos
     &.titulo-complementos::before {
-        content: '\e90d'; // pi-cog
+        content: '\ea13'; // pi-clipboard
     }
 }
 
@@ -274,44 +312,6 @@
     }
 }
 
-.blocos-scroll {
-    height: 100%;
-    overflow-y: auto;
-  }
-  
-  .expressao-container {
-    height: 100%;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    background: #fff;
-  }
-  
-  .expressao {
-    position: sticky; // 
-    top: 0;
-    width: 100%;
-    font-size: 24px;
-    font-style: italic;
-    font-weight: 500;
-    padding: 1rem 0;
-    background: #fff;
-    text-align: center;
-    z-index: 2;
-  }
-
-
-.drawer-footer {
-    width: 100%;
-    display: flex;
-    justify-content: flex-start; 
-    padding: 1rem;
-    background: #fff;
-    border-top: 1px solid #eee;
-    position: sticky;
-    bottom: 0;
-    z-index: 10;
-  }
   :host ::ng-deep .p-fieldset-legend {
     background-color: #0ea5e9;
     color: #fff;
@@ -428,60 +428,43 @@
       color: #9CA3AF !important;
     }
   }
-  
-  // Selects/Dropdowns
-  .p-dropdown {
-    background-color: #3B3E44 !important;
-    border: 1px solid #4A5157 !important;
-    border-radius: 6px !important;
-    transition: all 0.2s ease !important;
-    
-    .p-dropdown-label {
-      color: #F8F9FA !important;
-      padding: 12px !important;
-      
-      &.p-placeholder {
-        color: #9CA3AF !important;
-      }
+  .p-select{
+    background-color: #3B3E44;
+    .p-select-overlay{
+        background-color: #3B3E44;
     }
-    
-    .p-dropdown-trigger {
-      background-color: transparent !important;
-      color: #9CA3AF !important;
-      border-left: 1px solid #4A5157 !important;
-      width: 40px !important;
-      
-      .p-dropdown-trigger-icon {
-        color: #9CA3AF !important;
-      }
+    .p-select-list-container{
+        background-color: #3B3E44;
+        color: #F8F9FA;
     }
-    
-    &:not(.p-disabled):hover {
-      border-color: #5A6069 !important;
-      
-      .p-dropdown-trigger {
-        .p-dropdown-trigger-icon {
-          color: #0ea5e9 !important;
-        }
-      }
+}
+.p-select-overlay{
+        background-color: #3B3E44;
     }
-    
-    &:not(.p-disabled).p-focus {
-      border-color: #0ea5e9 !important;
-      box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.2) !important;
+    .p-select-option-group-label{
+        background-color: #3B3E44;
+        color: #F8F9FA;
     }
-    
-    &.p-dropdown-clearable {
-      .p-dropdown-clear-icon {
-        color: #9CA3AF !important;
-        
-        &:hover {
-          color: #F87171 !important;
-        }
-      }
+}
+:host ::ng-deep .p-select{
+    background-color: #3B3E44;
+    .p-select-overlay{
+        background-color: #3B3E44;
     }
-  }
-  
+    .p-select-list-container{
+        background-color: #3B3E44;
+        color: #F8F9FA;
+    }
+}
+.p-select-overlay{
+        background-color: #3B3E44;
+    }
+    .p-select-option-group-label{
+        background-color: #3B3E44;
+        color: #F8F9FA;
+    }
+}  
+    
   // Multiselect
   .p-multiselect {
     background-color: #3B3E44 !important;
@@ -553,54 +536,7 @@
   .p-input-icon {
     color: #9CA3AF !important;
   }
-}
 
-// Estilos para dropdowns no overlay
-::ng-deep .p-dropdown-panel {
-  background-color: #3B3E44 !important;
-  border: 1px solid #4A5157 !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
-  
-  .p-dropdown-items {
-    .p-dropdown-item {
-      background-color: transparent !important;
-      color: #F8F9FA !important;
-      padding: 8px 12px !important;
-      transition: all 0.2s ease !important;
-      
-      &:not(.p-highlight):not(.p-disabled):hover {
-        background-color: #4A5157 !important;
-        color: #F8F9FA !important;
-      }
-      
-      &.p-highlight {
-        background-color: #0ea5e9 !important;
-        color: white !important;
-      }
-    }
-  }
-  
-  .p-dropdown-filter {
-    background-color: #3B3E44 !important;
-    border: 1px solid #4A5157 !important;
-    color: #F8F9FA !important;
-    
-    &:focus {
-      border-color: #0ea5e9 !important;
-      box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.2) !important;
-    }
-  }
-  
-  .p-dropdown-filter-icon {
-    color: #9CA3AF !important;
-  }
-  
-  .p-dropdown-empty-message {
-    color: #9CA3AF !important;
-    background-color: transparent !important;
-    padding: 8px 12px !important;
-  }
-}
 
 // Estilos para calendar overlay
 ::ng-deep .p-datepicker {
@@ -802,4 +738,4 @@
   }
 }
 
-}
+

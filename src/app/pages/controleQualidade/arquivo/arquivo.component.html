@@ -91,15 +91,15 @@
                                             <p-iconfield>
                                                 <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
                                                 <input
-                                                    pInputText 
                                                     variant="filled" 
                                                     [(ngModel)]="inputValue"
                                                     [style]="{'width':'100%'}" 
                                                     id="on_label"
+                                                    class="form-control"
                                                     autocomplete="off" 
-                                                    type="text" 
+                                                    type="text"
+                                                    pInputText id="on_label" 
                                                     (input)="filterTable()"
-                                                    pInputText
                                                 />
                                             </p-iconfield>
                                             <label  for="on_label" style="color: #1b91ff">Pesquisar</label>
@@ -250,6 +250,7 @@
                                                     [model]="getMenuItems(analise)"
                                                     [radius]="80"
                                                     type="linear" 
+                                                    severity="info"
                                                     direction="left"
                                                     [style]="{ position: 'relative', top: 0, right: 0 }" 
                                                     [buttonProps]="{ severity: 'info', rounded: true }"
@@ -278,40 +279,33 @@
                                                 <div 
                                                     style="position: relative;"
                                                     *ngIf="!analise.finalizada"
+                                                    class="ml-2"
                                                 >
-                                                    <a 
-                                                        type="button" 
-                                                        class="ml-2"
-                                                    >
-                                                        <p-button 
-                                                            icon="pi pi-lock"
-                                                            severity="primary"
-                                                            (onClick)="finalizarAnalise(analise)" 
-                                                            [rounded]="true" 
-                                                            [disabled]="analise.finalizada"
-                                                            pTooltip="Finalizar OS"
-                                                            tooltipPosition="top" 
-                                                        />
-                                                    </a>
+                                                    <p-button 
+                                                        icon="pi pi-lock"
+                                                        severity="primary"
+                                                        (click)="finalizarAnalise(analise, $event)" 
+                                                        [rounded]="true" 
+                                                        [disabled]="analise.finalizada || finalizarAnaliseEmAndamento"
+                                                        pTooltip="Finalizar OS"
+                                                        tooltipPosition="top" 
+                                                    />
                                                 </div>
                                                 <div 
                                                     style="position: relative;"
                                                     *ngIf="analise.finalizada"    
+                                                    class="ml-2"
                                                 >
-                                                    <a 
-                                                        type="button" 
-                                                        class="ml-2"  
-                                                    >
                                                         <p-button 
                                                             icon="pi pi-lock-open"
                                                             severity="contrast"
-                                                            (onClick)="reabrirAnalise(analise)" 
+                                                            (click)="reabrirAnalise(analise, $event)" 
                                                             [rounded]="true" 
-                                                        
+                                                            [disabled]="reabrirAnaliseEmAndamento || operacoesAtivas.size > 0 || contadorConfirmacoes > 0"
                                                             pTooltip="Reabrir OS"
-                                                            tooltipPosition="top" 
+                                                            tooltipPosition="top"
+                                                            [style.pointer-events]="reabrirAnaliseEmAndamento ? 'none' : 'auto'"
                                                         />
-                                                    </a>
                                                 </div>
                                                 <div 
                                                     style="position: relative;"
@@ -346,20 +340,17 @@
                                                 <div 
                                                     style="position: relative;"
                                                     *ngIf="analise.finalizada && analise.laudo && !analise.aprovada"
+                                                    class="ml-2"
                                                 >
-                                                    <a 
-                                                        type="button" 
-                                                        class="ml-2"
-                                                    >
-                                                        <p-button 
-                                                            icon="pi pi-check-circle"
-                                                            severity="success"
-                                                            (onClick)="aprovarAnalise(analise)" 
-                                                            [rounded]="true" 
-                                                            pTooltip="Aprovar OS"
-                                                            tooltipPosition="top" 
-                                                        />
-                                                    </a>
+                                                    <p-button 
+                                                        icon="pi pi-check-circle"
+                                                        severity="success"
+                                                        (click)="aprovarAnalise(analise, $event)" 
+                                                        [rounded]="true" 
+                                                        [disabled]="aprovarAnaliseEmAndamento"
+                                                        pTooltip="Aprovar OS"
+                                                        tooltipPosition="top" 
+                                                    />
                                                 </div>
                                                 <div
                                                     style="position: relative;"
@@ -367,9 +358,9 @@
                                                 >
                                                     <p-button 
                                                             icon="pi pi-file-check"
-                                                            severity="primary"
+                                                            severity="warn"
                                                             [rounded]="true" 
-                                                            pTooltip="Veirificar Conformidade"
+                                                            pTooltip="Veririficar Conformidade"
                                                             (onClick)="consultarParecer(analise)"
                                                             tooltipPosition="top">
                                                         </p-button>
@@ -377,32 +368,28 @@
                                                 <div 
                                                     style="position: relative;"
                                                     *ngIf="analise.finalizada && analise.laudo && analise.aprovada"
+                                                    class="ml-2"
                                                 >
-                                                    <a 
-                                                        type="button" 
-                                                        class="ml-2"
-                                                    >
+                                                    <p-button 
+                                                        *ngIf="analise.amostra_detalhes.material == 'Argamassa'; else outroBotao"
+                                                        icon="pi pi-book"
+                                                        severity="success"
+                                                        [rounded]="true" 
+                                                        pTooltip="Colocar dados Laudo"
+                                                        (onClick)="abrirModalDadosLaudoSubstrato(analise)"
+                                                        tooltipPosition="top">
+                                                    </p-button>
+
+                                                    <ng-template #outroBotao>
                                                         <p-button 
-                                                            *ngIf="analise.amostra_detalhes.material == 'Argamassa'; else outroBotao"
-                                                            icon="pi pi-book"
-                                                            severity="success"
+                                                            icon="pi pi-print"
+                                                            severity="help"
                                                             [rounded]="true" 
-                                                            pTooltip="Colocar dados Laudo"
-                                                            (onClick)="abrirModalDadosLaudoSubstrato(analise)"
+                                                            pTooltip="Imprimir Laudo"
+                                                            (onClick)="abrirModalLaudo(analise)"
                                                             tooltipPosition="top">
                                                         </p-button>
-
-                                                        <ng-template #outroBotao>
-                                                            <p-button 
-                                                                icon="pi pi-print"
-                                                                severity="help"
-                                                                [rounded]="true" 
-                                                                pTooltip="Imprimir Laudo"
-                                                                (onClick)="abrirModalLaudo(analise)"
-                                                                tooltipPosition="top">
-                                                            </p-button>
-                                                        </ng-template>
-                                                    </a>
+                                                    </ng-template>
                                                 </div>
                                             </div>
 
@@ -430,7 +417,7 @@
                 </div>
             </div>
         </div>  
-    </div>
+    
 
     <p-drawer 
         header="Imagens da Amostra" 
@@ -439,7 +426,7 @@
         [style]="{ width: '80vw' }">
         
         <div *ngIf="amostraImagensSelecionada" class="mb-4">
-            <h3>Amostra: {{ amostraImagensSelecionada.numero }}</h3>
+            <h3 style="color: #ffffff;">Amostra: {{ amostraImagensSelecionada.numero }}</h3>
             <p><strong>Material:</strong> {{ amostraImagensSelecionada.material }}</p>
             <p><strong>Data de Coleta:</strong> {{ amostraImagensSelecionada.data_coleta | date:'dd/MM/yyyy' }}</p>
         </div>
@@ -482,11 +469,11 @@
                 <div class="w-full mb-3">
                     <p-floatLabel variant="on">
                         <input 
-                             pInputText
                             [(ngModel)]="imagensAmostra[imagemAtualIndex].descricao" 
                             type="text" 
                             id="edit-descricao"
-                            [style]="{'width':'100%'}" 
+                            [style]="{'width':'100%'}"
+                            class="form-control" 
                             autocomplete="off" 
                             variant="filled"
                             (ngModelChange)="onDescricaoChange(imagensAmostra[imagemAtualIndex])"
@@ -511,7 +498,8 @@
                 label="Deletar" 
                 icon="pi pi-trash" 
                 severity="danger"
-                (onClick)="deletarImagem(imagensAmostra[imagemAtualIndex].id)">
+                [disabled]="deletarImagemEmAndamento"
+                (click)="deletarImagem(imagensAmostra[imagemAtualIndex].id, $event)">
             </p-button>
             </div>
 
@@ -620,7 +608,7 @@
     >
 
         <div *ngIf="analiseSelecionada">
-            <h2>Dados</h2>
+            <h2 style="color: #ffffff;">Dados</h2>
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                 <div class="text-left w-12">
                     <b>Número:</b> {{ analiseSelecionada.amostra_detalhes.numero }}<br>
@@ -632,7 +620,7 @@
 
             <br>
 
-            <h2>Cálculos</h2>
+            <h2 style="color: #ffffff;">Cálculos</h2>
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                 <div class="text-left w-12" >
                     <span *ngIf="analiseSelecionada?.ultimo_calculo?.length > 0">
@@ -668,7 +656,7 @@
 
             <br>
 
-            <h2>Ensaios</h2>
+            <h2 style="color: #ffffff;">Ensaios</h2>
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                 <div class="text-left w-12" >
                     <span *ngIf="analiseSelecionada?.ultimo_ensaio?.ensaios_utilizados?.length > 0">
@@ -752,9 +740,9 @@
                                                 <input
                                                     value="{{ ensaio.garantia }}"
                                                     type="text"
-                                                    pInputText
                                                     [(ngModel)]="ensaio.garantia"
                                                     placeholder="Digite a garantia"
+                                                    class="form-control"
                                                 />
                                             </td>
                                         </tr>
@@ -823,19 +811,19 @@
                                         <ng-template pTemplate="body" let-linha let-i="rowIndex">
                                             <tr>
                                                 <td>{{ linha.numero }}</td>
-                                                <td><input pInputText [(ngModel)]="linha.diametro" type="number"/></td>
-                                                <td><input pInputText [(ngModel)]="linha.area" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.espessura" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.subst" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.junta" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.carga" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.resist" type="number" step="0.01" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.validacao" type="text" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.rupturas.sub" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.rupturas.subArga" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.rupturas.rupArga" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.rupturas.argaCola" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="linha.rupturas.colarPastilha" type="number" /></td>
+                                                <td><input [value]="linha.diametro" (input)="updateLinhaProperty(linha, 'diametro', $event)" type="number" class="form-control"/></td>
+                                                <td><input [value]="linha.area" (input)="updateLinhaProperty(linha, 'area', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="linha.espessura" (input)="updateLinhaProperty(linha, 'espessura', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="linha.subst" (input)="updateLinhaProperty(linha, 'subst', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="linha.junta" (input)="updateLinhaProperty(linha, 'junta', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="linha.carga" (input)="updateLinhaProperty(linha, 'carga', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="linha.resist" (input)="updateLinhaProperty(linha, 'resist', $event)" type="number" step="0.01" class="form-control" /></td>
+                                                <td><input [value]="linha.validacao" (input)="updateLinhaProperty(linha, 'validacao', $event)" type="text" class="form-control" /></td>
+                                                <td><input [value]="linha.rupturas?.sub" (input)="updateLinhaRuptura(linha, 'sub', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="linha.rupturas?.subArga" (input)="updateLinhaRuptura(linha, 'subArga', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="linha.rupturas?.rupArga" (input)="updateLinhaRuptura(linha, 'rupArga', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="linha.rupturas?.argaCola" (input)="updateLinhaRuptura(linha, 'argaCola', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="linha.rupturas?.colarPastilha" (input)="updateLinhaRuptura(linha, 'colarPastilha', $event)" type="number" class="form-control" /></td>
                                             </tr>
                                         </ng-template>
                                     </p-table>
@@ -906,19 +894,19 @@
                                         <ng-template pTemplate="body" let-numero let-i="rowIndex">
                                             <tr>
                                                 <td>{{ numero.numero }}</td>
-                                                <td><input pInputText [(ngModel)]="numero.diametro" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.area" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.espessura" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.subst" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.junta" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.carga" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.resist" type="number" step="0.01" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.validacao" type="text" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.rupturas.sub" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.rupturas.subArga" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.rupturas.rupArga" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.rupturas.argaCola" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="numero.rupturas.colarPastilha" type="number" /></td>
+                                                <td><input [value]="numero.diametro" (input)="updateNumeroProperty(numero, 'diametro', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="numero.area" (input)="updateNumeroProperty(numero, 'area', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="numero.espessura" (input)="updateNumeroProperty(numero, 'espessura', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="numero.subst" (input)="updateNumeroProperty(numero, 'subst', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="numero.junta" (input)="updateNumeroProperty(numero, 'junta', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="numero.carga" (input)="updateNumeroProperty(numero, 'carga', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="numero.resist" (input)="updateNumeroProperty(numero, 'resist', $event)" type="number" step="0.01" class="form-control" /></td>
+                                                <td><input [value]="numero.validacao" (input)="updateNumeroProperty(numero, 'validacao', $event)" type="text" class="form-control" /></td>
+                                                <td><input [value]="numero.rupturas?.sub" (input)="updateNumeroRuptura(numero, 'sub', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="numero.rupturas?.subArga" (input)="updateNumeroRuptura(numero, 'subArga', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="numero.rupturas?.rupArga" (input)="updateNumeroRuptura(numero, 'rupArga', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="numero.rupturas?.argaCola" (input)="updateNumeroRuptura(numero, 'argaCola', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="numero.rupturas?.colarPastilha" (input)="updateNumeroRuptura(numero, 'colarPastilha', $event)" type="number" class="form-control" /></td>
                                             </tr>
                                         </ng-template>
                                     </p-table>
@@ -1051,10 +1039,10 @@
                                         <ng-template pTemplate="body" let-flexao let-i="rowIndex">
                                             <tr>
                                                 <td>{{ flexao.cp }}</td>
-                                                <td><input pInputText [(ngModel)]="flexao.flexao_n" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="flexao.flexao_mpa" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="flexao.media_mpa" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="flexao.tracao_flexao" type="number" /></td>
+                                                <td><input [value]="flexao.flexao_n" (input)="updateFlexaoProperty(flexao, 'flexao_n', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="flexao.flexao_mpa" (input)="updateFlexaoProperty(flexao, 'flexao_mpa', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="flexao.media_mpa" (input)="updateFlexaoProperty(flexao, 'media_mpa', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="flexao.tracao_flexao" (input)="updateFlexaoProperty(flexao, 'tracao_flexao', $event)" type="number" class="form-control" /></td>
                                             </tr>
                                         </ng-template>
                                     </p-table>
@@ -1119,10 +1107,10 @@
                                         <ng-template pTemplate="body" let-compressao let-i="rowIndex">
                                             <tr>
                                                 <td>{{ compressao.cp }}</td>
-                                                <td><input pInputText [(ngModel)]="compressao.compressao_n" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="compressao.compressao_mpa" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="compressao.media_mpa" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="compressao.tracao_compressao" type="number" /></td>
+                                                <td><input [value]="compressao.compressao_n" (input)="updateCompressaoProperty(compressao, 'compressao_n', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="compressao.compressao_mpa" (input)="updateCompressaoProperty(compressao, 'compressao_mpa', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="compressao.media_mpa" (input)="updateCompressaoProperty(compressao, 'media_mpa', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="compressao.tracao_compressao" (input)="updateCompressaoProperty(compressao, 'tracao_compressao', $event)" type="number" class="form-control" /></td>
                                             </tr>
                                         </ng-template>
                                     </p-table>
@@ -1185,10 +1173,10 @@
 
                                         <ng-template pTemplate="body" let-retacao let-i="rowIndex">
                                             <tr>
-                                                <td><input pInputText  [(ngModel)]="retacao.data" type="date" /></td>
-                                                <td><input pInputText [(ngModel)]="retacao.idade" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="retacao.media" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="retacao.desvio" type="number" /></td>
+                                                <td><input [value]="retacao.data" (input)="updateRetacaoProperty(retacao, 'data', $event)" type="date" class="form-control" /></td>
+                                                <td><input [value]="retacao.idade" (input)="updateRetacaoProperty(retacao, 'idade', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="retacao.media" (input)="updateRetacaoProperty(retacao, 'media', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="retacao.desvio" (input)="updateRetacaoProperty(retacao, 'desvio', $event)" type="number" class="form-control" /></td>
                                             </tr>
                                         </ng-template>
                                     </p-table>
@@ -1250,9 +1238,9 @@
 
                                         <ng-template pTemplate="body" let-elasticidade let-i="rowIndex">
                                             <tr>
-                                                <td><input pInputText [(ngModel)]="elasticidade.individual" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="elasticidade.media" type="number" /></td>
-                                                <td><input pInputText [(ngModel)]="elasticidade.desvio_padrao" type="number" /></td>
+                                                <td><input [value]="elasticidade.individual" (input)="updateElasticidadeProperty(elasticidade, 'individual', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="elasticidade.media" (input)="updateElasticidadeProperty(elasticidade, 'media', $event)" type="number" class="form-control" /></td>
+                                                <td><input [value]="elasticidade.desvio_padrao" (input)="updateElasticidadeProperty(elasticidade, 'desvio_padrao', $event)" type="number" class="form-control" /></td>
                                             </tr>
                                         </ng-template>
                                     </p-table>

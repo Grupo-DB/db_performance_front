@@ -1,6 +1,36 @@
 @import "primeicons/primeicons.css";
+
+// Definições dos ícones para os títulos das seções
+.titulo {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    
+    &::before {
+        margin-right: 8px;
+        font-family: 'primeicons';
+        font-size: 1.2em;
+        color: #0ea5e9;
+    }
+    
+    // Ícone para Informações Gerais
+    &.titulo-info::before {
+        content: '\e934'; // pi-tags
+    }
+    
+    // Ícone para Material
+    &.titulo-material::before {
+        content: '\e91f'; // pi-box
+    }
+    
+    // Ícone para Complementos
+    &.titulo-complementos::before {
+        content: '\e925'; // pi-clipboard
+    }
+}
+
 :host ::ng-deep .p-card-body{
-    background-color: #f8f9fa;
+    background-color: #2C323A;
     border-radius: 0 0 10px 10px;
 }
 
@@ -160,14 +190,12 @@
         }
     }
 }   
-
 .background-form{
-    background-color: #F7F8FA;
-    border-radius: 20px;
+    background-color: #2C323A;
+    border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
 }
-
 // Estilos para o modal de parecer da IA
 :host ::ng-deep .parecer-modal {
     .p-dialog {

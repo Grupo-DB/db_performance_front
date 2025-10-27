@@ -28,8 +28,6 @@ import { LoginService } from '../../../services/avaliacoesServices/login/login.s
 import { AmostraService } from '../../../services/controleQualidade/amostra.service';
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
-import { CdkDragPlaceholder } from "@angular/cdk/drag-drop";
-
 interface ProdutoAmostraForm {
   nome: FormControl,
   registroEmpresa: FormControl,
@@ -268,7 +266,7 @@ export class ProdutoAmostraComponent implements OnInit {
       acceptLabel: 'Sim',
       rejectLabel: 'Cancelar',
       acceptButtonStyleClass: 'p-button-info',
-      rejectButtonStyleClass: 'p-button-secondary',
+      rejectButtonStyleClass: 'p-button-warn',
 
       accept:() =>{
         this.amostraService.deleteProduto(id).subscribe({

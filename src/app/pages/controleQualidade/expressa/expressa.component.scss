@@ -1,15 +1,150 @@
 @import "primeicons/primeicons.css";
-:host ::ng-deep .p-card-body{
-    background-color: #f8f9fa;
-    border-radius: 0 0 10px 10px;
+
+//Picklist
+:host ::ng-deep {
+    .p-picklist {
+        .p-picklist-source-controls,
+        .p-picklist-target-controls {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            
+            .p-button {
+                margin: 0.25rem 0;
+                background-color: #5688ec;
+                color: white;
+                border-color: #3B3E44;
+                
+                &:hover {
+                    background-color: #03163b;
+                    border-color: #3B3E44;
+                }
+            }
+        }
+        
+        .p-picklist-transfer-controls {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            
+            .p-button {
+                margin: 0.25rem 0;
+                background-color: #5688ec;
+                color: white;
+                border-color: #3B3E44;
+                
+                &:hover {
+                    background-color: #03163b;
+                    border-color: #3B3E44;
+                }
+                
+                &:disabled {
+                    background-color: #95c5f8;
+                    color: #6c757d;
+                    border-color: #e9ecef;
+                }
+            }
+        }
+        
+        .p-picklist-source-list-container,
+        .p-picklist-target-list-container {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            
+            .p-picklist-header {
+                background-color: #3B3E44;
+                color: white;
+                padding: 1rem;
+                font-weight: 600;
+            }
+            
+            .p-picklist-list {
+                max-height: 300px;
+                
+                .p-picklist-item {
+                    padding: 0.75rem 1rem;
+                    border-bottom: 1px solid #f1f3f4;
+                    background-color: #8d1616 !important;
+                    color: #333333;
+                    
+                    &:hover {
+                        background-color: #d1ecf1 !important;
+                        color: #0066cc !important;
+                        cursor: pointer;
+                    }
+                    
+                    &.p-highlight {
+                        background-color: #3B3E44 !important;
+                        color: white !important;
+                        
+                        &:hover {
+                            background-color: #3B3E44 !important;
+                        }
+                    }
+                    
+                    &:nth-child(even):not(.p-highlight) {
+                        background-color: #f8f9fa !important;
+                        
+                        &:hover {
+                            background-color: #d1ecf1 !important;
+                            color: #0066cc !important;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+:host ::ng-deep .p-card-body {
+  background-color: #2C323A;
+  border-radius: 12px;
+  color: #ffffff;
+}
+.tabela{
+    background-color: #3B3E44;
+    color: #ffffff;
+    border-radius: 10px;
+    width: 100%;
+    th{
+        font-size: 14px;
+        background-color: #3B3E44 !important;
+        color: white !important;
+    }
+    td{
+        font-size:12px ;
+    }
+}
+
+.card{
+    border-radius: 10px;
+    .header{
+        background-color: #3B3E44;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        h2{
+            color: #ffffff;
+            font-weight: 700;
+        }
+    }
+}
+.containerInterno{
+    background-color: #ffffff;
+    border: 10px solid #ffffff;
+    padding: 10px;
 }
 .container{
     max-width: 100%;
-    position: relative;
 }
+
 .titulo{
     font-size: 22px;
+    //background-color: #4A90E2;
+    background-color: #ffffff;
+    border: 20px solid #ffffff;
 }
+
 .form-geral{
     width: 98%;
     margin-left: auto;
@@ -55,6 +190,13 @@
         }
     }
 }   
+
+.background-form{
+    background-color: #2C323A;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
 .botoes-form{
     display: flex;
     width: 75%;
@@ -85,21 +227,6 @@
     p{
         text-align: center;
         margin-top: 10px;
-    }
-}
-.tabela{
-    border-radius: 10px;
-    width: 100%;
-
-    border-radius: 10px;
-    margin: auto;
-
-    // box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-    th{
-        font-size: 14px;
-    }
-    td{
-        font-size:12px ;
     }
 }
 
@@ -166,7 +293,7 @@
   }
   
   .expressao {
-    position: sticky;
+    position: sticky; // ou remova se não quiser fixa no topo
     top: 0;
     width: 100%;
     font-size: 24px;
@@ -177,36 +304,12 @@
     text-align: center;
     z-index: 2;
   }
-.step1{
-    background-color: #F7F8FA;
-    border-radius: 20px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    position: relative;
-}
 
-.containerInterno{
-    background-color: #ffffff;
-    border: 10px solid #ffffff;
-    padding-left: 20px;
-    padding-right: 20px;
-    //box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-}
-
-.header{
-    background-color: #3B3E44;
-    color: #ffffff;
-    padding: 10px;
-    border-radius: 10px 10px 0 0;
-    h2{
-        color: #ffffff;
-        font-weight: 700;
-    }
-}
 
 .drawer-footer {
     width: 100%;
     display: flex;
-    justify-content: flex-start; 
+    justify-content: flex-start; // ou center, se preferir centralizado
     padding: 1rem;
     background: #fff;
     border-top: 1px solid #eee;
@@ -214,132 +317,70 @@
     bottom: 0;
     z-index: 10;
   }
-  :host ::ng-deep .p-fieldset-legend {
-    background-color: #444959;
-    color: #fff;
+  :host ::ng-deep .p-select{
+    background-color: #3B3E44;
+    .p-select-overlay{
+        background-color: #3B3E44;
+    }
+    .p-select-list-container{
+        background-color: #3B3E44;
+        color: #F8F9FA;
+    }
+}
+.p-select-overlay{
+    background-color: #3B3E44;
+}
+    .p-select-option-group-label{
+        background-color: #3B3E44;
+        color: #F8F9FA;
+}
+::ng-deep .bloco {
+  // Inputs de texto
+  .p-inputtext {
+    background-color: #3B3E44 !important;
+    border: 1px solid #4A5157 !important;
+    color: #F8F9FA !important;
+    
+    &:enabled:focus {
+      border-color: #0ea5e9 !important;
+      box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.2) !important;
+    }
+    
+    &:enabled:hover {
+      border-color: #5A6069 !important;
+    }
+    
+    &::placeholder {
+      color: #9CA3AF !important;
+    }
   }
-
-
-:host ::ng-deep {
-    .p-speeddial-action{ 
-        background-color: #444959 !important;
-        color: white !important;
-    }
- 
-    .speeddial-linear-demo {
-        .p-speeddial-direction-up {
-            left: calc(50% - 2rem);
-            bottom: 0;
-        }
-
-        .p-speeddial-direction-down {
-            left: calc(50% - 2rem);
-            top: 0;
-        }
-
-        .p-speeddial-direction-left {
-            right: 0;
-            top: calc(50% - 2rem);
-        }
-
-        .p-speeddial-direction-right {
-            left: 0;
-            top: calc(50% - 2rem);
-        }
-    }
 }
-//Picklist
-:host ::ng-deep {
-    .p-picklist {
-        .p-picklist-source-controls,
-        .p-picklist-target-controls {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            
-            .p-button {
-                margin: 0.25rem 0;
-                background-color: #3B3E44;
-                color: white;
-                border-color: #3B3E44;
-                
-                &:hover {
-                    background-color: #3B3E44;
-                    border-color: #3B3E44;
-                }
-            }
-        }
-        
-        .p-picklist-transfer-controls {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            
-            .p-button {
-                margin: 0.25rem 0;
-                background-color: #3B3E44;
-                color: white;
-                border-color: #3B3E44;
-                
-                &:hover {
-                    background-color: #3B3E44;
-                    border-color: #3B3E44;
-                }
-                
-                &:disabled {
-                    background-color: #e9ecef;
-                    color: #6c757d;
-                    border-color: #e9ecef;
-                }
-            }
-        }
-        
-        .p-picklist-source-list-container,
-        .p-picklist-target-list-container {
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            
-            .p-picklist-header {
-                background-color: #3B3E44;
-                color: white;
-                padding: 1rem;
-                font-weight: 600;
-            }
-            
-            .p-picklist-list {
-                max-height: 300px;
-                
-                .p-picklist-item {
-                    padding: 0.75rem 1rem;
-                    border-bottom: 1px solid #f1f3f4;
-                    background-color: #8d1616 !important;
-                    color: #333333;
-                    
-                    &:hover {
-                        background-color: #d1ecf1 !important;
-                        color: #0066cc !important;
-                        cursor: pointer;
-                    }
-                    
-                    &.p-highlight {
-                        background-color: #3B3E44 !important;
-                        color: white !important;
-                        
-                        &:hover {
-                            background-color: #3B3E44 !important;
-                        }
-                    }
-                    
-                    &:nth-child(even):not(.p-highlight) {
-                        background-color: #f8f9fa !important;
-                        
-                        &:hover {
-                            background-color: #d1ecf1 !important;
-                            color: #0066cc !important;
-                        }
-                    }
-                }
-            }
-        }
+
+ .p-multiselect {
+    background-color: #3B3E44 !important;
+    border: 1px solid #4A5157 !important;
+    border-radius: 6px !important;
+    
+    .p-multiselect-label {
+      color: #F8F9FA !important;
+      
+      &.p-placeholder {
+        color: #9CA3AF !important;
+      }
     }
-}
+    
+    .p-multiselect-trigger {
+      background-color: transparent !important;
+      color: #9CA3AF !important;
+      border-left: 1px solid #4A5157 !important;
+    }
+    
+    &:not(.p-disabled):hover {
+      border-color: #5A6069 !important;
+    }
+    
+    &:not(.p-disabled).p-focus {
+      border-color: #0ea5e9 !important;
+      box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.2) !important;
+    }
+  }

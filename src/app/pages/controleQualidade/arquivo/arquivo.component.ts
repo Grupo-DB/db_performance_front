@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Input, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { CommonModule, DatePipe, formatDate } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormGroup } from '@angular/forms';
@@ -51,7 +51,6 @@ import { TreeNode } from 'primeng/api';
 import jsPDF from 'jspdf';
 import autoTable, { CellInput } from "jspdf-autotable";
 import { Analise } from '../analise/analise.component';
-import { catchError, delayWhen, Observable, retryWhen, scan, throwError, timer } from 'rxjs';
 
 interface FileWithInfo {
   file: File;
@@ -178,9 +177,8 @@ interface LinhaElasticidade {
     ],
   templateUrl: './arquivo.component.html',
   styleUrl: './arquivo.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ArquivoComponent implements OnInit {
+export class ArquivoComponent implements OnInit, OnDestroy {
   @Input() mostrarMenu = true; 
   @ViewChild('graficoCanvas', { static: true }) graficoCanvas!: ElementRef<HTMLCanvasElement>;
   chart!: Chart;
@@ -194,6 +192,9 @@ export class ArquivoComponent implements OnInit {
   laudoForm!: FormGroup;
   modalLaudo: boolean = false;
   modalImpressao: boolean = false;
+  
+  // Flag para controlar detecção de mudanças
+  private isInitializing = true;
   uploadedFilesWithInfo: FileWithInfo[] = [];
 
   // AQUI JIAN
@@ -311,25 +312,29 @@ private datePipe: DatePipe,
 private cdr: ChangeDetectorRef
 ){}
   ngOnInit(): void {
+    // Reset completo ao inicializar o componente
+    this.resetOperacoes();
+    
+    this.isInitializing = true;
     this.loadAnalises();
     
     for (let i = 1; i <= 10; i++) {
       this.linhas.push({
         numero: i,
-        diametro: null,
-        area: null,
-        espessura: null,
-        subst: null,
-        junta: null,
-        carga: null,
-        resist: null,
+        diametro: 0,
+        area: 0,
+        espessura: 0,
+        subst: 0,
+        junta: 0,
+        carga: 0,
+        resist: 0,
         validacao: "",
         rupturas: {
-          sub: null,
-          subArga: null,
-          rupArga: null,
-          argaCola: null,
-          colarPastilha: null
+          sub: 0,
+          subArga: 0,
+          rupArga: 0,
+          argaCola: 0,
+          colarPastilha: 0
         }
       });
     }
@@ -337,20 +342,20 @@ private cdr: ChangeDetectorRef
     for (let i = 1; i <= 10; i++) {
       this.linhasSuperficial.push({
         numero: i,
-        diametro: null,
-        area: null,
-        espessura: null,
-        subst: null,
-        junta: null,
-        carga: null,
-        resist: null,
+        diametro: 0,
+        area: 0,
+        espessura: 0,
+        subst: 0,
+        junta: 0,
+        carga: 0,
+        resist: 0,
         validacao: "",
         rupturas: {
-          sub: null,
-          subArga: null,
-          rupArga: null,
-          argaCola: null,
-          colarPastilha: null
+          sub: 0,
+          subArga: 0,
+          rupArga: 0,
+          argaCola: 0,
+          colarPastilha: 0
         }
       });
     }
@@ -391,7 +396,12 @@ private cdr: ChangeDetectorRef
         desvio_padrao: null,
       });
     }
-
+    
+    // Marca que a inicialização terminou
+    setTimeout(() => {
+      this.isInitializing = false;
+      this.cdr.detectChanges();
+    }, 100);
   }
 
 //===================================Datas ==============================================================================
@@ -561,26 +571,67 @@ formatForDisplay(value: any): string {
     if (!str) return '';
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
   }
+  // Cache para evitar recalcular severities
+  private severityCache = new Map<string, 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | undefined>();
+  
+  // TrackBy functions para melhorar performance dos *ngFor
+  trackByIndex(index: number, item: any): number {
+    return index;
+  }
+  
+  trackByNumero(index: number, item: any): any {
+    return item.numero || index;
+  }
+  
+  trackByCp(index: number, item: any): any {
+    return item.cp || index;
+  }
+  
+  trackById(index: number, item: any): any {
+    return item.id || index;
+  }
+  
   //Severity
   getSeverity(materialNome: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | undefined {
-    const materialNormalizado = this.normalize(materialNome);
-    if (!materialNome) {
+    // Evita recálculo durante inicialização
+    if (this.isInitializing) {
       return 'secondary';
     }
+    
+    if (this.severityCache.has(materialNome)) {
+      return this.severityCache.get(materialNome);
+    }
+    
+    const materialNormalizado = this.normalize(materialNome);
+    if (!materialNome) {
+      const result = 'secondary' as const;
+      this.severityCache.set(materialNome, result);
+      return result;
+    }
+    
+    let result: 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | undefined;
     switch (materialNormalizado.toLowerCase()) {
       case 'calcario':
-        return 'warn';
+        result = 'warn';
+        break;
       case 'acabamento':
-        return 'success';
+        result = 'success';
+        break;
       case 'argamassa':
-        return 'info';
+        result = 'info';
+        break;
       case 'cal':
-        return 'danger';
+        result = 'danger';
+        break;
       case 'mineracao':
-        return 'contrast';
+        result = 'contrast';
+        break;
       default:
-        return 'secondary';
+        result = 'secondary';
     }
+    
+    this.severityCache.set(materialNome, result);
+    return result;
   }
   //////////////////////////////////////////////////
   tipoSelecionados: string = ''; // valores escolhidos no multiselect
@@ -610,12 +661,21 @@ formatForDisplay(value: any): string {
     }
     
   }
-  // Filtro Global
+  // Filtro Global com debounce para evitar loops infinitos
+  private filterTimeout: any;
+  
   filterTable(): void {
-    if (this.dt1) {
-      this.dt1.filterGlobal(this.inputValue, 'contains');
+    // Cancelar timeout anterior se existir
+    if (this.filterTimeout) {
+      clearTimeout(this.filterTimeout);
     }
     
+    // Aplicar filtro com debounce de 300ms
+    this.filterTimeout = setTimeout(() => {
+      if (this.dt1) {
+        this.dt1.filterGlobal(this.inputValue, 'contains');
+      }
+    }, 300);
   }
   
   //Menu Items
@@ -643,7 +703,7 @@ formatForDisplay(value: any): string {
         this.garantias = response;
       },
       error => {
-        console.log('Erro ao carregar garantias de produto:', error);
+        console.error('Erro ao carregar garantias de produto:', error);
       }
     );
   }
@@ -1567,9 +1627,13 @@ private processarParecer(analise: any) {
     this.confirmationService.confirm({
       message: `Tem certeza que deseja excluir a os ${id}?`,
       header: 'Confirmar Exclusão',
-      icon: 'pi pi-exclamation-triangle',
+      icon: 'pi pi-check-circle',
+      acceptIcon: 'pi pi-check',
+      rejectIcon: 'pi pi-times',
       acceptLabel: 'Sim',
-      rejectLabel: 'Não',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-info',
+      rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
         this.amostraService.deleteAmostraExpressa(id).subscribe({
           next: () => {
@@ -1598,9 +1662,13 @@ private processarParecer(analise: any) {
     this.confirmationService.confirm({
       message: `Tem certeza que deseja excluir a os ${id}?`,
       header: 'Confirmar Exclusão',
-      icon: 'pi pi-exclamation-triangle',
+      icon: 'pi pi-check-circle',
+      acceptIcon: 'pi pi-check',
+      rejectIcon: 'pi pi-times',
       acceptLabel: 'Sim',
-      rejectLabel: 'Não',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-info',
+      rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
         this.amostraService.deleteAmostraOrdem(id).subscribe({
           next: () => {
@@ -1682,11 +1750,41 @@ irParaImagem(index: number): void {
 }
 
 // Método para deletar uma imagem
-deletarImagem(imageId: number): void {
-  this.confirmationService.confirm({
+// Flag para prevenir múltiplas chamadas - deletar imagem
+public deletarImagemEmAndamento = false;
+private ultimoCliqueDeletar = 0;
+
+deletarImagem(imageId: number, event?: Event): void {  
+  // Prevenir propagação de evento se existir
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+  }
+  // Proteção por timestamp - 1 segundo entre chamadas
+  const agora = Date.now();
+  if (agora - this.ultimoCliqueDeletar < 1000) {
+    return;
+  }
+  this.ultimoCliqueDeletar = agora;  
+  // Prevenir múltiplas chamadas
+  if (this.deletarImagemEmAndamento) {
+    return;
+  }
+  this.deletarImagemEmAndamento = true;
+  // Fechar qualquer confirmação existente antes de abrir nova
+  this.confirmationService.close();
+  setTimeout(() => {
+    this.confirmationService.confirm({
     message: 'Tem certeza que deseja deletar esta imagem?',
     header: 'Confirmação',
-    icon: 'pi pi-exclamation-triangle',
+    icon: 'pi pi-check-circle',
+    acceptIcon: 'pi pi-check',
+    rejectIcon: 'pi pi-times',
+    acceptLabel: 'Sim',
+    rejectLabel: 'Cancelar',
+    acceptButtonStyleClass: 'p-button-info',
+    rejectButtonStyleClass: 'p-button-warn',
     accept: () => {
       this.amostraService.deleteImagem(this.amostraImagensSelecionada.id, imageId).subscribe({
         next: () => {
@@ -1696,8 +1794,8 @@ deletarImagem(imageId: number): void {
             detail: 'Imagem deletada com sucesso!'
           });
           
-          
           this.carregarImagensAmostra(this.amostraImagensSelecionada.id);
+          this.deletarImagemEmAndamento = false;
         },
         error: (error) => {
           console.error('Erro ao deletar imagem:', error);
@@ -1706,10 +1804,16 @@ deletarImagem(imageId: number): void {
             summary: 'Erro',
             detail: 'Erro ao deletar imagem.'
           });
+          this.deletarImagemEmAndamento = false;
         }
       });
+    },
+    reject: () => {
+      // Reset flag quando usuário cancela
+      this.deletarImagemEmAndamento = false;
     }
   });
+  }, 100); // Fechar setTimeout
 }
 
 downloadImagem(imagem: any): void {
@@ -1770,9 +1874,13 @@ duplicata(amostra: any): void {
     this.confirmationService.confirm({
       message: `Tem certeza que deseja fazer a duplicata?`,
       header: 'Confirmar Duplicata',
-      icon: 'pi pi-exclamation-triangle',
+      icon: 'pi pi-check-circle',
+      acceptIcon: 'pi pi-check',
+      rejectIcon: 'pi pi-times',
       acceptLabel: 'Sim',
-      rejectLabel: 'Não',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-info',
+      rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
         
         const novaAmostra = JSON.parse(JSON.stringify(amostra));
@@ -1883,13 +1991,41 @@ duplicata(amostra: any): void {
 
 
   //Finalizar análise
-  finalizarAnalise(analise: any): void {
-    this.confirmationService.confirm({
+  // Flag para prevenir múltiplas chamadas - finalizar
+  public finalizarAnaliseEmAndamento = false;
+  private ultimoCliqueFinalizar = 0;
+
+  finalizarAnalise(analise: any, event?: Event): void {   
+    // Prevenir propagação de evento se existir
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+    }
+    // Proteção por timestamp - 1 segundo entre chamadas
+    const agora = Date.now();
+    if (agora - this.ultimoCliqueFinalizar < 1000) {
+      return;
+    }
+    this.ultimoCliqueFinalizar = agora;
+    // Prevenir múltiplas chamadas
+    if (this.finalizarAnaliseEmAndamento) {
+      return;
+    }
+    this.finalizarAnaliseEmAndamento = true;
+    // Fechar qualquer confirmação existente antes de abrir nova
+    this.confirmationService.close();
+    setTimeout(() => {
+      this.confirmationService.confirm({
       message: `Tem certeza que deseja finalizar a análise da amostra ${analise.id}?`,
       header: 'Finalizar Análise',
       icon: 'pi pi-check-circle',
+      acceptIcon: 'pi pi-check',
+      rejectIcon: 'pi pi-times',
       acceptLabel: 'Sim',
-      rejectLabel: 'Não',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-info',
+      rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
         this.analiseService.finalizarAnalise(analise.id).subscribe({
           next: () => {
@@ -1898,9 +2034,10 @@ duplicata(amostra: any): void {
               summary: 'Sucesso',
               detail: 'Análise finalizada com sucesso!'
             });
-             setTimeout(() => {
-             this.loadAnalises();
-          }, 1000);
+            setTimeout(() => {
+              this.loadAnalises();
+              this.finalizarAnaliseEmAndamento = false;
+            }, 1000);
           },
           error: (error) => {
             console.error('Erro ao finalizar análise:', error);
@@ -1909,51 +2046,134 @@ duplicata(amostra: any): void {
               summary: 'Erro',
               detail: 'Erro ao finalizar análise.'
             });
+            this.finalizarAnaliseEmAndamento = false;
           } 
         });
+      },
+      reject: () => {
+        // Reset flag quando usuário cancela
+        this.finalizarAnaliseEmAndamento = false;
       }
     });
+    }, 100); // Fechar setTimeout
   }
 
-  reabrirAnalise(analise: any): void {
-    this.confirmationService.confirm({
-      message: `Tem certeza que deseja reabrir a análise da amostra ${analise.id}?`,
-      header: 'Reabrir Análise',
-      icon: 'pi pi-check-circle',
-      acceptLabel: 'Sim',
-      rejectLabel: 'Não',
-      accept: () => {
-        this.analiseService.reabrirAnalise(analise.id).subscribe({
-          next: () => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Sucesso',
-              detail: 'Análise reaberta com sucesso!'
-            });
-             setTimeout(() => {
-             this.loadAnalises();
-          }, 1000);
-          },
-          error: (error) => {
-            console.error('Erro ao reabrir análise:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Erro',
-              detail: 'Erro ao reabrir análise.'
-            });
-          } 
-        });
+  // Flag e timestamp para prevenir múltiplas chamadas
+  public reabrirAnaliseEmAndamento = false;
+  private reabrirAnaliseLastCall = 0;
+  
+  // Sistema de bloqueio global para prevenir múltiplas confirmações
+  public operacoesAtivas = new Set<string>();
+  private ultimaOperacao = '';
+  public contadorConfirmacoes = 0;
+  
+  // Proteção específica para callbacks de confirmação
+  private callbackExecutado = false;
+  private callbackOperacaoId = '';
+
+  reabrirAnalise(analise: any, event?: Event): void {
+    // Criar ID único para esta operação
+    const operacaoId = `reabrir_${analise.id}_${Date.now()}_${Math.random()}`;
+    if (this.operacoesAtivas.size > 0) {
+      return;
+    }
+    // BLOQUEIO POR CONTADOR: Se contador > 0, BLOQUEAR
+    this.contadorConfirmacoes++;
+    if (this.contadorConfirmacoes > 1) {
+      this.contadorConfirmacoes = 1; // Reset para próxima tentativa válida
+      return;
+    }
+    // Prevenir propagação de evento COMPLETAMENTE
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      // Remover o evento do target para evitar re-trigger
+      if (event.target) {
+        (event.target as HTMLElement).style.pointerEvents = 'none';
+        setTimeout(() => {
+          if (event.target) {
+            (event.target as HTMLElement).style.pointerEvents = 'auto';
+          }
+        }, 3000);
       }
-    });
+    }
+    
+    // Verificar se operação similar já aconteceu recentemente
+    const chaveOperacao = `reabrir_${analise.id}`;
+    if (this.ultimaOperacao === chaveOperacao) {
+      this.contadorConfirmacoes = 0; // Reset contador
+      return;
+    }    
+    const now = Date.now();
+    if (now - this.reabrirAnaliseLastCall < 3000) { // 3 segundos
+      this.contadorConfirmacoes = 0; // Reset contador
+      return;
+    }
+    this.reabrirAnaliseLastCall = now;
+    // Marcar operação como ativa
+    this.operacoesAtivas.add(operacaoId);
+    this.ultimaOperacao = chaveOperacao;
+    this.reabrirAnaliseEmAndamento = true;  
+    // Usar confirmação nativa do navegador para evitar problemas do PrimeNG
+    const confirmacao = window.confirm(`Tem certeza que deseja reabrir a análise da amostra ${analise.id}?`);
+    if (confirmacao) {
+      // PROTEÇÃO CRÍTICA: Evitar múltiplas execuções
+      if (this.callbackExecutado && this.callbackOperacaoId === operacaoId) {
+        return;
+      }
+      this.callbackExecutado = true;
+      this.callbackOperacaoId = operacaoId;     
+      this.analiseService.reabrirAnalise(analise.id).subscribe({
+        next: () => {          
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: 'Análise reaberta com sucesso!'
+          });
+          setTimeout(() => {
+            this.loadAnalises();
+            this.resetOperacoes();
+          }, 1000);
+        },
+        error: (error) => {
+          console.error('❌ Erro ao reabrir análise:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Erro ao reabrir análise.'
+          });
+          this.resetOperacoes();
+        } 
+      });
+    } else {
+      this.resetOperacoes();
+    }
+  }
+  // Método utilitário para reset completo de operações
+  private resetOperacoes(): void {
+    this.reabrirAnaliseEmAndamento = false;
+    this.finalizarAnaliseEmAndamento = false;
+    this.aprovarAnaliseEmAndamento = false;
+    this.deletarImagemEmAndamento = false;
+    this.operacoesAtivas.clear();
+    this.contadorConfirmacoes = 0;
+    this.ultimaOperacao = '';
+    this.callbackExecutado = false;
+    this.callbackOperacaoId = '';
   }
 
   laudoAnalise(analise: any): void {
     this.confirmationService.confirm({
       message: `Tem certeza que deseja encaminhar à análise ${analise.id} para laudo?`,
       header: 'Encaminhar para Laudo',
-      icon: 'pi pi-file',
+      icon: 'pi pi-check-circle',
+      acceptIcon: 'pi pi-check',
+      rejectIcon: 'pi pi-times',
       acceptLabel: 'Sim',
-      rejectLabel: 'Não',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-info',
+      rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
         this.analiseService.laudoAnalise(analise.id).subscribe({
           next: () => {
@@ -1979,13 +2199,45 @@ duplicata(amostra: any): void {
     });
   }
 
-  aprovarAnalise(analise: any): void {
-    this.confirmationService.confirm({
+  // Flag para prevenir múltiplas chamadas - aprovar
+  public aprovarAnaliseEmAndamento = false;
+  private ultimoCliqueAprovar = 0;
+
+  aprovarAnalise(analise: any, event?: Event): void {    
+    // Prevenir propagação de evento se existir
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+    }
+    
+    // Proteção por timestamp - 1 segundo entre chamadas
+    const agora = Date.now();
+    if (agora - this.ultimoCliqueAprovar < 1000) {
+
+      return;
+    }
+    this.ultimoCliqueAprovar = agora;
+    
+    // Prevenir múltiplas chamadas
+    if (this.aprovarAnaliseEmAndamento) {
+      return;
+    }
+    this.aprovarAnaliseEmAndamento = true;
+    // Fechar qualquer confirmação existente antes de abrir nova
+    this.confirmationService.close();
+    
+    setTimeout(() => {
+      this.confirmationService.confirm({
       message: `Tem certeza que deseja aprovar a análise ${analise.id}?`,
       header: 'Aprovar Análise',
-      icon: 'pi pi-check',
+      icon: 'pi pi-check-circle',
+      acceptIcon: 'pi pi-check',
+      rejectIcon: 'pi pi-times',
       acceptLabel: 'Sim',
-      rejectLabel: 'Não',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-info',
+      rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
         this.analiseService.aprovarAnalise(analise.id).subscribe({
           next: () => {
@@ -1994,9 +2246,10 @@ duplicata(amostra: any): void {
               summary: 'Sucesso',
               detail: 'Análise aprovada para laudo com sucesso!'
             });
-             setTimeout(() => {
-             this.loadAnalises();
-          }, 1000);
+            setTimeout(() => {
+              this.loadAnalises();
+              this.aprovarAnaliseEmAndamento = false;
+            }, 1000);
           },
           error: (error) => {
             console.error('Erro ao aprovar análise para laudo:', error);
@@ -2005,10 +2258,16 @@ duplicata(amostra: any): void {
               summary: 'Erro',
               detail: 'Erro ao aprovar análise.'
             });
+            this.aprovarAnaliseEmAndamento = false;
           } 
         });
+      },
+      reject: () => {
+        // Reset flag quando usuário cancela
+        this.aprovarAnaliseEmAndamento = false;
       }
     });
+    }, 100); // Fechar setTimeout
   }
 
   salvarSelecionados() {
@@ -2030,7 +2289,6 @@ duplicata(amostra: any): void {
 
   ///////AQUIIII
   imprimirLaudoCalcPDF(amostra_detalhes_selecionada: any) {
-
     const doc = new jsPDF({ 
       unit: "mm", 
       format: "a4" 
@@ -2843,7 +3101,6 @@ duplicata(amostra: any): void {
           const linha: any[] = [];
 
           if (selected.id === ensaios_utilizados.id) {
-            console.log(selected.id);
             let norma: string = '-';
             if (ensaios_utilizados.norma) {
               norma = ensaios_utilizados.norma;
@@ -2865,9 +3122,7 @@ duplicata(amostra: any): void {
               garantia_num = aux[0]; 
               garantia_texto = aux[1]; 
             }
-
             this.descricaoApi += ensaios_utilizados.descricao+': '+valor+''+unidade+'; ';
-
             linha.push({ content: ensaios_utilizados.descricao });
             linha.push({ content: valor });
             linha.push({ content: unidade });
@@ -2910,7 +3165,6 @@ duplicata(amostra: any): void {
             const linha: any[] = [];
 
             if (selected.id === ensaios_utilizados.id) {
-              console.log(selected.id);
               let norma: string = '-';
               if (ensaios_utilizados.norma) {
                 norma = ensaios_utilizados.norma;
@@ -2996,7 +3250,6 @@ duplicata(amostra: any): void {
           const linha: any[] = [];
 
           if (selected.id === ensaios_utilizados.id) {
-            console.log(selected.id);
             let norma: string = '-';
             if (ensaios_utilizados.norma) {
               norma = ensaios_utilizados.norma;
@@ -3063,7 +3316,6 @@ duplicata(amostra: any): void {
             const linha: any[] = [];
 
             if (selected.id === ensaios_utilizados.id) {
-              console.log(selected.id);
               let norma: string = '-';
               if (ensaios_utilizados.norma) {
                 norma = ensaios_utilizados.norma;
@@ -3651,8 +3903,6 @@ duplicata(amostra: any): void {
       month: '2-digit',
       year: '2-digit'
     });
-
-    // console.log(amostra_detalhes_selecionada);
     const dataColetaFormatada = new Date(amostra_detalhes_selecionada.data_coleta);
     const dataColetaFormatada2 = dataColetaFormatada.toLocaleDateString('pt-BR', {
       day: '2-digit',
@@ -4674,10 +4924,18 @@ duplicata(amostra: any): void {
   }
 
   getStatusIcon(status: boolean): string {
+    // Evita recálculo durante inicialização
+    if (this.isInitializing) {
+      return 'pi-circle';
+    }
     return status ? 'pi-check-circle' : 'pi-times-circle';
   }
 
   getStatusColor(status: boolean): string {
+    // Evita recálculo durante inicialização
+    if (this.isInitializing) {
+      return '#6b7280';
+    }
     return status ? '#22c55e' : '#ef4444';
   }
 
@@ -4722,6 +4980,71 @@ duplicata(amostra: any): void {
           detail: 'Não foi possível copiar o texto'
         });
       });
+    }
+  }
+
+  // Métodos para evitar loops infinitos com two-way binding
+  updateLinhaProperty(linha: any, property: string, event: Event): void {
+    const target = event.target as HTMLInputElement;
+    if (linha && linha.hasOwnProperty(property) && target) {
+      linha[property] = target.type === 'number' ? Number(target.value) : target.value;
+    }
+  }
+
+  updateLinhaRuptura(linha: any, property: string, event: Event): void {
+    const target = event.target as HTMLInputElement;
+    if (linha && linha.rupturas && linha.rupturas.hasOwnProperty(property) && target) {
+      linha.rupturas[property] = target.type === 'number' ? Number(target.value) : target.value;
+    }
+  }
+
+  updateNumeroProperty(numero: any, property: string, event: Event): void {
+    const target = event.target as HTMLInputElement;
+    if (numero && numero.hasOwnProperty(property) && target) {
+      numero[property] = target.type === 'number' ? Number(target.value) : target.value;
+    }
+  }
+
+  updateNumeroRuptura(numero: any, property: string, event: Event): void {
+    const target = event.target as HTMLInputElement;
+    if (numero && numero.rupturas && numero.rupturas.hasOwnProperty(property) && target) {
+      numero.rupturas[property] = target.type === 'number' ? Number(target.value) : target.value;
+    }
+  }
+
+  updateFlexaoProperty(flexao: any, property: string, event: Event): void {
+    const target = event.target as HTMLInputElement;
+    if (flexao && flexao.hasOwnProperty(property) && target) {
+      flexao[property] = target.type === 'number' ? Number(target.value) : target.value;
+    }
+  }
+
+  updateCompressaoProperty(compressao: any, property: string, event: Event): void {
+    const target = event.target as HTMLInputElement;
+    if (compressao && compressao.hasOwnProperty(property) && target) {
+      compressao[property] = target.type === 'number' ? Number(target.value) : target.value;
+    }
+  }
+
+  updateRetacaoProperty(retacao: any, property: string, event: Event): void {
+    const target = event.target as HTMLInputElement;
+    if (retacao && retacao.hasOwnProperty(property) && target) {
+      retacao[property] = target.type === 'number' || target.type === 'date' ? 
+        (target.type === 'number' ? Number(target.value) : target.value) : target.value;
+    }
+  }
+
+  updateElasticidadeProperty(elasticidade: any, property: string, event: Event): void {
+    const target = event.target as HTMLInputElement;
+    if (elasticidade && elasticidade.hasOwnProperty(property) && target) {
+      elasticidade[property] = target.type === 'number' ? Number(target.value) : target.value;
+    }
+  }
+
+  ngOnDestroy(): void {
+    // Limpar timeout do filtro para evitar vazamentos de memória
+    if (this.filterTimeout) {
+      clearTimeout(this.filterTimeout);
     }
   }
 

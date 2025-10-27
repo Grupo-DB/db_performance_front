@@ -1240,7 +1240,7 @@
   [style]="{ width: '80vw' }"
 >
   <div *ngIf="amostraImagensSelecionada" class="mb-4">
-    <h3>Amostra: {{ amostraImagensSelecionada.numero }}</h3>
+    <p><strong>Amostra:</strong> {{ amostraImagensSelecionada.numero }}</p>
     <p><strong>Material:</strong> {{ amostraImagensSelecionada.material }}</p>
     <p><strong>Data de Coleta:</strong> {{ amostraImagensSelecionada.data_coleta | date:'dd/MM/yyyy' }}</p>
   </div>
@@ -2027,79 +2027,130 @@
     <div class="container">
     <h2>Cálculo do Coeficiente de Absorção de Água por Capilaridade (Aw)</h2>
 
-    <form [formGroup]="dataForm" class="data-input-area">
-        <h3>1. Entrada de Dados Experimentais (Fase Linear)</h3>
+    <!-- Layout com tabela e gráfico lado a lado -->
+    <div class="flex flex-column lg:flex-row gap-4 w-full">
+        
+        <!-- Seção da Tabela de Dados (Lado Esquerdo) -->
+        <div class="flex-1">
+            <form [formGroup]="dataForm" class="data-input-area">
+                <h3 style="color: #ffffff;">1. Entrada de Dados Experimentais (Fase Linear)</h3>
 
-        <table formArrayName="dataRows" class="data-table">
-            <thead>
-                <tr>
-                    <th>Tempo</th>
-                    <th>Raiz t (h¹/²)</th>
-                    <th>Δmt (kg/m²)</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let row of dataRows.controls; let i = index" [formGroupName]="i">
-                    <td>
-                        {{ dataRows.at(i).get('tLabel')?.value }}
-                    </td>
-                    <td>
-                        <input type="number" [formControlName]="'raizT'" step="0.01" required>
-                    </td>
-                    <td>
-                        <input type="number" [formControlName]="'deltaMt'" step="0.01" required>
-                    </td>
-                    <td>
-                        <button type="button" (click)="removeDataRow(i)" *ngIf="i >= dadosIniciais.length" class="btn-remove">X</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                <p-table 
+                    [value]="dataRows.controls" 
+                    class="data-table"
+                    [tableStyle]="{'min-width': '40rem'}"
+                    formArrayName="dataRows"
+                >
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Tempo</th>
+                            <th>Raiz t (h¹/²)</th>
+                            <th>Δmt (kg/m²)</th>
+                            <th>Ações</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-row let-i="rowIndex">
+                        <tr [formGroupName]="i">
+                            <td>
+                                {{ dataRows.at(i).get('tLabel')?.value }}
+                            </td>
+                            <td>
+                                <p-inputNumber
+                                    [formControlName]="'raizT'"
+                                    mode="decimal"
+                                    [minFractionDigits]="2"
+                                    [maxFractionDigits]="2"
+                                    [step]="0.01"
+                                    [style]="{'width':'100%'}"
+                                    placeholder="0.00"
+                                ></p-inputNumber>
+                            </td>
+                            <td>
+                                <p-inputNumber
+                                    [formControlName]="'deltaMt'"
+                                    mode="decimal"
+                                    [minFractionDigits]="2"
+                                    [maxFractionDigits]="2"
+                                    [step]="0.01"
+                                    [style]="{'width':'100%'}"
+                                    placeholder="0.00"
+                                ></p-inputNumber>
+                            </td>
+                            <td>
+                                <p-button 
+                                    *ngIf="i >= dadosIniciais.length"
+                                    icon="pi pi-trash" 
+                                    severity="danger" 
+                                    size="small"
+                                    [text]="true"
+                                    (onClick)="removeDataRow(i)"
+                                    pTooltip="Remover linha"
+                                    tooltipPosition="top"
+                                ></p-button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
 
-        <button type="button" (click)="addDataRow()" class="btn-add">+ Adicionar Ponto</button>
-
-    </form>
-    
-    <hr>
-
-    <div class="chart-area">
-        <div style="width: 800px; height: 500px; margin: 20px auto;">
-            <canvas #meuGrafico></canvas>
+                <div class="flex justify-content-center mt-3">
+                    <p-button 
+                        label="Adicionar Ponto" 
+                        icon="pi pi-plus" 
+                        severity="success" 
+                        (onClick)="addDataRow()"
+                        pTooltip="Adicionar nova linha de dados"
+                        tooltipPosition="top"
+                    ></p-button>
+                </div>
+            </form>
         </div>
 
-        <div class="resultados">
-            <h3>Resultado Calculado (Aw)</h3>
-            <p>
-                **Aw:** <span *ngIf="awCalculado !== null" style="font-weight: bold; color: #d9534f; font-size: 1.4em;">
-                    {{ awCalculado | number:'1.3-3' }} kg/(m² · h¹/²)
-                </span>
-                <span *ngIf="!awCalculado">Aguardando dados válidos...</span>
-            </p>
-            <p>
-                **R²:** {{ r2Calculado | number:'1.4-4' }}
-            </p>
+        <!-- Seção do Gráfico (Lado Direito) -->
+        <div class="flex-1">
+            <h3 style="color: #ffffff;">2. Gráfico de Regressão Linear</h3>
             
-            <!-- Botões para salvar/baixar imagem do gráfico -->
-            <div class="flex gap-3 mt-4 justify-content-center">
-                <p-button 
-                    label="Salvar Imagem no Banco" 
-                    icon="pi pi-cloud-upload"
-                    severity="success"
-                    [loading]="salvandoImagemGrafico"
-                    (click)="gerarESalvarImagemGrafico()"
-                    [disabled]="!chartInstance"
-                    pTooltip="Salva a imagem do gráfico no banco de dados da amostra">
-                </p-button>
-                
-                <p-button 
-                    label="Download Imagem" 
-                    icon="pi pi-download"
-                    severity="info"
-                    (click)="downloadImagemGrafico()"
-                    [disabled]="!chartInstance"
-                    pTooltip="Baixa a imagem do gráfico para seu computador">
-                </p-button>
+            <div class="chart-area">
+                <div class="w-full" style="height: 500px;">
+                    <canvas #meuGrafico></canvas>
+                </div>
+
+                <div class="resultados mt-4">
+                    <h3 style="color: #ffffff;">Resultado Calculado (Aw)</h3>
+                    <div class="bg-gray-50 p-3 border-round mb-3">
+                        <p class="m-0 mb-2">
+                            <strong>Aw:</strong> 
+                            <span *ngIf="awCalculado !== null" style="font-weight: bold; color: #010716; font-size: 1.2em;">
+                                 {{ awCalculado | number:'1.3-3' }} kg/(m² · h¹/²)
+                            </span>
+                            <span *ngIf="!awCalculado" class="text-muted">Aguardando dados válidos...</span>
+                        </p>
+                        <p class="m-0">
+                            <strong>R²:</strong> {{ r2Calculado | number:'1.4-4' }}
+                        </p>
+                    </div>
+                    
+                    <!-- Botões para salvar/baixar imagem do gráfico -->
+                    <div class="flex flex-column sm:flex-row gap-2 justify-content-center">
+                        <p-button 
+                            label="Salvar no Banco" 
+                            icon="pi pi-cloud-upload"
+                            severity="success"
+                            [loading]="salvandoImagemGrafico"
+                            (click)="gerarESalvarImagemGrafico()"
+                            [disabled]="!chartInstance"
+                            pTooltip="Salva a imagem do gráfico no banco de dados da amostra">
+                        </p-button>
+                        
+                        <p-button 
+                            label="Download" 
+                            icon="pi pi-download"
+                            severity="info"
+                            (click)="downloadImagemGrafico()"
+                            [disabled]="!chartInstance"
+                            pTooltip="Baixa a imagem do gráfico para seu computador">
+                        </p-button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

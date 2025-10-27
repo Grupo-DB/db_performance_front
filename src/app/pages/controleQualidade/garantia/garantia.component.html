@@ -49,8 +49,7 @@
     </ul>
 </div>
 <div class="container flex flex-column align-items-center mb-4">
-     <div class="containerInterno w-12">
-        <div @swipeAnimation>
+    <div class="containerInterno w-12" @swipeAnimation>
             <form
                 [formGroup]="registerForm"
                 title="Cadastrar nova garantia de produto"
@@ -64,7 +63,7 @@
                                     <h2>Inserir Nova Garantia de Produto</h2>
                                 </div>
                             </ng-template>
-                            <div class="flex flex-column w-12 gap-3 lg:flex-row">
+                            <div class="bloco flex flex-column w-12 gap-3 lg:flex-row">
                                 <div class="flex flex-column w-6 gap-3">
                                     <div class="w-12 text-left">
                                         <p-floatLabel variant="on">
@@ -216,6 +215,7 @@
                                     tooltipPosition="top"
                                     pTooltip="Limpar"
                                     icon="pi pi-eraser"
+                                    severity="info"
                                 />
                                 <p-button 
                                     (onClick)="submit()" 
@@ -231,9 +231,7 @@
                     </div>
                 </div>
             </form>
-        </div>
-     </div>
-
+     
      <div class="background-form mt-4 w-12" @swipeAnimation>
         <div class="text-left w-12">
             <p-toast />
@@ -243,7 +241,8 @@
                     <p-button 
                         label="Garantias de Produtos" 
                         tooltipPosition="top"
-                        pTooltip="Exibir Garantias de Produtos"      
+                        pTooltip="Exibir Garantias de Produtos"
+                        severity="info"      
                     >
                         <div class="inline-flex align-items-center">
                             <span><i class="pi pi-angle-down"></i></span>
@@ -310,6 +309,7 @@
                                             severity="primary" 
                                             size="small" 
                                             [raised]="true"
+                                            severity="success"
                                             pTooltip="Editar" 
                                             tooltipPosition="top"
                                             (onClick)="abrirModalEdicao(garantiaProduto)">

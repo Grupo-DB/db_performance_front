@@ -50,9 +50,7 @@
 </div>
 
 <div class="container flex flex-column align-items-center mb-4">
-
-    <div class="containerInterno w-12">
-        <div @swipeAnimation>
+    <div class="containerInterno w-12" @swipeAnimation>
             <form
                 [formGroup]="registerForm" 
                 title="Cadastrar novo Tipo de Ensaio" 
@@ -63,10 +61,10 @@
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
                                 <div class="header w-full text-center">
-                                    <h2>Inserir Novo Ensaio</h2>
+                                    <h2>Tipo de Ensaio</h2>
                                 </div>
                             </ng-template>
-                            <div class="flex flex-column w-12 lg:flex-row">
+                            <div class="bloco flex flex-column w-12 lg:flex-row">
                                 <div class="flex flex-column w-12 ">
                                     <div class="w-12 text-left">
                                         <p-floatlabel variant="on">
@@ -94,6 +92,7 @@
                                     tooltipPosition="top"
                                     pTooltip="Limpar"
                                     icon="pi pi-eraser"
+                                    severity="info"
                                 />
                                 <p-button 
                                     (onClick)="submit()" 
@@ -109,7 +108,7 @@
                     </div>
                 </div>
             </form>            
-        </div>    
+        
    
         <div class="background-form mt-4 w-12" @swipeAnimation>
             <div class="text-left w-12">
@@ -117,7 +116,8 @@
                 <p-confirmDialog />
                 <p-inplace closable="true" closeIcon="pi pi-angle-up">
                     <ng-template pTemplate="display">
-                        <p-button 
+                        <p-button
+                            severity="info"
                             label="Tipos de Ensaios" 
                             tooltipPosition="top"
                             pTooltip="Exibir Tipos de Ensaios"      
@@ -215,23 +215,19 @@
     [style]="{ width: '60vw' }"
     styleClass="w-full md:w-12 lg:w-4"
 >
-
-    <div class="containerInterno w-12">
         <div class="background-form">
             <form
                 [formGroup]="editForm" title="Editar Tipo de Ensaio" class="flex flex-column gap-4" 
             >
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                     <div class="fg1 flex flex-column w-12 align-items-center">
-
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
                                 <div class="header w-full text-center">
                                     <h2>Editar Tipo de Ensaio</h2>
                                 </div>
                             </ng-template>
-                            <div class="flex flex-column w-12 gap-3">
-
+                            <div class="bloco flex flex-column w-12 gap-3">
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
@@ -254,6 +250,7 @@
                                 <p-button 
                                     (onClick)="clearEditForm()" 
                                     label="Limpar"
+                                    severity="info"
                                     iconPos="right"
                                     tooltipPosition="top"
                                     pTooltip="Limpar"
@@ -274,6 +271,4 @@
                 </div>
             </form>
         </div>
-    </div>
-  
 </p-drawer>

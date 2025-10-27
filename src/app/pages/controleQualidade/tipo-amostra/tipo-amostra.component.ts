@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { im } from 'mathjs';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { AutoCompleteModule } from 'primeng/autocomplete';
@@ -242,7 +241,7 @@ export class TipoAmostraComponent implements OnInit {
       acceptLabel: 'Sim',
       rejectLabel: 'Cancelar',
       acceptButtonStyleClass: 'p-button-info',
-      rejectButtonStyleClass: 'p-button-secondary',
+      rejectButtonStyleClass: 'p-button-warn',
       
       accept: () => {
         this.amostraService.deleteTipoAmostra(id).subscribe({

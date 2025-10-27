@@ -3100,9 +3100,13 @@ gerarNumero(materialNome: string, sequencial: number): string {
     this.confirmationService.confirm({
       message: `Tem certeza que deseja fazer a duplicata?`,
       header: 'Confirmar Duplicata',
-      icon: 'pi pi-exclamation-triangle',
+      icon: 'pi pi-check-circle',
+      acceptIcon: 'pi pi-check',
+      rejectIcon: 'pi pi-times',
       acceptLabel: 'Sim',
-      rejectLabel: 'Não',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-info',
+      rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
         
         const novaAmostra = JSON.parse(JSON.stringify(amostra));
@@ -3643,9 +3647,13 @@ gerarNumero(materialNome: string, sequencial: number): string {
     this.confirmationService.confirm({
       message: `Tem certeza que deseja excluir essa Análise?`,
       header: 'Confirmar Exclusão',
-      icon: 'pi pi-exclamation-triangle',
+      icon: 'pi pi-check-circle',
+      acceptIcon: 'pi pi-check',
+      rejectIcon: 'pi pi-times',
       acceptLabel: 'Sim',
-      rejectLabel: 'Não',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-info',
+      rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
         this.analiseService.deleteAnalise(analise.id).subscribe({
           next: () => {
@@ -3858,8 +3866,12 @@ onDescricaoInput(index: number, event: Event): void {
       message: `Tem certeza que deseja finalizar a análise da amostra ${analise.id}?`,
       header: 'Finalizar Análise',
       icon: 'pi pi-check-circle',
+      acceptIcon: 'pi pi-check',
+      rejectIcon: 'pi pi-times',
       acceptLabel: 'Sim',
-      rejectLabel: 'Não',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-info',
+      rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
         this.analiseService.finalizarAnalise(analise.id).subscribe({
           next: () => {
@@ -3890,8 +3902,12 @@ onDescricaoInput(index: number, event: Event): void {
       message: `Tem certeza que deseja reabrir a análise da amostra ${analise.id}?`,
       header: 'Reabrir Análise',
       icon: 'pi pi-check-circle',
+      acceptIcon: 'pi pi-check',
+      rejectIcon: 'pi pi-times',
       acceptLabel: 'Sim',
-      rejectLabel: 'Não',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-info',
+      rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
         this.analiseService.reabrirAnalise(analise.id).subscribe({
           next: () => {
@@ -3921,9 +3937,13 @@ onDescricaoInput(index: number, event: Event): void {
     this.confirmationService.confirm({
       message: `Tem certeza que deseja encaminhar à análise ${analise.id} para laudo?`,
       header: 'Encaminhar para Laudo',
-      icon: 'pi pi-file',
+      icon: 'pi pi-check-circle',
+      acceptIcon: 'pi pi-check',
+      rejectIcon: 'pi pi-times',
       acceptLabel: 'Sim',
-      rejectLabel: 'Não',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-info',
+      rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
         this.analiseService.laudoAnalise(analise.id).subscribe({
           next: () => {
@@ -3953,9 +3973,13 @@ onDescricaoInput(index: number, event: Event): void {
     this.confirmationService.confirm({
       message: `Tem certeza que deseja aprovar a análise ${analise.id}?`,
       header: 'Aprovar Análise',
-      icon: 'pi pi-check',
+      icon: 'pi pi-check-circle',
+      acceptIcon: 'pi pi-check',
+      rejectIcon: 'pi pi-times',
       acceptLabel: 'Sim',
-      rejectLabel: 'Não',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-info',
+      rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
         this.analiseService.aprovarAnalise(analise.id).subscribe({
           next: () => {

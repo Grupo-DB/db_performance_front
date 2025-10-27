@@ -1,29 +1,25 @@
 @import "primeicons/primeicons.css";
-
 .indent {
   margin-left: 4em;  /* funciona como um TAB */
 }
-
 .linha-tracejada {
   border: none;             // remove a linha padrão do <hr> 
   border-top: 1px dashed #333; // define espessura, tipo e cor
   margin: 10px 0;          // espaço em cima e embaixo
 }
-
 ::ng-deep .custom-drawer .p-drawer-header {
   justify-content: center; // centraliza o conteúdo
 }
-
 ::ng-deep .custom-drawer .p-drawer-header .p-drawer-title {
   flex: unset; // evita que ocupe espaço lateral
   text-align: center;
   width: 100%;
 }
-
 :host ::ng-deep .p-card-body{
     background-color: #3B3E44;
     border-radius: 0 0 10px 10px;
 }
+
 :host ::ng-deep .p-select{
     background-color: #3B3E44;
     .p-select-overlay{
@@ -41,9 +37,47 @@
         background-color: #3B3E44;
         color: #F8F9FA;
     }
+ ::ng-deep .bloco {
+  // Inputs de texto
+  .p-inputtext {
+    background-color: #3B3E44 !important;
+    border: 1px solid #4A5157 !important;
+    color: #F8F9FA !important;
+    
+    &:enabled:focus {
+      border-color: #0ea5e9 !important;
+      box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.2) !important;
+    }
+    
+    &:enabled:hover {
+      border-color: #5A6069 !important;
+    }
+    
+    &::placeholder {
+      color: #9CA3AF !important;
+    }
+  }
+}    
 .bloco{
     background-color: #2C323A;
-    border-radius: 8px;    
+    border-radius: 8px;
+     .p-select{
+    background-color: #3B3E44;
+    .p-select-overlay{
+        background-color: #3B3E44;
+    }
+    .p-select-list-container{
+        background-color: #3B3E44;
+        color: #F8F9FA;
+    }
+}
+.p-select-overlay{
+        background-color: #3B3E44;
+    }
+    .p-select-option-group-label{
+        background-color: #3B3E44;
+        color: #F8F9FA;
+    }    
 }
 .header-modal{
     color: #ffffff;
