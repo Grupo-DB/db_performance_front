@@ -1655,12 +1655,12 @@
 
                                                 />
                                             </td>
-                                            <td><input pInputText [(ngModel)]="linha.area" type="text" readonly (ngModelChange)="atualizarCalculosSubstrato(linha)" style="width: 80px"/></td>
+                                            <td><input pInputText [(ngModel)]="linha.area" type="text" readonly (ngModelChange)="atualizarCalculosSubstrato(linha)" style="width: 95px"/></td>
                                             <td><input pInputText [(ngModel)]="linha.espessura" type="number" style="width: 70px"/></td>
                                             <td><input pInputText [(ngModel)]="linha.subst" type="number" style="width: 70px"/></td>
                                             <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td>
                                             <td><input pInputText [(ngModel)]="linha.carga" type="number" (ngModelChange)="atualizarCalculosSubstrato(linha)" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.resist" type="text" readonly style="width: 70px"/></td>
+                                            <td><input pInputText [(ngModel)]="linha.resist" type="text" readonly style="width: 80px"/></td>
                                             <td><input pInputText [(ngModel)]="linha.validacao" type="text" style="width: 100px" readonly/></td>
                                             <td><input pInputText [(ngModel)]="linha.rupturas.sub" type="number" style="width: 70px"/></td>
                                             <td><input pInputText [(ngModel)]="linha.rupturas.subArga" type="number" style="width: 70px"/></td>
@@ -1734,30 +1734,30 @@
                                         </tr>
                                     </ng-template>
 
-                                    <ng-template pTemplate="body" let-numero let-i="rowIndex">
+                                    <ng-template pTemplate="body" let-linha let-i="rowIndex">
                                         <tr>
-                                            <td>{{ numero.numero }}</td>
+                                            <td>{{ linha.numero }}</td>
                                             <td>
                                                 <input 
                                                     pInputText 
-                                                    [(ngModel)]="numero.diametro" 
+                                                    [(ngModel)]="linha.diametro" 
                                                     type="number"
-                                                    (ngModelChange)="atualizarArea(numero)"
+                                                    (ngModelChange)="atualizarAreaSuper(linha)"
                                                     style="width: 70px"
                                                 />
                                             </td>
-                                            <td><input pInputText [(ngModel)]="numero.area" type="number" readonly style="width: 80px"/></td>
-                                            <td><input pInputText [(ngModel)]="numero.espessura" type="number"style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="numero.subst" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="numero.junta" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="numero.carga" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="numero.resist" type="number" step="0.01" style="width: 70px" readonly/></td>
-                                            <td><input pInputText [(ngModel)]="numero.validacao" type="text" style="width: 100px" readonly/></td>
-                                            <td><input pInputText [(ngModel)]="numero.rupturas.sub" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="numero.rupturas.subArga" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="numero.rupturas.rupArga" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="numero.rupturas.argaCola" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="numero.rupturas.colarPastilha" type="number" style="width: 70px"/></td>
+                                            <td><input pInputText [(ngModel)]="linha.area" type="number" readonly style="width: 95px"/></td>
+                                            <td><input pInputText [(ngModel)]="linha.espessura" type="number"style="width: 70px"/></td>
+                                            <td><input pInputText [(ngModel)]="linha.subst" type="number" style="width: 70px"/></td>
+                                            <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td>
+                                            <td><input pInputText [(ngModel)]="linha.carga" type="number" style="width: 70px" (ngModelChange)="atualizarCalculosSuper(linha)"/></td>
+                                            <td><input pInputText [(ngModel)]="linha.resist" type="number" step="0.01" style="width: 80px" readonly/></td>
+                                            <td><input pInputText [(ngModel)]="linha.validacao" type="text" style="width: 100px" readonly/></td>
+                                            <td><input pInputText [(ngModel)]="linha.rupturas.sub" type="number" style="width: 70px"/></td>
+                                            <td><input pInputText [(ngModel)]="linha.rupturas.subArga" type="number" style="width: 70px"/></td>
+                                            <td><input pInputText [(ngModel)]="linha.rupturas.rupArga" type="number" style="width: 70px"/></td>
+                                            <td><input pInputText [(ngModel)]="linha.rupturas.argaCola" type="number" style="width: 70px"/></td>
+                                            <td><input pInputText [(ngModel)]="linha.rupturas.colarPastilha" type="number" style="width: 70px"/></td>
                                         </tr>
                                     </ng-template>
                                 </p-table>

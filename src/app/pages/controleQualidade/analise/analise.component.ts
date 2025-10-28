@@ -5529,11 +5529,11 @@ canDeactivate(): boolean | Promise<boolean> {
 
     //BC linhas.resist
     if (resistValidos.length > 0) {
+
       valor_vezes_03 = 0.3*mediaResistSubstrato;//BD
       if (linha.resist != '!#REF') {
         linha_mais_03 = mediaResistSubstrato+valor_vezes_03; //BE        
         linha_menos_03 = mediaResistSubstrato-valor_vezes_03;//BF
-
         if(linha.resist > linha_mais_03){
           linha.validacao = 'Inválido'
         }else if(linha.resist < linha_menos_03){
@@ -5542,7 +5542,72 @@ canDeactivate(): boolean | Promise<boolean> {
           linha.validacao = 'Válido'
         }
       }
+      
     }
+          console.log(linha.resist+' =- - - - - - '+valor_vezes_03);
+
+    
+  }
+
+  atualizarAreaSuper(numero: any) {
+    const diametro = Number(numero.diametro);
+
+    if (!isNaN(diametro) && diametro > 0) {
+      const raio = diametro / 2;
+      const area = 3.14 * Math.pow(raio, 2);
+      numero.area = parseFloat(area.toFixed(2));
+    } else {
+      numero.area = '!#REF';
+    }
+    this.atualizarCalculosSuper(numero);
+  }
+
+  atualizarCalculosSuper(linha: any) {
+    const carga = Number(linha.carga);
+    const area = Number(linha.area);
+
+    if (!isNaN(carga) && carga > 0 && !isNaN(area) && area > 0) {
+      const resist = (carga * 10) / area;
+      linha.resist = parseFloat(resist.toFixed(2));
+    } else {
+      linha.resist = '!#REF';
+    }
+
+
+    let mediaResistSuoerficial: any;
+
+    const resistValidos = this.linhasSuperficial.map(l => l.resist).filter((v: any) => v !== null && v !== undefined && v !== '' && v !== '!#REF' && !isNaN(Number(v))).map((v: any) => Number(v));
+
+    if (resistValidos.length > 0) {
+      const soma = resistValidos.reduce((acc, val) => acc + Number(val), 0);
+      mediaResistSuoerficial = parseFloat((soma / resistValidos.length).toFixed(2));
+    } else {
+      mediaResistSuoerficial = null;
+    }
+  
+    let valor_vezes_03: any;
+    let linha_mais_03: any;
+    let linha_menos_03: any;
+
+    //BC linhas.resist
+    if (resistValidos.length > 0) {
+
+      valor_vezes_03 = 0.3*mediaResistSuoerficial;//BD
+      if (linha.resist != '!#REF') {
+        linha_mais_03 = mediaResistSuoerficial+valor_vezes_03; //BE        
+        linha_menos_03 = mediaResistSuoerficial-valor_vezes_03;//BF
+        if(linha.resist > linha_mais_03){
+          linha.validacao = 'Inválido'
+        }else if(linha.resist < linha_menos_03){
+          linha.validacao = 'Inválido'
+        }else{
+          linha.validacao = 'Válido'
+        }
+      }
+      
+    }
+          console.log(linha.resist+' =- - - - - - '+valor_vezes_03);
+
     
   }
 

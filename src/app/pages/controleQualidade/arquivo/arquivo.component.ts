@@ -2016,7 +2016,7 @@ duplicata(amostra: any): void {
   }
 
   imprimirLaudoPDF(amostra_detalhes_selecionada: any){
-    if(this.normalize(amostra_detalhes_selecionada.amostra_detalhes.material) === 'argamassa'){
+    if(this.normalize(amostra_detalhes_selecionada.amostra_detalhes.material) === 'argamassa' || this.normalize(amostra_detalhes_selecionada.amostra_detalhes.material) === 'Argamassa'){
       // if(this.normalize(amostra_detalhes_selecionada.amostra_detalhes.tipo_amostra) === 'colante'){
       //   this.imprimirLaudoArgColantePDF(amostra_detalhes_selecionada);
       // }else{
@@ -3685,40 +3685,844 @@ duplicata(amostra: any): void {
       contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
     }
 
+    //Calculos flexao, etc ensaio detalhes
+    if(amostra_detalhes_selecionada.amostra_detalhes?.ordem_detalhes?.calculo_ensaio_detalhes){
+      const resultado = amostra_detalhes_selecionada.amostra_detalhes.ordem_detalhes.calculo_ensaio_detalhes.find((item: any) => item.id === 140);
 
- const imagens = amostra_detalhes_selecionada.amostra_detalhes.imagens;
+      if(resultado){
 
-const ultimaImagem = imagens.length
-  ? imagens.reduce((prev: any, curr: any) => (curr.id > prev.id ? curr : prev))
-  : null;
+        const flexao_cp1 = resultado.ensaios_detalhes.find((item: any) => item.id === 315);
+        let ruptura_cp1 = flexao_cp1.variavel_detalhes.find((item: any) => item.id === 127);
+        ruptura_cp1 = ruptura_cp1.valor;
 
-if (ultimaImagem && ultimaImagem.image_url) {
-  const imageUrl = ultimaImagem.image_url;
+        let tracao_cp1 = flexao_cp1.variavel_detalhes.find((item: any) => item.id === 128);
+        tracao_cp1 = tracao_cp1.valor;
 
-  try {
-    const img = await fetch(imageUrl)
-      .then(res => res.blob())
-      .then(blob => new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsDataURL(blob);
-      }));
+        const flexao_cp2 = resultado.ensaios_detalhes.find((item: any) => item.id === 316);
+        let ruptura_cp2 = flexao_cp2.variavel_detalhes.find((item: any) => item.id === 133);
+        ruptura_cp2 = ruptura_cp2.valor;
 
-    const imgWidth = 100;
-    const imgHeight = 60;
-    const x = (doc.internal.pageSize.getWidth() - imgWidth) / 2;
-    const y = contadorLinhas;
+        let tracao_cp2 = flexao_cp2.variavel_detalhes.find((item: any) => item.id === 135);
+        tracao_cp2 = tracao_cp2.valor;
 
-    doc.addImage(img, 'JPEG', x, y, imgWidth, imgHeight);
+        const flexao_cp3 = resultado.ensaios_detalhes.find((item: any) => item.id === 321);
+        let ruptura_cp3 = flexao_cp3.variavel_detalhes.find((item: any) => item.id === 134);
+        ruptura_cp3 = ruptura_cp3.valor;
 
-    contadorLinhas = y + imgHeight + 10;
+        let tracao_cp3 = flexao_cp3.variavel_detalhes.find((item: any) => item.id === 136);
+        tracao_cp3 = tracao_cp3.valor;
 
-  } catch (error) {
-    console.error('Erro ao carregar imagem:', error);
-  }
-}
+        let resistencia_media_flexao = resultado.ensaios_detalhes.find((item: any) => item.id === 318);
+        resistencia_media_flexao = resistencia_media_flexao.valor;
 
-    
+        let desvio_padrao_flexao = resultado.ensaios_detalhes.find((item: any) => item.id === 319);
+        desvio_padrao_flexao = desvio_padrao_flexao.valor;
+
+        let desvio_absoluto_flexao = resultado.ensaios_detalhes.find((item: any) => item.id === 320);
+        desvio_absoluto_flexao = desvio_absoluto_flexao.valor;
+
+        const data_rompimento_flexao = resultado.ensaios_detalhes.find((item: any) => item.id === 312);
+        let data_rompimento_flexao_moldagem = data_rompimento_flexao.variavel_detalhes.find((item: any) => item.id === 43);
+        data_rompimento_flexao_moldagem = data_rompimento_flexao_moldagem.valor;
+
+
+        let data_rompimento_flexao_valor = data_rompimento_flexao.variavel_detalhes.find((item: any) => item.id === 85);
+        data_rompimento_flexao_valor = data_rompimento_flexao_valor.valor;
+
+        const headFlexao = [
+          [
+            { content: 'CP', rowSpan: 2 },
+            { content: 'Carga de Ruptura à Flexão (N)', rowSpan: 2 },
+            { content: 'Resis. À Tração na Flexão (Mpa)', rowSpan: 2 },
+            { content: 'Resis. Média (Mpa)', colSpan: 1 },
+          ],
+          [
+            { content: 'Resist. Tração Flexão' },
+          ],
+        ];
+
+        const bodyFlexao = [
+          ['1', ruptura_cp1, tracao_cp1, '1,8'],
+          ['2', ruptura_cp2, tracao_cp2, ''],
+          ['3', ruptura_cp3, tracao_cp3, ''],
+          [{ content: 'Desvio - padrão (Mpa):', colSpan: 3 }, desvio_padrao_flexao],
+          [{ content: 'Desvio absoluto máximo (Mpa):', colSpan: 3 }, desvio_absoluto_flexao],
+          [{ content: 'Coeficiente de variação (%):', colSpan: 3 }, ''],
+          [{ content: 'Data de Rompimento Moldagem:', colSpan: 3 }, data_rompimento_flexao_moldagem],
+          [{ content: 'Data de Rompimento Valor:', colSpan: 3 }, data_rompimento_flexao_valor],
+        ];
+
+        autoTable(doc, {
+          head: headFlexao,
+          body: bodyFlexao,
+          startY: contadorLinhas,
+          styles: {
+            fontSize: 8,
+            halign: 'center',
+            valign: 'middle',
+            cellPadding: 1,
+          },
+          headStyles: {
+            fillColor: [220, 220, 220],
+            textColor: 0,
+            lineWidth: 0.1,
+            fontStyle: 'bold',
+          },
+          bodyStyles: {
+            lineWidth: 0.1,
+          },
+          theme: 'grid',
+        });
+        
+        contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+      }
+
+
+      //"(Argamassa) - Ensaios Variação Dimensional Linear"
+      const resultado_linear = amostra_detalhes_selecionada.amostra_detalhes.ordem_detalhes.calculo_ensaio_detalhes.find((item: any) => item.id === 138);
+
+      if(resultado_linear){
+        const linear_cp1 = resultado_linear.ensaios_detalhes.find((item: any) => item.id === 299);
+        let deforma_cp1 = linear_cp1.variavel_detalhes.find((item: any) => item.id === 123);
+        deforma_cp1 = deforma_cp1.valor;
+
+        let idade_cp1 = linear_cp1.variavel_detalhes.find((item: any) => item.id === 124);
+        idade_cp1 = idade_cp1.valor;
+
+        const linear_cp2 = resultado_linear.ensaios_detalhes.find((item: any) => item.id === 300);
+        let deforma_cp2 = linear_cp2.variavel_detalhes.find((item: any) => item.id === 123);
+        deforma_cp2 = deforma_cp2.valor;
+
+        let idade_cp2 = linear_cp2.variavel_detalhes.find((item: any) => item.id === 124);
+        idade_cp2 = idade_cp2.valor;
+
+        const linear_cp3 = resultado_linear.ensaios_detalhes.find((item: any) => item.id === 301);
+        let deforma_cp3 = linear_cp3.variavel_detalhes.find((item: any) => item.id === 123);
+        deforma_cp3 = deforma_cp3.valor;
+
+        let idade_cp3 = linear_cp3.variavel_detalhes.find((item: any) => item.id === 124);
+        idade_cp3 = idade_cp3.valor;
+
+        let desvio_padrao_linear = resultado_linear.ensaios_detalhes.find((item: any) => item.id === 306);
+        desvio_padrao_linear = desvio_padrao_linear.valor;
+
+        let variacao_dimensional_linear = resultado_linear.ensaios_detalhes.find((item: any) => item.id === 305);
+        variacao_dimensional_linear = variacao_dimensional_linear.valor;
+
+        let data_1_linear = resultado_linear.ensaios_detalhes.find((item: any) => item.id === 307);
+        data_1_linear = data_1_linear.valor;
+
+        let data_7_linear = resultado_linear.ensaios_detalhes.find((item: any) => item.id === 308);
+        data_7_linear = data_7_linear.valor;
+
+        let data_28_linear = resultado_linear.ensaios_detalhes.find((item: any) => item.id === 309);
+        data_28_linear = data_28_linear.valor;
+
+        const headDimensionalLinear = [
+          [
+            { content: 'CP'},
+            { content: 'Leitura Desforma LO (mm)' },
+            { content: 'Leitura Idade Li (mm)' },
+          ],
+        ];
+
+        const bodyDimensionalLinear = [
+          ['1', deforma_cp1, idade_cp1],
+          ['2', deforma_cp2, idade_cp2],
+          ['3', deforma_cp3, idade_cp3],
+          [{ content: 'Desvio Padrão (Variação Dimencional:', colSpan: 2 }, desvio_padrao_linear],
+          [{ content: 'Variação dimensinal:', colSpan: 2 }, variacao_dimensional_linear],
+          [{ content: 'Data pós (1 Dia):', colSpan: 2 }, data_1_linear],
+          [{ content: 'Data pós (7 Dias):', colSpan: 2 }, data_7_linear],
+          [{ content: 'Data pós (28 Dias):', colSpan: 2 }, data_28_linear],
+        ];
+
+        autoTable(doc, {
+          head: headDimensionalLinear,
+          body: bodyDimensionalLinear,
+          startY: contadorLinhas,
+          styles: {
+            fontSize: 8,
+            halign: 'center',
+            valign: 'middle',
+            cellPadding: 1,
+          },
+          headStyles: {
+            fillColor: [220, 220, 220],
+            textColor: 0,
+            lineWidth: 0.1,
+            fontStyle: 'bold',
+          },
+          bodyStyles: {
+            lineWidth: 0.1,
+          },
+          theme: 'grid',
+        });
+        
+        contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+      }
+
+      //"(Argamassa) - Ensaios Variação de Massa"
+      const resultado_variacao = amostra_detalhes_selecionada.amostra_detalhes.ordem_detalhes.calculo_ensaio_detalhes.find((item: any) => item.id === 139);
+
+      if(resultado_variacao){
+        const linear_cp1_variacao = resultado_variacao.ensaios_detalhes.find((item: any) => item.id === 302);
+        let deforma_cp1_variacao = linear_cp1_variacao.variavel_detalhes.find((item: any) => item.id === 125);
+        deforma_cp1_variacao = deforma_cp1_variacao.valor;
+
+        let idade_cp1_variacao = linear_cp1_variacao.variavel_detalhes.find((item: any) => item.id === 126);
+        idade_cp1_variacao = idade_cp1_variacao.valor;
+
+        const linear_cp2_variacao = resultado_variacao.ensaios_detalhes.find((item: any) => item.id === 303);
+        let deforma_cp2_variacao = linear_cp2_variacao.variavel_detalhes.find((item: any) => item.id === 125);
+        deforma_cp2_variacao = deforma_cp2_variacao.valor;
+
+        let idade_cp2_variacao = linear_cp2_variacao.variavel_detalhes.find((item: any) => item.id === 126);
+        idade_cp2_variacao = idade_cp2_variacao.valor;
+
+        const linear_cp3_variacao = resultado_variacao.ensaios_detalhes.find((item: any) => item.id === 304);
+        let deforma_cp3_variacao = linear_cp3_variacao.variavel_detalhes.find((item: any) => item.id === 125);
+        deforma_cp3_variacao = deforma_cp3_variacao.valor;
+
+        let idade_cp3_variacao = linear_cp3_variacao.variavel_detalhes.find((item: any) => item.id === 126);
+        idade_cp3_variacao = idade_cp3_variacao.valor;
+
+        let desvio_padrao_variacao = resultado_variacao.ensaios_detalhes.find((item: any) => item.id === 311);
+        desvio_padrao_variacao = desvio_padrao_variacao.valor;
+
+        let variacao_massa = resultado_variacao.ensaios_detalhes.find((item: any) => item.id === 310);
+        variacao_massa = variacao_massa.valor;
+
+        let data_1_variacao = resultado_variacao.ensaios_detalhes.find((item: any) => item.id === 307);
+        data_1_variacao = data_1_variacao.valor;
+
+        let data_7_variacao = resultado_variacao.ensaios_detalhes.find((item: any) => item.id === 308);
+        data_7_variacao = data_7_variacao.valor;
+
+        let data_28_variacao = resultado_variacao.ensaios_detalhes.find((item: any) => item.id === 309);
+        data_28_variacao = data_28_variacao.valor;
+
+        let data_desmoldagem = resultado_variacao.ensaios_detalhes.find((item: any) => item.id === 281);
+        data_desmoldagem = data_desmoldagem.valor;
+
+        const headVariacao = [
+          [
+            { content: 'CP'},
+            { content: 'Massa após desforma m0(g)' },
+            { content: 'Massa na idade mi(g)' },
+          ],
+        ];
+
+        const bodyVariacao = [
+          ['1', deforma_cp1_variacao, idade_cp1_variacao],
+          ['2', deforma_cp2_variacao, idade_cp2_variacao],
+          ['3', deforma_cp3_variacao, idade_cp3_variacao],
+          [{ content: 'Desvio Padrão (Variação de Massa:', colSpan: 2 }, desvio_padrao_variacao],
+          [{ content: 'Variação de Massa:', colSpan: 2 }, variacao_massa],
+          [{ content: 'Data pós (1 Dia):', colSpan: 2 }, data_1_variacao],
+          [{ content: 'Data pós (7 Dias):', colSpan: 2 }, data_7_variacao],
+          [{ content: 'Data pós (28 Dias):', colSpan: 2 }, data_28_variacao],
+          [{ content: 'Data de Desmoldagem:', colSpan: 2 }, data_desmoldagem],
+        ];
+
+        autoTable(doc, {
+          head: headVariacao,
+          body: bodyVariacao,
+          startY: contadorLinhas,
+          styles: {
+            fontSize: 8,
+            halign: 'center',
+            valign: 'middle',
+            cellPadding: 1,
+          },
+          headStyles: {
+            fillColor: [220, 220, 220],
+            textColor: 0,
+            lineWidth: 0.1,
+            fontStyle: 'bold',
+          },
+          bodyStyles: {
+            lineWidth: 0.1,
+          },
+          theme: 'grid',
+        });
+        
+        contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+      }
+
+       //"Argamassa) - Ensaios Compressão
+      const resultado_compressao = amostra_detalhes_selecionada.amostra_detalhes.ordem_detalhes.calculo_ensaio_detalhes.find((item: any) => item.id === 141);
+
+      if(resultado_compressao){
+        const linear_cp1_compressao = resultado_compressao.ensaios_detalhes.find((item: any) => item.id === 322);
+        let ruptura_cp1_compressao = linear_cp1_compressao.variavel_detalhes.find((item: any) => item.id === 129);
+        ruptura_cp1_compressao = ruptura_cp1_compressao.valor;
+
+        let tracao_cp1_compressao = linear_cp1_compressao.variavel_detalhes.find((item: any) => item.id === 132);
+        tracao_cp1_compressao = tracao_cp1_compressao.valor;
+
+        const linear_cp2_compressao = resultado_compressao.ensaios_detalhes.find((item: any) => item.id === 323);
+        let ruptura_cp2_compressao = linear_cp2_compressao.variavel_detalhes.find((item: any) => item.id === 137);
+        ruptura_cp2_compressao = ruptura_cp2_compressao.valor;
+
+        let tracao_cp2_compressao = linear_cp2_compressao.variavel_detalhes.find((item: any) => item.id === 139);
+        tracao_cp2_compressao = tracao_cp2_compressao.valor;
+
+        const linear_cp3_compressao = resultado_compressao.ensaios_detalhes.find((item: any) => item.id === 324);
+        let ruptura_cp3_compressao = linear_cp3_compressao.variavel_detalhes.find((item: any) => item.id === 138);
+        ruptura_cp3_compressao = ruptura_cp3_compressao.valor;
+
+        let tracao_cp3_compressao = linear_cp3_compressao.variavel_detalhes.find((item: any) => item.id === 140);
+        tracao_cp3_compressao = tracao_cp3_compressao.valor;
+
+        let desvio_padrao_compressao = resultado_compressao.ensaios_detalhes.find((item: any) => item.id === 326);
+        desvio_padrao_compressao = desvio_padrao_compressao.valor;
+
+        const data_rompimento_compressao = resultado_compressao.ensaios_detalhes.find((item: any) => item.id === 312);
+        let data_rompimento_moldagem = data_rompimento_compressao.variavel_detalhes.find((item: any) => item.id === 43);
+        data_rompimento_moldagem = data_rompimento_moldagem.valor;
+
+        let data_rompimento_valor = data_rompimento_compressao.variavel_detalhes.find((item: any) => item.id === 85);
+        data_rompimento_valor = data_rompimento_valor.valor;
+
+        let resistencia_media_compressao = resultado_compressao.ensaios_detalhes.find((item: any) => item.id === 325);
+        resistencia_media_compressao = resistencia_media_compressao.valor;
+
+        let desvio_absoluto_compressao = resultado_compressao.ensaios_detalhes.find((item: any) => item.id === 327);
+        desvio_absoluto_compressao = desvio_absoluto_compressao.valor;
+
+        const headCompressao = [
+          [
+            { content: 'CP'},
+            { content: 'Carga de Ruptura à Compressão (N)' },
+            { content: 'Resist. Tração Compressão (Mpa)' },
+          ],
+        ];
+
+        const bodyCompressao = [
+          ['1', ruptura_cp1_compressao, tracao_cp1_compressao],
+          ['2', ruptura_cp2_compressao, tracao_cp2_compressao],
+          ['3', ruptura_cp3_compressao, tracao_cp3_compressao],
+          [{ content: 'Desvio Padrão (Ruptura/Tração Compressão:', colSpan: 2 }, desvio_padrao_compressao],
+          [{ content: 'Desvio Absoluto Máximo (Ruptura/Tração Compressão):', colSpan: 2 }, desvio_absoluto_compressao],
+          [{ content: 'Resistência Média (Ruptura/Tração Compressão):', colSpan: 2 }, resistencia_media_compressao],
+          [{ content: 'Data de Rompimento (Flexão/Compressão) - Moldagem:', colSpan: 2 }, data_rompimento_moldagem],
+          [{ content: 'Data de Rompimento (Flexão/Compressão) - Valor:', colSpan: 2 }, data_rompimento_valor],
+        ];
+
+        autoTable(doc, {
+          head: headCompressao,
+          body: bodyCompressao,
+          startY: contadorLinhas,
+          styles: {
+            fontSize: 8,
+            halign: 'center',
+            valign: 'middle',
+            cellPadding: 1,
+          },
+          headStyles: {
+            fillColor: [220, 220, 220],
+            textColor: 0,
+            lineWidth: 0.1,
+            fontStyle: 'bold',
+          },
+          bodyStyles: {
+            lineWidth: 0.1,
+          },
+          theme: 'grid',
+        });
+        
+        contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+      }
+
+      //"(Argamassa) Módulo de elasticidade dinâmico - Média/Desvio Padrão
+      const resultado_elasticidade = amostra_detalhes_selecionada.amostra_detalhes.ordem_detalhes.calculo_ensaio_detalhes.find((item: any) => item.id === 142);
+
+      if(resultado_elasticidade){
+        const media_elasticidade = resultado_elasticidade.ensaios_detalhes.find((item: any) => item.id === 328);
+        let media_individual_1 = media_elasticidade.variavel_detalhes.find((item: any) => item.id === 141);
+        media_individual_1 = media_individual_1.valor;
+
+        let media_individual_2 = media_elasticidade.variavel_detalhes.find((item: any) => item.id === 142);
+        media_individual_2 = media_individual_2.valor;
+
+        let media_individual_3 = media_elasticidade.variavel_detalhes.find((item: any) => item.id === 143);
+        media_individual_3 = media_individual_3.valor;
+
+        const headIndividual = [
+          [
+            { content: ''},
+            { content: 'Média'},
+          ],
+        ];
+
+        const bodyIndividual = [
+          ['Individual - 1', media_individual_1],
+          ['Individual - 2', media_individual_2],
+          ['Individual - 3', media_individual_3],
+        ];
+
+        autoTable(doc, {
+          head: headIndividual,
+          body: bodyIndividual,
+          startY: contadorLinhas,
+          styles: {
+            fontSize: 8,
+            halign: 'center',
+            valign: 'middle',
+            cellPadding: 1,
+          },
+          headStyles: {
+            fillColor: [220, 220, 220],
+            textColor: 0,
+            lineWidth: 0.1,
+            fontStyle: 'bold',
+          },
+          bodyStyles: {
+            lineWidth: 0.1,
+          },
+          theme: 'grid',
+        });
+        
+        contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+      }
+
+
+    }
+
+    //Calculos flexao, etc expressa
+    if(amostra_detalhes_selecionada.amostra_detalhes?.expressa_detalhes?.calculo_ensaio_detalhes){
+      const resultado = amostra_detalhes_selecionada.amostra_detalhes.expressa_detalhes.calculo_ensaio_detalhes.find((item: any) => item.id === 140);
+
+      if(resultado){
+        const flexao_cp1 = resultado.ensaios_detalhes.find((item: any) => item.id === 315);
+        let ruptura_cp1 = flexao_cp1.variavel_detalhes.find((item: any) => item.id === 127);
+        ruptura_cp1 = ruptura_cp1.valor;
+
+        let tracao_cp1 = flexao_cp1.variavel_detalhes.find((item: any) => item.id === 128);
+        tracao_cp1 = tracao_cp1.valor;
+
+        const flexao_cp2 = resultado.ensaios_detalhes.find((item: any) => item.id === 316);
+        let ruptura_cp2 = flexao_cp2.variavel_detalhes.find((item: any) => item.id === 133);
+        ruptura_cp2 = ruptura_cp2.valor;
+
+        let tracao_cp2 = flexao_cp2.variavel_detalhes.find((item: any) => item.id === 135);
+        tracao_cp2 = tracao_cp2.valor;
+
+        const flexao_cp3 = resultado.ensaios_detalhes.find((item: any) => item.id === 321);
+        let ruptura_cp3 = flexao_cp3.variavel_detalhes.find((item: any) => item.id === 134);
+        ruptura_cp3 = ruptura_cp3.valor;
+
+        let tracao_cp3 = flexao_cp3.variavel_detalhes.find((item: any) => item.id === 136);
+        tracao_cp3 = tracao_cp3.valor;
+
+        let resistencia_media_flexao = resultado.ensaios_detalhes.find((item: any) => item.id === 318);
+        resistencia_media_flexao = resistencia_media_flexao.valor;
+
+        let desvio_padrao_flexao = resultado.ensaios_detalhes.find((item: any) => item.id === 319);
+        desvio_padrao_flexao = desvio_padrao_flexao.valor;
+
+        let desvio_absoluto_flexao = resultado.ensaios_detalhes.find((item: any) => item.id === 320);
+        desvio_absoluto_flexao = desvio_absoluto_flexao.valor;
+
+        const data_rompimento_flexao = resultado.ensaios_detalhes.find((item: any) => item.id === 312);
+        let data_rompimento_flexao_moldagem = data_rompimento_flexao.variavel_detalhes.find((item: any) => item.id === 43);
+        data_rompimento_flexao_moldagem = data_rompimento_flexao_moldagem.valor;
+
+
+        let data_rompimento_flexao_valor = data_rompimento_flexao.variavel_detalhes.find((item: any) => item.id === 85);
+        data_rompimento_flexao_valor = data_rompimento_flexao_valor.valor;
+
+
+
+        const headFlexao = [
+          [
+            { content: 'CP', rowSpan: 2 },
+            { content: 'Carga de Ruptura à Flexão (N)', rowSpan: 2 },
+            { content: 'Resis. À Tração na Flexão (Mpa)', rowSpan: 2 },
+            { content: 'Resis. Média (Mpa)', colSpan: 1 },
+          ],
+          [
+            { content: 'Resist. Tração Flexão' },
+          ],
+        ];
+
+        const bodyFlexao = [
+          ['1', ruptura_cp1, tracao_cp1, '1,8'],
+          ['2', ruptura_cp2, tracao_cp2, ''],
+          ['3', ruptura_cp3, tracao_cp3, ''],
+          [{ content: 'Desvio - padrão (Mpa):', colSpan: 3 }, desvio_padrao_flexao],
+          [{ content: 'Desvio absoluto máximo (Mpa):', colSpan: 3 }, desvio_absoluto_flexao],
+          [{ content: 'Coeficiente de variação (%):', colSpan: 3 }, ''],
+          [{ content: 'Data de Rompimento Moldagem:', colSpan: 3 }, data_rompimento_flexao_moldagem],
+          [{ content: 'Data de Rompimento Valor:', colSpan: 3 }, data_rompimento_flexao_valor],
+        ];
+
+        autoTable(doc, {
+          head: headFlexao,
+          body: bodyFlexao,
+          startY: contadorLinhas,
+          styles: {
+            fontSize: 8,
+            halign: 'center',
+            valign: 'middle',
+            cellPadding: 1,
+          },
+          headStyles: {
+            fillColor: [220, 220, 220],
+            textColor: 0,
+            lineWidth: 0.1,
+            fontStyle: 'bold',
+          },
+          bodyStyles: {
+            lineWidth: 0.1,
+          },
+          theme: 'grid',
+        });
+        
+        contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+      }
+
+      //"(Argamassa) - Ensaios Variação Dimensional Linear"
+      const resultado_linear = amostra_detalhes_selecionada.amostra_detalhes.expressa_detalhes.calculo_ensaio_detalhes.find((item: any) => item.id === 138);
+
+      if(resultado_linear){
+        const linear_cp1 = resultado_linear.ensaios_detalhes.find((item: any) => item.id === 299);
+        let deforma_cp1 = linear_cp1.variavel_detalhes.find((item: any) => item.id === 123);
+        deforma_cp1 = deforma_cp1.valor;
+
+        let idade_cp1 = linear_cp1.variavel_detalhes.find((item: any) => item.id === 124);
+        idade_cp1 = idade_cp1.valor;
+
+        const linear_cp2 = resultado_linear.ensaios_detalhes.find((item: any) => item.id === 300);
+        let deforma_cp2 = linear_cp2.variavel_detalhes.find((item: any) => item.id === 123);
+        deforma_cp2 = deforma_cp2.valor;
+
+        let idade_cp2 = linear_cp2.variavel_detalhes.find((item: any) => item.id === 124);
+        idade_cp2 = idade_cp2.valor;
+
+        const linear_cp3 = resultado_linear.ensaios_detalhes.find((item: any) => item.id === 301);
+        let deforma_cp3 = linear_cp3.variavel_detalhes.find((item: any) => item.id === 123);
+        deforma_cp3 = deforma_cp3.valor;
+
+        let idade_cp3 = linear_cp3.variavel_detalhes.find((item: any) => item.id === 124);
+        idade_cp3 = idade_cp3.valor;
+
+        let desvio_padrao_linear = resultado_linear.ensaios_detalhes.find((item: any) => item.id === 306);
+        desvio_padrao_linear = desvio_padrao_linear.valor;
+
+        let variacao_dimensional_linear = resultado_linear.ensaios_detalhes.find((item: any) => item.id === 305);
+        variacao_dimensional_linear = variacao_dimensional_linear.valor;
+
+        let data_1_linear = resultado_linear.ensaios_detalhes.find((item: any) => item.id === 307);
+        data_1_linear = data_1_linear.valor;
+
+        let data_7_linear = resultado_linear.ensaios_detalhes.find((item: any) => item.id === 308);
+        data_7_linear = data_7_linear.valor;
+
+        let data_28_linear = resultado_linear.ensaios_detalhes.find((item: any) => item.id === 309);
+        data_28_linear = data_28_linear.valor;
+
+        const headDimensionalLinear = [
+          [
+            { content: 'CP'},
+            { content: 'Leitura Desforma LO (mm)' },
+            { content: 'Leitura Idade Li (mm)' },
+          ],
+        ];
+
+        const bodyDimensionalLinear = [
+          ['1', deforma_cp1, idade_cp1],
+          ['2', deforma_cp2, idade_cp2],
+          ['3', deforma_cp3, idade_cp3],
+          [{ content: 'Desvio Padrão (Variação Dimencional:', colSpan: 2 }, desvio_padrao_linear],
+          [{ content: 'Variação dimensinal:', colSpan: 2 }, variacao_dimensional_linear],
+          [{ content: 'Data pós (1 Dia):', colSpan: 2 }, data_1_linear],
+          [{ content: 'Data pós (7 Dias):', colSpan: 2 }, data_7_linear],
+          [{ content: 'Data pós (28 Dias):', colSpan: 2 }, data_28_linear],
+        ];
+
+        autoTable(doc, {
+          head: headDimensionalLinear,
+          body: bodyDimensionalLinear,
+          startY: contadorLinhas,
+          styles: {
+            fontSize: 8,
+            halign: 'center',
+            valign: 'middle',
+            cellPadding: 1,
+          },
+          headStyles: {
+            fillColor: [220, 220, 220],
+            textColor: 0,
+            lineWidth: 0.1,
+            fontStyle: 'bold',
+          },
+          bodyStyles: {
+            lineWidth: 0.1,
+          },
+          theme: 'grid',
+        });
+        
+        contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+      }
+
+      //"(Argamassa) - Ensaios Variação de Massa"
+      const resultado_variacao = amostra_detalhes_selecionada.amostra_detalhes.expressa_detalhes.calculo_ensaio_detalhes.find((item: any) => item.id === 139);
+
+      if(resultado_variacao){
+        const linear_cp1_variacao = resultado_variacao.ensaios_detalhes.find((item: any) => item.id === 302);
+        let deforma_cp1_variacao = linear_cp1_variacao.variavel_detalhes.find((item: any) => item.id === 125);
+        deforma_cp1_variacao = deforma_cp1_variacao.valor;
+
+        let idade_cp1_variacao = linear_cp1_variacao.variavel_detalhes.find((item: any) => item.id === 126);
+        idade_cp1_variacao = idade_cp1_variacao.valor;
+
+        const linear_cp2_variacao = resultado_variacao.ensaios_detalhes.find((item: any) => item.id === 303);
+        let deforma_cp2_variacao = linear_cp2_variacao.variavel_detalhes.find((item: any) => item.id === 125);
+        deforma_cp2_variacao = deforma_cp2_variacao.valor;
+
+        let idade_cp2_variacao = linear_cp2_variacao.variavel_detalhes.find((item: any) => item.id === 126);
+        idade_cp2_variacao = idade_cp2_variacao.valor;
+
+        const linear_cp3_variacao = resultado_variacao.ensaios_detalhes.find((item: any) => item.id === 304);
+        let deforma_cp3_variacao = linear_cp3_variacao.variavel_detalhes.find((item: any) => item.id === 125);
+        deforma_cp3_variacao = deforma_cp3_variacao.valor;
+
+        let idade_cp3_variacao = linear_cp3_variacao.variavel_detalhes.find((item: any) => item.id === 126);
+        idade_cp3_variacao = idade_cp3_variacao.valor;
+
+        let desvio_padrao_variacao = resultado_variacao.ensaios_detalhes.find((item: any) => item.id === 311);
+        desvio_padrao_variacao = desvio_padrao_variacao.valor;
+
+        let variacao_massa = resultado_variacao.ensaios_detalhes.find((item: any) => item.id === 310);
+        variacao_massa = variacao_massa.valor;
+
+        let data_1_variacao = resultado_variacao.ensaios_detalhes.find((item: any) => item.id === 307);
+        data_1_variacao = data_1_variacao.valor;
+
+        let data_7_variacao = resultado_variacao.ensaios_detalhes.find((item: any) => item.id === 308);
+        data_7_variacao = data_7_variacao.valor;
+
+        let data_28_variacao = resultado_variacao.ensaios_detalhes.find((item: any) => item.id === 309);
+        data_28_variacao = data_28_variacao.valor;
+
+        let data_desmoldagem = resultado_variacao.ensaios_detalhes.find((item: any) => item.id === 281);
+        data_desmoldagem = data_desmoldagem.valor;
+
+        const headVariacao = [
+          [
+            { content: 'CP'},
+            { content: 'Massa após desforma m0(g)' },
+            { content: 'Massa na idade mi(g)' },
+          ],
+        ];
+
+        const bodyVariacao = [
+          ['1', deforma_cp1_variacao, idade_cp1_variacao],
+          ['2', deforma_cp2_variacao, idade_cp2_variacao],
+          ['3', deforma_cp3_variacao, idade_cp3_variacao],
+          [{ content: 'Desvio Padrão (Variação de Massa:', colSpan: 2 }, desvio_padrao_variacao],
+          [{ content: 'Variação de Massa:', colSpan: 2 }, variacao_massa],
+          [{ content: 'Data pós (1 Dia):', colSpan: 2 }, data_1_variacao],
+          [{ content: 'Data pós (7 Dias):', colSpan: 2 }, data_7_variacao],
+          [{ content: 'Data pós (28 Dias):', colSpan: 2 }, data_28_variacao],
+          [{ content: 'Data de Desmoldagem:', colSpan: 2 }, data_desmoldagem],
+        ];
+
+        autoTable(doc, {
+          head: headVariacao,
+          body: bodyVariacao,
+          startY: contadorLinhas,
+          styles: {
+            fontSize: 8,
+            halign: 'center',
+            valign: 'middle',
+            cellPadding: 1,
+          },
+          headStyles: {
+            fillColor: [220, 220, 220],
+            textColor: 0,
+            lineWidth: 0.1,
+            fontStyle: 'bold',
+          },
+          bodyStyles: {
+            lineWidth: 0.1,
+          },
+          theme: 'grid',
+        });
+        
+        contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+      }
+
+      //"Argamassa) - Ensaios Compressão
+      const resultado_compressao = amostra_detalhes_selecionada.amostra_detalhes.expressa_detalhes.calculo_ensaio_detalhes.find((item: any) => item.id === 141);
+
+      if(resultado_compressao){
+        const linear_cp1_compressao = resultado_compressao.ensaios_detalhes.find((item: any) => item.id === 322);
+        let ruptura_cp1_compressao = linear_cp1_compressao.variavel_detalhes.find((item: any) => item.id === 129);
+        ruptura_cp1_compressao = ruptura_cp1_compressao.valor;
+
+        let tracao_cp1_compressao = linear_cp1_compressao.variavel_detalhes.find((item: any) => item.id === 132);
+        tracao_cp1_compressao = tracao_cp1_compressao.valor;
+
+        const linear_cp2_compressao = resultado_compressao.ensaios_detalhes.find((item: any) => item.id === 323);
+        let ruptura_cp2_compressao = linear_cp2_compressao.variavel_detalhes.find((item: any) => item.id === 137);
+        ruptura_cp2_compressao = ruptura_cp2_compressao.valor;
+
+        let tracao_cp2_compressao = linear_cp2_compressao.variavel_detalhes.find((item: any) => item.id === 139);
+        tracao_cp2_compressao = tracao_cp2_compressao.valor;
+
+        const linear_cp3_compressao = resultado_compressao.ensaios_detalhes.find((item: any) => item.id === 324);
+        let ruptura_cp3_compressao = linear_cp3_compressao.variavel_detalhes.find((item: any) => item.id === 138);
+        ruptura_cp3_compressao = ruptura_cp3_compressao.valor;
+
+        let tracao_cp3_compressao = linear_cp3_compressao.variavel_detalhes.find((item: any) => item.id === 140);
+        tracao_cp3_compressao = tracao_cp3_compressao.valor;
+
+        let desvio_padrao_compressao = resultado_compressao.ensaios_detalhes.find((item: any) => item.id === 326);
+        desvio_padrao_compressao = desvio_padrao_compressao.valor;
+
+        const data_rompimento_compressao = resultado_compressao.ensaios_detalhes.find((item: any) => item.id === 312);
+        let data_rompimento_moldagem = data_rompimento_compressao.variavel_detalhes.find((item: any) => item.id === 43);
+        data_rompimento_moldagem = data_rompimento_moldagem.valor;
+
+        let data_rompimento_valor = data_rompimento_compressao.variavel_detalhes.find((item: any) => item.id === 85);
+        data_rompimento_valor = data_rompimento_valor.valor;
+
+        let resistencia_media_compressao = resultado_compressao.ensaios_detalhes.find((item: any) => item.id === 325);
+        resistencia_media_compressao = resistencia_media_compressao.valor;
+
+        let desvio_absoluto_compressao = resultado_compressao.ensaios_detalhes.find((item: any) => item.id === 327);
+        desvio_absoluto_compressao = desvio_absoluto_compressao.valor;
+
+        const headCompressao = [
+          [
+            { content: 'CP'},
+            { content: 'Carga de Ruptura à Compressão (N)' },
+            { content: 'Resist. Tração Compressão (Mpa)' },
+          ],
+        ];
+
+        const bodyCompressao = [
+          ['1', ruptura_cp1_compressao, tracao_cp1_compressao],
+          ['2', ruptura_cp2_compressao, tracao_cp2_compressao],
+          ['3', ruptura_cp3_compressao, tracao_cp3_compressao],
+          [{ content: 'Desvio Padrão (Ruptura/Tração Compressão:', colSpan: 2 }, desvio_padrao_compressao],
+          [{ content: 'Desvio Absoluto Máximo (Ruptura/Tração Compressão):', colSpan: 2 }, desvio_absoluto_compressao],
+          [{ content: 'Resistência Média (Ruptura/Tração Compressão):', colSpan: 2 }, resistencia_media_compressao],
+          [{ content: 'Data de Rompimento (Flexão/Compressão) - Moldagem:', colSpan: 2 }, data_rompimento_moldagem],
+          [{ content: 'Data de Rompimento (Flexão/Compressão) - Valor:', colSpan: 2 }, data_rompimento_valor],
+        ];
+
+        autoTable(doc, {
+          head: headCompressao,
+          body: bodyCompressao,
+          startY: contadorLinhas,
+          styles: {
+            fontSize: 8,
+            halign: 'center',
+            valign: 'middle',
+            cellPadding: 1,
+          },
+          headStyles: {
+            fillColor: [220, 220, 220],
+            textColor: 0,
+            lineWidth: 0.1,
+            fontStyle: 'bold',
+          },
+          bodyStyles: {
+            lineWidth: 0.1,
+          },
+          theme: 'grid',
+        });
+        
+        contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+      }
+
+      //"(Argamassa) Módulo de elasticidade dinâmico - Média/Desvio Padrão
+      const resultado_elasticidade = amostra_detalhes_selecionada.amostra_detalhes.expressa_detalhes.calculo_ensaio_detalhes.find((item: any) => item.id === 142);
+
+      if(resultado_elasticidade){
+        const media_elasticidade = resultado_elasticidade.ensaios_detalhes.find((item: any) => item.id === 328);
+        let media_individual_1 = media_elasticidade.variavel_detalhes.find((item: any) => item.id === 141);
+        media_individual_1 = media_individual_1.valor;
+
+        let media_individual_2 = media_elasticidade.variavel_detalhes.find((item: any) => item.id === 142);
+        media_individual_2 = media_individual_2.valor;
+
+        let media_individual_3 = media_elasticidade.variavel_detalhes.find((item: any) => item.id === 143);
+        media_individual_3 = media_individual_3.valor;
+
+        const headIndividual = [
+          [
+            { content: ''},
+            { content: 'Média'},
+          ],
+        ];
+
+        const bodyIndividual = [
+          ['Individual - 1', media_individual_1],
+          ['Individual - 2', media_individual_2],
+          ['Individual - 3', media_individual_3],
+        ];
+
+        autoTable(doc, {
+          head: headIndividual,
+          body: bodyIndividual,
+          startY: contadorLinhas,
+          styles: {
+            fontSize: 8,
+            halign: 'center',
+            valign: 'middle',
+            cellPadding: 1,
+          },
+          headStyles: {
+            fillColor: [220, 220, 220],
+            textColor: 0,
+            lineWidth: 0.1,
+            fontStyle: 'bold',
+          },
+          bodyStyles: {
+            lineWidth: 0.1,
+          },
+          theme: 'grid',
+        });
+        
+        contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+      }
+    }
+
+
+    const imagens = amostra_detalhes_selecionada.amostra_detalhes.imagens;
+
+    const ultimaImagem = imagens.length ? imagens.reduce((prev: any, curr: any) => (curr.id > prev.id ? curr : prev)) : null;
+
+    if (ultimaImagem && ultimaImagem.image_url) {
+      const imageUrl = ultimaImagem.image_url;
+
+      try {
+        const img = await fetch(imageUrl)
+          .then(res => res.blob())
+          .then(blob => new Promise<string>((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.readAsDataURL(blob);
+          }));
+
+        const imgWidth = 100;
+        const imgHeight = 60;
+        const x = (doc.internal.pageSize.getWidth() - imgWidth) / 2;
+        const y = contadorLinhas;
+
+        doc.addImage(img, 'JPEG', x, y, imgWidth, imgHeight);
+
+        contadorLinhas = y + imgHeight + 10;
+
+      } catch (error) {
+        console.error('Erro ao carregar imagem:', error);
+      }
+    }
 
     // ====== Segunda página: Observações e rodapé ===============================
     doc.addImage(logoAssinaturaBase64, 'PNG', 84, contadorLinhas, 40, 30); // assinatura
