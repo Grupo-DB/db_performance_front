@@ -214,7 +214,7 @@
                                             [severity]="getSeverity(analise.amostra_detalhes.material)"
                                             />
                                         </td>
-                                        <td style="text-align: left;"> {{ analise.amostra_detalhes?.tipo_amostra }} </td>
+                                        <td style="text-align: left;"> {{ analise.amostra_detalhes?.numero }} </td>
                                         <ng-container *ngIf="analise?.amostra_detalhes?.expressa_detalhes; else ensaioDetalhes">
                                             <td style="text-align: left;">
                                                 {{ analise.amostra_detalhes?.expressa_detalhes?.data | date:'dd/MM/yy' }}
@@ -260,25 +260,6 @@
                                                 <div 
                                                     style="position: relative;"
                                                     *ngIf="!analise.finalizada"
-                                                >
-                                                    <a 
-                                                        type="button" 
-                                                        class="ml-2"
-                                                        [routerLink]="['/welcome/controleQualidade/analise', analise.id]"
-                                                    >
-                                                        <p-button
-                                                            severity="success" 
-                                                            icon="pi pi-file-edit"
-                                                            pTooltip="Realizar Análise"
-                                                            tooltipPosition="top"
-                                                            [disabled]="analise.finalizada" 
-                                                            [rounded]="true" 
-                                                        />
-                                                    </a>
-                                                </div>
-                                                <div 
-                                                    style="position: relative;"
-                                                    *ngIf="!analise.finalizada"
                                                     class="ml-2"
                                                 >
                                                     <p-button 
@@ -293,7 +274,7 @@
                                                 </div>
                                                 <div 
                                                     style="position: relative;"
-                                                    *ngIf="analise.finalizada"    
+                                                    *ngIf="analise.finalizada && !analise.aprovada && !analise.laudo"    
                                                     class="ml-2"
                                                 >
                                                         <p-button 
@@ -309,23 +290,12 @@
                                                 </div>
                                                 <div 
                                                     style="position: relative;"
-                                                    *ngIf="analise.finalizada && !analise.laudo"
+                                                    *ngIf="analise.finalizada && analise.laudo"
                                                 >
                                                     <a 
                                                         type="button" 
                                                         class="ml-2"
                                                     >
-                                                        <p-button 
-                                                            *ngIf="analise.amostra_detalhes.material == 'Argamassa'; else outroBotao"
-                                                            icon="pi pi-book"
-                                                            severity="success"
-                                                            [rounded]="true" 
-                                                            pTooltip="Colocar dados Laudo"
-                                                            (onClick)="abrirModalDadosLaudoSubstrato(analise)"
-                                                            tooltipPosition="top">
-                                                        </p-button>
-
-                                                        <ng-template #outroBotao>
                                                         <p-button 
                                                             icon="pi pi-print"
                                                             severity="help"
@@ -334,27 +304,43 @@
                                                             (onClick)="abrirModalLaudo(analise)"
                                                             tooltipPosition="top">
                                                         </p-button>
-                                                        </ng-template>
                                                     </a>
                                                 </div>
                                                 <div 
                                                     style="position: relative;"
-                                                    *ngIf="analise.finalizada && analise.laudo && !analise.aprovada"
+                                                    *ngIf="analise.finalizada && !analise.laudo && !analise.aprovada"
                                                     class="ml-2"
                                                 >
                                                     <p-button 
                                                         icon="pi pi-check-circle"
                                                         severity="success"
-                                                        (click)="aprovarAnalise(analise, $event)" 
+                                                        (click)="aprovarAnalise(analise)" 
+                                                        [rounded]="true" 
+                                                        
+                                                        pTooltip="Aprovar OS"
+                                                        tooltipPosition="top" 
+                                                    />
+                
+                                                </div>
+                                                <div 
+                                                    style="position: relative;"
+                                                    *ngIf="analise.finalizada && !analise.laudo && analise.aprovada"
+                                                    class="ml-2"
+                                                >
+                                                    <p-button 
+                                                        icon="pi pi-clipboard"
+                                                        severity="secondary"
+                                                        (click)="laudoAnalise(analise, $event)" 
                                                         [rounded]="true" 
                                                         [disabled]="aprovarAnaliseEmAndamento"
-                                                        pTooltip="Aprovar OS"
+                                                        pTooltip="Encaminhar para Laudo"
                                                         tooltipPosition="top" 
                                                     />
                                                 </div>
                                                 <div
                                                     style="position: relative;"
                                                     class="ml-2"
+                                                    *ngIf="analise.finalizada && analise.laudo && analise.aprovada"
                                                 >
                                                     <p-button 
                                                             icon="pi pi-file-check"
@@ -370,7 +356,7 @@
                                                     *ngIf="analise.finalizada && analise.laudo && analise.aprovada"
                                                     class="ml-2"
                                                 >
-                                                    <p-button 
+                                                    <!-- <p-button 
                                                         *ngIf="analise.amostra_detalhes.material == 'Argamassa'; else outroBotao"
                                                         icon="pi pi-book"
                                                         severity="success"
@@ -378,7 +364,7 @@
                                                         pTooltip="Colocar dados Laudo"
                                                         (onClick)="abrirModalDadosLaudoSubstrato(analise)"
                                                         tooltipPosition="top">
-                                                    </p-button>
+                                                    </p-button> -->
 
                                                     <ng-template #outroBotao>
                                                         <p-button 
@@ -597,7 +583,6 @@
         </div>
     </p-dialog>
 
-
     <!---------------------------------Modal Visualização---------------------------------------------->
     <p-drawer 
         header="Visualizar OS" 
@@ -738,6 +723,7 @@
                                             <td>{{ ensaio.descricao }}</td>
                                             <td>
                                                 <input
+                                                    pInputText
                                                     value="{{ ensaio.garantia }}"
                                                     type="text"
                                                     [(ngModel)]="ensaio.garantia"
@@ -1002,7 +988,6 @@
     </div>
 </div>
 
-
     <!-- ruptura a flexao -->
     <p-drawer 
         [(visible)]="modalDadosLaudoFlexao" 
@@ -1138,9 +1123,9 @@
        
     </p-drawer>
 
-    <!-- retacao -->
+    <!-- retracao -->
     <p-drawer 
-        [(visible)]="modalDadosLaudoRetacao" 
+        [(visible)]="modalDadosLaudoRetracao" 
         position="full" >
         <p-toast />
         <p-confirmDialog />
@@ -1151,14 +1136,14 @@
 
                         <p-card class="card w-12 text-center card-superficial">
                             <ng-template #header>
-                                <div class="header-retacao w-full text-center">
+                                <div class="header-retracao w-full text-center">
                                     <b>Determinação da Variação Dimencional Linear (Retação/Expansão)</b>
                                 </div>
                             </ng-template>
                             <div class="flex flex-row w-12 gap-3">
                                 <div class="w-12">
                                     <p-table 
-                                        [value]="linhasRetacao" 
+                                        [value]="linhasRetracao" 
                                         stripedRows
                                     >
                                         <ng-template pTemplate="header">
@@ -1171,12 +1156,12 @@
                                             </tr>
                                         </ng-template>
 
-                                        <ng-template pTemplate="body" let-retacao let-i="rowIndex">
+                                        <ng-template pTemplate="body" let-retracao let-i="rowIndex">
                                             <tr>
-                                                <td><input [value]="retacao.data" (input)="updateRetacaoProperty(retacao, 'data', $event)" type="date" class="form-control" /></td>
-                                                <td><input [value]="retacao.idade" (input)="updateRetacaoProperty(retacao, 'idade', $event)" type="number" class="form-control" /></td>
-                                                <td><input [value]="retacao.media" (input)="updateRetacaoProperty(retacao, 'media', $event)" type="number" class="form-control" /></td>
-                                                <td><input [value]="retacao.desvio" (input)="updateRetacaoProperty(retacao, 'desvio', $event)" type="number" class="form-control" /></td>
+                                                <td><input pInputText  [(ngModel)]="retracao.data" type="date" /></td>
+                                                <td><input pInputText [(ngModel)]="retracao.idade" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="retracao.media" type="number" /></td>
+                                                <td><input pInputText [(ngModel)]="retracao.desvio" type="number" /></td>
                                             </tr>
                                         </ng-template>
                                     </p-table>
@@ -1187,7 +1172,7 @@
                             <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
                                 <p-button 
                                     label="Salvar Variação Dimencional Linear" 
-                                    (onClick)="salvarRetacao()"
+                                    (onClick)="salvarRetracao()"
                                     severity="info"
                                     icon="pi pi-check" 
                                     iconPos="right" 

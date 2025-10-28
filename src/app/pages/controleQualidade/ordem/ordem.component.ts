@@ -198,7 +198,7 @@ export class OrdemComponent implements OnInit {
   expanded?: boolean;
   partialSelected?: boolean;
 
-  selectedEnsaios: TreeNode[] = []; // aqui ficam os selecionados
+  selectedEnsaios: TreeNode[] = []; 
 
   modalVisualizar: boolean = false;
   analiseSelecionada: any;
