@@ -136,9 +136,7 @@ export interface Expressa {
   ],
   templateUrl: './expressa.component.html',
   styleUrl: './expressa.component.scss'
-
 })
-
 export class ExpressaComponent implements OnInit, OnDestroy {
   ensaios: any[] = [];
   targetEnsaios!: Ensaio[];
@@ -694,5 +692,9 @@ private calcularDataDescarte(dataEntrada: Date, material: string): Date | null {
 
   return dataDescarte;
 }
+
+clearForm(){
+    this.expressaForm.reset();
+  }
 
 }

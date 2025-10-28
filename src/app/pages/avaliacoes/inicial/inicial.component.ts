@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterOutlet, RouterLink } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
@@ -14,14 +13,13 @@ import { NotificacoesService } from '../../../services/avaliacoesServices/notifi
 import { UserService } from '../../../services/avaliacoesServices/users/user.service';
 import { MessagesModule } from 'primeng/messages';
 import { ToastModule } from 'primeng/toast';
-import { th } from 'date-fns/locale';
-
+import { MessageModule } from 'primeng/message';
 @Component({
   selector: 'app-inicial',
   standalone: true,
   imports: [
     CommonModule,NzIconModule,NzUploadModule, NzLayoutModule, NzMenuModule,
-    DividerModule,FormsModule,MessagesModule,ToastModule
+    DividerModule,FormsModule,MessagesModule,ToastModule,MessageModule
   ],
   providers: [MessageService,UploadService],
   templateUrl: './inicial.component.html',
@@ -74,7 +72,6 @@ export class InicialComponent implements OnInit {
   markAllAsRead(): void {
     this.notificacoesService.markAllAsRead().subscribe(
       (data: any) => {
-        console.log('Notificações marcadas como lidas!', data);
         this.getUnreadNotifications();
         this.messageService.add({
           severity: 'success',

@@ -27,46 +27,36 @@ import { ToastModule } from 'primeng/toast';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ProjecaoService } from '../../../services/baseOrcamentariaServices/dre/projecao.service';
-import { Produto } from '../../baseOrcamentaria/dre/produto/produto.component';
 import { AmostraService } from '../../../services/controleQualidade/amostra.service';
 import { TipoAmostra } from '../tipo-amostra/tipo-amostra.component';
 import { ProdutoAmostra } from '../produto-amostra/produto-amostra.component';
 import { StepperModule } from 'primeng/stepper';
-import { ToggleButton, ToggleButtonModule } from 'primeng/togglebutton';
 import { OrdemService } from '../../../services/controleQualidade/ordem.service';
 import { EnsaioService } from '../../../services/controleQualidade/ensaio.service';
 import { Plano } from '../plano/plano.component';
-import { Colaborador } from '../../avaliacoes/colaborador/colaborador.component';
 import { ColaboradorService } from '../../../services/avaliacoesServices/colaboradores/registercolaborador.service';
 import { AnaliseService } from '../../../services/controleQualidade/analise.service';
 import { FieldsetModule } from 'primeng/fieldset';
 import { MenuModule } from 'primeng/menu';
 import { SplitButtonModule } from 'primeng/splitbutton';
-import { SpeedDial, SpeedDialModule } from 'primeng/speeddial';
+import { SpeedDialModule } from 'primeng/speeddial';
 import { Ordem } from '../ordem/ordem.component';
 import { Analise } from '../analise/analise.component';
-import { evaluate } from 'mathjs';
 import { InplaceModule } from 'primeng/inplace';
 import { CardModule } from 'primeng/card';
-import { CdkDragPlaceholder } from "@angular/cdk/drag-drop";
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzUploadChangeParam, NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TagModule } from 'primeng/tag';
 import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import { TooltipModule } from 'primeng/tooltip';
-import { AvaliadorService } from '../../../services/avaliacoesServices/avaliadores/registeravaliador.service';
 import { Avaliador } from '../../avaliacoes/avaliador/avaliador.component';
-import { da } from 'date-fns/locale';
 
 interface FileWithInfo {
   file: File;
   descricao: string;
 }
-
 interface AmostraForm{
   material: FormControl,
   finalidade: FormControl,

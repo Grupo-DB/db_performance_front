@@ -130,9 +130,10 @@
     }
 }
 .containerInterno{
+    position: sticky;
     background-color: #ffffff;
     border: 10px solid #ffffff;
-    padding: 10px;
+    padding: 10px;    
 }
 .container{
     max-width: 100%;

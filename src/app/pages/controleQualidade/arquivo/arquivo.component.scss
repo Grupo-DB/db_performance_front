@@ -209,7 +209,7 @@
     }
     
     .p-dialog-header {
-        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        background: linear-gradient(135deg, #353636, #444547);
         color: white;
         border-radius: 8px 8px 0 0;
         
@@ -225,10 +225,10 @@
         display: flex;
         align-items: center;
         padding: 1rem;
-        background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+        background: linear-gradient(135deg, #2C323A, #e2e8f0);
         border-radius: 8px;
         border-left: 4px solid #3b82f6;
-        
+        margin-top: 20px;
         i {
             font-size: 1.5rem;
         }
@@ -238,7 +238,7 @@
         font-family: system-ui, -apple-system, sans-serif;
         font-size: 14px;
         line-height: 1.6;
-        background: #fff;
+        background: #2C323A;
         border: 1px solid #ddd;
         border-radius: 6px;
         padding: 1rem;
@@ -285,10 +285,10 @@
     
     .parecer-footer {
         padding: 0.75rem;
-        background: #f9fafb;
+        background: linear-gradient(135deg, #2C323A, #e2e8f0);
         border-radius: 6px;
         border: 1px solid #f3f4f6;
-        
+        margin-bottom: 20px;
         small {
             display: flex;
             align-items: center;
@@ -342,6 +342,34 @@
         small {
             color: #9ca3af;
             font-size: 0.85rem;
+        }
+    }
+}
+:host ::ng-deep {
+    .p-speeddial-action{ 
+        background-color: #0ea5e9 !important;
+        color: white !important;
+    }
+
+    .speeddial-linear-demo {
+        .p-speeddial-direction-up {
+            left: calc(50% - 2rem);
+            bottom: 0;
+        }
+
+        .p-speeddial-direction-down {
+            left: calc(50% - 2rem);
+            top: 0;
+        }
+
+        .p-speeddial-direction-left {
+            right: 0;
+            top: calc(50% - 2rem);
+        }
+
+        .p-speeddial-direction-right {
+            left: 0;
+            top: calc(50% - 2rem);
         }
     }
 }

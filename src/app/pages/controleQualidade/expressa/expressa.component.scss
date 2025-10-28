@@ -130,6 +130,7 @@
     }
 }
 .containerInterno{
+    position: sticky;
     background-color: #ffffff;
     border: 10px solid #ffffff;
     padding: 10px;
@@ -354,7 +355,6 @@
       color: #9CA3AF !important;
     }
   }
-}
 
  .p-multiselect {
     background-color: #3B3E44 !important;
@@ -384,3 +384,34 @@
       box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.2) !important;
     }
   }
+
+  Datepicker
+  .p-calendar {
+    .p-inputtext {
+      background-color: #3B3E44 !important;
+      border: 1px solid #4A5157 !important;
+      color: #F8F9FA !important;
+    }
+    
+    .p-datepicker-trigger {
+      background-color: #4A5157 !important;
+      border: 1px solid #4A5157 !important;
+      color: #9CA3AF !important;
+      border-radius: 0 6px 6px 0 !important;
+      transition: all 0.2s ease !important;
+      
+      &:hover {
+        background-color: #5A6069 !important;
+        color: #0ea5e9 !important;
+        border-color: #5A6069 !important;
+      }
+      
+      &:focus {
+        box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.2) !important;
+        border-color: #0ea5e9 !important;
+      }
+    }
+  }
+
+
+}
