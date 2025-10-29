@@ -43,11 +43,13 @@ import { trigger, transition, style, animate, keyframes } from '@angular/animati
 import { SelectModule } from 'primeng/select';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { DatePickerModule } from 'primeng/datepicker';
-
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
 import { DrawerModule } from 'primeng/drawer';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { MessageModule, Message } from 'primeng/message';
+import { CdkDragPlaceholder } from "@angular/cdk/drag-drop";
+
 interface FileWithInfo {
   file: File;
   descricao: string;
@@ -124,6 +126,7 @@ export interface Colaborador{
   dominio_id: number;
   minerion_id: number;
   sgg_id: number;
+  user_id: number;
   tornar_avaliador: boolean;
   tornar_avaliado: boolean;
   tornar_gestor: boolean; // upload das imagens
@@ -151,12 +154,17 @@ interface TipoContrato{
   selector: 'app-colaborador',
   standalone: true,
   imports: [
-    ReactiveFormsModule,FormsModule,NzUploadModule,CommonModule,DialogModule,InputNumberModule,InputSwitchModule,BooleanToStatusPipe,InputMaskModule,CalendarModule,CheckboxModule,ConfirmDialogModule,DividerModule,FloatLabelModule,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,ToastModule,IconFieldModule,InputIconModule,SelectModule,ToggleSwitchModule,DatePickerModule, CardModule, InplaceModule, DrawerModule, NzIconModule
-  ],
+    ReactiveFormsModule, FormsModule, NzUploadModule, CommonModule, DialogModule, 
+    InputNumberModule, InputSwitchModule, BooleanToStatusPipe, InputMaskModule, 
+    CalendarModule, CheckboxModule, ConfirmDialogModule, DividerModule, FloatLabelModule, 
+    TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule, ButtonModule, 
+    ToastModule, IconFieldModule, InputIconModule, SelectModule, ToggleSwitchModule, 
+    DatePickerModule, CardModule, InplaceModule, DrawerModule, NzIconModule,
+],
   providers:[
     MessageService,SetorService,ColaboradorService,ColaboradorService,AmbienteService,TipoContratoService,
     RegisterCompanyService,FilialService,AreaService,CargoService,ConfirmationService,
-    DatePipe, CurrencyPipe
+    DatePipe, CurrencyPipe, MessageModule, InplaceModule
   ],
   animations:[
     trigger('efeitoFade',[
@@ -334,6 +342,7 @@ export class ColaboradorComponent implements OnInit {
     dominio_id:[''],
     minerion_id:[''],
     sgg_id:[''],
+    user_id:[''],
     tornar_avaliador:[''],
     tornar_avaliado:[''],
     tornar_gestor:['']
@@ -531,8 +540,6 @@ onDescricaoInput(index: number, event: Event): void {
   
   if (this.uploadedFilesWithInfo[index]) {
     this.uploadedFilesWithInfo[index].descricao = descricao;
-    console.log(`Descrição atualizada para arquivo ${index}: "${descricao}"`);
-    console.log('Estado atual dos arquivos:', this.uploadedFilesWithInfo);
   }
 }
 
@@ -576,7 +583,6 @@ handleFileChange(event: any) {
 handleChange({ file, fileList }: NzUploadChangeParam): void {
   const status = file.status;
   if (status !== 'uploading') {
-    console.log(file, fileList);
   }
   if (status === 'done') {
     this.msg.success(`${file.name} file uploaded successfully.`);
@@ -588,7 +594,6 @@ handleChange({ file, fileList }: NzUploadChangeParam): void {
 onEmpresaSelecionada(empresa: any): void {
   const id = empresa.id;
   if (id !== undefined) {
-    console.log('Empresa selecionada ID:', id); // Log para depuração
     this.empresaSelecionadaId = id;
     this.filiaisByEmpresa();
   } else {
@@ -607,14 +612,12 @@ filiaisByEmpresa(): void {
       if (filialControl) {
         filialControl.enable();
       }
-      console.log('Filiais carregadas:', this.filiais); // Log para depuração
     });
   }
 } 
 onFilialSelecionada(filial: any): void {
   const id = filial.id;
   if (id !== undefined) {
-    console.log('Filial selecionada ID:', id); // Log para depuração
     this.filialSelecionadaId = id;
     this.areasByFilial();
   } else {
@@ -632,14 +635,12 @@ areasByFilial(): void {
       if (areaControl) {
         areaControl.enable();
       }
-      console.log('Areas carregadas:', this.areas); // Log para depuração
     });
   }
 } 
 onAreaSelecionada(area: any): void {
   const id = area.id;
   if (id !== undefined) {
-    console.log('Area selecionada ID:', id); // Log para depuração
     this.areaSelecionadaId = id;
     this.setoresByArea();
   } else {
@@ -657,14 +658,12 @@ setoresByArea(): void {
       if (setorControl) {
         setorControl.enable();
       }
-      console.log('Setores carregadas:', this.areas); // Log para depuração
     });
   }
 }
 onSetorSelecionado(setor: any): void {
   const id = setor.id;
   if (id !== undefined) {
-    console.log('Ambiente selecionado ID:', id); // Log para depuração
     this.setorSelecionadoId = id;
     this.ambientesBySetor();
   } else {
@@ -683,7 +682,6 @@ ambientesBySetor(): void {
       if (ambienteControl) {
         ambienteControl.enable();
       }
-      console.log('Ambientes carregadas:', this.areas); // Log para depuração
     });
   }
 }
@@ -691,7 +689,6 @@ ambientesBySetor(): void {
 onAmbienteSelecionado(ambiente: any): void {
   const id = ambiente.id;
   if (id !== undefined) {
-    console.log('Ambiente selecionado ID:', id); // Log para depuração
     this.ambienteSelecionadoId = id;
     this.cargosByAmbiente();
   } else {
@@ -709,7 +706,6 @@ cargosByAmbiente(): void {
       if (cargoControl) {
         cargoControl.enable();
       }
-      console.log('Setores carregadas:', this.areas); // Log para depuração
     });
   }
 }
@@ -717,7 +713,6 @@ cargosByAmbiente(): void {
 onCargoSelecionado(cargo: any): void {
   const id = cargo.id;
   if (id !== undefined) {
-    console.log('Cargo selecionado ID:', id); // Log para depuração
     this.cargoSelecionadoId = id;
     
   } else {
@@ -789,6 +784,7 @@ abrirModalEdicao(colaborador: Colaborador) {
     dominio_id: colaborador.dominio_id,
     minerion_id: colaborador.minerion_id,
     sgg_id: colaborador.sgg_id,
+    user_id: colaborador.user_id,
     tornar_avaliador:colaborador.tornar_avaliador,
     tornar_avaliado:colaborador.tornar_avaliado,
     tornar_gestor:colaborador.tornar_gestor

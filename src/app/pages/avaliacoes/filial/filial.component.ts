@@ -23,8 +23,6 @@ import { InputIconModule } from 'primeng/inputicon';
 import { SelectModule } from 'primeng/select';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
-
-
 import { DrawerModule } from 'primeng/drawer';
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
@@ -254,7 +252,6 @@ saveEdit() {
   });
 }
 excluirFilial(id: number) {
-  console.log('Excluir filial chamada com id:', id); // Adicione este log
   this.confirmationService.confirm({
     message: 'Tem certeza que deseja excluir esta filial?',
     header: 'Confirmação',
@@ -266,7 +263,6 @@ excluirFilial(id: number) {
     acceptButtonStyleClass: 'p-button-info',
     rejectButtonStyleClass: 'p-button-secondary',
     accept: () => {
-      console.log('Confirmação aceita'); // Adicione este log
       this.filialService.deleteFilial(id).subscribe({
         next: () => {
           this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Filial excluída com sucesso!!', life: 1000 });

@@ -1,27 +1,20 @@
 <div class="container flex flex-column align-items-center mb-4">
-
     <div class="containerInterno w-12">
-
         <div @swipeAnimation>
             <form
-            
                 [formGroup]="registercompanyForm" 
                 title="Cadastrar nova Empresa"
-                class="flex flex-column gap-4" 
-                
+                class="flex flex-column gap-4"  
             >
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-
-                    <div class="fg1 flex flex-column w-12 align-items-center">
-
-                        <p-card class="card w-12 text-center">
+                    <div class="bloco fg1 flex flex-column w-12 align-items-center">
+                        <p-card class="card w-12">
                             <ng-template #header>
-                                <div class="header w-full text-center">
-                                    <h2>Inserir Nova Empresa</h2>
+                                <div class="header titulo-info w-full text-left">
+                                    <h2> Empresa</h2>
                                 </div>
                             </ng-template>
                             <div class="flex flex-column w-12 gap-3">
-
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
@@ -38,7 +31,6 @@
                                         <label for="on_label">Digite o nome</label>
                                     </p-floatlabel>
                                 </div>
-
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-inputMask
@@ -53,7 +45,6 @@
                                         <label for="on_label">Informe o CNPJ</label>
                                     </p-floatlabel>
                                 </div>
-
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
@@ -70,7 +61,6 @@
                                         <label for="on_label">Digite o endereço</label>
                                     </p-floatlabel>
                                 </div>
-
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
@@ -87,7 +77,6 @@
                                         <label for="on_label">Digite a cidade</label>
                                     </p-floatlabel>
                                 </div>
-
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
@@ -104,7 +93,6 @@
                                         <label for="on_label">Digite a sigla do Estado</label>
                                     </p-floatlabel>
                                 </div>
-
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
@@ -131,6 +119,7 @@
                                     tooltipPosition="top"
                                     pTooltip="Limpar"
                                     icon="pi pi-eraser"
+                                    severity="info"
                                 />
                                 <p-button 
                                     (onClick)="submit()" 
@@ -158,7 +147,8 @@
                         <p-button 
                             label="Empresas" 
                             tooltipPosition="top"
-                            pTooltip="Exibir Empresas"      
+                            pTooltip="Exibir Empresas"
+                            severity="info"      
                         >
                             <div class="inline-flex align-items-center">
                                 <span><i class="pi pi-angle-down"></i></span>
@@ -200,25 +190,25 @@
                             </ng-template>
                             <ng-template pTemplate="header">
                                 <tr class="tabela">
-                                    <th style="width:25%" type="text" field="nome" display="menu">
+                                    <th style="width:25%; text-align: center;" type="text" field="nome" display="menu">
                                     Nome
                                 </th>
-                                <th style="width:25%"  type="text" field="cnpj" display="menu">
+                                <th style="width:25%; text-align: center;"  type="text" field="cnpj" display="menu">
                                     CNPJ
                                 </th>
-                                <th style="width:25%" type="text" field="endereco" display="menu">
+                                <th style="width:25%; text-align: center;" type="text" field="endereco" display="menu">
                                     Endereço
                                 </th>
-                                <th style="width:25%" type="text" field="cidade" display="menu">
+                                <th style="width:25%; text-align: center;" type="text" field="cidade" display="menu">
                                     Cidade
                                 </th>
-                                <th style="width:25%" type="text" field="estado" display="menu">
+                                <th style="width:25%; text-align: center;" type="text" field="estado" display="menu">
                                     Estado
                                 </th>
-                                <th style="width:25%" type="text" field="codigo" display="menu">
+                                <th style="width:25%; text-align: center;" type="text" field="codigo" display="menu">
                                     Codigo
                                 </th>
-                                <th style="width: 25%; text-align: center;">Ações</th>
+                                <th style="width:25%; text-align: center;">Ações</th>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-empresa>
@@ -233,7 +223,7 @@
                                         <div class="flex justify-content-center gap-2">
                                             <p-button
                                             icon="pi pi-file-edit" 
-                                            severity="primary" 
+                                            severity="info" 
                                             size="small" 
                                             [raised]="true"
                                             pTooltip="Editar" 
@@ -277,18 +267,15 @@
     [style]="{ width: '60vw' }"
     styleClass="w-full md:w-12 lg:w-4"
 >
-
-    <div class="containerInterno w-12">
         <div class="background-form">
             <form
                 [formGroup]="editForm" title="Editar Empresa" class="flex flex-column gap-4" 
             >
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                     <div class="fg1 flex flex-column w-12 align-items-center">
-
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
-                                <div class="header w-full text-center">
+                                <div class="header titulo-info w-full text-center">
                                     <b>Editar Empresa</b>
                                 </div>
                             </ng-template>
@@ -400,6 +387,7 @@
                                     tooltipPosition="top"
                                     pTooltip="Limpar"
                                     icon="pi pi-eraser"
+                                    severity="info"
                                 />
                                 <p-button 
                                     (onClick)="saveEdit()" 
@@ -416,6 +404,4 @@
                 </div>
             </form>
         </div>
-    </div>
-  
 </p-drawer>

@@ -1752,6 +1752,8 @@ irParaImagem(index: number): void {
 // Flag para prevenir múltiplas chamadas - deletar imagem
 public deletarImagemEmAndamento = false;
 private ultimoCliqueDeletar = 0;
+private deletarOperacaoToken = '';
+private deletarAcceptRan = false;
 
 deletarImagem(imageId: number, event?: Event): void {  
   // Prevenir propagação de evento se existir
@@ -1773,8 +1775,12 @@ deletarImagem(imageId: number, event?: Event): void {
   this.deletarImagemEmAndamento = true;
   // Fechar qualquer confirmação existente antes de abrir nova
   this.confirmationService.close();
-  setTimeout(() => {
-    this.confirmationService.confirm({
+  // Garante single confirm aberto
+  this.confirmationService.close();
+  const token = `deletar_${imageId}_${Date.now()}`;
+  this.deletarOperacaoToken = token;
+  this.deletarAcceptRan = false;
+  this.confirmationService.confirm({
     message: 'Tem certeza que deseja deletar esta imagem?',
     header: 'Confirmação',
     icon: 'pi pi-check-circle',
@@ -1785,6 +1791,8 @@ deletarImagem(imageId: number, event?: Event): void {
     acceptButtonStyleClass: 'p-button-info',
     rejectButtonStyleClass: 'p-button-warn',
     accept: () => {
+      if (this.deletarAcceptRan || this.deletarOperacaoToken !== token) return;
+      this.deletarAcceptRan = true;
       this.amostraService.deleteImagem(this.amostraImagensSelecionada.id, imageId).subscribe({
         next: () => {
           this.messageService.add({
@@ -1795,6 +1803,8 @@ deletarImagem(imageId: number, event?: Event): void {
           
           this.carregarImagensAmostra(this.amostraImagensSelecionada.id);
           this.deletarImagemEmAndamento = false;
+          this.deletarOperacaoToken = '';
+          this.deletarAcceptRan = false;
         },
         error: (error) => {
           console.error('Erro ao deletar imagem:', error);
@@ -1804,15 +1814,19 @@ deletarImagem(imageId: number, event?: Event): void {
             detail: 'Erro ao deletar imagem.'
           });
           this.deletarImagemEmAndamento = false;
+          this.deletarOperacaoToken = '';
+          this.deletarAcceptRan = false;
         }
       });
     },
     reject: () => {
       // Reset flag quando usuário cancela
       this.deletarImagemEmAndamento = false;
+      this.deletarOperacaoToken = '';
+      this.deletarAcceptRan = false;
     }
   });
-  }, 100); // Fechar setTimeout
+  // fim confirm
 }
 
 downloadImagem(imagem: any): void {
@@ -1994,6 +2008,9 @@ duplicata(amostra: any): void {
   public finalizarAnaliseEmAndamento = false;
   private ultimoCliqueFinalizar = 0;
 
+  private finalizarOperacaoToken = '';
+  private finalizarAcceptRan = false;
+
   finalizarAnalise(analise: any, event?: Event): void {   
     // Prevenir propagação de evento se existir
     if (event) {
@@ -2014,8 +2031,10 @@ duplicata(amostra: any): void {
     this.finalizarAnaliseEmAndamento = true;
     // Fechar qualquer confirmação existente antes de abrir nova
     this.confirmationService.close();
-    setTimeout(() => {
-      this.confirmationService.confirm({
+    const token = `finalizar_${analise.id}_${Date.now()}`;
+    this.finalizarOperacaoToken = token;
+    this.finalizarAcceptRan = false;
+    this.confirmationService.confirm({
       message: `Tem certeza que deseja finalizar a análise da amostra ${analise.id}?`,
       header: 'Finalizar Análise',
       icon: 'pi pi-check-circle',
@@ -2026,6 +2045,8 @@ duplicata(amostra: any): void {
       acceptButtonStyleClass: 'p-button-info',
       rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
+        if (this.finalizarAcceptRan || this.finalizarOperacaoToken !== token) return;
+        this.finalizarAcceptRan = true;
         this.analiseService.finalizarAnalise(analise.id).subscribe({
           next: () => {
             this.messageService.add({
@@ -2036,6 +2057,8 @@ duplicata(amostra: any): void {
             setTimeout(() => {
               this.loadAnalises();
               this.finalizarAnaliseEmAndamento = false;
+              this.finalizarOperacaoToken = '';
+              this.finalizarAcceptRan = false;
             }, 1000);
           },
           error: (error) => {
@@ -2046,108 +2069,97 @@ duplicata(amostra: any): void {
               detail: 'Erro ao finalizar análise.'
             });
             this.finalizarAnaliseEmAndamento = false;
+            this.finalizarOperacaoToken = '';
+            this.finalizarAcceptRan = false;
           } 
         });
       },
       reject: () => {
         // Reset flag quando usuário cancela
         this.finalizarAnaliseEmAndamento = false;
+        this.finalizarOperacaoToken = '';
+        this.finalizarAcceptRan = false;
       }
     });
-    }, 100); // Fechar setTimeout
   }
 
   // Flag e timestamp para prevenir múltiplas chamadas
   public reabrirAnaliseEmAndamento = false;
   private reabrirAnaliseLastCall = 0;
-  
-  // Sistema de bloqueio global para prevenir múltiplas confirmações
-  public operacoesAtivas = new Set<string>();
-  private ultimaOperacao = '';
-  public contadorConfirmacoes = 0;
-  
-  // Proteção específica para callbacks de confirmação
-  private callbackExecutado = false;
-  private callbackOperacaoId = '';
+  private reabrirOperacaoToken = '';
+  private reabrirAcceptRan = false;
 
   reabrirAnalise(analise: any, event?: Event): void {
-    // Criar ID único para esta operação
-    const operacaoId = `reabrir_${analise.id}_${Date.now()}_${Math.random()}`;
-    if (this.operacoesAtivas.size > 0) {
-      return;
-    }
-    // BLOQUEIO POR CONTADOR: Se contador > 0, BLOQUEAR
-    this.contadorConfirmacoes++;
-    if (this.contadorConfirmacoes > 1) {
-      this.contadorConfirmacoes = 1; // Reset para próxima tentativa válida
-      return;
-    }
     // Prevenir propagação de evento COMPLETAMENTE
     if (event) {
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
-      // Remover o evento do target para evitar re-trigger
-      if (event.target) {
-        (event.target as HTMLElement).style.pointerEvents = 'none';
-        setTimeout(() => {
-          if (event.target) {
-            (event.target as HTMLElement).style.pointerEvents = 'auto';
-          }
-        }, 3000);
-      }
     }
-    
-    // Verificar se operação similar já aconteceu recentemente
-    const chaveOperacao = `reabrir_${analise.id}`;
-    if (this.ultimaOperacao === chaveOperacao) {
-      this.contadorConfirmacoes = 0; // Reset contador
-      return;
-    }    
+
     const now = Date.now();
-    if (now - this.reabrirAnaliseLastCall < 3000) { // 3 segundos
-      this.contadorConfirmacoes = 0; // Reset contador
+    if (now - this.reabrirAnaliseLastCall < 800) {
       return;
     }
     this.reabrirAnaliseLastCall = now;
-    // Marcar operação como ativa
-    this.operacoesAtivas.add(operacaoId);
-    this.ultimaOperacao = chaveOperacao;
-    this.reabrirAnaliseEmAndamento = true;  
-    // Usar confirmação nativa do navegador para evitar problemas do PrimeNG
-    const confirmacao = window.confirm(`Tem certeza que deseja reabrir a análise da amostra ${analise.id}?`);
-    if (confirmacao) {
-      // PROTEÇÃO CRÍTICA: Evitar múltiplas execuções
-      if (this.callbackExecutado && this.callbackOperacaoId === operacaoId) {
-        return;
-      }
-      this.callbackExecutado = true;
-      this.callbackOperacaoId = operacaoId;     
-      this.analiseService.reabrirAnalise(analise.id).subscribe({
-        next: () => {          
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Sucesso',
-            detail: 'Análise reaberta com sucesso!'
-          });
-          setTimeout(() => {
-            this.loadAnalises();
-            this.resetOperacoes();
-          }, 1000);
-        },
-        error: (error) => {
-          console.error('❌ Erro ao reabrir análise:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: 'Erro ao reabrir análise.'
-          });
-          this.resetOperacoes();
-        } 
-      });
-    } else {
-      this.resetOperacoes();
+
+    if (this.reabrirAnaliseEmAndamento) {
+      return;
     }
+    this.reabrirAnaliseEmAndamento = true;
+
+    // Fechar confirmações abertas e abrir uma única
+    this.confirmationService.close();
+    const token = `reabrir_${analise.id}_${Date.now()}`;
+    this.reabrirOperacaoToken = token;
+    this.reabrirAcceptRan = false;
+
+    this.confirmationService.confirm({
+      message: `Tem certeza que deseja reabrir a análise da amostra ${analise.id}?`,
+      header: 'Reabrir Análise',
+      icon: 'pi pi-check-circle',
+      acceptIcon: 'pi pi-check',
+      rejectIcon: 'pi pi-times',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-info',
+      rejectButtonStyleClass: 'p-button-warn',
+      accept: () => {
+        if (this.reabrirAcceptRan || this.reabrirOperacaoToken !== token) return;
+        this.reabrirAcceptRan = true;
+        this.analiseService.reabrirAnalise(analise.id).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Sucesso',
+              detail: 'Análise reaberta com sucesso!'
+            });
+            setTimeout(() => {
+              this.loadAnalises();
+              this.reabrirAnaliseEmAndamento = false;
+              this.reabrirOperacaoToken = '';
+              this.reabrirAcceptRan = false;
+            }, 1000);
+          },
+          error: (error) => {
+            console.error('Erro ao reabrir análise:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: 'Erro ao reabrir análise.'
+            });
+            this.reabrirAnaliseEmAndamento = false;
+            this.reabrirOperacaoToken = '';
+            this.reabrirAcceptRan = false;
+          }
+        });
+      },
+      reject: () => {
+        this.reabrirAnaliseEmAndamento = false;
+        this.reabrirOperacaoToken = '';
+        this.reabrirAcceptRan = false;
+      }
+    });
   }
   // Método utilitário para reset completo de operações
   private resetOperacoes(): void {
@@ -2155,11 +2167,9 @@ duplicata(amostra: any): void {
     this.finalizarAnaliseEmAndamento = false;
     this.aprovarAnaliseEmAndamento = false;
     this.deletarImagemEmAndamento = false;
-    this.operacoesAtivas.clear();
-    this.contadorConfirmacoes = 0;
-    this.ultimaOperacao = '';
-    this.callbackExecutado = false;
-    this.callbackOperacaoId = '';
+    // Limpando tokens e guardas
+    this.reabrirOperacaoToken = '';
+    this.reabrirAcceptRan = false;
   }
 
   laudoAnalise(analise: any, event?: Event): void {
@@ -2170,21 +2180,24 @@ duplicata(amostra: any): void {
       event.stopImmediatePropagation();
     }
 
-    // Proteção por timestamp - 1 segundo entre chamadas
+    // Debounce simples
     const agora = Date.now();
-    if (agora - this.ultimoCliqueAprovar < 1000) {
+    if (agora - this.ultimoCliqueLaudo < 800) {
+      return;
+    }
+    this.ultimoCliqueLaudo = agora;
 
+    // Evita reentrância
+    if (this.laudoAnaliseEmAndamento) {
       return;
     }
-    this.ultimoCliqueAprovar = agora;
-    
-    // Prevenir múltiplas chamadas
-    if (this.aprovarAnaliseEmAndamento) {
-      return;
-    }
-    this.aprovarAnaliseEmAndamento = true;
+    this.laudoAnaliseEmAndamento = true;
     // Fechar qualquer confirmação existente antes de abrir nova
     this.confirmationService.close();
+
+    const token = `laudo_${analise.id}_${Date.now()}`;
+    this.laudoOperacaoToken = token;
+    this.laudoAcceptRan = false;
 
     this.confirmationService.confirm({
       message: `Tem certeza que deseja encaminhar à análise ${analise.id} para laudo?`,
@@ -2197,6 +2210,8 @@ duplicata(amostra: any): void {
       acceptButtonStyleClass: 'p-button-info',
       rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
+        if (this.laudoAcceptRan || this.laudoOperacaoToken !== token) return;
+        this.laudoAcceptRan = true;
         this.analiseService.laudoAnalise(analise.id).subscribe({
           next: () => {
             this.messageService.add({
@@ -2206,7 +2221,7 @@ duplicata(amostra: any): void {
             });
              setTimeout(() => {
              this.loadAnalises();
-          }, 1000);
+         }, 1000);
           },
           error: (error) => {
             console.error('Erro ao encaminhar análise para laudo:', error);
@@ -2215,7 +2230,12 @@ duplicata(amostra: any): void {
               summary: 'Erro',
               detail: 'Erro ao reabrir análise.'
             });
-          } 
+          },
+          complete: () => {
+            this.laudoAnaliseEmAndamento = false;
+            this.laudoOperacaoToken = '';
+            this.laudoAcceptRan = false;
+          }
         });
       }
     });
@@ -2224,8 +2244,46 @@ duplicata(amostra: any): void {
   // Flag para prevenir múltiplas chamadas - aprovar
   public aprovarAnaliseEmAndamento = false;
   private ultimoCliqueAprovar = 0;
+  private aprovarOperacaoToken = '';
+  private aprovarAcceptRan = false;
 
-  aprovarAnalise(analise: any): void {
+  // Flags/controles específicos para Laudo
+  public laudoAnaliseEmAndamento = false;
+  private ultimoCliqueLaudo = 0;
+  private laudoOperacaoToken = '';
+  private laudoAcceptRan = false;
+
+  aprovarAnalise(analise: any, event?: Event): void {
+    // Evita múltiplos disparos por propagação/ancoras
+    if (event) {
+      try {
+        event.preventDefault();
+        event.stopPropagation();
+        if ((event as any).stopImmediatePropagation) {
+          (event as any).stopImmediatePropagation();
+        }
+      } catch {}
+    }
+
+    // Debounce simples de 800ms
+    const agora = Date.now();
+    if (agora - this.ultimoCliqueAprovar < 800) {
+      return;
+    }
+    this.ultimoCliqueAprovar = agora;
+
+    // Evita reentrância
+    if (this.aprovarAnaliseEmAndamento) {
+      return;
+    }
+    this.aprovarAnaliseEmAndamento = true;
+
+    // Garante um único ConfirmDialog do PrimeNG e accept single-shot
+    this.confirmationService.close();
+    const token = `aprovar_${analise.id}_${Date.now()}`;
+    this.aprovarOperacaoToken = token;
+    this.aprovarAcceptRan = false;
+
     this.confirmationService.confirm({
       message: `Tem certeza que deseja aprovar a análise ${analise.id}?`,
       header: 'Aprovar Análise',
@@ -2237,6 +2295,8 @@ duplicata(amostra: any): void {
       acceptButtonStyleClass: 'p-button-info',
       rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
+        if (this.aprovarAcceptRan || this.aprovarOperacaoToken !== token) return;
+        this.aprovarAcceptRan = true;
         this.analiseService.aprovarAnalise(analise.id).subscribe({
           next: () => {
             this.messageService.add({
@@ -2244,9 +2304,9 @@ duplicata(amostra: any): void {
               summary: 'Sucesso',
               detail: 'Análise aprovada para laudo com sucesso!'
             });
-             setTimeout(() => {
-             this.loadAnalises();
-          }, 1000);
+            setTimeout(() => {
+              this.loadAnalises();
+            }, 1000);
           },
           error: (error) => {
             console.error('Erro ao aprovar análise para laudo:', error);
@@ -2255,8 +2315,18 @@ duplicata(amostra: any): void {
               summary: 'Erro',
               detail: 'Erro ao aprovar análise.'
             });
-          } 
+          },
+          complete: () => {
+            this.aprovarAnaliseEmAndamento = false;
+            this.aprovarOperacaoToken = '';
+            this.aprovarAcceptRan = false;
+          }
         });
+      },
+      reject: () => {
+        this.aprovarAnaliseEmAndamento = false;
+        this.aprovarOperacaoToken = '';
+        this.aprovarAcceptRan = false;
       }
     });
   }

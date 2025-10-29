@@ -3692,7 +3692,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
         { label: 'Visualizar', icon: 'pi pi-eye', command: () => this.visualizar(analise), tooltip: 'Visualizar OS', tooltipPosition: 'top' },
         { label: 'Imprimir', icon: 'pi pi-print', command: () => this.abrirModalImpressao(analise) },
         { label: 'Imprimir Etiqueta', icon: 'pi pi-file-pdf', command: () => this.imprimirEtiqueta(analise.amostra_detalhes), tooltip: 'Imprimir Etiqueta', tooltipPosition: 'top' },
-      { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(analise.amostra_detalhes) },
+        { label: 'Editar', icon: 'pi pi-pencil', command: () => this.abrirModalEdicao(analise.amostra_detalhes) },
         { label: 'Excluir', icon: 'pi pi-trash', command: () => this.excluirAnalise(analise) },
         { label: 'Imagens', icon: 'pi pi-image', command: () => this.visualizarImagens(analise.amostra_detalhes) },
         //{ label: 'Duplicata', icon: 'pi pi-file-import', command: () => this.duplicata(analise.amostra_detalhes) },
@@ -3933,7 +3933,39 @@ onDescricaoInput(index: number, event: Event): void {
     });
   }
 
-  laudoAnalise(analise: any): void {
+  public laudoAnaliseEmAndamento = false;
+  private ultimoCliqueLaudo = 0;
+  private laudoOperacaoToken = '';
+  private laudoAcceptRan = false;
+
+  laudoAnalise(analise: any, event?: Event): void {
+    // Prevenir propagação/ações padrão para evitar cliques duplicados
+    if (event) {
+      try {
+        event.preventDefault();
+        event.stopPropagation();
+        if ((event as any).stopImmediatePropagation) {
+          (event as any).stopImmediatePropagation();
+        }
+      } catch {}
+    }
+
+    const agora = Date.now();
+    if (agora - this.ultimoCliqueLaudo < 800) {
+      return;
+    }
+    this.ultimoCliqueLaudo = agora;
+
+    if (this.laudoAnaliseEmAndamento) {
+      return;
+    }
+    this.laudoAnaliseEmAndamento = true;
+
+    this.confirmationService.close();
+    const token = `laudo_${analise.id}_${Date.now()}`;
+    this.laudoOperacaoToken = token;
+    this.laudoAcceptRan = false;
+
     this.confirmationService.confirm({
       message: `Tem certeza que deseja encaminhar à análise ${analise.id} para laudo?`,
       header: 'Encaminhar para Laudo',
@@ -3945,6 +3977,8 @@ onDescricaoInput(index: number, event: Event): void {
       acceptButtonStyleClass: 'p-button-info',
       rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
+        if (this.laudoAcceptRan || this.laudoOperacaoToken !== token) return;
+        this.laudoAcceptRan = true;
         this.analiseService.laudoAnalise(analise.id).subscribe({
           next: () => {
             this.messageService.add({
@@ -3954,7 +3988,7 @@ onDescricaoInput(index: number, event: Event): void {
             });
              setTimeout(() => {
              this.loadAnalises();
-          }, 1000);
+         }, 1000);
           },
           error: (error) => {
             console.error('Erro ao encaminhar análise para laudo:', error);
@@ -3963,13 +3997,59 @@ onDescricaoInput(index: number, event: Event): void {
               summary: 'Erro',
               detail: 'Erro ao reabrir análise.'
             });
-          } 
+          },
+          complete: () => {
+            this.laudoAnaliseEmAndamento = false;
+            this.laudoOperacaoToken = '';
+            this.laudoAcceptRan = false;
+          }
         });
+      },
+      reject: () => {
+        this.laudoAnaliseEmAndamento = false;
+        this.laudoOperacaoToken = '';
+        this.laudoAcceptRan = false;
       }
     });
   }
 
-  aprovarAnalise(analise: any): void {
+  // Flag e timestamp para prevenir múltiplas chamadas de aprovação
+  public aprovarAnaliseEmAndamento = false;
+  private ultimoCliqueAprovar = 0;
+  private aprovarOperacaoToken = '';
+  private aprovarAcceptRan = false;
+
+  aprovarAnalise(analise: any, event?: Event): void {
+    // Evita múltiplos disparos por propagação/ancoras
+    if (event) {
+      try {
+        event.preventDefault();
+        event.stopPropagation();
+        if ((event as any).stopImmediatePropagation) {
+          (event as any).stopImmediatePropagation();
+        }
+      } catch {}
+    }
+
+    // Debounce simples de 800ms
+    const agora = Date.now();
+    if (agora - this.ultimoCliqueAprovar < 800) {
+      return;
+    }
+    this.ultimoCliqueAprovar = agora;
+
+    // Evita reentrância
+    if (this.aprovarAnaliseEmAndamento) {
+      return;
+    }
+    this.aprovarAnaliseEmAndamento = true;
+
+    // Fecha diálogos anteriores para garantir um único confirm visível
+    this.confirmationService.close();
+    const token = `aprovar_${analise.id}_${Date.now()}`;
+    this.aprovarOperacaoToken = token;
+    this.aprovarAcceptRan = false;
+
     this.confirmationService.confirm({
       message: `Tem certeza que deseja aprovar a análise ${analise.id}?`,
       header: 'Aprovar Análise',
@@ -3981,6 +4061,8 @@ onDescricaoInput(index: number, event: Event): void {
       acceptButtonStyleClass: 'p-button-info',
       rejectButtonStyleClass: 'p-button-warn',
       accept: () => {
+        if (this.aprovarAcceptRan || this.aprovarOperacaoToken !== token) return;
+        this.aprovarAcceptRan = true;
         this.analiseService.aprovarAnalise(analise.id).subscribe({
           next: () => {
             this.messageService.add({
@@ -3988,9 +4070,9 @@ onDescricaoInput(index: number, event: Event): void {
               summary: 'Sucesso',
               detail: 'Análise aprovada para laudo com sucesso!'
             });
-             setTimeout(() => {
-             this.loadAnalises();
-          }, 1000);
+            setTimeout(() => {
+              this.loadAnalises();
+            }, 1000);
           },
           error: (error) => {
             console.error('Erro ao aprovar análise para laudo:', error);
@@ -3999,8 +4081,18 @@ onDescricaoInput(index: number, event: Event): void {
               summary: 'Erro',
               detail: 'Erro ao aprovar análise.'
             });
-          } 
+          },
+          complete: () => {
+            this.aprovarAnaliseEmAndamento = false;
+            this.aprovarOperacaoToken = '';
+            this.aprovarAcceptRan = false;
+          }
         });
+      },
+      reject: () => {
+        this.aprovarAnaliseEmAndamento = false;
+        this.aprovarOperacaoToken = '';
+        this.aprovarAcceptRan = false;
       }
     });
   }

@@ -1,23 +1,18 @@
 <div class="container flex flex-column align-items-center mb-4">
-
     <div class="containerInterno w-12">
         <div @swipeAnimation>
-
             <form
                 [formGroup]="registerareaForm" title="Cadastrar nova Área" class="flex flex-column gap-4" 
             >
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-
-                    <div class="fg1 flex flex-column w-12 align-items-center">
-
+                    <div class="bloco fg1 flex flex-column w-12 align-items-center">
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
-                                <div class="header w-full text-center">
-                                    <h2>Inserir Nova Área</h2>
+                                <div class="header titulo-info w-full text-center">
+                                    <h2>Área</h2>
                                 </div>
                             </ng-template>
                             <div class="flex flex-column w-12 gap-3">
-
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
@@ -34,7 +29,6 @@
                                         <label for="on_label">Digite o nome</label>
                                     </p-floatlabel>
                                 </div>
-
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-select
@@ -49,7 +43,6 @@
                                         <label for="on_label">Selecione a Empresa</label>
                                     </p-floatlabel>
                                 </div>
-
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-select
@@ -70,6 +63,7 @@
                                 <p-button 
                                     (onClick)="clearForm()" 
                                     label="Limpar"
+                                    severity="info"
                                     iconPos="right"  
                                     tooltipPosition="top"
                                     pTooltip="Limpar"
@@ -101,6 +95,7 @@
                         <p-button 
                             label="Áreas" 
                             tooltipPosition="top"
+                            severity="info"
                             pTooltip="Exibir Áreas"      
                         >
                             <div class="inline-flex align-items-center">
@@ -143,13 +138,13 @@
                             </ng-template>
                             <ng-template pTemplate="header">
                                 <tr class="tabela">
-                                    <th style="width:25%" type="text" field="nome" display="menu">
+                                    <th style="width:25%; text-align: center;" type="text" field="nome" display="menu">
                                         Nome
                                     </th>
-                                    <th style="width:25%" type="text" field="empresaNome" display="menu">
+                                    <th style="width:25%; text-align: center;" type="text" field="empresaNome" display="menu">
                                         Empresa
                                     </th>
-                                    <th style="width:25%" type="text" field="filialNome" display="menu">
+                                    <th style="width:25%; text-align: center;" type="text" field="filialNome" display="menu">
                                         Filial
                                     </th>
                                     <th style="width: 25%; text-align: center;">Ações</th>
@@ -163,23 +158,22 @@
                                     <td style="text-align: center;">
                                         <div class="flex justify-content-center gap-2">
                                             <p-button
-                                            icon="pi pi-file-edit" 
-                                            severity="primary" 
-                                            size="small" 
-                                            [raised]="true"
-                                            pTooltip="Editar" 
-                                            tooltipPosition="top"
-                                            (onClick)="abrirModalEdicao(area)">
+                                                icon="pi pi-file-edit" 
+                                                severity="info" 
+                                                size="small" 
+                                                [raised]="true"
+                                                pTooltip="Editar" 
+                                                tooltipPosition="top"
+                                                (onClick)="abrirModalEdicao(area)">
                                             </p-button>
-
                                             <p-button 
-                                            icon="pi pi-trash" 
-                                            severity="danger" 
-                                            size="small" 
-                                            [raised]="true"
-                                            pTooltip="Excluir" 
-                                            tooltipPosition="top"
-                                            (onClick)="excluirArea(area.id)">
+                                                icon="pi pi-trash" 
+                                                severity="danger" 
+                                                size="small" 
+                                                [raised]="true"
+                                                pTooltip="Excluir" 
+                                                tooltipPosition="top"
+                                                (onClick)="excluirArea(area.id)">
                                             </p-button>
                                         </div>
                                     </td>
@@ -197,19 +191,14 @@
                 </p-inplace>
             </div>
         </div>
-
     </div>
-    
 </div>
-
 <p-drawer
     [(visible)]="editFormVisible"
     position="right"
     [style]="{ width: '60vw' }"
     styleClass="w-full md:w-12 lg:w-4"
 >
-
-    <div class="containerInterno w-12">
         <div class="background-form">
             <form
                 [formGroup]="editForm" title="Editar Área" class="flex flex-column gap-4" 
@@ -219,12 +208,11 @@
 
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
-                                <div class="header w-full text-center">
+                                <div class="header titulo-info w-full text-center">
                                     <b>Editar Área</b>
                                 </div>
                             </ng-template>
-                            <div class="flex flex-column w-12 gap-3">
-
+                            <div class="bloco flex flex-column w-12 gap-3">
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
@@ -281,8 +269,10 @@
                                 <p-button 
                                     (onClick)="cleareditForm()" 
                                     label="Limpar"
-                                    iconPos="right"                                      tooltipPosition="top"
+                                    iconPos="right"                                      
+                                    tooltipPosition="top"
                                     pTooltip="Limpar"
+                                    severity="info"
                                     icon="pi pi-eraser" 
                                 />
                                 <p-button 
@@ -300,6 +290,4 @@
                 </div>
             </form>
         </div>
-    </div>
-  
 </p-drawer>

@@ -20,10 +20,12 @@ import { ButtonModule } from 'primeng/button';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
-import { Select, SelectModule } from 'primeng/select';
+import { SelectModule } from 'primeng/select';
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
 import { DrawerModule } from 'primeng/drawer';
+import { MessageModule } from 'primeng/message';
+import { TooltipModule } from 'primeng/tooltip';
 
 interface RegisterRaizAnaliticaForm{
   raiz_contabil: FormControl,
@@ -42,7 +44,9 @@ export interface RaizAnalitica {
   standalone: true,
   imports: [
     DividerModule,CommonModule,RouterLink,NzMenuModule,InputGroupModule,InputGroupAddonModule,
-    DropdownModule,FormsModule,SelectModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,ConfirmDialogModule,ToastModule,ButtonModule,FloatLabelModule,InputIconModule,IconFieldModule, CardModule, InplaceModule, DrawerModule
+    DropdownModule,FormsModule,SelectModule,ReactiveFormsModule,InputTextModule,TableModule,
+    DialogModule,ConfirmDialogModule,ToastModule,ButtonModule,FloatLabelModule,InputIconModule,
+    IconFieldModule, CardModule, InplaceModule, DrawerModule, MessageModule, TooltipModule
   ],
   providers:[
     MessageService,ConfirmationService,

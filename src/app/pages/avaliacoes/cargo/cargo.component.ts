@@ -302,7 +302,6 @@ getNomeAmbiente(id: number): string {
 onEmpresaSelecionada(empresa: any): void {
   const id = empresa.id;
   if (id !== undefined) {
-    console.log('Empresa selecionada ID:', id); // Log para depuração
     this.empresaSelecionadaId = id;
     this.filiaisByEmpresa();
   } else {
@@ -321,14 +320,12 @@ filiaisByEmpresa(): void {
       if (filialControl) {
         filialControl.enable();
       }
-      console.log('Filiais carregadas:', this.filiais); // Log para depuração
     });
   }
 }
 onFilialSelecionada(filial: any): void {
   const id = filial.id;
   if (id !== undefined) {
-    console.log('Filial selecionada ID:', id); // Log para depuração
     this.filialSelecionadaId = id;
     this.areasByFilial();
   } else {
@@ -346,14 +343,12 @@ areasByFilial(): void {
       if (areaControl) {
         areaControl.enable();
       }
-      console.log('Areas carregadas:', this.areas); // Log para depuração
     });
   }
 } 
 onAreaSelecionada(area: any): void {
   const id = area.id;
   if (id !== undefined) {
-    console.log('Area selecionada ID:', id); // Log para depuração
     this.areaSelecionadaId = id;
     this.setoresByArea();
   } else {
@@ -371,7 +366,6 @@ setoresByArea(): void {
       if (setorControl) {
         setorControl.enable();
       }
-      console.log('Setores carregadas:', this.areas); // Log para depuração
     });
   }
 }
@@ -379,7 +373,6 @@ setoresByArea(): void {
 onSetorSelecionado(setor: any): void {
   const id = setor.id;
   if (id !== undefined) {
-    console.log('Ambiente selecionado ID:', id); // Log para depuração
     this.setorSelecionadoId = id;
     this.ambientesBySetor();
   } else {
@@ -397,7 +390,6 @@ ambientesBySetor(): void {
       if (ambienteControl) {
         ambienteControl.enable();
       }
-      console.log('Ambientes carregadas:', this.areas); // Log para depuração
     });
   }
 }

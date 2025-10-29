@@ -54,20 +54,9 @@
         </li>    
     </ul>
 </div>
-
 <div class="container flex flex-column align-items-center mb-4">
-
-    <div class="titulo mt-2 mb-0 w-12 text-2xl">
-        <p-divider align="left" type="solid">
-            <b>Cadastro de Raiz Sintética</b>
-        </p-divider>
-    </div>
-
     <div class="containerInterno w-12">
-
-
-        <div class="background-form" @swipeAnimation>
-
+        <div @swipeAnimation>
             <form
                 [formGroup]="registerForm" 
                 title="Cadastrar nova Raiz Sintetica"
@@ -75,17 +64,14 @@
                 enctype="multipart/form-data"
             >
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-
                     <div class="fg1 flex flex-column w-12 align-items-center">
-
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
-                                <div class="header w-full text-center">
-                                    <h2>Inserir Novo</h2>
+                                <div class="header titulo-info w-full text-center">
+                                    <h2>Raiz Sintética</h2>
                                 </div>
                             </ng-template>
-                            <div class="flex flex-column w-12 gap-3">
-
+                            <div class="bloco flex flex-column w-12 gap-3">
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
@@ -129,6 +115,8 @@
                                     iconPos="right"  
                                     tooltipPosition="top"
                                     pTooltip="Limpar"
+                                    icon="pi pi-eraser"
+                                    severity="info"
                                 />
                                 <p-button 
                                     (onClick)="submit()" 
@@ -137,7 +125,7 @@
                                     icon="pi pi-check" 
                                     iconPos="right" 
                                     tooltipPosition="top"
-                                    pTooltip="Salvar Raiz Sintética"
+                                    pTooltip="Salvar"
                                 />
                             </div>
                         </p-card>
@@ -146,7 +134,6 @@
             </form>
 
         </div>
-
         <div class="background-form mt-4 w-12" @swipeAnimation>
             <div class="tabela text-left w-12">
                 <p-toast />
@@ -156,6 +143,7 @@
                         <p-button 
                             label="Raiz Sintética" 
                             tooltipPosition="top"
+                            severity="info"
                             pTooltip="Exibir Raizes Sintéticas"      
                         >
                             <div class="inline-flex align-items-center">
@@ -197,16 +185,16 @@
                             </ng-template>
                             <ng-template pTemplate="header">
                                 <tr>
-                                    <th style="width:25%" type="text" field="raizContabil" display="menu">
+                                    <th style="width:25%; text-align: center;" type="text" field="raizContabil" display="menu">
                                         Raiz Contabil
                                     </th>
-                                    <th style="width:25%" type="text" field="descricao" display="menu">
+                                    <th style="width:25%; text-align: center;" type="text" field="descricao" display="menu">
                                         Descrição
                                     </th>
-                                    <th style="width:25%" type="text" field="natureza" display="menu">
+                                    <th style="width:25%; text-align: center;" type="text" field="natureza" display="menu">
                                         Natureza
                                     </th>
-                                    <th style="width:25%" type="text" field="cc" display="menu">
+                                    <th style="width:25%; text-align: center;" type="text" field="cc" display="menu">
                                         Centro de Custo
                                     </th>
                                     <th style="width: 25%;text-align: center;">Ações</th>
@@ -219,20 +207,23 @@
                                     <td style="text-align: center;">{{ raizSintetica.natureza }}</td>
                                     <td style="text-align: center;">{{ getNomeCc(raizSintetica.centro_custo) }}</td>
                                     <td style="text-align: center;">
-                                        <div style="display: flex; justify-content: center;">
+                                        <div class="flex justify-content-center gap-2">
                                             <p-button
-                                                label = "Editar"
-                                                class="ml-1"
+                                                icon="pi pi-file-edit" 
+                                                severity="info" 
+                                                size="small" 
+                                                [raised]="true"
+                                                pTooltip="Editar" 
                                                 tooltipPosition="top"
-                                                pTooltip="Editar"
                                                 (onClick)="abrirModalEdicao(raizSintetica)"
                                             ></p-button>
                                             <p-button 
-                                                label = "Excluir"
-                                                severity="danger"
-                                                class="ml-2"
+                                                icon="pi pi-trash" 
+                                                severity="danger" 
+                                                size="small" 
+                                                [raised]="true"
+                                                pTooltip="Excluir" 
                                                 tooltipPosition="top"
-                                                pTooltip="Excluir"
                                                 (onClick)="excluirRaizSintetica(raizSintetica.id)"
                                             ></p-button>
                                         </div>
@@ -251,9 +242,7 @@
                 </p-inplace>
             </div>
         </div>
-
-    </div>
-    
+    </div>   
 </div>
 
 <p-drawer
@@ -262,8 +251,6 @@
     [style]="{ width: '60vw' }"
     styleClass="w-full md:w-12 lg:w-4"
 >
-
-    <div class="containerInterno w-12">
         <div class="background-form">
             <form
                 [formGroup]="editForm" 
@@ -272,15 +259,13 @@
             >
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                     <div class="fg1 flex flex-column w-12 align-items-center">
-
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
-                                <div class="header w-full text-center">
+                                <div class="header titulo-info w-full text-center">
                                     <b>Editar Raíz Sintética</b>
                                 </div>
                             </ng-template>
-                            <div class="flex flex-column w-12 gap-3">
-
+                            <div class="bloco flex flex-column w-12 gap-3">
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
@@ -325,6 +310,8 @@
                                     iconPos="right"  
                                     tooltipPosition="top"
                                     pTooltip="Limpar"
+                                    icon="pi pi-eraser"
+                                    severity="info"
                                 />
                                 <p-button 
                                     (onClick)="saveEdit()" 
@@ -341,6 +328,4 @@
                 </div>
             </form>
         </div>
-    </div>
-  
 </p-drawer>

@@ -244,7 +244,6 @@ excluirEmpresa(id: number) {
 }
 
   submit(){
-    console.log('control =>', this.registercompanyForm);
     this.registercompanyService.registercompany(
       this.registercompanyForm.value.nome, 
       this.registercompanyForm.value.cnpj, 

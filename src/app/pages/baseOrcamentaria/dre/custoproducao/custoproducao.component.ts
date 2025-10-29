@@ -26,10 +26,10 @@ import { LoginService } from '../../../../services/avaliacoesServices/login/logi
 import { CustoproducaoService } from '../../../../services/baseOrcamentariaServices/indicadoresCustoProducao/custoproducao.service';
 import { CentrocustopaiService } from '../../../../services/baseOrcamentariaServices/orcamento/CentroCustoPai/centrocustopai.service';
 import { ProjecaoService } from '../../../../services/baseOrcamentariaServices/dre/projecao.service';
-
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
 import { DrawerModule } from 'primeng/drawer';
+import { TooltipModule } from 'primeng/tooltip';
 
 interface RegisterCustoProducaoForm{
   produto: FormControl;
@@ -55,7 +55,11 @@ export interface CustoProducao{
 @Component({
   selector: 'app-custoproducao',
   imports: [
-    CommonModule,ReactiveFormsModule,RouterLink,FormsModule,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,DropdownModule,InputTextModule,TableModule,DialogModule,ButtonModule,InputNumberModule,ConfirmDialogModule,ToastModule,FloatLabelModule,SelectModule,IconFieldModule,InputIconModule, CardModule, InplaceModule, DrawerModule
+    CommonModule,ReactiveFormsModule,RouterLink,FormsModule,DividerModule,
+    NzMenuModule,InputGroupModule,InputGroupAddonModule,DropdownModule,InputTextModule,
+    TableModule,DialogModule,ButtonModule,InputNumberModule,ConfirmDialogModule,ToastModule,
+    FloatLabelModule,SelectModule,IconFieldModule,InputIconModule, CardModule, InplaceModule, 
+    DrawerModule, TooltipModule
   ],
   providers:[
     MessageService,ConfirmationService,

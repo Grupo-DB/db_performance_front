@@ -18,7 +18,6 @@ import { RaizAnaliticaService } from '../../../../services/baseOrcamentariaServi
 import { CentrocustoService } from '../../../../services/baseOrcamentariaServices/orcamento/CentroCusto/centrocusto.service';
 import { CentroCustoPai } from '../centrocustopai/centrocustopai.component';
 import { CentrocustopaiService } from '../../../../services/baseOrcamentariaServices/orcamento/CentroCustoPai/centrocustopai.service';
-import { Colaborador } from '../../../avaliacoes/colaborador/colaborador.component';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { animate, keyframes, style, transition, trigger } from '@angular/animations';
 import { ButtonModule } from 'primeng/button';
@@ -28,6 +27,7 @@ import { SelectModule } from 'primeng/select';
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
 import { DrawerModule } from 'primeng/drawer';
+import { TooltipModule } from 'primeng/tooltip';
 
 interface RegisterCentroCustoForm{
   codigo: FormControl;
@@ -50,7 +50,9 @@ export interface CentroCusto{
   standalone: true,
   imports: [
     CommonModule,RouterLink,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
-    DropdownModule,FormsModule,ReactiveFormsModule,IconFieldModule,InputIconModule, InputTextModule,TableModule,DialogModule,SelectModule,ConfirmDialogModule,ToastModule,FloatLabelModule,ButtonModule, CardModule, InplaceModule, DrawerModule
+    DropdownModule,FormsModule,ReactiveFormsModule,IconFieldModule,InputIconModule, InputTextModule,
+    TableModule,DialogModule,SelectModule,ConfirmDialogModule,ToastModule,FloatLabelModule,
+    ButtonModule, CardModule, InplaceModule, DrawerModule, TooltipModule
   ],
   providers: [
     MessageService,ConfirmationService

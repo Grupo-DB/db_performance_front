@@ -7,15 +7,14 @@
                 class="flex flex-column gap-4" 
             >
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-                    <div class="fg1 flex flex-column w-12 align-items-center">
+                    <div class="bloco fg1 flex flex-column w-12 align-items-center">
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
-                                <div class="header w-full text-center">
-                                    <h2>Inserir Novo Ambiente</h2>
+                                <div class="header titulo-info w-full text-center">
+                                    <h2>Ambiente</h2>
                                 </div>
                             </ng-template>
                             <div class="flex flex-column w-12 gap-3">
-
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
@@ -86,6 +85,7 @@
                                     tooltipPosition="top"
                                     pTooltip="Limpar"
                                     icon="pi pi-eraser"
+                                    severity="info"
                                 />
                                 <p-button 
                                     (onClick)="submit()" 
@@ -113,7 +113,8 @@
                         <p-button 
                             label="Ambientes" 
                             tooltipPosition="top"
-                            pTooltip="Exibir Ambientes"      
+                            pTooltip="Exibir Ambientes"
+                            severity="info"      
                         >
                             <div class="inline-flex align-items-center">
                                 <span><i class="pi pi-angle-down"></i></span>
@@ -155,16 +156,16 @@
                             </ng-template>
                             <ng-template pTemplate="header">
                                 <tr class="tabela">
-                                    <th style="width:25%" type="text" field="nome" display="menu">
+                                    <th style="width:25%; text-align: center;" type="text" field="nome" display="menu">
                                         Nome
                                     </th>
-                                    <th style="width:25%" type="text" field="empresaNome" display="menu">
+                                    <th style="width:25%; text-align: center;" type="text" field="empresaNome" display="menu">
                                         Empresa
                                     </th>
-                                    <th style="width:25%" type="text" field="filialNome" display="menu">
+                                    <th style="width:25%; text-align: center;" type="text" field="filialNome" display="menu">
                                         Filial
                                     </th>
-                                    <th style="width:25%" type="text" field="areaNome" display="menu">
+                                    <th style="width:25%; text-align: center;" type="text" field="areaNome" display="menu">
                                         Área
                                     </th>
                                     <th style="width: 25%; text-align: center;">Ações</th>
@@ -179,7 +180,7 @@
                                     <div class="flex justify-content-center gap-2">
                                         <p-button
                                         icon="pi pi-file-edit" 
-                                        severity="primary" 
+                                        severity="info" 
                                         size="small" 
                                         [raised]="true"
                                         pTooltip="Editar" 
@@ -222,23 +223,19 @@
     [style]="{ width: '60vw' }"
     styleClass="w-full md:w-12 lg:w-4"
 >
-
-    <div class="containerInterno w-12">
         <div class="background-form">
             <form
                 [formGroup]="editForm" title="Editar Ambiente" class="flex flex-column gap-4" 
             >
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-                    <div class="fg1 flex flex-column w-12 align-items-center">
-
+                    <div class="bloco fg1 flex flex-column w-12 align-items-center">
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
-                                <div class="header w-full text-center">
+                                <div class="header titulo-info w-full text-center">
                                     <b>Editar Ambiente</b>
                                 </div>
                             </ng-template>
                             <div class="flex flex-column w-12 gap-3">
-
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
@@ -255,7 +252,6 @@
                                         <label for="on_label">Digite o nome</label>
                                     </p-floatlabel>
                                 </div>
-
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-select
@@ -272,7 +268,6 @@
                                         <label for="on_label">Empresa</label>
                                     </p-floatlabel>
                                 </div>
-
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-select
@@ -311,9 +306,11 @@
                                 <p-button 
                                     (onClick)="cleareditForm()" 
                                     label="Limpar"
-                                    iconPos="right"                                      tooltipPosition="top"
+                                    iconPos="right"                                      
+                                    tooltipPosition="top"
                                     pTooltip="Limpar"
-                                    icon="pi pi-eraser" 
+                                    icon="pi pi-eraser"
+                                    severity="info" 
                                 />
                                 <p-button 
                                     (onClick)="saveEdit()" 
@@ -329,7 +326,5 @@
                     </div>    
                 </div>
             </form>
-        </div>
-    </div>
-  
+        </div>  
 </p-drawer>

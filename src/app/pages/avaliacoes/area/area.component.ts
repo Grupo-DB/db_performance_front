@@ -160,7 +160,6 @@ export class AreaComponent implements OnInit {
         empresas => {
           this.empresas = empresas;
           this.mapEmpresas();
-          console.log();
         },
         error => {
           console.error('Error fetching users:',error);
@@ -199,7 +198,6 @@ export class AreaComponent implements OnInit {
    onEmpresaSelecionada(empresa: any): void {
     const id = empresa.id;
     if (id !== undefined) {
-      console.log('Empresa selecionada ID:', id); 
       this.empresaSelecionadaId = id;
       this.filiaisByEmpresa();
     } else {
@@ -211,7 +209,6 @@ export class AreaComponent implements OnInit {
     if (this.empresaSelecionadaId !== null) {
       this.filialService.getFiliaisByEmpresa(this.empresaSelecionadaId).subscribe(data => {
         this.filiais = data;
-        console.log('Filiais carregadas:', this.filiais); 
       });
     }
   } 

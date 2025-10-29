@@ -56,35 +56,22 @@
 </div>
 
 <div class="container flex flex-column align-items-center mb-4">
-
-    <div class="titulo mt-2 mb-0 w-12 text-2xl">
-        <p-divider align="left" type="solid">
-            <b>Cadastro de Projeções de Vendas</b>
-        </p-divider>
-    </div>
-
     <div class="containerInterno w-12">
-
-
-        <div class="background-form" @swipeAnimation>
-
+        <div @swipeAnimation>
             <form
                 [formGroup]="registerForm" 
-                title="Cadastrar novo Tipo de Ensaio" 
+                title="Cadastrar nova projeção de vendas" 
                 class="flex flex-column gap-4" 
             >
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-
-                    <div class="fg1 flex flex-column w-12 align-items-center">
-
+                    <div class="bloco fg1 flex flex-column w-12 align-items-center">
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
-                                <div class="header w-full text-center">
-                                    <h2>Inserir Nova</h2>
+                                <div class="header titulo-info w-full text-center">
+                                    <h2>Projeção de Vendas</h2>
                                 </div>
                             </ng-template>
                             <div class="flex flex-column w-12 gap-3">
-
                                 <p-table 
                                     [value]="linhas.controls"
                                     [tableStyle]="{ 'min-width': '100rem' }"
@@ -92,7 +79,7 @@
                                     scrollable="true"
                                 >
                                     <ng-template pTemplate="header">
-                                        <tr>
+                                        <tr class="tabela">
                                             <th style="width:40%" field="nome" display="menu">Produto</th>
                                             <th style="width:10%" field="nome" display="menu">Custo Médio Variável</th>
                                             <th style="width:10%" field="nome" display="menu">Preço Médio</th>
@@ -102,7 +89,6 @@
                                             <th style="width:10%">Ações</th>  
                                         </tr>
                                     </ng-template>
-
                                     <ng-template pTemplate="body" let-linha let-index="rowIndex">
                                         <tr [formGroup]="linha">
                                             <td>
@@ -187,6 +173,8 @@
                                     iconPos="right"  
                                     tooltipPosition="top"
                                     pTooltip="Adicionar Linha"
+                                    icon="pi pi-plus"
+                                    severity="info"
                                 />
                                 <p-button 
                                     (onClick)="onSubmit()" 
@@ -215,6 +203,7 @@
                             label="Projeções de Vendas" 
                             tooltipPosition="top"
                             pTooltip="Exibir Projeções de Vendas"      
+                            severity="info"   
                         >
                             <div class="inline-flex align-items-center">
                                 <span><i class="pi pi-angle-down"></i></span>
@@ -233,9 +222,7 @@
                             currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
                             [rowsPerPageOptions]="[5, 10, 20]"
                             [globalFilterFields]="[ 'nome','aliquota']"
-                            stripedRows
                             scrollable="true"
-                            
                         >
                             <ng-template pTemplate="caption">
                                 <div class="flex flex-row md: justify-content-end">
@@ -257,7 +244,7 @@
                                 </div>
                             </ng-template>
                             <ng-template pTemplate="header">
-                                <tr>
+                                <tr class="tabela">
                                     <th style="width:10%" type="text" field="nome" display="menu">
                                         Produto
                                     </th>
@@ -292,20 +279,23 @@
                                     <td>{{ projecao.ano }}</td>
                                     <td>{{ projecao.quantidade_carregada }}</td>
                                     <td style="text-align: center;">
-                                        <div style="display: flex; justify-content: center;">
+                                        <div class="flex justify-content-center gap-2">
                                             <p-button
-                                                label = "Editar"
-                                                class="ml-1"
+                                                icon="pi pi-file-edit" 
+                                                severity="info" 
+                                                size="small" 
+                                                [raised]="true"
+                                                pTooltip="Editar" 
                                                 tooltipPosition="top"
-                                                pTooltip="Editar"
                                                 (onClick)="abrirModalEdicao(projecao)"
                                             ></p-button>
                                             <p-button 
-                                                label = "Excluir"
-                                                severity="danger"
-                                                class="ml-2"
+                                                icon="pi pi-trash" 
+                                                severity="danger" 
+                                                size="small" 
+                                                [raised]="true"
+                                                pTooltip="Excluir" 
                                                 tooltipPosition="top"
-                                                pTooltip="Excluir"
                                                 (onClick)="excluirLinha(projecao.id)"
                                             ></p-button>
                                         </div>
@@ -335,28 +325,24 @@
     [style]="{ width: '60vw' }"
     styleClass="w-full md:w-12 lg:w-4"
 >
-
-    <div class="containerInterno w-12">
         <div class="background-form">
             <form
                 [formGroup]="editForm" title="Editar Tipo de Ensaio" class="flex flex-column gap-4" 
             >
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                     <div class="fg1 flex flex-column w-12 align-items-center">
-
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
-                                <div class="header w-full text-center">
-                                    <b>Editar Projeção</b>
+                                <div class="header titulo-info w-full text-center">
+                                    <b>Editar Projeção de Venda</b>
                                 </div>
                             </ng-template>
-                            <div class="flex flex-column w-12 gap-3">
-
+                            <div class="bloco flex flex-column w-12 gap-3">
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-select
                                             variant="filled"
-                                            [style]="{'width':'50%'}"
+                                            [style]="{'width':'68%'}"
                                             [options]="produtos"
                                             optionValue="id"
                                             formControlName="produto"
@@ -444,7 +430,9 @@
                                 <p-button 
                                     (onClick)="clearEditForm()" 
                                     label="Limpar"
-                                    iconPos="right"  
+                                    iconPos="right"
+                                    icon="pi pi-eraser"
+                                    severity="info"  
                                     tooltipPosition="top"
                                     pTooltip="Limpar"
                                 />
@@ -463,6 +451,4 @@
                 </div>
             </form>
         </div>
-    </div>
-  
 </p-drawer>

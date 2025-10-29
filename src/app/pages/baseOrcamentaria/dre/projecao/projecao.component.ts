@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, FormArray, FormGroupName, FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, FormArray,FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { ProjecaoService } from '../../../../services/baseOrcamentariaServices/dre/projecao.service';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -24,11 +24,10 @@ import { animate, keyframes, style, transition, trigger } from '@angular/animati
 import { SelectModule } from 'primeng/select';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
-
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
 import { DrawerModule } from 'primeng/drawer';
-
+import { TooltipModule } from 'primeng/tooltip';
 
 interface RegisterProjecaoForm{
   produto: FormControl;
@@ -56,7 +55,11 @@ export interface Projecao{
   selector: 'app-projecao',
   standalone: true,
   imports: [
-    CommonModule,ReactiveFormsModule,RouterLink,FormsModule,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,DropdownModule,InputTextModule,TableModule,FloatLabelModule,DialogModule,ButtonModule,MessagesModule,SelectModule,IconFieldModule,InputIconModule,ConfirmDialogModule,ToastModule,FloatLabelModule,InputNumberModule,ButtonModule, CardModule, InplaceModule, DrawerModule
+    CommonModule,ReactiveFormsModule,RouterLink,FormsModule,DividerModule,NzMenuModule,
+    InputGroupModule,InputGroupAddonModule,DropdownModule,InputTextModule,TableModule,
+    FloatLabelModule,DialogModule,ButtonModule,MessagesModule,SelectModule,IconFieldModule,
+    InputIconModule,ConfirmDialogModule,ToastModule,FloatLabelModule,InputNumberModule,ButtonModule, 
+    CardModule, InplaceModule, DrawerModule, TooltipModule
   ],
   providers: [
     MessageService,ConfirmationService,

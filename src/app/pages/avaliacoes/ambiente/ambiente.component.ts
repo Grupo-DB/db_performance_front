@@ -271,7 +271,6 @@ export class AmbienteComponent implements OnInit {
   onEmpresaSelecionada(empresa: any): void {
     const id = empresa.id;
     if (id !== undefined) {
-      console.log('Empresa selecionada ID:', id); 
       this.empresaSelecionadaId = id;
       this.filiaisByEmpresa();
     } else {
@@ -290,14 +289,12 @@ export class AmbienteComponent implements OnInit {
         if (filialControl) {
           filialControl.enable();
         }
-        console.log('Filiais carregadas:', this.filiais); 
       });
     }
   } 
   onFilialSelecionada(filial: any): void {
     const id = filial.id;
     if (id !== undefined) {
-      console.log('Filial selecionada ID:', id); 
       this.filialSelecionadaId = id;
       this.areasByFilial();
     } else {
@@ -315,14 +312,12 @@ export class AmbienteComponent implements OnInit {
         if (areaControl) {
           areaControl.enable();
         }
-        console.log('Areas carregadas:', this.areas); 
       });
     }
   } 
   onAreaSelecionada(area: any): void {
     const id = area.id;
     if (id !== undefined) {
-      console.log('Area selecionada ID:', id); 
       this.areaSelecionadaId = id;
       this.setoresByArea();
     } else {
@@ -340,7 +335,6 @@ export class AmbienteComponent implements OnInit {
         if (setorControl) {
           setorControl.enable();
         }
-        console.log('Setores carregadas:', this.areas); 
       });
     }
   }

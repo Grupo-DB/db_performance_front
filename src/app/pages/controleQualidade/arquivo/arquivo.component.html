@@ -282,7 +282,7 @@
                                                             severity="contrast"
                                                             (click)="reabrirAnalise(analise, $event)" 
                                                             [rounded]="true" 
-                                                            [disabled]="reabrirAnaliseEmAndamento || operacoesAtivas.size > 0 || contadorConfirmacoes > 0"
+                                                            [disabled]="reabrirAnaliseEmAndamento"
                                                             pTooltip="Reabrir OS"
                                                             tooltipPosition="top"
                                                             [style.pointer-events]="reabrirAnaliseEmAndamento ? 'none' : 'auto'"
@@ -308,14 +308,15 @@
                                                 </div>
                                                 <div 
                                                     style="position: relative;"
-                                                    *ngIf="analise.finalizada && !analise.laudo && !analise.aprovada"
+                                                    *ngIf="analise.finalizada && !analise.laudo"
                                                     class="ml-2"
                                                 >
                                                     <p-button 
                                                         icon="pi pi-check-circle"
                                                         severity="success"
-                                                        (click)="aprovarAnalise(analise)" 
+                                                        (click)="aprovarAnalise(analise, $event)" 
                                                         [rounded]="true" 
+                                                        [disabled]="aprovarAnaliseEmAndamento"
                                                         
                                                         pTooltip="Aprovar OS"
                                                         tooltipPosition="top" 
@@ -332,7 +333,7 @@
                                                         severity="secondary"
                                                         (click)="laudoAnalise(analise, $event)" 
                                                         [rounded]="true" 
-                                                        [disabled]="aprovarAnaliseEmAndamento"
+                                                        [disabled]="laudoAnaliseEmAndamento"
                                                         pTooltip="Encaminhar para Laudo"
                                                         tooltipPosition="top" 
                                                     />
@@ -340,13 +341,13 @@
                                                 <div
                                                     style="position: relative;"
                                                     class="ml-2"
-                                                    *ngIf="analise.finalizada && analise.laudo && analise.aprovada"
+                                                    *ngIf="analise.finalizada && !analise.laudo"
                                                 >
                                                     <p-button 
                                                             icon="pi pi-file-check"
                                                             severity="warn"
                                                             [rounded]="true" 
-                                                            pTooltip="Veririficar Conformidade"
+                                                            pTooltip="Verificar Conformidade"
                                                             (onClick)="consultarParecer(analise)"
                                                             tooltipPosition="top">
                                                         </p-button>
@@ -683,8 +684,7 @@
         [draggable]="false" 
         [resizable]="false"
     >
-        <p-toast />
-        <p-confirmDialog />
+    <p-toast />
         
         <div class="containerInterno w-12">
             <div class="background-form">
@@ -839,8 +839,7 @@
     <p-drawer 
         [(visible)]="modalDadosLaudoSuperficial" 
         position="full" >
-        <p-toast />
-        <p-confirmDialog />
+    <p-toast />
          <div class="containerInterno w-12">
             <div class="background-form">
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
@@ -992,8 +991,7 @@
     <p-drawer 
         [(visible)]="modalDadosLaudoFlexao" 
         position="full" >
-        <p-toast />
-        <p-confirmDialog />
+    <p-toast />
          <div class="containerInterno w-12">
             <div class="background-form">
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
@@ -1060,8 +1058,7 @@
     <p-drawer 
         [(visible)]="modalDadosLaudoCompressao" 
         position="full" >
-        <p-toast />
-        <p-confirmDialog />
+    <p-toast />
          <div class="containerInterno w-12">
             <div class="background-form">
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
@@ -1127,8 +1124,7 @@
     <p-drawer 
         [(visible)]="modalDadosLaudoRetracao" 
         position="full" >
-        <p-toast />
-        <p-confirmDialog />
+    <p-toast />
          <div class="containerInterno w-12">
             <div class="background-form">
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
@@ -1193,8 +1189,7 @@
     <p-drawer 
         [(visible)]="modalDadosLaudoElasticidade" 
         position="full" >
-        <p-toast />
-        <p-confirmDialog />
+    <p-toast />
          <div class="containerInterno w-12">
             <div class="background-form">
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
@@ -1252,3 +1247,6 @@
         </div>
        
     </p-drawer>
+
+    <!-- Único ConfirmDialog centralizado para toda a página -->
+    <p-confirmDialog></p-confirmDialog>

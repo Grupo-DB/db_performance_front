@@ -134,7 +134,6 @@ export interface Amostra {
   complemento: any;
   observacoes: any;
   reter: any;
-
   expressa_detalhes: any;
   ordem_detalhes: any;
   classificacao: any;

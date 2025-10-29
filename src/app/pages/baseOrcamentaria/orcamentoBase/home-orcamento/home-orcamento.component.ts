@@ -24,6 +24,7 @@ import { GrupoItensService } from '../../../../services/baseOrcamentariaServices
 import { CentrocustoService } from '../../../../services/baseOrcamentariaServices/orcamento/CentroCusto/centrocusto.service';
 import { CentroCusto } from '../centrocusto/centrocusto.component';
 import { ColaboradorService } from '../../../../services/avaliacoesServices/colaboradores/registercolaborador.service';
+import { MessageModule } from 'primeng/message';
 
 @Component({
   selector: 'app-home-orcamento',
@@ -31,43 +32,43 @@ import { ColaboradorService } from '../../../../services/avaliacoesServices/cola
   imports: [
     DividerModule,CommonModule,NzMenuModule,RouterLink,ToastModule,
     FloatLabelModule,MultiSelectModule,DrawerModule,ProgressSpinnerModule,
-    InputNumberModule,ProgressSpinnerModule,ButtonModule,
+    InputNumberModule,ProgressSpinnerModule,ButtonModule,MessageModule,
     FormsModule,RadioButtonModule,NzProgressModule,PaginatorModule,TooltipModule
   ],
   providers:[MessageService],
-  animations:[
+  animations: [
     trigger('slideAnimation', [
-                transition(':enter', [
-                  style({ transform: 'translateX(100%)' }),
-                  animate('2s ease-out', style({ transform: 'translateX(0)' })),
-                ]),
-              ]),
-              trigger('efeitoFade',[
-                transition(':enter',[
-                  style({ opacity: 0 }),
-                  animate('2s', style({ opacity:1 }))
-                ])
-              ]),
-              trigger('swipeAnimation', [
-                transition(':enter', [
-                  style({ transform: 'translateX(-100%)' }),
-                  animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
-                ]),
-                transition(':leave', [
-                  style({ transform: 'translateX(0)' }),
-                  animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
-                ]),
-              ]),
-              trigger('swipeAnimationReverse', [
-                transition(':enter', [
-                  style({ transform: 'translateX(100%)' }),
-                  animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
-                ]),
-                transition(':leave', [
-                  style({ transform: 'translateX(0)' }),
-                  animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
-                ]),
-              ]),
+      transition(':enter', [
+        style({ transform: 'translateX(100%)' }),
+        animate('2s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+    ]),
+    trigger('efeitoFade', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('2s', style({ opacity: 1 }))
+      ])
+    ]),
+    trigger('swipeAnimation', [
+      transition(':enter', [
+        style({ transform: 'translateX(-100%)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+      ]),
+    ]),
+    trigger('swipeAnimationReverse', [
+      transition(':enter', [
+        style({ transform: 'translateX(100%)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(0)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0)' }),
+        animate('1.5s ease-out', style({ transform: 'translateX(100%)' })),
+      ]),
+    ]),
   ],
   templateUrl: './home-orcamento.component.html',
   styleUrl: './home-orcamento.component.scss'
@@ -241,7 +242,6 @@ export class HomeOrcamentoComponent implements OnInit {
     this.grupoItensService.getMeusGruposItens().subscribe(
       response =>{
         this.meusGrupos = response.map((grupo: any) => grupo.codigo);
-        console.log('Meus Grupos:', this.meusGrupos);
       },
       error => {
         console.error('Erro ao carregar meus grupos', error);
@@ -252,10 +252,8 @@ export class HomeOrcamentoComponent implements OnInit {
         this.meusCcs = response.map((centroCusto: any)=> centroCusto.cc_pai_detalhes?.id);
          this.meusCcs = Array.from(new Set(this.meusCcs)); // Remove duplicados aqui!
         this.carregarCcs(this.meusCcs);
-        console.log('Meus CcsJJJJJJJJJJJJJJJJ:', this.meusCcs);
         this.meusCcsCodigos = response.map((centroCusto: any)=> centroCusto.codigo);
          this.meusCcsCodigos = Array.from(new Set(this.meusCcsCodigos)); // Remove duplicados aqui!
-        console.log('Meus Ccskkkkkkkkkkkkkkkkkkk:', this.meusCcsCodigos);
       },
       error => {
         console.error('Erro ao carregar meus ccs', error);
@@ -266,19 +264,14 @@ export class HomeOrcamentoComponent implements OnInit {
   carregarCcs(ccPaiId: any): void{
     this.centroCustoService.getCentroCustoByCcPai(ccPaiId).subscribe(
       centrosCusto =>{
-        console.log('Centros de Custo Originais:', centrosCusto);
         this.meusCcs = centrosCusto.map((centroCusto: any)=>centroCusto.codigo);
         this.meusCcs = Array.from(new Set(centrosCusto.map((centroCusto: any) => centroCusto.codigo)));
-        console.log('Meus CcsAAAAAAA:', this.meusCcs);
         this.meusCcs = Array.from(new Set(this.meusCcs)); // Remove duplicados aqui!
-        console.log('Meus Ccs:', this.meusCcs);
         this.meusCcsPaisUpdated = centrosCusto.map((centroCusto: any)=>centroCusto.cc_pai_detalhes?.id);
         this.meusCcsPaisUpdated = Array.from(new Set(this.meusCcsPaisUpdated)); // Remove duplicados aqui!
-        console.log('Meus Ccs Pais:', this.meusCcsPaisUpdated);
       }, error =>{
         console.error('Não rolou',error)
       }
-      
     )
   }
     
@@ -292,9 +285,7 @@ export class HomeOrcamentoComponent implements OnInit {
 
   onFiliaisInformada(selectedCods: any[]): void{
     const filial = this.filiaisSga.filter(filial => selectedCods.includes(filial.cod));
-    console.log('Selected Filiais:', filial);
     this.selectedCodManagers = filial.map(filial => filial.codManager).join(',');
-    console.log('Selected Filiais:', this.selectedCodManagers);
   }
 
   calcularOrcado(): void {
@@ -325,10 +316,8 @@ export class HomeOrcamentoComponent implements OnInit {
   calcularMeuOrcado(): void{
     this.loadingOrcado = true;
     this.carregarCcs(this.meusCcs);
-    console.log('Meus CcCCCCCCCCCCCs:', this.meusCcsPaisUpdated);
     this.curvaService.getGarficoMeuOrcamentoGp(this.ano,this.periodo,this.selectedCodManagers,this.meusGrupos).subscribe(
       (response) => {
-        
         //this.meuOrcadosResultadosCcsPai = response.total_por_cc_pai;
         this.meuOrcadosResultadosGruposItens = response.total_por_grupo_itens;
         //this.meuTotalOrcadoCcPai = response.total_cc;
@@ -354,7 +343,6 @@ export class HomeOrcamentoComponent implements OnInit {
     this.curvaService.getGarficoMeuOrcamentoCc(this.ano,this.periodo,this.selectedCodManagers,this.meusCcsPaisUpdated).subscribe(
       (response) => {
         this.meuOrcadosResultadosCcsPai = response.total_por_cc_pai;
-        console.log('Dados do CCS MEU ORCADO', this.meuOrcadosResultadosCcsPai);
         this.meuTotalOrcadoCcPai = response.total_cc;
         this.loadingOrcado = false;
       },
@@ -431,13 +419,9 @@ export class HomeOrcamentoComponent implements OnInit {
     this.curvaService.calcularRealizado(this.ano,this.periodo,this.filial).subscribe(
       (response) => {
         this.realizadosResultadosCcsPai = response.agrupado_por_pai;
-        //console.log('Dados do CCS rEALIZADOS', this.realizadosResultadosCcsPai);
         this.totalRealizadoCcPai = response.total_soma_ccs;
-        console.log('totalRealizadoCcPai:', this.totalRealizadoCcPai);
         this.realizadosResultadosGruposItens = response.dicionario_soma_nomes;
-        //console.log('Dados do realizadosResultadosGruposItens:', this.realizadosResultadosGruposItens);
         this.totalRealizadoGruposItens = response.total_soma_gps;
-        //console.log('totalRealizadoGruposItens:', this.totalRealizadoGruposItens);
         this.calcularProgresso();
         this.calcularProgressoGruposItens();
         this.loadingInicial = false;
@@ -480,7 +464,6 @@ export class HomeOrcamentoComponent implements OnInit {
     
     // Verifica se os dados de orçado e realizado estão disponíveis
     if (!this.meuOrcadosResultadosCcsPai || !this.meuRealizadosResultadosCcsPai) {
-      console.log('kkkkkkkkkkkkkkkkk', this.meuRealizadosResultadosCcsPai);
       //console.error('Dados de orçado ou realizado estão ausentes.');
       return;
     }
@@ -534,18 +517,11 @@ export class HomeOrcamentoComponent implements OnInit {
     const totalRealizado = typeof this.meuTotalRealizadoCcPai === 'number'
     ? this.meuTotalRealizadoCcPai // Usa diretamente se for um número
     : parseFloat(String(this.meuTotalRealizadoCcPai?.saldo || 0).replace(/\./g, '').replace(/,/g, '.'));
-
     this.meuTotalPorcentagem = totalOrcado > 0 ? parseFloat(((totalRealizado / totalOrcado) * 100).toFixed(1)) : 0;
-
     // Formata os valores para exibição
     this.meuTotalOrcadoFormatado = formatarParaBRL(totalOrcado);
     this.meuTotalRealizadoFormatado = formatarParaBRL(totalRealizado);
     this.meuTotalPorcentagemFormatada = `${this.meuTotalPorcentagem.toFixed(1)}%`;
-
-    
-    console.log('Total Orçado (BRL):', this.meuTotalOrcadoFormatado);
-    console.log('Total Realizado (BRL):', this.meuTotalRealizadoFormatado);
-    console.log('Porcentagem Total:', this.meuTotalPorcentagemFormatada);
 
   }
 
@@ -609,19 +585,11 @@ export class HomeOrcamentoComponent implements OnInit {
     const totalRealizado = typeof this.totalRealizadoCcPai === 'number'
     ? this.totalRealizadoCcPai // Usa diretamente se for um número
     : parseFloat(String(this.totalRealizadoCcPai?.saldo || 0).replace(/\./g, '').replace(/,/g, '.'));
-
     this.totalPorcentagem = totalOrcado > 0 ? parseFloat(((totalRealizado / totalOrcado) * 100).toFixed(1)) : 0;
-
     // Formata os valores para exibição
     this.totalOrcadoFormatado = formatarParaBRL(totalOrcado);
     this.totalRealizadoFormatado = formatarParaBRL(totalRealizado);
     this.totalPorcentagemFormatada = `${this.totalPorcentagem.toFixed(1)}%`;
-
-    
-    console.log('Total Orçado (BRL):', this.totalOrcadoFormatado);
-    console.log('Total Realizado (BRL):', this.totalRealizadoFormatado);
-    console.log('Porcentagem Total:', this.totalPorcentagemFormatada);
-
   }
 
   calcularProgressoGruposItens(): void {
@@ -691,15 +659,10 @@ export class HomeOrcamentoComponent implements OnInit {
       : parseFloat(String(this.totalRealizadoGruposItens?.saldo || 0).replace(/\./g, '').replace(/,/g, '.'));
   
     this.totalPorcentagemGp = totalOrcado > 0 ? parseFloat(((totalRealizado / totalOrcado) * 100).toFixed(1)) : 0;
-  
     // Formata os valores para exibição
     this.totalOrcadoFormatadoGp = formatarParaBRL(totalOrcado);
     this.totalRealizadoFormatadoGp = formatarParaBRL(totalRealizado);
     this.totalPorcentagemFormatadaGp = `${this.totalPorcentagemGp.toFixed(1)}%`;
-    
-    console.log('Total Orçado GP (BRL):', this.totalOrcadoFormatadoGp);
-    console.log('Total Realizado GP (BRL):', this.totalRealizadoFormatadoGp);
-    console.log('Porcentagem Total GP:', this.totalPorcentagemFormatadaGp);
   }
 
 
@@ -718,7 +681,6 @@ export class HomeOrcamentoComponent implements OnInit {
         minimumFractionDigits: 2
       }).format(valor);
     };
-    console.log('kkkkkkkkkkkk',this.meuOrcadosResultadosGruposItens)
     // Calcula a porcentagem para cada grupoItem
     this.meuGrupoItens = Object.keys(this.meuOrcadosResultadosGruposItens).map(nome => {
       // Trata o valor orçado
@@ -770,15 +732,11 @@ export class HomeOrcamentoComponent implements OnInit {
       : parseFloat(String(this.meuTotalRealizadoGruposItens?.saldo || 0).replace(/\./g, '').replace(/,/g, '.'));
   
     this.meuTotalPorcentagemGp = totalOrcado > 0 ? parseFloat(((totalRealizado / totalOrcado) * 100).toFixed(1)) : 0;
-  
     // Formata os valores para exibição
     this.meuTotalOrcadoFormatadoGp = formatarParaBRL(totalOrcado);
     this.meuTotalRealizadoFormatadoGp = formatarParaBRL(totalRealizado);
     this.meuTotalPorcentagemFormatadaGp = `${this.meuTotalPorcentagemGp.toFixed(1)}%`;
-    
-    console.log('Meu Total Orçado GP (BRL):', this.meuTotalOrcadoFormatadoGp);
-    console.log('Meu Total Realizado GP (BRL):', this.meuTotalRealizadoFormatadoGp);
-    console.log('Meu Porcentagem Total GP:', this.meuTotalPorcentagemFormatadaGp);
+
   }
 
   

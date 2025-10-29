@@ -34,6 +34,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
 import { DrawerModule } from 'primeng/drawer';
+import { TooltipModule } from 'primeng/tooltip';
 
 interface RegisterCentroCustoPaiForm {
   nome: FormControl,
@@ -64,7 +65,8 @@ export interface CentroCustoPai {
   imports: [
     CommonModule,RouterLink,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
     DropdownModule,FormsModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,
-    ConfirmDialogModule,ToastModule,IconFieldModule,InputIconModule, FloatLabelModule,ButtonModule,FloatLabelModule,SelectModule, CardModule, InplaceModule, DrawerModule
+    ConfirmDialogModule,ToastModule,IconFieldModule,InputIconModule, FloatLabelModule,ButtonModule,
+    FloatLabelModule,SelectModule, CardModule, InplaceModule, DrawerModule, TooltipModule
   ],
   providers: [
     MessageService,ConfirmationService
@@ -226,7 +228,6 @@ export class CentrocustopaiComponent implements OnInit {
   onEmpresaSelecionada(empresa: any): void {
     const id = empresa.id;
     if (id !== undefined) {
-      console.log('Empresa selecionada ID:', id); // Log para depuração
       this.empresaSelecionadaId = id;
       this.filiaisByEmpresa();
     } else {
@@ -245,7 +246,6 @@ export class CentrocustopaiComponent implements OnInit {
         if (filialControl) {
           filialControl.enable();
         }
-        console.log('Filiais carregadas:', this.filiais); // Log para depuração
       });
     }
   }
@@ -253,7 +253,6 @@ export class CentrocustopaiComponent implements OnInit {
   onFilialSelecionada(filial: any): void {
     const id = filial.id;
     if (id !== undefined) {
-      console.log('Filial selecionada ID:', id); // Log para depuração
       this.filialSelecionadaId = id;
       this.areasByFilial();
     } else {
@@ -271,14 +270,12 @@ export class CentrocustopaiComponent implements OnInit {
         if (areaControl) {
           areaControl.enable();
         }
-        console.log('Areas carregadas:', this.areas); // Log para depuração
       });
     }
   }
   onAreaSelecionada(area: any): void {
     const id = area.id;
     if (id !== undefined) {
-      console.log('Area selecionada ID:', id); // Log para depuração
       this.areaSelecionadaId = id;
       this.setoresByArea();
     } else {
@@ -296,14 +293,12 @@ export class CentrocustopaiComponent implements OnInit {
         if (setorControl) {
           setorControl.enable();
         }
-        console.log('Setores carregadas:', this.areas); // Log para depuração
       });
     }
   }
   onSetorSelecionado(setor: any): void {
     const id = setor.id;
     if (id !== undefined) {
-      console.log('Ambiente selecionado ID:', id); // Log para depuração
       this.setorSelecionadoId = id;
       this.ambientesBySetor();
     } else {
@@ -322,7 +317,6 @@ export class CentrocustopaiComponent implements OnInit {
         if (ambienteControl) {
           ambienteControl.enable();
         }
-        console.log('Ambientes carregadas:', this.areas); // Log para depuração
       });
     }
   }

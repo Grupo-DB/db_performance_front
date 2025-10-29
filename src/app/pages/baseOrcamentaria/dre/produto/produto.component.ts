@@ -21,10 +21,11 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { SelectModule } from 'primeng/select';
-import { InputNumber, InputNumberModule } from 'primeng/inputnumber';
+import { InputNumberModule } from 'primeng/inputnumber';
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
 import { DrawerModule } from 'primeng/drawer';
+import { TooltipModule } from 'primeng/tooltip';
 
 interface RegisterProdutoForm{
   nome: FormControl;
@@ -41,7 +42,11 @@ export interface Produto{
   selector: 'app-produto',
   standalone: true,
   imports: [
-    CommonModule,ReactiveFormsModule,RouterLink,FormsModule,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,DropdownModule,InputTextModule,TableModule,DialogModule,ButtonModule,InputNumberModule,ConfirmDialogModule,ToastModule,FloatLabelModule,SelectModule,IconFieldModule,InputIconModule, CardModule, InplaceModule, DrawerModule
+    CommonModule,ReactiveFormsModule,RouterLink,FormsModule,DividerModule,
+    NzMenuModule,InputGroupModule,InputGroupAddonModule,DropdownModule,
+    InputTextModule,TableModule,DialogModule,ButtonModule,InputNumberModule,
+    ConfirmDialogModule,ToastModule,FloatLabelModule,SelectModule,IconFieldModule,
+    InputIconModule,CardModule,InplaceModule,DrawerModule,TooltipModule
   ],
   providers: [
     MessageService,ConfirmationService,
