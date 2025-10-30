@@ -35,10 +35,10 @@ import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ButtonModule } from 'primeng/button';
-
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
 import { DrawerModule } from 'primeng/drawer';
+import { TooltipModule } from 'primeng/tooltip';
 
 interface RegisterOrcamentoBaseForm{
   ccPai: FormControl;
@@ -106,7 +106,12 @@ export interface OrcamentoBase{
   selector: 'app-orcamento-base',
   standalone: true,
   imports: [
-    CommonModule,RouterLink,DividerModule,NzMenuModule,InputIconModule,IconFieldModule,InputGroupModule,InputGroupAddonModule,MatFormFieldModule,MatSelectModule,DropdownModule,FormsModule,FloatLabelModule,SelectModule,MultiSelectModule,ButtonModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,ToggleSwitchModule,ConfirmDialogModule,ToastModule,MultiSelectModule,InputSwitchModule,InputNumberModule,FloatLabelModule, CardModule, InplaceModule, DrawerModule
+    CommonModule,RouterLink,DividerModule,NzMenuModule,InputIconModule,IconFieldModule,
+    InputGroupModule,InputGroupAddonModule,MatFormFieldModule,MatSelectModule,DropdownModule,
+    FormsModule,FloatLabelModule,SelectModule,MultiSelectModule,ButtonModule,ReactiveFormsModule,
+    InputTextModule,TableModule,DialogModule,ToggleSwitchModule,ConfirmDialogModule,ToastModule,
+    MultiSelectModule,InputSwitchModule,InputNumberModule,FloatLabelModule, CardModule, InplaceModule, 
+    DrawerModule, TooltipModule
   ],
   providers: [
     MessageService,ConfirmationService,CurrencyPipe
@@ -340,9 +345,7 @@ export class OrcamentoBaseComponent implements OnInit{
         console.error('Não carregou',error)
       }
     )
-
     this.registerForm.valueChanges.subscribe(values => {
-      console.log('Valores do formulário:', values);
     });
 
     this.orcamentoBaseService.getOrcamentosBases().subscribe(
@@ -488,7 +491,6 @@ export class OrcamentoBaseComponent implements OnInit{
   onCcPaiSelecionado(ccPaiId: any): void {
     //const id = this.selectedCcPai
     if (ccPaiId) {
-      console.log('Centro de Custo Pai selecionado ID:', ccPaiId); // Log para depuração
       this.selectedCcPai = ccPaiId; // Atualiza a variável
       this.ccsByCcPai(); // Chama a API com o ID
       this.ccPaiDetalhes();
@@ -501,7 +503,6 @@ export class OrcamentoBaseComponent implements OnInit{
     if (this.selectedCcPai !==null) {
     this.centrosCustoService.getCentroCustoByCcPai(this.selectedCcPai).subscribe(data => {
       this.centrosCusto = data;
-      console.log('ccs carregados:', this.centrosCusto)
     });
   }
 }
@@ -522,7 +523,6 @@ export class OrcamentoBaseComponent implements OnInit{
         this.ccsPaiService.getCentrosCustoPaiDetalhes(this.selectedCcPai).subscribe(
           (response) => {
             this.ccsPaiDetalhes = response
-            console.log('detalhes: ', this.ccsPaiDetalhes)
             resolve(); // Resolva a Promise após a conclusão
           },
           error =>{
@@ -557,11 +557,6 @@ export class OrcamentoBaseComponent implements OnInit{
             if (response && response.length > 0) {
               this.raizSinteticaDetalhes = response[0];
               this.filterValue = this.raizSinteticaDetalhes.raiz_contabil;
-
-          
-              console.log('filterValue:', this.filterValue);
-              console.log('Raiz Sintética Detalhes:', this.raizSinteticaDetalhes);
-
               this.getRaizesFiltradas(this.filterValue);
               resolve(); // Resolve a promessa com sucesso
             } else {
@@ -610,7 +605,6 @@ export class OrcamentoBaseComponent implements OnInit{
       this.raizContabilGrupoDesc(this.contaContabil);
       this.montarIdBase();
       this.montarTipoCusto();
-      console.log('Conta Contábil Montada:', this.contaContabil);
     } else {
       console.warn('Raiz Sintética ou Raiz Analítica não estão definidas');
     }
@@ -635,9 +629,6 @@ export class OrcamentoBaseComponent implements OnInit{
     const caracteres = this.contaContabil.substring(0, 4); // Pega os 4 primeiros dígitos
     const contaCompleta = this.contaContabil.substring(0,7); // A conta completa para comparação
   
-    console.log('Conta completa:', contaCompleta); // Log para verificar o valor da conta
-    console.log('Prefixo:', caracteres); // Log do prefixo avaliado
-  
     if (caracteres === '3401') {
       this.tipoCusto = 'Despesas Administrativas';
     } else if (caracteres === '3402') {
@@ -645,21 +636,15 @@ export class OrcamentoBaseComponent implements OnInit{
     } else if (caracteres.startsWith('42')) {
       this.tipoCusto = 'Custos Indiretos';
     } else if (caracteres.startsWith('41')) {
-      console.log('Conta iniciada com 41, verificando detalhes...');
   
       // Verifica os tipos de custos diretos fixos
       if (custosInsumos.includes(contaCompleta)) {
-        this.tipoCusto = 'Custo Direto Variável Insumos';
-        console.log('Categorizado como: Custo Direto Variável Insumos');
       } else if (custosMateriaPrima.includes(contaCompleta)) {
         this.tipoCusto = 'Custo Direto Variável Matéria Prima';
-        console.log('Categorizado como: Custo Direto Variável Matéria Prima');
       } else if (custosEmbalagens.includes(contaCompleta)) {
         this.tipoCusto = 'Custo Direto Variável Embalagens';
-        console.log('Categorizado como: Custo Direto Variável Embalagens');
       } else {
         this.tipoCusto = 'Custo Direto Fixo';
-        console.log('Categorizado como: Custo Direto Fixo');
       }
     } else {
       // Caso desconhecido
@@ -680,7 +665,6 @@ export class OrcamentoBaseComponent implements OnInit{
       rcGrupoDesc => {
         this.rcGrupoDesc = rcGrupoDesc[0].nivel_4_nome;
         this.contaContabilDesc = rcGrupoDesc[0].nivel_analitico_nome;
-        console.log('Descrição:',rcGrupoDesc)
       },error => {
         console.error('Não Carregou', error)
       }

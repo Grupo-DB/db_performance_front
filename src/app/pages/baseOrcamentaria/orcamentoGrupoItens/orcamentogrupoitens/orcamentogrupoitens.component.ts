@@ -15,7 +15,7 @@ import { FilialService } from '../../../../services/avaliacoesServices/filiais/r
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DrawerModule } from 'primeng/drawer';
 import { MeterGroupModule } from 'primeng/metergroup';
-import { Card, CardModule } from 'primeng/card';
+import { CardModule } from 'primeng/card';
 import { OrcamentoBaseService } from '../../../../services/baseOrcamentariaServices/orcamento/OrcamentoBase/orcamento-base.service';
 import { CentrocustoService } from '../../../../services/baseOrcamentariaServices/orcamento/CentroCusto/centrocusto.service';
 import { CentroCusto } from '../../orcamentoBase/centrocusto/centrocusto.component';
@@ -30,6 +30,7 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { MessageModule } from 'primeng/message';
 import { AvatarModule } from 'primeng/avatar';
+
 
 export interface CCsArrayItem {
   label: string;
@@ -63,10 +64,10 @@ export interface FilialSga{
 @Component({
   selector: 'app-orcamentogrupoitens',
   imports: [
-    DividerModule,CommonModule,NzMenuModule,RouterLink,FloatLabelModule,MultiSelectModule,
-    FormsModule,ReactiveFormsModule,InputNumberModule,DrawerModule,MeterGroupModule,ToastModule,AvatarModule,
-    CardModule,TableModule,TooltipModule,InplaceModule,ProgressSpinnerModule,ButtonModule,MessageModule
-  ],
+    DividerModule, CommonModule, NzMenuModule, RouterLink, FloatLabelModule, MultiSelectModule,
+    FormsModule, ReactiveFormsModule, InputNumberModule, DrawerModule, MeterGroupModule, ToastModule, AvatarModule,
+    CardModule, TableModule, TooltipModule, InplaceModule, ProgressSpinnerModule, ButtonModule, MessageModule,
+],
   animations: [
         trigger('slideAnimation', [
           transition(':enter', [
@@ -165,7 +166,6 @@ export class OrcamentogrupoitensComponent {
     this.grupoItensService.getMeusGruposItens().subscribe(
       response =>{
         this.meusGrupos = response;
-        console.log('Meus Grupos:', this.meusGrupos);
       },
       error => {
         console.error('Erro ao carregar meus grupos', error);
@@ -174,7 +174,6 @@ export class OrcamentogrupoitensComponent {
     this.centroCustoService.getMeusCentrosCusto().subscribe(
       response => {
         this.meusCcs = response;
-        console.log('Meus Ccs:', this.meusCcs);
       },
       error => {
         console.error('Erro ao carregar meus ccs', error);
@@ -192,8 +191,6 @@ export class OrcamentogrupoitensComponent {
     // Converte os ids para códigos
     const selectedGruposItensCodigos = grupoItensId.map(id => grupoItensMap[id]);
 
-    console.log('Selected Grupos Itens Códigos:', selectedGruposItensCodigos); // Log para verificar os códigos
-
     this.selectedGruposItens = grupoItensId; // Mantém os ids para o método grupoItensDetalhes
     this.selectedGruposItensCodigos = selectedGruposItensCodigos; // Mantém os códigos para o método calculosOrcamentosRealizados
 
@@ -205,8 +202,7 @@ export class OrcamentogrupoitensComponent {
   }
 
   grupoItensDetalhes():Promise <void>{
-    return new Promise((resolve, reject) => {
-      console.log('Grupo Itens Selecionado KD:', this.selectedGruposItens); // Log para depuração
+    return new Promise((resolve, reject) => {     
       if(this.selectedGruposItens !== undefined){
         this.loading = true;
         this.grupoItensService.getGrupoItensDetalhes(this.selectedGruposItens).subscribe(
@@ -225,7 +221,6 @@ export class OrcamentogrupoitensComponent {
 
   onCcPaiSelecionado(ccPaiId: any[]): void {
     if (ccPaiId.length <= 1) {
-      console.log('Centro de Custo Pai selecionado ID:', ccPaiId); // Log para depuração
       this.selectedCcsPais = ccPaiId; // Atualiza a variável
       this.carregarCcs(ccPaiId);
       
@@ -238,11 +233,8 @@ export class OrcamentogrupoitensComponent {
   carregarCcs(ccPaiId: any): void{
     this.centroCustoService.getCentroCustoByCcPai(ccPaiId).subscribe(
       centrosCusto =>{
-        console.log('Centros de Custo Originais:', centrosCusto);
         this.centrosCusto = centrosCusto.map((centroCusto: any)=>centroCusto.codigo);
         this.detalhes = centrosCusto[0];
-        //this.calculosOrcamentosRealizados();
-        console.log('Ccs',this.centrosCusto)
       }, error =>{
         console.error('Não rolou',error)
       }
@@ -280,7 +272,7 @@ calculosOrcamentosRealizados(): Promise<void> {
           this.detalhesRealizadoGrupoItens = response.agrupado_por_pai;
           this.ccs = Object.keys(response.agrupado_por_pai).map((key) => ({
             label: key,
-            color1: '#4972B0',
+            color1: '#1b91ff',
             color2: '#fbbf24',
             value: response.agrupado_por_pai[key],
             icon: 'pi pi-table',
@@ -323,7 +315,6 @@ async executarCalculos(): Promise<void> {
 ccsLancamentos(meterItem: any) {
   this.loading = true;
   this.modalDetalhesLancamentos = true;
-  console.log('Index:', meterItem);
   const indice = meterItem.label;
   if (this.selectedGruposItensCodigos !== null) {
     this.grupoItensService.calcularOrcamentoRealizado(this.selectedGruposItensCodigos, this.centrosCusto, this.selectedFiliais,this.periodo, this.selectedAno).subscribe(
@@ -349,7 +340,7 @@ orcamentosByGrupoItens(): void {
         totalOrcadoAcumulado += response.total; // Acumula o total orçado
         this.ccsPaisArray = Object.keys(response.total_por_cc_pai).map((key) => ({
           label: key,
-          color1: '#4972B0',
+          color1: '#1b91ff',
           color2: '#fbbf24',
           value: response.total_por_cc_pai[key],
           icon: 'pi pi-tags',
@@ -357,7 +348,7 @@ orcamentosByGrupoItens(): void {
 
         this.ccsOrcadosArray = Object.keys(response.total_por_cc).map((key) => ({
           label: key,
-          color1: '#4972B0',
+          color1: '#1b91ff',
           color2: '#fbbf24',
           value: response.total_por_cc[key],
           icon: 'pi pi-tags',
@@ -463,7 +454,7 @@ atualizarGraficoOrcadoRealizado(valorOrcado: any, valorRealizado: any): void {
           beginAtZero: true,
           stacked: false,
           ticks: {
-            color: '#4972B0',
+            color: '#ffffff',
             font: {
               weight: 'bold',
             },

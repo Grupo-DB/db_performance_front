@@ -10,7 +10,6 @@ import { DialogModule } from 'primeng/dialog';
 import { DividerModule } from 'primeng/divider';
 import { DropdownModule } from 'primeng/dropdown';
 import { FloatLabelModule } from 'primeng/floatlabel';
-import { InplaceModule } from 'primeng/inplace';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -20,9 +19,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-import { TreeTableModule } from 'primeng/treetable';
 import { LoginService } from '../../../../services/avaliacoesServices/login/login.service';
-import { ProjetadoService } from '../../../../services/baseOrcamentariaServices/projetado/projetado.service';
 import { CentroCusto } from '../../orcamentoBase/centrocusto/centrocusto.component';
 import { CentrocustoService } from '../../../../services/baseOrcamentariaServices/orcamento/CentroCusto/centrocusto.service';
 import { PprService } from '../../../../services/baseOrcamentariaServices/ppr.service';
@@ -31,8 +28,8 @@ import { RealizadoService } from '../../../../services/baseOrcamentariaServices/
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { OrcamentoBaseService } from '../../../../services/baseOrcamentariaServices/orcamento/OrcamentoBase/orcamento-base.service';
 import { CustoproducaoService } from '../../../../services/baseOrcamentariaServices/indicadoresCustoProducao/custoproducao.service';
-import { fi } from 'date-fns/locale';
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
+import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'app-ppr-orcamento',
@@ -42,7 +39,7 @@ import { trigger, transition, style, animate, keyframes } from '@angular/animati
     DropdownModule,InputTextModule,TableModule,DialogModule,ButtonModule,
     MessagesModule,InputNumberModule,SelectModule,MultiSelectModule,
     ConfirmDialogModule,ToastModule,FloatLabelModule,
-    FloatLabelModule,ProgressSpinnerModule
+    FloatLabelModule,ProgressSpinnerModule,CardModule
   ],
   animations:[
     trigger('efeitoFade',[
@@ -186,7 +183,6 @@ export class PprOrcamentoComponent implements OnInit {
           centrosCusto =>{
             this.centrosCusto = centrosCusto.map((centroCusto: any)=>centroCusto.codigo);
             //this.calculosOrcamentosRealizados();
-            console.log('Ccs',this.centrosCusto);
             this.calcularRealizado();
           }, error =>{
             console.error('Não rolou',error)
@@ -214,7 +210,6 @@ export class PprOrcamentoComponent implements OnInit {
       this.pprService.calcularCusto2(this.ano, this.periodo, this.filial).subscribe(
         response =>{
           this.variavelMatriz = response.total_variavel;
-          console.log('Custo Variável Matriz',this.variavelMatriz);
           this.variavelMatrizFormatado = response.total_variavel.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
           this.fixoMatriz = response.custos_fixo;
           this.fixoMatrizFormatado = response.custos_fixo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -231,11 +226,9 @@ export class PprOrcamentoComponent implements OnInit {
       this.pprService.calcularCusto2(this.ano, this.periodo, this.filialAtm).subscribe(
         response =>{
           this.variavelAtm = response.total_variavel;
-          console.log('Custo Variável AAAAATM',this.variavelAtm);
           this.variavelAtmFormatado = response.total_variavel.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
           this.fixoAtm = response.custos_fixo;
           this.fixoAtmFormatado = response.custos_fixo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
-          console.log('Custo FIXO ATM',this.fixoAtm);
           // Chamar os cálculos após obter todos os valores
           this.loading3 = false;
           this.calcularIndicesEContribuicao();
@@ -275,8 +268,6 @@ export class PprOrcamentoComponent implements OnInit {
       };
       this.loading4 = false;
       this.calcularOrcadoDespAdm();
-      console.log('Índices:', this.indices);
-      console.log('Contribuição do Bônus:', this.bonusContribuicao);
     }
 
     calcularOrcadoDespAdm(): void {
@@ -303,42 +294,36 @@ export class PprOrcamentoComponent implements OnInit {
               [16, 28, 52].includes(item.id)
             )
             .reduce((sum: number, item: { quantidade: number }) => sum + item.quantidade, 0);
-          console.log('Prod Prevista Matriz',this.prodPrevistaMatriz);
 
           this.prodPrevistaAtm = resultados
             .filter((item: { id: number }) => 
               [88].includes(item.id)
             )
             .reduce((sum: number, item: { quantidade: number }) => sum + item.quantidade, 0);
-          console.log('Prod Prevista Atm',this.prodPrevistaAtm);
 
           this.producaoMatriz = resultados
             .filter((item: { fabrica: string }) => 
               ["06 - Fábrica de Argamassa", "04 - Fábrica de Cal", "05 - Fábrica de Calcário"].includes(item.fabrica)
             )
             .reduce((sum: number, item: { producao: number }) => sum + item.producao, 0);  
-          console.log('Produção Matriz',this.producaoMatriz);
 
           this.producaoAtm = resultados
             .filter((item: { fabrica: string }) => 
               ["08 - F08 - UP ATM"].includes(item.fabrica)
             )
             .reduce((sum: number, item: { producao: number }) => sum + item.producao, 0);  
-          console.log('Produção Atm',this.producaoAtm);
 
           this.realizadoMatriz = resultados
             .filter((item: { fabrica: string }) => 
               ["06 - Fábrica de Argamassa", "04 - Fábrica de Cal", "05 - Fábrica de Calcário"].includes(item.fabrica)
             )
             .reduce((sum: number, item: { realizado_cc_pai: number }) => sum + item.realizado_cc_pai, 0);
-            console.log('Realizado Matriz',this.realizadoMatriz);
 
           this.realizadoAtm = resultados
             .filter((item: { fabrica: string }) => 
               ["08 - F08 - UP ATM"].includes(item.fabrica)
             )
             .reduce((sum: number, item: { realizado_cc_pai: number }) => sum + item.realizado_cc_pai, 0);
-            console.log('Realizado Atm',this.realizadoAtm);
 
           this.custoVariavelMatriz = (this.realizadoMatriz / this.producaoMatriz)
           this.custoVariavelMatrizFormatado = (this.realizadoMatriz / this.producaoMatriz).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });  
@@ -369,7 +354,6 @@ export class PprOrcamentoComponent implements OnInit {
               item.filial === 'Matriz' && item.tipo.includes('Custo Direto Variável')
             )
             .reduce((sum: number, item: { total: number }) => sum + item.total, 0);
-          console.log('Orçado Variável Matriz Total:', this.orcadoVariavelMatrizTotal);  
 
           this.orcadoVariavelMatriz = this.orcadoVariavelMatrizTotal / this.prodPrevistaMatriz  
           this.orcadoVariavelMatrizFormatado = this.orcadoVariavelMatriz.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -406,7 +390,6 @@ export class PprOrcamentoComponent implements OnInit {
 
     calcularPercentuais(): void {
       this.loading8 = true;
-      console.log('kkkkkkkkkkkkkkkkkkkk', this.custoVariavelAtm, this.orcadoVariavelAtm);
       this.indices2 = {
         despesasAdm: (1 - (this.despesasAdm / this.orcadoDespesasAdm)) * 100,
         despesasAdmFormatado: ((1 - (this.despesasAdm / this.orcadoDespesasAdm)) * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
@@ -486,11 +469,6 @@ export class PprOrcamentoComponent implements OnInit {
   });
 
     this.somaBonus = totalBonusSumFormatted;
-
-      //valor bonus = bonus *  quando o indice for => 0 sempre retorna 100% quando for negativo usar a formula
-      // se for  menor que -0.15 o bonus vai ser 0
-
-      console.log('Percentuais Calculados:', this.indices2);
       this.loading8 = false;
     }
 

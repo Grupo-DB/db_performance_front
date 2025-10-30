@@ -2,6 +2,12 @@
 .container{
     max-width: 100%;
 }
+.containerInterno{
+    background-color: #ffffff;
+    border: 10px solid #ffffff;
+    padding: 10px;
+    border-radius: 20px;
+}
 .titulo{
    font-size: 22px;
 }
@@ -44,6 +50,49 @@
             
     }
 } 
+
+.card{
+    border-radius: 10px;
+    .header{
+        background-color: #3B3E44;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        h2{
+            color: #ffffff;
+            font-weight: 700;
+            margin-top: 16px;
+        }
+        display: flex;
+        align-items: center;
+        font-size: 18px;
+        color: #F8F9FA;
+        margin-bottom: 1rem;
+        font-weight: 500;
+        &::before {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 0.75rem;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+            flex-shrink: 0;
+            font-family: 'primeicons';
+            margin-left: 16px;
+        }
+        
+        // Ícone para Informações Gerais
+        &.titulo-info::before {
+            content: '\e95d'; // pi-tags
+        }
+        }
+    }
 
 .colunaEsq{
     width: 50%;
@@ -280,14 +329,14 @@ tr {
     //margin-left: -5%;
     margin-top: 5%;
     height: 100vh;
-    background: linear-gradient(to top, #7A91A8, #BCC6D3, #E5EAEE, #F8FAFC, #ffffff);
+   //background: linear-gradient(to top, #7A91A8, #BCC6D3, #E5EAEE, #F8FAFC, #ffffff);
     border-radius: 10px;
   }
   .grafico2{
     //margin-left: -5%;
     margin-top: 5%;
     height: 150vh;
-    background: linear-gradient(to top, #7A91A8, #BCC6D3, #E5EAEE, #F8FAFC, #ffffff);
+    //background: linear-gradient(to top, #7A91A8, #BCC6D3, #E5EAEE, #F8FAFC, #ffffff);
     border-radius: 10px;
   }
      
@@ -351,11 +400,10 @@ tr {
 }
 
 .form-geral{
-    width: 95%;
+    width: 98%;
     margin-left: auto;
     margin-right: auto;
     border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
     .fg1{
         width: 100%;
         //margin-top: 10px;

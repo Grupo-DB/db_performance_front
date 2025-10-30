@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, NO_ERRORS_SCHEMA, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormBuilder } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
@@ -20,12 +20,11 @@ import { ToastModule } from 'primeng/toast';
 import { LoginService } from '../../../../services/avaliacoesServices/login/login.service';
 import { ProjetadoService } from '../../../../services/baseOrcamentariaServices/projetado/projetado.service';
 import { InplaceModule } from 'primeng/inplace';
-import { TableRowCollapseEvent, TableRowExpandEvent } from 'primeng/table';
 import {  TreeTableModule } from 'primeng/treetable';
 import { animate, keyframes, style, transition, trigger } from '@angular/animations';
-import { th } from 'date-fns/locale';
 import { SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { CardModule } from 'primeng/card';
 
 export interface ResultadosArrayItem {
   label: string;
@@ -42,8 +41,6 @@ interface CentroCustoPai {
   total: number;
 }
 
-
-
 @Component({
   selector: 'app-projetado',
   standalone: true,
@@ -54,7 +51,7 @@ interface CentroCustoPai {
     DropdownModule,InputTextModule,TableModule,DialogModule,ButtonModule,
     MessagesModule,InputNumberModule,SelectModule,MultiSelectModule,
     ConfirmDialogModule,ToastModule,FloatLabelModule,InputNumberModule,InplaceModule,
-    TreeTableModule,FloatLabelModule
+    TreeTableModule,FloatLabelModule,CardModule,
   ],
   providers: [
     MessageService,ConfirmationService,
@@ -198,7 +195,6 @@ export class ProjetadoComponent implements OnInit {
         response => {
           // Receita Bruta obtida da resposta
           const receitaLiquida = this.receitaLiquida;
-          //console.log('receita liquida', receitaLiquida);
           this.totalGeral = response.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
           this.custoTotalFormatado = response.total;
     
@@ -209,9 +205,7 @@ export class ProjetadoComponent implements OnInit {
             },
             children: response.resultado.map((item: any) => {
               const receitaLiquidaValor = this.receitaLiquidaValor;
-              //console.log('receita liquida valor', receitaLiquidaValor);
               const percentualTipo = receitaLiquidaValor ? (item.total / receitaLiquidaValor) * 100 : 0;
-    
               return {
                 data: {
                   tipo: item.tipo,
@@ -220,9 +214,7 @@ export class ProjetadoComponent implements OnInit {
                 },
                 children: item.centros_custo.map((centro: any) => {
                   const receitaLiquidaValor = this.receitaLiquidaValor;
-                  //console.log('receita liquida valor', receitaLiquidaValor);
                   const percentualCentro = receitaLiquidaValor ? (centro.total / receitaLiquidaValor) * 100 : 0;
-    
                   return {
                     data: {
                       nome: centro.nome,
@@ -357,30 +349,25 @@ export class ProjetadoComponent implements OnInit {
 
     calcularLucroBruto(): void{
       this.lucroBruto = this.receitaLiquidaValor - this.custoTotalFormatado;
-      console.log('hahaha',this.receitaLiquidaValor);
       this.lucroBrutoFormatado = this.lucroBruto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
       this.calcularResultOper();
     }
 
     calcularResultOper(): void{
       this.resultadoOperacional = this.lucroBruto - this.totalGeralDespesa;
-      console.log('kkkkkkkkkk',this.lucroBruto);
       this.resultadoOperacionalFormatado = this.resultadoOperacional.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
-      
       this.calcularEbitda();
     }
 
     calculatePercentualTotalGeral(): void {
       if (this.receitaLiquidaValor > 0) {
         this.percentualTotalGeral = Math.round((this.custoTotalFormatado / this.receitaLiquidaValor) * 100);
-        console.log('adfgadfgdafg',this.percentualTotalGeral);
       }
     }
 
     calculoPercentualDespesa(): void {
       if (this.receitaLiquidaValor > 0) {
         this.percentualDespesaGeral = Math.round((this.totalGeralDespesa / this.receitaLiquidaValor) * 100);
-        console.log(this.percentualDespesaGeral);
       }
     }
 

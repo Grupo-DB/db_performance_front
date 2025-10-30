@@ -54,240 +54,258 @@
         </li>    
     </ul>
 </div>
+<div class="container flex flex-column align-items-center mb-4">
+    <div class="containerInterno w-12">
+        <div @swipeAnimation>
+                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                    <div class="bloco fg1 flex flex-column w-12 align-items-center">
+                        <p-card class="card w-12 text-center">
+                            <ng-template #header>
+                                <div class="header titulo-info w-full text-center">
+                                    <h2>Acompanhamento do Orçamento</h2>
+                                </div>
+                            </ng-template>
+                            <div class="form-geral">
+                                <div class="flex flex-column lg:flex-row"@swipeAnimation>
+                                    <div class="fg1 flex flex-column w-12 align-items-center lg:w-6 lg:mt-5"> 
+                                        <div class="form2 w-10" *ngIf="hasGroup(['Admin','Master'])">
+                                            <p-floatlabel variant="on"> 
+                                                <p-multiSelect
+                                                    variant="filled"
+                                                    id="ccPai" 
+                                                    [style]="{'width':'100%'}"
+                                                    [options]="ccsPai" 
+                                                    [(ngModel)]="selectedCcPai"
+                                                    optionValue="id"
+                                                    optionLabel="nome"
+                                                    [filter]="true" 
+                                                    filterBy="nome"
+                                                    appendTo="body"
+                                                    inputId="float-label" 
+                                                    (onChange)="onCcPaiSelecionado($event.value)"
+                                                >
+                                                </p-multiSelect>
+                                                <label for="float-label">Sel. o Centro de Custo Pai</label>
+                                            </p-floatlabel>
+                                        </div>
 
-<div class="titulo mt-6 mb-6">
-    <p-divider align="left" type="solid">
-        <b>Acompanhamento do Orçamento</b>
-    </p-divider>
-</div>
-<p-toast></p-toast>
-<div class="container">
-    <div class="form-geral">
-        <div class="flex flex-column lg:flex-row"@swipeAnimation>
-            <div class="fg1 flex flex-column w-12 align-items-center lg:w-6 lg:mt-5"> 
-                <div class="form2 w-10" *ngIf="hasGroup(['Admin','Master'])">
-                    <p-floatlabel variant="on"> 
-                        <p-multiSelect
-                            variant="filled"
-                            id="ccPai" 
-                            [style]="{'width':'100%'}"
-                            [options]="ccsPai" 
-                            [(ngModel)]="selectedCcPai"
-                            optionValue="id"
-                            optionLabel="nome"
-                            [filter]="true" 
-                            filterBy="nome"
-                            appendTo="body"
-                            inputId="float-label" 
-                            (onChange)="onCcPaiSelecionado($event.value)"
-                        >
-                        </p-multiSelect>
-                        <label for="float-label">Sel. o Centro de Custo Pai</label>
-                    </p-floatlabel>
-                </div>
+                                        <div class="form2 w-10" *ngIf="hasGroup(['OrcamentoGestorSetor'])">
+                                            <p-floatlabel variant="on"> 
+                                                <p-multiSelect
+                                                    variant="filled"
+                                                    id="ccPai" 
+                                                    [style]="{'width':'100%'}"
+                                                    [options]="meusCcs" 
+                                                    [(ngModel)]="selectedCcPai"
+                                                    optionValue="id"
+                                                    optionLabel="nome"
+                                                    [filter]="true" 
+                                                    filterBy="nome"
+                                                    appendTo="body"
+                                                    inputId="float-label" 
+                                                    (onChange)="onCcPaiSelecionado($event.value)"
+                                                >
+                                                </p-multiSelect>
+                                                <label for="float-label">Sel. o Centro de Custo Pai</label>
+                                            </p-floatlabel>
+                                        </div>
 
-                <div class="form2 w-10" *ngIf="hasGroup(['OrcamentoGestorSetor'])">
-                    <p-floatlabel variant="on"> 
-                        <p-multiSelect
-                            variant="filled"
-                            id="ccPai" 
-                            [style]="{'width':'100%'}"
-                            [options]="meusCcs" 
-                            [(ngModel)]="selectedCcPai"
-                            optionValue="id"
-                            optionLabel="nome"
-                            [filter]="true" 
-                            filterBy="nome"
-                            appendTo="body"
-                            inputId="float-label" 
-                            (onChange)="onCcPaiSelecionado($event.value)"
-                        >
-                        </p-multiSelect>
-                        <label for="float-label">Sel. o Centro de Custo Pai</label>
-                    </p-floatlabel>
-                </div>
+                                        <div class="form2 w-10" *ngIf="hasGroup(['OrcamentoGestorSetor','Master','Admin'])">
+                                            <p-floatlabel variant="on"> 
+                                                <p-multiSelect
+                                                    variant="filled"
+                                                    id="ccPai" 
+                                                    [style]="{'width':'100%'}"
+                                                    [options]="filiaisSga" 
+                                                    [(ngModel)]="selectedsFiliais"
+                                                    optionValue="cod"
+                                                    appendTo="body"
+                                                    optionLabel="nome"
+                                                    [filter]="true" 
+                                                    filterBy="nome"
+                                                    inputId="float-label" 
+                                                    (onChange)="onFiliaisInformada($event.value)"
+                                                >
+                                                </p-multiSelect>
+                                                <label for="float-label">Selecione as Filiais</label>
+                                            </p-floatlabel>
+                                        </div>
+                                        <div class="form2 w-10" *ngIf="hasGroup(['OrcamentoGestorSetor','Master','Admin'])">
+                                            <p-floatLabel variant="on">    
+                                                <p-multiSelect
+                                                    variant="filled"
+                                                    [style]="{'width':'100%'}"
+                                                    [options]="meses"
+                                                    optionLabel="value"
+                                                    optionValue="key"
+                                                    inputId="float-label"
+                                                    appendTo="body"
+                                                    [(ngModel)]="periodo"
+                                                >
+                                                </p-multiSelect>
+                                                <label for="float-label">Selecione os Meses</label>
+                                            </p-floatLabel>
+                                        </div>
+                                        <div class="form2 w-10 text-left">
+                                            <p-floatlabel variant="on">
+                                                <p-inputnumber
+                                                    fluid="true" 
+                                                    variant="filled"
+                                                    mode="decimal"
+                                                    [(ngModel)]="selectedAno"
+                                                    [showButtons]="true" 
+                                                    [min]="2024" 
+                                                    [max]="2999"
+                                                    [useGrouping]="false" 
+                                                    (ngModelChange)="onAnoInformado($event)"
+                                                />
+                                                <label>Ano Vigente</label>
+                                            </p-floatlabel>
+                                        </div>     
+                                        <p-toast></p-toast>
+                                        <div *ngIf="hasGroup(['Admin','Master'])"  class="flex flex-column w-10  lg:flex-row" style="font-size: 12px;">
+                                            <div class="form2 w-10 flex flex-wrap gap-1">
+                                                <div class="flex items-center">
+                                                    <p-radiobutton name="pizza" [(ngModel)]="filtroGlobal" (ngModelChange)="onCcPaiSelecionado($event.value)" value="globalMatriz" inputId="ingredient1" />
+                                                    <label for="ingredient1" class="ml-2">Orçamento Setorial Global Matriz</label>
+                                                </div>
+                                        
+                                                <div class="flex items-center">
+                                                    <p-radiobutton name="pizza" [(ngModel)]="filtroGlobal" value="indiretosMatriz" inputId="ingredient2" />
+                                                    <label for="ingredient2" class="ml-2">Orçamento Setorial Indiretos Matriz</label>
+                                                </div>
+                                            </div>    
+                                            <div class="form2 w-10 flex flex-wrap gap-1">
+                                                <div class="flex items-center text-left">
+                                                    <p-radiobutton name="pizza" [(ngModel)]="filtroGlobal" value="admMatriz" inputId="ingredient3" />
+                                                    <label  for="ingredient3" class="ml-2">Orçamento Setorial Administrativo Matriz</label>
+                                                </div>
+                                                <div class="flex items-center text-left">
+                                                    <p-radiobutton name="pizza" [(ngModel)]="filtroGlobal" value="admAtm" inputId="ingredient4" />
+                                                    <label for="ingredient4" class="ml-2">Orçamento Setorial Administrativo - ATM</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div 
+                                            class="btn-base btn-limpar w-10 h-3rem mt-2"
+                                            (click)="limparFiltroGlobal()"
+                                        >
+                                            Limpar Filtros
+                                        </div>    
+                                        <div 
+                                            class="btn-base btn-calcular w-10 h-3rem"
+                                            (click)="executarCalculos()"
+                                        >
+                                            Calcular
+                                        </div>
+                                    <br>                   
+                                    <p-message size="small" severity="info"@swipeAnimation *ngIf="detalhes && selectedCcPai.length <= 1" closable="true">
+                                        <ng-template #icon>
+                                            <p-avatar [image]="detalhes.gestor_detalhes.image" class="md:ml-5 inline-flex justify-content-center align-items-center text-center" size="xlarge" shape="circle" />  
+                                        </ng-template>
+                                        <div class=" w-full text-xs flex flex-row "  *ngIf="selectedCcPai.length <= 1 && detalhes">    
+                                            <div class="w-6 mr-4 text-left  lg:w-2 lg:text-sm lg:ml-8 " >
+                                                Gestor:<br>
+                                                Empresa:<br>
+                                                Filial:<br>
+                                                Área:<br>
+                                                Ambiente:<br>
+                                                Setor:<br>
+                                            </div>
+                                            <div class="w-6 ml-0 mr-4 text-left lg:w-10 lg:text-sm" *ngIf="detalhes">
+                                                <strong>{{ detalhes.gestor_detalhes.nome }}</strong><br>
+                                                <strong>{{ detalhes.cc_pai_detalhes.empresa_detalhes.nome }}</strong><br>
+                                                <strong>{{ detalhes.cc_pai_detalhes.filial_detalhes.nome }}</strong><br>
+                                                <strong>{{ detalhes.cc_pai_detalhes.area_detalhes.nome }}</strong><br>
+                                                <strong>{{ detalhes.cc_pai_detalhes.setor_detalhes.nome }}</strong><br>
+                                                <strong>{{ detalhes.cc_pai_detalhes.ambiente_detalhes.nome }}</strong><br>
+                                            </div>
+                                        </div>
+                                    </p-message>      
+                                    </div>            
+                                        
+                                    <div class="fg1 flex flex-column w-12 align-items-center lg:w-6 lg:gap-2 lg:mt-3"@slideAnimation>
+                                        <p-card 
+                                            class="w-10 mt-5 w-4 shadow-2 hover:shadow-6 md:w-10 lg:w-10" 
+                                            [style]="{ 'background-color': 'rgba(0, 43, 92, 0.4)' }" @slideAnimation
+                                        >
+                                            <div class="flex justify-content-between gap-3 lg:h-4rem">
+                                                <div class="flex flex-column gap-1">
+                                                    <span class="text-secondary font-bold text-md" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">Orçado Total</span>
+                                                    <span *ngIf="!isLoading" class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">R$ {{ teste2 }}</span>
+                                                </div>
+                                                <div *ngIf="isLoading" class="loading-indicator">
+                                                    <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '50px', height: '50px' }" />
+                                                </div> 
+                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center" [style]="{ 'background-color': '#1b91ff' }">
+                                                    <a (click)="orcadoDetalhes()"><i class="pi pi-wallet" style="font-size: 1.5rem; color: #ffffff;"></i></a>
+                                                </span>
+                                            </div>
+                                        </p-card>
+                                        <p-card 
+                                            class="w-10 mt-1 shadow-2 hover:shadow-6 md:w-10 lg:w-10" 
+                                            [style]="{ 'background-color': 'rgba(92, 123, 177, 0.2)'}" @slideAnimation
+                                        >
+                                            <div class="flex justify-content-between gap-3 lg:h-4rem">
+                                                <div class="flex flex-column gap-1">
+                                                    <span class="text-secondary font-bold text-md" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">Realizado Total</span>
+                                                    <span *ngIf="!isLoading" class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">R$ {{ teste }}</span>
+                                                </div>
+                                                <div *ngIf="isLoading" class="loading-indicator">
+                                                    <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '50px', height: '50px' }" />
+                                                </div> 
+                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center" [style]="{ 'background-color': '#1b91ff' }">
+                                                    <a (click)="realizadoDetalhes()"><i class="pi pi-wallet" style="font-size: 1.5rem; color: #ffffff;"></i></a>
+                                                </span>
+                                            </div>
+                                        </p-card>
+                                        <p-card 
+                                            class="w-10 w-4 mt-1 shadow-2 hover:shadow-6 md:w-10 lg:w-10" 
+                                            [style]="{ 'background-color': 'rgba(125, 227, 245, 0.2)' }" @slideAnimation
+                                        >
+                                            <div class="flex justify-content-between gap-3 lg:h-4rem">
+                                                <div class="flex flex-column gap-1">
+                                                    <span class="text-secondary font-bold text-md" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">Saldo Total</span>
+                                                    <span *ngIf="!isLoading" class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">R$ {{ saldo }}</span>
+                                                </div>
+                                                <div *ngIf="isLoading" class="loading-indicator">
+                                                    <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '50px', height: '50px' }" />
+                                                </div> 
+                                                <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center" [style]="{ 'background-color': '#1b91ff' }">
+                                                    <i class="pi pi-wallet" style="font-size: 1.5rem; color: #ffffff;"></i>
+                                                </span>
+                                            </div>
+                                        </p-card>        
+                                    </div>
+                                </div>
 
-                <div class="form2 w-10" *ngIf="hasGroup(['OrcamentoGestorSetor','Master','Admin'])">
-                    <p-floatlabel variant="on"> 
-                        <p-multiSelect
-                            variant="filled"
-                            id="ccPai" 
-                            [style]="{'width':'100%'}"
-                            [options]="filiaisSga" 
-                            [(ngModel)]="selectedsFiliais"
-                            optionValue="cod"
-                            appendTo="body"
-                            optionLabel="nome"
-                            [filter]="true" 
-                            filterBy="nome"
-                            inputId="float-label" 
-                            (onChange)="onFiliaisInformada($event.value)"
-                        >
-                        </p-multiSelect>
-                        <label for="float-label">Selecione as Filiais</label>
-                    </p-floatlabel>
-                </div>
-                <div class="form2 w-10" *ngIf="hasGroup(['OrcamentoGestorSetor','Master','Admin'])">
-                    <p-floatLabel variant="on">    
-                        <p-multiSelect
-                            variant="filled"
-                            [style]="{'width':'100%'}"
-                            [options]="meses"
-                            optionLabel="value"
-                            optionValue="key"
-                            inputId="float-label"
-                            appendTo="body"
-                            [(ngModel)]="periodo"
-                        >
-                        </p-multiSelect>
-                        <label for="float-label">Selecione os Meses</label>
-                    </p-floatLabel>
-                </div>
-                <div class="form2 w-10 text-left">
-                    <p-floatlabel variant="on">
-                        <p-inputnumber
-                            fluid="true" 
-                            variant="filled"
-                            mode="decimal"
-                            [(ngModel)]="selectedAno"
-                            [showButtons]="true" 
-                            [min]="2024" 
-                            [max]="2999"
-                            [useGrouping]="false" 
-                            (ngModelChange)="onAnoInformado($event)"
-                        />
-                        <label>Ano Vigente</label>
-                    </p-floatlabel>
-                </div>     
-                <p-toast></p-toast>
-                <div *ngIf="hasGroup(['Admin','Master'])"  class="flex flex-column w-10  lg:flex-row" style="font-size: 12px;">
-                    <div class="form2 w-10 flex flex-wrap gap-1">
-                        <div class="flex items-center">
-                            <p-radiobutton name="pizza" [(ngModel)]="filtroGlobal" (ngModelChange)="onCcPaiSelecionado($event.value)" value="globalMatriz" inputId="ingredient1" />
-                            <label for="ingredient1" class="ml-2">Orçamento Setorial Global Matriz</label>
-                        </div>
-                
-                        <div class="flex items-center">
-                            <p-radiobutton name="pizza" [(ngModel)]="filtroGlobal" value="indiretosMatriz" inputId="ingredient2" />
-                            <label for="ingredient2" class="ml-2">Orçamento Setorial Indiretos Matriz</label>
-                        </div>
-                    </div>    
-                    <div class="form2 w-10 flex flex-wrap gap-1">
-                        <div class="flex items-center text-left">
-                            <p-radiobutton name="pizza" [(ngModel)]="filtroGlobal" value="admMatriz" inputId="ingredient3" />
-                            <label  for="ingredient3" class="ml-2">Orçamento Setorial Administrativo Matriz</label>
-                        </div>
-                        <div class="flex items-center text-left">
-                            <p-radiobutton name="pizza" [(ngModel)]="filtroGlobal" value="admAtm" inputId="ingredient4" />
-                            <label for="ingredient4" class="ml-2">Orçamento Setorial Administrativo - ATM</label>
-                        </div>
+                                <div 
+                                    *ngIf="isLoading" 
+                                    class="loading-animation flex flex-column form2 w-5 justify-content-center m-auto"
+                                    >
+                                    
+                                <!-- Coloque aqui a sua animação de carregamento -->
+                                    <img src="assets/imagens/startmanager2.gif" alt="Loading..." class="w-12">
+                                </div>        
+                                    
+                                <div class="w-full align-items-center  mb-6 flex flex-column gap-5 lg:flex-row">           
+                                    <div class="grafico1 w-12 lg:w-4">
+                                        <canvas id="graficoTotalChart"></canvas>
+                                    </div>
+                                
+                                    <div class="grafico1 w-12 lg:w-4">
+                                        <canvas id="graficoBaseChart"></canvas>
+                                    </div>
+                                    <div class="grafico1 w-12 lg:w-4 justify-content-center">
+                                        <canvas id="gruposContasRealizadosChart"></canvas>
+                                    </div>  
+                                </div>
+                            </div>
+                        </p-card>
                     </div>
                 </div>
-                <div 
-                    class="form2 w-10 h-3rem"
-                    style="background-color: #4972B0; cursor: pointer; border-radius: 4px; color: #ffffff; display: flex; justify-content: center; align-items: center;font-size: 16px;"
-                    (click)="limparFiltroGlobal()"
-                >
-                    Limpar Filtros
-                </div>    
-                <div 
-                    class="form2 w-10 h-3rem"
-                    style="background-color: #002B5C; cursor: pointer; border-radius: 4px; color: #ffffff; display: flex; justify-content: center; align-items: center;font-size: 16px;"
-                    (click)="executarCalculos()"
-                >
-                    Calcular
-                </div>
-             <br>                   
-            <p-message size="small" severity="info"@swipeAnimation *ngIf="detalhes && selectedCcPai.length <= 1" closable="true">
-                <ng-template #icon>
-                    <p-avatar [image]="detalhes.gestor_detalhes.image" class="md:ml-5 inline-flex justify-content-center align-items-center text-center" size="xlarge" shape="circle" />  
-                </ng-template>
-                <div class=" w-full text-xs flex flex-row "  *ngIf="selectedCcPai.length <= 1 && detalhes">    
-                    <div class="w-6 mr-4 text-left  lg:w-2 lg:text-sm lg:ml-8 " >
-                        Gestor:<br>
-                        Empresa:<br>
-                        Filial:<br>
-                        Área:<br>
-                        Ambiente:<br>
-                        Setor:<br>
-                    </div>
-                    <div class="w-6 ml-0 mr-4 text-left lg:w-10 lg:text-sm" *ngIf="detalhes">
-                        <strong>{{ detalhes.gestor_detalhes.nome }}</strong><br>
-                        <strong>{{ detalhes.cc_pai_detalhes.empresa_detalhes.nome }}</strong><br>
-                        <strong>{{ detalhes.cc_pai_detalhes.filial_detalhes.nome }}</strong><br>
-                        <strong>{{ detalhes.cc_pai_detalhes.area_detalhes.nome }}</strong><br>
-                        <strong>{{ detalhes.cc_pai_detalhes.setor_detalhes.nome }}</strong><br>
-                        <strong>{{ detalhes.cc_pai_detalhes.ambiente_detalhes.nome }}</strong><br>
-                    </div>
-                </div>
-            </p-message>      
-            </div>            
-                
-            <div class="fg1 flex flex-column w-12 align-items-center lg:w-6 lg:gap-2 lg:mt-3"@slideAnimation>
-                <p-card class="w-10  mt-5 w-4 shadow-2 hover:shadow-6 md:w-10 lg:w-10" [style]="{ 'background-color': '#002B5C' }" @slideAnimation>
-                    <div class="flex justify-content-between gap-3 lg:h-4rem">
-                        <div class="flex flex-column gap-1">
-                            <span class="text-secondary font-bold text-md" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">Orçado Total</span>
-                            <span *ngIf="!isLoading" class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">R$ {{ teste2 }}</span>
-                        </div>
-                        <div *ngIf="isLoading" class="loading-indicator">
-                            <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '50px', height: '50px' }" />
-                        </div> 
-                        <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center" [style]="{ 'background-color': '#ffffff' }">
-                            <a (click)="orcadoDetalhes()"><i class="pi pi-wallet" style="font-size: 1.5rem; color: #002B5C;"></i></a>
-                        </span>
-                    </div>
-                </p-card>
-                <p-card class="w-10 mt-1 shadow-2 hover:shadow-6 md:w-10 lg:w-10" [style]="{ 'background-color': '#4972B0' }" @slideAnimation>
-                    <div class="flex justify-content-between gap-3 lg:h-4rem">
-                        <div class="flex flex-column gap-1">
-                            <span class="text-secondary font-bold text-md" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">Realizado Total</span>
-                            <span *ngIf="!isLoading" class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">R$ {{ teste }}</span>
-                        </div>
-                        <div *ngIf="isLoading" class="loading-indicator">
-                            <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '50px', height: '50px' }" />
-                        </div> 
-                        <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center" [style]="{ 'background-color': '#ffffff' }">
-                            <a (click)="realizadoDetalhes()"><i class="pi pi-wallet" style="font-size: 1.5rem; color: #002B5C;"></i></a>
-                        </span>
-                    </div>
-                </p-card>
-                <p-card class="w-10 w-4 mt-1 shadow-2 hover:shadow-6 md:w-10 lg:w-10" [style]="{ 'background-color': '#7F94B5' }" @slideAnimation>
-                    <div class="flex justify-content-between gap-3 lg:h-4rem">
-                        <div class="flex flex-column gap-1">
-                            <span class="text-secondary font-bold text-md" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">Saldo Total</span>
-                            <span *ngIf="!isLoading" class="font-bold text-lg" style="white-space: nowrap; margin-left: -10px; text-align: start; color: #ffffff;">R$ {{ saldo }}</span>
-                        </div>
-                        <div *ngIf="isLoading" class="loading-indicator">
-                            <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '50px', height: '50px' }" />
-                        </div> 
-                        <span class="w-3rem h-3rem border-circle inline-flex justify-content-center align-items-center text-center" [style]="{ 'background-color': '#ffffff' }">
-                            <i class="pi pi-wallet" style="font-size: 1.5rem; color: #7F94B5;"></i>
-                        </span>
-                    </div>
-                </p-card>        
-            </div>
         </div>
-
-        <div *ngIf="isLoading" class="loading-animation flex flex-column form2 w-5 justify-content-center m-auto">
-            <!-- Coloque aqui a sua animação de carregamento -->
-            <img src="assets/imagens/startmanager2.gif" alt="Loading..." class="w-12">
-        </div>        
-                
-        <div class="w-full align-items-center  mb-6 flex flex-column gap-5 lg:flex-row">           
-            <div class="grafico1 w-12 lg:w-4">
-                <canvas id="graficoTotalChart"></canvas>
-            </div>
-        
-            <div class="grafico1 w-12 lg:w-4">
-                <canvas id="graficoBaseChart"></canvas>
-            </div>
-            <div class="grafico1 w-11 lg:w-3 justify-content-center">
-                <canvas id="gruposContasRealizadosChart"></canvas>
-            </div>  
-        </div>
-
-    </div>    
+    </div>                            
 </div>
 
               
@@ -300,9 +318,8 @@
     [style]="{ width: '90%', }" 
     (onHide)="limparDadosOrcado()"
 >
-
     
-        <p-table [value]="detalhesMensais" responsiveLayout="scroll" stripedRows>
+        <p-table [value]="detalhesMensais" class="tabela" responsiveLayout="scroll">
             <ng-template pTemplate="header">
                 <tr>
                     <th>Mês</th>
@@ -313,7 +330,7 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-detalheMensal>
-                <tr>
+                <tr class="tabela">
                     <td>{{ detalheMensal.mes_especifico }} </td>
                     <td>{{ detalheMensal.tipo_custo}} </td>
                     <td>{{ detalheMensal.raiz_contabil_grupo_desc }} </td>
@@ -346,7 +363,7 @@
         />
     </div>
     <div *ngIf="!isLoading"> 
-        <p-table [value]="detalhesLancamentosGrupos" responsiveLayout="scroll" stripedRows>
+        <p-table [value]="detalhesLancamentosGrupos" class="tabela" responsiveLayout="scroll">
             <ng-template pTemplate="header">
                 <tr>
                     <th>Data</th>
@@ -376,7 +393,7 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-detalheLancamentoGrupo>
-                <tr>
+                <tr class="tabela">
                     <td>{{ detalheLancamentoGrupo.LANCDATA }}</td>
                     <td>{{ detalheLancamentoGrupo.LANCCOD }}</td>
                     <td>{{ detalheLancamentoGrupo.DESCRICAO }}</td>
@@ -412,7 +429,7 @@
         />
     </div>
     <div *ngIf="!isLoading">   
-        <p-table [value]="detalhesLancamentosContas" responsiveLayout="scroll" stripedRows>
+        <p-table [value]="detalhesLancamentosContas" class="tabela" responsiveLayout="scroll">
             <ng-template pTemplate="header">            
                 <tr>
                     <th>Data</th>               
@@ -442,7 +459,7 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-detalheLancamentoConta>
-                <tr>                        
+                <tr class="tabela">                        
                     <td>{{ detalheLancamentoConta.LANCDATA }}</td>
                     <td>{{ detalheLancamentoConta.LANCCOD }}</td>
                     <td>{{ detalheLancamentoConta.DESCRICAO }}</td>
@@ -494,7 +511,10 @@
                                     <div style="max-height: 500px; overflow-x: scroll; margin-top: 20px;">
                                         <div class="flex flex-wrap gap-3 ml-0 justify-content-center">
                                             <ng-container *ngFor="let meterItem of resultadosMensais; let index = index">
-                                                <p-card class="w-14rem  shadow-4 border-round-md hover:shadow-6" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
+                                                <p-card 
+                                                    class="w-14rem  shadow-4 border-round-md hover:shadow-6" 
+                                                    [style]="{ 'background-color': 'rgba(0, 43, 92, 0.4)' }" @slideAnimation 
+                                                >
                                                     <div class="flex justify-content-between gap-2">
                                                         <div class="flex flex-column gap-3">
                                                             <span class="text-secondary text-md" style="white-space: nowrap; text-align: start;">{{ meterItem.label | uppercase }}</span>
@@ -524,7 +544,9 @@
                             <div class="" style="max-height: 500px; min-height: 200px; overflow-y: auto;">
                                 <div class="flex flex-wrap gap-3 mt-3 mb-3 justify-content-center">
                                     <ng-container *ngFor="let meterItem of tiposMensais; let index = index">
-                                        <p-card class="w-12  shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
+                                        <p-card
+                                        class="w-12  shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" 
+                                        [style]="{ 'background-color': 'rgba(0, 43, 92, 0.4)' }" @slideAnimation >
                                             <div class="flex justify-content-between gap-3">
                                                 <div class="flex flex-column gap-3">
                                                     <span class="text-secondary text-md w-12" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
@@ -553,7 +575,9 @@
                             <div class="w-full" style="max-height: 500px; overflow-y: auto;">
                                 <div class="flex flex-wrap gap-3 justify-content-center mt-3 mb-3">
                                     <ng-container *ngFor="let meterItem of contasMensais; let index = index">
-                                        <p-card class="w-12  shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
+                                        <p-card 
+                                            class="w-12  shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" 
+                                            [style]="{ 'background-color': 'rgba(0, 43, 92, 0.4)' }" @slideAnimation >
                                             <div class="flex justify-content-between gap-3">
                                                 <div class="flex flex-column gap-3">
                                                     <span class="text-secondary text-md w-12" style="text-align: start; ">{{ meterItem.label | uppercase }}</span>
@@ -582,7 +606,9 @@
                             <div class="w-full" style="max-height: 500px; overflow-y: auto;">
                                 <div class="flex flex-wrap justify-content-center gap-3 mt-3 mb-3">
                                     <ng-container *ngFor="let meterItem of raizMensais; let index = index">
-                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
+                                        <p-card 
+                                            class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" 
+                                            [style]="{ 'background-color': 'rgba(0, 43, 92, 0.4)' }"@slideAnimation >
                                             <div class="flex justify-content-between gap-3">
                                                 <div class="flex flex-column  gap-3">
                                                     <span class="text-secondary text-md w-12" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
@@ -624,7 +650,9 @@
                             <div class="w-12" style="max-height: 500px; overflow-y: auto;">
                                 <div class="flex flex-wrap gap-3 mb-3 mt-3 justify-content-center">
                                     <ng-container *ngFor="let meterItem of tiposAnuais; let index = index">
-                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
+                                        <p-card 
+                                            class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" 
+                                            [style]="{ 'background-color': 'rgba(0, 43, 92, 0.4)' }" @slideAnimation >
                                             <div class="flex justify-content-between gap-2">
                                                 <div class="flex flex-column gap-3">
                                                     <span class="text-secondary text-md w-12" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
@@ -652,7 +680,8 @@
                             <div class="w-full" style="max-height: 500px; overflow-y: auto;">
                                 <div class="flex flex-wrap gap-3 mb-3 mt-3 justify-content-center">
                                     <ng-container *ngFor="let meterItem of contasAnuais; let index = index">
-                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
+                                        <p-card 
+                                            class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': 'rgba(0, 43, 92, 0.4)' }" @slideAnimation >
                                             <div class="flex justify-content-between gap-2">
                                                 <div class="flex flex-column gap-3">
                                                     <span class="text-secondary text-md -w-12" style="white-space: nowrap; text-align: start;">{{ meterItem.label | uppercase }}</span>
@@ -680,7 +709,7 @@
                             <div class="w-full" style="max-height: 500px; overflow-y: auto;">
                                 <div class="flex flex-wrap justify-content-center gap-3 mb-3 mt-3">
                                     <ng-container *ngFor="let meterItem of raizAnuais; let index = index">
-                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
+                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': 'rgba(0, 43, 92, 0.4)' }" @slideAnimation >
                                             <div class="flex justify-content-between gap-3">
                                                 <div class="flex flex-column gap-3">
                                                     <span class="text-secondary text-md w-12" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
@@ -732,7 +761,7 @@
                             <div style="max-height: 500px; overflow-y: auto;">
                                 <div class="flex flex-wrap gap-3 mb-3 mt-3 justify-content-center">
                                     <ng-container *ngFor="let meterItem of tiposCusto; let index = index">
-                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
+                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': 'rgba(0, 43, 92, 0.4)' }" @slideAnimation >
                                             <div class="flex justify-content-between gap-2">
                                                 <div class="flex flex-column gap-3">
                                                     <span class="text-secondary text-md -ml-2" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
@@ -761,7 +790,7 @@
                             <div style="max-height: 500px; overflow-y: auto;">
                                 <div class="flex flex-wrap gap-3 mb-3 mt-3 justify-content-center">
                                     <ng-container *ngFor="let meterItem of ccs; let index = index">
-                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
+                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': 'rgba(0, 43, 92, 0.4)' }" @slideAnimation >
                                             <div class="flex justify-content-between gap-2">
                                                 <div class="flex flex-column gap-3">
                                                     <span class="text-secondary text-md -ml-2" style="text-align: start;">{{ meterItem.label | uppercase }}</span>
@@ -790,7 +819,7 @@
                             <div style="max-height: 500px; overflow-y: auto;">
                                 <div class="flex flex-wrap gap-3 mb-3 mt-3 justify-content-center">
                                     <ng-container *ngFor="let meterItem of gruposContabeis; let index = index">
-                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
+                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': 'rgba(0, 43, 92, 0.4)' }" @slideAnimation >
                                             <div class="flex justify-content-between gap-2">
                                                 <div class="flex flex-column gap-3">
                                                     <a (click)="grupoLancamentos(meterItem)" style="text-decoration: none; color: inherit;">    
@@ -821,7 +850,7 @@
                             <div style="max-height: 500px; overflow-y: auto;">
                                 <div class="flex flex-wrap justify-content-center gap-3 mb-3 mt-3">
                                     <ng-container *ngFor="let meterItem of contasCompletas; let index = index">
-                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': '#F8FAFC' }" @slideAnimation >
+                                        <p-card class="w-12 shadow-4 border-round-md hover:shadow-6 border-0.2 md:w-10" [style]="{ 'background-color': 'rgba(0, 43, 92, 0.4)' }" @slideAnimation >
                                             <div class="flex justify-content-between gap-2">
                                                 <div class="flex flex-column gap-3">
                                                     <a (click)="contaLancamentos(meterItem)" style="text-decoration: none; color: inherit;">

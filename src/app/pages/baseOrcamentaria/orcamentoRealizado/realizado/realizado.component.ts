@@ -32,13 +32,11 @@ import { trigger, transition, style, animate } from '@angular/animations';
 import { DrawerModule } from 'primeng/drawer';
 import { MessageModule } from 'primeng/message';
 import { AvatarModule } from 'primeng/avatar';
-import { Toast } from 'ngx-toastr';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TooltipModule } from 'primeng/tooltip';
 import { RadioButtonModule } from 'primeng/radiobutton';
-import { el } from 'date-fns/locale';
 
 export interface ResultadosTotaisArrayItem {
   label: string;
@@ -144,10 +142,13 @@ export interface FilialSga{
   selector: 'app-realizado',
   standalone: true,
   imports: [
-    DropdownModule,FloatLabelModule,DividerModule,CommonModule,FormsModule,InputNumberModule,DrawerModule,ToastModule,RadioButtonModule,
-    MeterGroupModule,CardModule,ButtonModule,InplaceModule,DialogModule,TableModule,ChartModule,MessageModule,ProgressSpinnerModule,
-    SidebarModule,TabViewModule,MultiSelectModule,KnobModule,NzProgressModule,NzMenuModule,RouterLink,AvatarModule,TooltipModule
-  ],
+    DropdownModule, FloatLabelModule, DividerModule,
+    CommonModule, FormsModule, InputNumberModule, DrawerModule, ToastModule, RadioButtonModule,
+    MeterGroupModule, CardModule, ButtonModule, InplaceModule, DialogModule, TableModule,
+    ChartModule, MessageModule, ProgressSpinnerModule, CardModule,
+    SidebarModule, TabViewModule, MultiSelectModule, KnobModule, NzProgressModule,
+    NzMenuModule, RouterLink, AvatarModule, TooltipModule
+],
   animations: [
       trigger('slideAnimation', [
         transition(':enter', [
@@ -345,19 +346,9 @@ export class RealizadoComponent implements OnInit {
                     ])
                 ).values()
             );
-            console.log('Meus Ccs:', this.meusCcs); // Log para verificar a resposta
 
             this.centrosCusto = this.meusCcs.map((cc: { codigo: any; }) => cc.codigo);
-            console.log('Centros Custo Para Calcular:', this.centrosCusto); // Log para verificar centros de custo
-            
-            //this.selectedCcPai = this.meusCcs.map((cc: { cc_pai_detalhes: { id: any; }; }) => cc.cc_pai_detalhes.id);
-            //console.log('Selected Cc Pai:', this.selectedCcPai); // Log para verificar selectedCcPai
-
-            //this.onCcPaiSelecionado(this.selectedCcPai);
-
             const filialId = this.meusCcs[0].cc_pai_detalhes.filial_detalhes.id;
-            console.log('Filial ID:', filialId); // Log para verificar filialId
-
             // Mapeamento dos valores
             const filialMap = {
                 4: 0,
@@ -368,15 +359,11 @@ export class RealizadoComponent implements OnInit {
 
             // Converte o valor usando o mapeamento
             const mappedFilialId = filialMap[filialId as keyof typeof filialMap] !== undefined ? filialMap[filialId as keyof typeof filialMap] : filialId;
-            console.log('Mapped Filial ID:', mappedFilialId); // Log para verificar mappedFilialId
-
             this.selectedsFiliais = [mappedFilialId];
-            console.log('Selecteds Filiais:', this.selectedsFiliais); // Log para verificar selectedsFiliais
-
+        
             if (this.selectedsFiliais.length > 0) {
                 //this.calculosOrcamentosRealizados();
                 this.onFiliaisInformada(this.selectedsFiliais);
-                console.log('Fil', this.selectedsFiliais);
             } else {
                 console.error('A lista de filiais está vazia ou contém apenas valores inválidos.');
             }
@@ -400,7 +387,7 @@ export class RealizadoComponent implements OnInit {
     this.ccs = [];
     this.gruposContabeis = [];
     this.contasCompletas = [];
-    console.log('Dados de realizado limpos.');
+
   }
   limparDadosDetalhes(): void {
     this.dictRealizadoContasAnaliticas = null;
@@ -424,13 +411,11 @@ export class RealizadoComponent implements OnInit {
     this.tiposAnuais = [];
     this.raizMensais = [];
     this.raizAnuais = [];
-    console.log('Dados de orçado limpos.');
   }
 
   
   modalDetalhes(meterItem:any) {
     this.modalVisible = true;
-    console.log('Index:', meterItem);
     const mes = meterItem.num;
     if (this.selectedCcPai !== null) {
       this.orcamentoBaseService.getOrcamentoBaseByCcPai(this.selectedCcPai, this.selectedAno, this.periodo, this.selectedCodManagers).subscribe(
@@ -465,7 +450,6 @@ export class RealizadoComponent implements OnInit {
   
   onCcPaiSelecionado(ccPaiId: any[]): void {
     if (ccPaiId.length <= 1) {
-      console.log('Centro de Custo Pai selecionado ID:', ccPaiId); // Log para depuração
       this.selectedCcPai = ccPaiId; // Atualiza a variável
      // this.orcamentosBaseByCcpai(); // Chama a API com o ID
       //this.ccPaiDetalhes(); 
@@ -510,7 +494,6 @@ export class RealizadoComponent implements OnInit {
           this.dictAnualOrcadoContasAnaliticas = response.raiz_por_ano;
 
           this.teste2 = response.total;
-
           
           this.totalOrcado = Number(response.total_real);
           
@@ -522,23 +505,23 @@ export class RealizadoComponent implements OnInit {
           ];
           
           this.resultadosMensais = [
-            { label: 'Janeiro',num: 1, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[1], icon:'pi pi-money-bill' },
-            { label: 'Fevereiro', num: 2, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[2], icon:'pi pi-money-bill' },
-            { label: 'Março', num: 3, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[3], icon:'pi pi-money-bill' },
-            { label: 'Abril', num: 4, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[4], icon:'pi pi-money-bill' },
-            { label: 'Maio', num: 5, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[5], icon:'pi pi-money-bill' },
-            { label: 'Junho', num: 6, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[6], icon:'pi pi-money-bill' },
-            { label: 'Julho', num: 7, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[7], icon:'pi pi-money-bill' },
-            { label: 'Agosto', num: 8, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[8], icon:'pi pi-money-bill' },
-            { label: 'Setembro', num: 9, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[9], icon:'pi pi-money-bill' },
-            { label: 'Outubro', num: 10, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[10], icon:'pi pi-money-bill' },
-            { label: 'Novembro', num: 11, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[11], icon:'pi pi-money-bill' },
-            { label: 'Dezembro', num: 12, color1: '#4972B0', color2: '#fbbf24', value: response.mensal_por_mes[12], icon:'pi pi-money-bill' },
+            { label: 'Janeiro',num: 1, color1: '#1b91ff', color2: '#fbbf24', value: response.mensal_por_mes[1], icon:'pi pi-money-bill' },
+            { label: 'Fevereiro', num: 2, color1: '#1b91ff', color2: '#fbbf24', value: response.mensal_por_mes[2], icon:'pi pi-money-bill' },
+            { label: 'Março', num: 3, color1: '#1b91ff', color2: '#fbbf24', value: response.mensal_por_mes[3], icon:'pi pi-money-bill' },
+            { label: 'Abril', num: 4, color1: '#1b91ff', color2: '#fbbf24', value: response.mensal_por_mes[4], icon:'pi pi-money-bill' },
+            { label: 'Maio', num: 5, color1: '#1b91ff', color2: '#fbbf24', value: response.mensal_por_mes[5], icon:'pi pi-money-bill' },
+            { label: 'Junho', num: 6, color1: '#1b91ff', color2: '#fbbf24', value: response.mensal_por_mes[6], icon:'pi pi-money-bill' },
+            { label: 'Julho', num: 7, color1: '#1b91ff', color2: '#fbbf24', value: response.mensal_por_mes[7], icon:'pi pi-money-bill' },
+            { label: 'Agosto', num: 8, color1: '#1b91ff', color2: '#fbbf24', value: response.mensal_por_mes[8], icon:'pi pi-money-bill' },
+            { label: 'Setembro', num: 9, color1: '#1b91ff', color2: '#fbbf24', value: response.mensal_por_mes[9], icon:'pi pi-money-bill' },
+            { label: 'Outubro', num: 10, color1: '#1b91ff', color2: '#fbbf24', value: response.mensal_por_mes[10], icon:'pi pi-money-bill' },
+            { label: 'Novembro', num: 11, color1: '#1b91ff', color2: '#fbbf24', value: response.mensal_por_mes[11], icon:'pi pi-money-bill' },
+            { label: 'Dezembro', num: 12, color1: '#1b91ff', color2: '#fbbf24', value: response.mensal_por_mes[12], icon:'pi pi-money-bill' },
           ];
 
           this.contasMensais = Object.keys(response.conta_por_mes).map((key) => ({
             label: key,
-            color1: '#7F94B5',
+            color1: '#1b91ff',
             color2: '#fbbf24',
             value: response.conta_por_mes[key],
             icon: 'pi pi-chart-bar',
@@ -547,7 +530,7 @@ export class RealizadoComponent implements OnInit {
           this.dictAnualOrcadoTiposCusto = response.conta_por_ano;
           this.contasAnuais = Object.keys(response.conta_por_ano).map((key) => ({
             label: key,
-            color1: '#7F94B5',
+            color1: '#1b91ff',
             color2: '#fbbf24',
             value: response.conta_por_ano[key],
             icon: 'pi pi-chart-bar',
@@ -556,7 +539,7 @@ export class RealizadoComponent implements OnInit {
           this.dictOrcadoGrupoContas2 = response.tipo_por_grupo_mes;
           this.tiposMensais = Object.keys(response.tipo_por_grupo_mes).map((key) => ({
             label: key,
-            color1: '#002B5C',
+            color1: '#1b91ff',
             color2: '#fbbf24',
             value: response.tipo_por_grupo_mes[key],
             icon: 'pi pi-chart-bar',
@@ -565,7 +548,7 @@ export class RealizadoComponent implements OnInit {
           this.dictAnualOrcadoTiposCusto = response.tipo_por_ano;
           this.tiposAnuais = Object.keys(response.tipo_por_ano).map((key) => ({
             label: key,
-            color1: '#002B5C',
+            color1: '#1b91ff',
             color2: '#fbbf24',
             value: response.tipo_por_ano[key],
             icon: 'pi pi-chart-bar',
@@ -573,7 +556,7 @@ export class RealizadoComponent implements OnInit {
 
           this.raizMensais = Object.keys(response.raiz_por_mes).map((key) => ({
             label: key,
-            color1: '#4972B0',
+            color1: '#1b91ff',
             color2: '#fbbf24',
             value: response.raiz_por_mes[key],
             icon: 'pi pi-chart-bar',
@@ -581,7 +564,7 @@ export class RealizadoComponent implements OnInit {
 
           this.raizAnuais = Object.keys(response.raiz_por_ano).map((key) => ({
             label: key,
-            color1: '#4972B0',
+            color1: '#1b91ff',
             color2: '#fbbf24',
             value: response.raiz_por_ano[key],
             icon: 'pi pi-chart-bar',
@@ -597,13 +580,10 @@ export class RealizadoComponent implements OnInit {
   carregarCcs(ccPaiId: any): void{
     this.centroCustoService.getCentroCustoByCcPai(ccPaiId).subscribe(
       centrosCusto =>{
-        console.log('Centros de Custo Originais:', centrosCusto);
         this.centrosCusto = centrosCusto.map((centroCusto: any)=>centroCusto.codigo);
         this.detalhes = centrosCusto[0];
         this.gestorImagem = centrosCusto[0].gestor_detalhes.image;
-        //this.calculosOrcamentosRealizados();
-        console.log('Ccs',this.centrosCusto);
-        console.log('Imagem:', this.gestorImagem);
+
       }, error =>{
         console.error('Não rolou',error)
       }
@@ -730,13 +710,13 @@ calculosOrcamentosRealizados(): Promise<void> {
           this.totalRealizado = Number(response.total_real);
 
           this.resultadosTotaisRealizado = [
-            { label: 'Realizado Total', num: 1, color1: '#004EAE', color2: '#fbbf24', value: response.total_realizado, icon: 'pi pi-wallet' },
+            { label: 'Realizado Total', num: 1, color1: '#1b91ff', color2: '#fbbf24', value: response.total_realizado, icon: 'pi pi-wallet' },
           ];
 
           this.dictRealizadoTipoCusto = response.total_tipo_deb;
           this.tiposCusto = Object.keys(response.total_tipo_deb).map((key) => ({
             label: key,
-            color1: '#002B5C',
+            color1: '#1b91ff',
             color2: '#fbbf24',
             value: response.total_tipo_deb[key],
             icon: 'pi pi-chart-bar',
@@ -745,7 +725,7 @@ calculosOrcamentosRealizados(): Promise<void> {
           this.dictRealizadoCentroCusto = response.df_agrupado;
           this.ccs = Object.keys(response.df_agrupado).map((key) => ({
             label: key,
-            color1: '#4972B0',
+            color1: '#1b91ff',
             color2: '#fbbf24',
             value: response.df_agrupado[key],
             icon: 'pi pi-chart-bar',
@@ -754,7 +734,7 @@ calculosOrcamentosRealizados(): Promise<void> {
           this.dictRealizadoGruposContabeis = response.total_grupo_com_nomes;
           this.gruposContabeis = Object.keys(response.total_grupo_com_nomes).map((key) => ({
             label: key,
-            color1: '#7F94B5',
+            color1: '#1b91ff',
             color2: '#fbbf24',
             value: response.total_grupo_com_nomes[key],
             icon: 'pi pi-chart-bar',
@@ -765,7 +745,7 @@ calculosOrcamentosRealizados(): Promise<void> {
           this.dictRealizadoContasAnaliticas = response.conta_completa_nomes;
           this.contasCompletas = Object.keys(response.conta_completa_nomes).map((key) => ({
             label: key,
-            color1: '#004598',
+            color1: '#1b91ff',
             color2: '#fbbf24',
             value: response.conta_completa_nomes[key],
             icon: 'pi pi-chart-bar',
@@ -802,7 +782,6 @@ calculosOrcamentosRealizados(): Promise<void> {
   grupoLancamentos(meterItem: any) {
     this.isLoading = true;
     this.modalVisible4 = true;
-    console.log('Index:', meterItem);
     const indice = meterItem.label;
     if (this.selectedCcPai !== null) {
       this.orcamentoBaseService.calcularOrcamentoRealizado(this.centrosCusto,this.periodo, this.selectedAno, this.selectedsFiliais).subscribe(
@@ -819,7 +798,6 @@ calculosOrcamentosRealizados(): Promise<void> {
   contaLancamentos(meterItem: any) {
     this.isLoading = true;
     this.modalVisible5 = true;
-    console.log('Index:', meterItem);
     const indice = meterItem.label;
     if (this.selectedCcPai !== null) {
       this.orcamentoBaseService.calcularOrcamentoRealizado(this.centrosCusto,this.periodo, this.selectedAno, this.selectedsFiliais).subscribe(
@@ -936,10 +914,6 @@ calcularSaldo() {
 
   this.percent = Number(orcado)
   this.percent = Number(Number(orcado).toFixed(0));
-  console.log('percent:', this.percent);
-  // Exibe o saldo formatado (apenas para visualização, mantém o original como número)
-  console.log('Saldo formatado:', saldoFormatado);
-
 
   // Salva o saldo original para uso no nz-progress
   this.saldo = saldoFormatado;
@@ -991,7 +965,6 @@ async executarCalculos(): Promise<void> {
     this.selectedCodManagers = 'F08 - UP ATM';
     this.selectedsFiliais = [3];
   }
-  console.log('selectedCcPai:', this.selectedCcPai);
   try {
 
    // await this.calcsGestor();

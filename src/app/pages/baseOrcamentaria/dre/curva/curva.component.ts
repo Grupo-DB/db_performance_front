@@ -16,13 +16,14 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { RadioButtonModule } from 'primeng/radiobutton';
+import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'app-curva',
   imports: [ 
     DividerModule,CommonModule,NzMenuModule,RouterLink,DividerModule,ToastModule,
     FloatLabelModule,MultiSelectModule,InputNumberModule,ProgressSpinnerModule,
-    FormsModule,RadioButtonModule
+    FormsModule,RadioButtonModule,CardModule
 
    ],
   animations: [
@@ -101,18 +102,14 @@ export class CurvaComponent implements OnInit {
   }
   onFiliaisInformada(selectedCods: any[]): void{
     const selectedFiliais = this.filiaisSga.filter(filial => selectedCods.includes(filial.cod));
-    console.log('Selected Filiais:', selectedFiliais);
     this.selectedCodManagers = selectedFiliais.map(filial => filial.codManager).join(',');
-    console.log('Selected Filiais:', this.selectedCodManagers);
   }
 
   calcularOrcado(): void {
     this.curvaService.getGarficoOrcamento(this.ano,this.periodo,this.selectedCodManagers).subscribe(
       (response) => {
         this.orcadosResultadosCcsPai = response.total_por_cc_pai;
-        console.log('Dados do orcadosResultadosCcsPai:', this.orcadosResultadosCcsPai);
         this.orcadosResultadosGruposItens = response.total_por_grupo_itens;
-        console.log('Dados do orcadosResultadosGruposItens:', this.orcadosResultadosGruposItens);
       },
       (error) => {
         console.error('Erro ao obter os dados do gráfico:', error);
@@ -124,9 +121,7 @@ export class CurvaComponent implements OnInit {
     this.curvaService.calcularRealizado(this.ano,this.periodo,this.selectedsFiliais).subscribe(
       (response) => {
         this.realizadosResultadosCcsPai = response.agrupado_por_pai;
-        console.log('Dados do CCS rEALIZADOS', this.realizadosResultadosCcsPai);
         this.realizadosResultadosGruposItens = response.dicionario_soma_nomes;
-        console.log('Dados do realizadosResultadosGruposItens:', this.realizadosResultadosGruposItens);
       },
       (error) => {
         console.error('Erro ao obter os dados do gráfico:', error);
@@ -161,9 +156,6 @@ export class CurvaComponent implements OnInit {
         this.orcadosResultadosCcsPai = orcado.total_por_cc_pai;
         this.realizadosResultadosCcsPai = realizado.agrupado_por_pai;
   
-        console.log('Dados do Orçado:', this.orcadosResultadosCcsPai);
-        console.log('Dados do Realizado:', this.realizadosResultadosCcsPai);
-  
         // Atualiza o gráfico somente após obter os resultados
         this.atualizarGraficoOrcadoRealizado(this.orcadosResultadosCcsPai, this.realizadosResultadosCcsPai);
         this.loading = false;
@@ -184,10 +176,7 @@ export class CurvaComponent implements OnInit {
         // Define os resultados após as chamadas serem concluídas
         this.orcadosResultadosGruposItens = orcado.total_por_grupo_itens;
         this.realizadosResultadosGruposItens = realizado.dicionario_soma_nomes;
-  
-        console.log('Dados do Orçado:', this.orcadosResultadosGruposItens);
-        console.log('Dados do Realizado:', this.realizadosResultadosGruposItens);
-  
+    
         // Atualiza o gráfico somente após obter os resultados
         this.atualizarGraficoOrcadoRealizadoGp(this.orcadosResultadosGruposItens, this.realizadosResultadosGruposItens);
         this.loading = false;
@@ -285,7 +274,7 @@ atualizarGraficoOrcadoRealizado(valorOrcado: any, valorRealizado: any): void {
           stacked: false,
           ticks: {
             callback: (value: any) => Math.abs(value).toLocaleString('pt-BR'),
-            color: '#4972B0',
+            color: '#ffffff',
             font: {
               weight: 'bold',
             },
@@ -306,6 +295,12 @@ atualizarGraficoOrcadoRealizado(valorOrcado: any, valorRealizado: any): void {
       plugins: {
         legend: {
           position: 'top',
+          labels: {
+            color: '#ffffff',
+            font: {
+              weight: 'bold',
+            },
+          }
         },
         tooltip: {
           callbacks: {

@@ -28,6 +28,7 @@ import { CentroCusto } from '../../orcamentoBase/centrocusto/centrocusto.compone
 import { CentrocustoService } from '../../../../services/baseOrcamentariaServices/orcamento/CentroCusto/centrocusto.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { Popover, PopoverModule } from 'primeng/popover';
+import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'app-indicadorescp',
@@ -37,7 +38,7 @@ import { Popover, PopoverModule } from 'primeng/popover';
     DropdownModule,InputTextModule,TableModule,DialogModule,ButtonModule,
     MessagesModule,InputNumberModule,SelectModule,MultiSelectModule,ProgressSpinnerModule,
     ConfirmDialogModule,ToastModule,FloatLabelModule,InputNumberModule,InplaceModule,
-    TreeTableModule,FloatLabelModule,PopoverModule
+    TreeTableModule,FloatLabelModule,PopoverModule,CardModule
   ],
   providers: [
     MessageService,ConfirmationService,

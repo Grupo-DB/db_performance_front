@@ -2,6 +2,12 @@
 .container{
     max-width: 100%;
 }
+.containerInterno{
+    background-color: #ffffff;
+    border: 10px solid #ffffff;
+    border-radius: 20px;
+    padding: 10px;
+}
 .titulo{
    font-size: 22px;
 }
@@ -127,11 +133,14 @@
     }
 }
 .tabela{
+    background-color: #3B3E44;
+    color: #ffffff;
     border-radius: 10px;
     width: 100%;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
     th{
         font-size: 14px;
+        background-color: #3B3E44 !important;
+        color: white !important;
     }
     td{
         font-size:12px ;
@@ -146,14 +155,6 @@
     span{
         margin-left: 10%;
     }
-}
-
-.tabela{
-    border-radius: 10px;
-    margin: auto;
-    margin-top: 10%;
-    width: 99%;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 }
 
 .td-acao{
@@ -279,7 +280,7 @@ tr {
   .grafico1{
     margin-top: 5%;
     height: 450px;
-    background: linear-gradient(to top, #7A91A8, #BCC6D3, #E5EAEE, #F8FAFC, #ffffff);
+    //background: linear-gradient(to top, #7A91A8, #BCC6D3, #E5EAEE, #F8FAFC, #ffffff);
     
   }
   .grafico2{
@@ -314,7 +315,8 @@ tr {
     margin: auto;
     width: 100%;
     height: 100%;
-    background-color: #f2f1f0;
+    background-color: #1a1b1b;
+    color: #ffffff;
 }
 .editGeral{
     width: 100%;
@@ -347,11 +349,11 @@ tr {
 }
 
 .form-geral{
-    width: 95%;
+    width: 98%;
     margin-left: auto;
     margin-right: auto;
     border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    //box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
     .fg1{
         width: 100%;
         background-color: transparent;        
@@ -390,4 +392,103 @@ tr {
             
         }
     }
-}   
+} 
+
+.card{
+    border-radius: 10px;
+    .header{
+        background-color: #3B3E44;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        h2{
+            color: #ffffff;
+            font-weight: 700;
+            margin-top: 16px;
+        }
+        display: flex;
+        align-items: center;
+        font-size: 18px;
+        color: #F8F9FA;
+        margin-bottom: 1rem;
+        font-weight: 500;
+        &::before {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 0.75rem;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+            flex-shrink: 0;
+            font-family: 'primeicons';
+            margin-left: 16px;
+        }
+        
+        // Ícone para Informações Gerais
+        &.titulo-info::before {
+            content: '\e95d'; // pi-tags
+        }
+        }
+    }
+
+.btnFiltros{
+    background-color: #103561;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    cursor: pointer; 
+    border-radius: 4px; 
+    color: #ffffff; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    font-size: 16px;
+    transition: background-color 0.2s, border-color 0.2s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    :hover {
+        background-color: #4a0d2f;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
+    }
+}
+.btn-base {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s, border-color 0.2s;
+    color: #FFFFFF; 
+    border: none;
+}
+
+.btn-calcular {
+   background-color: rgba(43, 63, 235, 0.2);
+}
+.btn-calcular:hover {
+   background-color: rgba(43, 63, 235, 0.3);
+}
+
+.btn-limpar {
+    background-color: rgba(125, 227, 245, 0.3);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.btn-limpar:hover {
+    background-color: #6497B1; 
+}
+
+.card-perfil {
+    background-color: #1F262C; 
+    border: 1px solid #345697;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    color: #CED4DA; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+

@@ -55,111 +55,116 @@
     </ul>
 </div>
 
-<div class="titulo mt-6 mb-6">
-    <p-divider align="left" type="solid">
-        <b>Curva ABC</b>
-    </p-divider>
-</div>
 <p-toast></p-toast>
-<div class="container">
-    <div class="form-geral">
-        <div class="flex flex-column lg:flex-row"@swipeAnimation>
-            <div class="fg1 flex flex-column w-12 align-items-center lg:w-6 lg:mt-5">
-                <div class="form2 w-10" *ngIf="hasGroup(['OrcamentoGestor','Admin'])">
-                    <p-floatlabel variant="on"> 
-                        <p-multiSelect
-                            variant="filled"
-                            id="ccPai" 
-                            [style]="{'width':'100%'}"
-                            [options]="filiaisSga" 
-                            [(ngModel)]="selectedsFiliais"
-                            optionValue="cod"
-                            appendTo="body"
-                            optionLabel="nome"
-                            [filter]="true" 
-                            filterBy="nome"
-                            inputId="float-label" 
-                            (onChange)="onFiliaisInformada($event.value)"
-                        >
-                        </p-multiSelect>
-                        <label for="float-label">Selecione as Filiais</label>
-                    </p-floatlabel>
-                </div>
-                <div class="form2 w-10" *ngIf="hasGroup(['OrcamentoGestor','Admin'])">
-                    <p-floatLabel variant="on">    
-                        <p-multiSelect
-                            variant="filled"
-                            [style]="{'width':'100%'}"
-                            [options]="meses"
-                            optionLabel="value"
-                            optionValue="key"
-                            inputId="float-label"
-                            appendTo="body"
-                            [(ngModel)]="periodo"
-                        >
-                        </p-multiSelect>
-                        <label for="float-label">Selecione os Meses</label>
-                    </p-floatLabel>
-                </div>
-            </div>
-            <div class="fg1 flex flex-column w-12 align-items-center lg:w-6 lg:mt-5">
-                <div class="form2 w-10 text-left">
-                    <p-floatlabel variant="on">
-                        <p-inputnumber
-                            fluid="true" 
-                            variant="filled"
-                            mode="decimal"
-                            [(ngModel)]="selectedAno"
-                            [showButtons]="true" 
-                            [min]="2024" 
-                            [max]="2999"
-                            [useGrouping]="false" 
-                            
-                        />
-                        <label>Ano Vigente</label>
-                    </p-floatlabel>
-                </div>     
-                <p-toast></p-toast>
-                <div class="form2 flex flex-wrap gap-4 ">
-                    <div class="flex items-center">
-                        <p-radiobutton name="pizza" value="Centros de Custo Pai" [(ngModel)]="tipoGrafico" inputId="ingredient1" />
-                        <label for="ingredient1" class="ml-2">Centros de Custo Pai</label>
+<div class="container flex flex-column align-items-center mb-4">
+    <div class="containerInterno w-12">
+        <div @swipeAnimation>
+            <p-card class="card w-12 text-center">
+                <ng-template #header>
+                    <div class="header titulo-info w-full text-center">
+                        <h2>Acompanhamento do Orçamento</h2>
                     </div>
-            
-                    <div class="flex items-center">
-                        <p-radiobutton name="pizza" value="Grupos de Itens" [(ngModel)]="tipoGrafico"  inputId="ingredient2" />
-                        <label for="ingredient2" class="ml-2">Grupos de Itens</label>
+                </ng-template>
+                <div class="form-geral">
+                    <div class="flex flex-column lg:flex-row"@swipeAnimation>
+                        <div class="fg1 flex flex-column w-12 align-items-center lg:w-6 lg:mt-5">
+                            <div class="form2 w-10" *ngIf="hasGroup(['OrcamentoGestor','Admin'])">
+                                <p-floatlabel variant="on"> 
+                                    <p-multiSelect
+                                        variant="filled"
+                                        id="ccPai" 
+                                        [style]="{'width':'100%'}"
+                                        [options]="filiaisSga" 
+                                        [(ngModel)]="selectedsFiliais"
+                                        optionValue="cod"
+                                        appendTo="body"
+                                        optionLabel="nome"
+                                        [filter]="true" 
+                                        filterBy="nome"
+                                        inputId="float-label" 
+                                        (onChange)="onFiliaisInformada($event.value)"
+                                    >
+                                    </p-multiSelect>
+                                    <label for="float-label">Selecione as Filiais</label>
+                                </p-floatlabel>
+                            </div>
+                            <div class="form2 w-10" *ngIf="hasGroup(['OrcamentoGestor','Admin'])">
+                                <p-floatLabel variant="on">    
+                                    <p-multiSelect
+                                        variant="filled"
+                                        [style]="{'width':'100%'}"
+                                        [options]="meses"
+                                        optionLabel="value"
+                                        optionValue="key"
+                                        inputId="float-label"
+                                        appendTo="body"
+                                        [(ngModel)]="periodo"
+                                    >
+                                    </p-multiSelect>
+                                    <label for="float-label">Selecione os Meses</label>
+                                </p-floatLabel>
+                            </div>
+                        </div>
+                        <div class="fg1 flex flex-column w-12 align-items-center lg:w-6 lg:mt-5">
+                            <div class="form2 w-10 text-left">
+                                <p-floatlabel variant="on">
+                                    <p-inputnumber
+                                        fluid="true" 
+                                        variant="filled"
+                                        mode="decimal"
+                                        [(ngModel)]="selectedAno"
+                                        [showButtons]="true" 
+                                        [min]="2024" 
+                                        [max]="2999"
+                                        [useGrouping]="false" 
+                                        
+                                    />
+                                    <label>Ano Vigente</label>
+                                </p-floatlabel>
+                            </div>     
+                            <p-toast></p-toast>
+                            <div class="form2 flex flex-wrap gap-4 ">
+                                <div class="flex items-center">
+                                    <p-radiobutton name="pizza" value="Centros de Custo Pai" [(ngModel)]="tipoGrafico" inputId="ingredient1" />
+                                    <label for="ingredient1" class="ml-2">Centros de Custo Pai</label>
+                                </div>
+                        
+                                <div class="flex items-center">
+                                    <p-radiobutton name="pizza" value="Grupos de Itens" [(ngModel)]="tipoGrafico"  inputId="ingredient2" />
+                                    <label for="ingredient2" class="ml-2">Grupos de Itens</label>
+                                </div>
+                            </div>
+                        </div>    
+                    </div>
+                    <div class="flex justify-content-center mt-3">
+                        <div 
+                            class="form2 w-10  h-3rem"
+                            style="background-color: #002B5C; cursor: pointer; border-radius: 4px; color: #ffffff; display: flex; justify-content: center; align-items: center;font-size: 16px;"
+                            (click)="calcularGrafico()"
+                        >
+                            Calcular
+                        </div>
+                    </div> 
+                    <div *ngIf="loading" class="loading-animation flex flex-column form2 w-5 justify-content-center m-auto">
+                        <!-- Coloque aqui a sua animação de carregamento -->
+                        <img src="assets/imagens/startmanager2.gif" alt="Loading..." class="w-12">
+                    </div>      
+                    <div *ngIf="exibirGraficoCc" class="w-full align-items-center  mb-6 flex flex-column gap-5 lg:flex-row">           
+                        <div class="grafico1 w-12">
+                            <canvas id="graficoOrcadoRealizado"></canvas>
+                        </div>
+                    </div>
+                    <div *ngIf="exibirGraficoGp" class="w-full align-items-center  mb-6 flex flex-column gap-5 lg:flex-row">           
+                        <div class="grafico2 w-12">
+                            <canvas id="graficoOrcadoRealizado"></canvas>
+                        </div>
                     </div>
                 </div>
-            </div>    
-        </div>
-        <div class="flex justify-content-center mt-3">
-            <div 
-                class="form2 w-10  h-3rem"
-                style="background-color: #002B5C; cursor: pointer; border-radius: 4px; color: #ffffff; display: flex; justify-content: center; align-items: center;font-size: 16px;"
-                (click)="calcularGrafico()"
-            >
-                Calcular
-            </div>
-        </div> 
-        <div *ngIf="loading" class="loading-animation flex flex-column form2 w-5 justify-content-center m-auto">
-            <!-- Coloque aqui a sua animação de carregamento -->
-            <img src="assets/imagens/startmanager2.gif" alt="Loading..." class="w-12">
-        </div>      
-        <div *ngIf="exibirGraficoCc" class="w-full align-items-center  mb-6 flex flex-column gap-5 lg:flex-row">           
-            <div class="grafico1 w-12">
-                <canvas id="graficoOrcadoRealizado"></canvas>
-            </div>
-        </div>
-        <div *ngIf="exibirGraficoGp" class="w-full align-items-center  mb-6 flex flex-column gap-5 lg:flex-row">           
-            <div class="grafico2 w-12">
-                <canvas id="graficoOrcadoRealizado"></canvas>
-            </div>
+            </p-card>
         </div>
     </div>
-
+<div>
     <!-- <p (click)="montarGrafico()">curva works!</p> -->
 
 
     
-</div>

@@ -25,6 +25,7 @@ import { SelectModule } from 'primeng/select';
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
 import { DrawerModule } from 'primeng/drawer';
+import { TooltipModule } from 'primeng/tooltip';
 
 
 interface RegisterGrupoItensForm{
@@ -47,7 +48,8 @@ export interface GrupoItens{
   imports: [
     CommonModule,RouterLink,DividerModule,NzMenuModule,InputGroupModule,InputGroupAddonModule,
     DropdownModule,FormsModule,ReactiveFormsModule,InputTextModule,TableModule,DialogModule,
-    ConfirmDialogModule,ToastModule,ButtonModule,FloatLabelModule,SelectModule,IconFieldModule,InputIconModule, CardModule, InplaceModule, DrawerModule
+    ConfirmDialogModule,ToastModule,ButtonModule,FloatLabelModule,SelectModule,IconFieldModule,
+    InputIconModule, CardModule, InplaceModule, DrawerModule, TooltipModule
   ],
   providers: [
     MessageService,ConfirmationService

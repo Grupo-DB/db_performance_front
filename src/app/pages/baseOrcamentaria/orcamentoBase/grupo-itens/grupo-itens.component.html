@@ -56,35 +56,22 @@
 </div>
 
 <div class="container flex flex-column align-items-center mb-4">
-
-    <div class="titulo mt-2 mb-0 w-12 text-2xl">
-        <p-divider align="left" type="solid">
-            <b>Cadastro de Grupo de Itens</b>
-        </p-divider>
-    </div>
-
     <div class="containerInterno w-12">
-
-
-        <div class="background-form" @swipeAnimation>
-
+        <div @swipeAnimation>
             <form
                 [formGroup]="registerForm" 
                 title="Cadastrar novo Grupo de Itens"
                 class="flex flex-column gap-4" 
             >
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-
                     <div class="fg1 flex flex-column w-12 align-items-center">
-
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
-                                <div class="header w-full text-center">
-                                    <h2>Inserir Novo</h2>
+                                <div class="header titulo-info w-full text-center">
+                                    <h2>Grupo de Itens</h2>
                                 </div>
                             </ng-template>
-                            <div class="flex flex-column w-12 gap-3">
-
+                            <div class="bloco flex flex-column w-12 gap-3">
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                          <p-iconfield>
@@ -142,13 +129,15 @@
                                 <p-button 
                                     (onClick)="clearForm()" 
                                     label="Limpar"
-                                    iconPos="right"  
+                                    iconPos="right"
+                                    icon="pi pi-eraser"
+                                    severity="info"  
                                     tooltipPosition="top"
                                     pTooltip="Limpar"
                                 />
                                 <p-button 
                                     (onClick)="submit()" 
-                                    label="Salvar Grupo de Itens" 
+                                    label="Salvar" 
                                     severity="success"
                                     icon="pi pi-check" 
                                     iconPos="right" 
@@ -160,9 +149,7 @@
                     </div>    
                 </div>
             </form>
-
         </div>
-
         <div class="background-form mt-4 w-12" @swipeAnimation>
             <div class="tabela text-left w-12">
                 <p-toast />
@@ -172,6 +159,7 @@
                         <p-button 
                             label="Grupos de Itens" 
                             tooltipPosition="top"
+                            severity="info"
                             pTooltip="Exibir Grupos de Itens"      
                         >
                             <div class="inline-flex align-items-center">
@@ -214,13 +202,13 @@
                             </ng-template>
                             <ng-template pTemplate="header">
                                 <tr>
-                                    <th style="width:10%" type="text" field="codigo" display="menu">
+                                    <th style="width:10%; text-align: center;" type="text" field="codigo" display="menu">
                                         Codigo
                                     </th>
-                                    <th style="width:50%" type="text" field="nome" display="menu">
+                                    <th style="width:50%; text-align: center;" type="text" field="nome" display="menu">
                                         Nome Completo
                                     </th>
-                                    <th style="width:50%" type="text" field="gestorNome" display="menu">
+                                    <th style="width:50%; text-align: center;" type="text" field="gestorNome" display="menu">
                                         Gestor
                                     </th>
                                     <th style="width:25%;text-align: center;">Ações</th>
@@ -232,20 +220,23 @@
                                     <td style="text-align: center;">{{ grupoItens.nome_completo }}</td>
                                     <td style="text-align: center;">{{ grupoItens.gestor_detalhes.nome }}</td>
                                     <td style="text-align: center;">
-                                        <div style="display: flex; justify-content: center;">
+                                        <div class="flex justify-content-center gap-2">
                                             <p-button
-                                                label = "Editar"
-                                                class="ml-1"
+                                                icon="pi pi-file-edit" 
+                                                severity="info" 
+                                                size="small" 
+                                                [raised]="true"
+                                                pTooltip="Editar" 
                                                 tooltipPosition="top"
-                                                pTooltip="Editar"
                                                 (onClick)="abrirModalEdicao(grupoItens)"
                                             ></p-button>
                                             <p-button 
-                                                label = "Excluir"
-                                                severity="danger"
-                                                class="ml-2"
+                                                icon="pi pi-trash" 
+                                                severity="danger" 
+                                                size="small" 
+                                                [raised]="true"
+                                                pTooltip="Excluir" 
                                                 tooltipPosition="top"
-                                                pTooltip="Excluir"
                                                 (onClick)="excluirGrupoItens(grupoItens.id)"
                                             ></p-button>
                                         </div>
@@ -264,9 +255,7 @@
                 </p-inplace>
             </div>
         </div>
-
-    </div>
-    
+    </div> 
 </div>
 
 <p-drawer
@@ -275,23 +264,19 @@
     [style]="{ width: '60vw' }"
     styleClass="w-full md:w-12 lg:w-4"
 >
-
-    <div class="containerInterno w-12">
         <div class="background-form">
             <form
                 [formGroup]="editForm" title="Editar Grupo de Itens" class="flex flex-column gap-4" 
             >
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                     <div class="fg1 flex flex-column w-12 align-items-center">
-
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
-                                <div class="header w-full text-center">
+                                <div class="header titulo-info w-full text-center">
                                     <b>Editar Grupo de Itens</b>
                                 </div>
                             </ng-template>
-                            <div class="flex flex-column w-12 gap-3">
-
+                            <div class="bloco flex flex-column w-12 gap-3">
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
@@ -353,6 +338,8 @@
                                     iconPos="right"  
                                     tooltipPosition="top"
                                     pTooltip="Limpar"
+                                    icon="pi pi-eraser"
+                                    severity="info"
                                 />
                                 <p-button 
                                     (onClick)="saveEdit()" 
@@ -369,6 +356,4 @@
                 </div>
             </form>
         </div>
-    </div>
-  
 </p-drawer>
