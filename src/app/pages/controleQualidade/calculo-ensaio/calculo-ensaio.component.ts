@@ -27,8 +27,6 @@ import { EnsaioService } from '../../../services/controleQualidade/ensaio.servic
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { AutoComplete, AutoCompleteModule } from 'primeng/autocomplete';
 import { evaluate } from 'mathjs';
-import { id } from 'date-fns/locale';
-
 import { CardModule } from 'primeng/card';
 import { InplaceModule } from 'primeng/inplace';
 import { TooltipModule } from 'primeng/tooltip';

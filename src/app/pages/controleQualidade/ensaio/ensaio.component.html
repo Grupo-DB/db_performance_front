@@ -59,9 +59,9 @@
         >
             <div class="form-geral flex flex-column gap-3 w-12">
                 <div class="fg1 flex flex-column w-12 align-items-center">
-                    <p-card class="card w-12 text-center">
+                    <p-card class="card titulo-info w-12 text-center">
                         <ng-template #header>
-                            <div class="header">
+                            <div class="header titulo-info w-full">
                                 <h2>Ensaio</h2>
                             </div>
                         </ng-template>
@@ -388,7 +388,7 @@
                                 <td class="flex justify-content-center gap-1">
                                     <p-button 
                                         icon="pi pi-file-edit" 
-                                        severity="success" 
+                                        severity="info" 
                                         size="small" 
                                         [raised]="true"
                                         (onClick)="abrirModalEdicao(ensaios)"
@@ -433,9 +433,9 @@
             >
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                     <div class="fg1 flex flex-column w-12 align-items-center">
-                        <p-card class="card">
+                        <p-card class="card w-12">
                             <ng-template #header>
-                                <div class="header">
+                                <div class="header titulo-info ">
                                     <h2>Editar Ensaio</h2>
                                 </div>
                             </ng-template>
@@ -621,13 +621,13 @@
         </div>
         <div class="flex justify-content-center gap-2 mb-5 mt-5">
             <p-button 
-            icon="pi pi-eraser" 
-            severity="info"
-            label="Limpar" 
-            size="large" [raised]="true" 
-            (onClick)="clearEditForm()"
-            pTooltip="Limpar Formulário" 
-            tooltipPosition="top">
+                icon="pi pi-eraser" 
+                severity="info"
+                label="Limpar" 
+                size="large" [raised]="true" 
+                (onClick)="clearEditForm()"
+                pTooltip="Limpar Formulário" 
+                tooltipPosition="top">
         </p-button>
         <p-button 
             icon="pi pi-save" 

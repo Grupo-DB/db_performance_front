@@ -60,8 +60,8 @@
                 <div class="fg1 flex flex-column w-12 align-items-center">
                     <p-card class="card w-12 text-center">
                         <ng-template #header>
-                            <div class="header w-full text-center">
-                                <h2>Inserir Novo Cálculo de Ensaio</h2>
+                            <div class="header titulo-info w-full text-center">
+                                <h2>Cálculo de Ensaio</h2>
                             </div>
                         </ng-template>
                         <div class="bloco flex flex-column w-12 gap-3">
@@ -239,23 +239,23 @@
                                     <td style="text-align: center;">
                                         <div class="flex justify-content-center gap-2">
                                             <p-button
-                                            icon="pi pi-file-edit" 
-                                            severity="success" 
-                                            size="small" 
-                                            [raised]="true"
-                                            pTooltip="Editar" 
-                                            tooltipPosition="top"
-                                            (onClick)="abrirModalEdicao(calcEnsaio)">
+                                                icon="pi pi-file-edit" 
+                                                severity="info" 
+                                                size="small" 
+                                                [raised]="true"
+                                                pTooltip="Editar" 
+                                                tooltipPosition="top"
+                                                (onClick)="abrirModalEdicao(calcEnsaio)">
                                             </p-button>
 
                                             <p-button 
-                                            icon="pi pi-trash" 
-                                            severity="danger" 
-                                            size="small" 
-                                            [raised]="true"
-                                            pTooltip="Excluir" 
-                                            tooltipPosition="top"
-                                            (onClick)="excluirCalculoEnsaio(calcEnsaio.id)">
+                                                icon="pi pi-trash" 
+                                                severity="danger" 
+                                                size="small" 
+                                                [raised]="true"
+                                                pTooltip="Excluir" 
+                                                tooltipPosition="top"
+                                                (onClick)="excluirCalculoEnsaio(calcEnsaio.id)">
                                             </p-button>
                                         </div>
                                     </td>
@@ -393,7 +393,7 @@
 
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
-                                <div class="header w-full text-center">
+                                <div class="header titulo-info w-full text-center">
                                     <b>Editar Cálculo de Ensaios</b>
                                 </div>
                             </ng-template>

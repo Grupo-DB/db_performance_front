@@ -200,6 +200,19 @@ export class PlanoComponent implements OnInit {
     this.editForm.reset();
   }
 
+  // Sincroniza os IDs selecionados no PickList com os controles do formulário de cadastro
+  syncEnsaios(): void {
+    const ids = (this.targetEnsaios || []).map(e => (e as any).id);
+    this.registerForm.get('ensaios')?.setValue(ids);
+    this.registerForm.get('ensaios')?.markAsDirty();
+  }
+
+  syncCalculos(): void {
+    const ids = (this.targetCalculos || []).map(c => (c as any).id ?? 0);
+    this.registerForm.get('calculos_ensaio')?.setValue(ids);
+    this.registerForm.get('calculos_ensaio')?.markAsDirty();
+  }
+
   abrirModalEdicao(planoAnalise: Plano){
     this.editFormVisible = true;
     this.editForm.patchValue({
@@ -277,10 +290,9 @@ export class PlanoComponent implements OnInit {
   }
 
   submit(){
-    this.registerForm.patchValue({
-      ensaios: this.targetEnsaios,
-      calculos_ensaio: this.targetCalculos
-    });
+    // Garante sincronização antes do envio
+    this.syncEnsaios();
+    this.syncCalculos();
 
     this.planEnsaios = [];
     this.targetEnsaios.forEach(ensaio => {

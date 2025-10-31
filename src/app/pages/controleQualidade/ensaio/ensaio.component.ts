@@ -603,7 +603,6 @@ private calcularDesvioAbsolutoMaximo(...args: any[]): number {
   let valores: number[];
   // Caso especial: se não há argumentos, retornar erro específico
   if (args.length === 0) {
-    console.log('MAD - Erro: nenhum argumento fornecido');
     throw new Error('Desvio absoluto máximo requer ao menos um valor');
   }
   

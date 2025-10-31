@@ -3004,8 +3004,6 @@ duplicata(amostra: any): void {
       ]
     ];
     const body: any[] = [];
-
-    console.log(amostra_detalhes_selecionada);
     if(amostra_detalhes_selecionada.ultimo_ensaio && amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados){
       amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
         if(ensaios_utilizados.estado == 'Fresco'){
@@ -3166,7 +3164,6 @@ duplicata(amostra: any): void {
             const linha: any[] = [];
 
             if (selected.id === ensaios_utilizados.id) {
-              console.log(selected.id);
               let norma: string = '-';
               if (ensaios_utilizados.norma) {
                 norma = ensaios_utilizados.norma;
@@ -3635,7 +3632,6 @@ duplicata(amostra: any): void {
     ];
 
     // --- Cálculos da coluna 'resist' ---
-    console.log(amostra_detalhes_selecionada);
     if(amostra_detalhes_selecionada.substrato){
       const resistencias = amostra_detalhes_selecionada.substrato
         .map((item: any) => item.resist)

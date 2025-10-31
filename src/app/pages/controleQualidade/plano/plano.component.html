@@ -61,7 +61,7 @@
                     <div class="fg1 flex flex-column w-12 align-items-center">
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
-                                <div class="header w-full text-center">
+                                <div class="header titulo-info w-full text-center">
                                     <h2>Plano de Análise</h2>
                                 </div>
                             </ng-template>
@@ -102,7 +102,9 @@
                                         breakpoint="412px"
                                         styleClass="picklist-black"
                                         [trackBy]="trackByFn"
-                                        formControlName="ensaios"
+                                        (onMoveToTarget)="syncEnsaios()"
+                                        (onMoveToSource)="syncEnsaios()"
+                                        (onReorder)="syncEnsaios()"
                                     >
                                         <ng-template let-ensaio pTemplate="item">
                                             <div class="flex flex-wrap p-2 align-items-center gap-3">
@@ -136,7 +138,9 @@
                                         sourceFilterPlaceholder="Pesquisa por nome" 
                                         targetFilterPlaceholder="Pesquisa por nome"
                                         breakpoint="412px"
-                                        formControlName="calculos_ensaio"
+                                        (onMoveToTarget)="syncCalculos()"
+                                        (onMoveToSource)="syncCalculos()"
+                                        (onReorder)="syncCalculos()"
                                     
                                         >
                                         <ng-template let-ensaio pTemplate="item">
@@ -254,23 +258,23 @@
                                     <td style="text-align: center;">
                                         <div class="flex justify-content-center gap-2">
                                             <p-button
-                                            icon="pi pi-file-edit" 
-                                            severity="success" 
-                                            size="small" 
-                                            [raised]="true"
-                                            pTooltip="Editar" 
-                                            tooltipPosition="top"
-                                            (onClick)="abrirModalEdicao(planoAnalise)"
+                                                icon="pi pi-file-edit" 
+                                                severity="info" 
+                                                size="small" 
+                                                [raised]="true"
+                                                pTooltip="Editar" 
+                                                tooltipPosition="top"
+                                                (onClick)="abrirModalEdicao(planoAnalise)"
                                             ></p-button>
 
                                             <p-button 
-                                            icon="pi pi-trash" 
-                                            severity="danger" 
-                                            size="small" 
-                                            [raised]="true"
-                                            pTooltip="Excluir" 
-                                            tooltipPosition="top"
-                                            (onClick)="excluirPlano(planoAnalise.id)"
+                                                icon="pi pi-trash" 
+                                                severity="danger" 
+                                                size="small" 
+                                                [raised]="true"
+                                                pTooltip="Excluir" 
+                                                tooltipPosition="top"
+                                                (onClick)="excluirPlano(planoAnalise.id)"
                                             ></p-button>
                                         </div>
                                     </td>
@@ -308,7 +312,7 @@
 
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
-                                <div class="header w-full text-center">
+                                <div class="header titulo-info w-full text-center">
                                     <b>Editar Plano de Análise</b>
                                 </div>
                             </ng-template>

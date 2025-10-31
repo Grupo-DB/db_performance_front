@@ -59,8 +59,8 @@
                     <div class="fg1 flex flex-column w-12 align-items-center">
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
-                                <div class="header w-full text-center">
-                                    <h2>Inserir Nova Garantia de Produto</h2>
+                                <div class="header titulo-info w-full text-center">
+                                    <h2>Garantia de Produto</h2>
                                 </div>
                             </ng-template>
                             <div class="bloco flex flex-column w-12 gap-3 lg:flex-row">
@@ -306,10 +306,9 @@
                                     <div class="flex justify-content-center gap-2">
                                         <p-button
                                             icon="pi pi-file-edit" 
-                                            severity="primary" 
+                                            severity="info" 
                                             size="small" 
                                             [raised]="true"
-                                            severity="success"
                                             pTooltip="Editar" 
                                             tooltipPosition="top"
                                             (onClick)="abrirModalEdicao(garantiaProduto)">
@@ -347,7 +346,6 @@
     [style]="{ width: '60vw' }"
     styleClass="w-full md:w-12 lg:w-4"
 >
-    <div class="containerInterno w-12">
         <div class="background-form">
             <form
                 [formGroup]="editForm" 
@@ -358,7 +356,7 @@
                     <div class="fg1 flex flex-column w-12 align-items-center">
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
-                                <div class="header w-full text-center">
+                                <div class="header titulo-info w-full text-center">
                                     <h2>Editar Garantia de Produto</h2>
                                 </div>
                             </ng-template>
@@ -502,6 +500,7 @@
                                     tooltipPosition="top"
                                     pTooltip="Limpar"
                                     icon="pi pi-eraser"
+                                    severity="info"
                                 />
                                 <p-button 
                                     (onClick)="saveEdit()" 
@@ -518,5 +517,4 @@
                 </div>
             </form>
         </div>
-    </div>
 </p-drawer>
