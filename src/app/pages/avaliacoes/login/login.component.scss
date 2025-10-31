@@ -26,12 +26,12 @@
     color: #ffffff;
     font-size: 18px;
     width: 550px;
+    height: 100dvh;
     flex-shrink: 0;
     justify-content: center;
     @media only screen and (min-width: 1440px) {
        width: 700px;
     }
-    height: 100vh;
 }
 
 .login {
