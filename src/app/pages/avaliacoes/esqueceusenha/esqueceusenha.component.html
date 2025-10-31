@@ -1,14 +1,14 @@
 <div class="container">
-    <div class="formulario m-3 mt-8">
-        <div class="lgimg">
-            <img  src="/assets/imagens/logotelalogin.png"/>
-        </div>
-        <div class="titulo">
-            <p>Insira seu email,(o mesmo cadastrado no sistema) para receber o link para redefinição de senha. </p>
-        </div>
-        <form [formGroup]="forgotPasswordForm">
-            <div class="f1">
-                <p-floatlabel variant="on">
+    <div class="container2">
+        <div class="formulario mt-8">
+            <div class="lgimg">
+                <img src="/assets/imagens/logonovo.png"/>
+            </div>
+            <div class="titulo">
+                <p>Insira seu email, (o mesmo cadastrado no sistema) para receber o link para redefinição de senha.</p>
+            </div>
+            <form [formGroup]="forgotPasswordForm">
+                <div class="f1">
                     <p-iconfield>
                         <p-inputicon class="pi pi-at"/>
                         <input
@@ -18,22 +18,24 @@
                             id="newPassword"
                             formControlName="email"
                             name="newPassword"
+                            autocomplete="off" 
+                            placeholder="Informe o Email"
                             required
                         />
-                        <label for="newPassword">Informe o Email</label>
                     </p-iconfield>                
-                </p-floatlabel>
-            </div>
-            <div class="botoes-form">
-                <p-toast></p-toast>
-                <div class="btnsec" (click)="clearForm()">
-                    <p>Limpar</p>
                 </div>
-                <div class="btnpri" (click)="submit()">
-                    <p>Enviar</p>            
+                <div class="botoes-form">
+                    
+                    <p-toast></p-toast>
+                    <div class="btnsec" (click)="clearForm()">
+                        <p>Limpar</p>
+                    </div>
+                    <div class="btnpri" (click)="submit()">
+                        <p>Enviar</p>            
+                    </div>
                 </div>
-            </div>
-            
-        </form>
+                
+            </form>
+        </div>
     </div>
 </div>    
