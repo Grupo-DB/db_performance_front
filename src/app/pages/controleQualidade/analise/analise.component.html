@@ -150,7 +150,7 @@
                             class="w-full lg:w-auto"
                             label="Imagens"
                             [raised]="true"
-                            severity="success"
+                            severity="info"
                             icon="pi pi-image"
                             iconPos="right"
                             (onClick)="visualizarImagens(analise.amostra_detalhes?.id)">
@@ -371,7 +371,7 @@
                                     <td style="text-align: end;">
                                         <p-button 
                                             icon="pi pi-history" 
-                                            severity="success" 
+                                            severity="info" 
                                             size="small" 
                                             [raised]="true"
                                             (onClick)="abrirDrawerResultadosEnsaios(ensaio)"
@@ -534,7 +534,7 @@
                                                         >
                                                         </p-button>
                                                         <p-button 
-                                                            severity="success" 
+                                                            severity="info" 
                                                             pTooltip="Alterar ordem das variáveis" 
                                                             tooltipPosition="top"
                                                             size="small" 
@@ -755,7 +755,7 @@
                                     <td style="text-align: end;">
                                         <p-button 
                                             icon="pi pi-history" 
-                                            severity="success" 
+                                            severity="info" 
                                             size="small" 
                                             [raised]="true"
                                             (onClick)="abrirDrawerResultados(calc, plano)"
@@ -934,7 +934,7 @@
                                                                                 >
                                                                                 </p-button>
                                                                                 <p-button 
-                                                                                    severity="success"
+                                                                                    severity="info"
                                                                                     pTooltip="Alterar ordem das variáveis"
                                                                                     tooltipPosition="top" size="small" [raised]="true"
                                                                                     icon="pi pi-arrows-v"
@@ -1092,38 +1092,33 @@
             </div>
         </div>    
         <div class="step1 flex justify-content-between align-items-center w-12 mt-3 mb-5">
-  
-            <div>
+            <div *ngIf="analise.amostra_detalhes.material === 'Argamassa'">
                 <p-menu 
                     #menu 
                     [model]="menuArgamassa" 
                     popup="true" 
                     styleClass="menu-up">
                 </p-menu>
-
                 <p-button 
-                label="Ações Argamassa"
-                icon="pi pi-chevron-up"
-                (click)="menu.toggle($event)"
-                severity="info"
+                    label="Ações Argamassa"
+                    icon="pi pi-chevron-up"
+                    (click)="menu.toggle($event)"
+                    severity="info"
                 ></p-button>
             </div>
-
             <div>
                 <p-button 
-                [label]="hasUnsavedChanges ? 'Salvar Resultados *' : 'Salvar Resultados'" 
-                [severity]="hasUnsavedChanges ? 'warn' : 'success'" 
-                icon="pi pi-check" 
-                iconPos="right" 
-                [raised]="true"
-                size="large" 
-                (onClick)="salvarAnaliseResultados()" 
-                [pTooltip]="hasUnsavedChanges ? 'Há alterações não salvas' : 'Salvar análise'" 
+                    [label]="hasUnsavedChanges ? 'Salvar Resultados *' : 'Salvar Resultados'" 
+                    [severity]="hasUnsavedChanges ? 'warn' : 'success'" 
+                    icon="pi pi-check" 
+                    iconPos="right" 
+                    [raised]="true"
+                    size="large" 
+                    (onClick)="salvarAnaliseResultados()" 
+                    [pTooltip]="hasUnsavedChanges ? 'Há alterações não salvas' : 'Salvar análise'" 
                 ></p-button>
             </div>
-
         </div>
-            
     </div>
 </div>
 
@@ -1171,7 +1166,7 @@
         <p>Nenhum resultado anterior encontrado para este cálculo.</p>
     </div>
     <ng-template pTemplate="footer">
-        <p-button label="Fechar" icon="pi pi-times" (onClick)="fecharDrawerResultados()">
+        <p-button label="Fechar" severity="info" icon="pi pi-times" (onClick)="fecharDrawerResultados()">
         </p-button>
     </ng-template>
 </p-drawer>
@@ -1228,7 +1223,7 @@
         <p>Nenhum resultado anterior encontrado para este cálculo.</p>
     </div>
     <ng-template pTemplate="footer">
-        <p-button label="Fechar" icon="pi pi-times" (onClick)="fecharDrawerResultadosEnsaios()">
+        <p-button label="Fechar" severity="info" icon="pi pi-times" (onClick)="fecharDrawerResultadosEnsaios()">
         </p-button>
     </ng-template>
 </p-drawer>
@@ -1409,7 +1404,7 @@
                 <p-button 
                     label="Cancelar" 
                     icon="pi pi-times" 
-                    severity="secondary" 
+                    severity="info" 
                     (onClick)="fecharModalAdicionarEnsaios()">
                 </p-button>
                 <p-button 
@@ -1581,22 +1576,16 @@
         </ng-template>
     </p-table>
     <ng-template pTemplate="footer">
-        <p-button label="Fechar" icon="pi pi-times" (onClick)="fecharDrawerGarantias()">
+        <p-button label="Fechar" severity="info" icon="pi pi-times" (onClick)="fecharDrawerGarantias()">
         </p-button>
     </ng-template>
 </p-drawer>
-
-
-
-
 
 
 <!-- Substrato Mpa -->
 <p-drawer 
     [(visible)]="modalDadosLaudoSubstrato" 
     position="full" >
-
-        <div class="containerInterno w-12">
         <div class="background-form">
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                 <div class="fg1 flex flex-column w-12 align-items-center">
@@ -1674,8 +1663,7 @@
                 </div>    
             </div>
         </div>
-    </div>
-    
+
 </p-drawer>
 
 <!-- superficial -->
@@ -1684,7 +1672,6 @@
     position="full" >
     <p-toast />
     <p-confirmDialog />
-        <div class="containerInterno w-12">
         <div class="background-form">
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                 <div class="fg1 flex flex-column w-12 align-items-center">
@@ -1765,9 +1752,7 @@
                     </p-card>
                 </div>    
             </div>
-        </div>
-    </div>
-    
+        </div>    
 </p-drawer>
 
 <!-- retracao -->
@@ -1776,7 +1761,6 @@
     position="full" >
     <p-toast />
     <p-confirmDialog />
-        <div class="containerInterno w-12">
         <div class="background-form">
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                 <div class="fg1 flex flex-column w-12 align-items-center">
@@ -1832,8 +1816,6 @@
                 </div>    
             </div>
         </div>
-    </div>
-    
 </p-drawer>
 
 <!-- elasticidade -->
@@ -1842,7 +1824,6 @@
     position="full" >
     <p-toast />
     <p-confirmDialog />
-        <div class="containerInterno w-12">
         <div class="background-form">
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                 <div class="fg1 flex flex-column w-12 align-items-center">
@@ -1896,8 +1877,6 @@
                 </div>    
             </div>
         </div>
-    </div>
-    
 </p-drawer>
 
 <!-- ruptura a flexao -->
@@ -1906,7 +1885,6 @@
     position="full" >
     <p-toast />
     <p-confirmDialog />
-        <div class="containerInterno w-12">
         <div class="background-form">
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                 <div class="fg1 flex flex-column w-12 align-items-center">
@@ -1958,14 +1936,11 @@
                                 pTooltip="Salvar Ruptura a Flexão"
                                 [style]="{'background-color': 'purple', 'border-color': 'purple'}"
                             />
-                            
                         </div>
                     </p-card>
                 </div>    
             </div>
         </div>
-    </div>
-    
 </p-drawer>
 
 <!-- ruptura a compressao -->
@@ -1974,11 +1949,9 @@
     position="full" >
     <p-toast />
     <p-confirmDialog />
-        <div class="containerInterno w-12">
         <div class="background-form">
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                 <div class="fg1 flex flex-column w-12 align-items-center">
-
                     <p-card class="card w-12 text-center card-superficial">
                         <ng-template #header>
                             <div class="header-compressao w-full text-center">
@@ -2031,8 +2004,6 @@
                 </div>    
             </div>
         </div>
-    </div>
-    
 </p-drawer>
 
 <!-- Gráfico -->

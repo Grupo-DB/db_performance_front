@@ -32,7 +32,6 @@ import { StepperModule } from 'primeng/stepper';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { Ensaio } from '../ensaio/ensaio.component';
-import { C } from '@angular/cdk/focus-monitor.d-CvvJeQRc';
 import { CalculoEnsaio } from '../calculo-ensaio/calculo-ensaio.component';
 import { EnsaioService } from '../../../services/controleQualidade/ensaio.service';
 import { PickListModule } from 'primeng/picklist';

@@ -251,14 +251,13 @@
                                                 [style]="{'width':'100%'}"
                                                 pInputText id="on_label"
                                                 autocomplete="off"
-                                                formControlName="nivel6Conta"
+                                                formControlName="nivelAnaliticoConta"
                                                 type="text"
                                             />
                                         </p-iconfield>
-                                        <label for="on_label">Informe a Conta Nível 6</label>
+                                        <label for="on_label">Informe a Conta Nível Analítico</label>
                                     </p-floatlabel>
                                 </div>
-
                                 <div class="w-12 text-left">
                                     <p-floatlabel variant="on">
                                         <p-iconfield>
@@ -268,7 +267,7 @@
                                                 [style]="{'width':'100%'}"
                                                 pInputText id="on_label"
                                                 autocomplete="off"
-                                                formControlName="nivelAnaliticoConta"
+                                                formControlName="nivelAnaliticoNome"
                                                 type="text"
                                             />
                                         </p-iconfield>
@@ -329,7 +328,7 @@
                             [paginator]="true"
                             [rows]="10"
                             [rowsPerPageOptions]="[10, 20, 50]"
-                            [globalFilterFields]="['nome','codigo','ccPaiNome','gestorNome']"
+                            [globalFilterFields]="['nivel_analitico_conta','nivel_analitico_nome']"
                             [showCurrentPageReport]="true"
                             currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Contas Contábeis"
                             scrollable="true"
@@ -356,10 +355,10 @@
                             </ng-template>
                             <ng-template pTemplate="header">
                                 <tr>
-                                    <th style="width:50%; text-align: center;" type="text" field="ccPaiNome" display="menu">
+                                    <th style="width:50%; text-align: center;" type="text" field="nivel_analitico_conta" display="menu">
                                         Nível Analítico Conta
                                     </th>
-                                    <th style="width:50%; text-align: center;" type="text" field="gestorNome" display="menu">
+                                    <th style="width:50%; text-align: center;" type="text" field="nivel_analitico_nome" display="menu">
                                         Nível Analítico Nome
                                     </th>
                                     <th style="width: 25%;text-align: center;">Ações</th>
@@ -367,7 +366,7 @@
                             </ng-template>
                             <ng-template pTemplate="body" let-contaContabil>
                                 <tr>
-                                    <td style="text-align: center;">{{ contaContabil.nivel_analitico_conta}}</td>
+                                    <td style="text-align: center;">{{ contaContabil.nivel_analitico_conta }}</td>
                                     <td style="text-align: center;">{{ contaContabil.nivel_analitico_nome }}</td>
                                     <td style="text-align: center;">
                                         <div class="flex justify-content-center gap-2">

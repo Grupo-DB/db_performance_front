@@ -641,7 +641,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
         // Define lista filtrada e libera carregamento (skeleton some)
         this.loading=false;
         // ✅ NOVO: Carregar dados completos e verificar alertas de rompimento
-        //COMENTADO PARA PRODUÇÂO =======      this.carregarDadosCompletosEVerificarAlertas();
+        this.carregarDadosCompletosEVerificarAlertas();
       },
       (error) => {
         console.error('Erro ao carregar análises', error);
@@ -670,11 +670,8 @@ gerarNumero(materialNome: string, sequencial: number): string {
     analiseIds.forEach((id: number) => {
       this.analiseService.getAnaliseById(id).subscribe({
         next: (analiseCompleta: any) => {
-
           this.verificarRompimentosAnalise(analiseCompleta, alertasRompimento, configAlerta);
-          
           analisesCarregadas++;
-          
           // Quando todas foram carregadas, processar alertas
           if (analisesCarregadas === totalAnalises) {
             this.processarAlertasOrdem(alertasRompimento);
@@ -856,7 +853,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
           severity: 'info',
           summary: '📊 Resumo de Alertas',
           detail: `Total: ${alertas.length} alertas de rompimento encontrados`,
-          life: 3000
+          life: 9000
         });
       }, 2000);
     } else {
@@ -864,7 +861,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
         severity: 'success',
         summary: '✅ Sistema de Alertas Ativo',
         detail: `Sistema verificou ${this.analises.length} análises. Nenhum rompimento crítico detectado.`,
-        life: 5000
+        life: 9500
       });
     }
   }
@@ -886,8 +883,8 @@ gerarNumero(materialNome: string, sequencial: number): string {
       severity: severityMap[alerta.tipo] as any,
       summary: `Rompimento ${titleMap[alerta.tipo]}`,
       detail: alerta.mensagem,
-      life: alerta.tipo === 'vencido' ? 0 : 10000,
-      sticky: alerta.tipo === 'vencido'
+      //life: alerta.tipo === 'vencido' ? 0 : 10000,
+     // sticky: alerta.tipo === 'vencido'
     });
   }
 

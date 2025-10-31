@@ -175,7 +175,7 @@
                             [paginator]="true"
                             [rows]="10"
                             [rowsPerPageOptions]="[10, 20, 50]"
-                            [globalFilterFields]="['nome','codigo','ccPaiNome','gestorNome']"
+                            [globalFilterFields]="['codigo','nome_completo','gestor_detalhes.nome']"
                             [showCurrentPageReport]="true"
                             currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Grupos de Itens"
                             scrollable="true"
@@ -205,10 +205,10 @@
                                     <th style="width:10%; text-align: center;" type="text" field="codigo" display="menu">
                                         Codigo
                                     </th>
-                                    <th style="width:50%; text-align: center;" type="text" field="nome" display="menu">
+                                    <th style="width:50%; text-align: center;" type="text" field="nome_completo" display="menu">
                                         Nome Completo
                                     </th>
-                                    <th style="width:50%; text-align: center;" type="text" field="gestorNome" display="menu">
+                                    <th style="width:50%; text-align: center;" type="text" field="gestor_detalhes.nome" display="menu">
                                         Gestor
                                     </th>
                                     <th style="width:25%;text-align: center;">Ações</th>

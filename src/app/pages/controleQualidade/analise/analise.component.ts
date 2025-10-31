@@ -1,8 +1,8 @@
-import { ChangeDetectorRef, Component, OnInit, OnDestroy, HostListener, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy, HostListener, ViewChild,ElementRef } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CanComponentDeactivate } from '../../../guards/can-deactivate.guard';
 import { AnaliseService } from '../../../services/controleQualidade/analise.service';
-import { CommonModule, DatePipe, formatDate } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { AutoCompleteModule } from 'primeng/autocomplete';
@@ -31,7 +31,7 @@ import { StepperModule } from 'primeng/stepper';
 import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { ColaboradorService } from '../../../services/avaliacoesServices/colaboradores/registercolaborador.service';
-import { evaluate, create, all, to } from 'mathjs';
+import { create, all } from 'mathjs';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { ProjecaoService } from '../../../services/baseOrcamentariaServices/dre/projecao.service';
@@ -50,7 +50,7 @@ import { HttpClient } from '@angular/common/http';
 import { TooltipModule } from 'primeng/tooltip';
 import { HotTableModule } from '@handsontable/angular-wrapper';
 //
-import { Chart, ScatterController, LinearScale, PointElement, LineElement, Tooltip, Legend, plugins } from 'chart.js';
+import { Chart, ScatterController, LinearScale, PointElement, LineElement, Tooltip, Legend } from 'chart.js';
 import { linearRegression, linearRegressionLine, rSquared } from 'simple-statistics';
 import AnnotationPlugin from 'chartjs-plugin-annotation';
 import { MessageModule } from 'primeng/message';
@@ -231,7 +231,6 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   //images
   imagensAmostra: any[] = [];
   imagemAtualIndex: number = 0;
-  
   // Instância personalizada do MathJS com funções bitwise seguras
   private mathjs: any;
   modalImagensVisible = false;
@@ -258,7 +257,6 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   todasExpandidas: boolean = false;
   todasCalculosExpandidas: boolean = false;
   calculoSelecionado: any = null;
-
   // Sistema de alertas de rompimento
   alertasRompimento: any[] = [];
   intervaloPadrao = 9500000; // 5 minutos
@@ -269,26 +267,20 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
     horarioVerificacao: '09:00', // Verificar as 9h
     ativo: true
   };
-   
    // Controle de campos para adicionar/remover ensaios e cálculos
   modalAdicionarEnsaioVisible = false;
   modalAdicionarCalculoVisible = false;
-
   // Controle de alertas para evitar duplicações
   private alertasExibidos = new Set<string>();
   private timerLimpezaAlertas: any;
   editFormVisible = false;
-  
   // Controle para evitar múltiplas confirmações
   private confirmacoesAbertas = new Set<string>();
   ensaiosDisponiveis: any[] = [];
   calculosDisponiveis: any[] = [];
-  
   inputValue: string = '';
   inputCalculos: string = '';
-
   produtoId: any;
-
   responsaveis = [
     { value: 'Antonio Carlos Vargas Sito' },
     { value: 'Fabiula Bueno' },
@@ -413,7 +405,7 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
     this.getAnalise();
     this.carregarEnsaiosECalculosDisponiveis();
     // Inicializar sistema de alertas
-    // this.iniciarSistemaAlertas();
+    this.iniciarSistemaAlertas();
 
     //chamo os itens aqui para não ficar chamamdo toda hora
     //AQUI NÃO FUNCIONOU______na linha 454 funcionou
@@ -905,9 +897,7 @@ private gerarDescricaoGrafico(): string {
   return descricao;
 }
 
-/**
- * Download direto da imagem do gráfico (sem salvar no banco)
- */
+// Download direto da imagem do gráfico (sem salvar no banco)
 downloadImagemGrafico(): void {
   if (!this.chartInstance) {
     this.messageService.add({
@@ -5209,7 +5199,7 @@ verificarRompimentos(): void {
           const ehData = this.ensaioTemVariavelData(ensaioInt) ||
             (typeof ensaioInt.valor === 'number' && ensaioInt.valor > 946684800000) ||
             (typeof ensaioInt.valor_data === 'string' && /\d{4}-\d{2}-\d{2}/.test(ensaioInt.valor_data)) ||
-            /(data|rompimento|modelagem|moldagem)/i.test(ensaioInt.unidade || '');
+            /(data|rompimento|modelagem|moldagem|desmoldagem)/i.test(ensaioInt.unidade || '');
           if (ehData && (ensaioInt.valor || ensaioInt.valor_data)) {
             const alerta = this.analisarDataRompimento(ensaioInt, hoje, true, calc);
             if (alerta && !chaveUnica.has(alerta.id)) {
@@ -5315,8 +5305,8 @@ exibirAlerta(alerta: any): void {
     severity: severityMap[alerta.tipo] as any,
     summary: `Rompimento ${titleMap[alerta.tipo]}`,
     detail: alerta.mensagem,
-    life: alerta.tipo === 'vencido' ? 0 : 10000, // Alertas vencidos ficam até serem fechados
-    sticky: alerta.tipo === 'vencido'
+    life: alerta.tipo === 'vencido' ? 0 : 300, // Alertas vencidos ficam até serem fechados
+    //sticky: alerta.tipo === 'vencido'
   });
 }
 //Conta alertas por tipo
