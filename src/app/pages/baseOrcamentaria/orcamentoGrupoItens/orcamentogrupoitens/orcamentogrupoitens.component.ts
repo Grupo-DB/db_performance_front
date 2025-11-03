@@ -7,6 +7,7 @@ import { LoginService } from '../../../../services/avaliacoesServices/login/logi
 import { GrupoItensService } from '../../../../services/baseOrcamentariaServices/orcamento/GrupoItens/grupo-itens.service';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { SelectModule } from 'primeng/select';
 import { GrupoItens } from '../../orcamentoBase/grupo-itens/grupo-itens.component';
 import { CentrocustopaiService } from '../../../../services/baseOrcamentariaServices/orcamento/CentroCustoPai/centrocustopai.service';
 import { CentroCustoPai } from '../../orcamentoBase/centrocustopai/centrocustopai.component';
@@ -30,6 +31,7 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { MessageModule } from 'primeng/message';
 import { AvatarModule } from 'primeng/avatar';
+import { RaizAnaliticaService } from '../../../../services/baseOrcamentariaServices/orcamento/RaizAnalitica/raiz-analitica.service';
 
 
 export interface CCsArrayItem {
@@ -64,7 +66,7 @@ export interface FilialSga{
 @Component({
   selector: 'app-orcamentogrupoitens',
   imports: [
-    DividerModule, CommonModule, NzMenuModule, RouterLink, FloatLabelModule, MultiSelectModule,
+    DividerModule, CommonModule, NzMenuModule, RouterLink, FloatLabelModule, MultiSelectModule, SelectModule,
     FormsModule, ReactiveFormsModule, InputNumberModule, DrawerModule, MeterGroupModule, ToastModule, AvatarModule,
     CardModule, TableModule, TooltipModule, InplaceModule, ProgressSpinnerModule, ButtonModule, MessageModule,
 ],
@@ -87,6 +89,8 @@ export interface FilialSga{
 })
 export class OrcamentogrupoitensComponent {
   gruposItens:GrupoItens []| undefined;
+  gestores: any[] = [];
+  selectedGestor: any = null;
   ccsPais: CentroCustoPai[] | undefined;
   centrosCusto: CentroCusto[]| undefined;
   selectedCcsPais: any[] = [];
@@ -97,7 +101,7 @@ export class OrcamentogrupoitensComponent {
   ccs:CCsArrayItem[] = [];
   ccsPaisArray:CCsPaisArrayItem[] = [];
   ccsOrcadosArray:ccsOrcadosArrayItem[] = [];
-
+  gruposPorGestor: any[] = [];
   percent: any;
   gestor:any;
   detalhesRealizadoGrupoItens: any[] = [];
@@ -137,10 +141,18 @@ export class OrcamentogrupoitensComponent {
     private filialService: FilialService,
     private orcamentoBaseService: OrcamentoBaseService,
     private centroCustoService: CentrocustoService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private raizAnaliticaService: RaizAnaliticaService
   ) { }
   ngOnInit(): void {
-    
+    // Carregar lista de gestores para filtragem (Admin/Master)
+    this.raizAnaliticaService.getGestores().subscribe({
+      next: (gestores) => {
+        this.gestores = gestores;
+      },
+      error: (err) => console.error('Erro ao carregar gestores', err)
+    });
+
     this.grupoItensService.getGruposItens().subscribe((data) => {
       this.gruposItens = data;
       this.gruposItens = this.gruposItens.filter(
@@ -160,6 +172,22 @@ export class OrcamentogrupoitensComponent {
     ]
 
     this.calcsGestor();
+  }
+  onGestorSelecionado(gestorId: any): void {
+    this.selectedGestor = gestorId;
+    // Limpa seleções atuais de grupos/ccs ao trocar de gestor
+    this.selectedGruposItens = [];
+    this.selectedGruposItensCodigos = [];
+
+    if (!gestorId) return;
+
+    this.grupoItensService.getGrupoItensByGestor(gestorId).subscribe({
+      next: (grupos) => {
+        // Atualiza a lista que alimenta o MultiSelect de grupos (Admin/Master)
+        this.gruposItens = grupos as any;
+      },
+      error: (err) => console.error('Erro ao carregar grupos do gestor', err)
+    });
   }
 
   calcsGestor(){

@@ -11,16 +11,16 @@ import { da } from 'date-fns/locale';
 })
 export class AmostraService {
 
-  private amostraExpressaUrl = 'http://172.50.10.79:8008/ordem/expressa/';
-  private amostraOrdemUrl = 'http://172.50.10.79:8008/ordem/ordem/';
-  private tipoAmostraUrl = 'http://172.50.10.79:8008/amostra/tipoAmostra/';
-  private amostraUrl = 'http://172.50.10.79:8008/amostra/amostra/';
-  private garantiaProdutoUrl = 'http://172.50.10.79:8008/amostra/garantiaProduto/';
-  private consultaGarantiaUrl = 'http://172.50.10.79:8008/amostra/garantiaProduto/por-produto/';
-  private imageUrl = 'http://172.50.10.79:8008/amostra/amostraImagem/';
-  private produtoUrl = 'http://172.50.10.79:8008/amostra/produto/';
-  private sequencialUrl = 'http://172.50.10.79:8008/amostra/amostra/proximo-sequencial/';
-  private representatividadeUrl = 'http://172.50.10.79:8008/cal/representatividade/';
+  private amostraExpressaUrl = 'http://localhost:8000/ordem/expressa/';
+  private amostraOrdemUrl = 'http://localhost:8000/ordem/ordem/';
+  private tipoAmostraUrl = 'http://localhost:8000/amostra/tipoAmostra/';
+  private amostraUrl = 'http://localhost:8000/amostra/amostra/';
+  private garantiaProdutoUrl = 'http://localhost:8000/amostra/garantiaProduto/';
+  private consultaGarantiaUrl = 'http://localhost:8000/amostra/garantiaProduto/por-produto/';
+  private imageUrl = 'http://localhost:8000/amostra/amostraImagem/';
+  private produtoUrl = 'http://localhost:8000/amostra/produto/';
+  private sequencialUrl = 'http://localhost:8000/amostra/amostra/proximo-sequencial/';
+  private representatividadeUrl = 'http://localhost:8000/cal/representatividade/';
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
@@ -148,6 +148,10 @@ atualizarDescricaoImagem(imagemId: number, descricao: string): Observable<any> {
   //////////Amostras
   getAmostras(): Observable<any>{
     return this.http.get<any[]>(this.amostraUrl);
+  }
+  amostrasCalcs(): Observable<any>{
+    const url = `${this.amostraUrl}calcs/`;
+    return this.http.get<any[]>(url);
   }
   getAmostrasSemOrdem(): Observable<any> {
     const url = `${this.amostraUrl}sem_ordem/`;

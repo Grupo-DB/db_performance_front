@@ -68,7 +68,27 @@
                         </ng-template>
                         <div class="form-geral">
                             <div class="flex flex-column lg:flex-row"@swipeAnimation>
-                                <div class="fg1 flex flex-column w-12 align-items-center lg:w-6 lg:mt-5">
+                                <div class="fg1 flex flex-column text-left w-12 align-items-center lg:w-6 lg:mt-5">
+                                    <div class="form2 w-10" *ngIf="hasGroup(['Admin','Master'])">
+                                        <p-floatlabel variant="on">
+                                            <p-select
+                                                variant="filled"
+                                                id="gestorSelect"
+                                                [style]="{'width':'100%'}"
+                                                [options]="gestores"
+                                                [(ngModel)]="selectedGestor"
+                                                optionValue="id"
+                                                optionLabel="nome"
+                                                [filter]="true"
+                                                filterBy="nome"
+                                                appendTo="body"
+                                                inputId="float-label-gestor"
+                                                (onChange)="onGestorSelecionado($event.value)"
+                                            >
+                                            </p-select>
+                                            <label for="float-label-gestor">Selecione o Gestor</label>
+                                        </p-floatlabel>
+                                    </div>
                                     <div class="form2 w-10" *ngIf="hasGroup(['Admin','Master'])">
                                         <p-floatlabel variant="on"> 
                                             <p-multiSelect

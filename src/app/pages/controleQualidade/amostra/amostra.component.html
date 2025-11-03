@@ -148,10 +148,17 @@
                                                             </div>
                                                             <div class="w-11  text-left">
                                                                 <p-floatLabel variant="on">
-                                                                    <p-select inputId="float-label" [style]="{'width':'100%'}"
-                                                                        [options]="finalidades" formControlName="finalidade"
-                                                                        optionLabel="nome" optionValue="nome" appendTo="body"
-                                                                        [filter]="true" filterBy="nome" [showClear]="true">
+                                                                    <p-select 
+                                                                        inputId="float-label" 
+                                                                        [style]="{'width':'100%'}"
+                                                                        [options]="finalidades" 
+                                                                        formControlName="finalidade"
+                                                                        optionLabel="nome" 
+                                                                        optionValue="nome" appendTo="body"
+                                                                        [filter]="true" 
+                                                                        filterBy="nome"
+                                                                        [editable]="true" 
+                                                                        [showClear]="true">
                                                                     </p-select>
                                                                     <label for="float-label">Selecione a Finalidade</label>
                                                                 </p-floatLabel>
@@ -322,13 +329,20 @@
                                                             </div>
                                                             <div class="w-11 text-left">
                                                                 <p-floatLabel variant="on">
-                                                                    <p-select inputId="float-label" [style]="{'width':'100%'}"
-                                                                        [options]="produtosFiltrados" formControlName="produtoAmostra"
-                                                                        optionLabel="nome" optionValue="id" appendTo="body" [filter]="true"
-                                                                        filterBy="nome" [showClear]="true" [editable]="true"
+                                                                    <p-select 
+                                                                        inputId="float-label" 
+                                                                        [style]="{'width':'100%'}"
+                                                                        [options]="produtosFiltrados" 
+                                                                        formControlName="produtoAmostra"
+                                                                        optionLabel="nome" 
+                                                                        optionValue="id" 
+                                                                        appendTo="body" 
+                                                                        [filter]="true"
+                                                                        filterBy="nome" 
+                                                                        [showClear]="true" 
                                                                         (onChange)="onProdutoAmostraChange($event.value)">
                                                                     </p-select>
-                                                                    <label for="float-label">Produto de Amostra</label>
+                                                                    <label for="float-label">Produto da Amostra</label>
                                                                 </p-floatLabel>
                                                             </div>
                                                             <div class="w-11">
@@ -382,10 +396,18 @@
                                                             </div>
                                                             <div class="w-11 text-left">
                                                                 <p-floatLabel variant="on">
-                                                                    <p-select inputId="float-label" [style]="{'width':'100%'}"
-                                                                        [options]="fornecedores" formControlName="fornecedor"
-                                                                        optionLabel="nome" optionValue="nome" appendTo="body"
-                                                                        [filter]="true" filterBy="nome" [showClear]="true">
+                                                                    <p-select 
+                                                                        inputId="float-label" [style]="{'width':'100%'}"
+                                                                        [options]="fornecedores" 
+                                                                        formControlName="fornecedor"
+                                                                        optionLabel="nome" 
+                                                                        optionValue="nome" 
+                                                                        appendTo="body"
+                                                                        [filter]="true" 
+                                                                        filterBy="nome" 
+                                                                        [showClear]="true"
+                                                                        [editable]="true"
+                                                                    >
                                                                     </p-select>
                                                                     <label for="float-label">Fornecedor</label>
                                                                 </p-floatLabel>
@@ -399,7 +421,8 @@
                                                                             [style]="{'width':'100%'}" 
                                                                             pInputText
                                                                             id="on_label" 
-                                                                            autocomplete="off" formControlName="periodoHora"
+                                                                            autocomplete="off" 
+                                                                            formControlName="periodoHora"
                                                                             type="time" 
                                                                             min="00:00"
                                                                             max="23:59"
@@ -712,7 +735,7 @@
                                                                                 tooltipPosition="top"
                                                                                 severity="help"
                                                                                 (onClick)="criarOrdemDeAmostra(amostra)"
-                                                                                pTooltip="Abrir OS"
+                                                                                pTooltip="Abrir OS com plano fixo"
                                                                             ></p-button>
                                                                             <p-button 
                                                                                 icon="pi pi-book" 

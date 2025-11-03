@@ -52,100 +52,110 @@
 
     <div class="container flex flex-column align-items-center mb-4">
         <div class="containerInterno w-12">
-            <div class="background-form" @swipeAnimation>
+            <div @swipeAnimation>
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                     <div class="fg1 flex flex-column w-12 align-items-center">
-                        <p-card class="card w-12 text-left exemplo">
+                        <p-card class="card w-12 text-left">
                             <ng-template #header>
-                                <div class="header w-full text-center">
+                                <div class="header titulo-info w-full text-center">
                                 <h2>Controle de Qualidade</h2>
                                 </div>
                             </ng-template>
                             <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="w-full">
-                                <div class="lab-dashboard w-full">
-                                    <div class="main w-full">
-                                        <section class="content w-full">
-
-                                            <div class="cards grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
-                                                <div class="card p-4 shadow-md rounded-lg text-center bg-white">
-                                                    <div class="card-title font-semibold">
-                                                        Análises hoje
+                                <div class="flex flex-column w-full">
+                                    <div class="flex flex-column w-full lg:flex-row">
+                                        <div class="flex  gap-2 w-full">
+                                            <div class="w-12 sm:w-6 lg:w-3">
+                                                <div
+                                                    class="shadow-2 hover:shadow-5 transition-duration-200"
+                                                    style="height: 110px; border-radius: 12px; background-color: #4a4458; position: relative; cursor: pointer;"
+                                                >
+                                                    <i class="pi pi-tags" style="position: absolute; top: 12px; left: 12px; color: #e3d8ff; font-size: 1.25rem;"></i>
+                                                    <div
+                                                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #e6defa; font-size: 1.6rem; font-weight: 700; text-align: center;"
+                                                        aria-label="Total de Amostras"
+                                                    >
+                                                        {{ totalAmostras }}
                                                     </div>
-                                                    <div class="card-value text-2xl font-bold text-blue-600">
-                                                        128
-                                                    </div>
-                                                </div>
-                                                <div class="card p-4 shadow-md rounded-lg text-center bg-white">
-                                                    <div class="card-title font-semibold">
-                                                        Pendente
-                                                    </div>
-                                                    <div class="card-value text-2xl font-bold text-orange-500">
-                                                        34
-                                                    </div>
-                                                </div>
-                                                <div class="card p-4 shadow-md rounded-lg text-center bg-white">
-                                                    <div class="card-title font-semibold">
-                                                        Aprovadas
-                                                    </div>
-                                                    <div class="card-value text-2xl font-bold text-green-600">
-                                                        82
-                                                    </div>
-                                                </div>
-                                                <div class="card p-4 shadow-md rounded-lg text-center bg-white">
-                                                    <div class="card-title font-semibold">
-                                                        Laudos
-                                                    </div>
-                                                    <div class="card-value text-2xl font-bold text-purple-600">
-                                                        12
+                                                    <div class="flex align-items-end h-full">
+                                                        <span class="p-3 text-sm font-semibold" style="color: #e6defa;">Total de Amostras</span>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="panel-row grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                                <div class="panel large col-span-2 p-4 bg-white shadow-md rounded-lg">
-                                                    <h3 class="mb-3 font-semibold">Gráfico de Resultado</h3>
-                                                    <canvas id="chart" class="w-full h-64"></canvas>
-                                                </div>
-
-                                                <div class="panel small p-4 bg-white shadow-md rounded-lg">
-                                                    <h3 class="mb-3 font-semibold">
-                                                        Últimas Análises
-                                                    </h3>
-                                                    <table class="table w-full border-collapse">
-                                                        <thead>
-                                                            <tr class="bg-gray-100 text-sm">
-                                                                <th class="p-2 text-left">ID</th>
-                                                                <th class="p-2 text-left">Material</th>
-                                                                <th class="p-2 text-left">Data</th>
-                                                                <th class="p-2 text-left">Status</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr *ngFor="let r of exemplos" class="border-t hover:bg-gray-50">
-                                                                <td class="p-2">{{r.id}}</td>
-                                                                <td class="p-2">{{r.material}}</td>
-                                                                <td class="p-2">{{r.data}}</td>
-                                                                <td class="p-2">{{r.status}}</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
+                                            
+                                            <div class="w-12 sm:w-6 lg:w-3">
+                                                <div
+                                                    class="shadow-2 hover:shadow-5 transition-duration-200"
+                                                    style="height: 110px; border-radius: 12px; background-color: #3b3b32; position: relative; cursor: pointer;"
+                                                >
+                                                    <i class="pi pi-thumbtack" style="position: absolute; top: 12px; left: 12px; color: #fff3b0; font-size: 1.25rem;"></i>
+                                                    <div
+                                                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #fff2a8; font-size: 1.6rem; font-weight: 700; text-align: center;"
+                                                    >
+                                                        {{ totalSemOrdem }}
+                                                    </div>
+                                                    <div class="flex align-items-end h-full">
+                                                        <span class="p-3 text-sm font-semibold" style="color: #fff2a8;">Sem Ordem</span>
+                                                    </div>
                                                 </div>
                                             </div>
 
-                                            <div class="cards grid grid-cols-1 sm:grid-cols-12 lg:grid-cols-12 gap-4 mb-5">
-                                                <div class="card p-4 shadow-md rounded-lg text-center bg-white tabela">
-                                                    <div class="card-title font-semibold">
-                                                        Banco de análises
+                                            <!-- Insights -->
+                                            <div class="w-12 sm:w-6 lg:w-3">
+                                                <div
+                                                    class="shadow-2 hover:shadow-5 transition-duration-200"
+                                                    style="height: 110px; border-radius: 12px; background-color: #2b3a55; position: relative; cursor: pointer;"
+                                                >
+                                                    <i class="pi pi-clipboard" style="position: absolute; top: 12px; left: 12px; color: #b3e5ff; font-size: 1.25rem;"></i>
+                                                    <div
+                                                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #d6f1ff; font-size: 1.6rem; font-weight: 700; text-align: center;"
+                                                    >
+                                                        {{ totalAbertas }}
                                                     </div>
-                                                    <div class="card-value text-2xl font-bold text-blue-600">
-                                                        
-                                                        <!-- <app-arquivo [mostrarMenu]="false"></app-arquivo> -->
-
+                                                    <div class="flex align-items-end h-full">
+                                                        <span class="p-3 text-sm font-semibold" style="color: #d6f1ff;">Total Abertas</span>
                                                     </div>
                                                 </div>
-                                               
                                             </div>
-                                        </section>
+
+                                            <!-- Dashboard -->
+                                            <div class="w-12 sm:w-6 lg:w-3">
+                                                <div
+                                                    class="shadow-2 hover:shadow-5 transition-duration-200"
+                                                    style="height: 110px; border-radius: 12px; background-color: #26413c; position: relative; cursor: pointer;"
+                                                >
+                                                    <i class="pi pi-paperclip" style="position: absolute; top: 12px; left: 12px; color: #b2f5ea; font-size: 1.25rem;"></i>
+                                                    <div
+                                                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ccfbf1; font-size: 1.6rem; font-weight: 700; text-align: center;"
+                                                    >
+                                                        {{ totalLaudos }}
+                                                    </div>
+                                                    <div class="flex align-items-end h-full">
+                                                        <span class="p-3 text-sm font-semibold" style="color: #ccfbf1;">Para Laudo</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="w-12 sm:w-6 lg:w-3">
+                                                <div
+                                                    class="shadow-2 hover:shadow-5 transition-duration-200"
+                                                    style="height: 110px; border-radius: 12px; background-color: #4a4458; position: relative; cursor: pointer;"
+                                                >
+                                                    <i class="pi pi-check-square" style="position: absolute; top: 12px; left: 12px; color: #e3d8ff; font-size: 1.25rem;"></i>
+                                                    <div
+                                                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #e6defa; font-size: 1.6rem; font-weight: 700; text-align: center;"
+                                                        aria-label="Total de Amostras"
+                                                    >
+                                                        {{ totalAprovadas }}
+                                                    </div>
+                                                    <div class="flex align-items-end h-full">
+                                                        <span class="p-3 text-sm font-semibold" style="color: #e6defa;">Total Aprovadas</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
                                     </div>
                                 </div>
                             </div>

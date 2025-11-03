@@ -57,8 +57,8 @@
                     <div class="bloco fg1 flex flex-column w-12 align-items-center">
                         <p-card *ngIf="amostraData" class="card w-12 mb-4">
                             <ng-template #header>
-                                <div class="header w-full text-center">
-                                    <h2>Dados da Amostra/Criar OS Expressa</h2>
+                                <div class="header titulo-info w-full text-center">
+                                    <h2>OS Expressa</h2>
                                 </div>
                             </ng-template>
                             <div class="grid">
@@ -189,15 +189,15 @@
                             </div>
                                 
                             <div class="w-12 text-left mt-5 mb-5">
-                                <div class="step1 mt-2 mb-5 w-12 ">
+                                <!-- <div class="step1 mt-2 mb-5 w-12 ">
                                     <p-message severity="info" class="w-11">
                                         <b>Selecione os Cálculos</b>
                                     </p-message>
-                                </div>
+                                </div> -->
                                 <p-pickList 
                                     [source]="calculos" 
                                     [target]="targetCalculos" 
-                                    sourceHeader="Calculos"
+                                    
                                     targetHeader="Selecionados" 
                                     [dragdrop]="true" 
                                     [responsive]="true"

@@ -97,8 +97,30 @@ import autoTable, { CellInput } from "jspdf-autotable";
 })
 
 export class DashControleComponent implements OnInit {
-
   chart: Chart | undefined;
+  amostraCalcs: any;
+  totalAmostras: number = 0;
+  totalSemOrdem: number = 0;
+  totalAbertas: number = 0;
+  totalAprovadas: number = 0;
+  totalLaudos: number = 0;
+
+  exemplos = [
+    { id: 101, material: 'Cimento', data: '2025-09-29', status: 'Pendente' },
+    { id: 102, material: 'Areia', data: '2025-09-29', status: 'Finalizada' },
+    { id: 103, material: 'Argamassa', data: '2025-09-28', status: 'Aprovada' },
+    { id: 104, material: 'Concreto', data: '2025-09-27', status: 'Laudo' },
+  ];
+
+  hasGroup(groups: string[]): boolean {
+    return this.loginService.hasAnyGroup(groups);
+  }
+
+  constructor(
+    private loginService: LoginService,
+    private analiseService: AnaliseService,
+    private amostraService: AmostraService
+  ){}
 
   ngOnInit(): void {
     setTimeout(() => {
@@ -141,20 +163,34 @@ export class DashControleComponent implements OnInit {
         }
       });
     }, 0);
+    this.loadAnalisesCalcs();
+    this.loadAmostrasCalcs();
   }
 
-  exemplos = [
-    { id: 101, material: 'Cimento', data: '2025-09-29', status: 'Pendente' },
-    { id: 102, material: 'Areia', data: '2025-09-29', status: 'Finalizada' },
-    { id: 103, material: 'Argamassa', data: '2025-09-28', status: 'Aprovada' },
-    { id: 104, material: 'Concreto', data: '2025-09-27', status: 'Laudo' },
-  ];
-
-  constructor(
-    private loginService: LoginService,
-  ){}
-  hasGroup(groups: string[]): boolean {
-    return this.loginService.hasAnyGroup(groups);
+  loadAnalisesCalcs(): void {
+    this.analiseService.analisesCalcs().subscribe(
+      calcs => {
+       this.totalAbertas = calcs.total_abertas;
+       this.totalAprovadas = calcs.total_aprovadas;
+       this.totalLaudos = calcs.total_laudos;
+      },
+      error => {
+        console.error('Erro ao carregar análises para cálculos:', error);
+      }
+    );
   }
+
+    loadAmostrasCalcs(): void {
+    this.amostraService.amostrasCalcs().subscribe(
+      response => {
+        this.totalAmostras = response.total_amostras;
+        this.totalSemOrdem = response.total_sem_ordem;
+      },
+      error => {
+        console.error('Erro ao carregar amostras para cálculos:', error);
+      }
+    );
+  }
+  
 }
 

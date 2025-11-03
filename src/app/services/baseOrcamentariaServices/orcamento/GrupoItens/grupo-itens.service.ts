@@ -8,8 +8,8 @@ import { GrupoItens } from '../../../../pages/baseOrcamentaria/orcamentoBase/gru
   providedIn: 'root'
 })
 export class GrupoItensService {
-  private apiUrl = 'http://172.50.10.79:8008/orcamento/grupositens/'
-  private apiRealizadoUrl = 'http://172.50.10.79:8008/grupoitens/calculos_realizados_grupo_itens/'
+  private apiUrl = 'http://localhost:8000/orcamento/grupositens/'
+  private apiRealizadoUrl = 'http://localhost:8000/grupoitens/calculos_realizados_grupo_itens/'
   constructor(
     private httpClient: HttpClient,
     private router: Router
@@ -27,6 +27,9 @@ export class GrupoItensService {
   }
   getGruposItens():Observable<any[]>{
     return this.httpClient.get<any[]>(this.apiUrl);
+  }
+  getGrupoItensByGestor(id: any): Observable<any[]>{
+    return this.httpClient.get<any[]>(`${this.apiUrl}byGestor/?gestor_id=${id}`);
   }
   getMeusGruposItens():Observable<any[]>{
     return this.httpClient.get<any[]>(`${this.apiUrl}meusGrupos/`);

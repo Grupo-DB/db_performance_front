@@ -119,16 +119,11 @@
                                 </div>
 
                                 <div class="w-12 text-left">
-                                    <div class="step1 mt-2 mb-5 w-12 ">
-                                        <p-message severity="info" class="w-11">
-                                            <b>Selecione os Cálculos</b>
-                                        </p-message>
-                                    </div>
                                     <p-pickList 
                                         [source]="calculosEnsaio" 
                                         [target]="targetCalculos"
                                         [trackBy]="trackByFn"
-                                        sourceHeader="Cálculos"
+                                       
                                         targetHeader="Selecionados"
                                         [dragdrop]="true"
                                         [responsive]="true"

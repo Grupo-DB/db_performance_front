@@ -104,7 +104,7 @@ export class GrupoItensComponent implements OnInit {
   gruposItens: any[] = [];
   gestores: any;
   editForm!: FormGroup;
-  
+  gruposPorGestor: any[] = [];
   registerForm!: FormGroup<RegisterGrupoItensForm>;
   editFormVisible: boolean = false;
   loading: boolean = true;
@@ -139,6 +139,7 @@ export class GrupoItensComponent implements OnInit {
       gestores =>{
         this.gestores = gestores;
         this.mapGestores();
+        this.getGruposByGestor();
       },
       error => {
         console.error('Não Carregou', error)
@@ -161,6 +162,17 @@ export class GrupoItensComponent implements OnInit {
   getNomeGestor(id: number): string{
     const gestor = this.gestores?.find((gestor: { id: number; }) => gestor.id === id );
     return gestor ? gestor.nome : 'Gestor não encontrado';
+  }
+
+  getGruposByGestor(gestorId?: number){
+    this.grupoItensService.getGrupoItensByGestor(gestorId).subscribe(
+      response => {
+        this.gruposPorGestor = response;
+      },
+      error => {
+        console.error('Erro ao carregar meus grupos', error);
+      }
+    )
   }
 
   clearForm() {
