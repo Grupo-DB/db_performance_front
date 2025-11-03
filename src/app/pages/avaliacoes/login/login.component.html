@@ -1,13 +1,13 @@
 <div class="flex flex-column align-items-center justify-content-center min-vh-100 lg:flex-row">
     <div class="container2 flex flex-column lg:flex-row">
-        <div class="menu flex flex-column">
-            <div class="lgimg2 flex flex-column mb-4">
-                <img src="/assets/imagens/logonovo.png" width="300px"/>
+        <div class="card-login flex flex-column">
+            <div class="lgimg2 flex flex-column mb-2">
+                <img src="/assets/imagens/logonovo.png" width="280px"/>
             </div>
-            <form [formGroup]="loginForm" (keydown.enter)="submit()">
-                <div class="m-3">    
+            <form [formGroup]="loginForm" (keydown.enter)="submit()" class="mb-6">
+                <div class="inputs w-6">    
                     <p-iconfield>
-                        <p-inputicon class="pi pi-user"/>
+                        <p-inputicon class="pi pi-user" style="color: #e3e3f3;"/>
                         <input
                             #emailInput
                             [style]="{'width':'100%'}"
@@ -20,9 +20,9 @@
                         />
                     </p-iconfield>
                 </div>    
-                <div class="m-3 mb-1">    
+                <div class="inputs w-6 mb-1">    
                     <p-iconfield>
-                        <p-inputicon class="pi pi-key"/>
+                        <p-inputicon class="pi pi-key" style="color: #e3e3f3;"/>
                         <input
                             [style]="{'width':'100%'}"
                             pInputText id="on_label"  
