@@ -229,13 +229,14 @@
 
 .card-title {
     font-size: 13px;
-    color: #64748b
+    color: #64748b;
 }
 
 .card-value {
     font-size: 22px;
     font-weight: 700;
-    margin-top: 6px
+    margin-top: 6px;
+    color: #64748b !important;
 }
 
 .panel-row {
