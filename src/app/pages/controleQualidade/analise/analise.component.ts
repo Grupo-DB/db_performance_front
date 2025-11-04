@@ -495,7 +495,6 @@ calculateRegressionThroughOrigin(points: [number, number][]): number {
 
 calculateAndDrawRegression(): void {
     const rawData = this.dataRows.value;
-    const AW_INTERCEPTO_FIXO = 0.8807; // Mantemos a constante para o cálculo final do Aw Lab
     
     // 1. Extração de Dados
     const todosOsPontos: DataPoint[] = rawData
@@ -531,7 +530,7 @@ calculateAndDrawRegression(): void {
     this.r2Calculado = rSquared(dataForRegression, lineFunction);
 
     // --- 4. CÁLCULO Aw PELA FÓRMULA DO EXCEL/LABORATÓRIO (VALOR FINAL) ---
-    
+    // Encontrar o ponto máximo para calcular o Aw
     const pontoMaximo = todosOsPontos.reduce((max, p) => {
         if (p.x > max.x) return p;
         if (p.x === max.x && p.y > max.y) return p;
@@ -539,17 +538,18 @@ calculateAndDrawRegression(): void {
     }, todosOsPontos[0]); 
     
     const deltaM_max = pontoMaximo.y;
-    const raizT_max = pontoMaximo.x;     
-  
-    // Fórmula final do laboratório: Aw = (Máximo Delta M - Coeficiente Fixo) / Máxima Raiz t
+    const raizT_max = pontoMaximo.x;
+    
+    // Fórmula do laboratório: Aw = (Δmt_max - Intercepto) / Raiz_t_max
+    // O intercepto (b) é o coeficiente linear da regressão
     if (raizT_max > 0) {
-        this.awLaboratorioCalculado = (deltaM_max - AW_INTERCEPTO_FIXO) / raizT_max; 
+        this.awLaboratorioCalculado = (deltaM_max - regression.b) / raizT_max;
     } else {
         this.awLaboratorioCalculado = 0;
     }
     
     // 5. Gerar pontos da Linha (usa a Regressão Normal para desenhar)
-    const xMin = 0; 
+    const xMin = 0;
     const xMax = raizT_max + 0.1;
 
     const regressionLineData = [
@@ -566,13 +566,14 @@ renderChart(todosOsPontos: DataPoint[], regressionLineData: DataPoint[]) {
     const ctx = this.chartRef.nativeElement.getContext('2d');
     
     // 1. DADOS PROTEGIDOS PARA FORMATAÇÃO
-    const m = this.awLaboratorioCalculado ?? 0; 
+    // Para a equação, usar o coeficiente angular (m) da regressão
+    const m = this.awCalculado ?? 0; 
     const b = this.bIntercepto ?? 0; 
     let equacaoFormatada: string;
 
-    // Garante que o cálculo Aw da Inclinação seja válido
-    if (this.awLaboratorioCalculado !== null && !isNaN(this.awLaboratorioCalculado)) {
-        equacaoFormatada = `f(x) = ${m.toFixed(8)}x ${b >= 0 ? '+' : '-'} ${Math.abs(b).toFixed(4)}`;
+    // Garante que o cálculo da regressão seja válido
+    if (this.awCalculado !== null && !isNaN(this.awCalculado)) {
+        equacaoFormatada = `f(x) = ${m.toFixed(11)}x ${b >= 0 ? '+' : '-'} ${Math.abs(b).toFixed(11)}`;
     } else {
         equacaoFormatada = 'f(x) = Cálculo Indisponível';
     }
