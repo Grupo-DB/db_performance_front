@@ -127,6 +127,24 @@ interface LinhaCompressao {
   tracao_compressao: number | null;
 }
 
+interface LinhaPeneira {
+  peneira: string;
+  valor_retido: number | null;
+  porcentual_retido: number | null;
+  acumulado: number | null;
+  passante: number | null;
+  passante_acumulado: number | null;
+}
+
+interface LinhaPeneiraUmida {
+  peneira: string;
+  valor_retido: number | null;
+  porcentual_retido: number | null;
+  acumulado: number | null;
+  passante: number | null;
+  passante_acumulado: number | null;
+}
+
 export interface Analise {
   id: number;
   data: string;
@@ -143,6 +161,8 @@ export interface Analise {
   elasticidade: any;
   flexao: any;
   compressao: any;
+  peneiras: any;
+  peneiras_umidas: any;
 
 }
 interface FileWithInfo {
@@ -338,6 +358,59 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   modalDadosLaudoCompressao = false;
   linhasCompressao: LinhaCompressao[] = [];
   parecer_compressao: any = null;
+
+  modalDadosPeneira = false;
+  linhasPeneira: LinhaPeneira[] = [];
+  peneira_seca: any = null;
+
+  modalDadosPeneiraUmida = false;
+  linhasPeneiraUmida: LinhaPeneiraUmida[] = [];
+  peneira_umida: any = null;
+
+
+
+  modalVisualizarPeneira = false;
+  modalVisualizarPeneiraUmida = false;
+
+
+  peneirasDados = [
+    { value: '# 1.1/2 - ABNT/ASTM 1.1/2 - 37,5 mm' },
+    { value: '# 1 - ABNT/ASTM 1 - 25,0 mm' },
+    { value: '# 3/4 - ABNT/ASTM 3/4 - 19,0 mm' },
+    { value: '# 1/2 - ABNT/ASTM 1/2 - 12,5 mm' },
+    { value: '# 3/8 - ABNT/ASTM 3/8 - 9,5 mm' },
+    { value: '# 1/4 - ABNT/ASTM 1/4 - 6,3 mm' },
+    { value: '# 4 - ABNT/ASTM 4 - 4,75 mm' },
+    { value: '# 5 - ABNT/ASTM 5 - 4,00 mm' },
+    { value: '# 6 - ABNT/ASTM 6 - 3,35 mm' },
+    { value: '# 7 - ABNT/ASTM 7 - 2,80 mm' },
+    { value: '# 8 - ABNT/ASTM 8 - 2,36 mm' },
+    { value: '# 10 - ABNT/ASTM 10 - 2,00 mm' },
+    { value: '# 12 - ABNT/ASTM 12 - 1,70 mm' },
+    { value: '# 14 - ABNT/ASTM 14 - 1,40 mm' },
+    { value: '# 16 - ABNT/ASTM 16 - 1,18 mm' },
+    { value: '# 18 - ABNT/ASTM 18 - 1,00 mm' },
+    { value: '# 20 - ABNT/ASTM 20 - 0,850 mm' },
+    { value: '# 25 - ABNT/ASTM 25 - 0,710 mm' },
+    { value: '# 30 - ABNT/ASTM 30 - 0,600 mm' },
+    { value: '# 35 - ABNT/ASTM 35 - 0,500 mm' },
+    { value: '# 40 - ABNT/ASTM 40 - 0,425 mm' },
+    { value: '# 45 - ABNT/ASTM 45 - 0,355 mm' },
+    { value: '# 50 - ABNT/ASTM 50 - 0,300 mm' },
+    { value: '# 60 - ABNT/ASTM 60 - 0,250 mm' },
+    { value: '# 70 - ABNT/ASTM 70 - 0,212 mm' },
+    { value: '# 100 - ABNT/ASTM 100 - 0,150 mm' },
+    { value: '# 120 - ABNT/ASTM 120 - 0,125 mm' },
+    { value: '# 140 - ABNT/ASTM 140 - 0,106 mm' },
+    { value: '# 200 - ABNT/ASTM 200 - 0,075 mm' },
+    { value: '# 250 - ABNT/ASTM 250 - 0,063 mm' },
+    { value: '# 325 - ABNT/ASTM 325 - 0,045 mm' },
+    { value: '# 400 - ABNT/ASTM 400 - 0,038 mm' },
+    { value: '# 635 - ABNT/ASTM 635 - 0,020 mm' },
+  ];
+
+
+ 
 
   jsonModal: {
     substrato: any[];
@@ -5578,7 +5651,293 @@ canDeactivate(): boolean | Promise<boolean> {
       //{ label: 'Compressão', icon: 'pi pi-eye', command: () => this.abrirModalCompressao(analise) },
       //{ label: 'Determinação do Coeficiente de Absorção de Água por Capilaridade', icon: 'pi pi-eye' },
       { label: 'Gráfico Capilaridade', icon: 'pi pi-eye', command: () => this.exibirGrafico() },
+      { label: 'Peneiras Secas', icon: 'pi pi-eye', command: () => this.abrirModalPeneira(analise) },
+      { label: 'Peneiras Úmidas', icon: 'pi pi-eye', command: () => this.abrirModalPeneiraUmida(analise) },
     ];
+  }
+
+  abrirModalPeneira(analise: any){
+    
+    if(this.peneira_seca){
+      this.linhasPeneira = this.peneira_seca.map((item: any, index: number) => ({
+        peneira: item.peneira ?? '',
+        valor_retido: item.valor_retido ?? null,
+        porcentual_retido: item.porcentual_retido ?? null,
+        acumulado: item.acumulado ?? null,
+        passante: item.passante ?? null,
+        passante_acumulado: item.passante_acumulado ?? null,
+      }));
+    }else if (analise?.peneiras.peneiras && Array.isArray(analise.peneiras.peneiras)) {
+      this.linhasPeneira = analise.peneiras.peneiras.map((item: any, index: number) => ({
+        peneira: item.peneira ?? '',
+        valor_retido: item.valor_retido ?? null,
+        porcentual_retido: item.porcentual_retido ?? null,
+        acumulado: item.acumulado ?? null,
+        passante: item.passante ?? null,
+        passante_acumulado: item.passante_acumulado ?? null,
+      }));
+      while (this.linhasPeneira.length < 5) {
+        this.linhasPeneira.push({
+          peneira: '',
+          valor_retido: null,
+          porcentual_retido: null,
+          acumulado: null,
+          passante: null,
+          passante_acumulado: null
+        });
+      }
+
+      this.massa_amostra = analise.peneiras.amostra;
+      this.total_finos = analise.peneiras.finos;
+    } else {
+      this.linhasPeneira = [];
+      for (let i = 1; i <= 5; i++) {
+        this.linhasPeneira.push({
+          peneira: '',
+          valor_retido: null,
+          porcentual_retido: null,
+          acumulado: null,
+          passante: null,
+          passante_acumulado: null,
+        });
+      }
+    }
+    this.modalDadosPeneira = true;
+  }
+
+  massa_amostra: number = 0;
+  total_finos: number | null = null;
+
+  atualizarValores(index: number) {
+    this.calcularPercentuaisEAcumulado();
+  }
+
+  atualizarTodosValores() {
+    this.calcularPercentuaisEAcumulado();
+  }
+
+  calcularPercentuaisEAcumulado() {
+    let somaPercentual = 0;
+
+    this.linhasPeneira.forEach((linha) => {
+      const retido = Number(linha.valor_retido);
+
+      // Calcula o % Retido apenas se houver massa válida e valor_retido
+      if (
+        this.massa_amostra &&
+        this.massa_amostra > 0 &&
+        !isNaN(retido) &&
+        linha.valor_retido !== null &&
+        linha.valor_retido !== undefined
+      ) {
+        linha.porcentual_retido = (retido * 100) / this.massa_amostra;
+      } else {
+        linha.porcentual_retido = null;
+      }
+
+      // Só acumula se houver porcentual válido
+      if (
+        linha.porcentual_retido !== null &&
+        !isNaN(linha.porcentual_retido)
+      ) {
+        somaPercentual += linha.porcentual_retido;
+        linha.acumulado = somaPercentual;
+        linha.passante_acumulado = 100 - linha.acumulado;
+        linha.passante = 100 - linha.porcentual_retido;
+      } else {
+        linha.acumulado = null; // 🔹 Mantém vazio se não houver % Retido
+        linha.passante_acumulado = null;
+        linha.passante = null;
+      }
+    });
+
+    // 🔹 Pega a última linha com acumulado válido
+    const ultimaLinhaComAcumulado = [...this.linhasPeneira]
+      .reverse()
+      .find(l => l.acumulado != null);
+
+    // 🔹 Total finos = 100 - acumulado final
+    this.total_finos =
+      ultimaLinhaComAcumulado && ultimaLinhaComAcumulado.acumulado != null
+        ? 100 - ultimaLinhaComAcumulado.acumulado
+        : null;
+  }
+
+  salvarPeneiraSeca(analise: any){
+
+    this.peneira_seca = this.linhasPeneira;
+    this.modalDadosPeneira = false;
+console.log(this.linhasPeneira);
+    const dadosAtualizados: Partial<Analise> = {
+      peneiras:{
+        peneiras: this.linhasPeneira,
+        amostra: this.massa_amostra,
+        finos: this.total_finos
+      }
+    };
+   
+    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Peneira Seca Cadastrada com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });    
+  }
+
+
+  abrirModalPeneiraUmida(analise: any){
+    
+    if(this.peneira_umida){
+      this.linhasPeneiraUmida = this.peneira_umida.map((item: any, index: number) => ({
+        peneira: item.peneira ?? '',
+        valor_retido: item.valor_retido ?? null,
+        porcentual_retido: item.porcentual_retido ?? null,
+        acumulado: item.acumulado ?? null,
+        passante: item.passante ?? null,
+        passante_acumulado: item.passante_acumulado ?? null,
+      }));
+    }else if (analise?.peneiras_umidas.peneiras && Array.isArray(analise.peneiras_umidas.peneiras)) {
+      this.linhasPeneiraUmida = analise.peneiras_umidas.peneiras.map((item: any, index: number) => ({
+        peneira: item.peneira ?? '',
+        valor_retido: item.valor_retido ?? null,
+        porcentual_retido: item.porcentual_retido ?? null,
+        acumulado: item.acumulado ?? null,
+        passante: item.passante ?? null,
+        passante_acumulado: item.passante_acumulado ?? null,
+      }));
+      
+      this.massa_amostra_umida = analise.peneiras.amostra;
+      this.total_finos_umida = analise.peneiras.finos;
+    } else {
+      this.linhasPeneiraUmida = [];
+      this.linhasPeneiraUmida.push({
+        peneira: '',
+        valor_retido: null,
+        porcentual_retido: null,
+        acumulado: null,
+        passante: null,
+        passante_acumulado: null,
+      });
+    }
+    this.modalDadosPeneiraUmida = true;
+  }
+
+  massa_amostra_umida: number = 0;
+  total_finos_umida: number | null = null;
+
+  atualizarValoresUmida(index: number) {
+    this.calcularPercentuaisEAcumuladoUmida();
+  }
+
+  atualizarTodosValoresUmida() {
+    this.calcularPercentuaisEAcumuladoUmida();
+  }
+
+  calcularPercentuaisEAcumuladoUmida() {
+    let somaPercentual = 0;
+
+    this.linhasPeneiraUmida.forEach((linha) => {
+      const retido = Number(linha.valor_retido);
+
+      // Calcula o % Retido apenas se houver massa válida e valor_retido
+      if (
+        this.massa_amostra_umida &&
+        this.massa_amostra_umida > 0 &&
+        !isNaN(retido) &&
+        linha.valor_retido !== null &&
+        linha.valor_retido !== undefined
+      ) {
+        linha.porcentual_retido = (retido * 100) / this.massa_amostra_umida;
+      } else {
+        linha.porcentual_retido = null;
+      }
+
+      // Só acumula se houver porcentual válido
+      if (
+        linha.porcentual_retido !== null &&
+        !isNaN(linha.porcentual_retido)
+      ) {
+        somaPercentual += linha.porcentual_retido;
+        linha.acumulado = somaPercentual;
+        linha.passante_acumulado = 100 - linha.acumulado;
+        linha.passante = 100 - linha.porcentual_retido;
+      } else {
+        linha.acumulado = null; // 🔹 Mantém vazio se não houver % Retido
+        linha.passante_acumulado = null;
+        linha.passante = null;
+      }
+    });
+
+    // 🔹 Pega a última linha com acumulado válido
+    const ultimaLinhaComAcumulado = [...this.linhasPeneiraUmida]
+      .reverse()
+      .find(l => l.acumulado != null);
+
+    // 🔹 Total finos = 100 - acumulado final
+    this.total_finos_umida =
+      ultimaLinhaComAcumulado && ultimaLinhaComAcumulado.acumulado != null
+        ? 100 - ultimaLinhaComAcumulado.acumulado
+        : null;
+  }
+
+  salvarPeneiraUmida(analise: any){
+
+    this.peneira_umida = this.linhasPeneiraUmida;
+    this.modalDadosPeneiraUmida = false;
+
+    const dadosAtualizados: Partial<Analise> = {
+      peneiras_umidas:{
+        peneiras: this.linhasPeneiraUmida,
+        amostra: this.massa_amostra_umida,
+        finos: this.total_finos_umida
+      }
+    };
+    
+   
+    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Peneira Úmida Cadastrada com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });    
   }
 
   abrirModalSubstrato(analise: any){
@@ -6231,9 +6590,93 @@ canDeactivate(): boolean | Promise<boolean> {
       }
       
     }
-          console.log(linha.resist+' =- - - - - - '+valor_vezes_03);
-
-    
   }
+
+  visualizarPeneira(){
+    if(this.peneira_seca){
+      this.linhasPeneira = this.peneira_seca.map((item: any, index: number) => ({
+        peneira: item.peneira ?? '',
+        valor_retido: item.valor_retido ?? null,
+        porcentual_retido: item.porcentual_retido ?? null,
+        acumulado: item.acumulado ?? null,
+        passante: item.passante ?? null,
+        passante_acumulado: item.passante_acumulado ?? null,
+      }));
+    }else if (this.analise?.peneiras.peneiras && Array.isArray(this.analise.peneiras.peneiras)) {
+      this.linhasPeneira = this.analise.peneiras.peneiras.map((item: any, index: number) => ({
+        peneira: item.peneira ?? '',
+        valor_retido: item.valor_retido ?? null,
+        porcentual_retido: item.porcentual_retido ?? null,
+        acumulado: item.acumulado ?? null,
+        passante: item.passante ?? null,
+        passante_acumulado: item.passante_acumulado ?? null,
+      }));
+      
+      this.massa_amostra = this.analise.peneiras.amostra;
+      this.total_finos = this.analise.peneiras.finos;
+    } else {
+      this.linhasPeneira = [];
+      this.linhasPeneira.push({
+        peneira: '',
+        valor_retido: null,
+        porcentual_retido: null,
+        acumulado: null,
+        passante: null,
+        passante_acumulado: null,
+      });
+    }
+    this.modalVisualizarPeneira = true;
+    this.modalVisualizarPeneiraUmida = false;
+  }
+
+  visualizarPeneiraUmida(){
+    if(this.peneira_umida){
+      this.linhasPeneiraUmida = this.peneira_umida.map((item: any, index: number) => ({
+        peneira: item.peneira ?? '',
+        valor_retido: item.valor_retido ?? null,
+        porcentual_retido: item.porcentual_retido ?? null,
+        acumulado: item.acumulado ?? null,
+        passante: item.passante ?? null,
+        passante_acumulado: item.passante_acumulado ?? null,
+      }));
+    }else if (this.analise?.peneiras_umidas.peneiras && Array.isArray(this.analise.peneiras_umidas.peneiras)) {
+      this.linhasPeneiraUmida = this.analise.peneiras_umidas.peneiras.map((item: any, index: number) => ({
+        peneira: item.peneira ?? '',
+        valor_retido: item.valor_retido ?? null,
+        porcentual_retido: item.porcentual_retido ?? null,
+        acumulado: item.acumulado ?? null,
+        passante: item.passante ?? null,
+        passante_acumulado: item.passante_acumulado ?? null,
+      }));
+      this.massa_amostra_umida = this.analise.peneiras.amostra;
+      this.total_finos_umida = this.analise.peneiras.finos;
+    } else {
+      this.linhasPeneiraUmida = [];
+        this.linhasPeneiraUmida.push({
+          peneira: '',
+          valor_retido: null,
+          porcentual_retido: null,
+          acumulado: null,
+          passante: null,
+          passante_acumulado: null,
+        });
+      
+    }
+    this.modalVisualizarPeneiraUmida = true;
+    this.modalVisualizarPeneira = false;
+  }
+
+   addLinha(): void {
+    this.linhasPeneiraUmida.push({
+      peneira: '',
+      valor_retido: null,
+      porcentual_retido: null,
+      acumulado: null,
+      passante: null,
+      passante_acumulado: null,
+    });
+  }
+
+ 
 
 }
