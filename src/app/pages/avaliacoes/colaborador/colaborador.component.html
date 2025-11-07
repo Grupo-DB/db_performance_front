@@ -326,6 +326,7 @@
                                             type="file"
                                             class="form-control"
                                             (change)="onFileChange($event,registercolaboradorForm)"
+                                            formControlName="image"
                                         />
                                             <!-- formControlName="image" -->
                                     </div>
@@ -1006,7 +1007,7 @@
                                         <input
                                             id="foto"
                                             type="file"
-                                            
+                                            formControlName="image"
                                             class="form-control"
                                             (change)="onFileChange($event,registercolaboradorForm)"
                                         />
@@ -1164,6 +1165,7 @@
                     <input
                     id="foto"
                     type="file"
+                    formControlName="image"
                     class="form-control"
                     (change)="onFileChange($event,imgForm)">
 
