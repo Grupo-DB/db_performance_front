@@ -41,6 +41,8 @@ interface RegisterEnsaioForm {
   unidade: FormControl;
   tempoPrevistoValor: FormControl;
   tempoPrevistoUnidade: FormControl;
+  tempoTrabalhoValor: FormControl;
+  tempoTrabalhoUnidade: FormControl;
   variavel: FormControl;
   funcao: FormControl;
   norma: FormControl;
@@ -56,9 +58,11 @@ export interface Ensaio {
   tipoEnsaio: any;
   unidade: any;
   tempoPrevisto: any;
+  tempoTrabalho: any;
   tipo_ensaio_detalhes: any;
   tipo_ensaio: any;
   tempo_previsto: any;
+  tempo_trabalho: any;
   variavel: any;
   funcao: any;
   norma: any;
@@ -272,6 +276,8 @@ export class EnsaioComponent implements OnInit{
       unidade: new FormControl(''),
       tempoPrevistoValor: new FormControl('',),
       tempoPrevistoUnidade: new FormControl('',),
+      tempoTrabalhoValor: new FormControl('',),
+      tempoTrabalhoUnidade: new FormControl('',),
       variavel: new FormControl(''),
       funcao: new FormControl(''),
       norma: new FormControl(''),
@@ -287,6 +293,8 @@ export class EnsaioComponent implements OnInit{
       unidade: [''],
       tempoPrevistoValor: [''],
       tempoPrevistoUnidade: [''],
+      tempoTrabalhoValor: [''],
+      tempoTrabalhoUnidade: [''],
       variavel: [''],
       funcao: [''],
       norma: [''],
@@ -952,6 +960,15 @@ filterVariaveis(event: any) {
     tempoPrevistoUnidade = partes.slice(1).join(' ') || '';
   }
 
+    // Supondo que ensaio.tempoTrtabalho seja uma string tipo "15 Minutos"
+  let tempoTrabalhoValor = '';
+  let tempoTrabalhoUnidade = '';
+  if (ensaio.tempoTrabalho) {
+    const partes = ensaio.tempoTrabalho ? ensaio.tempoTrabalho.split(' ') : [];
+    tempoTrabalhoValor = partes[0] || '';
+    tempoTrabalhoUnidade = partes.slice(1).join(' ') || '';
+  }
+
   this.editForm.patchValue({
     id: ensaio.id,
     descricao: ensaio.descricao,
@@ -960,6 +977,8 @@ filterVariaveis(event: any) {
     unidade: ensaio.unidade,
     tempoPrevistoValor: tempoPrevistoValor,
     tempoPrevistoUnidade: tempoPrevistoUnidade,
+    tempoTrabalhoValor: tempoTrabalhoValor,
+    tempoTrabalhoUnidade: tempoTrabalhoUnidade,
     variavel: ensaio.variavel,
     funcao: ensaio.funcao,
     norma: ensaio.norma,
@@ -980,10 +999,12 @@ filterVariaveis(event: any) {
   const id = this.editForm.value.id;
   const tipo_ensaio = this.editForm.value.tipo_ensaio;
   const tempo_previsto = `${this.editForm.value.tempoPrevistoValor} ${this.editForm.value.tempoPrevistoUnidade}`;
+  const tempo_trabalho = `${this.editForm.value.tempoTrabalhoValor} ${this.editForm.value.tempoTrabalhoUnidade}`;
   const dadosAtualizados: Partial<Ensaio> = {
     descricao: this.editForm.value.descricao,
     valor: this.editForm.value.valor,
     tempo_previsto: tempo_previsto,
+    tempo_trabalho: tempo_trabalho,
     tipo_ensaio: tipo_ensaio,
     unidade: this.editForm.value.unidade,
     variavel: this.editForm.value.variavel,
@@ -1080,6 +1101,7 @@ filterVariaveis(event: any) {
       this.registerForm.value.valor,
       this.registerForm.value.tipoEnsaio,
       `${this.registerForm.value.tempoPrevistoValor} ${this.registerForm.value.tempoPrevistoUnidade}`,
+      `${this.registerForm.value.tempoTrabalhoValor} ${this.registerForm.value.tempoTrabalhoUnidade}`,
       this.registerForm.value.unidade,
       variaveis,
       this.registerForm.value.funcao,

@@ -47,8 +47,8 @@ export class EnsaioService {
     const url = `${this.apiUrlEnsaio}${id}/`;
     return this.http.delete(url);
   }
-  registerEnsaio(descricao: string,  valor: number, tipoEnsaio: any, tempoPrevisto: any, unidade:any, variavel: any, funcao: any, norma: any, garantia: any, tecnica: any, estado: string){
-    return this.http.post<Ensaio>(this.apiUrlEnsaio, { descricao: descricao, valor: valor, tipo_ensaio: tipoEnsaio, tempo_previsto: tempoPrevisto, unidade: unidade, variavel: variavel, funcao: funcao, norma: norma, garantia: garantia, tecnica: tecnica, estado: estado });
+  registerEnsaio(descricao: string,  valor: number, tipoEnsaio: any, tempoPrevisto: any, tempoTrabalho: any, unidade:any, variavel: any, funcao: any, norma: any, garantia: any, tecnica: any, estado: string){
+    return this.http.post<Ensaio>(this.apiUrlEnsaio, { descricao: descricao, valor: valor, tipo_ensaio: tipoEnsaio, tempo_previsto: tempoPrevisto, tempo_trabalho: tempoTrabalho, unidade: unidade, variavel: variavel, funcao: funcao, norma: norma, garantia: garantia, tecnica: tecnica, estado: estado });
   }
 
   //Calculo Ensaio

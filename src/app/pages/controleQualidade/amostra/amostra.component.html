@@ -151,7 +151,7 @@
                                                                     <p-select inputId="float-label" [style]="{'width':'100%'}"
                                                                         [options]="finalidades" formControlName="finalidade"
                                                                         optionLabel="nome" optionValue="nome" appendTo="body"
-                                                                        [filter]="true" filterBy="nome" [showClear]="true">
+                                                                        [filter]="true" filterBy="nome" [showClear]="true" [editable]="true">
                                                                     </p-select>
                                                                     <label for="float-label">Selecione a Finalidade</label>
                                                                 </p-floatLabel>
@@ -197,7 +197,7 @@
                                                                     <p-select inputId="float-label" [style]="{'width':'100%'}"
                                                                         [options]="status" formControlName="status" optionLabel="nome"
                                                                         optionValue="nome" appendTo="body" [filter]="true" filterBy="nome"
-                                                                        [showClear]="true">
+                                                                        [showClear]="true" [editable]="true">
                                                                     </p-select>
                                                                     <label for="float-label">Classificação</label>
                                                                 </p-floatLabel>
@@ -207,7 +207,7 @@
                                                                     <p-select inputId="float-label" [style]="{'width':'100%'}"
                                                                         [options]="locaisColeta" formControlName="localColeta"
                                                                         optionLabel="nome" optionValue="nome" appendTo="body"
-                                                                        [filter]="true" filterBy="nome" [showClear]="true">
+                                                                        [filter]="true" filterBy="nome" [showClear]="true" [editable]="true">
                                                                     </p-select>
                                                                     <label for="float-label">Local de Coleta</label>
                                                                 </p-floatLabel>
@@ -364,7 +364,7 @@
                                                                     <label for="on_label">Estado Físico</label>
                                                                 </p-floatlabel>
                                                             </div>
-                                                            <div *ngIf="registerForm.get('material')?.value === 'Argamassa'" class="w-12 text-left">
+                                                            <div *ngIf="registerForm.get('material')?.value === 'Argamassa'" class="w-11 text-left">
                                                                 <p-floatlabel variant="on">
                                                                     <p-iconfield>
                                                                         <p-inputicon class="pi pi-file-edit" />
@@ -385,7 +385,7 @@
                                                                     <p-select inputId="float-label" [style]="{'width':'100%'}"
                                                                         [options]="fornecedores" formControlName="fornecedor"
                                                                         optionLabel="nome" optionValue="nome" appendTo="body"
-                                                                        [filter]="true" filterBy="nome" [showClear]="true">
+                                                                        [filter]="true" filterBy="nome" [showClear]="true" [editable]="true">
                                                                     </p-select>
                                                                     <label for="float-label">Fornecedor</label>
                                                                 </p-floatLabel>
@@ -934,7 +934,7 @@
                                                     <p-select inputId="float-label" [style]="{'width':'100%'}"
                                                         [options]="finalidades" formControlName="finalidade"
                                                         optionLabel="nome" optionValue="nome" appendTo="body"
-                                                        [filter]="true" filterBy="value" [showClear]="true">
+                                                        [filter]="true" filterBy="value" [showClear]="true" [editable]="true">
                                                     </p-select>
                                                     <label for="float-label">Selecione a Finalidade</label>
                                                 </p-floatLabel>
@@ -980,7 +980,7 @@
                                                     <p-select inputId="float-label" [style]="{'width':'100%'}"
                                                         [options]="status" formControlName="status" optionLabel="nome"
                                                         optionValue="nome" appendTo="body" [filter]="true" filterBy="value"
-                                                        [showClear]="true">
+                                                        [showClear]="true" [editable]="true">
                                                     </p-select>
                                                     <label for="float-label">Classificação</label>
                                                 </p-floatLabel>
@@ -990,7 +990,7 @@
                                                     <p-select inputId="float-label" [style]="{'width':'100%'}"
                                                         [options]="locaisColeta" formControlName="localColeta"
                                                         optionLabel="nome" optionValue="nome" appendTo="body"
-                                                        [filter]="true" filterBy="value" [showClear]="true">
+                                                        [filter]="true" filterBy="value" [showClear]="true" [editable]="true">
                                                     </p-select>
                                                     <label for="float-label">Local de Coleta</label>
                                                 </p-floatLabel>
@@ -1169,7 +1169,7 @@
                                                     <p-select inputId="float-label" [style]="{'width':'100%'}"
                                                         [options]="fornecedores" formControlName="fornecedor"
                                                         optionLabel="nome" optionValue="nome" appendTo="body"
-                                                        [filter]="true" filterBy="value" [showClear]="true">
+                                                        [filter]="true" filterBy="value" [showClear]="true" [editable]="true">
                                                     </p-select>
                                                     <label for="float-label">Fornecedor</label>
                                                 </p-floatLabel>
