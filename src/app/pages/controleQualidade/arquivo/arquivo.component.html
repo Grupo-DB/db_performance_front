@@ -71,7 +71,8 @@
                                     'fornecedor',
                                     'numero',
                                     'status',
-                                    'responsavel'
+                                    'responsavel',
+                                    'laboratorio'
                                 ]"
                             >
                             <ng-template pTemplate="caption">
@@ -141,6 +142,32 @@
                                             field="fornecedor" 
                                             display="menu"
                                         >Número</th>
+                                        <th style="width: 10%; text-align: left;" type="text" field="laboratorio" display="menu">
+                                            <p-multiselect
+                                                [(ngModel)]="laboratoriosSelecionados"
+                                                [options]="laboratoriosFiltro"
+                                                (onChange)="filtrarPorLaboratorios()"
+                                                placeholder="Laboratório"
+                                                [showClear]="true"
+                                                optionLabel="label"
+                                                optionValue="value"
+                                                [maxSelectedLabels]="2"
+                                                appendTo="body"
+                                            >
+                                                <ng-template pTemplate="selectedItems" let-selectedOptions>
+                                                    <div class="flex gap-1 flex-wrap">
+                                                        <p-tag
+                                                            *ngFor="let option of selectedOptions"
+                                                            [value]="option.value"
+                                                            [severity]="getLaboratorioSeverity(option.value)"
+                                                        />
+                                                    </div>
+                                                </ng-template>
+                                                <ng-template pTemplate="item" let-option>
+                                                    <p-tag [value]="option.value" [severity]="getLaboratorioSeverity(option.value)" />
+                                                </ng-template>
+                                            </p-multiselect>
+                                        </th>
                                         <th pSortableColumn="data_entrada" style="width: 10%;">
                                             <div class="flex justify-between items-left">
                                                 Data de Abertura
@@ -215,6 +242,12 @@
                                             />
                                         </td>
                                         <td style="text-align: left;"> {{ analise.amostra_detalhes?.numero }} </td>
+                                        <td style="text-align: left;">
+                                            <p-tag 
+                                                *ngIf="analise?.amostra_detalhes?.laboratorio"
+                                                [value]="analise.amostra_detalhes.laboratorio"
+                                                [severity]="getLaboratorioSeverity(analise.amostra_detalhes.laboratorio)" />
+                                        </td>
                                         <ng-container *ngIf="analise?.amostra_detalhes?.expressa_detalhes; else ensaioDetalhes">
                                             <td style="text-align: left;">
                                                 {{ analise.amostra_detalhes?.expressa_detalhes?.data | date:'dd/MM/yy' }}

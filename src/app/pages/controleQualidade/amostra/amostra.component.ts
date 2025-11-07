@@ -58,6 +58,7 @@ interface FileWithInfo {
   descricao: string;
 }
 interface AmostraForm{
+  laboratorio: FormControl,
   material: FormControl,
   finalidade: FormControl,
   numeroSac: FormControl,
@@ -107,6 +108,7 @@ interface AnaliseForm{
 
 export interface Amostra {
   id: number;
+  laboratorio: any;
   data_entrada: any;
   data_coleta: any;
   numero: any;
@@ -245,6 +247,11 @@ export class AmostraComponent implements OnInit {
   
   // Cache para menu items para evitar recriação constante
   private menuItemsCache = new Map<number, MenuItem[]>();
+  
+  // Propriedades para controle de laboratório
+  laboratorios: any[] = [];
+  laboratorioSelecionado: any = null;
+  mostrarFormulario: boolean = false;
   
   registerForm!: FormGroup<AmostraForm>;
   registerOrdemForm!: FormGroup<OrdemForm>;
@@ -412,6 +419,7 @@ export class AmostraComponent implements OnInit {
   )
   {
     this.registerForm = new FormGroup<AmostraForm>({
+      laboratorio: new FormControl(''),
       material: new FormControl('',[Validators.required]),
       finalidade: new FormControl('',[Validators.required]),
       numeroSac: new FormControl('',),
@@ -444,6 +452,12 @@ export class AmostraComponent implements OnInit {
       status: new FormControl(''),
       dataDescarte: new FormControl(''),
     });
+    
+    // Inicializar lista de laboratórios
+    this.laboratorios = [
+      { nome: 'Matriz'},
+      { nome: 'ATM'},
+    ];
     this.registerOrdemForm = new FormGroup<OrdemForm>({
       data: new FormControl('',[Validators.required]),
       numero: new FormControl('',[Validators.required]),
@@ -455,6 +469,7 @@ export class AmostraComponent implements OnInit {
 
     this.editForm  = this.fb.group({
       id: [''],
+      laboratorio: [''],
       dataEntrada: [''],
       dataColeta: [''],
       numero: [''],
@@ -503,6 +518,7 @@ export class AmostraComponent implements OnInit {
     }
     this.editForm.patchValue({
       id: amostra.id,
+      laboratorio: amostra.laboratorio,
       dataEntrada: dataEntrada,
       dataColeta: dataColeta,
       dataEnvio: dataEnvio,
@@ -537,6 +553,32 @@ export class AmostraComponent implements OnInit {
   hasGroup(groups: string[]): boolean {
     return this.loginService.hasAnyGroup(groups);
   }
+  
+  // Método chamado quando o laboratório é selecionado
+  onLaboratorioSelecionado(laboratorio: any): void {
+    this.laboratorioSelecionado = laboratorio;
+    this.mostrarFormulario = true;
+    
+    // Salvar o nome do laboratório no formulário
+    this.registerForm.patchValue({
+      laboratorio: laboratorio.nome
+    });
+    
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Laboratório Selecionado',
+      detail: `${laboratorio.nome} selecionado com sucesso!`,
+      life: 2000
+    });
+  }
+  
+  // Método para resetar a seleção do laboratório
+  resetarLaboratorio(): void {
+    this.laboratorioSelecionado = null;
+    this.mostrarFormulario = false;
+    this.clearForm();
+  }
+  
   ngOnInit(): void {
     this.loadTiposAmostra();
     this.loadProdutosAmostra();
@@ -622,7 +664,14 @@ export class AmostraComponent implements OnInit {
   }
   clearForm(){
     this.registerForm.reset();
+    // Não resetar o laboratório aqui para manter a seleção
   }
+  
+  clearFormCompleto(){
+    this.registerForm.reset();
+    this.resetarLaboratorio();
+  }
+  
   clearEditForm(){
     this.editForm.reset();
     // Também limpar os arquivos de upload
@@ -657,6 +706,7 @@ export class AmostraComponent implements OnInit {
       dataDescarteFormatada = formatDate(dataDescarte, 'yyyy-MM-dd', 'en-US');
     }
     const dadosAtualizados: Partial<Amostra> = {
+      laboratorio: this.editForm.value.laboratorio,
       data_entrada: dataEntradaFormatada,
       data_coleta: dataColetaFormatada,
       data_envio: dataEnvioFormatada,
@@ -1180,6 +1230,7 @@ submitAmostra() {
   }
 
   this.amostraService.registerAmostra(
+    this.registerForm.value.laboratorio,
     this.registerForm.value.material,
     this.registerForm.value.finalidade,
     this.registerForm.value.numeroSac,
@@ -1989,6 +2040,7 @@ limparDadosFormulario() {
 
     // Criar amostra vinculada à ordem
     this.amostraService.registerAmostra(
+      this.amostraData.laboratorio,
       this.amostraData.materialInfo?.id || this.amostraData.material,
       this.amostraData.finalidadeInfo?.id || this.amostraData.finalidade,
       this.amostraData.numeroSac,
@@ -2308,6 +2360,7 @@ criarAmostraNormal(): void {
   }  
   // Criar amostra normal (sem ordem)
   this.amostraService.registerAmostra(
+    this.registerForm.value.laboratorio,
     this.registerForm.value.material,
     this.registerForm.value.finalidade,
     this.registerForm.value.numeroSac,

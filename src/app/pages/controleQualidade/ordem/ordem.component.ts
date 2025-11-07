@@ -147,6 +147,7 @@ export class OrdemComponent implements OnInit {
   inputValue: string = '';
   produtosFiltrados: any[] = [];
   materiaisFiltro: any[] = [];
+  laboratoriosFiltro: any[] = [];
   amostras: Amostra[] = [];
   laudoForm!: FormGroup;
   modalLaudo: boolean = false;
@@ -570,7 +571,6 @@ loadProdutosPorMaterial(materialNome: string): void {
     this.produtosFiltrados = [];
     return;
   }
-
   this.amostraService.getProdutosPorMaterial(materialNome).subscribe({
     next: (response) => {
       this.produtosFiltrados = response;
@@ -603,6 +603,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
 
   analisesFiltradas: any[] = []; // array para exibir na tabela
   materiaisSelecionados: string[] = []; // valores escolhidos no multiselect
+  laboratoriosSelecionados: string[] = []; // valores escolhidos no multiselect de laboratório
   loadAnalises(): void {
     this.loading=true;
     // Limpa lista para forçar exibição de skeletonRows imediatamente
@@ -619,8 +620,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
           responsavel: analise.amostra_detalhes?.expressa_detalhes?.responsavel ?? '',
           data_entrada: analise.amostra_detalhes?.data_entrada ?? '',
           data_coleta: analise.amostra_detalhes?.data_coleta ?? '',
-
-        
+          laboratorio: analise.amostra_detalhes?.laboratorio ?? ''
         }));
         // Inicializa a lista filtrada
         this.analisesFiltradas = [...this.analises];
@@ -634,13 +634,18 @@ gerarNumero(materialNome: string, sequencial: number): string {
             label: analise.material,
             value: analise.material
           }))
-          .filter(
-            (item, index, self) =>
-              index === self.findIndex((opt) => opt.value === item.value)
-          );
+          .filter((item, index, self) => index === self.findIndex((opt) => opt.value === item.value));
+
+        this.laboratoriosFiltro = this.analises
+          .map((analise) => ({
+            label: analise.laboratorio,
+            value: analise.laboratorio
+          }))
+          .filter((item, index, self) => item.value && index === self.findIndex(opt => opt.value === item.value));
+
         // Define lista filtrada e libera carregamento (skeleton some)
         this.loading=false;
-        // ✅ NOVO: Carregar dados completos e verificar alertas de rompimento
+        //Carregar dados completos e verificar alertas de rompimento
         this.carregarDadosCompletosEVerificarAlertas();
       },
       (error) => {
@@ -1372,6 +1377,17 @@ gerarNumero(materialNome: string, sequencial: number): string {
     } else {
       this.analisesFiltradas = this.analises.filter((analise) =>
         this.materiaisSelecionados.includes(analise.material)
+      );
+    }
+  }
+
+  // Filtro pelo MultiSelect de Laboratório
+  filtrarPorLaboratorios(): void {
+    if (this.laboratoriosSelecionados.length === 0) {
+      this.analisesFiltradas = [...this.analises];
+    } else {
+      this.analisesFiltradas = this.analises.filter((analise) =>
+        this.laboratoriosSelecionados.includes(analise.laboratorio)
       );
     }
   }
@@ -3122,6 +3138,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
           }
 
           this.amostraService.registerAmostra(
+            novaAmostra.laboratorio,
             novaAmostra.material,
             novaAmostra.finalidade,
             novaAmostra.numeroSac,
@@ -3188,6 +3205,21 @@ gerarNumero(materialNome: string, sequencial: number): string {
         return 'warn';
       default:
         return 'contrast';
+    }
+  }
+
+  getLaboratorioSeverity(lab: string | undefined): 'info' | 'success' | 'warn' | 'contrast' | undefined {
+    if (!lab) return undefined;
+    const key = lab.toUpperCase();
+    switch (key) {
+      case 'LCA':
+        return 'success';
+      case 'LCI':
+        return 'info';
+      case 'LDB':
+        return 'contrast';
+      default:
+        return 'warn';
     }
   }
 

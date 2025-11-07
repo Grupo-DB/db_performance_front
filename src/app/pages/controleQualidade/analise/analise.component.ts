@@ -224,6 +224,7 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   analiseId: number | undefined;
   analiseAndamento: any;
   digitador: any;
+  laboratorioUsuario: string | null = null; // Laboratório do usuário logado
   planos: any;
   amostraNumero: any;
   planoDescricao: any;
@@ -274,10 +275,23 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   private alertasExibidos = new Set<string>();
   private timerLimpezaAlertas: any;
   editFormVisible = false;
+  // Controle de transferência de laboratório
+  modalTransferirLaboratorioVisible = false;
+  laboratorioDestinoTransferencia: string = '';
+  laboratorios = [
+    { nome: 'LC', descricao: 'Laboratório Central' },
+    { nome: 'LCI', descricao: 'Laboratório de Cimento' },
+    { nome: 'LAR', descricao: 'Laboratório de Argamassa' },
+    { nome: 'LAD', descricao: 'Laboratório de Aditivos' },
+    { nome: 'LCA', descricao: 'Laboratório de Cal' },
+    { nome: 'LMI', descricao: 'Laboratório de Mineração' }
+  ];
   // Controle para evitar múltiplas confirmações
   private confirmacoesAbertas = new Set<string>();
   ensaiosDisponiveis: any[] = [];
   calculosDisponiveis: any[] = [];
+  // Snapshot temporário para itens ad-hoc (plano NORMAL) que o backend ainda não devolve incorporados ao plano
+  adHocSnapshot: { ensaios: any[]; calculos: any[] } | null = null;
   inputValue: string = '';
   inputCalculos: string = '';
   produtoId: any;
@@ -358,6 +372,10 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   awLaboratorioCalculado: number | null = null;
   bIntercepto: number | null = null;
   
+  // Controle para coeficiente linear customizado
+  coeficienteLinearCustomizado: number | null = null;
+  usarCoeficienteCustomizado: boolean = false;
+  
   // Controle para salvamento de imagem do gráfico
   salvandoImagemGrafico: boolean = false;
   
@@ -367,7 +385,7 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
     { raizT: 0.57, deltaMt: 4.10, tLabel: '20min' },
     { raizT: 1.00, deltaMt: 6.85, tLabel: '1h' },
     { raizT: 1.41, deltaMt: 8.35, tLabel: '2h' },
-    { raizT: 1.41, deltaMt: 12.00, tLabel: '4h' },
+    { raizT: 2.00, deltaMt: 12.00, tLabel: '4h' },
     { raizT: '', deltaMt: '', tLabel: '6h' },
     { raizT: '', deltaMt: '', tLabel: '8h' },
     { raizT: '', deltaMt: '', tLabel: '22:30h' },
@@ -479,6 +497,23 @@ get dataRows(): FormArray {
         alert('Não é possível remover dados de ensaios obrigatórios.');
     }
   }
+  // Alterna o uso do coeficiente linear customizado
+  toggleCoeficienteCustomizado(): void {
+    // Se estiver ativando e ainda não tem valor customizado, usar o calculado como inicial
+    if (this.usarCoeficienteCustomizado && this.coeficienteLinearCustomizado === null && this.bIntercepto !== null) {
+      this.coeficienteLinearCustomizado = this.bIntercepto;
+    }
+    // Recalcular gráfico quando alternar
+    this.calculateAndDrawRegression();
+  }
+
+  // Atualiza o coeficiente customizado e recalcula
+  atualizarCoeficienteCustomizado(): void {
+    if (this.usarCoeficienteCustomizado) {
+      this.calculateAndDrawRegression();
+    }
+  }
+
   // Função para Regressão Forçada Pela Origem (b=0)
 calculateRegressionThroughOrigin(points: [number, number][]): number {
     let sumXY = 0;
@@ -526,7 +561,12 @@ calculateAndDrawRegression(): void {
     this.awCalculado = regression.m;  
     this.bIntercepto = regression.b; 
 
-    const interceptoB = regression.b; 
+    // Determinar qual intercepto usar: customizado ou calculado
+    const interceptoUsado = (this.usarCoeficienteCustomizado && this.coeficienteLinearCustomizado !== null) 
+        ? this.coeficienteLinearCustomizado 
+        : regression.b;
+    
+    const interceptoB = interceptoUsado; 
     this.r2Calculado = rSquared(dataForRegression, lineFunction);
 
     // --- 4. CÁLCULO Aw PELA FÓRMULA DO EXCEL/LABORATÓRIO (VALOR FINAL) ---
@@ -541,9 +581,9 @@ calculateAndDrawRegression(): void {
     const raizT_max = pontoMaximo.x;
     
     // Fórmula do laboratório: Aw = (Δmt_max - Intercepto) / Raiz_t_max
-    // O intercepto (b) é o coeficiente linear da regressão
+    // O intercepto (b) pode ser o da regressão ou o customizado pelo usuário
     if (raizT_max > 0) {
-        this.awLaboratorioCalculado = (deltaM_max - regression.b) / raizT_max;
+        this.awLaboratorioCalculado = (deltaM_max - interceptoUsado) / raizT_max;
     } else {
         this.awLaboratorioCalculado = 0;
     }
@@ -552,35 +592,39 @@ calculateAndDrawRegression(): void {
     const xMin = 0;
     const xMax = raizT_max + 0.1;
 
+    // Se estiver usando coeficiente customizado, recalcular a linha com o novo intercepto
     const regressionLineData = [
-        // A linha começa no intercepto normal (-0.337)
         { x: xMin, y: interceptoB }, 
-        { x: xMax, y: lineFunction(xMax) } 
+        { x: xMax, y: (regression.m * xMax) + interceptoB } 
     ];
 
     // 6. Renderizar o Gráfico
-    this.renderChart(todosOsPontos, regressionLineData);
+    this.renderChart(todosOsPontos, regressionLineData, interceptoUsado);
 }
 
-renderChart(todosOsPontos: DataPoint[], regressionLineData: DataPoint[]) {
+renderChart(todosOsPontos: DataPoint[], regressionLineData: DataPoint[], interceptoUsado?: number) {
     const ctx = this.chartRef.nativeElement.getContext('2d');
     
     // 1. DADOS PROTEGIDOS PARA FORMATAÇÃO
     // Para a equação, usar o coeficiente angular (m) da regressão
     const m = this.awCalculado ?? 0; 
-    const b = this.bIntercepto ?? 0; 
+    // Usar o intercepto passado como parâmetro se disponível, senão usar o calculado
+    const b = interceptoUsado !== undefined ? interceptoUsado : (this.bIntercepto ?? 0); 
     let equacaoFormatada: string;
 
     // Garante que o cálculo da regressão seja válido
     if (this.awCalculado !== null && !isNaN(this.awCalculado)) {
-        equacaoFormatada = `f(x) = ${m.toFixed(11)}x ${b >= 0 ? '+' : '-'} ${Math.abs(b).toFixed(11)}`;
+        const tipoIntercepto = (this.usarCoeficienteCustomizado && this.coeficienteLinearCustomizado !== null) 
+            ? ' (Customizado)' 
+            : '';
+        equacaoFormatada = `f(x) = ${m.toFixed(11)}x ${b >= 0 ? '+' : '-'} ${Math.abs(b).toFixed(11)}${tipoIntercepto}`;
     } else {
         equacaoFormatada = 'f(x) = Cálculo Indisponível';
     }
     
     // 2. CÁLCULO DE POSICIONAMENTO PROTEGIDO
-    let xPos = 0.5; // Valor padrão seguro
-    let yPos = 25.0; // Valor padrão seguro (topo do gráfico)
+    let xPos = 0.2; // Valor padrão seguro
+    let yPos = 22.0; // Valor padrão seguro (topo do gráfico)
     let regressionDataLabel = 'Linha de Tendência Linear'; // Rótulo padrão
 
     if (todosOsPontos.length >= 2) {
@@ -588,8 +632,8 @@ renderChart(todosOsPontos: DataPoint[], regressionLineData: DataPoint[]) {
         const ultimoPonto = todosOsPontos[todosOsPontos.length - 1];
 
         // Centraliza o rótulo da anotação entre o primeiro e último ponto
-        xPos = (primeiroPonto.x + ultimoPonto.x) / 6;
-        yPos = ultimoPonto.y * 0.90; // 90% do Delta M máximo (para posicionar no topo)
+        xPos = (primeiroPonto.x + ultimoPonto.x) / 2;
+        yPos = ultimoPonto.y * 1.2; // 95% do Delta M máximo (para posicionar no topo)
     }
 
     // Rótulo da linha de tendência (Usamos o Aw Lab para exibir o resultado final)
@@ -606,8 +650,8 @@ renderChart(todosOsPontos: DataPoint[], regressionLineData: DataPoint[]) {
                 ...todosOsPontos.map((ponto: DataPoint, index: number) => ({
                     label: `Δm: ${ponto.y.toFixed(2)} kg/m²`,
                     data: [ponto],
-                    backgroundColor: '#0ea5e9', // Azul claro para boa visibilidade
-                    borderColor: '#0284c7', // Borda um pouco mais escura
+                    backgroundColor: '#0ea5e9', 
+                    borderColor: '#0284c7', 
                     pointRadius: 6,
                     pointStyle: 'circle',
                     showLine: false
@@ -952,6 +996,12 @@ downloadImagemGrafico(): void {
   this.colaboradorService.getColaboradorInfo().subscribe(
     data => {
       this.digitador = data.nome;
+      
+      // SEMPRE usar o laboratório do usuário logado
+      this.laboratorioUsuario = data.laboratorio || null;
+      
+     
+      
       // Verificar se o nome do usuário logado está na lista de responsáveis
       const responsavelEncontrado = this.responsaveis.find(r => r.value === data.nome);
       // Preencher o campo digitador e responsável em todos os ensaios já carregados
@@ -1072,6 +1122,8 @@ loadAnalisePorId(analise: any) {
   if (isOrdemExpressa) {
     // Processar dados da ordem expressa
     const expressaDetalhes = analise.amostra_detalhes.expressa_detalhes;
+    
+    
     detalhesOrdem = {
       id: expressaDetalhes.id,
       numero: expressaDetalhes.numero,
@@ -1083,6 +1135,8 @@ loadAnalisePorId(analise: any) {
     };
     ensaioDetalhes = expressaDetalhes.ensaio_detalhes || [];
     calculoDetalhes = expressaDetalhes.calculo_ensaio_detalhes || [];
+    
+    
     this.planoEnsaioId = null;
   } else if (isOrdemNormal) {
     // Processar dados da ordem normal
@@ -1102,6 +1156,7 @@ loadAnalisePorId(analise: any) {
     ensaioDetalhes = planoDetalhes[0]?.ensaio_detalhes || [];
     calculoDetalhes = planoDetalhes[0]?.calculo_ensaio_detalhes || [];
     this.planoEnsaioId = planoDetalhes[0]?.id || null;
+    // MERGE será aplicado mais abaixo após montar dados salvos e cálculos
   } else {
     this.analisesSimplificadas = [];
     return;
@@ -1126,8 +1181,29 @@ loadAnalisePorId(analise: any) {
     
   if (dadosSalvos.length > 0 && ensaioDetalhes.length > 0) {
     const ultimoUtilizados = dadosSalvos;
+    // Preparar estrutura para distribuir valores distintos quando houver duplicatas (mesmo id)
+    const utilizadosPorId: Record<string, any[]> = {};
+    ultimoUtilizados.forEach((u: any) => {
+      const k = String(u.id);
+      if (!utilizadosPorId[k]) utilizadosPorId[k] = [];
+      utilizadosPorId[k].push(u);
+    });
+    const contadorDuplicatas: Record<string, number> = {};
     ensaioDetalhes = ensaioDetalhes.map((ensaio: any) => {
-      const valorRecente = ultimoUtilizados.find((u: any) => String(u.id) === String(ensaio.id));          
+      const chave = String(ensaio.id);
+      if (contadorDuplicatas[chave] === undefined) contadorDuplicatas[chave] = 0;
+      const idxDuplicata = contadorDuplicatas[chave]++;
+      let valorRecente: any = null;
+      if (utilizadosPorId[chave] && utilizadosPorId[chave].length) {
+        // Se houver instanceId tentar casar primeiro
+        if (ensaio.instanceId) {
+          valorRecente = utilizadosPorId[chave].find(u => u.instanceId === ensaio.instanceId) || null;
+        }
+        // Caso não encontre por instanceId, usar a posição correspondente
+        if (!valorRecente) {
+          valorRecente = utilizadosPorId[chave][idxDuplicata] || utilizadosPorId[chave][0];
+        }
+      }
       // Buscar valor pré-cadastrado nas variáveis do ensaio
       let valorPreCadastrado = null;
       if (ensaio.variavel_detalhes && ensaio.variavel_detalhes.length > 0) {
@@ -1156,16 +1232,84 @@ loadAnalisePorId(analise: any) {
       const respDiretoSalvo = valorRecente?.responsavel || valorRecente?.responsavel1;
       const respDiretoObj = this.responsaveis.find(r => r.value === respDiretoSalvo);
 
-      return {
+      const resultado = {
         ...ensaio,
         valor: valorFinal, // Usa o valor salvo do banco
         numero_cadinho: valorRecente?.numero_cadinho || ensaio.numero_cadinho, //Restaurar número do cadinho
         // manter ngModel como string (optionValue = 'value')
         responsavel: (respDiretoObj?.value) || valorRecente?.responsavel || valorRecente?.responsavel1 || ensaio.responsavel,
         digitador: valorRecente ? analise.ultimo_ensaio.digitador : ensaio.digitador || this.digitador,
+        // FALLBACK: Se ensaio não tem laboratório, usar laboratório da análise
+        laboratorio: valorRecente?.laboratorio || ensaio.laboratorio || analise.amostra_detalhes?.laboratorio || null,
+        // Preservar/atribuir instanceId individual para distinguir duplicatas em nova sessão
+        instanceId: valorRecente?.instanceId || ensaio.instanceId || `${Date.now()}_${Math.random().toString(36).slice(2,9)}`
       };
+      
+     
+      return resultado;
     });
   }
+  // MERGE (ENSÁIOS AD-HOC em OS com plano): adicionar ensaios salvos que não pertencem ao plano base
+  try {
+    const laboratorioAnalise = analise.amostra_detalhes?.laboratorio || null;
+    if (isOrdemNormal) {
+      const existeChave = new Set(
+        (ensaioDetalhes || []).map((e: any) => `${String(e.id)}::${e.instanceId || ''}`)
+      );
+      // 1) Da sessão atual (snapshot) — após salvar e recarregar
+      if (this.adHocSnapshot?.ensaios || this.adHocSnapshot?.ensaios === undefined) {
+        const snapshotEnsaios = (this.adHocSnapshot?.ensaios || []) as any[];
+        snapshotEnsaios.forEach((e: any) => {
+          const k = `${String(e.id)}::${e.instanceId || ''}`;
+          if (!existeChave.has(k)) {
+            const novo = {
+              ...e,
+              laboratorio: e.laboratorio || laboratorioAnalise || null,
+              origem: e.origem || 'ad-hoc'
+              ,tipo_ensaio_detalhes: e.tipo_ensaio_detalhes || (e.tipo_ensaio ? { nome: e.tipo_ensaio } : null)
+            };
+            ensaioDetalhes.push(novo);
+            existeChave.add(k);
+          }
+        });
+      }
+      // 2) Do backend (ultimo_ensaio.ensaios_utilizados)
+      if (dadosSalvos.length > 0) {
+        dadosSalvos.forEach((u: any) => {
+          const k = `${String(u.id)}::${u.instanceId || ''}`;
+          if (!existeChave.has(k)) {
+            const base = (this.ensaiosDisponiveis || []).find((b: any) =>
+              String(b.id) === String(u.id) || this.normalize(b.descricao) === this.normalize(u.descricao || '')
+            );
+            const variaveisDetalhes = Array.isArray(u.variaveis_utilizadas)
+              ? u.variaveis_utilizadas.map((v: any, idx: number) => ({
+                  nome: v.descricao || v.nome || v.tecnica || `var${idx + 1}`,
+                  tecnica: v.tecnica || v.nome || `var${idx + 1}`,
+                  valor: v.valor ?? 0,
+                  id: `${u.id}_${v.tecnica || v.nome || `var${idx + 1}`}`
+                }))
+              : [];
+            const novo = {
+              ...(base || {}),
+              id: u.id,
+              descricao: u.descricao,
+              valor: u.valor ?? 0,
+              responsavel: u.responsavel || null,
+              digitador: u.digitador || null,
+              numero_cadinho: u.numero_cadinho || null,
+              variavel_detalhes: variaveisDetalhes,
+              laboratorio: u.laboratorio || laboratorioAnalise || null,
+              instanceId: u.instanceId || `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+              origem: 'ad-hoc'
+              ,tipo_ensaio_detalhes: (base?.tipo_ensaio_detalhes) || (u.tipo_ensaio_detalhes ? u.tipo_ensaio_detalhes : (u.tipo_ensaio ? { nome: u.tipo_ensaio } : null))
+            };
+            ensaioDetalhes.push(novo);
+            existeChave.add(k);
+          }
+        });
+      }
+    }
+  } catch {}
   // 2. Se há dados de ensaios salvos, também carregar as variáveis dos ensaios diretos
   if (dadosSalvos.length > 0) {
     dadosSalvos.forEach((ensaioSalvo: any) => {
@@ -1222,10 +1366,23 @@ loadAnalisePorId(analise: any) {
   // 3. Processar cálculos (mesmo para ambos os tipos)
   if (calculoDetalhes.length > 0) {
     const calculosDetalhes = analise.calculos_detalhes || [];
+    // Contadores por descrição para distribuir quando não houver instanceId persistido
+    const contadorCalcDesc: Record<string, number> = {};
     calculoDetalhes = calculoDetalhes.map((calc: any) => {
-    const calcBanco = calculosDetalhes
+    const candidatos = calculosDetalhes
         .filter((c: any) => c.calculos === calc.descricao)
-        .sort((a: any, b: any) => b.id - a.id)[0];
+        .sort((a: any, b: any) => b.id - a.id);
+    // Selecionar por instanceId quando disponível para distinguir duplicatas
+    let calcBanco = candidatos[0];
+    if (calc.instanceId) {
+      const porInst = candidatos.find((c: any) => c.instanceId && c.instanceId === calc.instanceId);
+      if (porInst) calcBanco = porInst;
+    } else if (candidatos.length > 1) {
+      const chave = this.normalize(calc.descricao || '');
+      const idx = (contadorCalcDesc[chave] ?? 0);
+      contadorCalcDesc[chave] = idx + 1;
+      calcBanco = candidatos[idx] || candidatos[0];
+    }
     const ensaiosUtilizados = calcBanco?.ensaios_utilizados || calc.ensaios_detalhes || [];
 
       // Helper local: cria variáveis varNN a partir da função
@@ -1334,7 +1491,9 @@ loadAnalisePorId(analise: any) {
             variavel: u.variavel || original?.variavel,
             numero_cadinho: u.numero_cadinho ?? original?.numero_cadinho ?? null,
             variavel_detalhes: variavelDetalhes,
-            funcao: funcaoEnsaio || null
+            funcao: funcaoEnsaio || null,
+            // Forçar laboratório a ser sempre o do cálculo (opção 1 solicitada)
+            laboratorio: calcBanco?.laboratorio || calc.laboratorio || null,
           };
         });
       } else {
@@ -1343,12 +1502,14 @@ loadAnalisePorId(analise: any) {
           if (e?.funcao && (!Array.isArray(e.variavel_detalhes) || e.variavel_detalhes.length === 0)) {
             e.variavel_detalhes = criarVariaveisPorFuncaoLocal(e.funcao, e.descricao);
           }
+          // Forçar laboratório = laboratório do cálculo também aqui
+          e.laboratorio = calcBanco?.laboratorio || calc.laboratorio || null;
           return e;
         });
       }
 
       // Responsável do cálculo (nível cálculo)
-      const responsavelCalcObj = this.responsaveis.find(r => r.value === (calcBanco?.responsavel || calc.responsavel));
+  const responsavelCalcObj = this.responsaveis.find(r => r.value === (calcBanco?.responsavel || calc.responsavel));
 
       return {
         ...calc,
@@ -1357,9 +1518,88 @@ loadAnalisePorId(analise: any) {
         // manter responsavel no cálculo como string
         responsavel: (responsavelCalcObj?.value) || calcBanco?.responsavel || calc.responsavel || null,
         digitador: calcBanco?.digitador || calc.digitador || this.digitador,
+        // FALLBACK: Se cálculo não tem laboratório, usar laboratório da análise
+        laboratorio: calcBanco?.laboratorio || calc.laboratorio || analise.amostra_detalhes?.laboratorio || null,
+        origem: calc.origem || calcBanco?.origem || null,
       };
     });
   }
+  // MERGE (CÁLCULOS AD-HOC em OS com plano): adicionar cálculos salvos fora do plano base
+  try {
+    const laboratorioAnalise = analise.amostra_detalhes?.laboratorio || null;
+    if (isOrdemNormal) {
+      const existeCalc = new Set(
+        (calculoDetalhes || []).map((c: any) => `${this.normalize(c.descricao)}::${c.instanceId || ''}`)
+      );
+      // 1) Da sessão atual (snapshot)
+      const snapshotCalcs = (this.adHocSnapshot?.calculos || []) as any[];
+      snapshotCalcs.forEach((c: any) => {
+        const k = `${this.normalize(c.descricao)}::${c.instanceId || ''}`;
+        if (!existeCalc.has(k)) {
+          // Garantir tipo_ensaio_detalhes nos ensaios internos
+          const ensaiosCorrigidos = Array.isArray(c.ensaios_detalhes) ? c.ensaios_detalhes.map((u: any) => {
+            const baseEnsaio = (this.ensaiosDisponiveis || []).find((b: any) => String(b.id) === String(u.id));
+            return {
+              ...u,
+              tipo_ensaio_detalhes: u.tipo_ensaio_detalhes || baseEnsaio?.tipo_ensaio_detalhes || (u.tipo_ensaio ? { nome: u.tipo_ensaio } : null),
+              laboratorio: c.laboratorio || u.laboratorio || laboratorioAnalise || null
+            };
+          }) : [];
+          const novo = {
+            ...c,
+            ensaios_detalhes: ensaiosCorrigidos,
+            laboratorio: c.laboratorio || laboratorioAnalise || null,
+            origem: c.origem || 'ad-hoc'
+          };
+          calculoDetalhes.push(novo);
+          existeCalc.add(k);
+        }
+      });
+      // 2) Do backend (analise.calculos_detalhes)
+      const calculosBanco = Array.isArray(analise.calculos_detalhes) ? analise.calculos_detalhes : [];
+      calculosBanco.forEach((c: any) => {
+        const k = `${this.normalize(c.calculos || c.descricao || '')}::${c.instanceId || ''}`;
+        if (!existeCalc.has(k)) {
+          const base = (this.calculosDisponiveis || []).find((b: any) =>
+            this.normalize(b.descricao) === this.normalize(c.calculos || c.descricao || '')
+          );
+          const ensaiosInternos = Array.isArray(c.ensaios_utilizados) ? c.ensaios_utilizados.map((u: any, idx: number) => ({
+            id: u.id,
+            descricao: u.descricao,
+            valor: u.valor ?? 0,
+            responsavel: u.responsavel || null,
+            digitador: u.digitador || null,
+            variavel_detalhes: Array.isArray(u.variaveis_utilizadas) ? u.variaveis_utilizadas.map((v: any, i: number) => ({
+              nome: v.descricao || v.nome || v.tecnica || `var${i + 1}`,
+              tecnica: v.tecnica || v.nome || `var${i + 1}`,
+              valor: v.valor ?? 0,
+              id: `${u.id}_${v.tecnica || v.nome || `var${i + 1}`}`
+            })) : [],
+            laboratorio: c.laboratorio || laboratorioAnalise || null,
+            instanceId: u.instanceId || `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`
+            ,tipo_ensaio_detalhes: (u.tipo_ensaio_detalhes ? u.tipo_ensaio_detalhes : (u.tipo_ensaio ? { nome: u.tipo_ensaio } : null))
+          })) : [];
+          const novo = {
+            ...(base || {}),
+            id: base?.id || undefined,
+            descricao: c.calculos || c.descricao,
+            unidade: base?.unidade || null,
+            resultado: c.resultados ?? null,
+            responsavel: c.responsavel || null,
+            digitador: c.digitador || null,
+            laboratorio: c.laboratorio || laboratorioAnalise || null,
+            ensaios_detalhes: ensaiosInternos,
+            instanceId: c.instanceId || `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+            origem: 'ad-hoc'
+          };
+          calculoDetalhes.push(novo);
+          existeCalc.add(k);
+        }
+      });
+    }
+  } catch {}
+  
+ 
   // Monta estrutura final unificada
   this.analisesSimplificadas = [{
     // Dados da amostra (comum para ambos os tipos)
@@ -1374,6 +1614,7 @@ loadAnalisePorId(analise: any) {
     amostraLocalColeta: analise.amostra_detalhes?.local_coleta,
     amostraMaterial: analise.amostra_detalhes?.material_detalhes?.nome,
     amostraNumero: analise.amostra_detalhes?.numero,
+    amostraLaboratorio: analise.amostra_detalhes?.laboratorio,
     amostraPeriodoHora: analise.amostra_detalhes?.periodo_hora,
     amostraPeriodoTurno: analise.amostra_detalhes?.periodo_turno,
     amostraRepresentatividadeLote: analise.amostra_detalhes?.representatividade_lote,
@@ -1409,6 +1650,9 @@ loadAnalisePorId(analise: any) {
       idPlano: detalhesOrdem.planoId || null,
     }]
   }];
+  // Limpar snapshot após reintroduzir os itens
+  this.adHocSnapshot = null;
+  
   // Inicializar datas após carregar os dados
     setTimeout(() => {
       this.inicializarDatasVariaveis();
@@ -2254,10 +2498,14 @@ onDescricaoInput(index: number, event: Event): void {
           if (Array.isArray(calculo.ensaios_detalhes)) {
             // Enriquecer ensaios internos com definição (função/variáveis)
             calculo.ensaios_detalhes.forEach((e: any) => {
-              // 1) Se não houver função, tentar obter do catálogo ou do próprio plano
+              // IMPORTANTE: Buscar apenas do catálogo (ensaiosDisponiveis)
+              // NÃO buscar de plano.ensaio_detalhes para evitar copiar valores de outros laboratórios
+              
+              // 1) Se não houver função, tentar obter APENAS do catálogo
               if (!e.funcao) {
-                const base = (this.ensaiosDisponiveis || []).find((b: any) => String(b.id) === String(e.id) || this.normalize(b.descricao) === this.normalize(e.descricao))
-                           || (plano.ensaio_detalhes || []).find((b: any) => String(b.id) === String(e.id) || this.normalize(b.descricao) === this.normalize(e.descricao));
+                const base = (this.ensaiosDisponiveis || []).find((b: any) => 
+                  String(b.id) === String(e.id) || this.normalize(b.descricao) === this.normalize(e.descricao)
+                );
                 if (base?.funcao) {
                   e.funcao = base.funcao;
                 }
@@ -2268,8 +2516,10 @@ onDescricaoInput(index: number, event: Event): void {
                 if (!e.id && base?.id) e.id = base.id;
               }
               // Garanta tecnica/variavel/id mesmo quando já existe função/variáveis
-              const baseAll = (this.ensaiosDisponiveis || []).find((b: any) => String(b.id) === String(e.id) || this.normalize(b.descricao) === this.normalize(e.descricao))
-                           || (plano.ensaio_detalhes || []).find((b: any) => String(b.id) === String(e.id) || this.normalize(b.descricao) === this.normalize(e.descricao));
+              // APENAS do catálogo, não do plano
+              const baseAll = (this.ensaiosDisponiveis || []).find((b: any) => 
+                String(b.id) === String(e.id) || this.normalize(b.descricao) === this.normalize(e.descricao)
+              );
               if (!e.id && baseAll?.id) e.id = baseAll.id;
               if (!e.tecnica && baseAll?.tecnica) e.tecnica = baseAll.tecnica;
               if (!e.variavel && baseAll?.tecnica) e.variavel = baseAll.tecnica;
@@ -2279,18 +2529,21 @@ onDescricaoInput(index: number, event: Event): void {
                 e.tecnica = `ensaio${String(idNum).padStart(2, '0')}`;
               }
               if (!e.variavel && e.tecnica) e.variavel = e.tecnica;
+              
               // 2) Inicializa variáveis técnicas a partir da função do ensaio interno
               if (e.funcao && (!Array.isArray(e.variavel_detalhes) || e.variavel_detalhes.length === 0)) {
                 const varMatches = (e.funcao.match(/var\d+/g) || []);
                 const varList: string[] = Array.from(new Set(varMatches));
-                // Tentar nomes/infos do base
-                const base = (this.ensaiosDisponiveis || []).find((b: any) => String(b.id) === String(e.id) || this.normalize(b.descricao) === this.normalize(e.descricao))
-                           || (plano.ensaio_detalhes || []).find((b: any) => String(b.id) === String(e.id) || this.normalize(b.descricao) === this.normalize(e.descricao));
+                // Tentar nomes/infos APENAS do catálogo
+                const base = (this.ensaiosDisponiveis || []).find((b: any) => 
+                  String(b.id) === String(e.id) || this.normalize(b.descricao) === this.normalize(e.descricao)
+                );
                 const baseVars = Array.isArray(base?.variavel_detalhes) ? base.variavel_detalhes : [];
                 // Também garanta técnica/id mesmo quando já havia função
                 if (!e.tecnica && base?.tecnica) e.tecnica = base.tecnica;
                 if (!e.variavel && base?.tecnica) e.variavel = base.tecnica;
                 if (!e.id && base?.id) e.id = base.id;
+                
                 e.variavel_detalhes = varList.map((varName: string, idx: number) => {
                   const bv = baseVars[idx];
                   const nomeAmigavel = bv?.nome && !/^var\d+$/.test(bv.nome) ? bv.nome : undefined;
@@ -2300,19 +2553,22 @@ onDescricaoInput(index: number, event: Event): void {
                     tecnica: varName,
                     varTecnica: varName,
                     id: `${e.descricao || e.id}_${varName}`,
+                    // IMPORTANTE: Sempre começar com valor 0, não copiar do catálogo
                     valor: 0
                   };
                   if (tipo) item.tipo = tipo;
                   return item;
                 });
-                // Se base trouxer valores default, use-os
-                if (Array.isArray(baseVars) && baseVars.length === e.variavel_detalhes.length) {
-                  e.variavel_detalhes.forEach((v: any, i: number) => {
-                    const bv = baseVars[i];
-                    if (typeof bv?.valor !== 'undefined') v.valor = Number(bv.valor) || 0;
-                    if (typeof bv?.valorTimestamp === 'number') v.valorTimestamp = bv.valorTimestamp;
-                  });
-                }
+                
+                // REMOVIDO: Não copiar valores default do catálogo
+                // Cada ensaio de cada laboratório deve ter seus próprios valores
+                // if (Array.isArray(baseVars) && baseVars.length === e.variavel_detalhes.length) {
+                //   e.variavel_detalhes.forEach((v: any, i: number) => {
+                //     const bv = baseVars[i];
+                //     if (typeof bv?.valor !== 'undefined') v.valor = Number(bv.valor) || 0;
+                //     if (typeof bv?.valorTimestamp === 'number') v.valorTimestamp = bv.valorTimestamp;
+                //   });
+                // }
               }
             });
           }
@@ -2618,6 +2874,10 @@ recalcularTodosCalculos() {
   planoDetalhes.forEach((plano: any) => {
     if (plano.calculo_ensaio_detalhes) {
         plano.calculo_ensaio_detalhes.forEach((calc: any) => {
+        // Garantir objeto cálculo consistente antes de processar
+        if (!calc) { return; }
+        if (!calc.funcao) { calc.funcao = ''; }
+        if (!Array.isArray(calc.ensaios_detalhes)) { calc.ensaios_detalhes = []; }
         // Primeiro recalcula as dependências internas entre ensaios do próprio cálculo
         this.recalcularEnsaiosInternosDoCalculo(calc, plano);
         // Agora calcular com os valores atualizados
@@ -2688,6 +2948,23 @@ recalcularTodosCalculos() {
   }
 //---------------------- CALCULAR (CÁLCULO ENSAIO)-------------------------------------------------------------
   calcular(calc: any, produtoOuPlano?: any) {
+  if (!calc) return;
+  // Se funcao ausente ou vazia, não tentar avaliar expressão
+  if (!calc.funcao || typeof calc.funcao !== 'string') {
+    // Não sobrescreve se já existe um resultado definido
+    if (calc.resultado !== undefined && calc.resultado !== null) return;
+    // Caso contrário, manter um fallback discreto (soma simples) se houver ensaios internos
+    if (Array.isArray(calc.ensaios_detalhes) && calc.ensaios_detalhes.length) {
+      const soma = calc.ensaios_detalhes.reduce((acc: number, e: any) => {
+        const v = (typeof e.valor === 'number') ? e.valor : Number(e.valor) || 0;
+        return acc + (isFinite(v) ? v : 0);
+      }, 0);
+      calc.resultado = soma;
+    } else {
+      calc.resultado = 0;
+    }
+    return;
+  }
   // Antes de avaliar a expressão do cálculo, garanta que os ensaios internos estejam atualizados
   this.recalcularEnsaiosInternosDoCalculo(calc, produtoOuPlano);
     // Plano base apenas como contexto (sem sincronizar valores)
@@ -2705,8 +2982,12 @@ recalcularTodosCalculos() {
       calc.resultado = 'Sem ensaios para calcular';
       return;
     }
-    const varMatches = (calc.funcao.match(/\b(var\d+|ensaio\d+|calculo\d+)\b/g) || []);
+  const varMatches = (typeof calc.funcao === 'string') ? (calc.funcao.match(/\b(var\d+|ensaio\d+|calculo\d+)\b/g) || []) : [];
     const varList = Array.from(new Set(varMatches)) as string[];
+    // Se não há tokens e já existe resultado, evitar sobrescrever
+    if (varList.length === 0 && calc.resultado !== undefined && calc.resultado !== null) {
+      return;
+    }
     const safeVars: any = {};
     varList.forEach((tk: string) => {
       if (/^var\d+$/.test(tk)) {
@@ -2811,7 +3092,7 @@ recalcularTodosCalculos() {
     const scope = { ...safeVars, ...funcoesDatas, ...funcoesBitwise };
     try {
       const resultado = this.evaluateSeguro(calc.funcao, scope);
-      if (calc.funcao.includes('adicionarDias') || calc.funcao.includes('hoje')) {
+      if (calc.funcao && (calc.funcao.includes('adicionarDias') || calc.funcao.includes('hoje'))) {
         if (typeof resultado === 'number' && resultado > 946684800000) {
           const dataResultado = new Date(resultado);
           calc.resultado = dataResultado.toLocaleDateString('pt-BR');
@@ -2820,7 +3101,8 @@ recalcularTodosCalculos() {
           calc.resultado = resultado;
         }
       } else {
-        // MUDANÇA: Armazenar valor sem arredondamento para cálculos precisos
+        // Se já existia resultado e não há expressão significativa, não sobrescrever
+        if (varList.length === 0 && calc.resultado !== undefined && calc.resultado !== null) return;
         calc.resultado = (typeof resultado === 'number' && isFinite(resultado)) ? resultado : 0;
       }
       // Verificar alertas após o cálculo
@@ -3607,7 +3889,6 @@ calcularEnsaioDireto(ensaio: any, planoRef?: any) {
                 safeVars[tk] = dataObj.getTime();
               } else {
                 safeVars[tk] = 0;
-                console.warn(`⚠️ Data inválida para ${tk}: ${variavel.valor}`);
               }
             } catch (error) {
               safeVars[tk] = 0;
@@ -3690,10 +3971,8 @@ calcularEnsaioDireto(ensaio: any, planoRef?: any) {
         }
       });
     } catch (re) {
-      console.warn('Falha ao substituir descrições de ensaio na expressão:', re);
     }
-    // Se não há tokens (varX/ensaioNN), ainda assim avalie a expressão.
-    // Ex.: função "1.2794" (constante) ou somente funções de data.
+    // Se não há tokens (varX/ensaioNN), ainda assim avalie a expressão. 
     const resultado = this.evaluateSeguro(expressao, scope);
     // Se o resultado é um timestamp (resultado de função de data), converter para data legível
   if (ensaio.funcao.includes('adicionarDias') || ensaio.funcao.includes('hoje') || ensaio.funcao.includes('diasEntre')) {
@@ -3836,6 +4115,16 @@ salvarAnaliseResultados() {
   }
   const analiseData = this.analisesSimplificadas[0];
   const planoDetalhes = analiseData?.planoDetalhes || [];
+  // Capturar snapshot de itens ad-hoc (apenas para análises com plano) antes de enviar ao backend, para reintroduzir após reload
+  try {
+    const planoAtual = planoDetalhes[0];
+    if (planoAtual) {
+      this.adHocSnapshot = {
+        ensaios: (planoAtual.ensaio_detalhes || []).filter((e: any) => e.origem === 'ad-hoc'),
+        calculos: (planoAtual.calculo_ensaio_detalhes || []).filter((c: any) => c.origem === 'ad-hoc')
+      };
+    }
+  } catch { this.adHocSnapshot = null; }
   // PASSO 0: Normalização antecipada de todos os ensaios e variáveis de data
   planoDetalhes.forEach((pl: any) => {
     (pl.ensaio_detalhes || []).forEach((ensaio: any) => {
@@ -3897,8 +4186,7 @@ salvarAnaliseResultados() {
                 }
               }
             }
-          } catch(errN) {
-            console.warn('[Normalize][EnsaioData] Falha reconstruindo', ensaio.descricao, errN);
+          } catch(errN) {       
           }
         }
       }
@@ -3927,7 +4215,6 @@ salvarAnaliseResultados() {
                   v.valor = this.toLocalYYYYMMDD(dLoc);
                 }
               } else if (typeof v.valor === 'string' && /^(\d{4}-\d{2}-\d{2})$/.test(v.valor)) {
-                // já está ok
               }
             }
           }
@@ -4084,7 +4371,7 @@ salvarAnaliseResultados() {
               }
             }
           } catch (errFb) {
-            console.warn('[Fallback-Data] Falha reconstruindo data final para', ensaio.descricao, errFb);
+            console.warn('Falha reconstruindo data final para', ensaio.descricao, errFb);
           }
         }
       }
@@ -4099,9 +4386,12 @@ salvarAnaliseResultados() {
                     ? (this.parseDateLocal(valorParaSalvar)?.getTime() || undefined)
                     : undefined)))
         : undefined;
-      return {
-    id: ensaio.id,
-    descricao: ensaio.descricao,
+      
+      const ensaioPayload = {
+        id: ensaio.id,
+        descricao: ensaio.descricao,
+        instanceId: ensaio.instanceId || null,
+        origem: ensaio.origem || (ensaio.instanceId ? 'ad-hoc' : 'plano'),
         // Para ensaio de data: 'valor' = timestamp (ou 0 se falhou) e 'valor_data' = string
         valor: isData ? (tsFinal || 0) : valorParaSalvar,
         valor_data: isData
@@ -4116,12 +4406,13 @@ salvarAnaliseResultados() {
                           : ''))))
           : undefined,
         // Removidos valorTimestamp / valor_bruto conforme solicitado
-        tecnica: ensaio.tecnica || `ensaio${String(ensaio.id).padStart(2, '0')}`,
+        tecnica: ensaio.tecnica || (ensaio.id ? `ensaio${String(ensaio.id).padStart(2, '0')}` : ensaio.descricao?.toLowerCase().replace(/\s+/g, '_')),
         tipo: 'ENSAIO',
         responsavel: typeof ensaio.responsavel === 'object' && ensaio.responsavel !== null
           ? ensaio.responsavel.value
           : ensaio.responsavel,
         digitador: this.digitador,
+        laboratorio: ensaio.laboratorio || analiseData?.amostraLaboratorio || null,
         tempo_previsto: ensaio.tempo_previsto,
         tipo_ensaio: ensaio.tipo_ensaio_detalhes?.nome,
         funcao: ensaio.funcao || null,
@@ -4172,9 +4463,12 @@ salvarAnaliseResultados() {
           };
           return acc;
         }, {})
-      };
+      };  
+      return ensaioPayload;
     })
   );
+  
+  
   // Criar um único registro com todos os ensaios
   const ensaios = [{
     descricao: `Análise Completa - ${analiseData.ordemTipo}`,
@@ -4191,6 +4485,8 @@ salvarAnaliseResultados() {
  const calculos = planoDetalhes.flatMap((plano: any) =>
   (plano.calculo_ensaio_detalhes || []).map((calc: any) => ({
     calculos: calc.descricao,
+    instanceId: calc.instanceId || null,
+    origem: calc.origem || (calc.instanceId ? 'ad-hoc' : 'plano'),
     resultados: (() => {
       const r = calc.resultado;
       if (typeof r === 'string' && /^(\d{4}-\d{2}-\d{2})$/.test(r)) return r;
@@ -4200,7 +4496,8 @@ salvarAnaliseResultados() {
     })(),
     responsavel: (typeof calc.responsavel === 'object' && calc.responsavel !== null) ? (calc.responsavel as any).value : (calc.responsavel || null),
     digitador: this.digitador,
-    ensaios_utilizados: (calc.ensaios_detalhes || []).map((e: any) => {
+    laboratorio: calc.laboratorio || analiseData?.amostraLaboratorio || null,
+  ensaios_utilizados: (calc.ensaios_detalhes || []).map((e: any) => {
       // Buscar dados completos do ensaio nos ensaios diretos do plano
       const ensaioDireto = plano.ensaio_detalhes?.find((ed: any) => 
         ed.id === e.id || 
@@ -4290,9 +4587,11 @@ salvarAnaliseResultados() {
         } catch {}
       }
       const valorDataInterno = eEhData && tsInterno ? this.toLocalYYYYMMDD(new Date(tsInterno)) : undefined;
+      
       return {
         id: e.id,
         descricao: e.descricao,
+        instanceId: e.instanceId || null,
         valor: eEhData ? (tsInterno || 0) : this.round2(e.valor),
         valor_data: eEhData ? valorDataInterno : undefined,
         variavel: e.variavel || e.tecnica,
@@ -4301,6 +4600,8 @@ salvarAnaliseResultados() {
           : e.responsavel,
         digitador: e.digitador || this.digitador,
         numero_cadinho: e.numero_cadinho || null,
+  // Forçar uso exclusivo do laboratório do cálculo para ensaios internos
+  laboratorio: calc.laboratorio || null,
         funcao: e.funcao || null,       
         // Buscar dados completos com fallbacks**
         garantia: e.garantia || ensaioCompleto?.garantia || ensaioDireto?.garantia || null,
@@ -4327,17 +4628,35 @@ salvarAnaliseResultados() {
     metodo_muro: this.analise?.metodoMuro ?? null,
     observacoes_muro: this.analise?.observacoesMuro ?? null
   };
+  
   // Chamada para salvar a análise no backend
   this.analiseService.registerAnaliseResultados(idAnalise, payload).subscribe({
     next: () => {
       this.markAsSaved(); // Marcar como salvo após sucesso
-      this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Análise salva com sucesso!' });
-      setTimeout(() => {
-        this.router.navigate(['/welcome/controleQualidade/ordem']);
-      }, 1000);
+      this.messageService.add({ 
+        severity: 'success', 
+        summary: 'Sucesso', 
+        detail: 'Análise salva com sucesso!' 
+      });
+      // Navegar para a página de ordem após salvar (caminho correto informado)
+      this.router.navigate(['/welcome/controleQualidade/ordem']).catch(() => {
+        // Fallback: se navegação falhar, recarregar a análise como antes
+        this.analiseService.getAnaliseById(idAnalise).subscribe({
+          next: (analiseAtualizada: any) => {
+            this.analise = analiseAtualizada;
+            this.loadAnalisePorId(analiseAtualizada);
+            this.cd.detectChanges();
+          }
+        });
+      });
     },
     error: (err) => {
-      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao salvar análise.' });
+      console.error('[SALVAR] Erro ao salvar análise:', err);
+      this.messageService.add({ 
+        severity: 'error', 
+        summary: 'Erro', 
+        detail: 'Erro ao salvar análise.' 
+      });
     }
   });
 }
@@ -4472,6 +4791,7 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
         variaveis,
         variaveis_utilizadas: variaveisUtilizadas,
         ensaios_utilizados: ensaiosUtilizadosMap,
+        laboratorio: analiseData?.amostraLaboratorio || null,
       };
     } 
     if (item.tipo === 'ENSAIO' && item.ensaio_descricao) {
@@ -4655,77 +4975,89 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
     if (!plano.ensaio_detalhes) {
       plano.ensaio_detalhes = [];
     }
-    // Filtrar ensaios que já não estão na análise
-    const ensaiosExistentesIds = plano.ensaio_detalhes.map((e: any) => e.id);
-    const novosEnsaios = this.ensaiosSelecionadosParaAdicionar.filter(
-      ensaio => !ensaiosExistentesIds.includes(ensaio.id)
-    );
+    
+    const novosEnsaios = this.ensaiosSelecionadosParaAdicionar;
+    
     if (!novosEnsaios.length) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Aviso',
-        detail: 'Todos os ensaios selecionados já estão na análise.'
+        detail: 'Nenhum ensaio selecionado.'
       });
       return;
     }
-    // Adicionar novos ensaios com preenchimento automático de valores
-      novosEnsaios.forEach(ensaio => {
+
+    // Adicionar ensaios considerando duplicatas (mesmo ID já adicionado anteriormente)
+    novosEnsaios.forEach(ensaio => {
       const responsavelPadrao = this.obterResponsavelPadrao();
-      // 1) Montar variáveis com defaults se existirem
-      let variaveisComDefaults: any[] = [];
-      if (Array.isArray((ensaio as any).variavel_detalhes) && (ensaio as any).variavel_detalhes.length > 0) {
-        // Clonar e normalizar estrutura esperada
-        variaveisComDefaults = (ensaio as any).variavel_detalhes.map((v: any, idx: number) => ({
-          nome: v.nome || `${v.tecnica || v.varTecnica || `var${idx+1}`}${ensaio.descricao ? ` (${ensaio.descricao})` : ''}`,
-          tecnica: v.tecnica || v.varTecnica || v.nome || `var${idx+1}`,
-          valor: typeof v.valor !== 'undefined' && v.valor !== null ? v.valor : 0,
-          varTecnica: v.varTecnica || v.tecnica || `var${idx+1}`,
-          tipo: v.tipo,
-          id: v.id || `${ensaio.id}_${v.tecnica || v.varTecnica || `var${idx+1}`}`
+      const jaExistentesMesmoId = plano.ensaio_detalhes.filter((e: any) => String(e.id) === String(ensaio.id));
+
+      // Preparar variáveis (resetar valores se duplicata)
+      let variaveis: any[] = [];
+      if (Array.isArray(ensaio.variavel_detalhes) && ensaio.variavel_detalhes.length > 0) {
+        variaveis = ensaio.variavel_detalhes.map((v: any, idx: number) => {
+          const base = {
+            nome: v.nome || `${v.tecnica || v.varTecnica || `var${idx+1}`}`,
+            tecnica: v.tecnica || v.varTecnica || v.nome || `var${idx+1}`,
+            varTecnica: v.varTecnica || v.tecnica || `var${idx+1}`,
+            tipo: v.tipo,
+            id: v.id || `${ensaio.id}_${v.tecnica || v.varTecnica || `var${idx+1}`}`
+          };
+          return {
+            ...base,
+            // Se já existe ensaio igual anteriormente, limpar o valor
+            valor: jaExistentesMesmoId.length ? 0 : (v.valor ?? 0)
+          };
+        });
+      } else if (ensaio.funcao) {
+        variaveis = this.criarVariaveisParaEnsaio(ensaio).map((v: any) => ({
+          ...v,
+          valor: jaExistentesMesmoId.length ? 0 : v.valor
         }));
-      } else if ((ensaio as any).funcao) {
-        // Criar variáveis pelos tokens da função
-        variaveisComDefaults = this.criarVariaveisParaEnsaio(ensaio);
       }
-      const valorBackend = (ensaio as any).valor;
-      const valorFlex = this.parseNumeroFlex(valorBackend);
-      const valorPrefill = (valorFlex !== null && valorFlex !== undefined && !isNaN(Number(valorFlex))) ? Number(valorFlex) : 0;
+
       const novoEnsaio = {
         ...ensaio,
-      // 2) Prefill do valor: sempre preferir o valor que vem do backend, mesmo com função
-      valor: valorPrefill,
-      responsavel: (ensaio as any).responsavel || responsavelPadrao,
-      digitador: this.digitador || '',
-      variavel_detalhes: variaveisComDefaults
-      } as any;
-      // 3) Se houver função, calcular imediatamente SOMENTE se todas as variáveis tiverem defaults
-      if (novoEnsaio.funcao && this.deveCalcularEnsaioComDefaults(novoEnsaio)) {
-        try {
-          this.calcularEnsaioDireto(novoEnsaio, plano);
-        } catch (e) {
-          console.warn('Falha ao calcular ensaio recém-adicionado com defaults:', e);
-        }
-      }
+        // Se duplicata, força reset do valor e do laboratório
+        valor: jaExistentesMesmoId.length ? 0 : (ensaio.valor ?? 0),
+        responsavel: jaExistentesMesmoId.length ? (responsavelPadrao || this.digitador || '') : (ensaio.responsavel || responsavelPadrao),
+        digitador: this.digitador || '',
+        variavel_detalhes: variaveis,
+        // Para OS com plano (NORMAL), adicionar com laboratório da análise; senão, do usuário
+        laboratorio: this.isAnalisePlano() ? analiseData.amostraLaboratorio : this.laboratorioUsuario,
+        duplicata: jaExistentesMesmoId.length > 0,
+        instanceId: `${Date.now()}_${Math.random().toString(36).slice(2,9)}`,
+        origem: 'ad-hoc'
+      };
+
       plano.ensaio_detalhes.push(novoEnsaio);
+
+      if (jaExistentesMesmoId.length) {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Duplicata adicionada',
+          detail: `Ensaio '${ensaio.descricao}' já existente. Valores foram limpos e laboratório ajustado.`
+        });
+      }
     });
-    // Atualizar referências nos cálculos e recalcular com os novos valores
+
+    // Atualizar referências e recalcular
     this.mapearEnsaiosParaCalculos();
     this.recalcularTodosEnsaiosDirectos(plano);
     this.recalcularTodosCalculos();
     this.messageService.add({
       severity: 'success',
       summary: 'Sucesso',
-      detail: `${novosEnsaios.length} ensaio(s) adicionado(s) com valores padrão aplicados.`
+      detail: `${novosEnsaios.length} ensaio(s) adicionado(s).`
     });
     this.modalAdicionarEnsaioVisible = false;
     this.ensaiosSelecionadosParaAdicionar = [];
-    // Sincronizar com a ordem expressa se for análise expressa
+    // Sincronizar com ordem expressa enviando dados completos (preserva duplicatas)
     if (this.isAnaliseExpressa()) {
-      this.sincronizarComOrdemExpressa();
+      this.sincronizarComOrdemExpressaCompleto();
     }
-    // Salvar imediatamente para garantir persistência dos valores padrão
-    window.location.reload();
-    this.getAnalise();
+    // Forçar detecção de mudanças para atualizar a view
+    this.cd.detectChanges();
   }
   /**
    * Adiciona um novo ensaio diretamente ao plano, se ordem for EXPRESSA
@@ -4756,13 +5088,20 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
     const valorBackend = ensaio ? ensaio.valor : undefined;
     const valorFlex = this.parseNumeroFlex(valorBackend);
     const valorPrefill = (valorFlex !== null && valorFlex !== undefined && !isNaN(Number(valorFlex))) ? Number(valorFlex) : 0;
+    // Detectar duplicatas pelo mesmo ID dentro do plano atual
+    const jaExistentesMesmoId = planoDetalhes[planoIdx].ensaio_detalhes.filter((e: any) => ensaio && String(e.id) === String(ensaio.id));
+
     const novoEnsaio = ensaio ? {
       ...ensaio,
-      // Preferir valor do backend; só recalcular se todas variáveis possuem defaults
-      valor: valorPrefill,
-      responsavel: ensaio.responsavel || responsavelPadrao || this.digitador || '',
+      // Preferir valor do backend, mas se duplicata limpar
+      valor: jaExistentesMesmoId.length ? 0 : valorPrefill,
+      responsavel: jaExistentesMesmoId.length ? (responsavelPadrao || this.digitador || '') : (ensaio.responsavel || responsavelPadrao || this.digitador || ''),
       digitador: this.digitador || '',
-      variavel_detalhes: variaveisComDefaults
+      variavel_detalhes: variaveisComDefaults.map(v => ({ ...v, valor: jaExistentesMesmoId.length ? 0 : v.valor })),
+      laboratorio: this.laboratorioUsuario || analiseData?.amostraLaboratorio || null,
+      somenteLeitura: false,
+      duplicata: jaExistentesMesmoId.length > 0,
+      instanceId: `${Date.now()}_${Math.random().toString(36).slice(2,9)}`
     } : {
       id: Date.now(),
       descricao: '',
@@ -4770,8 +5109,19 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
       responsavel: responsavelPadrao || this.digitador || '',
       variavel_detalhes: [],
       funcao: '',
-      tipo_ensaio_detalhes: { nome: 'EXPRESSA' }
+      tipo_ensaio_detalhes: { nome: 'EXPRESSA' },
+      laboratorio: this.laboratorioUsuario || analiseData?.amostraLaboratorio || null,
+      somenteLeitura: false,
+      duplicata: false,
+      instanceId: `${Date.now()}_${Math.random().toString(36).slice(2,9)}`
     };
+    if (novoEnsaio.duplicata) {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Duplicata adicionada',
+        detail: `Ensaio '${novoEnsaio.descricao}' já existente. Valores foram limpos e laboratório ajustado.`
+      });
+    }
     // Calcular imediatamente se houver função E todas as variáveis tiverem defaults
     if (novoEnsaio.funcao && this.deveCalcularEnsaioComDefaults(novoEnsaio)) {
       try { this.calcularEnsaioDireto(novoEnsaio, planoDetalhes[planoIdx]); } catch {}
@@ -4829,33 +5179,71 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
     if (!plano.calculo_ensaio_detalhes) {
       plano.calculo_ensaio_detalhes = [];
     }
-    // Filtrar cálculos que já não estão na análise
-    const calculosExistentesIds = plano.calculo_ensaio_detalhes.map((c: any) => c.id);
-    const novosCalculos = this.calculosSelecionadosParaAdicionar.filter(
-      calculo => !calculosExistentesIds.includes(calculo.id)
-    );
+    
+    const novosCalculos = this.calculosSelecionadosParaAdicionar;
+    
     if (!novosCalculos.length) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Aviso',
-        detail: 'Todos os cálculos selecionados já estão na análise.'
+        detail: 'Nenhum cálculo selecionado.'
       });
       return;
     }
-    // Adicionar novos cálculos com estrutura padrão
+
+    // Adicionar cálculos com tratamento de duplicatas
     novosCalculos.forEach(calculo => {
+      const duplicatasExistentes = plano.calculo_ensaio_detalhes.filter((c: any) =>
+        String(c.id || '') === String(calculo.id || '') || this.normalize(c.descricao) === this.normalize(calculo.descricao)
+      );
+
+      // Buscar ensaios do catálogo
+      const ensaiosFromCatalogo = this.ensaiosDisponiveis
+        .filter((ens: any) => calculo.ensaios_detalhes?.some((e: any) => e.id === ens.id));
+
+      // Mapear ensaios para o cálculo; se for duplicata, zerar valores e setar instanceId
+      const ensaiosDoCalculo = ensaiosFromCatalogo.map((ensaio: any, idx: number) => {
+        const vars = Array.isArray(ensaio.variavel_detalhes) ? ensaio.variavel_detalhes.map((v: any, i: number) => ({
+          nome: v.nome || `${v.tecnica || v.varTecnica || `var${i+1}`}`,
+          tecnica: v.tecnica || v.varTecnica || v.nome || `var${i+1}`,
+          varTecnica: v.varTecnica || v.tecnica || `var${i+1}`,
+          tipo: v.tipo,
+          id: v.id || `${ensaio.id}_${v.tecnica || v.varTecnica || `var${i+1}`}`,
+          valor: duplicatasExistentes.length ? 0 : (typeof v.valor !== 'undefined' && v.valor !== null ? v.valor : 0)
+        })) : [];
+        return {
+          ...ensaio,
+          responsavel: ensaio.responsavel || null,
+          digitador: this.digitador || '',
+          variavel_detalhes: vars,
+          // Para OS com plano (NORMAL), usar laboratório da análise; senão, do usuário
+          laboratorio: this.isAnalisePlano() ? analiseData.amostraLaboratorio : this.laboratorioUsuario,
+          instanceId: `${Date.now()}_${Math.random().toString(36).slice(2,9)}`
+        };
+      });
+
       const novoCalculo = {
         ...calculo,
-        resultado: null,
         responsavel: calculo.responsavel || null,
         digitador: this.digitador || '',
-        // Associar os ensaios disponíveis na análise se o cálculo não tem ensaios específicos
-        ensaios_detalhes: calculo.ensaios_detalhes && calculo.ensaios_detalhes.length > 0
-          ? calculo.ensaios_detalhes
-          : (plano.ensaio_detalhes || []).map((e: any) => ({ ...e }))
+        // Se duplicata, limpar resultado e zera internos (acima)
+        resultado: duplicatasExistentes.length ? null : (calculo.resultado ?? null),
+        ensaios_detalhes: ensaiosDoCalculo,
+        laboratorio: this.isAnalisePlano() ? analiseData.amostraLaboratorio : this.laboratorioUsuario,
+        instanceId: `${Date.now()}_${Math.random().toString(36).slice(2,9)}`,
+        duplicata: duplicatasExistentes.length > 0,
+        origem: 'ad-hoc'
       };
-      
+
       plano.calculo_ensaio_detalhes.push(novoCalculo);
+
+      if (novoCalculo.duplicata) {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Duplicata adicionada',
+          detail: `Cálculo '${novoCalculo.descricao}' já existente. Resultado e variáveis foram limpos e laboratório ajustado.`
+        });
+      }
     });
     this.messageService.add({
       severity: 'success',
@@ -4864,123 +5252,136 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
     });
     this.modalAdicionarCalculoVisible = false;
     this.calculosSelecionadosParaAdicionar = [];
-    // Sincronizar com a ordem expressa se for análise expressa
+    // Sincronizar com ordem expressa enviando dados completos (preserva duplicatas)
     if (this.isAnaliseExpressa()) {
-      this.sincronizarComOrdemExpressa();
+      this.sincronizarComOrdemExpressaCompleto();
     }
-    // Recarregar toda a análise para forçar atualização total da página
-    this.getAnalise();
-    window.location.reload();
+    // Forçar detecção de mudanças para atualizar a view
     this.cd.detectChanges();
   }
   removerEnsaio(ensaio: any, plano: any): void {
     // Criar chave única para este ensaio
-    const chaveConfirmacao = `ensaio_${ensaio.id}`;
+    const chaveConfirmacao = `ensaio_${ensaio.id}_${Date.now()}`;
     
     // Verificar se já há uma confirmação aberta para este ensaio
-    if (this.confirmacoesAbertas.has(chaveConfirmacao)) {
+    if (this.confirmacoesAbertas.has(`ensaio_${ensaio.id}`)) {
       return; // Evitar múltiplas confirmações
     }
     
     // Marcar confirmação como aberta
-    this.confirmacoesAbertas.add(chaveConfirmacao);
+    this.confirmacoesAbertas.add(`ensaio_${ensaio.id}`);
     
-    this.confirmationService.confirm({
-      message: `Tem certeza que deseja remover o ensaio "${ensaio.descricao}" da análise?`,
-      header: 'Confirmação',
-      icon: 'pi pi-check-circle',
-      acceptIcon: 'pi pi-check',
-      rejectIcon: 'pi pi-times',
-      acceptLabel: 'Sim',
-      rejectLabel: 'Cancelar',
-      acceptButtonStyleClass: 'p-button-info',
-      rejectButtonStyleClass: 'p-button-warn',
-      accept: () => {
-        // Remover da lista de confirmações abertas
-        this.confirmacoesAbertas.delete(chaveConfirmacao);
-        
-        if (!plano.ensaio_detalhes) {
-          return;
-        }
-        const index = plano.ensaio_detalhes.findIndex((e: any) => e.id === ensaio.id);
-        if (index !== -1) {
-          plano.ensaio_detalhes.splice(index, 1);
-          // Remover referências deste ensaio dos cálculos
-          if (plano.calculo_ensaio_detalhes) {
-            plano.calculo_ensaio_detalhes.forEach((calc: any) => {
-              if (calc.ensaios_detalhes) {
-                calc.ensaios_detalhes = calc.ensaios_detalhes.filter((e: any) => e.id !== ensaio.id);
-              }
+    // Usar setTimeout para evitar múltiplas chamadas síncronas
+    setTimeout(() => {
+      this.confirmationService.confirm({
+        key: 'confirmDialog', // Usar key global para o dialog
+        message: `Tem certeza que deseja remover o ensaio "${ensaio.descricao}" da análise?`,
+        header: 'Confirmação',
+        icon: 'pi pi-check-circle',
+        acceptIcon: 'pi pi-check',
+        rejectIcon: 'pi pi-times',
+        acceptLabel: 'Sim',
+        rejectLabel: 'Cancelar',
+        acceptButtonStyleClass: 'p-button-info',
+        rejectButtonStyleClass: 'p-button-warn',
+        closeOnEscape: true,
+        accept: () => {
+          // Remover da lista de confirmações abertas
+          this.confirmacoesAbertas.delete(`ensaio_${ensaio.id}`);
+          
+          if (!plano.ensaio_detalhes) {
+            return;
+          }
+          const index = plano.ensaio_detalhes.findIndex((e: any) => e.id === ensaio.id);
+          if (index !== -1) {
+            plano.ensaio_detalhes.splice(index, 1);
+            // Remover referências deste ensaio dos cálculos
+            if (plano.calculo_ensaio_detalhes) {
+              plano.calculo_ensaio_detalhes.forEach((calc: any) => {
+                if (calc.ensaios_detalhes) {
+                  calc.ensaios_detalhes = calc.ensaios_detalhes.filter((e: any) => e.id !== ensaio.id);
+                }
+              });
+            }
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Sucesso',
+              detail: `Ensaio "${ensaio.descricao}" removido com sucesso.`
             });
+            // Sincronizar com a ordem expressa se for análise expressa
+            if (this.isAnaliseExpressa()) {
+              this.sincronizarComOrdemExpressa();
+            }
+            // Usar setTimeout para evitar problemas de detecção de mudanças
+            setTimeout(() => {
+              this.cd.detectChanges();
+            }, 0);
           }
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Sucesso',
-            detail: `Ensaio "${ensaio.descricao}" removido com sucesso.`
-          });
-          // Sincronizar com a ordem expressa se for análise expressa
-          if (this.isAnaliseExpressa()) {
-            this.sincronizarComOrdemExpressa();
-          }
-          this.cd.detectChanges();
+        },
+        reject: () => {
+          // Remover da lista de confirmações abertas quando cancelar
+          this.confirmacoesAbertas.delete(`ensaio_${ensaio.id}`);
         }
-      },
-      reject: () => {
-        // Remover da lista de confirmações abertas quando cancelar
-        this.confirmacoesAbertas.delete(chaveConfirmacao);
-      }
-    });
+      });
+    }, 0);
   }
   //Remove um cálculo da análise
   removerCalculo(calculo: any, plano: any): void {
     // Criar chave única para este cálculo
-    const chaveConfirmacao = `calculo_${calculo.id}`;
+    const chaveConfirmacao = `calculo_${calculo.id}_${Date.now()}`;
     
     // Verificar se já há uma confirmação aberta para este cálculo
-    if (this.confirmacoesAbertas.has(chaveConfirmacao)) {
+    if (this.confirmacoesAbertas.has(`calculo_${calculo.id}`)) {
       return; // Evitar múltiplas confirmações
     }
     
     // Marcar confirmação como aberta
-    this.confirmacoesAbertas.add(chaveConfirmacao);
+    this.confirmacoesAbertas.add(`calculo_${calculo.id}`);
     
-    this.confirmationService.confirm({
-      message: `Tem certeza que deseja remover o cálculo "${calculo.descricao}" da análise?`,
-      header: 'Confirmação',
-      icon: 'pi pi-check-circle',
-      acceptIcon: 'pi pi-check',
-      rejectIcon: 'pi pi-times',
-      acceptLabel: 'Sim',
-      rejectLabel: 'Cancelar',
-      acceptButtonStyleClass: 'p-button-info',
-      rejectButtonStyleClass: 'p-button-warn',
-      accept: () => {
-        // Remover da lista de confirmações abertas
-        this.confirmacoesAbertas.delete(chaveConfirmacao);
-        
-        if (!plano.calculo_ensaio_detalhes) {
-          return;
-        }
-        const index = plano.calculo_ensaio_detalhes.findIndex((c: any) => c.id === calculo.id);
-        if (index !== -1) {
-          plano.calculo_ensaio_detalhes.splice(index, 1);
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Sucesso',
-            detail: `Cálculo "${calculo.descricao}" removido com sucesso.`
-          });
-          // Sincronizar com a ordem expressa se for análise expressa
-          if (this.isAnaliseExpressa()) {
-            this.sincronizarComOrdemExpressa();
+    // Usar setTimeout para evitar múltiplas chamadas síncronas
+    setTimeout(() => {
+      this.confirmationService.confirm({
+        key: 'confirmDialog', // Usar key global para o dialog
+        message: `Tem certeza que deseja remover o cálculo "${calculo.descricao}" da análise?`,
+        header: 'Confirmação',
+        icon: 'pi pi-check-circle',
+        acceptIcon: 'pi pi-check',
+        rejectIcon: 'pi pi-times',
+        acceptLabel: 'Sim',
+        rejectLabel: 'Cancelar',
+        acceptButtonStyleClass: 'p-button-info',
+        rejectButtonStyleClass: 'p-button-warn',
+        closeOnEscape: true,
+        accept: () => {
+          // Remover da lista de confirmações abertas
+          this.confirmacoesAbertas.delete(`calculo_${calculo.id}`);
+          
+          if (!plano.calculo_ensaio_detalhes) {
+            return;
           }
-          this.cd.detectChanges();
+          const index = plano.calculo_ensaio_detalhes.findIndex((c: any) => c.id === calculo.id);
+          if (index !== -1) {
+            plano.calculo_ensaio_detalhes.splice(index, 1);
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Sucesso',
+              detail: `Cálculo "${calculo.descricao}" removido com sucesso.`
+            });
+            // Sincronizar com a ordem expressa se for análise expressa
+            if (this.isAnaliseExpressa()) {
+              this.sincronizarComOrdemExpressa();
+            }
+            setTimeout(() => {
+              this.cd.detectChanges();
+            }, 0);
+          }
+        },
+        reject: () => {
+          // Remover da lista de confirmações abertas quando cancelar
+          this.confirmacoesAbertas.delete(`calculo_${calculo.id}`);
         }
-      },
-      reject: () => {
-        // Remover da lista de confirmações abertas quando cancelar
-        this.confirmacoesAbertas.delete(chaveConfirmacao);
-      }
-    });
+      });
+    }, 0);
   }
   //Verifica se a análise é do tipo expressa (pode adicionar/remover ensaios e cálculos) 
   isAnaliseExpressa(): boolean {
@@ -4988,12 +5389,215 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
     const analiseData = this.analisesSimplificadas[0];
     return analiseData?.ordemTipo === 'EXPRESSA';
   }
+  // Verifica se a análise é do tipo NORMAL (tem plano associado)
+  isAnalisePlano(): boolean {
+    if (!this.analisesSimplificadas || !this.analisesSimplificadas.length) return false;
+    const analiseData = this.analisesSimplificadas[0];
+    return analiseData?.ordemTipo === 'NORMAL';
+  }
   //Verifica se a análise permite edição (apenas para análises expressas)
+  // SIMPLIFICADO: Só precisa ser expressa e ter permissão
   podeEditarEnsaiosCalculos(): boolean {
     const isExpressa = this.isAnaliseExpressa();
-    const hasPermission = this.hasGroup(['Admin', 'Master', 'LabGestor']);    
-    return isExpressa && hasPermission;
+    const isPlano = this.isAnalisePlano();
+    const hasPermission = this.hasGroup(['Admin', 'Master', 'LabGestor']);
+    // Para plano também permitimos adicionar itens ad-hoc se for mesmo laboratório
+    const podeAdicionar = this.podeAdicionarRemoverItens();
+    return (isExpressa || isPlano) && hasPermission && podeAdicionar;
   }
+  
+  // Verifica se há ensaios ou cálculos em modo somente leitura (de outros laboratórios)
+  temItensSomenteLeitura(): boolean {
+    const plano = this.analise?.planos_ensaio_detalhes?.[0];
+    if (!plano) return false;
+    
+    const laboratorioUsuario = this.laboratorioUsuario;
+    if (!laboratorioUsuario) return false;
+    
+    // Verifica se há ensaios de outros laboratórios
+    const temEnsaiosSomenteLeitura = plano.ensaio_detalhes?.some((e: any) => 
+      e.laboratorio && e.laboratorio !== laboratorioUsuario
+    ) || false;
+    
+    // Verifica se há cálculos de outros laboratórios
+    const temCalculosSomenteLeitura = plano.calculos_detalhes?.some((c: any) => 
+      c.laboratorio && c.laboratorio !== laboratorioUsuario
+    ) || false;
+    
+    return temEnsaiosSomenteLeitura || temCalculosSomenteLeitura;
+  }
+  
+  // Verifica se um item específico deve ser somente leitura
+  // REGRA: Só pode editar se o usuário for do MESMO laboratório da ANÁLISE (não do item)
+  isItemSomenteLeitura(item: any): boolean {
+    const laboratorioAnalise = this.analisesSimplificadas?.[0]?.amostraLaboratorio;
+    
+    
+    
+    // Se não há laboratório da análise, bloqueia por segurança
+    if (!laboratorioAnalise) {
+   
+      return true;
+    }
+    
+    // Se não há laboratório do usuário, bloqueia por segurança
+    if (!this.laboratorioUsuario) {
+    
+      return true;
+    }
+    
+    // NOVA REGRA: Só pode editar se o laboratório do USUÁRIO for igual ao laboratório do ITEM
+    // (não mais comparando com laboratório da análise)
+    const laboratorioItem = item?.laboratorio;
+    
+    // Se o item não tem laboratório, usa fallback da análise
+    if (!laboratorioItem) {
+     
+      const podeEditar = this.laboratorioUsuario === laboratorioAnalise;
+      const resultado = !podeEditar;
+  
+      return resultado;
+    }
+    
+    // Comparar laboratório do usuário com laboratório do ITEM
+    const podeEditar = this.laboratorioUsuario === laboratorioItem;
+    const resultado = !podeEditar;
+    
+   
+    
+    return resultado; // Retorna true se NÃO pode editar (somente leitura)
+  }
+  
+  // Verifica se o usuário pode ADICIONAR/REMOVER ensaios/cálculos
+  // REGRA: Só pode adicionar/remover se for do mesmo laboratório da ANÁLISE
+  podeAdicionarRemoverItens(): boolean {
+    const laboratorioAnalise = this.analisesSimplificadas?.[0]?.amostraLaboratorio;
+    
+    if (!laboratorioAnalise || !this.laboratorioUsuario) {
+      return false; // Se não há laboratório definido, bloqueia
+    }
+    
+    const podeAdicionar = this.laboratorioUsuario === laboratorioAnalise;
+       
+    return podeAdicionar;
+  }
+  
+  // Abre o modal para transferir toda a análise para outro laboratório
+  abrirModalTransferirLaboratorio(): void {
+    this.laboratorioDestinoTransferencia = '';
+    this.modalTransferirLaboratorioVisible = true;
+  }
+  
+  // Confirma a transferência da análise para outro laboratório
+  confirmarTransferenciaLaboratorio(): void {
+    if (!this.laboratorioDestinoTransferencia) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Atenção',
+        detail: 'Por favor, selecione um laboratório de destino.'
+      });
+      return;
+    }
+    
+    if (!this.analisesSimplificadas || !this.analisesSimplificadas.length) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Nenhuma análise encontrada para transferir.'
+      });
+      return;
+    }
+    
+    const analiseData = this.analisesSimplificadas[0];
+    const laboratorioOrigem = analiseData.amostraLaboratorio;
+    
+    // Confirmar a operação
+    this.confirmationService.confirm({
+      key: 'confirmDialog',
+      message: `Tem certeza que deseja transferir TODOS os ensaios e cálculos desta análise de "${laboratorioOrigem}" para "${this.laboratorioDestinoTransferencia}"?`,
+      header: 'Confirmar Transferência',
+      icon: 'pi pi-exclamation-triangle',
+      acceptIcon: 'pi pi-check',
+      rejectIcon: 'pi pi-times',
+      acceptLabel: 'Sim, Transferir',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-success',
+      rejectButtonStyleClass: 'p-button-secondary',
+      closeOnEscape: true,
+      accept: () => {
+        this.executarTransferenciaLaboratorio();
+      }
+    });
+  }
+  
+  // Executa a transferência de laboratório
+  private executarTransferenciaLaboratorio(): void {    
+    const analiseData = this.analisesSimplificadas[0];
+    const planoDetalhes = analiseData?.planoDetalhes || [];
+    const laboratorioOrigem = analiseData.amostraLaboratorio;
+    const laboratorioDestino = this.laboratorioDestinoTransferencia;
+    const amostraId = analiseData.amostraId;
+   
+    if (!laboratorioDestino || laboratorioDestino === laboratorioOrigem) {
+      console.error('[TRANSFERÊNCIA] ❌ Validação falhou: laboratório destino inválido');
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Aviso',
+        detail: 'Selecione um laboratório diferente do atual.'
+      });
+      return;
+    }
+    
+    if (amostraId) {
+      this.amostraService.updateAmostra(amostraId, { laboratorio: laboratorioDestino }).subscribe({
+        next: () => {
+       
+        },
+        error: (error) => {
+          console.error('[TRANSFERÊNCIA] ❌ Erro ao atualizar laboratório da amostra:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Erro ao atualizar laboratório da amostra no servidor.'
+          });
+        }
+      });
+    }
+    
+    // 5. Sincronizar com ordem expressa (se for expressa)
+    if (this.isAnaliseExpressa()) {
+      this.sincronizarComOrdemExpressaCompleto();
+    } else {
+      
+    }
+    // 6. Fechar moda
+    this.modalTransferirLaboratorioVisible = false;
+    this.laboratorioDestinoTransferencia = '';
+    
+    // 7. Salvar no backend (análise com resultados)
+    this.salvarAnaliseResultados();
+    
+    // 8. Mostrar mensagem de sucesso
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Transferência Realizada',
+      detail: `Análise transferida de ${laboratorioOrigem} para ${laboratorioDestino}. Novos ensaios serão adicionados com laboratório ${laboratorioDestino}.`,
+      life: 6000
+    });
+    
+    // 9. Forçar detecção de mudanças
+    this.cd.detectChanges();   
+  }
+
+  private aplicarSomenteLeituraEmItens(): void {
+  }
+  
+  // Cancela a transferência de laboratório
+  cancelarTransferenciaLaboratorio(): void {
+    this.modalTransferirLaboratorioVisible = false;
+    this.laboratorioDestinoTransferencia = '';
+  }
+  
   // Cria variáveis iniciais para um ensaio com função
   private criarVariaveisParaEnsaio(ensaio: any): any[] {
     if (!ensaio.funcao) return [];
@@ -5024,35 +5628,23 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
     }
     return variavel.nome;
   }
-  // Obtém ensaios disponíveis para adicionar (exclui os já presentes na análise)
+  // PERMITE DUPLICATAS para que múltiplos laboratórios possam realizar o mesmo ensaio
   getEnsaiosDisponiveis(): any[] {
-    if (!this.analisesSimplificadas || !this.analisesSimplificadas.length) {
-      return this.ensaiosDisponiveis;
-    }
-
-    const analiseData = this.analisesSimplificadas[0];
-    const planoDetalhes = analiseData?.planoDetalhes || [];
-    const ensaiosExistentesIds = planoDetalhes.flatMap((plano: any) => 
-      (plano.ensaio_detalhes || []).map((e: any) => e.id)
-    );
+    // Retorna todos os ensaios disponíveis, exceto Auxiliar e Resistencia
+    // Não filtra por IDs existentes para permitir que o mesmo ensaio seja adicionado
+    // múltiplas vezes (diferentes laboratórios)
     return this.ensaiosDisponiveis.filter(ensaio => 
-      !ensaiosExistentesIds.includes(ensaio.id) && 
       ensaio.tipo_ensaio_detalhes?.nome !== 'Auxiliar' && 
       ensaio.tipo_ensaio_detalhes?.nome !== 'Resistencia'
     );
   }
-  // Obtém cálculos disponíveis para adicionar (exclui os já presentes na análise)
+  // Obtém cálculos disponíveis para adicionar
+  // PERMITE DUPLICATAS para que múltiplos laboratórios possam realizar o mesmo cálculo
   getCalculosDisponiveis(): any[] {
-    if (!this.analisesSimplificadas || !this.analisesSimplificadas.length) {
-      return this.calculosDisponiveis;
-    }
-    const analiseData = this.analisesSimplificadas[0];
-    const planoDetalhes = analiseData?.planoDetalhes || [];
-    const calculosExistentesIds = planoDetalhes.flatMap((plano: any) => 
-      (plano.calculo_ensaio_detalhes || []).map((c: any) => c.id)
-    );
+    // Retorna todos os cálculos disponíveis
+    // Não filtra por IDs existentes para permitir que o mesmo cálculo seja adicionado
+    // múltiplas vezes (diferentes laboratórios)
     return this.calculosDisponiveis.filter(calculo => 
-      !calculosExistentesIds.includes(calculo.id) && 
       !calculo.descricao.includes('(Cálculo composto Cal)') && 
       !calculo.descricao.includes('(Calc PN Cal)') && 
       !calculo.descricao.includes('(Calc PN Calc Cal)')
@@ -5064,6 +5656,7 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
     this.ensaiosSelecionadosParaAdicionar = [];
   }
   //Sincroniza ensaios e cálculos adicionados manualmente com a ordem expressa
+  // Sincroniza com ordem expressa (método simplificado)
   private sincronizarComOrdemExpressa(): void {
     if (!this.isAnaliseExpressa() || !this.analisesSimplificadas.length) {
       return;
@@ -5073,19 +5666,68 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
     if (!planoDetalhes.length) return;
     const plano = planoDetalhes[0];
     const ordemExpressaId = analiseData.ordemId;
+    
     // Preparar IDs dos ensaios e cálculos atuais
     const ensaiosIds = (plano.ensaio_detalhes || []).map((e: any) => e.id).filter((id: any) => id);
     const calculosIds = (plano.calculo_ensaio_detalhes || []).map((c: any) => c.id).filter((id: any) => id);
-    // Chamar o backend para atualizar a ordem expressa
+    
+    // Sincronizar apenas os IDs
     this.ordemService.atualizarEnsaiosCalculosExpressa(ordemExpressaId, ensaiosIds, calculosIds).subscribe({
       next: (response: any) => {
-        // ...
+      
       },
       error: (error: any) => {
-        // ...
+        console.error('[SYNC EXPRESSA] Erro ao sincronizar:', error);
       }
     });
   }
+
+  // Sincroniza com ordem expressa enviando dados completos
+  private sincronizarComOrdemExpressaCompleto(): void {
+    if (!this.isAnaliseExpressa() || !this.analisesSimplificadas.length) {
+      return;
+    }
+    const analiseData = this.analisesSimplificadas[0];
+    const planoDetalhes = analiseData?.planoDetalhes || [];
+    if (!planoDetalhes.length) return;
+    const plano = planoDetalhes[0];
+    const ordemExpressaId = analiseData.ordemId;
+    
+    // Preparar ensaios com laboratório
+    const ensaiosCompletos = (plano.ensaio_detalhes || [])
+      .filter((e: any) => e.id)
+      .map((e: any) => ({ 
+        id: e.id,
+        laboratorio: e.laboratorio || null
+      }));
+    
+    // Preparar cálculos com laboratório
+    const calculosCompletos = (plano.calculo_ensaio_detalhes || [])
+      .filter((c: any) => c.id)
+      .map((c: any) => ({ 
+        id: c.id,
+        laboratorio: c.laboratorio || null
+      }));    
+    // Chamar método que envia objetos completos
+    this.ordemService.atualizarEnsaiosCalculosExpressaCompleto(
+      ordemExpressaId, 
+      ensaiosCompletos, 
+      calculosCompletos
+    ).subscribe({
+      next: (response: any) => {
+        
+      },
+      error: (error: any) => {
+        console.error('[SYNC EXPRESSA COMPLETO] Erro na sincronização:', error);
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Aviso',
+          detail: 'Erro ao sincronizar com ordem expressa. Salve manualmente.'
+        });
+      }
+    });
+  }
+
 //Atualiza a ordem de uma variável dentro do ensaio
 atualizarOrdemVariavel(variavel: any, novaOrdem: number): void {
   variavel.ordem = novaOrdem;
@@ -5573,7 +6215,6 @@ canDeactivate(): boolean | Promise<boolean> {
   }
 
   abrirModalSubstrato(analise: any){
-
     if(this.parecer_substrato){
       this.linhasSubstrato = this.parecer_substrato.map((item: any, index: number) => ({
         numero: item.numero ?? index + 1,
@@ -5659,14 +6300,11 @@ canDeactivate(): boolean | Promise<boolean> {
     this.modalDadosLaudoSubstrato = true;
   }
   salvarSubstrato(analise: any){
-
     this.parecer_substrato = this.linhasSubstrato;
     this.modalDadosLaudoSubstrato = false;
-
     const dadosAtualizados: Partial<Analise> = {
       substrato: this.linhasSubstrato
     };
-   
     this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
       next: () => {
         this.messageService.add({
@@ -5679,7 +6317,6 @@ canDeactivate(): boolean | Promise<boolean> {
       },
       error: (err) => {
         console.error('Login error:', err); 
-      
         if (err.status === 401) {
           this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
         } else if (err.status === 403) {
@@ -5693,7 +6330,6 @@ canDeactivate(): boolean | Promise<boolean> {
       }
     });    
   }
-
 
   abrirModalSuperficial(analise: any){
     if(this.parecer_superficial){
@@ -5775,11 +6411,9 @@ canDeactivate(): boolean | Promise<boolean> {
   salvarSuperficial(analise: any){
     this.parecer_superficial = this.linhasSuperficial;
     this.modalDadosLaudoSuperficial = false;
-
     const dadosAtualizados: Partial<Analise> = {
       superficial: this.linhasSuperficial
     };
-   
     this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
       next: () => {
         this.messageService.add({
@@ -5806,7 +6440,6 @@ canDeactivate(): boolean | Promise<boolean> {
       }
     });
   }
-
 
   abrirModalRetracao(analise: any){
     if(this.parecer_retracao){
@@ -5847,11 +6480,9 @@ canDeactivate(): boolean | Promise<boolean> {
   salvarRetracao(analise: any){
     this.parecer_retracao = this.linhasRetracao;
     this.modalDadosLaudoRetracao = false;
-
     const dadosAtualizados: Partial<Analise> = {
       retracao: this.linhasRetracao
     };
-   
     this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
       next: () => {
         this.messageService.add({
@@ -5864,7 +6495,6 @@ canDeactivate(): boolean | Promise<boolean> {
       },
       error: (err) => {
         console.error('Login error:', err); 
-      
         if (err.status === 401) {
           this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
         } else if (err.status === 403) {
@@ -5878,7 +6508,6 @@ canDeactivate(): boolean | Promise<boolean> {
       }
     });
   }
-
 
   abrirModalElasticidade(analise: any){
     if(this.parecer_elasticidade){
@@ -5915,11 +6544,9 @@ canDeactivate(): boolean | Promise<boolean> {
   salvarElasticidade(analise: any){
     this.parecer_elasticidade = this.linhasElasticidade;
     this.modalDadosLaudoElasticidade = false;
-
     const dadosAtualizados: Partial<Analise> = {
       elasticidade: this.linhasElasticidade
     };
-   
     this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
       next: () => {
         this.messageService.add({
@@ -5946,7 +6573,6 @@ canDeactivate(): boolean | Promise<boolean> {
       }
     });
   }
-
 
   abrirModalFlexao(analise: any){
     if(this.parecer_flexao){
@@ -6024,7 +6650,6 @@ canDeactivate(): boolean | Promise<boolean> {
     });
   }
 
-
   abrirModalCompressao(analise: any){
     if(this.parecer_compressao){
       this.linhasCompressao = this.parecer_compressao.map((item: any, index: number) => ({
@@ -6067,14 +6692,11 @@ canDeactivate(): boolean | Promise<boolean> {
     this.modalDadosLaudoCompressao = true;
   }
   salvarCompressao(analise: any){
-
     this.parecer_compressao = this.linhasCompressao;
     this.modalDadosLaudoCompressao = false;
-
     const dadosAtualizados: Partial<Analise> = {
       compressao: this.linhasCompressao
     };
-   
     this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
       next: () => {
         this.messageService.add({
@@ -6087,7 +6709,6 @@ canDeactivate(): boolean | Promise<boolean> {
       },
       error: (err) => {
         console.error('Login error:', err); 
-      
         if (err.status === 401) {
           this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
         } else if (err.status === 403) {
@@ -6102,10 +6723,8 @@ canDeactivate(): boolean | Promise<boolean> {
     });
   }
 
-
   atualizarArea(numero: any) {
     const diametro = Number(numero.diametro);
-
     if (!isNaN(diametro) && diametro > 0) {
       const raio = diametro / 2;
       const area = 3.14 * Math.pow(raio, 2);
@@ -6119,33 +6738,25 @@ canDeactivate(): boolean | Promise<boolean> {
   atualizarCalculosSubstrato(linha: any) {
     const carga = Number(linha.carga);
     const area = Number(linha.area);
-
     if (!isNaN(carga) && carga > 0 && !isNaN(area) && area > 0) {
       const resist = (carga * 10) / area;
       linha.resist = parseFloat(resist.toFixed(2));
     } else {
       linha.resist = '!#REF';
     }
-
-
     let mediaResistSubstrato: any;
-
     const resistValidos = this.linhasSubstrato.map(l => l.resist).filter((v: any) => v !== null && v !== undefined && v !== '' && v !== '!#REF' && !isNaN(Number(v))).map((v: any) => Number(v));
-
     if (resistValidos.length > 0) {
       const soma = resistValidos.reduce((acc, val) => acc + Number(val), 0);
       mediaResistSubstrato = parseFloat((soma / resistValidos.length).toFixed(2));
     } else {
       mediaResistSubstrato = null;
     }
-  
     let valor_vezes_03: any;
     let linha_mais_03: any;
     let linha_menos_03: any;
-
     //BC linhas.resist
     if (resistValidos.length > 0) {
-
       valor_vezes_03 = 0.3*mediaResistSubstrato;//BD
       if (linha.resist != '!#REF') {
         linha_mais_03 = mediaResistSubstrato+valor_vezes_03; //BE        
@@ -6158,16 +6769,11 @@ canDeactivate(): boolean | Promise<boolean> {
           linha.validacao = 'Válido'
         }
       }
-      
     }
-          console.log(linha.resist+' =- - - - - - '+valor_vezes_03);
-
-    
   }
 
   atualizarAreaSuper(numero: any) {
     const diametro = Number(numero.diametro);
-
     if (!isNaN(diametro) && diametro > 0) {
       const raio = diametro / 2;
       const area = 3.14 * Math.pow(raio, 2);
@@ -6181,33 +6787,25 @@ canDeactivate(): boolean | Promise<boolean> {
   atualizarCalculosSuper(linha: any) {
     const carga = Number(linha.carga);
     const area = Number(linha.area);
-
     if (!isNaN(carga) && carga > 0 && !isNaN(area) && area > 0) {
       const resist = (carga * 10) / area;
       linha.resist = parseFloat(resist.toFixed(2));
     } else {
       linha.resist = '!#REF';
     }
-
-
     let mediaResistSuoerficial: any;
-
     const resistValidos = this.linhasSuperficial.map(l => l.resist).filter((v: any) => v !== null && v !== undefined && v !== '' && v !== '!#REF' && !isNaN(Number(v))).map((v: any) => Number(v));
-
     if (resistValidos.length > 0) {
       const soma = resistValidos.reduce((acc, val) => acc + Number(val), 0);
       mediaResistSuoerficial = parseFloat((soma / resistValidos.length).toFixed(2));
     } else {
       mediaResistSuoerficial = null;
     }
-  
     let valor_vezes_03: any;
     let linha_mais_03: any;
     let linha_menos_03: any;
-
     //BC linhas.resist
     if (resistValidos.length > 0) {
-
       valor_vezes_03 = 0.3*mediaResistSuoerficial;//BD
       if (linha.resist != '!#REF') {
         linha_mais_03 = mediaResistSuoerficial+valor_vezes_03; //BE        
@@ -6220,11 +6818,6 @@ canDeactivate(): boolean | Promise<boolean> {
           linha.validacao = 'Válido'
         }
       }
-      
     }
-          console.log(linha.resist+' =- - - - - - '+valor_vezes_03);
-
-    
   }
-
 }

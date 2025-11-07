@@ -2,7 +2,7 @@
     <ul 
         nz-menu 
         nzMode="horizontal" 
-        >
+    >
         <li nz-menu-item nzMatchRouter="#">
             <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/dashControle">Início</a>
         </li>
@@ -63,7 +63,6 @@
                                 <h2>Ordens de Serviço</h2>
                             </div>
                         </ng-template>
-
                         <p-inplace closable="true" closeIcon="pi pi-angle-up">
                             <ng-template pTemplate="display">
                                 <p-button 
@@ -168,7 +167,6 @@
                                 </form>
                             </ng-template>
                         </p-inplace>
-
                         <div class="step1 flex flex-column w-12 gap-3 mt-3">
                             <div class="bloco w-12 text-left">
                                 <p-table 
@@ -184,7 +182,8 @@
                                         'fornecedor',
                                         'numero',
                                         'status',
-                                        'responsavel'
+                                        'responsavel',
+                                        'laboratorio'
                                     ]"
                                     [loading]="loading"
                                 >
@@ -270,15 +269,41 @@
                                                 >
                                                     <ng-template pTemplate="selectedItems" let-selectedOptions>
                                                         <div class="flex gap-1 flex-wrap">
-                                                        <p-tag
-                                                            *ngFor="let option of selectedOptions"
-                                                            [value]="option.value"
-                                                            [severity]="getTipoOrdem(option.value)"
-                                                        />
+                                                            <p-tag
+                                                                *ngFor="let option of selectedOptions"
+                                                                [value]="option.value"
+                                                                [severity]="getTipoOrdem(option.value)"
+                                                            />
                                                         </div>
                                                     </ng-template>
                                                     <ng-template pTemplate="item" let-option>
                                                         <p-tag [value]="option.value" [severity]="getTipoOrdem(option.value)" />
+                                                    </ng-template>
+                                                </p-multiselect>
+                                            </th>
+                                            <th style="width: 12%; text-align: left;">
+                                                <p-multiselect
+                                                    [(ngModel)]="laboratoriosSelecionados"
+                                                    [options]="laboratoriosFiltro"
+                                                    (onChange)="filtrarPorLaboratorios()"
+                                                    placeholder="Laboratório"
+                                                    [showClear]="true"
+                                                    optionLabel="label"
+                                                    optionValue="value"
+                                                    [maxSelectedLabels]="3"
+                                                    appendTo="body"
+                                                >
+                                                    <ng-template pTemplate="selectedItems" let-selectedOptions>
+                                                        <div class="flex gap-1 flex-wrap">
+                                                            <p-tag
+                                                                *ngFor="let option of selectedOptions"
+                                                                [value]="option.value"
+                                                                [severity]="getLaboratorioSeverity(option.value)"
+                                                            />
+                                                        </div>
+                                                    </ng-template>
+                                                    <ng-template pTemplate="item" let-option>
+                                                        <p-tag [value]="option.value" [severity]="getLaboratorioSeverity(option.value)" />
                                                     </ng-template>
                                                 </p-multiselect>
                                             </th>
@@ -322,6 +347,12 @@
                                                 <p-tag
                                                     [value]="analise?.amostra_detalhes?.expressa_detalhes ? 'Expressa' : 'Plano'"
                                                     [severity]="analise?.amostra_detalhes?.expressa_detalhes ? getTipoOrdem('Expressa') : getTipoOrdem('normal')"
+                                                />
+                                            </td>
+                                            <td style="text-align: left;">
+                                                <p-tag
+                                                    [value]="analise?.amostra_detalhes?.laboratorio || '-'"
+                                                    [severity]="getLaboratorioSeverity(analise?.amostra_detalhes?.laboratorio)"
                                                 />
                                             </td>
                                             <td style="text-align: center;">

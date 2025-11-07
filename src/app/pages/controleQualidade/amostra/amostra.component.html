@@ -110,7 +110,64 @@
                                 <p-step-panel [value]="1">
                                     <ng-template #content let-activateCallback="activateCallback">
                                         <div class="step1">
-                                            <form [formGroup]="registerForm" title="Cadastrar nova amostra" class="flex flex-column gap-4">
+                                            <!-- Seleção de Laboratório -->
+                                            <div *ngIf="!mostrarFormulario" class="mb-5">
+                                                <div class="flex flex-column gap-4 align-items-center">
+                                                    <p class="text-lg">Por favor, selecione o laboratório onde a amostra será cadastrada:</p>    
+                                                    <div class="w-12 md:w-6">
+                                                        <p-floatLabel variant="on">
+                                                            <p-select 
+                                                                inputId="laboratorio-select" 
+                                                                [style]="{'width':'100%'}"
+                                                                [options]="laboratorios" 
+                                                                [(ngModel)]="laboratorioSelecionado"
+                                                                optionLabel="nome"
+                                                                appendTo="body"
+                                                                [filter]="true" 
+                                                                filterBy="nome"
+                                                                [showClear]="false"
+                                                                (onChange)="onLaboratorioSelecionado(laboratorioSelecionado)"
+                                                            >
+                                                                <ng-template pTemplate="selectedItem" let-selectedOption>
+                                                                    <div class="flex align-items-center gap-2" *ngIf="selectedOption">
+                                                                        <i class="pi pi-building text-xl"></i>
+                                                                        <span>{{ selectedOption.nome }}</span>
+                                                                    </div>
+                                                                </ng-template>
+                                                                <ng-template pTemplate="item" let-laboratorio>
+                                                                    <div class="flex align-items-center gap-2">
+                                                                        <i class="pi pi-building"></i>
+                                                                        <div>
+                                                                            <div>{{ laboratorio.nome }}</div>
+                                                                            <div class="text-sm text-gray-500">{{ laboratorio.sigla }}</div>
+                                                                        </div>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </p-select>
+                                                            <label for="laboratorio-select">Laboratório</label>
+                                                        </p-floatLabel>
+                                                    </div>
+                                                </div>
+                                            </div>                                            <!-- Formulário de Amostra (só aparece após selecionar laboratório) -->
+                                            <form *ngIf="mostrarFormulario" [formGroup]="registerForm" title="Cadastrar nova amostra" class="flex flex-column gap-4">
+                                                <!-- Badge mostrando laboratório selecionado -->
+                                                <div class="flex justify-content-between align-items-center mb-3">
+                                                    <p-tag 
+                                                        [value]="'Laboratório: ' + laboratorioSelecionado?.nome" 
+                                                        severity="info"
+                                                        icon="pi pi-building"
+                                                        [style]="{'font-size': '1rem', 'padding': '0.5rem 1rem'}"
+                                                    ></p-tag>
+                                                    <p-button 
+                                                        label="Alterar Laboratório" 
+                                                        icon="pi pi-refresh" 
+                                                        severity="secondary"
+                                                        size="small"
+                                                        [text]="true"
+                                                        (onClick)="resetarLaboratorio()"
+                                                    />
+                                                </div>
+                                                
                                                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row" @swipeAnimation>
                                                     <!--CARD 1-->
                                                     <div class="bloco w-4 text-center">
@@ -570,7 +627,7 @@
                                             </form>
                                         </div>
                     
-                                        <div class="step1 flex flex-column w-12 gap-3 mb-5 mt-5 justify-content-end lg:w-12 lg:flex-row">
+                                        <div *ngIf="mostrarFormulario" class="step1 flex flex-column w-12 gap-3 mb-5 mt-5 justify-content-end lg:w-12 lg:flex-row">
                                            
                                             <div class=" flex w-6 gap-3 justify-content-end text-right">
                                                 <p-button 

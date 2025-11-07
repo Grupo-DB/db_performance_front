@@ -183,7 +183,7 @@
                             </p-floatlabel> 
                         </div>
                     </div>
-                    <div *ngIf="analise.amostra_detalhes.material==='Argamassa'" class="flex flex-column mt-3 lg:flex-row w-full lg:justify-content-around">
+                    <div *ngIf="analise?.amostra_detalhes?.material==='Argamassa'" class="flex flex-column mt-3 lg:flex-row w-full lg:justify-content-around">
                         <div class="flex flex-column w-5 gap-3">
                             <p-floatLabel variant="on"> 
                                 <p-select
@@ -245,11 +245,54 @@
         <!-- TABELAS ENSAIOS E CALCULOS-->
         <div class="w-12 mt-4">
             <div *ngFor="let plano of analisesSimplificadas[0]?.planoDetalhes">
-                <div class="step1 mb-5">    
-                    <p-message severity="info" class="w-11">
+                <div class="step1 mb-5 flex justify-content-between align-items-center gap-3">    
+                    <p-message severity="info" class="flex-1">
                         Plano de Análise: <b> {{ plano.descricao }}</b>
                     </p-message>
+                    <!-- Informação sobre permissão de edição -->
+                    <p-message 
+                        *ngIf="!podeEditarEnsaiosCalculos()" 
+                        severity="warn"
+                        text="Você não tem permissão para editar esta análise (laboratório diferente)"
+                    >
+                    </p-message>
                 </div>    
+                
+                <!-- Informações de Laboratório -->
+                <div class="flex gap-3 mb-4 align-items-center">
+                    <!-- Badge: Laboratório da Análise -->
+                    <div class="flex align-items-center gap-2 px-4 py-2 border-round-lg"
+                         [style]="'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.1);'">
+                        <i class="pi pi-building" style="font-size: 1.2rem;"></i>
+                        <div class="flex flex-column">
+                            <span style="font-size: 0.7rem; opacity: 0.9;">Laboratório da Análise</span>
+                            <span style="font-size: 1rem; font-weight: 700;">{{ analisesSimplificadas[0]?.amostraLaboratorio || 'N/A' }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Badge: Laboratório do Usuário -->
+                    <div class="flex align-items-center gap-2 px-4 py-2 border-round-lg"
+                         [style]="'background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.1);'">
+                        <i class="pi pi-user" style="font-size: 1.2rem;"></i>
+                        <div class="flex flex-column">
+                            <span style="font-size: 0.7rem; opacity: 0.9;">Seu Laboratório</span>
+                            <span style="font-size: 1rem; font-weight: 700;">{{ laboratorioUsuario || 'N/A' }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Indicador de Permissão -->
+                    <div class="flex align-items-center gap-2 px-4 py-2 border-round-lg"
+                         [style]="podeAdicionarRemoverItens() 
+                            ? 'background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.1);' 
+                            : 'background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%); color: white; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.1);'">
+                        <i [class]="podeAdicionarRemoverItens() ? 'pi pi-check-circle' : 'pi pi-lock'" style="font-size: 1.2rem;"></i>
+                        <div class="flex flex-column">
+                            <span style="font-size: 0.7rem; opacity: 0.9;">Status</span>
+                            <span style="font-size: 1rem; font-weight: 700;">{{ podeAdicionarRemoverItens() ? 'Pode Adicionar/Remover' : 'Somente Visualização' }}</span>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- Tabela para cada ensaio fixo (fora dos cálculos) -->
                 <div class="step1">     
                     <div class=" w-full flex justify-content-between align-items-center">
@@ -348,11 +391,24 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <div class="flex align-items-start justify-content-start gap-2">
+                                        <div class="flex align-items-start justify-content-start gap-2 flex-wrap">
                                             <i class="pi pi-file-edit text-primary"></i>
                                             <span class="font-bold text-lg">{{ ensaio.descricao }}</span>
                                             <span class="text-sm text-600 ml-2">({{ ensaio.unidade }})</span>
                                             <span class="text-sm text-600 ml-2" *ngIf="analise.amostra_detalhes?.material==='cal'">({{ ensaio.norma }})</span>
+                                            
+                                            <!-- Badge do laboratório -->
+                                            <span 
+                                                *ngIf="ensaio.laboratorio"
+                                                [class]="'text-xs px-2 py-1 border-round-md flex align-items-center gap-1 ' + (isItemSomenteLeitura(ensaio) ? 'bg-red-100 text-red-700 border-1 border-red-300' : 'bg-green-100 text-green-700 border-1 border-green-300')"
+                                                [style]="{'font-weight': '600'}"
+                                                [pTooltip]="isItemSomenteLeitura(ensaio) ? 'Ensaio do laboratório ' + ensaio.laboratorio + ' (somente leitura)' : 'Ensaio do laboratório ' + ensaio.laboratorio + ' (editável)'"
+                                                tooltipPosition="top"
+                                            >
+                                                <i class="pi pi-building text-xs"></i>
+                                                <span>{{ ensaio.laboratorio }}</span>
+                                                <i [class]="'text-xs ' + (isItemSomenteLeitura(ensaio) ? 'pi pi-lock' : 'pi pi-pencil')"></i>
+                                            </span>
                                         </div>
                                     </td>
                                     <td style="text-align: end;">
@@ -387,8 +443,9 @@
                                             severity="danger" 
                                             [raised]="true" 
                                             size="small"
+                                            [disabled]="isItemSomenteLeitura(ensaio)"
                                             (onClick)="removerEnsaio(ensaio, plano)" 
-                                            pTooltip="Remover ensaio"
+                                            [pTooltip]="isItemSomenteLeitura(ensaio) ? 'Não é possível remover ensaio de outro laboratório' : 'Remover ensaio'"
                                             tooltipPosition="top"
                                         >
                                         </p-button>
@@ -424,6 +481,7 @@
                                                                         (ngModelChange)="atualizarVariavelData(ensaio, variavel, $event)"
                                                                         dateFormat="dd/mm/yy"
                                                                         appendTo="body"
+                                                                        [disabled]="isItemSomenteLeitura(ensaio)"
                                                                     >
                                                                     </p-datepicker>
                                                                     <!-- Input numérico (padrão) -->
@@ -436,7 +494,8 @@
                                                                         size="large"
                                                                         [style]="{'width':'100%'}" id="variavel_{{variavel.id || variavel.nome}}"
                                                                         showButtons="false" [(ngModel)]="variavel.valor"
-                                                                        (ngModelChange)="atualizarVariavelEnsaio(ensaio, variavel, $event)" 
+                                                                        (ngModelChange)="atualizarVariavelEnsaio(ensaio, variavel, $event)"
+                                                                        [disabled]="isItemSomenteLeitura(ensaio)"
                                                                     />
                                                                     <label for="variavel_{{variavel.id || variavel.nome}}">
                                                                         {{ getVariavelDisplayName(variavel, ensaio) }}
@@ -458,6 +517,7 @@
                                                                     [style]="{'width':'30%'}"
                                                                     id="ensaio_valor_{{ensaio.id}}"
                                                                     (ngModelChange)="onValorEnsaioChange(ensaio, $event)"
+                                                                    [disabled]="isItemSomenteLeitura(ensaio)"
                                                                 />
                                                                 <label>{{ ensaio.descricao }}</label>
                                                             </p-floatlabel>
@@ -500,6 +560,7 @@
                                                                     [filter]="true"
                                                                     filterBy="value" 
                                                                     [showClear]="true"
+                                                                    [disabled]="isItemSomenteLeitura(ensaio)"
                                                                 >
                                                                 </p-select>
                                                                 <label for="float-label">Selecione o Responsável</label>
@@ -515,7 +576,8 @@
                                                                     [max]="9999" 
                                                                     mode="decimal" 
                                                                     [useGrouping]="false"
-                                                                    [size]="'small' " 
+                                                                    [size]="'small' "
+                                                                    [disabled]="isItemSomenteLeitura(ensaio)"
                                                                 >
                                                                 </p-inputnumber>
                                                                 <label for="float-label">Nº Cadinho</label>
@@ -736,10 +798,22 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <div class="flex align-items-start justify-content-start gap-2">
+                                        <div class="flex align-items-start justify-content-start gap-2 flex-wrap">
                                             <i class="pi pi-calculator text-primary"></i>
                                             <span class="font-bold text-lg">{{ calc.descricao }}</span>
                                             <span class="text-sm text-600 ml-2">({{ calc.unidade }})</span>
+                                            <!-- Badge do laboratório -->
+                                            <span 
+                                                *ngIf="calc.laboratorio"
+                                                [class]="'text-xs px-2 py-1 border-round-md flex align-items-center gap-1 ' + (isItemSomenteLeitura(calc) ? 'bg-red-100 text-red-700 border-1 border-red-300' : 'bg-green-100 text-green-700 border-1 border-green-300')"
+                                                [style]="{'font-weight': '600'}"
+                                                [pTooltip]="isItemSomenteLeitura(calc) ? 'Cálculo do laboratório ' + calc.laboratorio + ' (somente leitura)' : 'Cálculo do laboratório ' + calc.laboratorio + ' (editável)'"
+                                                tooltipPosition="top"
+                                            >
+                                                <i class="pi pi-building text-xs"></i>
+                                                <span>{{ calc.laboratorio }}</span>
+                                                <i [class]="'text-xs ' + (isItemSomenteLeitura(calc) ? 'pi pi-lock' : 'pi pi-pencil')"></i>
+                                            </span>
                                         </div>
                                     </td>
                                     <td style="text-align: end;">
@@ -771,8 +845,9 @@
                                             severity="danger" 
                                             [raised]="true" 
                                             size="small"
+                                            [disabled]="isItemSomenteLeitura(calc)"
                                             (onClick)="removerCalculo(calc, plano)" 
-                                            pTooltip="Remover cálculo" 
+                                            [pTooltip]="isItemSomenteLeitura(calc) ? 'Não é possível remover cálculo de outro laboratório' : 'Remover cálculo'"
                                             tooltipPosition="top"
                                         >
                                         </p-button>
@@ -820,9 +895,21 @@
 
                                                         >
                                                             <div class="align-items-center gap-2">
-                                                                <div class="flex align-items-center gap-2">
+                                                                <div class="flex align-items-center gap-2 flex-wrap">
                                                                     <i class="pi pi-flask text-primary"></i>
                                                                     <span class="font-bold">{{ ensaio.descricao }}</span>
+                                                                    <!-- Badge do laboratório -->
+                                                                    <span 
+                                                                        *ngIf="ensaio.laboratorio"
+                                                                        [class]="'px-2 py-1 border-round-md flex align-items-center gap-1 ' + (isItemSomenteLeitura(ensaio) ? 'bg-red-100 text-red-700 border-1 border-red-300' : 'bg-green-100 text-green-700 border-1 border-green-300')"
+                                                                        [style]="{'font-size': '0.7rem', 'font-weight': '600'}"
+                                                                        [pTooltip]="isItemSomenteLeitura(ensaio) ? 'Ensaio do laboratório ' + ensaio.laboratorio + ' (somente leitura)' : 'Ensaio do laboratório ' + ensaio.laboratorio + ' (editável)'"
+                                                                        tooltipPosition="top"
+                                                                    >
+                                                                        <i class="pi pi-building" [style]="{'font-size': '0.7rem'}"></i>
+                                                                        <span>{{ ensaio.laboratorio }}</span>
+                                                                        <i [class]="(isItemSomenteLeitura(ensaio) ? 'pi pi-lock' : 'pi pi-pencil')" [style]="{'font-size': '0.7rem'}"></i>
+                                                                    </span>
                                                                 </div>
                                                                 <span 
                                                                     class="pi pi-sort-alt"
@@ -853,6 +940,7 @@
                                                                                         inputId="variavel_{{variavel.id || variavel.nome}}"
                                                                                         [style]="{'width':'100%'}"
                                                                                         appendTo="body"
+                                                                                        [disabled]="isItemSomenteLeitura(ensaio)"
                                                                                     >
                                                                                     </p-datepicker>
                                                                                     <input 
@@ -865,7 +953,8 @@
                                                                                         id="variavel_{{variavel.id || variavel.nome}}"
                                                                                         showButtons="false" 
                                                                                         [(ngModel)]="variavel.valor"
-                                                                                        (ngModelChange)="atualizarVariavelEnsaio(ensaio, variavel, $event)" 
+                                                                                        (ngModelChange)="atualizarVariavelEnsaio(ensaio, variavel, $event)"
+                                                                                        [disabled]="isItemSomenteLeitura(ensaio)"
                                                                                     />
                                                                                     <label
                                                                                         for="variavel_{{variavel.id || variavel.nome}}">
@@ -884,9 +973,9 @@
                                                                                 <label class="text-sm font-medium" *ngIf="ensaio.descricao.toLowerCase()==='data moldagem'">Data Rompimento</label>
                                                                             </div>
                                                                             <div class="bg-gray-50 border-round mt-2 text-center">
-                                                                                <span class="text-2xl font-bold text-primary">
-                                                                                   {{ ensaioTemVariavelData(ensaio) || ensaio.tipo_ensaio_detalhes.nome=== 'data' && !ensaio.descricao.toLowerCase().includes('variação') ? (formatarDataExibicao(ensaio.valorTimestamp || ensaio.valor) || '—') :  ensaio.valor || 0 }}
-                                                                                </span>
+                                                                                                          <span class="text-2xl font-bold text-primary">
+                                                                                                              {{ ensaioTemVariavelData(ensaio) || (ensaio.tipo_ensaio_detalhes?.nome === 'data' && !ensaio.descricao?.toLowerCase()?.includes('variação')) ? (formatarDataExibicao(ensaio.valorTimestamp || ensaio.valor) || '—') : (ensaio.valor || 0) }}
+                                                                                                          </span>
                                                                                 <span class="ml-2 text-lg text-600">{{ ensaio.unidade }}</span>
                                                                             </div>
                                                                         </div>
@@ -903,7 +992,8 @@
                                                                                         [(ngModel)]="ensaio.responsavel"
                                                                                         (ngModelChange)="onResponsavelEnsaioDentroCalculoChange(plano, ensaio, $event)"
                                                                                         appendTo="body" [filter]="true" filterBy="value"
-                                                                                        [showClear]="true">
+                                                                                        [showClear]="true"
+                                                                                        [disabled]="isItemSomenteLeitura(ensaio)">
                                                                                     </p-select>
                                                                                     <label for="label">Responsável</label>
                                                                                 </p-floatLabel>
@@ -916,6 +1006,7 @@
                                                                                         [showButtons]="true" [min]="1" [max]="9999"
                                                                                         mode="decimal" [useGrouping]="false" size="small"
                                                                                         [style]="{'width':'100%'}"
+                                                                                        [disabled]="isItemSomenteLeitura(ensaio)"
                                                                                     >
                                                                                     </p-inputnumber>
                                                                                     <label>Nº Cadinho</label>
@@ -979,6 +1070,7 @@
                                                             [filter]="true" 
                                                             filterBy="value" 
                                                             [showClear]="true"
+                                                            [disabled]="isItemSomenteLeitura(calc)"
                                                         >
                                                         </p-select>
                                                         <label for="float-label">Selecione o Responsável</label>
@@ -1092,7 +1184,7 @@
             </div>
         </div>    
         <div class="step1 flex justify-content-between align-items-center w-12 mt-3 mb-5">
-            <div *ngIf="analise.amostra_detalhes.material === 'Argamassa'">
+            <div *ngIf="analise?.amostra_detalhes?.material === 'Argamassa'">
                 <p-menu 
                     #menu 
                     [model]="menuArgamassa" 
@@ -1106,7 +1198,18 @@
                     severity="info"
                 ></p-button>
             </div>
-            <div>
+            <div class="flex gap-2">
+                <p-button 
+                    label="Transferir Laboratório" 
+                    icon="pi pi-arrow-right-arrow-left" 
+                    severity="warn" 
+                    [raised]="true"
+                    size="large" 
+                    (onClick)="abrirModalTransferirLaboratorio()" 
+                    pTooltip="Transferir esta análise para outro laboratório"
+                    tooltipPosition="top"
+                    *ngIf="hasGroup(['Admin','Master','LabGestor'])"
+                ></p-button>
                 <p-button 
                     [label]="hasUnsavedChanges ? 'Salvar Resultados *' : 'Salvar Resultados'" 
                     [severity]="hasUnsavedChanges ? 'warn' : 'success'" 
@@ -1351,7 +1454,6 @@
                 selectionMode="multiple" 
                 [(selection)]="ensaiosSelecionadosParaAdicionar"
                 [paginator]="true"
-                [responsive]="true"
                 [rows]="10"
                 [globalFilterFields]="['descricao', 'tipo_ensaio_detalhes.nome']"
             >
@@ -1508,8 +1610,100 @@
     </p-card>    
 </p-dialog>
 <!-- Componentes necessários para confirmações e notificações -->
-<p-confirmDialog></p-confirmDialog>
+<p-confirmDialog key="confirmDialog"></p-confirmDialog>
 <p-toast></p-toast>
+
+<!-- Modal para Transferir Laboratório -->
+<p-dialog 
+    [(visible)]="modalTransferirLaboratorioVisible" 
+    header="Transferir Análise para Outro Laboratório"
+    [modal]="true"
+    [closable]="true"
+    [style]="{ width: '600px' }"
+    [draggable]="false"
+    [resizable]="false"
+>
+    <div class="flex flex-column gap-4">
+        <div class="flex flex-column gap-2">
+            <label class="font-semibold">Laboratório Atual:</label>
+            <div class="p-3 bg-blue-50 border-round">
+                <span class="text-xl font-bold text-primary">
+                    {{ analisesSimplificadas[0]?.amostraLaboratorio || 'Não definido' }}
+                </span>
+            </div>
+        </div>
+        
+        <div class="flex flex-column gap-2">
+            <label for="laboratorio-destino" class="font-semibold">
+                Selecione o Laboratório de Destino:
+            </label>
+            <p-select
+                id="laboratorio-destino"
+                [(ngModel)]="laboratorioDestinoTransferencia"
+                [options]="laboratorios"
+                optionLabel="descricao"
+                optionValue="nome"
+                placeholder="Selecione um laboratório"
+                [style]="{ width: '100%' }"
+            >
+                <ng-template pTemplate="selectedItem" let-option>
+                    <div class="flex align-items-center gap-2" *ngIf="option">
+                        <i class="pi pi-building text-primary"></i>
+                        <span class="font-semibold">{{ option.nome }}</span>
+                        <span class="text-sm text-500">- {{ option.descricao }}</span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="item" let-option>
+                    <div class="flex align-items-center gap-2">
+                        <i class="pi pi-building text-primary"></i>
+                        <span class="font-semibold">{{ option.nome }}</span>
+                        <span class="text-sm text-500">- {{ option.descricao }}</span>
+                    </div>
+                </ng-template>
+            </p-select>
+        </div>
+        
+        <div class="bg-yellow-50 border-round p-3">
+            <p class="m-0 text-sm font-semibold text-700">
+                <i class="pi pi-exclamation-triangle mr-2"></i>
+                Atenção: Esta ação irá transferir TODOS os ensaios e cálculos desta análise 
+                para o laboratório selecionado. Lembre-se de salvar a análise após a transferência!
+            </p>
+        </div>
+        
+        <div class="bg-blue-50 border-round p-3" *ngIf="analisesSimplificadas[0]?.planoDetalhes">
+            <p class="m-0 text-sm text-600">
+                <i class="pi pi-info-circle mr-2"></i>
+                <strong>Itens a serem transferidos:</strong>
+                <br>
+                • Ensaios Diretos: {{ analisesSimplificadas[0].planoDetalhes[0]?.ensaio_detalhes?.length || 0 }}
+                <br>
+                • Ensaios Compostos: {{ analisesSimplificadas[0].planoDetalhes[0]?.calculo_ensaio_detalhes?.length || 0 }}
+            </p>
+        </div>
+    </div>
+    
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-end gap-2">
+            <p-button 
+                label="Cancelar" 
+                icon="pi pi-times"
+                severity="secondary"
+                (onClick)="cancelarTransferenciaLaboratorio()"
+            >
+            </p-button>
+            <p-button 
+                label="Transferir" 
+                icon="pi pi-arrow-right-arrow-left"
+                severity="success"
+                (onClick)="confirmarTransferenciaLaboratorio()"
+                [disabled]="!laboratorioDestinoTransferencia"
+            >
+            </p-button>
+        </div>
+    </ng-template>
+</p-dialog>
+
 <!-- Modal ou seção para configurar ordem -->
 <p-dialog [(visible)]="modalOrdemVariaveisVisible" header="Ordenar Variáveis">
   <div *ngFor="let variavel of ensaioSelecionado?.variavel_detalhes; let i = index">
@@ -1671,7 +1865,6 @@
     [(visible)]="modalDadosLaudoSuperficial" 
     position="full" >
     <p-toast />
-    <p-confirmDialog />
         <div class="background-form">
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                 <div class="fg1 flex flex-column w-12 align-items-center">
@@ -1760,7 +1953,6 @@
     [(visible)]="modalDadosLaudoRetracao" 
     position="full" >
     <p-toast />
-    <p-confirmDialog />
         <div class="background-form">
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                 <div class="fg1 flex flex-column w-12 align-items-center">
@@ -1823,7 +2015,6 @@
     [(visible)]="modalDadosLaudoElasticidade" 
     position="full" >
     <p-toast />
-    <p-confirmDialog />
         <div class="background-form">
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                 <div class="fg1 flex flex-column w-12 align-items-center">
@@ -1884,7 +2075,6 @@
     [(visible)]="modalDadosLaudoFlexao" 
     position="full" >
     <p-toast />
-    <p-confirmDialog />
         <div class="background-form">
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                 <div class="fg1 flex flex-column w-12 align-items-center">
@@ -1948,7 +2138,6 @@
     [(visible)]="modalDadosLaudoCompressao" 
     position="full" >
     <p-toast />
-    <p-confirmDialog />
         <div class="background-form">
             <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                 <div class="fg1 flex flex-column w-12 align-items-center">
@@ -2096,6 +2285,41 @@
         <div class="flex-1">
             <h3 style="color: #ffffff;">2. Gráfico de Regressão Linear</h3>
             
+            <!-- Controle de Coeficiente Linear Customizado -->
+            <div class="bg-blue-900 p-3 border-round mb-3">
+                <div class="flex align-items-center gap-3 mb-3">
+                    <label class="flex align-items-center gap-2 cursor-pointer" style="color: #ffffff;">
+                        <input 
+                            type="checkbox" 
+                            [(ngModel)]="usarCoeficienteCustomizado"
+                            (change)="toggleCoeficienteCustomizado()"
+                            style="cursor: pointer; width: 18px; height: 18px;"
+                        />
+                        <span style="font-weight: 500;">Usar Coeficiente Linear (Intercepto) Customizado</span>
+                    </label>
+                </div>
+                
+                <div class="flex flex-column gap-2">
+                    <div class="flex align-items-center gap-2">
+                        <label style="color: #ffffff; min-width: 150px; font-weight: 500;">Coef. Linear (b):</label>
+                        <p-inputNumber
+                            [(ngModel)]="coeficienteLinearCustomizado"
+                            (onInput)="atualizarCoeficienteCustomizado()"
+                            [disabled]="!usarCoeficienteCustomizado"
+                            mode="decimal"
+                            [minFractionDigits]="4"
+                            [maxFractionDigits]="11"
+                            [step]="0.0001"
+                            [style]="{'width':'250px'}"
+                            placeholder="Ex: 3.2497"
+                        ></p-inputNumber>
+                    </div>
+                    <small style="color: #cbd5e0; margin-left: 150px;">
+                        Intercepto calculado pela regressão: <strong>{{ bIntercepto | number:'1.4-11' }}</strong>
+                    </small>
+                </div>
+            </div>
+
             <div class="chart-area">
                 <div class="w-full" style="height: 500px;">
                     <canvas #meuGrafico></canvas>
@@ -2105,11 +2329,26 @@
                     <h3 style="color: #ffffff;">Resultado Calculado (Aw)</h3>
                     <div class="bg-gray-50 p-3 border-round mb-3">
                         <p class="m-0 mb-2">
-                            <strong>Aw:</strong> 
-                            <span *ngIf="awCalculado !== null" style="font-weight: bold; color: #010716; font-size: 1.2em;">
-                                 {{ awCalculado | number:'1.3-3' }} kg/(m² · h¹/²)
+                            <strong>Aw (Laboratório):</strong> 
+                            <span *ngIf="awLaboratorioCalculado !== null" style="font-weight: bold; color: #010716; font-size: 1.2em;">
+                                 {{ awLaboratorioCalculado | number:'1.2-4' }} kg/(m² · h¹/²)
                             </span>
-                            <span *ngIf="!awCalculado" class="text-muted">Aguardando dados válidos...</span>
+                            <span *ngIf="awLaboratorioCalculado === null" class="text-muted">Aguardando dados válidos...</span>
+                        </p>
+                        <p class="m-0 mb-2">
+                            <strong>Inclinação (m):</strong> 
+                            <span *ngIf="awCalculado !== null">
+                                {{ awCalculado | number:'1.4-11' }}
+                            </span>
+                        </p>
+                        <p class="m-0 mb-2">
+                            <strong>Intercepto (b):</strong> 
+                            <span *ngIf="bIntercepto !== null">
+                                {{ bIntercepto | number:'1.4-11' }}
+                                <span *ngIf="usarCoeficienteCustomizado" style="color: #059669; font-weight: bold;">
+                                    → Usando: {{ coeficienteLinearCustomizado | number:'1.4-11' }}
+                                </span>
+                            </span>
                         </p>
                         <p class="m-0">
                             <strong>R²:</strong> {{ r2Calculado | number:'1.4-4' }}

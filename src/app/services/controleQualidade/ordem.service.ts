@@ -8,8 +8,8 @@ import { Expressa } from '../../pages/controleQualidade/expressa/expressa.compon
   providedIn: 'root'
 })
 export class OrdemService {
-  private ordemUrl = 'http://172.50.10.79:8008/ordem/ordem/';
-  private expressaUrl = 'http://172.50.10.79:8008/ordem/expressa/';
+  private ordemUrl = 'http://localhost:8000/ordem/ordem/';
+  private expressaUrl = 'http://localhost:8000/ordem/expressa/';
 
   constructor(
     private httpClient: HttpClient
@@ -92,11 +92,13 @@ export class OrdemService {
     
     console.log('📤 Payload enviado para registerExpressa:', payload);
     
-    return this.httpClient.post<Expressa>(this.expressaUrl, payload);
+    // ✅ CORRIGIDO: Usar a rota /register/ do backend
+    return this.httpClient.post<Expressa>(`${this.expressaUrl}register/`, payload);
   }
 
   /**
    * Atualiza ensaios e cálculos de uma ordem expressa existente
+   * OBSOLETO: Usa apenas IDs, não preserva duplicatas
    */
   atualizarEnsaiosCalculosExpressa(ordemId: number, ensaiosIds: number[], calculosIds: number[]): Observable<any> {
     const url = `${this.expressaUrl}${ordemId}/`;
@@ -105,10 +107,36 @@ export class OrdemService {
       calculos_ensaio: calculosIds
     };
     
-    console.log('📤 Atualizando ordem expressa:', {
+    console.log('📤 Atualizando ordem expressa (IDs apenas):', {
       ordemId,
       ensaiosIds,
       calculosIds,
+      url,
+      payload
+    });
+    
+    return this.httpClient.patch<any>(url, payload);
+  }
+
+  /**
+   * Atualiza ensaios e cálculos de uma ordem expressa com dados completos
+   * Preserva duplicatas (mesmo ensaio em diferentes laboratórios)
+   */
+  atualizarEnsaiosCalculosExpressaCompleto(
+    ordemId: number, 
+    ensaios: Array<{id: number, laboratorio?: string, laboratorio_original?: string, somente_leitura?: boolean}>,
+    calculos: Array<{id: number, laboratorio?: string, laboratorio_original?: string, somente_leitura?: boolean}>
+  ): Observable<any> {
+    const url = `${this.expressaUrl}${ordemId}/`;
+    const payload = {
+      ensaios: ensaios,
+      calculos_ensaio: calculos
+    };
+    
+    console.log('📤 Atualizando ordem expressa (dados completos):', {
+      ordemId,
+      totalEnsaios: ensaios.length,
+      totalCalculos: calculos.length,
       url,
       payload
     });

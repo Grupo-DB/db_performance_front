@@ -517,6 +517,8 @@ formatForDisplay(value: any): string {
   }
   analisesFiltradas: any[] = []; // array para exibir na tabela
   materiaisSelecionados: string[] = []; // valores escolhidos no multiselect
+  laboratoriosFiltro: any[] = [];
+  laboratoriosSelecionados: string[] = [];
   loadAnalises(): void { 
     this.analiseService.getAnalisesFechadas().subscribe(
       (response: any[]) => {
@@ -530,6 +532,7 @@ formatForDisplay(value: any): string {
           responsavel: analise.amostra_detalhes?.expressa_detalhes?.responsavel ?? '',
           data_entrada: analise.amostra_detalhes?.data_entrada ?? '',
           data_coleta: analise.amostra_detalhes?.data_coleta ?? '',
+          laboratorio: analise.amostra_detalhes?.laboratorio ?? ''
         }));
         // Inicializa a lista filtrada
       this.analisesFiltradas = [...this.analises];
@@ -547,6 +550,14 @@ formatForDisplay(value: any): string {
             (item, index, self) =>
               index === self.findIndex((opt) => opt.value === item.value)
           );
+
+        // Opções únicas para o filtro de Laboratório
+        this.laboratoriosFiltro = this.analises
+          .map((analise) => ({
+            label: analise.laboratorio,
+            value: analise.laboratorio
+          }))
+          .filter((item, index, self) => item.value && index === self.findIndex(opt => opt.value === item.value));
       },
       (error) => {
         console.error('Erro ao carregar análises', error);
@@ -565,10 +576,37 @@ formatForDisplay(value: any): string {
       );
     }
   }
+
+  // Filtro pelo MultiSelect de Laboratório
+  filtrarPorLaboratorios(): void {
+    if (this.laboratoriosSelecionados.length === 0) {
+      this.analisesFiltradas = [...this.analises];
+    } else {
+      this.analisesFiltradas = this.analises.filter((analise) =>
+        this.laboratoriosSelecionados.includes(analise.laboratorio)
+      );
+    }
+  }
   //Normalização
   private normalize(str: string): string {
     if (!str) return '';
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  }
+  
+  // Severidade por laboratório (LCA/LCI/LDB)
+  getLaboratorioSeverity(lab: string | undefined): 'info' | 'success' | 'warn' | 'contrast' | undefined {
+    if (!lab) return undefined;
+    const key = lab.toUpperCase();
+    switch (key) {
+      case 'LCA':
+        return 'success';
+      case 'LCI':
+        return 'info';
+      case 'LDB':
+        return 'contrast';
+      default:
+        return 'warn';
+    }
   }
   // Cache para evitar recalcular severities
   private severityCache = new Map<string, 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | undefined>();
@@ -1913,6 +1951,7 @@ duplicata(amostra: any): void {
           }
 
           this.amostraService.registerAmostra(
+            novaAmostra.laboratorio,
             novaAmostra.material,
             novaAmostra.finalidade,
             novaAmostra.numeroSac,

@@ -498,6 +498,7 @@ receberDadosAmostra(): void {
 
     // Criar amostra vinculada à ordem
     this.amostraService.registerAmostra(
+      this.amostraData.laboratorio,
       this.amostraData.materialInfo?.id || this.amostraData.material,
       this.amostraData.finalidadeInfo?.id || this.amostraData.finalidade,
       this.amostraData.numeroSac,
