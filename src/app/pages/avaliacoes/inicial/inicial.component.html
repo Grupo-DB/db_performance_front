@@ -1,20 +1,20 @@
-<div class="titulo mt-6 mb-6 text-2xl w-10">
+<div class="titulo mt-6 mb-6 text-2xl">
   <p-message severity="info">
     <b>Notificações</b>
   </p-message>
 </div>
-        <div class="container">
-          <p-toast></p-toast>
-          <div class="notifications">
-              <p-messages 
-                [(value)]="messages" 
-                [enableService]="false" 
-                [closable]="true">
-              </p-messages>
-            
-              <!-- <p>Total de avaliações pendentes {{ unreadCount }}</p> -->
-              <div class="btn" (click)="markAllAsRead()">
-                <p>Marcar todas como lidas</p>
-              </div>
-          </div>  
-        </div>
+
+<div class="container">
+  <p-toast></p-toast>
+  <div class="notifications">
+    <p-messages
+      [(value)]="messages"
+      [enableService]="false"
+      [closable]="true">
+    </p-messages>
+
+    <div class="btn" (click)="markAllAsRead()">
+      <p>Marcar todas como lidas</p>
+    </div>
+  </div>
+</div>

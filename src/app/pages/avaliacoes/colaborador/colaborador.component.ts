@@ -85,6 +85,7 @@ interface RegisterColaboradorForm {
   minerion_id: FormControl;
   dominio_id: FormControl;
   sgg_id: FormControl;
+  laboratorio: FormControl;
 }
   interface imgForm{
     image: FormControl
@@ -130,6 +131,8 @@ export interface Colaborador{
   tornar_avaliador: boolean;
   tornar_avaliado: boolean;
   tornar_gestor: boolean; // upload das imagens
+  laboratorio: string; 
+  
 
 }
 interface Genero{
@@ -149,6 +152,9 @@ interface Categoria{
 }
 interface TipoContrato{
   nome: string
+}
+interface Laboratorio{
+  nome: string,
 }
 @Component({
   selector: 'app-colaborador',
@@ -217,6 +223,7 @@ export class ColaboradorComponent implements OnInit {
   onUpload(event: any): void {
     this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded with Basic Mode' });
   }
+  laboratorios: Laboratorio[] | undefined;
   empresas: Empresa[]| undefined;
   filiais: Filial[]| undefined;
   areas: Area[]| undefined;
@@ -311,7 +318,9 @@ export class ColaboradorComponent implements OnInit {
       sgg_id: new FormControl('',),
       tornar_avaliado: new FormControl<boolean>(true),
       tornar_avaliador: new FormControl<boolean>(false),
-      tornar_gestor: new FormControl<boolean>(false)
+      tornar_gestor: new FormControl<boolean>(false),
+      laboratorio: new FormControl('',),
+
    }); 
    this.editForm = this.fb.group({
     id: [''],
@@ -345,7 +354,8 @@ export class ColaboradorComponent implements OnInit {
     user_id:[''],
     tornar_avaliador:[''],
     tornar_avaliado:[''],
-    tornar_gestor:['']
+    tornar_gestor:[''],
+    laboratorio:['']
 ,   });
    this.imgForm = new FormGroup({
     image: new FormControl('',)
@@ -357,6 +367,10 @@ export class ColaboradorComponent implements OnInit {
 }
 
  ngOnInit(): void {
+  this.laboratorios =[
+    { nome:'ATM'},
+    { nome:'Matriz'}
+  ];
   this.estados_civis = [
     { nome: 'Solteiro(a)' },
     { nome: 'Casado(a)'  },
@@ -787,7 +801,8 @@ abrirModalEdicao(colaborador: Colaborador) {
     user_id: colaborador.user_id,
     tornar_avaliador:colaborador.tornar_avaliador,
     tornar_avaliado:colaborador.tornar_avaliado,
-    tornar_gestor:colaborador.tornar_gestor
+    tornar_gestor:colaborador.tornar_gestor,
+    laboratorio:colaborador.laboratorio
   });
 }
 
@@ -799,6 +814,7 @@ visualizarColaboradorDetalhes(id: number) {
       this.formatarDatas(data);
       this.colaboradorDetalhes = data;
       data.salario = this.formatSalary(data.salario);
+      console.log(data);
     },
     error => {
       console.error('Erro ao buscar detalhes do colaborador:', error);
@@ -882,11 +898,10 @@ saveEdit(){
       tornar_avaliador: this.editForm.value.tornar_avaliador,
       tornar_avaliado: this.editForm.value.tornar_avaliado,
       tornar_gestor: this.editForm.value.tornar_gestor,
-      situacao:this.editForm.value.situacao
+      situacao:this.editForm.value.situacao,
+      laboratorio:this.editForm.value.laboratorio
     };
     
-  
-
     this.colaboradorService.editColaborador(colaboradorId, dadosAtualizados).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Colaborador atualizado com sucesso!' });
@@ -992,10 +1007,10 @@ submit() {
     const formData = new FormData();
 
     let situacao = this.registercolaboradorForm.value.situacao;
-// Verifique explicitamente se o valor é null ou undefined
+    // Verifique explicitamente se o valor é null ou undefined
     if (situacao === null || situacao === undefined) {
-    situacao = 0; // ou qualquer valor padrão que você queira
-}
+      situacao = 0; // ou qualquer valor padrão que você queira
+    }
 
    
 
@@ -1064,6 +1079,7 @@ submit() {
     formData.append('tornar_avaliado', this.registercolaboradorForm.value.tornar_avaliado);
     formData.append('tornar_avaliador',this.registercolaboradorForm.value.tornar_avaliador);
     formData.append('tornar_gestor', this.registercolaboradorForm.value.tornar_gestor)
+    formData.append('laboratorio', this.registercolaboradorForm.value.laboratorio)
 
     // Add a imagem ao FormData
     const image = this.registercolaboradorForm.get('image')?.value;

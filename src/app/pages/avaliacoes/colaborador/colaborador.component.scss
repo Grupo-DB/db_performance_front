@@ -1,4 +1,17 @@
 @import "primeicons/primeicons.css";
+
+:host ::ng-deep .inplace-lab,
+:host ::ng-deep .inplace-lab .p-inplace-display {
+  display: block !important;
+  width: 100% !important;
+}
+
+:host ::ng-deep .inplace-lab .p-button {
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
 :host ::ng-deep .p-card-body {
   background-color: #2C323A;
   border-radius: 12px;
