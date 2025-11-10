@@ -599,7 +599,7 @@
                             <ng-template pTemplate="body" let-colaborador>
                                 <tr>
                                     <td>{{ colaborador.nome | titlecase }}</td>
-                                    <td>{{ colaborador.empresa_detalhes.nome +' - - '+colaborador.id }}</td>
+                                    <td>{{ colaborador.empresa_detalhes.nome }}</td>
                                     <td>{{ colaborador.filial_detalhes.nome }}</td>
                                     <td>{{ colaborador.area_detalhes.nome }}</td>
                                     <td>{{ colaborador.setor_detalhes.nome }}</td>
@@ -663,6 +663,8 @@
     position="top"
     [style]="{ height: 'auto' }"
 >
+    <div class="drawer-scroll">
+
         <div class="background-form p-0">
             <form
                 [formGroup]="editForm" 
@@ -1175,6 +1177,7 @@
         </form>
         </div>
   
+    </div>
 </p-drawer>
 
 <p-dialog
