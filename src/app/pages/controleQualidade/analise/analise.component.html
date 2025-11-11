@@ -405,8 +405,35 @@
                                             <div class="header flex justify-content-between align-items-center">
                                                 <h2 class="text-2xl font-bold text-primary"><i class="pi pi-objects-column"></i> {{ ensaio.descricao }}
                                                 </h2>
-                                            </div>                                
+                                                
+                                            </div>            
+                                            <div class="flex flex-row justify-content-between align-items-center mt-2 mb-2 w-full" *ngIf="ensaio.descricao?.toLowerCase().trim().includes('reatividade');">
+                                                            
+                                                    <div class="flex flex-row gap-1 flex-shrink-0">
+                                                        <p-button 
+                                                            severity="info"
+                                                            [raised]="true" 
+                                                            size="small"
+                                                            pTooltip="Visualizar Pen. Secas"
+                                                            tooltipPosition="top"
+                                                            (click)="visualizarPeneira()"
+                                                            label="Visualizar Pen. Secas"
+                                                        ></p-button>
+
+                                                        <p-button 
+                                                            severity="info"
+                                                            pTooltip="Visualizar Pen. Úmidas"
+                                                            tooltipPosition="top" 
+                                                            size="small" 
+                                                            [raised]="true"
+                                                            (click)="visualizarPeneiraUmida()"
+                                                            label="Visualizar Pen. Úmidas"
+                                                        ></p-button>
+                                                    </div>
+                                                 
+                                                </div>                    
                                             <div class="expanded-row flex flex-column w-12 lg:flex-row">
+                                                 
                                                 <!-- Variáveis -->
                                                 <div class="flex flex-column w-7">
                                                     <div class="flex  gap-1" *ngIf="ensaio.variavel_detalhes && ensaio.variavel_detalhes.length > 0">
@@ -799,7 +826,7 @@
                                                         
                                                     >
 
-                                                        <div class="flex flex-row justify-content-between align-items-center mt-2 w-full" *ngIf="calc.descricao?.toLowerCase().trim().includes('reatividade'); else somentePesquisa"
+                                                        <div class="flex flex-row justify-content-between align-items-center mb-2 mt-2 w-full" *ngIf="calc.descricao?.toLowerCase().trim().includes('reatividade'); else somentePesquisa"
 >
                                                             
                                                             <div class="flex flex-row gap-1 flex-shrink-0">
