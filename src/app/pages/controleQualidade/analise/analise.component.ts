@@ -279,12 +279,8 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   modalTransferirLaboratorioVisible = false;
   laboratorioDestinoTransferencia: string = '';
   laboratorios = [
-    { nome: 'LC', descricao: 'Laboratório Central' },
-    { nome: 'LCI', descricao: 'Laboratório de Cimento' },
-    { nome: 'LAR', descricao: 'Laboratório de Argamassa' },
-    { nome: 'LAD', descricao: 'Laboratório de Aditivos' },
-    { nome: 'LCA', descricao: 'Laboratório de Cal' },
-    { nome: 'LMI', descricao: 'Laboratório de Mineração' }
+    { nome: 'Matriz', descricao: 'Laboratório Matriz' },
+    { nome: 'ATM', descricao: 'Laboratório ATM' },
   ];
   // Controle para evitar múltiplas confirmações
   private confirmacoesAbertas = new Set<string>();
@@ -1204,6 +1200,30 @@ loadAnalisePorId(analise: any) {
           valorRecente = utilizadosPorId[chave][idxDuplicata] || utilizadosPorId[chave][0];
         }
       }
+      // Mapear variáveis salvas em um dicionário por técnica/varNN para uso posterior
+      const variaveisSalvasMap: Record<string, any> = {};
+      if (valorRecente) {
+        if (Array.isArray(valorRecente.variaveis_utilizadas)) {
+          valorRecente.variaveis_utilizadas.forEach((v: any) => {
+            const k = v?.tecnica || v?.varTecnica || v?.nome;
+            if (k !== undefined) variaveisSalvasMap[k] = v.valor;
+          });
+        }
+        if (valorRecente.variaveis && typeof valorRecente.variaveis === 'object') {
+          Object.keys(valorRecente.variaveis).forEach(k => {
+            const entry = valorRecente.variaveis[k];
+            if (entry && entry.valor !== undefined) variaveisSalvasMap[k] = entry.valor;
+          });
+        }
+        // Top-level varNN numérico (fallback raro)
+        Object.keys(valorRecente).forEach(k => {
+          if (/^var\d+$/.test(k)) {
+            const val = (valorRecente as any)[k];
+            if (typeof val === 'number') variaveisSalvasMap[k] = val;
+            else if (val && typeof val === 'object' && val.valor !== undefined) variaveisSalvasMap[k] = val.valor;
+          }
+        });
+      }
       // Buscar valor pré-cadastrado nas variáveis do ensaio
       let valorPreCadastrado = null;
       if (ensaio.variavel_detalhes && ensaio.variavel_detalhes.length > 0) {
@@ -1242,7 +1262,9 @@ loadAnalisePorId(analise: any) {
         // FALLBACK: Se ensaio não tem laboratório, usar laboratório da análise
         laboratorio: valorRecente?.laboratorio || ensaio.laboratorio || analise.amostra_detalhes?.laboratorio || null,
         // Preservar/atribuir instanceId individual para distinguir duplicatas em nova sessão
-        instanceId: valorRecente?.instanceId || ensaio.instanceId || `${Date.now()}_${Math.random().toString(36).slice(2,9)}`
+        instanceId: valorRecente?.instanceId || ensaio.instanceId || `${Date.now()}_${Math.random().toString(36).slice(2,9)}`,
+        // Guardar snapshot de variáveis salvas para aplicar após criar variavel_detalhes (evita perder valores)
+        variaveis_salvas: Object.keys(variaveisSalvasMap).length ? variaveisSalvasMap : undefined
       };
       
      
@@ -1321,28 +1343,46 @@ loadAnalisePorId(analise: any) {
           ensaioOriginal.numero_cadinho = ensaioSalvo.numero_cadinho;
         }
         // Processar variáveis se for ensaio com função
-        if (ensaioOriginal.funcao && Array.isArray(ensaioSalvo.variaveis_utilizadas)) {
-          // Cria um mapa por tecnica para lookup rápido
+        if (ensaioOriginal.funcao) {
+          // Consolidar valores salvos em um único mapa por tecnica / varNN
           const mapSalvas: Record<string, any> = {};
-          ensaioSalvo.variaveis_utilizadas.forEach((v: any) => {
-            if (v.tecnica) mapSalvas[v.tecnica] = v;
+          // 1) Array variaveis_utilizadas (estrutura antiga)
+          if (Array.isArray(ensaioSalvo.variaveis_utilizadas)) {
+            ensaioSalvo.variaveis_utilizadas.forEach((v: any) => {
+              const k = v?.tecnica || v?.varTecnica || v?.nome;
+              if (k) mapSalvas[k] = v.valor;
+            });
+          }
+          // 2) Objeto variaveis { var01: { valor, descricao }, ... }
+          if (ensaioSalvo.variaveis && typeof ensaioSalvo.variaveis === 'object') {
+            Object.keys(ensaioSalvo.variaveis).forEach(k => {
+              const entry = ensaioSalvo.variaveis[k];
+              if (entry && entry.valor !== undefined) {
+                mapSalvas[k] = entry.valor;
+              }
+            });
+          }
+          // 3) Top-level propriedades varNN (fallback raro)
+          Object.keys(ensaioSalvo).forEach(k => {
+            if (/^var\d+$/.test(k) && ensaioSalvo[k] && ensaioSalvo[k].valor !== undefined) {
+              mapSalvas[k] = ensaioSalvo[k].valor;
+            }
           });
-          // Atualiza cada variável do ensaio pelo valor correspondente salvo, usando campo tecnica
+
+          // Atualiza cada variável do ensaio pelo valor correspondente salvo
           ensaioOriginal.variavel_detalhes?.forEach((variavel: any) => {
-            if (mapSalvas[variavel.tecnica] !== undefined) {
-              const valorSalvo = mapSalvas[variavel.tecnica].valor;
+            const key = variavel.tecnica || variavel.varTecnica || variavel.nome;
+            if (key && mapSalvas[key] !== undefined) {
+              const valorSalvo = mapSalvas[key];
               variavel.valor = valorSalvo;
-              // Se for variável de data, inicializar objeto Date
               if (this.isVariavelTipoData(variavel) && valorSalvo) {
                 try {
                   let dataObj: Date | null = null;
                   if (typeof valorSalvo === 'string') {
                     if (valorSalvo.includes('/')) {
-                      // Formato brasileiro DD/MM/YYYY (local)
                       const [dia, mes, ano] = valorSalvo.split('/');
                       dataObj = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
                     } else {
-                      // Formato ISO local yyyy-mm-dd ou outro
                       dataObj = this.parseDateLocal(valorSalvo);
                     }
                   } else {
@@ -1352,12 +1392,9 @@ loadAnalisePorId(analise: any) {
                     variavel.valorData = dataObj;
                     variavel.valorTimestamp = dataObj.getTime();
                   }
-                } catch (error) {
-                }
+                } catch {}
               }
             }
-          });
-          ensaioOriginal.variavel_detalhes.forEach((v: any, idx: number) => {
           });
         }
       }
@@ -1703,6 +1740,43 @@ inicializarVariaveisEnsaios() {
           // Só inicializa variáveis se variavel_detalhes não existir ou está vazia
           if (!Array.isArray(ensaio.variavel_detalhes) || ensaio.variavel_detalhes.length === 0) {
             ensaio.variavel_detalhes = criarVariaveisPorFuncao(ensaio.funcao, ensaio.descricao);
+            // Aplicar valores salvos (se existirem) imediatamente após criar as variáveis
+            if (ensaio.variaveis_salvas && typeof ensaio.variaveis_salvas === 'object') {
+              ensaio.variavel_detalhes.forEach((v: any) => {
+                const key = v.tecnica || v.varTecnica || v.nome;
+                if (key && ensaio.variaveis_salvas[key] !== undefined) {
+                  const valorSalvo = ensaio.variaveis_salvas[key];
+                  // Tratar datas
+                  if (this.isVariavelTipoData(v) && valorSalvo) {
+                    try {
+                      let dataObj: Date | null = null;
+                      if (typeof valorSalvo === 'string') {
+                        if (valorSalvo.includes('/')) {
+                          const [dia, mes, ano] = valorSalvo.split('/');
+                          dataObj = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
+                        } else {
+                          dataObj = this.parseDateLocal(valorSalvo);
+                        }
+                      } else if (typeof valorSalvo === 'number') {
+                        dataObj = this.parseDateLocal(valorSalvo);
+                      }
+                      if (dataObj && !isNaN(dataObj.getTime())) {
+                        v.valor = this.toLocalYYYYMMDD(dataObj);
+                        v.valorData = dataObj;
+                        v.valorTimestamp = dataObj.getTime();
+                      } else {
+                        v.valor = valorSalvo;
+                      }
+                    } catch {
+                      v.valor = valorSalvo;
+                    }
+                  } else {
+                    v.valor = typeof valorSalvo === 'number' ? valorSalvo : Number(valorSalvo);
+                    if (isNaN(v.valor)) v.valor = valorSalvo;
+                  }
+                }
+              });
+            }
           } else {
             // Se já existem variáveis, verificar se têm nomes descritivos adequados
             ensaio.variavel_detalhes.forEach((variavel: any, index: number) => {
@@ -2988,6 +3062,8 @@ recalcularTodosCalculos() {
     if (varList.length === 0 && calc.resultado !== undefined && calc.resultado !== null) {
       return;
     }
+  // Guardar resultado anterior para evitar zerar outros ao refazer
+  const resultadoAnterior = calc.resultado;
     const safeVars: any = {};
     varList.forEach((tk: string) => {
       if (/^var\d+$/.test(tk)) {
@@ -3103,12 +3179,13 @@ recalcularTodosCalculos() {
       } else {
         // Se já existia resultado e não há expressão significativa, não sobrescrever
         if (varList.length === 0 && calc.resultado !== undefined && calc.resultado !== null) return;
-        calc.resultado = (typeof resultado === 'number' && isFinite(resultado)) ? resultado : 0;
+        calc.resultado = (typeof resultado === 'number' && isFinite(resultado)) ? resultado : resultadoAnterior;
       }
       // Verificar alertas após o cálculo
       this.verificarAlertaPRNT(calc);
     } catch (e) {
-      calc.resultado = 'Erro no cálculo';
+      // Preservar resultado anterior em caso de erro
+      calc.resultado = resultadoAnterior !== undefined ? resultadoAnterior : 'Erro no cálculo';
       console.error('Erro no cálculo:', e);
     }
   }
@@ -3399,6 +3476,7 @@ recalcularTodosCalculos() {
   private calcularEnsaioInterno(ensaio: any, calc: any, planoBase?: any) {
     if (!ensaio || !ensaio.funcao) return;
     try {
+      const valorAnterior = ensaio.valor;
       const tokenMatches = (ensaio.funcao.match(/\b(var\d+|ensaio\d+|calculo\d+)\b/g) || []);
       const uniqueTokens = Array.from(new Set(tokenMatches)) as string[];
       const safeVars: any = {};
@@ -3475,9 +3553,10 @@ recalcularTodosCalculos() {
           ensaio.valor = resultado;
         }
       } else {
-        ensaio.valor = (typeof resultado === 'number' && isFinite(resultado)) ? this.round2(resultado) : 0;
+        ensaio.valor = (typeof resultado === 'number' && isFinite(resultado)) ? this.round2(resultado) : valorAnterior;
       }
     } catch (e) {
+      // Mantém valor anterior se ocorrer erro
       console.error('Erro ao calcular ensaio interno:', e);
     }
   }
@@ -3866,6 +3945,8 @@ calcularEnsaioDireto(ensaio: any, planoRef?: any) {
     return;
   }
   try {
+      // Preserva valor anterior para evitar zerar outros ao refazer
+      const valorAnterior = ensaio.valor;
     // Captura tanto varX quanto ensaioNN
     const tokenMatches = (ensaio.funcao.match(/\b(var\d+|ensaio\d+)\b/g) || []);
     const uniqueTokens = Array.from(new Set(tokenMatches)) as string[];
@@ -3904,8 +3985,10 @@ calcularEnsaioDireto(ensaio: any, planoRef?: any) {
         }
       } else if (/^ensaio\d+$/.test(tk)) {
         // Token de outro ensaio: buscar no plano
+        // Preferir sempre o ensaio do MESMO laboratório/instância do ensaio atual,
+        // para evitar pegar a duplicata de outro laboratório (que pode estar 0).
         const plano = planoRef || this.encontrarPlanoDoEnsaio(ensaio);
-        const valorEnsaio = this.obterValorEnsaioPorToken(plano, tk);
+        const valorEnsaio = this.obterValorEnsaioPorToken(plano, tk, ensaio);
         safeVars[tk] = valorEnsaio;
       } else {
         safeVars[tk] = 0;
@@ -3984,24 +4067,25 @@ calcularEnsaioDireto(ensaio: any, planoRef?: any) {
       } else {
         ensaio.valor = resultado;
       }
-    } else {
-      if (typeof resultado === 'number' && isFinite(resultado)) {
-        // Arredondar sempre para 4 casas decimais
-        const arredondado = this.roundN(resultado, 4);
-        ensaio.valor = arredondado;
       } else {
-        ensaio.valor = 0;
+        if (typeof resultado === 'number' && isFinite(resultado)) {
+          // Arredondar sempre para 4 casas decimais
+          const arredondado = this.roundN(resultado, 4);
+          ensaio.valor = arredondado;
+        } else {
+          // Mantém valor anterior se resultado inválido
+          ensaio.valor = valorAnterior;
+        }
       }
-    }
     // Verificar alerta Fechamento após cálculo do ensaio
     const plano = planoRef || this.encontrarPlanoDoEnsaio(ensaio);
     this.verificarAlertaFechamento(ensaio, plano);
     // Remover recálculo automático aqui para evitar loops de alertas
     this.forcarDeteccaoMudancas();
-  } catch (error) {
-    ensaio.valor = 0;
-    console.error(`❌ Erro no cálculo do ensaio ${ensaio.descricao}:`, error);
-  }
+    } catch (error) {
+      // Em erro manter valor anterior para não propagar 0
+      console.error(`❌ Erro no cálculo do ensaio ${ensaio.descricao}:`, error);
+    }
 }
 // Localiza o plano que contém o ensaio informado
 private encontrarPlanoDoEnsaio(ensaio: any): any | undefined {
@@ -4010,25 +4094,31 @@ private encontrarPlanoDoEnsaio(ensaio: any): any | undefined {
   return planos.find((pl: any) => (pl.ensaio_detalhes || []).some((e: any) => e.id === ensaio.id || e.descricao === ensaio.descricao));
 }
 // Dado um token 'ensaioNN', encontra o valor do ensaio correspondente no plano
-private obterValorEnsaioPorToken(plano: any, token: string): number {
+private obterValorEnsaioPorToken(plano: any, token: string, contexto?: any): number {
   if (!plano || !Array.isArray(plano.ensaio_detalhes)) return 0;
-  // 1) Tentar por tecnica com comparação tolerant a zeros à esquerda (ensaio7 == ensaio07)
-  let alvo = plano.ensaio_detalhes.find((e: any) => this.tokensIguais(e?.tecnica, token));
-  // 2) Fallback por id numérico contido no token (ensaio{id})
-  if (!alvo) {
-    const m = token.match(/ensaio(\d+)/i);
-    const idNum = m ? parseInt(m[1], 10) : NaN;
-    if (!isNaN(idNum)) {
-      // 2a) Por id (quando IDs são numéricos e estáveis)
-      alvo = plano.ensaio_detalhes.find((e: any) => String(e?.id) === String(idNum));
-      // 2b) Fallback por índice (ensaio12 -> index 11)
-      if (!alvo) {
-        const byIndex = plano.ensaio_detalhes[idNum - 1];
-        if (byIndex) alvo = byIndex;
-      }
+  // 1) Procurar TODAS as correspondências por técnica com tolerância a zeros à esquerda (ensaio7 == ensaio07)
+  const candidatosPorTecnica = plano.ensaio_detalhes.filter((e: any) => this.tokensIguais(e?.tecnica, token));
+  // 2) Se não houver por técnica, tentar por id numérico contido no token (ensaio{id})
+  const m = token.match(/ensaio(\d+)/i);
+  const idNum = m ? parseInt(m[1], 10) : NaN;
+  let candidatos: any[] = [...candidatosPorTecnica];
+  if (candidatos.length === 0 && !isNaN(idNum)) {
+    const porId = plano.ensaio_detalhes.filter((e: any) => String(e?.id) === String(idNum));
+    if (porId.length) candidatos = porId;
+    // 2b) Fallback por índice (ensaio12 -> index 11)
+    if (candidatos.length === 0) {
+      const byIndex = plano.ensaio_detalhes[idNum - 1];
+      if (byIndex) candidatos = [byIndex];
     }
   }
-  if (!alvo) return 0;
+  if (candidatos.length === 0) return 0;
+  // 3) Se houver contexto, priorizar o mesmo laboratório e/ou mesma instância
+  let alvo = candidatos[0];
+  if (contexto) {
+    const mesmoInst = candidatos.find((e: any) => contexto.instanceId && e.instanceId === contexto.instanceId);
+    const mesmoLab = candidatos.find((e: any) => contexto.laboratorio && e.laboratorio === contexto.laboratorio);
+    alvo = mesmoInst || mesmoLab || candidatos[0];
+  }
   // Preferir timestamp quando for data
   if (typeof alvo.valorTimestamp === 'number') return alvo.valorTimestamp;
   // Converter string para número ou data
@@ -4976,7 +5066,8 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
       plano.ensaio_detalhes = [];
     }
     
-    const novosEnsaios = this.ensaiosSelecionadosParaAdicionar;
+  // Agrupar por ID para controlar distribuição de duplicatas (evita replicar valores em todas)
+  const novosEnsaios = this.ensaiosSelecionadosParaAdicionar;
     
     if (!novosEnsaios.length) {
       this.messageService.add({
@@ -4987,12 +5078,37 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
       return;
     }
 
-    // Adicionar ensaios considerando duplicatas (mesmo ID já adicionado anteriormente)
-    novosEnsaios.forEach(ensaio => {
+    // Helper: copia valores das variáveis do ensaio base para o novo array de variáveis
+    const copiarValoresDeVariaveis = (baseVars: any[] = [], novasVars: any[] = []) => {
+      if (!Array.isArray(baseVars) || !Array.isArray(novasVars)) return novasVars;
+      const porChave: Record<string, any> = {};
+      baseVars.forEach((v: any) => {
+        const key = v?.tecnica || v?.varTecnica || v?.nome;
+        if (key) porChave[key] = v;
+      });
+      return novasVars.map((v: any) => {
+        const key = v?.tecnica || v?.varTecnica || v?.nome;
+        const src = key ? porChave[key] : null;
+        if (src) {
+          return {
+            ...v,
+            valor: (typeof src.valor !== 'undefined' && src.valor !== null) ? src.valor : (v.valor ?? 0),
+            valorTimestamp: src.valorTimestamp ?? v.valorTimestamp,
+            valorData: src.valorData ?? v.valorData
+          };
+        }
+        return v;
+      });
+    };
+
+  // Adicionar ensaios considerando duplicatas (mesmo ID já adicionado anteriormente)
+  let adicionouDuplicata = false;
+  novosEnsaios.forEach(ensaio => {
       const responsavelPadrao = this.obterResponsavelPadrao();
       const jaExistentesMesmoId = plano.ensaio_detalhes.filter((e: any) => String(e.id) === String(ensaio.id));
+  const baseClone: any | null = jaExistentesMesmoId.length ? jaExistentesMesmoId[jaExistentesMesmoId.length - 1] : null;
 
-      // Preparar variáveis (resetar valores se duplicata)
+      // Preparar variáveis (se duplicata, copiar valores das variáveis do ensaio base)
       let variaveis: any[] = [];
       if (Array.isArray(ensaio.variavel_detalhes) && ensaio.variavel_detalhes.length > 0) {
         variaveis = ensaio.variavel_detalhes.map((v: any, idx: number) => {
@@ -5005,46 +5121,65 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
           };
           return {
             ...base,
-            // Se já existe ensaio igual anteriormente, limpar o valor
-            valor: jaExistentesMesmoId.length ? 0 : (v.valor ?? 0)
+            valor: v.valor ?? 0
           };
         });
+        if (baseClone?.variavel_detalhes && jaExistentesMesmoId.length) {
+          variaveis = copiarValoresDeVariaveis(baseClone.variavel_detalhes, variaveis);
+        }
       } else if (ensaio.funcao) {
         variaveis = this.criarVariaveisParaEnsaio(ensaio).map((v: any) => ({
           ...v,
-          valor: jaExistentesMesmoId.length ? 0 : v.valor
+          valor: v.valor
         }));
+        if (baseClone?.variavel_detalhes && jaExistentesMesmoId.length) {
+          variaveis = copiarValoresDeVariaveis(baseClone.variavel_detalhes, variaveis);
+        }
       }
 
+      // Se já existem duplicatas, atribuir um contador de ordem interna para diferenciar e não sobrescrever depois
+      const ordemDuplicata = jaExistentesMesmoId.length;
       const novoEnsaio = {
         ...ensaio,
-        // Se duplicata, força reset do valor e do laboratório
-        valor: jaExistentesMesmoId.length ? 0 : (ensaio.valor ?? 0),
-        responsavel: jaExistentesMesmoId.length ? (responsavelPadrao || this.digitador || '') : (ensaio.responsavel || responsavelPadrao),
+        // Se duplicata, preservar valor do base (quando houver) e copiar variáveis
+        valor: (jaExistentesMesmoId.length && baseClone && typeof baseClone.valor !== 'undefined') ? baseClone.valor : (ensaio.valor ?? 0),
+        responsavel: (jaExistentesMesmoId.length && baseClone?.responsavel)
+          ? baseClone.responsavel
+          : (ensaio.responsavel || responsavelPadrao || this.digitador || ''),
         digitador: this.digitador || '',
         variavel_detalhes: variaveis,
         // Para OS com plano (NORMAL), adicionar com laboratório da análise; senão, do usuário
         laboratorio: this.isAnalisePlano() ? analiseData.amostraLaboratorio : this.laboratorioUsuario,
         duplicata: jaExistentesMesmoId.length > 0,
         instanceId: `${Date.now()}_${Math.random().toString(36).slice(2,9)}`,
-        origem: 'ad-hoc'
+        origem: 'ad-hoc',
+        ordemDuplicata,
       };
 
       plano.ensaio_detalhes.push(novoEnsaio);
 
       if (jaExistentesMesmoId.length) {
+        adicionouDuplicata = true;
         this.messageService.add({
           severity: 'info',
           summary: 'Duplicata adicionada',
-          detail: `Ensaio '${ensaio.descricao}' já existente. Valores foram limpos e laboratório ajustado.`
+          detail: `Ensaio '${ensaio.descricao}' duplicado (#${ordemDuplicata}). Valores preservados.`
         });
       }
     });
 
     // Atualizar referências e recalcular
     this.mapearEnsaiosParaCalculos();
-    this.recalcularTodosEnsaiosDirectos(plano);
-    this.recalcularTodosCalculos();
+    // Importante: ao duplicar, preservamos os valores copiados e não forçamos recálculo imediato
+    // para não sobrescrever resultados (especialmente quando os valores copiados são válidos).
+    if (!adicionouDuplicata) {
+      this.recalcularTodosEnsaiosDirectos(plano);
+    }
+    // Evitar recálculo imediato massivo que pode redistribuir valores entre duplicatas de maneira incorreta.
+    // Apenas recalcular cálculos depois de garantir técnicas atualizadas e sem mesclar laboratórios.
+    setTimeout(() => {
+      this.recalcularTodosCalculos();
+    }, 50);
     this.messageService.add({
       severity: 'success',
       summary: 'Sucesso',

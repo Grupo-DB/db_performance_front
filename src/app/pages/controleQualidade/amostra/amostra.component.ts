@@ -415,7 +415,6 @@ export class AmostraComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private router: Router,
     private fb: FormBuilder,
-    
   )
   {
     this.registerForm = new FormGroup<AmostraForm>({
@@ -426,12 +425,12 @@ export class AmostraComponent implements OnInit {
       dataEnvio: new FormControl('',),
       destinoEnvio: new FormControl('',),
       dataRecebimento: new FormControl('',),
-      reter: new FormControl('1'),
+      reter: new FormControl(true),
       registroEp: new FormControl('',),
       registroProduto: new FormControl('',),
       numeroLote: new FormControl(''),
       dataColeta: new FormControl(''),
-      dataEntrada: new FormControl(''),
+      dataEntrada: new FormControl(new Date()),
       numero: new FormControl(''),
       tipoAmostra: new FormControl(''),
       subtipo: new FormControl(''),

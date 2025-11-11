@@ -106,42 +106,81 @@
                                         <button pButton type="button" icon="pi pi-plus" (click)="montarFormula()"></button> 
                                     </div>
                                 </div>
-                                <div class="form2 flex flex-column md:flex-row md:justify-content-between w-12 mb-3 mt-3">
-                                    <div class="w-4 text-left md:mb-3 lg:mr-1">
+
+                                <div class="form2 flex flex-column md:flex-row md:items-end md:gap-4 w-12 mt-3">
+                                    <div class="field w-full md:w-6 text-left">
                                         <p-floatLabel variant="on">
-                                            <p-inputNumber 
-                                                variant="filled"
-                                                mode="decimal"
-                                                formControlName="tempoPrevistoValor"
-                                                [showButtons]="true" 
-                                                inputId="tempo" 
-                                                [min]="0" 
-                                                [max]="9999"
-                                                [useGrouping]="false" 
-                                            />
-                                        <label for="tempo">Tempo Previsto</label>
+                                        <p-inputNumber 
+                                            variant="filled"
+                                            mode="decimal"
+                                            formControlName="tempoPrevistoValor"
+                                            [showButtons]="true" 
+                                            inputId="tempoPrevistoValorInput"    
+                                            [min]="0" 
+                                            [max]="9999"
+                                            [useGrouping]="false" 
+                                            [style]="{ width: '100%' }"
+                                        ></p-inputNumber>
+                                        <label for="tempoPrevistoValorInput">Tempo Previsto</label>
                                         </p-floatLabel>     
                                     </div>
-                                    <div class="w-6 text-left">    
-                                        <p-floatLabel variant="on"> 
-                                            <p-select
-                                                inputId="float-label"
-                                                [style]="{'width':'100%'}"
-                                                [options]="unidades" 
-                                                formControlName="tempoPrevistoUnidade"
-                                                optionLabel="value"
-                                                optionValue="value"
-                                                appendTo="body"
-                                                [filter]="true" 
-                                                filterBy="value"
-                                                [showClear]="true"
 
-                                            >
-                                            </p-select>
-                                            <label for="float-label">Informe a Unidade de tempo</label>
+                                    <div class="field w-full md:w-6 text-left">
+                                        <p-floatLabel variant="on"> 
+                                        <p-select
+                                            inputId="tempoPrevistoUnidadeSelect"   
+                                            [style]="{'width':'100%'}"
+                                            [options]="unidades" 
+                                            formControlName="tempoPrevistoUnidade"
+                                            optionLabel="value"
+                                            optionValue="value"
+                                            appendTo="body"
+                                            [filter]="true" 
+                                            filterBy="value"
+                                            [showClear]="true"
+                                        ></p-select>
+                                        <label for="tempoPrevistoUnidadeSelect">Unidade de Tempo</label>
                                         </p-floatLabel>
                                     </div>    
                                 </div>
+                                
+                                <div class="form2 flex flex-column md:flex-row md:items-end md:gap-4 w-12 mb-3">
+                                    <div class="field w-full md:w-6 text-left">
+                                        <p-floatLabel variant="on">
+                                        <p-inputNumber 
+                                            variant="filled"
+                                            mode="decimal"
+                                            formControlName="tempoTrabalhoValor"
+                                            [showButtons]="true" 
+                                            inputId="tempoTrabalhoValorInput"    
+                                            [min]="0" 
+                                            [max]="9999"
+                                            [useGrouping]="false" 
+                                            [style]="{ 'width': '100%' }"
+                                        ></p-inputNumber>
+                                        <label for="tempoTrabalhoValorInput">Tempo Trabalho</label>
+                                        </p-floatLabel>     
+                                    </div>
+
+                                    <div class="field w-full md:w-6 text-left">
+                                        <p-floatLabel variant="on"> 
+                                        <p-select
+                                            inputId="tempoTrabalhoUnidadeSelect"   
+                                            [style]="{'width':'100%'}"
+                                            [options]="unidades" 
+                                            formControlName="tempoTrabalhoUnidade"
+                                            optionLabel="value"
+                                            optionValue="value"
+                                            appendTo="body"
+                                            [filter]="true" 
+                                            filterBy="value"
+                                            [showClear]="true"
+                                        ></p-select>
+                                        <label for="tempoTrabalhoUnidadeSelect">Unidade de Tempo</label>
+                                        </p-floatLabel>
+                                    </div>    
+                                </div>
+
                             </div>
                             <div class="fg1 flex flex-column w-12 align-items-center lg:w-6 ml-4">
                                 <div class="form2 w-12 mb-3 mt-3" *ngIf="registerForm.get('tipoEnsaio')?.value===7">
@@ -182,7 +221,7 @@
                                         </p-floatLabel> 
                                     </div>
                                     <div class="form2 flex flex-column md:flex-row w-12 mt-3 md:justify-content-between">
-                                        <div class="w-4 text-left md:mb-3 lg:mr-1">
+                                        <div class="w-6 text-left md:mb-3 lg:mr-1">
                                             <p-floatLabel variant="on">
                                                 <p-inputNumber 
                                                     variant="filled"
@@ -419,7 +458,7 @@
             </div>
         </div>    
     </div>
-
+</div>
     <!-------------------------------------------MODAL EDIÇÂO---------------------------------------------->
     <p-drawer
         [(visible)]="editFormVisible"
@@ -512,40 +551,79 @@
                                         <label for="on_label">Digite a norma</label>
                                     </p-floatlabel>
                                 </div>
-                                <div class="w-10 text-left md:mb-3 lg:mr-1">
+                                    
+                                <div class="w-10 mb-3 mt-3 text-left">
                                     <p-floatLabel variant="on">
-                                                <p-inputNumber 
-                                                    variant="filled"
-                                                    mode="decimal"
-                                                    formControlName="tempoPrevistoValor"
-                                                    [showButtons]="true" 
-                                                    inputId="tempo" 
-                                                    [min]="0" 
-                                                    [max]="9999"
-                                                    [useGrouping]="false" 
-                                                />
-                                                <label for="tempo">Tempo Previsto</label>
+                                        <p-inputNumber 
+                                        variant="filled"
+                                        mode="decimal"
+                                        formControlName="tempoPrevistoValor"
+                                        [showButtons]="true" 
+                                        inputId="tempoPrevistoValorInput"
+                                        [min]="0" 
+                                        [max]="9999"
+                                        [useGrouping]="false" 
+                                        [style]="{'width': '100%'}"
+                                        />
+                                        <label for="tempoPrevistoValorInput">Tempo Previsto</label>
                                     </p-floatLabel>     
                                 </div>
-                                <div class="w-10 text-left">    
+                        
+                                <div class="w-10 mb-3 mt-3 text-left">    
                                     <p-floatLabel variant="on"> 
                                         <p-select
-                                            inputId="float-label"
-                                            [style]="{'width':'100%'}"
-                                            [options]="unidades" 
-                                            formControlName="tempoPrevistoUnidade"
-                                            optionLabel="value"
-                                            optionValue="value"
-                                            appendTo="body"
-                                            [filter]="true" 
-                                            filterBy="value"
-                                            [showClear]="true"
-
+                                        inputId="tempoPrevistoUnidadeSelect"
+                                        [style]="{'width':'100%'}"
+                                        [options]="unidades" 
+                                        formControlName="tempoPrevistoUnidade"
+                                        optionLabel="value"
+                                        optionValue="value"
+                                        appendTo="body"
+                                        [filter]="true" 
+                                        filterBy="value"
+                                        [showClear]="true"
                                         >
                                         </p-select>
-                                        <label for="float-label">Informe a Unidade de tempo</label>
+                                        <label for="tempoPrevistoUnidadeSelect">Informe a Unidade de tempo</label>
                                     </p-floatLabel>
-                                </div>    
+                                </div>
+
+                                <div class="w-10 mb-3 mt-3 text-left">
+                                    <p-floatLabel variant="on">
+                                        <p-inputNumber 
+                                        variant="filled"
+                                        mode="decimal"
+                                        formControlName="tempoTrabalhoValor"
+                                        [showButtons]="true" 
+                                        inputId="tempoTrabalhoValorInput"
+                                        [min]="0" 
+                                        [max]="9999"
+                                        [useGrouping]="false" 
+                                        [style]="{'width': '100%'}"
+                                        />
+                                        <label for="tempoTrabalhoValorInput">Tempo Trabalho</label>
+                                    </p-floatLabel>     
+                                </div>
+
+                                <div class="w-10 mb-3 mt-3 text-left">    
+                                    <p-floatLabel variant="on"> 
+                                        <p-select
+                                        inputId="tempoTrabalhoUnidadeSelect"
+                                        [style]="{'width':'100%'}"
+                                        [options]="unidades" 
+                                        formControlName="tempoTrabalhoUnidade"
+                                        optionLabel="value"
+                                        optionValue="value"
+                                        appendTo="body"
+                                        [filter]="true" 
+                                        filterBy="value"
+                                        [showClear]="true"
+                                        >
+                                        </p-select>
+                                        <label for="tempoTrabalhoUnidadeSelect">Informe a Unidade de tempo</label>
+                                    </p-floatLabel>
+                                </div>
+
                                 <div class="w-10 mb-3 mt-3 text-left">
                                     <p-floatLabel variant="on"> 
                                         <p-select
@@ -642,7 +720,7 @@
         </div>
     </p-drawer>
 
-</div>
+
 
     <!-------------------------------------Modal Montagem Formulas--------------------------------------->
     <p-drawer

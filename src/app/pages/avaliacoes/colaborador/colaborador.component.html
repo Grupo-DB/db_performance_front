@@ -324,10 +324,11 @@
                                             [style]="{'color':'#1b91ff'}"
                                             id="foto"
                                             type="file"
-                                            formControlName="image"
                                             class="form-control"
                                             (change)="onFileChange($event,registercolaboradorForm)"
+                                            formControlName="image"
                                         />
+                                            <!-- formControlName="image" -->
                                     </div>
 
                                     <div class="dvemail w-12 text-left">
@@ -385,7 +386,7 @@
                                             </div> 
                                         </div>
                                     <div class="mt-2 ml-0 w-12 text-left">
-                                         <p-inplace closable="true" closeIcon="pi pi-angle-up">
+                                         <p-inplace class="inplace-lab" closable="true" closeIcon="pi pi-angle-up">
                                             <ng-template pTemplate="display">
                                                 <p-button 
                                                     label="Criar Usuário"
@@ -434,7 +435,52 @@
                                                 </div>
                                             </ng-template>
                                         </p-inplace> 
-                                    </div>     
+                                    </div>   
+                                    
+                                    
+
+
+                                    <div class="mt-2 ml-0 w-12 text-left">
+                                         <p-inplace class="inplace-lab" closable="true" closeIcon="pi pi-angle-up">
+                                            <ng-template pTemplate="display">
+                                                <p-button 
+                                                    label="Laboratório"
+                                                    severity="warn"
+                                                    tooltipPosition="top"
+                                                    pTooltip="Laboratório"
+                                                    class="w-full"
+                                                >
+                                                    <div class="inline-flex align-items-center">
+                                                        <span><i class="pi pi-user"></i></span>
+                                                    </div>
+                                                </p-button>
+                                            </ng-template>
+                                            <ng-template pTemplate="content">
+                                                <div class="flex w-12 gap-3 mt-4 justify-content-center text-center">
+                                                    <div class="w-12 text-left">
+                                                        <p-floatLabel variant="on">
+                                                            <p-select
+                                                                variant="filled"
+                                                                id="gen"
+                                                                [style]="{'width':'100%'}"
+                                                                [options]="laboratorios"
+                                                                formControlName="laboratorio"
+                                                                optionLabel="nome"
+                                                                inputId="float-label"
+                                                            >
+                                                            </p-select>
+                                                            <label for="float-label" >Selecione o Laboratório</label>
+                                                        </p-floatLabel>
+                                                       
+                                                    </div>
+                                                </div>
+                                            </ng-template>
+                                        </p-inplace> 
+                                    </div>    
+
+
+
+
                                     
                                 </div>
                            
@@ -552,7 +598,7 @@
                             </ng-template>
                             <ng-template pTemplate="body" let-colaborador>
                                 <tr>
-                                    <td>{{ colaborador.nome | titlecase}}</td>
+                                    <td>{{ colaborador.nome | titlecase }}</td>
                                     <td>{{ colaborador.empresa_detalhes.nome }}</td>
                                     <td>{{ colaborador.filial_detalhes.nome }}</td>
                                     <td>{{ colaborador.area_detalhes.nome }}</td>
@@ -560,7 +606,7 @@
                                     <td>{{ colaborador.ambiente_detalhes.nome }}</td>
                                     <td>{{ colaborador.cargo_detalhes.nome }}</td>
                                     <td>{{ colaborador.situacao | booleanToStatus }}</td>
-                                    <td><img [src]="colaborador.image"  width="80" class="shadow-4" /></td>
+                                    <td><img [src]="colaborador.image" width="80" class="shadow-4" /></td>
                                     <td style="text-align: center;">
                                         <div class="flex justify-content-center gap-2">
                                             <p-button
@@ -617,6 +663,8 @@
     position="top"
     [style]="{ height: 'auto' }"
 >
+    <div class="drawer-scroll">
+
         <div class="background-form p-0">
             <form
                 [formGroup]="editForm" 
@@ -965,6 +1013,7 @@
                                             class="form-control"
                                             (change)="onFileChange($event,registercolaboradorForm)"
                                         />
+                                        <!-- formControlName="image" -->
                                     </div>
 
                                     <div class="dvemail w-12 text-left mt-1">
@@ -1059,6 +1108,24 @@
                                             <label for="on_label">Digite a senha</label>
                                         </p-floatlabel>
                                     </div>
+
+                                    <div class="dvinst w-12 text-left mt-1">
+                                        <p-floatLabel variant="on">
+                                            <p-select
+                                                variant="filled"
+                                                [style]="{'width':'100%'}"
+                                                id="inst"
+                                                [options]="laboratorios"
+                                                formControlName="laboratorio"
+                                                optionLabel="nome"
+                                                inputId="float-label"
+                                                optionValue="nome"
+                                                
+                                            >
+                                            </p-select>
+                                            <label for="float-label" style="margin-left: 15px;">Selecione o Laboratório</label>
+                                        </p-floatLabel>
+                                    </div>
                                   
                                 </div>
 
@@ -1104,11 +1171,13 @@
                     class="form-control"
                     (change)="onFileChange($event,imgForm)">
 
+                    <!-- formControlName="image" -->
                 <button type="submit">Atualizar Imagem</button>
             </div>
         </form>
         </div>
   
+    </div>
 </p-drawer>
 
 <p-dialog
@@ -1150,6 +1219,7 @@
                 <p>Domínio ID: <strong>{{ colaboradorDetalhes.dominio_id }}</strong></p>
                 <p>Minerion ID: <strong>{{ colaboradorDetalhes.minerion_id }}</strong></p>
                 <p>SGG ID: <strong>{{ colaboradorDetalhes.sgg_id }}</strong></p>
+                <p>Laboratório: <strong>{{ colaboradorDetalhes.laboratorio }}</strong></p>
             </div>
             <div class="dvimg">
                 <img [src]="colaboradorDetalhes.image"  width="80" class="shadow-4" />
