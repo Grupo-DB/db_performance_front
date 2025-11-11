@@ -429,6 +429,7 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   };
 
   menuArgamassa: any[] = [];
+  menuPeneira: any[] = [];
 
   // GRAFICO
   @ViewChild('meuGrafico') chartRef!: ElementRef<HTMLCanvasElement>;
@@ -1108,6 +1109,7 @@ downloadImagemGrafico(): void {
           }, 0);
           //AQUI CARREGOU
           this.menuArgamassa = this.getItensArgamassa(analise);
+          this.menuPeneira = this.getItensPeneira(analise);
         },
         (error) => {
           // console.error('Erro ao buscar análise:', error);
@@ -5651,6 +5653,11 @@ canDeactivate(): boolean | Promise<boolean> {
       //{ label: 'Compressão', icon: 'pi pi-eye', command: () => this.abrirModalCompressao(analise) },
       //{ label: 'Determinação do Coeficiente de Absorção de Água por Capilaridade', icon: 'pi pi-eye' },
       { label: 'Gráfico Capilaridade', icon: 'pi pi-eye', command: () => this.exibirGrafico() },
+    ];
+  }
+
+   getItensPeneira(analise: any) {
+    return [
       { label: 'Peneiras Secas', icon: 'pi pi-eye', command: () => this.abrirModalPeneira(analise) },
       { label: 'Peneiras Úmidas', icon: 'pi pi-eye', command: () => this.abrirModalPeneiraUmida(analise) },
     ];
@@ -5667,7 +5674,7 @@ canDeactivate(): boolean | Promise<boolean> {
         passante: item.passante ?? null,
         passante_acumulado: item.passante_acumulado ?? null,
       }));
-    }else if (analise?.peneiras.peneiras && Array.isArray(analise.peneiras.peneiras)) {
+    }else if (analise?.peneiras?.peneiras && Array.isArray(analise.peneiras?.peneiras)) {
       this.linhasPeneira = analise.peneiras.peneiras.map((item: any, index: number) => ({
         peneira: item.peneira ?? '',
         valor_retido: item.valor_retido ?? null,
@@ -5676,31 +5683,19 @@ canDeactivate(): boolean | Promise<boolean> {
         passante: item.passante ?? null,
         passante_acumulado: item.passante_acumulado ?? null,
       }));
-      while (this.linhasPeneira.length < 5) {
-        this.linhasPeneira.push({
-          peneira: '',
-          valor_retido: null,
-          porcentual_retido: null,
-          acumulado: null,
-          passante: null,
-          passante_acumulado: null
-        });
-      }
 
       this.massa_amostra = analise.peneiras.amostra;
       this.total_finos = analise.peneiras.finos;
     } else {
       this.linhasPeneira = [];
-      for (let i = 1; i <= 5; i++) {
-        this.linhasPeneira.push({
-          peneira: '',
-          valor_retido: null,
-          porcentual_retido: null,
-          acumulado: null,
-          passante: null,
-          passante_acumulado: null,
-        });
-      }
+      this.linhasPeneira.push({
+        peneira: '',
+        valor_retido: null,
+        porcentual_retido: null,
+        acumulado: null,
+        passante: null,
+        passante_acumulado: null,
+      });
     }
     this.modalDadosPeneira = true;
   }
@@ -5767,7 +5762,7 @@ canDeactivate(): boolean | Promise<boolean> {
 
     this.peneira_seca = this.linhasPeneira;
     this.modalDadosPeneira = false;
-console.log(this.linhasPeneira);
+
     const dadosAtualizados: Partial<Analise> = {
       peneiras:{
         peneiras: this.linhasPeneira,
@@ -5815,7 +5810,7 @@ console.log(this.linhasPeneira);
         passante: item.passante ?? null,
         passante_acumulado: item.passante_acumulado ?? null,
       }));
-    }else if (analise?.peneiras_umidas.peneiras && Array.isArray(analise.peneiras_umidas.peneiras)) {
+    }else if (analise?.peneiras_umidas?.peneiras && Array.isArray(analise.peneiras_umidas?.peneiras)) {
       this.linhasPeneiraUmida = analise.peneiras_umidas.peneiras.map((item: any, index: number) => ({
         peneira: item.peneira ?? '',
         valor_retido: item.valor_retido ?? null,
@@ -6666,8 +6661,19 @@ console.log(this.linhasPeneira);
     this.modalVisualizarPeneira = false;
   }
 
-   addLinha(): void {
+  addLinha(): void {
     this.linhasPeneiraUmida.push({
+      peneira: '',
+      valor_retido: null,
+      porcentual_retido: null,
+      acumulado: null,
+      passante: null,
+      passante_acumulado: null,
+    });
+  }
+
+  addLinhaSeca(): void {
+    this.linhasPeneira.push({
       peneira: '',
       valor_retido: null,
       porcentual_retido: null,

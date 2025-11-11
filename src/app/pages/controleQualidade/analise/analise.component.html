@@ -309,6 +309,7 @@
                                             size="small"
                                             [icon]="todasExpandidas ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
                                             (click)="toggleTodasLinhas()"
+
                                             pTooltip="Expandir/Recolher todas as linhas">
                                         </p-button>
                                     </th>
@@ -795,10 +796,11 @@
                                                 <div class="flex flex-column w-12">
                                                     <div 
                                                         class="flex flex-column gap-3"
-                                                        *ngIf="calc.ensaios_detalhes && calc.ensaios_detalhes.length > 0"
+                                                        
                                                     >
 
-                                                        <div class="flex flex-row justify-content-between align-items-center mt-2 w-full" *ngIf="calc.descricao?.toLowerCase().includes('reatividade'); else somentePesquisa">
+                                                        <div class="flex flex-row justify-content-between align-items-center mt-2 w-full" *ngIf="calc.descricao?.toLowerCase().trim().includes('reatividade'); else somentePesquisa"
+>
                                                             
                                                             <div class="flex flex-row gap-1 flex-shrink-0">
                                                                 <p-button 
@@ -1150,6 +1152,22 @@
   
             <div>
                 <p-menu 
+                    #menuPeneiras 
+                    [model]="menuPeneira" 
+                    popup="true" 
+                    styleClass="menu-up">
+                </p-menu>
+
+                <p-button 
+                    label="Peneiras"
+                    icon="pi pi-chevron-up"
+                    (click)="menuPeneiras.toggle($event)"
+                    severity="help">
+                </p-button>
+            </div>
+
+            <div *ngIf="analise.amostra_detalhes?.material?.toLowerCase() === 'argamassa'">
+                <p-menu 
                     #menu 
                     [model]="menuArgamassa" 
                     popup="true" 
@@ -1157,11 +1175,11 @@
                 </p-menu>
 
                 <p-button 
-                label="Ações Argamassa"
-                icon="pi pi-chevron-up"
-                (click)="menu.toggle($event)"
-                severity="info"
-                ></p-button>
+                    label="Ações Argamassa"
+                    icon="pi pi-chevron-up"
+                    (click)="menu.toggle($event)"
+                    severity="info">
+                </p-button>
             </div>
 
             <div>
@@ -2224,8 +2242,6 @@
 </div>
 </p-drawer>
 
-
-
 <!-- Peneira -->
 <p-drawer 
     [(visible)]="modalDadosPeneira" 
@@ -2353,7 +2369,17 @@
                                     </ng-template>
                                 </p-table>
                             </div>
-                        </div>                    
+                        </div>                   
+                        
+                        <p-button 
+                            (onClick)="addLinhaSeca()" 
+                            label="Adicionar Linha"
+                            iconPos="right"  
+                            tooltipPosition="top"
+                            pTooltip="Adicionar Linha"
+                            icon="pi pi-plus"
+                            severity="info"
+                        />
 
                         <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
                             <p-button 
@@ -2503,14 +2529,14 @@
                         </div>
 
                         <p-button 
-                                    (onClick)="addLinha()" 
-                                    label="Adicionar Linha"
-                                    iconPos="right"  
-                                    tooltipPosition="top"
-                                    pTooltip="Adicionar Linha"
-                                    icon="pi pi-plus"
-                                    severity="info"
-                                />
+                            (onClick)="addLinha()" 
+                            label="Adicionar Linha"
+                            iconPos="right"  
+                            tooltipPosition="top"
+                            pTooltip="Adicionar Linha"
+                            icon="pi pi-plus"
+                            severity="info"
+                        />
                         <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
                             <p-button 
                                 label="Salvar Peneiras Umidas" 
