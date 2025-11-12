@@ -127,6 +127,25 @@ interface LinhaCompressao {
   tracao_compressao: number | null;
 }
 
+interface LinhaPeneira {
+  peneira: string;
+  valor_retido: number | null;
+  porcentual_retido: number | null;
+  acumulado: number | null;
+  passante: number | null;
+  passante_acumulado: number | null;
+}
+
+interface LinhaPeneiraUmida {
+  peneira: string;
+  valor_retido: number | null;
+  porcentual_retido: number | null;
+  acumulado: number | null;
+  passante: number | null;
+  passante_acumulado: number | null;
+}
+
+
 export interface Analise {
   id: number;
   data: string;
@@ -136,14 +155,14 @@ export interface Analise {
   metodoMuro: string;
   observacoesMuro: string;
   parecer: any;
-
   substrato: any;
   superficial: any;
   retracao: any;
   elasticidade: any;
   flexao: any;
   compressao: any;
-
+  peneiras: any;
+  peneiras_umidas: any;
 }
 interface FileWithInfo {
   file: File;
@@ -358,6 +377,57 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   };
 
   menuArgamassa: any[] = [];
+  menuPeneira: any[] = [];
+
+  modalDadosPeneira = false;
+  linhasPeneira: LinhaPeneira[] = [];
+  peneira_seca: any = null;
+
+  modalDadosPeneiraUmida = false;
+  linhasPeneiraUmida: LinhaPeneiraUmida[] = [];
+  peneira_umida: any = null;
+
+  modalVisualizarPeneira = false;
+  modalVisualizarPeneiraUmida = false;
+
+
+  peneirasDados = [
+    { value: '# 1.1/2 - ABNT/ASTM 1.1/2 - 37,5 mm' },
+    { value: '# 1 - ABNT/ASTM 1 - 25,0 mm' },
+    { value: '# 3/4 - ABNT/ASTM 3/4 - 19,0 mm' },
+    { value: '# 1/2 - ABNT/ASTM 1/2 - 12,5 mm' },
+    { value: '# 3/8 - ABNT/ASTM 3/8 - 9,5 mm' },
+    { value: '# 1/4 - ABNT/ASTM 1/4 - 6,3 mm' },
+    { value: '# 4 - ABNT/ASTM 4 - 4,75 mm' },
+    { value: '# 5 - ABNT/ASTM 5 - 4,00 mm' },
+    { value: '# 6 - ABNT/ASTM 6 - 3,35 mm' },
+    { value: '# 7 - ABNT/ASTM 7 - 2,80 mm' },
+    { value: '# 8 - ABNT/ASTM 8 - 2,36 mm' },
+    { value: '# 10 - ABNT/ASTM 10 - 2,00 mm' },
+    { value: '# 12 - ABNT/ASTM 12 - 1,70 mm' },
+    { value: '# 14 - ABNT/ASTM 14 - 1,40 mm' },
+    { value: '# 16 - ABNT/ASTM 16 - 1,18 mm' },
+    { value: '# 18 - ABNT/ASTM 18 - 1,00 mm' },
+    { value: '# 20 - ABNT/ASTM 20 - 0,850 mm' },
+    { value: '# 25 - ABNT/ASTM 25 - 0,710 mm' },
+    { value: '# 30 - ABNT/ASTM 30 - 0,600 mm' },
+    { value: '# 35 - ABNT/ASTM 35 - 0,500 mm' },
+    { value: '# 40 - ABNT/ASTM 40 - 0,425 mm' },
+    { value: '# 45 - ABNT/ASTM 45 - 0,355 mm' },
+    { value: '# 50 - ABNT/ASTM 50 - 0,300 mm' },
+    { value: '# 60 - ABNT/ASTM 60 - 0,250 mm' },
+    { value: '# 70 - ABNT/ASTM 70 - 0,212 mm' },
+    { value: '# 100 - ABNT/ASTM 100 - 0,150 mm' },
+    { value: '# 120 - ABNT/ASTM 120 - 0,125 mm' },
+    { value: '# 140 - ABNT/ASTM 140 - 0,106 mm' },
+    { value: '# 200 - ABNT/ASTM 200 - 0,075 mm' },
+    { value: '# 250 - ABNT/ASTM 250 - 0,063 mm' },
+    { value: '# 325 - ABNT/ASTM 325 - 0,045 mm' },
+    { value: '# 400 - ABNT/ASTM 400 - 0,038 mm' },
+    { value: '# 635 - ABNT/ASTM 635 - 0,020 mm' },
+  ];
+
+
 
   // GRAFICO
   @ViewChild('meuGrafico') chartRef!: ElementRef<HTMLCanvasElement>;
@@ -1072,6 +1142,7 @@ downloadImagemGrafico(): void {
           }, 0);
           //AQUI CARREGOU
           this.menuArgamassa = this.getItensArgamassa(analise);
+          this.menuPeneira = this.getItensPeneira(analise);
         },
         (error) => {
           // console.error('Erro ao buscar análise:', error);
@@ -1335,15 +1406,28 @@ loadAnalisePorId(analise: any) {
   // 2. Se há dados de ensaios salvos, também carregar as variáveis dos ensaios diretos
   if (dadosSalvos.length > 0) {
     dadosSalvos.forEach((ensaioSalvo: any) => {
-      // Encontra o ensaio correspondente
-      const ensaioOriginal = ensaioDetalhes.find((e: any) => String(e.id) === String(ensaioSalvo.id));
-        if (ensaioOriginal) {
+      // CORREÇÃO: Encontra o ensaio correspondente considerando instanceId para suportar duplicatas
+      let ensaioOriginal: any;
+      
+      // Primeira tentativa: buscar por id E instanceId
+      if (ensaioSalvo.instanceId) {
+        ensaioOriginal = ensaioDetalhes.find((e: any) => 
+          String(e.id) === String(ensaioSalvo.id) && e.instanceId === ensaioSalvo.instanceId
+        );
+      }
+      
+      // Fallback: buscar apenas por id se não encontrou por instanceId
+      if (!ensaioOriginal) {
+        ensaioOriginal = ensaioDetalhes.find((e: any) => String(e.id) === String(ensaioSalvo.id));
+      }
+      
+      if (ensaioOriginal) {
         // NOVO: Restaurar número do cadinho mesmo para ensaios sem função
         if (ensaioSalvo.numero_cadinho !== undefined && ensaioSalvo.numero_cadinho !== null) {
           ensaioOriginal.numero_cadinho = ensaioSalvo.numero_cadinho;
         }
-        // Processar variáveis se for ensaio com função
-        if (ensaioOriginal.funcao) {
+        // Processar variáveis para qualquer ensaio que possua variavel_detalhes
+        if (Array.isArray(ensaioOriginal.variavel_detalhes) && ensaioOriginal.variavel_detalhes.length > 0) {
           // Consolidar valores salvos em um único mapa por tecnica / varNN
           const mapSalvas: Record<string, any> = {};
           // 1) Array variaveis_utilizadas (estrutura antiga)
@@ -1395,6 +1479,36 @@ loadAnalisePorId(analise: any) {
                 } catch {}
               }
             }
+          });
+        } else if (ensaioOriginal.funcao) {
+          // Se não há variáveis ainda mas o ensaio tem função, cria e aplica valores salvos
+          const varMatches = (ensaioOriginal.funcao?.match(/var\d+/g) || []);
+          const varList: string[] = Array.from(new Set(varMatches));
+          ensaioOriginal.variavel_detalhes = varList.map((varName, index) => ({
+            nome: `${varName} (${ensaioOriginal.descricao || ''})`.trim(),
+            tecnica: varName,
+            valor: 0,
+            varTecnica: varName,
+            id: `${ensaioOriginal.id}_${varName}`
+          }));
+          const mapSalvas: Record<string, any> = {};
+          if (Array.isArray(ensaioSalvo.variaveis_utilizadas)) {
+            ensaioSalvo.variaveis_utilizadas.forEach((v: any) => {
+              const k = v?.tecnica || v?.varTecnica || v?.nome;
+              if (k) mapSalvas[k] = v.valor;
+            });
+          }
+          if (ensaioSalvo.variaveis && typeof ensaioSalvo.variaveis === 'object') {
+            Object.keys(ensaioSalvo.variaveis).forEach(k => {
+              const entry = ensaioSalvo.variaveis[k];
+              if (entry && entry.valor !== undefined) {
+                mapSalvas[k] = entry.valor;
+              }
+            });
+          }
+          ensaioOriginal.variavel_detalhes.forEach((v: any) => {
+            const key = v.tecnica || v.varTecnica || v.nome;
+            if (key && mapSalvas[key] !== undefined) v.valor = mapSalvas[key];
           });
         }
       }
@@ -1504,7 +1618,22 @@ loadAnalisePorId(analise: any) {
       let novosEnsaios: any[];
       if (ensaiosUtilizados.length) {
         novosEnsaios = ensaiosUtilizados.map((u: any) => {
-          const original = (calc.ensaio_detalhes_original || calc.ensaios_detalhes || []).find((e: any) => String(e.id) === String(u.id));
+          // CORREÇÃO: Buscar original considerando instanceId para suportar ensaios duplicados (segunda execução)
+          const ensaiosOriginais = calc.ensaio_detalhes_original || calc.ensaios_detalhes || [];
+          let original: any;
+          
+          // Primeira tentativa: buscar por id E instanceId
+          if (u.instanceId) {
+            original = ensaiosOriginais.find((e: any) => 
+              String(e.id) === String(u.id) && e.instanceId === u.instanceId
+            );
+          }
+          
+          // Fallback: buscar apenas por id se não encontrou por instanceId
+          if (!original) {
+            original = ensaiosOriginais.find((e: any) => String(e.id) === String(u.id));
+          }
+          
           const responsavelObj = this.responsaveis.find(r => r.value === u.responsavel);
           // construir variavel_detalhes
           let variavelDetalhes = Array.isArray(original?.variavel_detalhes)
@@ -2722,7 +2851,21 @@ onDescricaoInput(index: number, event: Event): void {
     planoDetalhes.forEach((plano: any) => {
       if (plano.ensaio_detalhes) {
         plano.ensaio_detalhes.forEach((ensaio: any) => {
-          const ensaioSalvo = savedList.find((e: any) => String(e.id) === String(ensaio.id));
+          // CORREÇÃO: Buscar ensaioSalvo considerando instanceId para suportar duplicatas
+          let ensaioSalvo: any;
+          
+          // Primeira tentativa: buscar por id E instanceId
+          if (ensaio.instanceId) {
+            ensaioSalvo = savedList.find((e: any) => 
+              String(e.id) === String(ensaio.id) && e.instanceId === ensaio.instanceId
+            );
+          }
+          
+          // Fallback: buscar apenas por id se não encontrou por instanceId
+          if (!ensaioSalvo) {
+            ensaioSalvo = savedList.find((e: any) => String(e.id) === String(ensaio.id));
+          }
+          
           if (ensaioSalvo) {
             const vFlex = this.parseNumeroFlex(ensaioSalvo.valor);
             ensaio.valor = typeof vFlex === 'number' ? vFlex : (Number(vFlex) || ensaioSalvo.valor);
@@ -2781,12 +2924,26 @@ onDescricaoInput(index: number, event: Event): void {
         plano.calculo_ensaio_detalhes.forEach((calc: any) => {
           if (!Array.isArray(calc.ensaios_detalhes)) return;
           calc.ensaios_detalhes.forEach((ensaioCalc: any) => {
-          const salvo = savedList.find((e: any) =>
+          // CORREÇÃO: Buscar salvo considerando instanceId primeiro para suportar duplicatas
+          let salvo: any;
+          
+          // Primeira tentativa: buscar por id E instanceId
+          if (ensaioCalc.instanceId) {
+            salvo = savedList.find((e: any) => 
+              String(e.id) === String(ensaioCalc.id) && e.instanceId === ensaioCalc.instanceId
+            );
+          }
+          
+          // Fallback: buscar por id, técnica ou descrição se não encontrou por instanceId
+          if (!salvo) {
+            salvo = savedList.find((e: any) =>
               String(e.id) === String(ensaioCalc.id) ||
               this.tokensIguais(e.variavel, ensaioCalc.tecnica || ensaioCalc.variavel) ||
               (e.descricao && ensaioCalc.descricao && this.normalize(e.descricao) === this.normalize(ensaioCalc.descricao))
             );
-            if (!salvo) return;
+          }
+          
+          if (!salvo) return;
             const vFlexCalc = this.parseNumeroFlex(salvo.valor);
             ensaioCalc.valor = typeof vFlexCalc === 'number' ? vFlexCalc : (Number(vFlexCalc) || salvo.valor);
             // metadata
@@ -2840,11 +2997,25 @@ onDescricaoInput(index: number, event: Event): void {
               if (isCalculoCorrespondente && Array.isArray(calc.ensaios_detalhes)) {
                 // Aplica os valores dos ensaios internos salvos
                 calculoSalvo.ensaios_utilizados.forEach((ensaioSalvo: any) => {
-                  const ensaioInterno = calc.ensaios_detalhes.find((e: any) => 
-                    String(e.id) === String(ensaioSalvo.id) ||
-                    this.tokensIguais(e.tecnica || e.variavel, ensaioSalvo.variavel) ||
-                    (e.descricao && ensaioSalvo.descricao && this.normalize(e.descricao) === this.normalize(ensaioSalvo.descricao))
-                  );
+                  // CORREÇÃO: Buscar ensaioInterno considerando instanceId primeiro para suportar duplicatas
+                  let ensaioInterno: any;
+                  
+                  // Primeira tentativa: buscar por id E instanceId
+                  if (ensaioSalvo.instanceId) {
+                    ensaioInterno = calc.ensaios_detalhes.find((e: any) => 
+                      String(e.id) === String(ensaioSalvo.id) && e.instanceId === ensaioSalvo.instanceId
+                    );
+                  }
+                  
+                  // Fallback: buscar por id, técnica ou descrição se não encontrou por instanceId
+                  if (!ensaioInterno) {
+                    ensaioInterno = calc.ensaios_detalhes.find((e: any) => 
+                      String(e.id) === String(ensaioSalvo.id) ||
+                      this.tokensIguais(e.tecnica || e.variavel, ensaioSalvo.variavel) ||
+                      (e.descricao && ensaioSalvo.descricao && this.normalize(e.descricao) === this.normalize(ensaioSalvo.descricao))
+                    );
+                  }
+                  
                   if (ensaioInterno) {
                     // Aplica valor principal
                     const vFlex = this.parseNumeroFlex(ensaioSalvo.valor);
@@ -5107,33 +5278,88 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
       const responsavelPadrao = this.obterResponsavelPadrao();
       const jaExistentesMesmoId = plano.ensaio_detalhes.filter((e: any) => String(e.id) === String(ensaio.id));
   const baseClone: any | null = jaExistentesMesmoId.length ? jaExistentesMesmoId[jaExistentesMesmoId.length - 1] : null;
+      // Coletar valores vindos na requisição (variaveis / variaveis_utilizadas)
+      const valoresExternos: Record<string, any> = {};
+      if (ensaio && ensaio.variaveis && typeof ensaio.variaveis === 'object') {
+        Object.keys(ensaio.variaveis).forEach(k => {
+          const entry = ensaio.variaveis[k];
+          if (entry && entry.valor !== undefined) valoresExternos[k] = entry.valor;
+        });
+      }
+      if (ensaio && Array.isArray(ensaio.variaveis_utilizadas)) {
+        ensaio.variaveis_utilizadas.forEach((v: any) => {
+          const k = v?.tecnica || v?.varTecnica || v?.nome;
+          if (k) valoresExternos[k] = v.valor;
+        });
+      }
 
-      // Preparar variáveis (se duplicata, copiar valores das variáveis do ensaio base)
+  // Preparar variáveis (merge: externos > baseClone > defaults)
       let variaveis: any[] = [];
       if (Array.isArray(ensaio.variavel_detalhes) && ensaio.variavel_detalhes.length > 0) {
+        const varList = Array.from(new Set(((ensaio.funcao || '').match(/var\d+/g)) || []));
+        // Manter valores existentes (não sobrescrever com 0)
         variaveis = ensaio.variavel_detalhes.map((v: any, idx: number) => {
+          const tecnica = v.tecnica || v.varTecnica || varList[idx] || `var${idx+1}`;
           const base = {
-            nome: v.nome || `${v.tecnica || v.varTecnica || `var${idx+1}`}`,
-            tecnica: v.tecnica || v.varTecnica || v.nome || `var${idx+1}`,
-            varTecnica: v.varTecnica || v.tecnica || `var${idx+1}`,
+            nome: v.nome || `${tecnica}`,
+            tecnica,
+            varTecnica: tecnica,
             tipo: v.tipo,
-            id: v.id || `${ensaio.id}_${v.tecnica || v.varTecnica || `var${idx+1}`}`
+            id: v.id || `${ensaio.id}_${tecnica}`
           };
           return {
             ...base,
-            valor: v.valor ?? 0
+            valor: (typeof v.valor !== 'undefined' && v.valor !== null) ? v.valor : 0,
+            valorTimestamp: v.valorTimestamp,
+            valorData: v.valorData
           };
         });
+        const porChaveBase: Record<string, any> = {};
         if (baseClone?.variavel_detalhes && jaExistentesMesmoId.length) {
-          variaveis = copiarValoresDeVariaveis(baseClone.variavel_detalhes, variaveis);
+          baseClone.variavel_detalhes.forEach((bv: any) => {
+            const k = bv?.tecnica || bv?.varTecnica || bv?.nome;
+            if (k) porChaveBase[k] = bv;
+          });
         }
+        const temExternos = Object.keys(valoresExternos).length > 0;
+        variaveis = variaveis.map((v: any) => {
+          const key = v?.tecnica || v?.varTecnica || v?.nome;
+          if (temExternos && key && valoresExternos[key] !== undefined) {
+            return { ...v, valor: valoresExternos[key] };
+          }
+          const src = key ? porChaveBase[key] : null;
+          if (src && (src.valor !== undefined && src.valor !== null)) {
+            return { ...v, valor: src.valor, valorTimestamp: src.valorTimestamp ?? v.valorTimestamp, valorData: src.valorData ?? v.valorData };
+          }
+          return v;
+        });
       } else if (ensaio.funcao) {
-        variaveis = this.criarVariaveisParaEnsaio(ensaio).map((v: any) => ({
-          ...v,
-          valor: v.valor
-        }));
+        // Criar variáveis técnicas e tentar reaplicar valores_salvos se presentes no ensaio original
+        const varsCriadas = this.criarVariaveisParaEnsaio(ensaio);
+        const mapSalvosBase = (ensaio.variaveis_salvas && typeof ensaio.variaveis_salvas === 'object') ? ensaio.variaveis_salvas : {};
+        const mapSalvos: Record<string, any> = { ...mapSalvosBase, ...valoresExternos };
+        variaveis = varsCriadas.map((v: any) => {
+          const key = v.tecnica || v.varTecnica || v.nome;
+          let valorAplicado = (mapSalvos[key] !== undefined) ? mapSalvos[key] : v.valor;
+          if (valorAplicado === undefined || valorAplicado === null) valorAplicado = 0;
+          return { ...v, valor: valorAplicado };
+        });
         if (baseClone?.variavel_detalhes && jaExistentesMesmoId.length) {
-          variaveis = copiarValoresDeVariaveis(baseClone.variavel_detalhes, variaveis);
+          // Preenche apenas variáveis sem valor definido pelos externos
+          const porChaveBase: Record<string, any> = {};
+          baseClone.variavel_detalhes.forEach((bv: any) => {
+            const k = bv?.tecnica || bv?.varTecnica || bv?.nome;
+            if (k) porChaveBase[k] = bv;
+          });
+          variaveis = variaveis.map((v: any) => {
+            const key = v?.tecnica || v?.varTecnica || v?.nome;
+            const temExterno = valoresExternos[key] !== undefined;
+            if (!temExterno && porChaveBase[key] && porChaveBase[key].valor !== undefined && porChaveBase[key].valor !== null) {
+              const src = porChaveBase[key];
+              return { ...v, valor: src.valor, valorTimestamp: src.valorTimestamp ?? v.valorTimestamp, valorData: src.valorData ?? v.valorData };
+            }
+            return v;
+          });
         }
       }
 
@@ -5141,15 +5367,17 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
       const ordemDuplicata = jaExistentesMesmoId.length;
       const novoEnsaio = {
         ...ensaio,
-        // Se duplicata, preservar valor do base (quando houver) e copiar variáveis
-        valor: (jaExistentesMesmoId.length && baseClone && typeof baseClone.valor !== 'undefined') ? baseClone.valor : (ensaio.valor ?? 0),
+        // Valor: prioriza o que veio na requisição; só usa baseClone se não veio
+        valor: (typeof ensaio.valor !== 'undefined' && ensaio.valor !== null)
+          ? ensaio.valor
+          : ((jaExistentesMesmoId.length && baseClone && typeof baseClone.valor !== 'undefined') ? baseClone.valor : 0),
         responsavel: (jaExistentesMesmoId.length && baseClone?.responsavel)
           ? baseClone.responsavel
           : (ensaio.responsavel || responsavelPadrao || this.digitador || ''),
         digitador: this.digitador || '',
         variavel_detalhes: variaveis,
-        // Para OS com plano (NORMAL), adicionar com laboratório da análise; senão, do usuário
-        laboratorio: this.isAnalisePlano() ? analiseData.amostraLaboratorio : this.laboratorioUsuario,
+        // Preservar laboratório vindo do catálogo/solicitação quando existir
+        laboratorio: ensaio.laboratorio || (this.isAnalisePlano() ? analiseData.amostraLaboratorio : this.laboratorioUsuario),
         duplicata: jaExistentesMesmoId.length > 0,
         instanceId: `${Date.now()}_${Math.random().toString(36).slice(2,9)}`,
         origem: 'ad-hoc',
@@ -5157,6 +5385,19 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
       };
 
       plano.ensaio_detalhes.push(novoEnsaio);
+
+      try {
+        // Log de diagnóstico para verificar distribuição de laboratório e variáveis nas duplicatas
+        console.log('[ADD ENSAIO LOTE]', {
+          id: novoEnsaio.id,
+          desc: novoEnsaio.descricao,
+          duplicata: novoEnsaio.duplicata,
+          ordemDuplicata: novoEnsaio.ordemDuplicata,
+          laboratorio: novoEnsaio.laboratorio,
+          instanceId: novoEnsaio.instanceId,
+          variaveis: (novoEnsaio.variavel_detalhes || []).map((v: any) => ({ k: v.tecnica || v.varTecnica || v.nome, valor: v.valor }))
+        });
+      } catch {}
 
       if (jaExistentesMesmoId.length) {
         adicionouDuplicata = true;
@@ -5206,34 +5447,130 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
     if (!planoDetalhes[planoIdx]) return;
     if (!planoDetalhes[planoIdx].ensaio_detalhes) planoDetalhes[planoIdx].ensaio_detalhes = [];
     const responsavelPadrao = this.obterResponsavelPadrao();
+    // Helper local para copiar valores das variáveis de um ensaio base
+    const copiarValoresDeVariaveisDireto = (baseVars: any[] = [], novasVars: any[] = []) => {
+      if (!Array.isArray(baseVars) || !Array.isArray(novasVars)) return novasVars;
+      const porChave: Record<string, any> = {};
+      baseVars.forEach((v: any) => {
+        const key = v?.tecnica || v?.varTecnica || v?.nome;
+        if (key) porChave[key] = v;
+      });
+      return novasVars.map((v: any) => {
+        const key = v?.tecnica || v?.varTecnica || v?.nome;
+        const src = key ? porChave[key] : null;
+        if (src) {
+          return {
+            ...v,
+            valor: (typeof src.valor !== 'undefined' && src.valor !== null) ? src.valor : (v.valor ?? 0),
+            valorTimestamp: src.valorTimestamp ?? v.valorTimestamp,
+            valorData: src.valorData ?? v.valorData
+          };
+        }
+        return v;
+      });
+    };
     // Quando vier um ensaio com defaults, respeitar
     let variaveisComDefaults: any[] = [];
     if (ensaio && Array.isArray(ensaio.variavel_detalhes) && ensaio.variavel_detalhes.length > 0) {
-      variaveisComDefaults = ensaio.variavel_detalhes.map((v: any, idx: number) => ({
-        nome: v.nome || `${v.tecnica || v.varTecnica || `var${idx+1}`}${ensaio.descricao ? ` (${ensaio.descricao})` : ''}`,
-        tecnica: v.tecnica || v.varTecnica || v.nome || `var${idx+1}`,
-        valor: typeof v.valor !== 'undefined' && v.valor !== null ? v.valor : 0,
-        varTecnica: v.varTecnica || v.tecnica || `var${idx+1}`,
-        tipo: v.tipo,
-        id: v.id || `${ensaio.id}_${v.tecnica || v.varTecnica || `var${idx+1}`}`
-      }));
+      const varList = Array.from(new Set(((ensaio.funcao || '').match(/var\d+/g)) || []));
+      variaveisComDefaults = ensaio.variavel_detalhes.map((v: any, idx: number) => {
+        const tecnica = v.tecnica || v.varTecnica || varList[idx] || `var${idx+1}`;
+        return {
+          nome: v.nome || `${tecnica}${ensaio.descricao ? ` (${ensaio.descricao})` : ''}`,
+          tecnica,
+          valor: typeof v.valor !== 'undefined' && v.valor !== null ? v.valor : 0,
+          varTecnica: tecnica,
+          tipo: v.tipo,
+          id: v.id || `${ensaio.id}_${tecnica}`
+        };
+      });
     } else if (ensaio && ensaio.funcao) {
       variaveisComDefaults = this.criarVariaveisParaEnsaio(ensaio);
+    }
+    // Aplicar valores vindos na requisição (variaveis / variaveis_utilizadas) quando não for duplicata
+    const valoresExternosDireto: Record<string, any> = {};
+    const valoresExternosDiretoDatas: Record<string, { valorData?: any; valorTimestamp?: any }> = {};
+    if (ensaio && ensaio.variaveis && typeof ensaio.variaveis === 'object') {
+      Object.keys(ensaio.variaveis).forEach(k => {
+        const entry = ensaio.variaveis[k];
+        if (entry && entry.valor !== undefined) valoresExternosDireto[k] = entry.valor;
+        if (entry && (entry.valorData !== undefined || entry.valorTimestamp !== undefined)) {
+          valoresExternosDiretoDatas[k] = {
+            valorData: entry.valorData,
+            valorTimestamp: entry.valorTimestamp
+          };
+        }
+      });
+    }
+    if (ensaio && Array.isArray(ensaio.variaveis_utilizadas)) {
+      ensaio.variaveis_utilizadas.forEach((v: any) => {
+        const k = v?.tecnica || v?.varTecnica || v?.nome;
+        if (k) {
+          valoresExternosDireto[k] = v.valor;
+          if (v.valorData !== undefined || v.valorTimestamp !== undefined) {
+            valoresExternosDiretoDatas[k] = {
+              valorData: v.valorData,
+              valorTimestamp: v.valorTimestamp
+            };
+          }
+        }
+      });
     }
     const valorBackend = ensaio ? ensaio.valor : undefined;
     const valorFlex = this.parseNumeroFlex(valorBackend);
     const valorPrefill = (valorFlex !== null && valorFlex !== undefined && !isNaN(Number(valorFlex))) ? Number(valorFlex) : 0;
     // Detectar duplicatas pelo mesmo ID dentro do plano atual
-    const jaExistentesMesmoId = planoDetalhes[planoIdx].ensaio_detalhes.filter((e: any) => ensaio && String(e.id) === String(ensaio.id));
+  const jaExistentesMesmoId = planoDetalhes[planoIdx].ensaio_detalhes.filter((e: any) => ensaio && String(e.id) === String(ensaio.id));
+  const baseClone: any | null = jaExistentesMesmoId.length ? jaExistentesMesmoId[jaExistentesMesmoId.length - 1] : null;
 
     const novoEnsaio = ensaio ? {
       ...ensaio,
-      // Preferir valor do backend, mas se duplicata limpar
-      valor: jaExistentesMesmoId.length ? 0 : valorPrefill,
-      responsavel: jaExistentesMesmoId.length ? (responsavelPadrao || this.digitador || '') : (ensaio.responsavel || responsavelPadrao || this.digitador || ''),
+      // Preferir valor do backend; se duplicata, copiar do último existente
+      valor: jaExistentesMesmoId.length && baseClone && typeof baseClone.valor !== 'undefined' ? baseClone.valor : valorPrefill,
+      responsavel: jaExistentesMesmoId.length && baseClone?.responsavel ? baseClone.responsavel : (ensaio.responsavel || responsavelPadrao || this.digitador || ''),
       digitador: this.digitador || '',
-      variavel_detalhes: variaveisComDefaults.map(v => ({ ...v, valor: jaExistentesMesmoId.length ? 0 : v.valor })),
-      laboratorio: this.laboratorioUsuario || analiseData?.amostraLaboratorio || null,
+      variavel_detalhes: (() => {
+        if (jaExistentesMesmoId.length && baseClone?.variavel_detalhes) {
+          const temExternos = Object.keys(valoresExternosDireto).length > 0;
+          // Se não foram geradas novas variáveis (variaveisComDefaults vazio), clonar integralmente as do baseClone
+          if (!variaveisComDefaults.length) {
+            return baseClone.variavel_detalhes.map((v: any) => {
+              const key = v?.tecnica || v?.varTecnica || v?.nome;
+              if (temExternos && key && valoresExternosDireto[key] !== undefined) {
+                const extraDatas = valoresExternosDiretoDatas[key] || {};
+                return { ...v, valor: valoresExternosDireto[key], ...extraDatas };
+              }
+              return { ...v };
+            });
+          }
+          // Caso contrário, mesclar no novo shape: externos > baseClone > defaults
+          const porChaveBase: Record<string, any> = {};
+          baseClone.variavel_detalhes.forEach((bv: any) => {
+            const k = bv?.tecnica || bv?.varTecnica || bv?.nome;
+            if (k) porChaveBase[k] = bv;
+          });
+          return variaveisComDefaults.map((v: any) => {
+            const key = v?.tecnica || v?.varTecnica || v?.nome;
+            if (temExternos && key && valoresExternosDireto[key] !== undefined) {
+              const extraDatas = valoresExternosDiretoDatas[key] || {};
+              return { ...v, valor: valoresExternosDireto[key], ...extraDatas };
+            }
+            const src = key ? porChaveBase[key] : null;
+            if (src && (src.valor !== undefined && src.valor !== null)) {
+              return { ...v, valor: src.valor, valorTimestamp: src.valorTimestamp ?? v.valorTimestamp, valorData: src.valorData ?? v.valorData };
+            }
+            return { ...v };
+          });
+        }
+        // Não é duplicata: aplicar valores de entrada (variaveis/variaveis_utilizadas)
+        return variaveisComDefaults.map(v => {
+          const key = v?.tecnica || v?.varTecnica || v?.nome;
+          const valor = (key && valoresExternosDireto[key] !== undefined) ? valoresExternosDireto[key] : v.valor;
+          const extraDatas = key && valoresExternosDiretoDatas[key] ? valoresExternosDiretoDatas[key] : {};
+          return { ...v, valor, ...extraDatas };
+        });
+      })(),
+      laboratorio: (ensaio?.laboratorio) || this.laboratorioUsuario || analiseData?.amostraLaboratorio || null,
       somenteLeitura: false,
       duplicata: jaExistentesMesmoId.length > 0,
       instanceId: `${Date.now()}_${Math.random().toString(36).slice(2,9)}`
@@ -5250,6 +5587,16 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
       duplicata: false,
       instanceId: `${Date.now()}_${Math.random().toString(36).slice(2,9)}`
     };
+    try {
+      console.log('[ADD ENSAIO DIRETO]', {
+        id: novoEnsaio?.id,
+        desc: novoEnsaio?.descricao,
+        duplicata: novoEnsaio?.duplicata,
+        laboratorio: novoEnsaio?.laboratorio,
+        instanceId: novoEnsaio?.instanceId,
+        variaveis: (novoEnsaio?.variavel_detalhes || []).map((v: any) => ({ k: v.tecnica || v.varTecnica || v.nome, valor: v.valor }))
+      });
+    } catch {}
     if (novoEnsaio.duplicata) {
       this.messageService.add({
         severity: 'info',
@@ -5263,12 +5610,22 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
     }
     planoDetalhes[planoIdx].ensaio_detalhes.push(novoEnsaio);
     // Recalcular dependências e salvar automaticamente
-    this.recalcularTodosEnsaiosDirectos(planoDetalhes[planoIdx]);
-    this.recalcularTodosCalculos();
+    // Evitar recalcular TODOS os ensaios imediatamentente em duplicatas para não sobrescrever variáveis recém copiadas
+    if (!novoEnsaio.duplicata) {
+      this.recalcularTodosEnsaiosDirectos(planoDetalhes[planoIdx]);
+      this.recalcularTodosCalculos();
+    } else {
+      // Recalcular apenas esse ensaio se tiver função e defaults completos
+      if (novoEnsaio.funcao && this.deveCalcularEnsaioComDefaults(novoEnsaio)) {
+        try { this.calcularEnsaioDireto(novoEnsaio, planoDetalhes[planoIdx]); } catch {}
+      }
+      // Calcular os cálculos dependentes de forma leve
+      setTimeout(() => this.recalcularTodosCalculos(), 60);
+    }
     this.salvarAnaliseResultados();
-    // Atualização visual: reconsultar análise após salvar para não perder valores
-    this.getAnalise();
-    window.location.reload();
+    // Evite recarregar a página aqui: preserva os valores recém-aplicados nas variáveis
+    // A detecção de mudanças e os recálculos acima já atualizam a UI adequadamente.
+    this.cd.detectChanges();
   }
   /**
    * Remove um ensaio do plano, se ordem for EXPRESSA
@@ -6349,6 +6706,285 @@ canDeactivate(): boolean | Promise<boolean> {
     ];
   }
 
+   getItensPeneira(analise: any) {
+    return [
+      { label: 'Peneiras Secas', icon: 'pi pi-eye', command: () => this.abrirModalPeneira(analise) },
+      { label: 'Peneiras Úmidas', icon: 'pi pi-eye', command: () => this.abrirModalPeneiraUmida(analise) },
+    ];
+  }
+
+  abrirModalPeneira(analise: any){
+    
+    if(this.peneira_seca){
+      this.linhasPeneira = this.peneira_seca.map((item: any, index: number) => ({
+        peneira: item.peneira ?? '',
+        valor_retido: item.valor_retido ?? null,
+        porcentual_retido: item.porcentual_retido ?? null,
+        acumulado: item.acumulado ?? null,
+        passante: item.passante ?? null,
+        passante_acumulado: item.passante_acumulado ?? null,
+      }));
+    }else if (analise?.peneiras?.peneiras && Array.isArray(analise.peneiras?.peneiras)) {
+      this.linhasPeneira = analise.peneiras.peneiras.map((item: any, index: number) => ({
+        peneira: item.peneira ?? '',
+        valor_retido: item.valor_retido ?? null,
+        porcentual_retido: item.porcentual_retido ?? null,
+        acumulado: item.acumulado ?? null,
+        passante: item.passante ?? null,
+        passante_acumulado: item.passante_acumulado ?? null,
+      }));
+
+      this.massa_amostra = analise.peneiras.amostra;
+      this.total_finos = analise.peneiras.finos;
+    } else {
+      this.linhasPeneira = [];
+      this.linhasPeneira.push({
+        peneira: '',
+        valor_retido: null,
+        porcentual_retido: null,
+        acumulado: null,
+        passante: null,
+        passante_acumulado: null,
+      });
+    }
+    this.modalDadosPeneira = true;
+  }
+
+  massa_amostra: number = 0;
+  total_finos: number | null = null;
+
+  atualizarValores(index: number) {
+    this.calcularPercentuaisEAcumulado();
+  }
+
+  atualizarTodosValores() {
+    this.calcularPercentuaisEAcumulado();
+  }
+
+  calcularPercentuaisEAcumulado() {
+    let somaPercentual = 0;
+
+    this.linhasPeneira.forEach((linha) => {
+      const retido = Number(linha.valor_retido);
+
+      // Calcula o % Retido apenas se houver massa válida e valor_retido
+      if (
+        this.massa_amostra &&
+        this.massa_amostra > 0 &&
+        !isNaN(retido) &&
+        linha.valor_retido !== null &&
+        linha.valor_retido !== undefined
+      ) {
+        linha.porcentual_retido = (retido * 100) / this.massa_amostra;
+      } else {
+        linha.porcentual_retido = null;
+      }
+
+      // Só acumula se houver porcentual válido
+      if (
+        linha.porcentual_retido !== null &&
+        !isNaN(linha.porcentual_retido)
+      ) {
+        somaPercentual += linha.porcentual_retido;
+        linha.acumulado = somaPercentual;
+        linha.passante_acumulado = 100 - linha.acumulado;
+        linha.passante = 100 - linha.porcentual_retido;
+      } else {
+        linha.acumulado = null; // 🔹 Mantém vazio se não houver % Retido
+        linha.passante_acumulado = null;
+        linha.passante = null;
+      }
+    });
+
+    // 🔹 Pega a última linha com acumulado válido
+    const ultimaLinhaComAcumulado = [...this.linhasPeneira]
+      .reverse()
+      .find(l => l.acumulado != null);
+
+    // 🔹 Total finos = 100 - acumulado final
+    this.total_finos =
+      ultimaLinhaComAcumulado && ultimaLinhaComAcumulado.acumulado != null
+        ? 100 - ultimaLinhaComAcumulado.acumulado
+        : null;
+  }
+
+  salvarPeneiraSeca(analise: any){
+
+    this.peneira_seca = this.linhasPeneira;
+    this.modalDadosPeneira = false;
+
+    const dadosAtualizados: Partial<Analise> = {
+      peneiras:{
+        peneiras: this.linhasPeneira,
+        amostra: this.massa_amostra,
+        finos: this.total_finos
+      }
+    };
+   
+    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Peneira Seca Cadastrada com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });    
+  }
+
+
+  abrirModalPeneiraUmida(analise: any){
+    
+    if(this.peneira_umida){
+      this.linhasPeneiraUmida = this.peneira_umida.map((item: any, index: number) => ({
+        peneira: item.peneira ?? '',
+        valor_retido: item.valor_retido ?? null,
+        porcentual_retido: item.porcentual_retido ?? null,
+        acumulado: item.acumulado ?? null,
+        passante: item.passante ?? null,
+        passante_acumulado: item.passante_acumulado ?? null,
+      }));
+    }else if (analise?.peneiras_umidas?.peneiras && Array.isArray(analise.peneiras_umidas?.peneiras)) {
+      this.linhasPeneiraUmida = analise.peneiras_umidas.peneiras.map((item: any, index: number) => ({
+        peneira: item.peneira ?? '',
+        valor_retido: item.valor_retido ?? null,
+        porcentual_retido: item.porcentual_retido ?? null,
+        acumulado: item.acumulado ?? null,
+        passante: item.passante ?? null,
+        passante_acumulado: item.passante_acumulado ?? null,
+      }));
+      
+      this.massa_amostra_umida = analise.peneiras.amostra;
+      this.total_finos_umida = analise.peneiras.finos;
+    } else {
+      this.linhasPeneiraUmida = [];
+      this.linhasPeneiraUmida.push({
+        peneira: '',
+        valor_retido: null,
+        porcentual_retido: null,
+        acumulado: null,
+        passante: null,
+        passante_acumulado: null,
+      });
+    }
+    this.modalDadosPeneiraUmida = true;
+  }
+
+  massa_amostra_umida: number = 0;
+  total_finos_umida: number | null = null;
+
+  atualizarValoresUmida(index: number) {
+    this.calcularPercentuaisEAcumuladoUmida();
+  }
+
+  atualizarTodosValoresUmida() {
+    this.calcularPercentuaisEAcumuladoUmida();
+  }
+
+  calcularPercentuaisEAcumuladoUmida() {
+    let somaPercentual = 0;
+
+    this.linhasPeneiraUmida.forEach((linha) => {
+      const retido = Number(linha.valor_retido);
+
+      // Calcula o % Retido apenas se houver massa válida e valor_retido
+      if (
+        this.massa_amostra_umida &&
+        this.massa_amostra_umida > 0 &&
+        !isNaN(retido) &&
+        linha.valor_retido !== null &&
+        linha.valor_retido !== undefined
+      ) {
+        linha.porcentual_retido = (retido * 100) / this.massa_amostra_umida;
+      } else {
+        linha.porcentual_retido = null;
+      }
+
+      // Só acumula se houver porcentual válido
+      if (
+        linha.porcentual_retido !== null &&
+        !isNaN(linha.porcentual_retido)
+      ) {
+        somaPercentual += linha.porcentual_retido;
+        linha.acumulado = somaPercentual;
+        linha.passante_acumulado = 100 - linha.acumulado;
+        linha.passante = 100 - linha.porcentual_retido;
+      } else {
+        linha.acumulado = null; // 🔹 Mantém vazio se não houver % Retido
+        linha.passante_acumulado = null;
+        linha.passante = null;
+      }
+    });
+
+    // 🔹 Pega a última linha com acumulado válido
+    const ultimaLinhaComAcumulado = [...this.linhasPeneiraUmida]
+      .reverse()
+      .find(l => l.acumulado != null);
+
+    // 🔹 Total finos = 100 - acumulado final
+    this.total_finos_umida =
+      ultimaLinhaComAcumulado && ultimaLinhaComAcumulado.acumulado != null
+        ? 100 - ultimaLinhaComAcumulado.acumulado
+        : null;
+  }
+
+  salvarPeneiraUmida(analise: any){
+
+    this.peneira_umida = this.linhasPeneiraUmida;
+    this.modalDadosPeneiraUmida = false;
+
+    const dadosAtualizados: Partial<Analise> = {
+      peneiras_umidas:{
+        peneiras: this.linhasPeneiraUmida,
+        amostra: this.massa_amostra_umida,
+        finos: this.total_finos_umida
+      }
+    };
+    
+   
+    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Peneira Úmida Cadastrada com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });    
+  }
+
   abrirModalSubstrato(analise: any){
     if(this.parecer_substrato){
       this.linhasSubstrato = this.parecer_substrato.map((item: any, index: number) => ({
@@ -6955,4 +7591,103 @@ canDeactivate(): boolean | Promise<boolean> {
       }
     }
   }
+
+  visualizarPeneira(){
+    if(this.peneira_seca){
+      this.linhasPeneira = this.peneira_seca.map((item: any, index: number) => ({
+        peneira: item.peneira ?? '',
+        valor_retido: item.valor_retido ?? null,
+        porcentual_retido: item.porcentual_retido ?? null,
+        acumulado: item.acumulado ?? null,
+        passante: item.passante ?? null,
+        passante_acumulado: item.passante_acumulado ?? null,
+      }));
+    }else if (this.analise?.peneiras.peneiras && Array.isArray(this.analise.peneiras.peneiras)) {
+      this.linhasPeneira = this.analise.peneiras.peneiras.map((item: any, index: number) => ({
+        peneira: item.peneira ?? '',
+        valor_retido: item.valor_retido ?? null,
+        porcentual_retido: item.porcentual_retido ?? null,
+        acumulado: item.acumulado ?? null,
+        passante: item.passante ?? null,
+        passante_acumulado: item.passante_acumulado ?? null,
+      }));
+      
+      this.massa_amostra = this.analise.peneiras.amostra;
+      this.total_finos = this.analise.peneiras.finos;
+    } else {
+      this.linhasPeneira = [];
+      this.linhasPeneira.push({
+        peneira: '',
+        valor_retido: null,
+        porcentual_retido: null,
+        acumulado: null,
+        passante: null,
+        passante_acumulado: null,
+      });
+    }
+    this.modalVisualizarPeneira = true;
+    this.modalVisualizarPeneiraUmida = false;
+  }
+
+  visualizarPeneiraUmida(){
+    if(this.peneira_umida){
+      this.linhasPeneiraUmida = this.peneira_umida.map((item: any, index: number) => ({
+        peneira: item.peneira ?? '',
+        valor_retido: item.valor_retido ?? null,
+        porcentual_retido: item.porcentual_retido ?? null,
+        acumulado: item.acumulado ?? null,
+        passante: item.passante ?? null,
+        passante_acumulado: item.passante_acumulado ?? null,
+      }));
+    }else if (this.analise?.peneiras_umidas.peneiras && Array.isArray(this.analise.peneiras_umidas.peneiras)) {
+      this.linhasPeneiraUmida = this.analise.peneiras_umidas.peneiras.map((item: any, index: number) => ({
+        peneira: item.peneira ?? '',
+        valor_retido: item.valor_retido ?? null,
+        porcentual_retido: item.porcentual_retido ?? null,
+        acumulado: item.acumulado ?? null,
+        passante: item.passante ?? null,
+        passante_acumulado: item.passante_acumulado ?? null,
+      }));
+      this.massa_amostra_umida = this.analise.peneiras.amostra;
+      this.total_finos_umida = this.analise.peneiras.finos;
+    } else {
+      this.linhasPeneiraUmida = [];
+        this.linhasPeneiraUmida.push({
+          peneira: '',
+          valor_retido: null,
+          porcentual_retido: null,
+          acumulado: null,
+          passante: null,
+          passante_acumulado: null,
+        });
+      
+    }
+    this.modalVisualizarPeneiraUmida = true;
+    this.modalVisualizarPeneira = false;
+  }
+
+  addLinha(): void {
+    this.linhasPeneiraUmida.push({
+      peneira: '',
+      valor_retido: null,
+      porcentual_retido: null,
+      acumulado: null,
+      passante: null,
+      passante_acumulado: null,
+    });
+  }
+
+  addLinhaSeca(): void {
+    this.linhasPeneira.push({
+      peneira: '',
+      valor_retido: null,
+      porcentual_retido: null,
+      acumulado: null,
+      passante: null,
+      passante_acumulado: null,
+    });
+  }
+
+ 
+
 }
