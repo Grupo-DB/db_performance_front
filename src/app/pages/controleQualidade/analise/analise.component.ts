@@ -31,7 +31,7 @@ import { StepperModule } from 'primeng/stepper';
 import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { ColaboradorService } from '../../../services/avaliacoesServices/colaboradores/registercolaborador.service';
-import { create, all } from 'mathjs';
+import { create, all, mean, std } from 'mathjs';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { LoginService } from '../../../services/avaliacoesServices/login/login.service';
 import { ProjecaoService } from '../../../services/baseOrcamentariaServices/dre/projecao.service';
@@ -163,6 +163,8 @@ export interface Analise {
   compressao: any;
   peneiras: any;
   peneiras_umidas: any;
+  variacao_dimensional: any;
+  variacao_massa: any;
 }
 interface FileWithInfo {
   file: File;
@@ -390,7 +392,6 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   modalVisualizarPeneira = false;
   modalVisualizarPeneiraUmida = false;
 
-
   peneirasDados = [
     { value: '# 1.1/2 - ABNT/ASTM 1.1/2 - 37,5 mm' },
     { value: '# 1 - ABNT/ASTM 1 - 25,0 mm' },
@@ -426,9 +427,34 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
     { value: '# 400 - ABNT/ASTM 400 - 0,038 mm' },
     { value: '# 635 - ABNT/ASTM 635 - 0,020 mm' },
   ];
-
-
-
+  //Variáveis para Variação Dimensional
+  exibirModalVariacaoDimensional: boolean = false;
+  //l0
+  l0Cp1: any;
+  l0Cp2: any;
+  l0Cp3: any;
+  l0Data: any;
+  //l1
+  l1Cp1: any;
+  l1Cp2: any;
+  l1Cp3: any;
+  l1VariacaoDimensionalMedia: any;
+  l1DesvioPadraoDimensional: any;
+  l1Data: any;
+  //l7
+  l7Cp1: any;
+  l7Cp2: any;
+  l7Cp3: any;
+  l7VariacaoDimensionalMedia: any;
+  l7DesvioPadraoDimensional: any;
+  l7Data: any;
+  //l28 
+  l28Cp1: any;
+  l28Cp2: any;
+  l28Cp3: any;
+  l28VariacaoDimensionalMedia: any;
+  l28DesvioPadraoDimensional: any;
+  l28Data: any;
   // GRAFICO
   @ViewChild('meuGrafico') chartRef!: ElementRef<HTMLCanvasElement>;
   chartInstance: any;
@@ -499,7 +525,195 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
     this.createForm();
   }
 
-//==============================GRAFICO====================================
+//==============================Variação Dimensional=================================================
+
+onL0DataChange(): void {
+  this.exibirModalVariacaoDimensional = true;
+  if (this.l0Data) {
+    const dataBase = new Date(this.l0Data);
+    // Calcular l1Data (+ 1 dia)
+    const novaDataL1 = new Date(dataBase);
+    novaDataL1.setDate(dataBase.getDate() + 1);
+    this.l1Data = novaDataL1;
+    // Calcular l7Data (+ 7 dias)
+    const novaDataL7 = new Date(dataBase);
+    novaDataL7.setDate(dataBase.getDate() + 7);
+    this.l7Data = novaDataL7;
+    // Calcular l28Data (+ 28 dias)
+    const novaDataL28 = new Date(dataBase);
+    novaDataL28.setDate(dataBase.getDate() + 28);
+    this.l28Data = novaDataL28;
+    // Chamar o método de cálculos
+    this.realizarCalculosVariacaoDimensional();
+  }
+}
+realizarCalculosVariacaoDimensional(): void {
+  // Cálculo para L1 (1 dia após L0)
+  if (this.l0Cp1 != null && this.l0Cp2 != null && this.l0Cp3 != null && this.l0Data != null && 
+      this.l1Cp1 != null && this.l1Cp2 != null && this.l1Cp3 != null && this.l1Data != null) {
+    const calcCp1_L1 = (this.l1Cp1 - this.l0Cp1) / 0.25;
+    const calcCp2_L1 = (this.l1Cp2 - this.l0Cp2) / 0.25;
+    const calcCp3_L1 = (this.l1Cp3 - this.l0Cp3) / 0.25;
+    this.l1VariacaoDimensionalMedia = mean([calcCp1_L1, calcCp2_L1, calcCp3_L1]);
+    this.l1DesvioPadraoDimensional = std([calcCp1_L1, calcCp2_L1, calcCp3_L1]);
+  }
+  // Cálculo para L7 (7 dias após L0)
+  if (this.l0Cp1 != null && this.l0Cp2 != null && this.l0Cp3 != null && this.l0Data != null && 
+      this.l7Cp1 != null && this.l7Cp2 != null && this.l7Cp3 != null && this.l7Data != null) {
+    const calcCp1_L7 = (this.l7Cp1 - this.l0Cp1) / 0.25;
+    const calcCp2_L7 = (this.l7Cp2 - this.l0Cp2) / 0.25;
+    const calcCp3_L7 = (this.l7Cp3 - this.l0Cp3) / 0.25;
+    this.l7VariacaoDimensionalMedia = mean([calcCp1_L7, calcCp2_L7, calcCp3_L7]);
+    this.l7DesvioPadraoDimensional = std([calcCp1_L7, calcCp2_L7, calcCp3_L7]);
+  }
+  // Cálculo para L28 (28 dias após L0)
+  if (this.l0Cp1 != null && this.l0Cp2 != null && this.l0Cp3 != null && this.l0Data != null && 
+      this.l28Cp1 != null && this.l28Cp2 != null && this.l28Cp3 != null && this.l28Data != null) {
+    const calcCp1_L28 = (this.l28Cp1 - this.l0Cp1) / 0.25;
+    const calcCp2_L28 = (this.l28Cp2 - this.l0Cp2) / 0.25;
+    const calcCp3_L28 = (this.l28Cp3 - this.l0Cp3) / 0.25;
+    this.l28VariacaoDimensionalMedia = mean([calcCp1_L28, calcCp2_L28, calcCp3_L28]);
+    this.l28DesvioPadraoDimensional = std([calcCp1_L28, calcCp2_L28, calcCp3_L28]);
+  }
+}
+
+salvarVariacaoDimensional(analise: any): void {
+  // Coletar todos os dados calculados
+  const dadosVariacaoDimensional = {
+    l0: {
+      cp1: this.l0Cp1,
+      cp2: this.l0Cp2,
+      cp3: this.l0Cp3,
+      data: this.l0Data ? this.toLocalYYYYMMDD(new Date(this.l0Data)) : null
+    },
+    l1: {
+      cp1: this.l1Cp1,
+      cp2: this.l1Cp2,
+      cp3: this.l1Cp3,
+      data: this.l1Data ? this.toLocalYYYYMMDD(new Date(this.l1Data)) : null,
+      media: this.l1VariacaoDimensionalMedia,
+      desvio_padrao: this.l1DesvioPadraoDimensional
+    },
+    l7: {
+      cp1: this.l7Cp1,
+      cp2: this.l7Cp2,
+      cp3: this.l7Cp3,
+      data: this.l7Data ? this.toLocalYYYYMMDD(new Date(this.l7Data)) : null,
+      media: this.l7VariacaoDimensionalMedia,
+      desvio_padrao: this.l7DesvioPadraoDimensional
+    },
+    l28: {
+      cp1: this.l28Cp1,
+      cp2: this.l28Cp2,
+      cp3: this.l28Cp3,
+      data: this.l28Data ? this.toLocalYYYYMMDD(new Date(this.l28Data)) : null,
+      media: this.l28VariacaoDimensionalMedia,
+      desvio_padrao: this.l28DesvioPadraoDimensional
+    }
+  };
+
+  this.exibirModalVariacaoDimensional = false;
+  // Preparar dados para atualização
+  const dadosAtualizados: Partial<Analise> = {
+    variacao_dimensional: dadosVariacaoDimensional
+  };
+
+  // Salvar no banco
+  this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+    next: () => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Sucesso',
+        detail: 'Variação Dimensional salva com sucesso!'
+      });
+      
+      // Atualizar a análise local
+      this.analise.variacao_dimensional = dadosVariacaoDimensional;
+      
+      setTimeout(() => {
+        this.cd.detectChanges();
+      }, 1000);
+    },
+    error: (err) => {
+      console.error('Erro ao salvar variação dimensional:', err);
+      
+      if (err.status === 401) {
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Timeout!', 
+          detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' 
+        });
+      } else if (err.status === 403) {
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Erro!', 
+          detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' 
+        });
+      } else if (err.status === 400) {
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Erro!', 
+          detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' 
+        });
+      } else {
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Falha!', 
+          detail: 'Erro interno, comunicar o administrador do sistema.' 
+        });
+      }
+    }
+  });
+}
+
+carregarVariacaoDimensionalSalva(analise: any): void {
+  if (analise?.variacao_dimensional) {
+    const dados = analise.variacao_dimensional;
+    
+    // Carregar L0
+    if (dados.l0) {
+      this.l0Cp1 = dados.l0.cp1 || null;
+      this.l0Cp2 = dados.l0.cp2 || null;
+      this.l0Cp3 = dados.l0.cp3 || null;
+      this.l0Data = dados.l0.data ? this.parseDateLocal(dados.l0.data) : null;
+    }
+    
+    // Carregar L1
+    if (dados.l1) {
+      this.l1Cp1 = dados.l1.cp1 || null;
+      this.l1Cp2 = dados.l1.cp2 || null;
+      this.l1Cp3 = dados.l1.cp3 || null;
+      this.l1Data = dados.l1.data ? this.parseDateLocal(dados.l1.data) : null;
+      this.l1VariacaoDimensionalMedia = dados.l1.media || null;
+      this.l1DesvioPadraoDimensional = dados.l1.desvio_padrao || null;
+    }
+    
+    // Carregar L7
+    if (dados.l7) {
+      this.l7Cp1 = dados.l7.cp1 || null;
+      this.l7Cp2 = dados.l7.cp2 || null;
+      this.l7Cp3 = dados.l7.cp3 || null;
+      this.l7Data = dados.l7.data ? this.parseDateLocal(dados.l7.data) : null;
+      this.l7VariacaoDimensionalMedia = dados.l7.media || null;
+      this.l7DesvioPadraoDimensional = dados.l7.desvio_padrao || null;
+    }
+    
+    // Carregar L28
+    if (dados.l28) {
+      this.l28Cp1 = dados.l28.cp1 || null;
+      this.l28Cp2 = dados.l28.cp2 || null;
+      this.l28Cp3 = dados.l28.cp3 || null;
+      this.l28Data = dados.l28.data ? this.parseDateLocal(dados.l28.data) : null;
+      this.l28VariacaoDimensionalMedia = dados.l28.media || null;
+      this.l28DesvioPadraoDimensional = dados.l28.desvio_padrao || null;
+    }
+    
+    this.cd.detectChanges();
+  }
+}
+//==================================================== FIM VARIACÂO ============================================================//
+
+//==================================================== GRÁFICO CAPILARIDADE ============================================================//
 exibirGrafico(): void {
     this.modalGrafico = true;
     this.calculateAndDrawRegression();
@@ -6697,7 +6911,14 @@ canDeactivate(): boolean | Promise<boolean> {
     return [
       { label: 'Determinação da Resistência Potencial de Aderência à Tração ao Substrato - Mpa', icon: 'pi pi-eye', command: () => this.abrirModalSubstrato(analise) },
       { label: 'Determinação da Resistência Potencial de Aderência à Tração Superficial', icon: 'pi pi-eye', command: () => this.abrirModalSuperficial(analise) },
-      { label: 'Determinação da Variação Dimencional Linear (Retração/Expansão)', icon: 'pi pi-eye', command: () => this.abrirModalRetracao(analise) },
+      { 
+        label: 'Determinação da Variação Dimencional Linear (Retração/Expansão)', 
+        icon: 'pi pi-eye', 
+        command: () => {
+          this.carregarVariacaoDimensionalSalva(analise); // Carregar dados salvos
+          this.exibirModalVariacaoDimensional = true;
+        }
+      },
       { label: 'Módulo de Elasticidade Dinâmico', icon: 'pi pi-eye', command: () => this.abrirModalElasticidade(analise) },
       //{ label: 'Flexão', icon: 'pi pi-eye', command: () => this.abrirModalFlexao(analise) },
       //{ label: 'Compressão', icon: 'pi pi-eye', command: () => this.abrirModalCompressao(analise) },

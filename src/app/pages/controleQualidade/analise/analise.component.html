@@ -2968,12 +2968,222 @@
                             </p-table>
                         </div>
                     </div>
-
-                  
-
-                
                 </p-card>
             </div>    
         </div>
     </div>
 </p-dialog>
+
+<!-- Modal Variação Dimensional -->
+<p-drawer 
+    [(visible)]="exibirModalVariacaoDimensional" 
+    position="right" 
+    [style]="{ width: '400px' }"
+>
+    <p-datePicker 
+        [(ngModel)]="l0Data" 
+        (ngModelChange)="onL0DataChange()"
+        dateFormat="dd/mm/yy"
+        placeholder="Selecione a data inicial"
+    />
+    <p>data 1</p> {{ l1Data | date:'dd/MM/yyyy' }}
+    <p>data 2</p> {{ l7Data | date:'dd/MM/yyyy' }}
+    <p>data 3</p> {{ l28Data | date:'dd/MM/yyyy' }}
+
+    <div class="flex flex-column">
+        <label class="font-bold text-sm text-600 mb-1">Leitura após a desforma L0 (mm)</label>
+            <p-floatlabel variant="on">
+                <p-iconfield>
+                     <p-inputicon class="pi pi-calculator" />
+                        <input 
+                            variant="filled" 
+                            [style]="{'width':'100%'}" 
+                            pInputText
+                            autocomplete="off"
+                            [(ngModel)]="l0Cp1" 
+                            type="text" 
+                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
+                        />
+                </p-iconfield>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+                <p-iconfield>
+                     <p-inputicon class="pi pi-calculator" />
+                        <input 
+                            variant="filled" 
+                            [style]="{'width':'100%'}" 
+                            pInputText
+                            autocomplete="off"
+                            [(ngModel)]="l0Cp2" 
+                            type="text" 
+                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
+                        />
+                </p-iconfield>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+                <p-iconfield>
+                     <p-inputicon class="pi pi-calculator" />
+                        <input 
+                            variant="filled" 
+                            [style]="{'width':'100%'}" 
+                            pInputText
+                            autocomplete="off"
+                            [(ngModel)]="l0Cp3" 
+                            type="text" 
+                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
+                        />
+                </p-iconfield>
+            </p-floatlabel>
+        </div>
+
+        <div class="flex flex-column">
+        <label class="font-bold text-sm text-600 mb-1">Leitura na idade Li +1 dia (mm)</label>
+            <p-floatlabel variant="on">
+                <p-iconfield>
+                     <p-inputicon class="pi pi-calculator" />
+                        <input 
+                            variant="filled" 
+                            [style]="{'width':'100%'}" 
+                            pInputText
+                            autocomplete="off"
+                            [(ngModel)]="l1Cp1" 
+                            type="text" 
+                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
+                        />
+                </p-iconfield>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+                <p-iconfield>
+                     <p-inputicon class="pi pi-calculator" />
+                        <input 
+                            variant="filled" 
+                            [style]="{'width':'100%'}" 
+                            pInputText
+                            autocomplete="off"
+                            [(ngModel)]="l1Cp2" 
+                            type="text" 
+                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
+                        />
+                </p-iconfield>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+                <p-iconfield>
+                     <p-inputicon class="pi pi-calculator" />
+                        <input 
+                            variant="filled" 
+                            [style]="{'width':'100%'}" 
+                            pInputText
+                            autocomplete="off"
+                            [(ngModel)]="l1Cp3" 
+                            type="text" 
+                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
+                        />
+                </p-iconfield>
+            </p-floatlabel>
+        </div>
+        <div class="flex flex-column">
+        <label class="font-bold text-sm text-600 mb-1">Leitura na idade Li +7 dias (mm)</label>
+            <p-floatlabel variant="on">
+                <p-iconfield>
+                     <p-inputicon class="pi pi-calculator" />
+                        <input 
+                            variant="filled" 
+                            [style]="{'width':'100%'}" 
+                            pInputText
+                            autocomplete="off"
+                            [(ngModel)]="l7Cp1" 
+                            type="text" 
+                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
+                        />
+                </p-iconfield>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+                <p-iconfield>
+                     <p-inputicon class="pi pi-calculator" />
+                        <input 
+                            variant="filled" 
+                            [style]="{'width':'100%'}" 
+                            pInputText
+                            autocomplete="off"
+                            [(ngModel)]="l7Cp2" 
+                            type="text" 
+                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
+                        />
+                </p-iconfield>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+                <p-iconfield>
+                     <p-inputicon class="pi pi-calculator" />
+                        <input 
+                            variant="filled" 
+                            [style]="{'width':'100%'}" 
+                            pInputText
+                            autocomplete="off"
+                            [(ngModel)]="l7Cp3" 
+                            type="text" 
+                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
+                        />
+                </p-iconfield>
+            </p-floatlabel>
+        </div>
+         <div class="flex flex-column">
+        <label class="font-bold text-sm text-600 mb-1">Leitura na idade Li +28 dia (mm)</label>
+            <p-floatlabel variant="on">
+                <p-iconfield>
+                     <p-inputicon class="pi pi-calculator" />
+                        <input 
+                            variant="filled" 
+                            [style]="{'width':'100%'}" 
+                            pInputText
+                            autocomplete="off"
+                            [(ngModel)]="l28Cp1" 
+                            type="text" 
+                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
+                        />
+                </p-iconfield>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+                <p-iconfield>
+                     <p-inputicon class="pi pi-calculator" />
+                        <input 
+                            variant="filled" 
+                            [style]="{'width':'100%'}" 
+                            pInputText
+                            autocomplete="off"
+                            [(ngModel)]="l28Cp2" 
+                            type="text" 
+                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
+                        />
+                </p-iconfield>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+                <p-iconfield>
+                     <p-inputicon class="pi pi-calculator" />
+                        <input 
+                            variant="filled" 
+                            [style]="{'width':'100%'}" 
+                            pInputText
+                            autocomplete="off"
+                            [(ngModel)]="l28Cp3" 
+                            type="text" 
+                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
+                        />
+                </p-iconfield>
+            </p-floatlabel>
+        </div>
+
+    <p>media</p> {{ l1VariacaoDimensionalMedia }}
+    <p>desvio</p> {{ l1DesvioPadraoDimensional }}
+    <p>media</p> {{ l7VariacaoDimensionalMedia }}
+    <p>desvio</p> {{ l7DesvioPadraoDimensional }}
+    <p>media</p> {{ l28VariacaoDimensionalMedia }}
+    <p>desvio</p> {{ l28DesvioPadraoDimensional }}
+
+    <p-button 
+      label="Salvar" 
+      icon="pi pi-check" 
+      severity="success"
+      (onClick)="salvarVariacaoDimensional(analise)">
+    </p-button>
+
+</p-drawer>

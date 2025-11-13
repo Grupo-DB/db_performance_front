@@ -27,16 +27,16 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch(),withInterceptors([customInterceptor])),
     provideAnimations(),
     provideAnimationsAsync(),
-        providePrimeNG({
-            theme: {
-                preset: Aura,
-                
-            }
-        }),
-  HttpClientModule,
-  { provide: HOT_GLOBAL_CONFIG, useValue: { themeName: 'ht-theme-main' } },
+    providePrimeNG({
+        theme: {
+            preset: Aura,
+        }
+    }),
+    HttpClientModule,
+    { provide: HOT_GLOBAL_CONFIG, useValue: { themeName: 'ht-theme-main' } },
     provideToastr(),
-     importProvidersFrom(FormsModule), provideAnimationsAsync(), provideHttpClient(), provideNzIcons(), provideNzI18n(en_US), importProvidersFrom(FormsModule), provideAnimationsAsync(), provideHttpClient(), provideAnimationsAsync(),
-      
+    importProvidersFrom(FormsModule),
+    provideNzIcons(),
+    provideNzI18n(en_US),
   ],
 };

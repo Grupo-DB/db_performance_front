@@ -14,8 +14,23 @@
     font-family: "Poppins", sans-serif;
 }
 
-html, body{
+html {
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    font-size: 16px;
+}
+
+html, body {
     height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+/* Força renderização consistente em todos os navegadores */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 
