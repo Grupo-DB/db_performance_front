@@ -2977,213 +2977,240 @@
 <!-- Modal Variação Dimensional -->
 <p-drawer 
     [(visible)]="exibirModalVariacaoDimensional" 
-    position="right" 
-    [style]="{ width: '400px' }"
+    position="full" 
 >
-    <p-datePicker 
-        [(ngModel)]="l0Data" 
-        (ngModelChange)="onL0DataChange()"
-        dateFormat="dd/mm/yy"
-        placeholder="Selecione a data inicial"
-    />
-    <p>data 1</p> {{ l1Data | date:'dd/MM/yyyy' }}
-    <p>data 2</p> {{ l7Data | date:'dd/MM/yyyy' }}
-    <p>data 3</p> {{ l28Data | date:'dd/MM/yyyy' }}
+    <!-- Seletor de Data Inicial -->
+    <div class="mb-4">
+        <label class="font-bold text-lg mb-2 block">📅 Data de Referência (L0)</label>
+        <p-datePicker 
+            [(ngModel)]="l0Data" 
+            (ngModelChange)="onL0DataChange()"
+            dateFormat="dd/mm/yy"
+            placeholder="Selecione a data inicial"
+            [style]="{'width':'100%'}"
+        />
+    </div>
 
-    <div class="flex flex-column">
-        <label class="font-bold text-sm text-600 mb-1">Leitura após a desforma L0 (mm)</label>
-            <p-floatlabel variant="on">
-                <p-iconfield>
-                     <p-inputicon class="pi pi-calculator" />
-                        <input 
-                            variant="filled" 
-                            [style]="{'width':'100%'}" 
-                            pInputText
-                            autocomplete="off"
-                            [(ngModel)]="l0Cp1" 
-                            type="text" 
-                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
-                        />
-                </p-iconfield>
-            </p-floatlabel>
-            <p-floatlabel variant="on">
-                <p-iconfield>
-                     <p-inputicon class="pi pi-calculator" />
-                        <input 
-                            variant="filled" 
-                            [style]="{'width':'100%'}" 
-                            pInputText
-                            autocomplete="off"
-                            [(ngModel)]="l0Cp2" 
-                            type="text" 
-                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
-                        />
-                </p-iconfield>
-            </p-floatlabel>
-            <p-floatlabel variant="on">
-                <p-iconfield>
-                     <p-inputicon class="pi pi-calculator" />
-                        <input 
-                            variant="filled" 
-                            [style]="{'width':'100%'}" 
-                            pInputText
-                            autocomplete="off"
-                            [(ngModel)]="l0Cp3" 
-                            type="text" 
-                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
-                        />
-                </p-iconfield>
-            </p-floatlabel>
-        </div>
+    <!-- Tabela de Variação Dimensional -->
+    <div class="mb-4" *ngIf="variacaoDimensionalTableData.length > 0">
+        <h3 class="font-bold text-lg mb-3" style="color: #ffffff;">📊 Medições e Resultados</h3>
+        <p-table 
+            [value]="variacaoDimensionalTableData" 
+            [tableStyle]="{'min-width': '50rem'}"
+            styleClass="p-datatable-striped"
+            [scrollable]="true"
+            scrollHeight="400px"
+        >
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 200px;">Período</th>
+                    <th style="width: 150px;">Data</th>
+                    <th style="width: 120px;">CP1 (mm)</th>
+                    <th style="width: 120px;">CP2 (mm)</th>
+                    <th style="width: 120px;">CP3 (mm)</th>
+                    <th style="width: 150px;">Média (%)</th>
+                    <th style="width: 150px;">Desvio Padrão</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item let-i="rowIndex">
+                <tr>
+                    <td>
+                        <span class="font-semibold" [style]="{'font-size': '14px'}">{{ item.label }}</span>
+                    </td>
+                    <td>
+                        <span class="text-sm">{{ item.data | date:'dd/MM/yyyy' }}</span>
+                    </td>
+                    <td>
+                        <p-inputNumber
+                            [ngModel]="i === 0 ? l0Cp1 : i === 1 ? l1Cp1 : i === 2 ? l7Cp1 : l28Cp1"
+                            (ngModelChange)="i === 0 ? (l0Cp1 = $event) : i === 1 ? (l1Cp1 = $event) : i === 2 ? (l7Cp1 = $event) : (l28Cp1 = $event); realizarCalculosVariacaoDimensional()"
+                            mode="decimal"
+                            [style]="{'width':'100%'}"
+                            placeholder="0"
+                            locale="pt-BR"
+                        ></p-inputNumber>
+                    </td>
+                    <td>
+                        <p-inputNumber
+                            [ngModel]="i === 0 ? l0Cp2 : i === 1 ? l1Cp2 : i === 2 ? l7Cp2 : l28Cp2"
+                            (ngModelChange)="i === 0 ? (l0Cp2 = $event) : i === 1 ? (l1Cp2 = $event) : i === 2 ? (l7Cp2 = $event) : (l28Cp2 = $event); realizarCalculosVariacaoDimensional()"
+                            mode="decimal"
+                            [style]="{'width':'100%'}"
+                            placeholder="0"
+                            locale="pt-BR"
+                        ></p-inputNumber>
+                    </td>
+                    <td>
+                        <p-inputNumber
+                            [ngModel]="i === 0 ? l0Cp3 : i === 1 ? l1Cp3 : i === 2 ? l7Cp3 : l28Cp3"
+                            (ngModelChange)="i === 0 ? (l0Cp3 = $event) : i === 1 ? (l1Cp3 = $event) : i === 2 ? (l7Cp3 = $event) : (l28Cp3 = $event); realizarCalculosVariacaoDimensional()"
+                            mode="decimal"
+                            [style]="{'width':'100%'}"
+                            placeholder="0"
+                            locale="pt-BR"
+                        ></p-inputNumber>
+                    </td>
+                    <td class="text-center">
+                        <span 
+                            *ngIf="item.media !== null && item.media !== undefined && !isNaN(item.media)" 
+                            class="font-bold"
+                            [style]="{'font-size': '16px'}"
+                            [ngClass]="{
+                                'text-green-600': item.media > 0,
+                                'text-red-600': item.media < 0,
+                                'text-gray-600': item.media === 0
+                            }"
+                        >
+                            {{ item.media | number:'1.2-4' }}
+                        </span>
+                        <span *ngIf="item.media === null || item.media === undefined || isNaN(item.media)" class="text-gray-400">-</span>
+                    </td>
+                    <td class="text-center">
+                        <span *ngIf="item.desvioPadrao !== null && item.desvioPadrao !== undefined && !isNaN(item.desvioPadrao)" class="font-semibold">
+                            {{ item.desvioPadrao | number:'1.2-4' }}
+                        </span>
+                        <span *ngIf="item.desvioPadrao === null || item.desvioPadrao === undefined || isNaN(item.desvioPadrao)" class="text-gray-400">-</span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
 
-        <div class="flex flex-column">
-        <label class="font-bold text-sm text-600 mb-1">Leitura na idade Li +1 dia (mm)</label>
-            <p-floatlabel variant="on">
-                <p-iconfield>
-                     <p-inputicon class="pi pi-calculator" />
-                        <input 
-                            variant="filled" 
-                            [style]="{'width':'100%'}" 
-                            pInputText
-                            autocomplete="off"
-                            [(ngModel)]="l1Cp1" 
-                            type="text" 
-                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
-                        />
-                </p-iconfield>
-            </p-floatlabel>
-            <p-floatlabel variant="on">
-                <p-iconfield>
-                     <p-inputicon class="pi pi-calculator" />
-                        <input 
-                            variant="filled" 
-                            [style]="{'width':'100%'}" 
-                            pInputText
-                            autocomplete="off"
-                            [(ngModel)]="l1Cp2" 
-                            type="text" 
-                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
-                        />
-                </p-iconfield>
-            </p-floatlabel>
-            <p-floatlabel variant="on">
-                <p-iconfield>
-                     <p-inputicon class="pi pi-calculator" />
-                        <input 
-                            variant="filled" 
-                            [style]="{'width':'100%'}" 
-                            pInputText
-                            autocomplete="off"
-                            [(ngModel)]="l1Cp3" 
-                            type="text" 
-                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
-                        />
-                </p-iconfield>
-            </p-floatlabel>
-        </div>
-        <div class="flex flex-column">
-        <label class="font-bold text-sm text-600 mb-1">Leitura na idade Li +7 dias (mm)</label>
-            <p-floatlabel variant="on">
-                <p-iconfield>
-                     <p-inputicon class="pi pi-calculator" />
-                        <input 
-                            variant="filled" 
-                            [style]="{'width':'100%'}" 
-                            pInputText
-                            autocomplete="off"
-                            [(ngModel)]="l7Cp1" 
-                            type="text" 
-                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
-                        />
-                </p-iconfield>
-            </p-floatlabel>
-            <p-floatlabel variant="on">
-                <p-iconfield>
-                     <p-inputicon class="pi pi-calculator" />
-                        <input 
-                            variant="filled" 
-                            [style]="{'width':'100%'}" 
-                            pInputText
-                            autocomplete="off"
-                            [(ngModel)]="l7Cp2" 
-                            type="text" 
-                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
-                        />
-                </p-iconfield>
-            </p-floatlabel>
-            <p-floatlabel variant="on">
-                <p-iconfield>
-                     <p-inputicon class="pi pi-calculator" />
-                        <input 
-                            variant="filled" 
-                            [style]="{'width':'100%'}" 
-                            pInputText
-                            autocomplete="off"
-                            [(ngModel)]="l7Cp3" 
-                            type="text" 
-                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
-                        />
-                </p-iconfield>
-            </p-floatlabel>
-        </div>
-         <div class="flex flex-column">
-        <label class="font-bold text-sm text-600 mb-1">Leitura na idade Li +28 dia (mm)</label>
-            <p-floatlabel variant="on">
-                <p-iconfield>
-                     <p-inputicon class="pi pi-calculator" />
-                        <input 
-                            variant="filled" 
-                            [style]="{'width':'100%'}" 
-                            pInputText
-                            autocomplete="off"
-                            [(ngModel)]="l28Cp1" 
-                            type="text" 
-                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
-                        />
-                </p-iconfield>
-            </p-floatlabel>
-            <p-floatlabel variant="on">
-                <p-iconfield>
-                     <p-inputicon class="pi pi-calculator" />
-                        <input 
-                            variant="filled" 
-                            [style]="{'width':'100%'}" 
-                            pInputText
-                            autocomplete="off"
-                            [(ngModel)]="l28Cp2" 
-                            type="text" 
-                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
-                        />
-                </p-iconfield>
-            </p-floatlabel>
-            <p-floatlabel variant="on">
-                <p-iconfield>
-                     <p-inputicon class="pi pi-calculator" />
-                        <input 
-                            variant="filled" 
-                            [style]="{'width':'100%'}" 
-                            pInputText
-                            autocomplete="off"
-                            [(ngModel)]="l28Cp3" 
-                            type="text" 
-                            (ngModelChange)="realizarCalculosVariacaoDimensional()"
-                        />
-                </p-iconfield>
-            </p-floatlabel>
-        </div>
-
-    <p>media</p> {{ l1VariacaoDimensionalMedia }}
-    <p>desvio</p> {{ l1DesvioPadraoDimensional }}
-    <p>media</p> {{ l7VariacaoDimensionalMedia }}
-    <p>desvio</p> {{ l7DesvioPadraoDimensional }}
-    <p>media</p> {{ l28VariacaoDimensionalMedia }}
-    <p>desvio</p> {{ l28DesvioPadraoDimensional }}
-
-    <p-button 
-      label="Salvar" 
-      icon="pi pi-check" 
-      severity="success"
-      (onClick)="salvarVariacaoDimensional(analise)">
-    </p-button>
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <p-button 
+          label="Limpar" 
+          icon="pi pi-eraser" 
+          severity="info"
+          iconPos="right"
+          (onClick)="limparVariacaoDimensional()">
+        </p-button>
+        <p-button 
+          label="Salvar" 
+          icon="pi pi-check" 
+          severity="success"
+          iconPos="right"
+          (onClick)="salvarVariacaoDimensional(analise)">
+        </p-button>
+    </div>
 
 </p-drawer>
+
+<!-- Modal Variação de Massa -->
+<p-drawer 
+    [(visible)]="exibirModalVariacaoMassa" 
+    position="full" 
+>
+    <!-- Seletor de Data Inicial -->
+    <div class="mb-4">
+        <label class="font-bold text-lg mb-2 block">📅 Data de Referência (M0)</label>
+        <p-datePicker 
+            [(ngModel)]="m0Data" 
+            (ngModelChange)="onM0DataChange()"
+            dateFormat="dd/mm/yy"
+            placeholder="Selecione a data inicial"
+            [style]="{'width':'100%'}"
+        />
+    </div>
+    <!-- Tabela de Variação de Massa -->
+    <div class="mb-4" *ngIf="variacaoMassaTableData.length > 0">
+        <h3 class="font-bold text-lg mb-3" style="color: #ffffff;">📊 Medições e Resultados</h3>
+        <p-table 
+            [value]="variacaoMassaTableData" 
+            [tableStyle]="{'min-width': '50rem'}"
+            styleClass="p-datatable-striped"
+            [scrollable]="true"
+            scrollHeight="400px"
+        >
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 200px;">Período</th>
+                    <th style="width: 150px;">Data</th>
+                    <th style="width: 150px;">CP1 (g)</th>
+                    <th style="width: 150px;">CP2 (g)</th>
+                    <th style="width: 150px;">CP3 (g)</th>
+                    <th style="width: 150px;">Média (%)</th>
+                    <th style="width: 150px;">Desvio Padrão</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item let-i="rowIndex">
+                <tr>
+                    <td>
+                        <span class="font-semibold" [style]="{'font-size': '14px'}">{{ item.label }}</span>
+                    </td>
+                    <td>
+                        <span class="text-sm">{{ item.data | date:'dd/MM/yyyy' }}</span>
+                    </td>
+                    <td>
+                        <p-inputNumber
+                            [ngModel]="i === 0 ? m0Cp1 : i === 1 ? m1Cp1 : i === 2 ? m7Cp1 : m28Cp1"
+                            (ngModelChange)="i === 0 ? (m0Cp1 = $event) : i === 1 ? (m1Cp1 = $event) : i === 2 ? (m7Cp1 = $event) : (m28Cp1 = $event); realizarCalculosVariacaoMassa()"
+                            
+                            [style]="{'width':'100%'}"
+                            placeholder="0"
+                            locale="pt-BR"
+                        ></p-inputNumber>   
+                    </td>
+                    <td>
+                        <p-inputNumber
+                            [ngModel]="i === 0 ? m0Cp2 : i === 1 ? m1Cp2 : i === 2 ? m7Cp2 : m28Cp2"
+                            (ngModelChange)="i === 0 ? (m0Cp2 = $event) : i === 1 ? (m1Cp2 = $event) : i === 2 ? (m7Cp2 = $event) : (m28Cp2 = $event); realizarCalculosVariacaoMassa()"
+                          
+                            [style]="{'width':'100%'}"
+                            placeholder="0"
+                            locale="pt-BR"
+                        ></p-inputNumber>
+                    </td>
+                    <td>
+                        <p-inputNumber
+                            [ngModel]="i === 0 ? m0Cp3 : i === 1 ? m1Cp3 : i === 2 ? m7Cp3 : m28Cp3"
+                            (ngModelChange)="i === 0 ? (m0Cp3 = $event) : i === 1 ? (m1Cp3 = $event) : i === 2 ? (m7Cp3 = $event) : (m28Cp3 = $event); realizarCalculosVariacaoMassa()"
+                     
+                            [style]="{'width':'100%'}"
+                            placeholder="0"
+                            locale="pt-BR"
+                        ></p-inputNumber>
+                    </td>
+                    <td class="text-center">
+                        <span 
+                            *ngIf="item.media !== null && item.media !== undefined && !isNaN(item.media)" 
+                            class="font-bold"
+                            [style]="{'font-size': '16px'}"     
+                            [ngClass]="{
+                                'text-green-500': item.media >= 0.5,
+                                'text-red-500': item.media < 0.5,    
+                                'text-gray-600': item.media === 0
+                            }"
+                        >
+                            {{ item.media | number:'1.2-4' }}
+                        </span>
+                        <span *ngIf="item.media === null || item.media === undefined || isNaN(item.media)" class="text-gray-400">-</span>
+                    </td>
+                    <td class="text-center">
+                        <span *ngIf="item.desvioPadrao !== null && item.desvioPadrao !== undefined && !isNaN(item.desvioPadrao)" class="font-semibold">
+                            {{ item.desvioPadrao | number:'1.2-4' }}
+                        </span>
+                        <span *ngIf="item.desvioPadrao === null || item.desvioPadrao === undefined || isNaN(item.desvioPadrao)" class="text-gray-400">-</span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <p-button 
+          label="Limpar" 
+          icon="pi pi-eraser" 
+          severity="info"
+          iconPos="right"
+          (onClick)="limparVariacaoMassa()">
+        </p-button>
+        <p-button 
+          label="Salvar" 
+          icon="pi pi-check" 
+          severity="success"
+          iconPos="right"
+          (onClick)="salvarVariacaoMassa(analise)">
+        </p-button>
+    </div>
+
+</p-drawer>    

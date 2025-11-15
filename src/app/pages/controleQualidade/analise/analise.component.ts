@@ -429,32 +429,63 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   ];
   //Variáveis para Variação Dimensional
   exibirModalVariacaoDimensional: boolean = false;
+  variacaoDimensionalTableData: any[] = [];
   //l0
-  l0Cp1: any;
-  l0Cp2: any;
-  l0Cp3: any;
-  l0Data: any;
+  l0Cp1: number | null = null;
+  l0Cp2: number | null = null;
+  l0Cp3: number | null = null;
+  l0Data: Date | null = null;
   //l1
-  l1Cp1: any;
-  l1Cp2: any;
-  l1Cp3: any;
-  l1VariacaoDimensionalMedia: any;
-  l1DesvioPadraoDimensional: any;
-  l1Data: any;
+  l1Cp1: number | null = null;
+  l1Cp2: number | null = null;
+  l1Cp3: number | null = null;
+  l1VariacaoDimensionalMedia: number | null = null;
+  l1DesvioPadraoDimensional: number | null = null;
+  l1Data: Date | null = null;
   //l7
-  l7Cp1: any;
-  l7Cp2: any;
-  l7Cp3: any;
-  l7VariacaoDimensionalMedia: any;
-  l7DesvioPadraoDimensional: any;
-  l7Data: any;
+  l7Cp1: number | null = null;
+  l7Cp2: number | null = null;
+  l7Cp3: number | null = null;
+  l7VariacaoDimensionalMedia: number | null = null;
+  l7DesvioPadraoDimensional: number | null = null;
+  l7Data: Date | null = null;
   //l28 
-  l28Cp1: any;
-  l28Cp2: any;
-  l28Cp3: any;
-  l28VariacaoDimensionalMedia: any;
-  l28DesvioPadraoDimensional: any;
-  l28Data: any;
+  l28Cp1: number | null = null;
+  l28Cp2: number | null = null;
+  l28Cp3: number | null = null;
+  l28VariacaoDimensionalMedia: number | null = null;
+  l28DesvioPadraoDimensional: number | null = null;
+  l28Data: Date | null = null;
+  //====Variaveis para Variação de Massa
+  exibirModalVariacaoMassa: boolean = false;
+  variacaoMassaTableData: any[] = [];
+  //m0
+  m0Cp1: number | null = null;
+  m0Cp2: number | null = null;
+  m0Cp3: number | null = null;
+  m0Data: Date | null = null;
+  //m1
+  m1Cp1: number | null = null;
+  m1Cp2: number | null = null;
+  m1Cp3: number | null = null;
+  m1VariacaoMassaMedia: number | null = null;
+  m1DesvioPadraoMassa: number | null = null;
+  m1Data: Date | null = null;
+  //m7
+  m7Cp1: number | null = null;
+  m7Cp2: number | null = null;
+  m7Cp3: number | null = null;
+  m7VariacaoMassaMedia: number | null = null;
+  m7DesvioPadraoMassa: number | null = null;
+  m7Data: Date | null = null;
+  //m28
+  m28Cp1: number | null = null;
+  m28Cp2: number | null = null;
+  m28Cp3: number | null = null;
+  m28VariacaoMassaMedia: number | null = null;
+  m28DesvioPadraoMassa: number | null = null;
+  m28Data: Date | null = null;
+
   // GRAFICO
   @ViewChild('meuGrafico') chartRef!: ElementRef<HTMLCanvasElement>;
   chartInstance: any;
@@ -509,6 +540,11 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
     return this.loginService.hasAnyGroup(groups);
   }
 
+  // Método para tornar isNaN acessível no template
+  isNaN(value: any): boolean {
+    return isNaN(value);
+  }
+
   ngOnInit(): void {
     this.analiseId = Number(this.route.snapshot.paramMap.get('id'));
     this.getDigitadorInfo();
@@ -543,38 +579,101 @@ onL0DataChange(): void {
     const novaDataL28 = new Date(dataBase);
     novaDataL28.setDate(dataBase.getDate() + 28);
     this.l28Data = novaDataL28;
-    // Chamar o método de cálculos
-    this.realizarCalculosVariacaoDimensional();
+    // Atualizar tabela
+    this.atualizarTabelaVariacaoDimensional();
   }
 }
 realizarCalculosVariacaoDimensional(): void {
+  // Verificar valores de L0
+  if (this.l0Cp1 == null || this.l0Cp2 == null || this.l0Cp3 == null || this.l0Data == null) {
+    return;
+  }
+  
+  const l0Cp1Num = Number(this.l0Cp1);
+  const l0Cp2Num = Number(this.l0Cp2);
+  const l0Cp3Num = Number(this.l0Cp3);
+  
+  if (isNaN(l0Cp1Num) || isNaN(l0Cp2Num) || isNaN(l0Cp3Num)) {
+    return;
+  }
+  
   // Cálculo para L1 (1 dia após L0)
-  if (this.l0Cp1 != null && this.l0Cp2 != null && this.l0Cp3 != null && this.l0Data != null && 
-      this.l1Cp1 != null && this.l1Cp2 != null && this.l1Cp3 != null && this.l1Data != null) {
-    const calcCp1_L1 = (this.l1Cp1 - this.l0Cp1) / 0.25;
-    const calcCp2_L1 = (this.l1Cp2 - this.l0Cp2) / 0.25;
-    const calcCp3_L1 = (this.l1Cp3 - this.l0Cp3) / 0.25;
-    this.l1VariacaoDimensionalMedia = mean([calcCp1_L1, calcCp2_L1, calcCp3_L1]);
-    this.l1DesvioPadraoDimensional = std([calcCp1_L1, calcCp2_L1, calcCp3_L1]);
+  if (this.l1Cp1 != null && this.l1Cp2 != null && this.l1Cp3 != null && this.l1Data != null) {
+    const l1Cp1Num = Number(this.l1Cp1);
+    const l1Cp2Num = Number(this.l1Cp2);
+    const l1Cp3Num = Number(this.l1Cp3);
+    
+    if (!isNaN(l1Cp1Num) && !isNaN(l1Cp2Num) && !isNaN(l1Cp3Num)) {
+      const calcCp1_L1 = (l1Cp1Num - l0Cp1Num) / 0.25;
+      const calcCp2_L1 = (l1Cp2Num - l0Cp2Num) / 0.25;
+      const calcCp3_L1 = (l1Cp3Num - l0Cp3Num) / 0.25;
+      this.l1VariacaoDimensionalMedia = mean([calcCp1_L1, calcCp2_L1, calcCp3_L1]) as number;
+      this.l1DesvioPadraoDimensional = Number(std([calcCp1_L1, calcCp2_L1, calcCp3_L1]));
+    }
   }
+  
   // Cálculo para L7 (7 dias após L0)
-  if (this.l0Cp1 != null && this.l0Cp2 != null && this.l0Cp3 != null && this.l0Data != null && 
-      this.l7Cp1 != null && this.l7Cp2 != null && this.l7Cp3 != null && this.l7Data != null) {
-    const calcCp1_L7 = (this.l7Cp1 - this.l0Cp1) / 0.25;
-    const calcCp2_L7 = (this.l7Cp2 - this.l0Cp2) / 0.25;
-    const calcCp3_L7 = (this.l7Cp3 - this.l0Cp3) / 0.25;
-    this.l7VariacaoDimensionalMedia = mean([calcCp1_L7, calcCp2_L7, calcCp3_L7]);
-    this.l7DesvioPadraoDimensional = std([calcCp1_L7, calcCp2_L7, calcCp3_L7]);
+  if (this.l7Cp1 != null && this.l7Cp2 != null && this.l7Cp3 != null && this.l7Data != null) {
+    const l7Cp1Num = Number(this.l7Cp1);
+    const l7Cp2Num = Number(this.l7Cp2);
+    const l7Cp3Num = Number(this.l7Cp3);
+    
+    if (!isNaN(l7Cp1Num) && !isNaN(l7Cp2Num) && !isNaN(l7Cp3Num)) {
+      const calcCp1_L7 = (l7Cp1Num - l0Cp1Num) / 0.25;
+      const calcCp2_L7 = (l7Cp2Num - l0Cp2Num) / 0.25;
+      const calcCp3_L7 = (l7Cp3Num - l0Cp3Num) / 0.25;
+      this.l7VariacaoDimensionalMedia = mean([calcCp1_L7, calcCp2_L7, calcCp3_L7]) as number;
+      this.l7DesvioPadraoDimensional = Number(std([calcCp1_L7, calcCp2_L7, calcCp3_L7]));
+    }
   }
+  
   // Cálculo para L28 (28 dias após L0)
-  if (this.l0Cp1 != null && this.l0Cp2 != null && this.l0Cp3 != null && this.l0Data != null && 
-      this.l28Cp1 != null && this.l28Cp2 != null && this.l28Cp3 != null && this.l28Data != null) {
-    const calcCp1_L28 = (this.l28Cp1 - this.l0Cp1) / 0.25;
-    const calcCp2_L28 = (this.l28Cp2 - this.l0Cp2) / 0.25;
-    const calcCp3_L28 = (this.l28Cp3 - this.l0Cp3) / 0.25;
-    this.l28VariacaoDimensionalMedia = mean([calcCp1_L28, calcCp2_L28, calcCp3_L28]);
-    this.l28DesvioPadraoDimensional = std([calcCp1_L28, calcCp2_L28, calcCp3_L28]);
+  if (this.l28Cp1 != null && this.l28Cp2 != null && this.l28Cp3 != null && this.l28Data != null) {
+    const l28Cp1Num = Number(this.l28Cp1);
+    const l28Cp2Num = Number(this.l28Cp2);
+    const l28Cp3Num = Number(this.l28Cp3);
+    
+    if (!isNaN(l28Cp1Num) && !isNaN(l28Cp2Num) && !isNaN(l28Cp3Num)) {
+      const calcCp1_L28 = (l28Cp1Num - l0Cp1Num) / 0.25;
+      const calcCp2_L28 = (l28Cp2Num - l0Cp2Num) / 0.25;
+      const calcCp3_L28 = (l28Cp3Num - l0Cp3Num) / 0.25;
+      this.l28VariacaoDimensionalMedia = mean([calcCp1_L28, calcCp2_L28, calcCp3_L28]) as number;
+      this.l28DesvioPadraoDimensional = Number(std([calcCp1_L28, calcCp2_L28, calcCp3_L28]));
+    }
   }
+  
+  // Atualizar dados da tabela
+  this.atualizarTabelaVariacaoDimensional();
+}
+
+// Método para atualizar dados da tabela de Variação Dimensional
+atualizarTabelaVariacaoDimensional(): void {
+  this.variacaoDimensionalTableData = [
+    {
+      label: '📏 L0 - Inicial',
+      data: this.l0Data,
+      media: null,
+      desvioPadrao: null
+    },
+    {
+      label: '📊 L1 - 1 dia',
+      data: this.l1Data,
+      media: this.l1VariacaoDimensionalMedia,
+      desvioPadrao: this.l1DesvioPadraoDimensional
+    },
+    {
+      label: '📊 L7 - 7 dias',
+      data: this.l7Data,
+      media: this.l7VariacaoDimensionalMedia,
+      desvioPadrao: this.l7DesvioPadraoDimensional
+    },
+    {
+      label: '📊 L28 - 28 dias',
+      data: this.l28Data,
+      media: this.l28VariacaoDimensionalMedia,
+      desvioPadrao: this.l28DesvioPadraoDimensional
+    }
+  ];
 }
 
 salvarVariacaoDimensional(analise: any): void {
@@ -666,6 +765,47 @@ salvarVariacaoDimensional(analise: any): void {
   });
 }
 
+limparVariacaoDimensional(): void {
+  // Limpar L0
+  this.l0Cp1 = null;
+  this.l0Cp2 = null;
+  this.l0Cp3 = null;
+  this.l0Data = null;
+  
+  // Limpar L1
+  this.l1Cp1 = null;
+  this.l1Cp2 = null;
+  this.l1Cp3 = null;
+  this.l1VariacaoDimensionalMedia = null;
+  this.l1DesvioPadraoDimensional = null;
+  this.l1Data = null;
+  
+  // Limpar L7
+  this.l7Cp1 = null;
+  this.l7Cp2 = null;
+  this.l7Cp3 = null;
+  this.l7VariacaoDimensionalMedia = null;
+  this.l7DesvioPadraoDimensional = null;
+  this.l7Data = null;
+  
+  // Limpar L28
+  this.l28Cp1 = null;
+  this.l28Cp2 = null;
+  this.l28Cp3 = null;
+  this.l28VariacaoDimensionalMedia = null;
+  this.l28DesvioPadraoDimensional = null;
+  this.l28Data = null;
+  
+  // Limpar tabela
+  this.variacaoDimensionalTableData = [];
+  
+  this.messageService.add({
+    severity: 'info',
+    summary: 'Campos Limpos',
+    detail: 'Todos os campos foram limpos com sucesso!'
+  });
+}
+
 carregarVariacaoDimensionalSalva(analise: any): void {
   if (analise?.variacao_dimensional) {
     const dados = analise.variacao_dimensional;
@@ -708,11 +848,300 @@ carregarVariacaoDimensionalSalva(analise: any): void {
       this.l28DesvioPadraoDimensional = dados.l28.desvio_padrao || null;
     }
     
+    // Atualizar tabela após carregar dados
+    this.atualizarTabelaVariacaoDimensional();
     this.cd.detectChanges();
+  } else {
+    // Se não há dados salvos, inicializa tabela vazia
+    this.atualizarTabelaVariacaoDimensional();
   }
 }
 //==================================================== FIM VARIACÂO ============================================================//
 
+//================================================= Variação de Massa =========================================================//
+onM0DataChange(): void {
+  this.exibirModalVariacaoMassa = true;
+  if (this.m0Data) {
+    const dataBase = new Date(this.m0Data);
+    // Calcular m1Data (+ 1 dia)
+    const novaDataM1 = new Date(dataBase);
+    novaDataM1.setDate(dataBase.getDate() + 1);
+    this.m1Data = novaDataM1;
+    // Calcular m7Data (+ 7 dias)
+    const novaDataM7 = new Date(dataBase);
+    novaDataM7.setDate(dataBase.getDate() + 7);
+    this.m7Data = novaDataM7;
+    // Calcular m28Data (+ 28 dias)
+    const novaDataM28 = new Date(dataBase);
+    novaDataM28.setDate(dataBase.getDate() + 28);
+    this.m28Data = novaDataM28;
+    // Atualizar tabela
+    this.atualizarTabelaVariacaoMassa();
+  }
+}
+realizarCalculosVariacaoMassa(): void {
+  // Verificar valores de M0
+  if (this.m0Cp1 == null || this.m0Cp2 == null || this.m0Cp3 == null || this.m0Data == null) {
+    return;
+  }
+  const m0Cp1Num = Number(this.m0Cp1);
+  const m0Cp2Num = Number(this.m0Cp2);
+  const m0Cp3Num = Number(this.m0Cp3);
+  if (isNaN(m0Cp1Num) || isNaN(m0Cp2Num) || isNaN(m0Cp3Num)) {
+    return;
+  }
+  // Cálculo para M1 (1 dia após M0)
+  if (this.m1Cp1 != null && this.m1Cp2 != null && this.m1Cp3 != null && this.m1Data != null) {
+    const m1Cp1Num = Number(this.m1Cp1);
+    const m1Cp2Num = Number(this.m1Cp2);
+    const m1Cp3Num = Number(this.m1Cp3);
+    if (!isNaN(m1Cp1Num) && !isNaN(m1Cp2Num) && !isNaN(m1Cp3Num)) {
+      const calcCp1_M1 = ((m1Cp1Num - m0Cp1Num) / m0Cp1Num) * 100;
+      console.log('calcCp1_M1:', calcCp1_M1);
+      const calcCp2_M1 = (m1Cp2Num - m0Cp2Num) / m0Cp2Num * 100;
+      console.log('KKKKKKK_M1:', m1Cp2Num);
+      console.log('mmmmmm_0):', m0Cp2Num);
+      console.log('resultado:', calcCp2_M1);
+      const calcCp3_M1 = (m1Cp3Num - m0Cp3Num) / m0Cp3Num * 100;
+      this.m1VariacaoMassaMedia = mean([calcCp1_M1, calcCp2_M1, calcCp3_M1]) as number;
+      this.m1DesvioPadraoMassa = Number(std([calcCp1_M1, calcCp2_M1, calcCp3_M1]));
+      //console.log('this.m1VariacaoMassaMedia:', this.m1VariacaoMassaMedia);
+      //console.log('this.m1DesvioPadraoMassa:', this.m1DesvioPadraoMassa);
+    }
+  }
+  // Cálculo para M7 (7 dias dopo M0)
+  if (this.m7Cp1 != null && this.m7Cp2 != null && this.m7Cp3 != null && this.m7Data != null) {
+    const m7Cp1Num = Number(this.m7Cp1);
+    const m7Cp2Num = Number(this.m7Cp2);
+    const m7Cp3Num = Number(this.m7Cp3);
+    if (!isNaN(m7Cp1Num) && !isNaN(m7Cp2Num) && !isNaN(m7Cp3Num)) {
+      const calcCp1_M7 = ((m0Cp1Num - m7Cp1Num) / m0Cp1Num) * 100;
+      const calcCp2_M7 = ((m0Cp2Num - m7Cp2Num) / m7Cp2Num) * 100;
+      const calcCp3_M7 = ((m0Cp3Num - m7Cp3Num) / m7Cp3Num) * 100;
+      this.m7VariacaoMassaMedia = mean([calcCp1_M7, calcCp2_M7, calcCp3_M7]) as number;
+      this.m7DesvioPadraoMassa = Number(std([calcCp1_M7, calcCp2_M7, calcCp3_M7]));
+    }
+  }
+  // Cálculo para M28 (28 dias dopo M0)
+  if (this.m28Cp1 != null && this.m28Cp2 != null && this.m28Cp3 != null && this.m28Data != null) {
+    const m28Cp1Num = Number(this.m28Cp1);
+    const m28Cp2Num = Number(this.m28Cp2);
+    const m28Cp3Num = Number(this.m28Cp3);
+    if (!isNaN(m28Cp1Num) && !isNaN(m28Cp2Num) && !isNaN(m28Cp3Num)) {
+      const calcCp1_M28 = ((m0Cp1Num - m28Cp1Num) / m0Cp1Num) * 100;
+      const calcCp2_M28 = ((m0Cp2Num - m28Cp2Num) / m28Cp2Num) * 100;
+      const calcCp3_M28 = ((m0Cp3Num - m28Cp3Num) / m28Cp3Num) * 100;
+      this.m28VariacaoMassaMedia = mean([calcCp1_M28, calcCp2_M28, calcCp3_M28]) as number;
+      this.m28DesvioPadraoMassa = Number(std([calcCp1_M28, calcCp2_M28, calcCp3_M28]));
+    }
+  }
+  // Atualizar dados da tabela
+  this.atualizarTabelaVariacaoMassa();
+}
+// Método para atualizar dados da tabela de Variação de Massa
+atualizarTabelaVariacaoMassa(): void {
+  this.variacaoMassaTableData = [
+    {
+      label: '⚖️ M0 - Inicial',
+      data: this.m0Data,
+      media: null,
+      desvioPadrao: null
+    },
+    {
+      label: '📊 M1 - 1 dia',
+      data: this.m1Data,
+      media: this.m1VariacaoMassaMedia,
+      desvioPadrao: this.m1DesvioPadraoMassa
+    },
+    {
+      label: '📊 M7 - 7 dias',
+      data: this.m7Data,
+      media: this.m7VariacaoMassaMedia,
+      desvioPadrao: this.m7DesvioPadraoMassa
+    },
+    {
+      label: '📊 M28 - 28 dias',
+      data: this.m28Data,
+      media: this.m28VariacaoMassaMedia,
+      desvioPadrao: this.m28DesvioPadraoMassa
+    }
+  ];
+}
+salvarVariacaoMassa(analise: any): void {
+  // Coletar todos os dados calculados
+  const dadosVariacaoMassa = {
+    m0: {
+      cp1: this.m0Cp1,
+      cp2: this.m0Cp2,
+      cp3: this.m0Cp3,
+      data: this.m0Data ? this.toLocalYYYYMMDD(new Date(this.m0Data)) : null
+    },
+    m1: {
+      cp1: this.m1Cp1,
+      cp2: this.m1Cp2,
+      cp3: this.m1Cp3,
+      data: this.m1Data ? this.toLocalYYYYMMDD(new Date(this.m1Data)) : null,
+      media: this.m1VariacaoMassaMedia,
+      desvio_padrao: this.m1DesvioPadraoMassa
+    },
+    m7: {
+      cp1: this.m7Cp1,
+      cp2: this.m7Cp2,      
+      cp3: this.m7Cp3,
+      data: this.m7Data ? this.toLocalYYYYMMDD(new Date(this.m7Data)) : null,
+      media: this.m7VariacaoMassaMedia,
+      desvio_padrao: this.m7DesvioPadraoMassa
+    },    
+    m28: {
+      cp1: this.m28Cp1,
+      cp2: this.m28Cp2,      
+      cp3: this.m28Cp3,
+      data: this.m28Data ? this.toLocalYYYYMMDD(new Date(this.m28Data)) : null,
+      media: this.m28VariacaoMassaMedia,      
+      desvio_padrao: this.m28DesvioPadraoMassa
+    },    
+  };
+  this.exibirModalVariacaoMassa = false;
+  // Preparar dados para atualização
+  const dadosAtualizados: Partial<Analise> = {
+    variacao_massa: dadosVariacaoMassa
+  };
+  // Salvar no banco
+  this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+    next: () => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Sucesso',
+        detail: 'Variação de Massa salva com sucesso!'
+      });
+      // Atualizar a análise local
+      this.analise.variacao_massa = dadosVariacaoMassa;
+      setTimeout(() => {
+        this.cd.detectChanges();
+      }, 1000);
+    },
+    error: (err) => {
+      console.error('Erro ao salvar variação dimensional:', err);
+      
+      if (err.status === 401) {
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Timeout!', 
+          detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' 
+        });
+      } else if (err.status === 403) {
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Erro!', 
+          detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' 
+        });
+      } else if (err.status === 400) {
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Erro!', 
+          detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' 
+        });
+      } else {
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Falha!', 
+          detail: 'Erro interno, comunicar o administrador do sistema.' 
+        });
+      }
+    }
+  });
+}
+
+limparVariacaoMassa(): void {
+  // Limpar M0
+  this.m0Cp1 = null;
+  this.m0Cp2 = null;
+  this.m0Cp3 = null;
+  this.m0Data = null;
+  
+  // Limpar M1
+  this.m1Cp1 = null;
+  this.m1Cp2 = null;
+  this.m1Cp3 = null;
+  this.m1VariacaoMassaMedia = null;
+  this.m1DesvioPadraoMassa = null;
+  this.m1Data = null;
+  
+  // Limpar M7
+  this.m7Cp1 = null;
+  this.m7Cp2 = null;
+  this.m7Cp3 = null;
+  this.m7VariacaoMassaMedia = null;
+  this.m7DesvioPadraoMassa = null;
+  this.m7Data = null;
+  
+  // Limpar M28
+  this.m28Cp1 = null;
+  this.m28Cp2 = null;
+  this.m28Cp3 = null;
+  this.m28VariacaoMassaMedia = null;
+  this.m28DesvioPadraoMassa = null;
+  this.m28Data = null;
+
+  // Limpar tabela
+  this.variacaoMassaTableData = [];
+  this.messageService.add({
+    severity: 'info',
+    summary: 'Campos Limpos',
+    detail: 'Todos os campos foram limpos com sucesso!'
+  });
+}
+
+carregarVariacaoMassaSalva(analise: any): void {
+  if (analise?.variacao_massa) {
+    const dados = analise.variacao_massa;
+    // Carregar M0
+    if (dados.m0) {
+      this.m0Cp1 = dados.m0.cp1 || null;
+      this.m0Cp2 = dados.m0.cp2 || null;
+      this.m0Cp3 = dados.m0.cp3 || null;      
+      this.m0Data = dados.m0.data ? this.parseDateLocal(dados.m0.data) : null;
+    }
+    
+    // Carregar M1
+    if (dados.m1) {
+      this.m1Cp1 = dados.m1.cp1 || null;
+      this.m1Cp2 = dados.m1.cp2 || null;
+      this.m1Cp3 = dados.m1.cp3 || null;
+      this.m1VariacaoMassaMedia = dados.m1.media || null;
+      this.m1DesvioPadraoMassa = dados.m1.desvio_padrao || null;
+      this.m1Data = dados.m1.data ? this.parseDateLocal(dados.m1.data) : null;
+    }
+
+    // Carregar M7
+    if (dados.m7) {
+      this.m7Cp1 = dados.m7.cp1 || null;
+      this.m7Cp2 = dados.m7.cp2 || null;
+      this.m7Cp3 = dados.m7.cp3 || null;
+      this.m7VariacaoMassaMedia = dados.m7.media || null;
+      this.m7DesvioPadraoMassa = dados.m7.desvio_padrao || null;
+      this.m7Data = dados.m7.data ? this.parseDateLocal(dados.m7.data) : null;
+    }
+
+    // Carregar M28
+    if (dados.m28) {
+    this.m28Cp1 = dados.m28.cp1 || null;
+    this.m28Cp2 = dados.m28.cp2 || null;
+    this.m28Cp3 = dados.m28.cp3 || null;
+    this.m28VariacaoMassaMedia = dados.m28.media || null;
+    this.m28DesvioPadraoMassa = dados.m28.desvio_padrao || null;
+    this.m28Data = dados.m28.data ? this.parseDateLocal(dados.m28.data) : null;
+  }
+
+    // Atualizar tabela após carregar dados
+    this.atualizarTabelaVariacaoMassa();
+    this.cd.detectChanges();
+  } else {
+    // Se não há dados salvos, inicializa tabela vazia
+    this.atualizarTabelaVariacaoMassa();
+  }
+}
+//================================================= FIM VARIAÇÃO DE MASSA =========================================================//
 //==================================================== GRÁFICO CAPILARIDADE ============================================================//
 exibirGrafico(): void {
     this.modalGrafico = true;
@@ -6917,6 +7346,14 @@ canDeactivate(): boolean | Promise<boolean> {
         command: () => {
           this.carregarVariacaoDimensionalSalva(analise); // Carregar dados salvos
           this.exibirModalVariacaoDimensional = true;
+        }
+      },
+      { 
+        label: 'Determinação da Variação de Massa (Retração/Expansão)', 
+        icon: 'pi pi-eye', 
+        command: () => {
+          this.carregarVariacaoMassaSalva(analise); // Carregar dados salvos
+          this.exibirModalVariacaoMassa = true;
         }
       },
       { label: 'Módulo de Elasticidade Dinâmico', icon: 'pi pi-eye', command: () => this.abrirModalElasticidade(analise) },
