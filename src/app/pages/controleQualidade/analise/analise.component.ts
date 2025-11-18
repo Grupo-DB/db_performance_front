@@ -54,6 +54,7 @@ import { Chart, ScatterController, LinearScale, PointElement, LineElement, Toolt
 import { linearRegression, linearRegressionLine, rSquared } from 'simple-statistics';
 import AnnotationPlugin from 'chartjs-plugin-annotation';
 import { MessageModule } from 'primeng/message';
+import { min } from 'date-fns';
 
 Chart.register(ScatterController, LinearScale, PointElement, LineElement, Tooltip, Legend, AnnotationPlugin);
 
@@ -165,6 +166,7 @@ export interface Analise {
   peneiras_umidas: any;
   variacao_dimensional: any;
   variacao_massa: any;
+  modulo_elasticidade: any;
 }
 interface FileWithInfo {
   file: File;
@@ -485,6 +487,54 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   m28VariacaoMassaMedia: number | null = null;
   m28DesvioPadraoMassa: number | null = null;
   m28Data: Date | null = null;
+  // Totais
+  variacaoMassaMediaTotal: number | null = null;
+  variacaoMassaDesvioPadraoTotal: number | null = null;
+
+  //=======================Variaveis para Módulode Elasticidade =========================================
+  exibirModalModuloElasticidade: boolean = false;
+  moduloElasticidadeTableData: any[] = [];
+  //cp1
+  comprimentoCp1: number | null = null;
+  larguraCp1: number | null = null;
+  alturaCp1: number | null = null;
+  massaCp1: number | null = null;
+  tempo1Cp1: number | null = null;
+  tempo2Cp1: number | null = null;
+  tempo3Cp1: number | null = null;
+  menorTempoCp1: number | null = null;
+  volumeCp1: number | null = null;
+  pMaxCp1: number | null = null;
+  velocidadeCp1: number | null = null;
+  edCp1: number | null = null;
+  //cp2
+  comprimentoCp2: number | null = null;
+  larguraCp2: number | null = null;
+  alturaCp2: number | null = null;
+  massaCp2: number | null = null;
+  tempo1Cp2: number | null = null;
+  tempo2Cp2: number | null = null;
+  tempo3Cp2: number | null = null;
+  menorTempoCp2: number | null = null;
+  volumeCp2: number | null = null;
+  pMaxCp2: number | null = null;
+  velocidadeCp2: number | null = null;
+  edCp2: number | null = null;
+  //cp3
+  comprimentoCp3: number | null = null;
+  larguraCp3: number | null = null;
+  alturaCp3: number | null = null;
+  massaCp3: number | null = null;
+  tempo1Cp3: number | null = null;
+  tempo2Cp3: number | null = null;
+  tempo3Cp3: number | null = null;
+  menorTempoCp3: number | null = null;
+  volumeCp3: number | null = null;
+  pMaxCp3: number | null = null;
+  velocidadeCp3: number | null = null;
+  edCp3: number | null = null;
+  // Totais
+  moduloElasticidadeMediaTotal: number | null = null;
 
   // GRAFICO
   @ViewChild('meuGrafico') chartRef!: ElementRef<HTMLCanvasElement>;
@@ -560,6 +610,410 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
     // Inicializar o formulário de dados do gráfico
     this.createForm();
   }
+//==================  Cálculos de Módulo de Elasticidade ==========================
+calculosModuloElasticidade(): void {
+  // Verificar se há valores válidos para cálculo
+  console.log('=== INÍCIO DOS CÁLCULOS ===');
+  console.log('Valores brutos - tempo1Cp1:', this.tempo1Cp1, typeof this.tempo1Cp1);
+  console.log('Valores brutos - tempo2Cp1:', this.tempo2Cp1, typeof this.tempo2Cp1);
+  console.log('Valores brutos - tempo3Cp1:', this.tempo3Cp1, typeof this.tempo3Cp1);
+  
+  // Converter explicitamente para número com parseFloat para preservar decimais
+  const temposCp1 = [this.tempo1Cp1, this.tempo2Cp1, this.tempo3Cp1]
+    .filter(t => t !== null && t !== undefined)
+    .map(t => parseFloat(String(t)));
+  const temposCp2 = [this.tempo1Cp2, this.tempo2Cp2, this.tempo3Cp2]
+    .filter(t => t !== null && t !== undefined)
+    .map(t => parseFloat(String(t)));
+  const temposCp3 = [this.tempo1Cp3, this.tempo2Cp3, this.tempo3Cp3]
+    .filter(t => t !== null && t !== undefined)
+    .map(t => parseFloat(String(t)));
+  
+  console.log('Array filtrado temposCp1:', temposCp1);
+  console.log('Cada elemento:', temposCp1.map((t, i) => `[${i}] = ${t} (${typeof t})`));
+  
+  if (temposCp1.length > 0) {
+    this.menorTempoCp1 = Math.min(...temposCp1);
+    console.log('Resultado de Math.min():', this.menorTempoCp1, typeof this.menorTempoCp1);
+  } else {
+    this.menorTempoCp1 = null;
+  }
+  
+  this.menorTempoCp2 = temposCp2.length > 0 ? Math.min(...temposCp2) : null;
+  this.menorTempoCp3 = temposCp3.length > 0 ? Math.min(...temposCp3) : null;
+  
+  console.log('Menor tempo final CP1:', this.menorTempoCp1);
+  console.log('=== FIM DOS CÁLCULOS ===');
+
+  // Cálculo do Volume (mm³ / 1000 = cm³)
+  if (this.comprimentoCp1 != null && this.larguraCp1 != null && this.alturaCp1 != null) {
+    this.volumeCp1 = (this.comprimentoCp1 * this.larguraCp1 * this.alturaCp1) / 1000;
+  }
+  if (this.comprimentoCp2 != null && this.larguraCp2 != null && this.alturaCp2 != null) {
+    this.volumeCp2 = (this.comprimentoCp2 * this.larguraCp2 * this.alturaCp2) / 1000;
+  }
+  if (this.comprimentoCp3 != null && this.larguraCp3 != null && this.alturaCp3 != null) {
+    this.volumeCp3 = (this.comprimentoCp3 * this.larguraCp3 * this.alturaCp3) / 1000;
+  }
+
+  // Cálculo de p_max (massa em g / volume em cm³ = g/cm³)
+  if (this.massaCp1 != null && this.volumeCp1 != null && this.volumeCp1 > 0) {
+    this.pMaxCp1 = this.massaCp1 / this.volumeCp1;
+  }
+  if (this.massaCp2 != null && this.volumeCp2 != null && this.volumeCp2 > 0) {
+    this.pMaxCp2 = this.massaCp2 / this.volumeCp2;
+  }
+  if (this.massaCp3 != null && this.volumeCp3 != null && this.volumeCp3 > 0) {
+    this.pMaxCp3 = this.massaCp3 / this.volumeCp3;
+  }
+
+  // Cálculo da Velocidade (comprimento em mm / tempo em μs = mm/μs = 1000 m/s)
+  if (this.comprimentoCp1 != null && this.menorTempoCp1 != null && this.menorTempoCp1 > 0) {
+    this.velocidadeCp1 = this.comprimentoCp1 / this.menorTempoCp1;
+  }
+  if (this.comprimentoCp2 != null && this.menorTempoCp2 != null && this.menorTempoCp2 > 0) {
+    this.velocidadeCp2 = this.comprimentoCp2 / this.menorTempoCp2;
+  }
+  if (this.comprimentoCp3 != null && this.menorTempoCp3 != null && this.menorTempoCp3 > 0) {
+    this.velocidadeCp3 = this.comprimentoCp3 / this.menorTempoCp3;
+  }
+
+  // Cálculo de Ed (Módulo de Elasticidade Dinâmico)
+  // Ed = v² * ρ * [(1 + ν) * (1 - 2ν) / (1 - ν)]
+  // Onde ν (coeficiente de Poisson) = 0.2
+  const poissonFactor = ((1 + 0.2) * (1 - (2 * 0.2))) / (1 - 0.2);
+  
+  if (this.velocidadeCp1 != null && this.pMaxCp1 != null) {
+    // Converter: v em mm/μs para m/s: v * 1000
+    // p_max em g/cm³ para kg/m³: p_max * 1000
+    // Resultado em Pa, dividir por 1000000 para MPa
+    const vMetrosPorSeg1 = this.velocidadeCp1 * 1000; // mm/μs -> m/s
+    const pKgPorM31 = this.pMaxCp1 * 1000; // g/cm³ -> kg/m³
+    this.edCp1 = (Math.pow(vMetrosPorSeg1, 2) * pKgPorM31 * poissonFactor) / 1000000; // Pa -> MPa
+  }
+  
+  if (this.velocidadeCp2 != null && this.pMaxCp2 != null) {
+    const vMetrosPorSeg2 = this.velocidadeCp2 * 1000;
+    const pKgPorM32 = this.pMaxCp2 * 1000;
+    this.edCp2 = (Math.pow(vMetrosPorSeg2, 2) * pKgPorM32 * poissonFactor) / 1000000;
+  }
+  
+  if (this.velocidadeCp3 != null && this.pMaxCp3 != null) {
+    const vMetrosPorSeg3 = this.velocidadeCp3 * 1000;
+    const pKgPorM33 = this.pMaxCp3 * 1000;
+    this.edCp3 = (Math.pow(vMetrosPorSeg3, 2) * pKgPorM33 * poissonFactor) / 1000000;
+  }
+
+  // Cálculo da média total do módulo de elasticidade
+  const valoresEd: number[] = [];
+  if (this.edCp1 != null && !isNaN(this.edCp1)) valoresEd.push(this.edCp1);
+  if (this.edCp2 != null && !isNaN(this.edCp2)) valoresEd.push(this.edCp2);
+  if (this.edCp3 != null && !isNaN(this.edCp3)) valoresEd.push(this.edCp3);
+  
+  if (valoresEd.length > 0) {
+    this.moduloElasticidadeMediaTotal = mean(valoresEd) as number;
+  } else {
+    this.moduloElasticidadeMediaTotal = null;
+  }
+  
+  // Atualizar dados da tabela
+  this.atualizarTabelaModuloElasticidade();
+}
+
+// Método para atualizar dados da tabela de Módulo de Elasticidade
+atualizarTabelaModuloElasticidade(): void {
+  this.moduloElasticidadeTableData = [
+    {
+      label: 'CP1',
+      comprimento: this.comprimentoCp1,
+      largura: this.larguraCp1,
+      altura: this.alturaCp1,
+      massa: this.massaCp1,
+      tempo1: this.tempo1Cp1,
+      tempo2: this.tempo2Cp1,
+      tempo3: this.tempo3Cp1,
+      menorTempo: this.menorTempoCp1,
+      volume: this.volumeCp1,
+      pMax: this.pMaxCp1,
+      velocidade: this.velocidadeCp1,
+      ed: this.edCp1
+    },
+    {
+      label: 'CP2',
+      comprimento: this.comprimentoCp2,
+      largura: this.larguraCp2,
+      altura: this.alturaCp2,
+      massa: this.massaCp2,
+      tempo1: this.tempo1Cp2,
+      tempo2: this.tempo2Cp2,
+      tempo3: this.tempo3Cp2,
+      menorTempo: this.menorTempoCp2,
+      volume: this.volumeCp2,
+      pMax: this.pMaxCp2,
+      velocidade: this.velocidadeCp2,
+      ed: this.edCp2
+    },
+    {
+      label: 'CP3',
+      comprimento: this.comprimentoCp3,
+      largura: this.larguraCp3,
+      altura: this.alturaCp3,
+      massa: this.massaCp3,
+      tempo1: this.tempo1Cp3,
+      tempo2: this.tempo2Cp3,
+      tempo3: this.tempo3Cp3,
+      menorTempo: this.menorTempoCp3,
+      volume: this.volumeCp3,
+      pMax: this.pMaxCp3,
+      velocidade: this.velocidadeCp3,
+      ed: this.edCp3
+    },
+    {
+      label: '🎯 MÉDIA',
+      comprimento: null,
+      largura: null,
+      altura: null,
+      massa: null,
+      tempo1: null,
+      tempo2: null,
+      tempo3: null,
+      menorTempo: null,
+      volume: null,
+      pMax: null,
+      velocidade: null,
+      ed: this.moduloElasticidadeMediaTotal
+    }
+  ];
+}
+
+salvarModuloElasticidade(analise: any): void {
+  // Coletar todos os dados calculados
+  const dadosModuloElasticidade = {
+    cp1: {
+      comprimento: this.comprimentoCp1,
+      largura: this.larguraCp1,
+      altura: this.alturaCp1,
+      massa: this.massaCp1,
+      tempo1: this.tempo1Cp1,
+      tempo2: this.tempo2Cp1,
+      tempo3: this.tempo3Cp1,
+      menorTempo: this.menorTempoCp1,
+      volume: this.volumeCp1,
+      pMax: this.pMaxCp1,
+      velocidade: this.velocidadeCp1,
+      ed: this.edCp1
+    },
+    cp2: {
+      comprimento: this.comprimentoCp2,
+      largura: this.larguraCp2,
+      altura: this.alturaCp2,
+      massa: this.massaCp2,
+      tempo1: this.tempo1Cp2,
+      tempo2: this.tempo2Cp2,
+      tempo3: this.tempo3Cp2,
+      menorTempo: this.menorTempoCp2,
+      volume: this.volumeCp2,
+      pMax: this.pMaxCp2,
+      velocidade: this.velocidadeCp2,
+      ed: this.edCp2
+    },
+    cp3: {
+      comprimento: this.comprimentoCp3,
+      largura: this.larguraCp3,
+      altura: this.alturaCp3,
+      massa: this.massaCp3,
+      tempo1: this.tempo1Cp3,
+      tempo2: this.tempo2Cp3,
+      tempo3: this.tempo3Cp3,
+      menorTempo: this.menorTempoCp3,
+      volume: this.volumeCp3,
+      pMax: this.pMaxCp3,
+      velocidade: this.velocidadeCp3,
+      ed: this.edCp3
+    },
+    media: {
+      ed: this.moduloElasticidadeMediaTotal
+    }
+  };
+  
+  this.exibirModalModuloElasticidade = false;
+  
+  // Preparar dados para atualização
+  const dadosAtualizados: Partial<Analise> = {
+    modulo_elasticidade: dadosModuloElasticidade
+  };
+  
+  // Salvar no banco
+  this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+    next: () => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Sucesso',
+        detail: 'Módulo de Elasticidade salvo com sucesso!'
+      });
+      
+      // Atualizar a análise local
+      this.analise.modulo_elasticidade = dadosModuloElasticidade;
+      
+      setTimeout(() => {
+        this.cd.detectChanges();
+      }, 1000);
+    },
+    error: (err) => {
+      console.error('Erro ao salvar módulo de elasticidade:', err);
+      
+      if (err.status === 401) {
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Timeout!', 
+          detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' 
+        });
+      } else if (err.status === 403) {
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Erro!', 
+          detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' 
+        });
+      } else if (err.status === 400) {
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Erro!', 
+          detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' 
+        });
+      } else {
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Falha!', 
+          detail: 'Erro interno, comunicar o administrador do sistema.' 
+        });
+      }
+    }
+  });
+}
+
+limparModuloElasticidade(): void {
+  // Limpar CP1
+  this.comprimentoCp1 = null;
+  this.larguraCp1 = null;
+  this.alturaCp1 = null;
+  this.massaCp1 = null;
+  this.tempo1Cp1 = null;
+  this.tempo2Cp1 = null;
+  this.tempo3Cp1 = null;
+  this.menorTempoCp1 = null;
+  this.volumeCp1 = null;
+  this.pMaxCp1 = null;
+  this.velocidadeCp1 = null;
+  this.edCp1 = null;
+  
+  // Limpar CP2
+  this.comprimentoCp2 = null;
+  this.larguraCp2 = null;
+  this.alturaCp2 = null;
+  this.massaCp2 = null;
+  this.tempo1Cp2 = null;
+  this.tempo2Cp2 = null;
+  this.tempo3Cp2 = null;
+  this.menorTempoCp2 = null;
+  this.volumeCp2 = null;
+  this.pMaxCp2 = null;
+  this.velocidadeCp2 = null;
+  this.edCp2 = null;
+  
+  // Limpar CP3
+  this.comprimentoCp3 = null;
+  this.larguraCp3 = null;
+  this.alturaCp3 = null;
+  this.massaCp3 = null;
+  this.tempo1Cp3 = null;
+  this.tempo2Cp3 = null;
+  this.tempo3Cp3 = null;
+  this.menorTempoCp3 = null;
+  this.volumeCp3 = null;
+  this.pMaxCp3 = null;
+  this.velocidadeCp3 = null;
+  this.edCp3 = null;
+  
+  // Limpar média
+  this.moduloElasticidadeMediaTotal = null;
+  
+  // Limpar tabela
+  this.moduloElasticidadeTableData = [];
+  
+  this.messageService.add({
+    severity: 'info',
+    summary: 'Campos Limpos',
+    detail: 'Todos os campos foram limpos com sucesso!'
+  });
+}
+
+carregarModuloElasticidadeSalvo(analise: any): void {
+  if (analise?.modulo_elasticidade) {
+    const dados = analise.modulo_elasticidade;
+    
+    // Carregar CP1
+    if (dados.cp1) {
+      this.comprimentoCp1 = dados.cp1.comprimento || null;
+      this.larguraCp1 = dados.cp1.largura || null;
+      this.alturaCp1 = dados.cp1.altura || null;
+      this.massaCp1 = dados.cp1.massa || null;
+      this.tempo1Cp1 = dados.cp1.tempo1 || null;
+      this.tempo2Cp1 = dados.cp1.tempo2 || null;
+      this.tempo3Cp1 = dados.cp1.tempo3 || null;
+      this.menorTempoCp1 = dados.cp1.menorTempo || null;
+      this.volumeCp1 = dados.cp1.volume || null;
+      this.pMaxCp1 = dados.cp1.pMax || null;
+      this.velocidadeCp1 = dados.cp1.velocidade || null;
+      this.edCp1 = dados.cp1.ed || null;
+    }
+    
+    // Carregar CP2
+    if (dados.cp2) {
+      this.comprimentoCp2 = dados.cp2.comprimento || null;
+      this.larguraCp2 = dados.cp2.largura || null;
+      this.alturaCp2 = dados.cp2.altura || null;
+      this.massaCp2 = dados.cp2.massa || null;
+      this.tempo1Cp2 = dados.cp2.tempo1 || null;
+      this.tempo2Cp2 = dados.cp2.tempo2 || null;
+      this.tempo3Cp2 = dados.cp2.tempo3 || null;
+      this.menorTempoCp2 = dados.cp2.menorTempo || null;
+      this.volumeCp2 = dados.cp2.volume || null;
+      this.pMaxCp2 = dados.cp2.pMax || null;
+      this.velocidadeCp2 = dados.cp2.velocidade || null;
+      this.edCp2 = dados.cp2.ed || null;
+    }
+    
+    // Carregar CP3
+    if (dados.cp3) {
+      this.comprimentoCp3 = dados.cp3.comprimento || null;
+      this.larguraCp3 = dados.cp3.largura || null;
+      this.alturaCp3 = dados.cp3.altura || null;
+      this.massaCp3 = dados.cp3.massa || null;
+      this.tempo1Cp3 = dados.cp3.tempo1 || null;
+      this.tempo2Cp3 = dados.cp3.tempo2 || null;
+      this.tempo3Cp3 = dados.cp3.tempo3 || null;
+      this.menorTempoCp3 = dados.cp3.menorTempo || null;
+      this.volumeCp3 = dados.cp3.volume || null;
+      this.pMaxCp3 = dados.cp3.pMax || null;
+      this.velocidadeCp3 = dados.cp3.velocidade || null;
+      this.edCp3 = dados.cp3.ed || null;
+    }
+    
+    // Carregar média
+    if (dados.media) {
+      this.moduloElasticidadeMediaTotal = dados.media.ed || null;
+    }
+    
+    // Atualizar tabela após carregar dados
+    this.atualizarTabelaModuloElasticidade();
+    this.cd.detectChanges();
+  } else {
+    // Se não há dados salvos, inicializa tabela vazia
+    this.atualizarTabelaModuloElasticidade();
+  }
+}
+//==================================================== FIM MÓDULO DE ELASTICIDADE =========================================================//
+
 
 //==============================Variação Dimensional=================================================
 
@@ -598,47 +1052,104 @@ realizarCalculosVariacaoDimensional(): void {
   }
   
   // Cálculo para L1 (1 dia após L0)
-  if (this.l1Cp1 != null && this.l1Cp2 != null && this.l1Cp3 != null && this.l1Data != null) {
-    const l1Cp1Num = Number(this.l1Cp1);
-    const l1Cp2Num = Number(this.l1Cp2);
-    const l1Cp3Num = Number(this.l1Cp3);
+  if (this.l1Data != null) {
+    const valoresL1: number[] = [];
     
-    if (!isNaN(l1Cp1Num) && !isNaN(l1Cp2Num) && !isNaN(l1Cp3Num)) {
-      const calcCp1_L1 = (l1Cp1Num - l0Cp1Num) / 0.25;
-      const calcCp2_L1 = (l1Cp2Num - l0Cp2Num) / 0.25;
-      const calcCp3_L1 = (l1Cp3Num - l0Cp3Num) / 0.25;
-      this.l1VariacaoDimensionalMedia = mean([calcCp1_L1, calcCp2_L1, calcCp3_L1]) as number;
-      this.l1DesvioPadraoDimensional = Number(std([calcCp1_L1, calcCp2_L1, calcCp3_L1]));
+    if (this.l1Cp1 != null) {
+      const l1Cp1Num = Number(this.l1Cp1);
+      if (!isNaN(l1Cp1Num)) {
+        const calcCp1_L1 = (l1Cp1Num - l0Cp1Num) / 250;
+        valoresL1.push(calcCp1_L1);
+      }
+    }
+    
+    if (this.l1Cp2 != null) {
+      const l1Cp2Num = Number(this.l1Cp2);
+      if (!isNaN(l1Cp2Num)) {
+        const calcCp2_L1 = (l1Cp2Num - l0Cp2Num) / 250;
+        valoresL1.push(calcCp2_L1);
+      }
+    }
+    
+    if (this.l1Cp3 != null) {
+      const l1Cp3Num = Number(this.l1Cp3);
+      if (!isNaN(l1Cp3Num)) {
+        const calcCp3_L1 = (l1Cp3Num - l0Cp3Num) / 250;
+        valoresL1.push(calcCp3_L1);
+      }
+    }
+    
+    if (valoresL1.length > 0) {
+      this.l1VariacaoDimensionalMedia = mean(valoresL1) as number;
+      this.l1DesvioPadraoDimensional = valoresL1.length > 1 ? Number(std(valoresL1)) : 0;
     }
   }
   
   // Cálculo para L7 (7 dias após L0)
-  if (this.l7Cp1 != null && this.l7Cp2 != null && this.l7Cp3 != null && this.l7Data != null) {
-    const l7Cp1Num = Number(this.l7Cp1);
-    const l7Cp2Num = Number(this.l7Cp2);
-    const l7Cp3Num = Number(this.l7Cp3);
+  if (this.l7Data != null) {
+    const valoresL7: number[] = [];
     
-    if (!isNaN(l7Cp1Num) && !isNaN(l7Cp2Num) && !isNaN(l7Cp3Num)) {
-      const calcCp1_L7 = (l7Cp1Num - l0Cp1Num) / 0.25;
-      const calcCp2_L7 = (l7Cp2Num - l0Cp2Num) / 0.25;
-      const calcCp3_L7 = (l7Cp3Num - l0Cp3Num) / 0.25;
-      this.l7VariacaoDimensionalMedia = mean([calcCp1_L7, calcCp2_L7, calcCp3_L7]) as number;
-      this.l7DesvioPadraoDimensional = Number(std([calcCp1_L7, calcCp2_L7, calcCp3_L7]));
+    if (this.l7Cp1 != null) {
+      const l7Cp1Num = Number(this.l7Cp1);
+      if (!isNaN(l7Cp1Num)) {
+        const calcCp1_L7 = (l7Cp1Num - l0Cp1Num) / 250;
+        valoresL7.push(calcCp1_L7);
+      }
+    }
+    
+    if (this.l7Cp2 != null) {
+      const l7Cp2Num = Number(this.l7Cp2);
+      if (!isNaN(l7Cp2Num)) {
+        const calcCp2_L7 = (l7Cp2Num - l0Cp2Num) / 250;
+        valoresL7.push(calcCp2_L7);
+      }
+    }
+    
+    if (this.l7Cp3 != null) {
+      const l7Cp3Num = Number(this.l7Cp3);
+      if (!isNaN(l7Cp3Num)) {
+        const calcCp3_L7 = (l7Cp3Num - l0Cp3Num) / 250;
+        valoresL7.push(calcCp3_L7);
+      }
+    }
+    
+    if (valoresL7.length > 0) {
+      this.l7VariacaoDimensionalMedia = mean(valoresL7) as number;
+      this.l7DesvioPadraoDimensional = valoresL7.length > 1 ? Number(std(valoresL7)) : 0;
     }
   }
   
   // Cálculo para L28 (28 dias após L0)
-  if (this.l28Cp1 != null && this.l28Cp2 != null && this.l28Cp3 != null && this.l28Data != null) {
-    const l28Cp1Num = Number(this.l28Cp1);
-    const l28Cp2Num = Number(this.l28Cp2);
-    const l28Cp3Num = Number(this.l28Cp3);
+  if (this.l28Data != null) {
+    const valoresL28: number[] = [];
     
-    if (!isNaN(l28Cp1Num) && !isNaN(l28Cp2Num) && !isNaN(l28Cp3Num)) {
-      const calcCp1_L28 = (l28Cp1Num - l0Cp1Num) / 0.25;
-      const calcCp2_L28 = (l28Cp2Num - l0Cp2Num) / 0.25;
-      const calcCp3_L28 = (l28Cp3Num - l0Cp3Num) / 0.25;
-      this.l28VariacaoDimensionalMedia = mean([calcCp1_L28, calcCp2_L28, calcCp3_L28]) as number;
-      this.l28DesvioPadraoDimensional = Number(std([calcCp1_L28, calcCp2_L28, calcCp3_L28]));
+    if (this.l28Cp1 != null) {
+      const l28Cp1Num = Number(this.l28Cp1);
+      if (!isNaN(l28Cp1Num)) {
+        const calcCp1_L28 = (l28Cp1Num - l0Cp1Num) / 250;
+        valoresL28.push(calcCp1_L28);
+      }
+    }
+    
+    if (this.l28Cp2 != null) {
+      const l28Cp2Num = Number(this.l28Cp2);
+      if (!isNaN(l28Cp2Num)) {
+        const calcCp2_L28 = (l28Cp2Num - l0Cp2Num) / 250;
+        valoresL28.push(calcCp2_L28);
+      }
+    }
+    
+    if (this.l28Cp3 != null) {
+      const l28Cp3Num = Number(this.l28Cp3);
+      if (!isNaN(l28Cp3Num)) {
+        const calcCp3_L28 = (l28Cp3Num - l0Cp3Num) / 250;
+        valoresL28.push(calcCp3_L28);
+      }
+    }
+    
+    if (valoresL28.length > 0) {
+      this.l28VariacaoDimensionalMedia = mean(valoresL28) as number;
+      this.l28DesvioPadraoDimensional = valoresL28.length > 1 ? Number(std(valoresL28)) : 0;
     }
   }
   
@@ -887,54 +1398,136 @@ realizarCalculosVariacaoMassa(): void {
   const m0Cp1Num = Number(this.m0Cp1);
   const m0Cp2Num = Number(this.m0Cp2);
   const m0Cp3Num = Number(this.m0Cp3);
+  
+  console.log('M0 Values:', { m0Cp1Num, m0Cp2Num, m0Cp3Num });
+  
   if (isNaN(m0Cp1Num) || isNaN(m0Cp2Num) || isNaN(m0Cp3Num)) {
     return;
   }
   // Cálculo para M1 (1 dia após M0)
-  if (this.m1Cp1 != null && this.m1Cp2 != null && this.m1Cp3 != null && this.m1Data != null) {
-    const m1Cp1Num = Number(this.m1Cp1);
-    const m1Cp2Num = Number(this.m1Cp2);
-    const m1Cp3Num = Number(this.m1Cp3);
-    if (!isNaN(m1Cp1Num) && !isNaN(m1Cp2Num) && !isNaN(m1Cp3Num)) {
-      const calcCp1_M1 = ((m1Cp1Num - m0Cp1Num) / m0Cp1Num) * 100;
-      console.log('calcCp1_M1:', calcCp1_M1);
-      const calcCp2_M1 = (m1Cp2Num - m0Cp2Num) / m0Cp2Num * 100;
-      console.log('KKKKKKK_M1:', m1Cp2Num);
-      console.log('mmmmmm_0):', m0Cp2Num);
-      console.log('resultado:', calcCp2_M1);
-      const calcCp3_M1 = (m1Cp3Num - m0Cp3Num) / m0Cp3Num * 100;
-      this.m1VariacaoMassaMedia = mean([calcCp1_M1, calcCp2_M1, calcCp3_M1]) as number;
-      this.m1DesvioPadraoMassa = Number(std([calcCp1_M1, calcCp2_M1, calcCp3_M1]));
-      //console.log('this.m1VariacaoMassaMedia:', this.m1VariacaoMassaMedia);
-      //console.log('this.m1DesvioPadraoMassa:', this.m1DesvioPadraoMassa);
+  if (this.m1Data != null) {
+    const valoresM1: number[] = [];
+    
+    if (this.m1Cp1 != null) {
+      const m1Cp1Num = Number(this.m1Cp1);
+      if (!isNaN(m1Cp1Num)) {
+        const calcCp1_M1 = ((m1Cp1Num - m0Cp1Num) / m0Cp1Num) * 100;
+        valoresM1.push(calcCp1_M1);
+        console.log('calcCp1_M1:', calcCp1_M1);
+      }
+    }
+    
+    if (this.m1Cp2 != null) {
+      const m1Cp2Num = Number(this.m1Cp2);
+      if (!isNaN(m1Cp2Num)) {
+        const calcCp2_M1 = ((m1Cp2Num - m0Cp2Num) / m0Cp2Num) * 100;
+        valoresM1.push(calcCp2_M1);
+        console.log('calcCp2_M1:', calcCp2_M1);
+      }
+    }
+    
+    if (this.m1Cp3 != null) {
+      const m1Cp3Num = Number(this.m1Cp3);
+      if (!isNaN(m1Cp3Num)) {
+        const calcCp3_M1 = ((m1Cp3Num - m0Cp3Num) / m0Cp3Num) * 100;
+        valoresM1.push(calcCp3_M1);
+        console.log('calcCp3_M1:', calcCp3_M1);
+      }
+    }
+    
+    if (valoresM1.length > 0) {
+      this.m1VariacaoMassaMedia = mean(valoresM1) as number;
+      this.m1DesvioPadraoMassa = valoresM1.length > 1 ? Number(std(valoresM1)) : 0;
+      console.log('M1 Results:', { media: this.m1VariacaoMassaMedia, desvio: this.m1DesvioPadraoMassa, count: valoresM1.length });
     }
   }
-  // Cálculo para M7 (7 dias dopo M0)
-  if (this.m7Cp1 != null && this.m7Cp2 != null && this.m7Cp3 != null && this.m7Data != null) {
-    const m7Cp1Num = Number(this.m7Cp1);
-    const m7Cp2Num = Number(this.m7Cp2);
-    const m7Cp3Num = Number(this.m7Cp3);
-    if (!isNaN(m7Cp1Num) && !isNaN(m7Cp2Num) && !isNaN(m7Cp3Num)) {
-      const calcCp1_M7 = ((m0Cp1Num - m7Cp1Num) / m0Cp1Num) * 100;
-      const calcCp2_M7 = ((m0Cp2Num - m7Cp2Num) / m7Cp2Num) * 100;
-      const calcCp3_M7 = ((m0Cp3Num - m7Cp3Num) / m7Cp3Num) * 100;
-      this.m7VariacaoMassaMedia = mean([calcCp1_M7, calcCp2_M7, calcCp3_M7]) as number;
-      this.m7DesvioPadraoMassa = Number(std([calcCp1_M7, calcCp2_M7, calcCp3_M7]));
+  // Cálculo para M7 (7 dias após M0)
+  if (this.m7Data != null) {
+    const valoresM7: number[] = [];
+    
+    if (this.m7Cp1 != null) {
+      const m7Cp1Num = Number(this.m7Cp1);
+      if (!isNaN(m7Cp1Num)) {
+        const calcCp1_M7 = ((m7Cp1Num - m0Cp1Num) / m0Cp1Num) * 100;
+        valoresM7.push(calcCp1_M7);
+      }
+    }
+    
+    if (this.m7Cp2 != null) {
+      const m7Cp2Num = Number(this.m7Cp2);
+      if (!isNaN(m7Cp2Num)) {
+        const calcCp2_M7 = ((m7Cp2Num - m0Cp2Num) / m0Cp2Num) * 100;
+        valoresM7.push(calcCp2_M7);
+      }
+    }
+    
+    if (this.m7Cp3 != null) {
+      const m7Cp3Num = Number(this.m7Cp3);
+      if (!isNaN(m7Cp3Num)) {
+        const calcCp3_M7 = ((m7Cp3Num - m0Cp3Num) / m0Cp3Num) * 100;
+        valoresM7.push(calcCp3_M7);
+      }
+    }
+    
+    if (valoresM7.length > 0) {
+      this.m7VariacaoMassaMedia = mean(valoresM7) as number;
+      this.m7DesvioPadraoMassa = valoresM7.length > 1 ? Number(std(valoresM7)) : 0;
     }
   }
-  // Cálculo para M28 (28 dias dopo M0)
-  if (this.m28Cp1 != null && this.m28Cp2 != null && this.m28Cp3 != null && this.m28Data != null) {
-    const m28Cp1Num = Number(this.m28Cp1);
-    const m28Cp2Num = Number(this.m28Cp2);
-    const m28Cp3Num = Number(this.m28Cp3);
-    if (!isNaN(m28Cp1Num) && !isNaN(m28Cp2Num) && !isNaN(m28Cp3Num)) {
-      const calcCp1_M28 = ((m0Cp1Num - m28Cp1Num) / m0Cp1Num) * 100;
-      const calcCp2_M28 = ((m0Cp2Num - m28Cp2Num) / m28Cp2Num) * 100;
-      const calcCp3_M28 = ((m0Cp3Num - m28Cp3Num) / m28Cp3Num) * 100;
-      this.m28VariacaoMassaMedia = mean([calcCp1_M28, calcCp2_M28, calcCp3_M28]) as number;
-      this.m28DesvioPadraoMassa = Number(std([calcCp1_M28, calcCp2_M28, calcCp3_M28]));
+  // Cálculo para M28 (28 dias após M0)
+  if (this.m28Data != null) {
+    const valoresM28: number[] = [];
+    
+    if (this.m28Cp1 != null) {
+      const m28Cp1Num = Number(this.m28Cp1);
+      if (!isNaN(m28Cp1Num)) {
+        const calcCp1_M28 = ((m28Cp1Num - m0Cp1Num) / m0Cp1Num) * 100;
+        valoresM28.push(calcCp1_M28);
+      }
+    }
+    
+    if (this.m28Cp2 != null) {
+      const m28Cp2Num = Number(this.m28Cp2);
+      if (!isNaN(m28Cp2Num)) {
+        const calcCp2_M28 = ((m28Cp2Num - m0Cp2Num) / m0Cp2Num) * 100;
+        valoresM28.push(calcCp2_M28);
+      }
+    }
+    
+    if (this.m28Cp3 != null) {
+      const m28Cp3Num = Number(this.m28Cp3);
+      if (!isNaN(m28Cp3Num)) {
+        const calcCp3_M28 = ((m28Cp3Num - m0Cp3Num) / m0Cp3Num) * 100;
+        valoresM28.push(calcCp3_M28);
+      }
+    }
+    
+    if (valoresM28.length > 0) {
+      this.m28VariacaoMassaMedia = mean(valoresM28) as number;
+      this.m28DesvioPadraoMassa = valoresM28.length > 1 ? Number(std(valoresM28)) : 0;
     }
   }
+  
+  // Calcular média e desvio padrão total de M1, M7 e M28
+  const mediasValidas: number[] = [];
+  if (this.m1VariacaoMassaMedia != null && !isNaN(this.m1VariacaoMassaMedia)) {
+    mediasValidas.push(this.m1VariacaoMassaMedia);
+  }
+  if (this.m7VariacaoMassaMedia != null && !isNaN(this.m7VariacaoMassaMedia)) {
+    mediasValidas.push(this.m7VariacaoMassaMedia);
+  }
+  if (this.m28VariacaoMassaMedia != null && !isNaN(this.m28VariacaoMassaMedia)) {
+    mediasValidas.push(this.m28VariacaoMassaMedia);
+  }
+  
+  if (mediasValidas.length > 0) {
+    this.variacaoMassaMediaTotal = mean(mediasValidas) as number;
+    this.variacaoMassaDesvioPadraoTotal = Number(std(mediasValidas));
+  } else {
+    this.variacaoMassaMediaTotal = null;
+    this.variacaoMassaDesvioPadraoTotal = null;
+  }
+  
   // Atualizar dados da tabela
   this.atualizarTabelaVariacaoMassa();
 }
@@ -964,7 +1557,13 @@ atualizarTabelaVariacaoMassa(): void {
       data: this.m28Data,
       media: this.m28VariacaoMassaMedia,
       desvioPadrao: this.m28DesvioPadraoMassa
-    }
+    },
+    // {
+    //   label: '🎯 TOTAL',
+    //   data: null,
+    //   media: this.variacaoMassaMediaTotal,
+    //   desvioPadrao: this.variacaoMassaDesvioPadraoTotal
+    // }
   ];
 }
 salvarVariacaoMassa(analise: any): void {
@@ -999,7 +1598,11 @@ salvarVariacaoMassa(analise: any): void {
       data: this.m28Data ? this.toLocalYYYYMMDD(new Date(this.m28Data)) : null,
       media: this.m28VariacaoMassaMedia,      
       desvio_padrao: this.m28DesvioPadraoMassa
-    },    
+    },
+    total: {
+      media: this.variacaoMassaMediaTotal,
+      desvio_padrao: this.variacaoMassaDesvioPadraoTotal
+    }
   };
   this.exibirModalVariacaoMassa = false;
   // Preparar dados para atualização
@@ -1082,6 +1685,10 @@ limparVariacaoMassa(): void {
   this.m28VariacaoMassaMedia = null;
   this.m28DesvioPadraoMassa = null;
   this.m28Data = null;
+  
+  // Limpar totais
+  this.variacaoMassaMediaTotal = null;
+  this.variacaoMassaDesvioPadraoTotal = null;
 
   // Limpar tabela
   this.variacaoMassaTableData = [];
@@ -1132,6 +1739,12 @@ carregarVariacaoMassaSalva(analise: any): void {
     this.m28DesvioPadraoMassa = dados.m28.desvio_padrao || null;
     this.m28Data = dados.m28.data ? this.parseDateLocal(dados.m28.data) : null;
   }
+  
+    // Carregar totais
+    if (dados.total) {
+      this.variacaoMassaMediaTotal = dados.total.media || null;
+      this.variacaoMassaDesvioPadraoTotal = dados.total.desvio_padrao || null;
+    }
 
     // Atualizar tabela após carregar dados
     this.atualizarTabelaVariacaoMassa();
@@ -7356,7 +7969,15 @@ canDeactivate(): boolean | Promise<boolean> {
           this.exibirModalVariacaoMassa = true;
         }
       },
-      { label: 'Módulo de Elasticidade Dinâmico', icon: 'pi pi-eye', command: () => this.abrirModalElasticidade(analise) },
+      { 
+        label: 'Módulo de Elasticidade Dinâmico', 
+        icon: 'pi pi-eye', 
+        command: () => {
+          this.carregarModuloElasticidadeSalvo(analise); // Carregar dados salvos
+          this.atualizarTabelaModuloElasticidade(); // Garantir que a tabela seja inicializada
+          this.exibirModalModuloElasticidade = true;
+        }
+      },
       //{ label: 'Flexão', icon: 'pi pi-eye', command: () => this.abrirModalFlexao(analise) },
       //{ label: 'Compressão', icon: 'pi pi-eye', command: () => this.abrirModalCompressao(analise) },
       //{ label: 'Determinação do Coeficiente de Absorção de Água por Capilaridade', icon: 'pi pi-eye' },

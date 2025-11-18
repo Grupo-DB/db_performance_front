@@ -3144,7 +3144,9 @@
                         <p-inputNumber
                             [ngModel]="i === 0 ? m0Cp1 : i === 1 ? m1Cp1 : i === 2 ? m7Cp1 : m28Cp1"
                             (ngModelChange)="i === 0 ? (m0Cp1 = $event) : i === 1 ? (m1Cp1 = $event) : i === 2 ? (m7Cp1 = $event) : (m28Cp1 = $event); realizarCalculosVariacaoMassa()"
-                            
+                            mode="decimal"
+                            [minFractionDigits]="0"
+                            [maxFractionDigits]="3"
                             [style]="{'width':'100%'}"
                             placeholder="0"
                             locale="pt-BR"
@@ -3154,7 +3156,9 @@
                         <p-inputNumber
                             [ngModel]="i === 0 ? m0Cp2 : i === 1 ? m1Cp2 : i === 2 ? m7Cp2 : m28Cp2"
                             (ngModelChange)="i === 0 ? (m0Cp2 = $event) : i === 1 ? (m1Cp2 = $event) : i === 2 ? (m7Cp2 = $event) : (m28Cp2 = $event); realizarCalculosVariacaoMassa()"
-                          
+                            mode="decimal"
+                            [minFractionDigits]="0"
+                            [maxFractionDigits]="3"
                             [style]="{'width':'100%'}"
                             placeholder="0"
                             locale="pt-BR"
@@ -3164,7 +3168,9 @@
                         <p-inputNumber
                             [ngModel]="i === 0 ? m0Cp3 : i === 1 ? m1Cp3 : i === 2 ? m7Cp3 : m28Cp3"
                             (ngModelChange)="i === 0 ? (m0Cp3 = $event) : i === 1 ? (m1Cp3 = $event) : i === 2 ? (m7Cp3 = $event) : (m28Cp3 = $event); realizarCalculosVariacaoMassa()"
-                     
+                            mode="decimal"
+                            [minFractionDigits]="0"
+                            [maxFractionDigits]="3"
                             [style]="{'width':'100%'}"
                             placeholder="0"
                             locale="pt-BR"
@@ -3213,4 +3219,197 @@
         </p-button>
     </div>
 
-</p-drawer>    
+</p-drawer>
+
+<!-- Modal Módulo de Elasticidade -->
+<p-drawer 
+    [(visible)]="exibirModalModuloElasticidade" 
+    position="full" 
+>
+    <div class="mb-4">
+        <h2 class="font-bold text-2xl mb-4" style="color: #ffffff;">🔬 Módulo de Elasticidade Dinâmico</h2>
+    </div>
+
+    <!-- Tabela de Módulo de Elasticidade -->
+    <div class="mb-4" *ngIf="moduloElasticidadeTableData.length > 0">
+        <h3 class="font-bold text-lg mb-3" style="color: #ffffff;">📊 Medições e Resultados</h3>
+        <p-table 
+            [value]="moduloElasticidadeTableData" 
+            [tableStyle]="{'min-width': '80rem'}"
+            styleClass="p-datatable-striped"
+            [scrollable]="true"
+            scrollHeight="500px"
+        >
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 100px;">CP</th>
+                    <th style="width: 120px;">Comprimento (mm)</th>
+                    <th style="width: 120px;">Largura (mm)</th>
+                    <th style="width: 120px;">Altura (mm)</th>
+                    <th style="width: 120px;">Massa (g)</th>
+                    <th style="width: 100px;">Tempo 1 (μs)</th>
+                    <th style="width: 100px;">Tempo 2 (μs)</th>
+                    <th style="width: 100px;">Tempo 3 (μs)</th>
+                    <th style="width: 120px;">Menor Tempo (μs)</th>
+                    <th style="width: 120px;">Volume (cm³)</th>
+                    <th style="width: 120px;">P Max (g/cm³)</th>
+                    <th style="width: 120px;">Velocidade (m/s)</th>
+                    <th style="width: 150px;">Ed (GPa)</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item let-i="rowIndex">
+                <tr>
+                    <td>
+                        <span class="font-semibold" [style]="{'font-size': '14px'}">{{ item.label }}</span>
+                    </td>
+                    <td>
+                        <p-inputNumber
+                            *ngIf="i < 3"
+                            [ngModel]="i === 0 ? comprimentoCp1 : i === 1 ? comprimentoCp2 : comprimentoCp3"
+                            (ngModelChange)="i === 0 ? (comprimentoCp1 = $event) : i === 1 ? (comprimentoCp2 = $event) : (comprimentoCp3 = $event); calculosModuloElasticidade()"
+                            mode="decimal"
+                            [minFractionDigits]="2"
+                            [maxFractionDigits]="8"
+                            [style]="{'width':'100%'}"
+                            showButtons="false"
+                        ></p-inputNumber>
+                        <span *ngIf="i === 3" class="text-gray-400">-</span>
+                    </td>
+                    <td>
+                        <p-inputNumber
+                            *ngIf="i < 3"
+                            [ngModel]="i === 0 ? larguraCp1 : i === 1 ? larguraCp2 : larguraCp3"
+                            (ngModelChange)="i === 0 ? (larguraCp1 = $event) : i === 1 ? (larguraCp2 = $event) : (larguraCp3 = $event); calculosModuloElasticidade()"
+                            mode="decimal"
+                            [minFractionDigits]="0"
+                            [maxFractionDigits]="3"
+                            [style]="{'width':'100%'}"
+                            placeholder="0"
+                            locale="pt-BR"
+                        ></p-inputNumber>
+                        <span *ngIf="i === 3" class="text-gray-400">-</span>
+                    </td>
+                    <td>
+                        <p-inputNumber
+                            *ngIf="i < 3"
+                            [ngModel]="i === 0 ? alturaCp1 : i === 1 ? alturaCp2 : alturaCp3"
+                            (ngModelChange)="i === 0 ? (alturaCp1 = $event) : i === 1 ? (alturaCp2 = $event) : (alturaCp3 = $event); calculosModuloElasticidade()"
+                            mode="decimal"
+                            [minFractionDigits]="0"
+                            [maxFractionDigits]="3"
+                            [style]="{'width':'100%'}"
+                            placeholder="0"
+                            locale="pt-BR"
+                        ></p-inputNumber>
+                        <span *ngIf="i === 3" class="text-gray-400">-</span>
+                    </td>
+                    <td>
+                        <p-inputNumber
+                            *ngIf="i < 3"
+                            [ngModel]="i === 0 ? massaCp1 : i === 1 ? massaCp2 : massaCp3"
+                            (ngModelChange)="i === 0 ? (massaCp1 = $event) : i === 1 ? (massaCp2 = $event) : (massaCp3 = $event); calculosModuloElasticidade()"
+                            mode="decimal"
+                            [minFractionDigits]="0"
+                            [maxFractionDigits]="3"
+                            [style]="{'width':'100%'}"
+                            placeholder="0"
+                            locale="pt-BR"
+                        ></p-inputNumber>
+                        <span *ngIf="i === 3" class="text-gray-400">-</span>
+                    </td>
+                    <td>
+                        <p-inputnumber
+                            *ngIf="i < 3"
+                            mode="decimal"
+                            [minFractionDigits]="0"
+                            [maxFractionDigits]="3"
+                            [ngModel]="i === 0 ? tempo1Cp1 : i === 1 ? tempo1Cp2 : tempo1Cp3"
+                            (ngModelChange)="i === 0 ? (tempo1Cp1 = +$event) : i === 1 ? (tempo1Cp2 = +$event) : (tempo1Cp3 = +$event); calculosModuloElasticidade()"
+                    
+                        />
+                        <span *ngIf="i === 3" class="text-gray-400">-</span>
+                    </td>
+                    <td>
+                        <p-inputNumber
+                            *ngIf="i < 3"
+                        
+                            step="0.01"
+                            [ngModel]="i === 0 ? tempo2Cp1 : i === 1 ? tempo2Cp2 : tempo2Cp3"
+                            (ngModelChange)="i === 0 ? (tempo2Cp1 = +$event) : i === 1 ? (tempo2Cp2 = +$event) : (tempo2Cp3 = +$event); calculosModuloElasticidade()"
+                    
+                            placeholder="0.00"
+                        />
+                        <span *ngIf="i === 3" class="text-gray-400">-</span>
+                    </td>
+                    <td>
+                        <p-inputNumber
+                            *ngIf="i < 3"
+                            type="number"
+                            step="0.01"
+                            [ngModel]="i === 0 ? tempo3Cp1 : i === 1 ? tempo3Cp2 : tempo3Cp3"
+                            (ngModelChange)="i === 0 ? (tempo3Cp1 = +$event) : i === 1 ? (tempo3Cp2 = +$event) : (tempo3Cp3 = +$event); calculosModuloElasticidade()"
+                            placeholder="0.00"
+                        />
+                        <span *ngIf="i === 3" class="text-gray-400">-</span>
+                    </td>
+                    <td class="text-center">
+                        <span *ngIf="item.menorTempo !== null && item.menorTempo !== undefined && !isNaN(item.menorTempo)" class="font-semibold">
+                            {{ item.menorTempo | number:'1.2-2' }}
+                        </span>
+                        <span *ngIf="item.menorTempo === null || item.menorTempo === undefined || isNaN(item.menorTempo)" class="text-gray-400">-</span>
+                    </td>
+                    <td class="text-center">
+                        <span *ngIf="item.volume !== null && item.volume !== undefined && !isNaN(item.volume)" class="font-semibold">
+                            {{ item.volume | number:'1.2-3' }}
+                        </span>
+                        <span *ngIf="item.volume === null || item.volume === undefined || isNaN(item.volume)" class="text-gray-400">-</span>
+                    </td>
+                    <td class="text-center">
+                        <span *ngIf="item.pMax !== null && item.pMax !== undefined && !isNaN(item.pMax)" class="font-semibold">
+                            {{ item.pMax | number:'1.2-3' }}
+                        </span>
+                        <span *ngIf="item.pMax === null || item.pMax === undefined || isNaN(item.pMax)" class="text-gray-400">-</span>
+                    </td>
+                    <td class="text-center">
+                        <span *ngIf="item.velocidade !== null && item.velocidade !== undefined && !isNaN(item.velocidade)" class="font-semibold">
+                            {{ item.velocidade | number:'1.2-3' }}
+                        </span>
+                        <span *ngIf="item.velocidade === null || item.velocidade === undefined || isNaN(item.velocidade)" class="text-gray-400">-</span>
+                    </td>
+                    <td class="text-center">
+                        <span 
+                            *ngIf="item.ed !== null && item.ed !== undefined && !isNaN(item.ed)" 
+                            class="font-bold"
+                            [style]="{'font-size': '16px'}"
+                            [ngClass]="{
+                                'text-blue-500': i < 3,
+                                'text-green-500': i === 3
+                            }"
+                        >
+                            {{ item.ed | number:'1.2-4' }}
+                        </span>
+                        <span *ngIf="item.ed === null || item.ed === undefined || isNaN(item.ed)" class="text-gray-400">-</span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <p-button 
+          label="Limpar" 
+          icon="pi pi-eraser" 
+          severity="info"
+          iconPos="right"
+          (onClick)="limparModuloElasticidade()">
+        </p-button>
+        <p-button 
+          label="Salvar" 
+          icon="pi pi-check" 
+          severity="success"
+          iconPos="right"
+          (onClick)="salvarModuloElasticidade(analise)">
+        </p-button>
+    </div>
+
+</p-drawer>

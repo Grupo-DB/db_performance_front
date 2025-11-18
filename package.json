@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "start:api": "node server/azure-openai-proxy.cjs",
-    "clean": "rm -rf .angular/cache node_modules/.vite",
+    "clean": "rm -rf .angular node_modules/.vite dist",
     "clean:start": "npm run clean && npm start"
   },
   "private": true,
