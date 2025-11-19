@@ -716,8 +716,8 @@ calculosModuloElasticidade(): void {
     this.moduloElasticidadeMediaTotal = null;
   }
   
-  // Atualizar dados da tabela
-  this.atualizarTabelaModuloElasticidade();
+  // Atualizar dados da tabela inline
+  this.atualizarTabelaModuloElasticidadeInline();
 }
 
 // Método para atualizar dados da tabela de Módulo de Elasticidade
@@ -769,21 +769,45 @@ atualizarTabelaModuloElasticidade(): void {
       ed: this.edCp3
     },
     {
-      label: '🎯 MÉDIA',
-      comprimento: null,
-      largura: null,
-      altura: null,
-      massa: null,
-      tempo1: null,
-      tempo2: null,
-      tempo3: null,
-      menorTempo: null,
-      volume: null,
-      pMax: null,
-      velocidade: null,
+      label: 'MÉDIA',
       ed: this.moduloElasticidadeMediaTotal
     }
   ];
+}
+
+// Método inline para atualizar apenas os valores calculados sem recriar o array
+atualizarTabelaModuloElasticidadeInline(): void {
+  if (this.moduloElasticidadeTableData.length === 0) {
+    this.atualizarTabelaModuloElasticidade();
+    return;
+  }
+  
+  // Atualizar apenas as propriedades calculadas sem recriar o array
+  if (this.moduloElasticidadeTableData.length >= 4) {
+    // CP1
+    this.moduloElasticidadeTableData[0].menorTempo = this.menorTempoCp1;
+    this.moduloElasticidadeTableData[0].volume = this.volumeCp1;
+    this.moduloElasticidadeTableData[0].pMax = this.pMaxCp1;
+    this.moduloElasticidadeTableData[0].velocidade = this.velocidadeCp1;
+    this.moduloElasticidadeTableData[0].ed = this.edCp1;
+    
+    // CP2
+    this.moduloElasticidadeTableData[1].menorTempo = this.menorTempoCp2;
+    this.moduloElasticidadeTableData[1].volume = this.volumeCp2;
+    this.moduloElasticidadeTableData[1].pMax = this.pMaxCp2;
+    this.moduloElasticidadeTableData[1].velocidade = this.velocidadeCp2;
+    this.moduloElasticidadeTableData[1].ed = this.edCp2;
+    
+    // CP3
+    this.moduloElasticidadeTableData[2].menorTempo = this.menorTempoCp3;
+    this.moduloElasticidadeTableData[2].volume = this.volumeCp3;
+    this.moduloElasticidadeTableData[2].pMax = this.pMaxCp3;
+    this.moduloElasticidadeTableData[2].velocidade = this.velocidadeCp3;
+    this.moduloElasticidadeTableData[2].ed = this.edCp3;
+    
+    // MÉDIA
+    this.moduloElasticidadeTableData[3].ed = this.moduloElasticidadeMediaTotal;
+  }
 }
 
 salvarModuloElasticidade(analise: any): void {
@@ -1081,7 +1105,9 @@ realizarCalculosVariacaoDimensional(): void {
     
     if (valoresL1.length > 0) {
       this.l1VariacaoDimensionalMedia = mean(valoresL1) as number;
+      console.log('MEDIA', this.l1VariacaoDimensionalMedia);
       this.l1DesvioPadraoDimensional = valoresL1.length > 1 ? Number(std(valoresL1)) : 0;
+      console.log('DESVIO', this.l1DesvioPadraoDimensional);
     }
   }
   
@@ -1153,8 +1179,8 @@ realizarCalculosVariacaoDimensional(): void {
     }
   }
   
-  // Atualizar dados da tabela
-  this.atualizarTabelaVariacaoDimensional();
+  // Atualizar dados da tabela inline sem recriar o array
+  this.atualizarTabelaVariacaoDimensionalInline();
 }
 
 // Método para atualizar dados da tabela de Variação Dimensional
@@ -1185,6 +1211,24 @@ atualizarTabelaVariacaoDimensional(): void {
       desvioPadrao: this.l28DesvioPadraoDimensional
     }
   ];
+}
+
+// Método inline para atualizar apenas os valores calculados sem recriar o array
+atualizarTabelaVariacaoDimensionalInline(): void {
+  if (this.variacaoDimensionalTableData.length === 0) {
+    this.atualizarTabelaVariacaoDimensional();
+    return;
+  }
+  
+  // Atualizar apenas as propriedades calculadas sem recriar o array
+  if (this.variacaoDimensionalTableData.length >= 4) {
+    this.variacaoDimensionalTableData[1].media = this.l1VariacaoDimensionalMedia;
+    this.variacaoDimensionalTableData[1].desvioPadrao = this.l1DesvioPadraoDimensional;
+    this.variacaoDimensionalTableData[2].media = this.l7VariacaoDimensionalMedia;
+    this.variacaoDimensionalTableData[2].desvioPadrao = this.l7DesvioPadraoDimensional;
+    this.variacaoDimensionalTableData[3].media = this.l28VariacaoDimensionalMedia;
+    this.variacaoDimensionalTableData[3].desvioPadrao = this.l28DesvioPadraoDimensional;
+  }
 }
 
 salvarVariacaoDimensional(analise: any): void {
@@ -1528,8 +1572,8 @@ realizarCalculosVariacaoMassa(): void {
     this.variacaoMassaDesvioPadraoTotal = null;
   }
   
-  // Atualizar dados da tabela
-  this.atualizarTabelaVariacaoMassa();
+  // Atualizar dados da tabela inline
+  this.atualizarTabelaVariacaoMassaInline();
 }
 // Método para atualizar dados da tabela de Variação de Massa
 atualizarTabelaVariacaoMassa(): void {
@@ -1565,6 +1609,24 @@ atualizarTabelaVariacaoMassa(): void {
     //   desvioPadrao: this.variacaoMassaDesvioPadraoTotal
     // }
   ];
+}
+
+// Método inline para atualizar apenas os valores calculados sem recriar o array
+atualizarTabelaVariacaoMassaInline(): void {
+  if (this.variacaoMassaTableData.length === 0) {
+    this.atualizarTabelaVariacaoMassa();
+    return;
+  }
+  
+  // Atualizar apenas as propriedades calculadas sem recriar o array
+  if (this.variacaoMassaTableData.length >= 4) {
+    this.variacaoMassaTableData[1].media = this.m1VariacaoMassaMedia;
+    this.variacaoMassaTableData[1].desvioPadrao = this.m1DesvioPadraoMassa;
+    this.variacaoMassaTableData[2].media = this.m7VariacaoMassaMedia;
+    this.variacaoMassaTableData[2].desvioPadrao = this.m7DesvioPadraoMassa;
+    this.variacaoMassaTableData[3].media = this.m28VariacaoMassaMedia;
+    this.variacaoMassaTableData[3].desvioPadrao = this.m28DesvioPadraoMassa;
+  }
 }
 salvarVariacaoMassa(analise: any): void {
   // Coletar todos os dados calculados
@@ -1937,7 +1999,7 @@ renderChart(todosOsPontos: DataPoint[], regressionLineData: DataPoint[], interce
     // Garante que o cálculo da regressão seja válido
     if (this.awCalculado !== null && !isNaN(this.awCalculado)) {
         const tipoIntercepto = (this.usarCoeficienteCustomizado && this.coeficienteLinearCustomizado !== null) 
-            ? ' (Customizado)' 
+            ? '' 
             : '';
         equacaoFormatada = `f(x) = ${m.toFixed(11)}x ${b >= 0 ? '+' : '-'} ${Math.abs(b).toFixed(11)}${tipoIntercepto}`;
     } else {
