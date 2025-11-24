@@ -6112,753 +6112,6 @@ canDeactivate(): boolean | Promise<boolean> {
 
 
 
-  abrirModalTracaoNormal(analise: any){
-    this.tracao_normal_media = 0;
-    if(this.parecer_tracao_normal){
-      this.linhasTracaoNormal = this.parecer_tracao_normal.map((item: any, index: number) => ({
-        numero: item.numero ?? index + 1,
-        diametro: item.diametro ?? null,
-        area: item.area ?? null,
-        espessura: item.espessura ?? null,
-        subst: item.subst ?? null,
-        junta: item.junta ?? null,
-        carga: item.carga ?? null,
-        resist: item.resist ?? null,
-        validacao: item.validacao ?? "",
-        rupturas: {
-          sub: item.rupturas?.sub ?? null,
-          subArga: item.rupturas?.subArga ?? null,
-          rupArga: item.rupturas?.rupArga ?? null,
-          argaCola: item.rupturas?.argaCola ?? null,
-          colarPastilha: item.rupturas?.colarPastilha ?? null
-        }
-      }));
-    }else if (analise?.tracao_normal?.linhas && Array.isArray(analise.tracao_normal.linhas)) {
-      if(analise?.tracao_normal.media){
-        this.tracao_normal_media = analise?.tracao_normal.media;
-      }
-      this.linhasTracaoNormal = analise.tracao_normal.linhas.map((item: any, index: number) => ({
-        numero: item.numero ?? index + 1,
-        diametro: item.diametro ?? null,
-        area: item.area ?? null,
-        espessura: item.espessura ?? null,
-        subst: item.subst ?? null,
-        junta: item.junta ?? null,
-        carga: item.carga ?? null,
-        resist: item.resist ?? null,
-        validacao: item.validacao ?? "",
-        rupturas: {
-          sub: item.rupturas?.sub ?? null,
-          subArga: item.rupturas?.subArga ?? null,
-          rupArga: item.rupturas?.rupArga ?? null,
-          argaCola: item.rupturas?.argaCola ?? null,
-          colarPastilha: item.rupturas?.colarPastilha ?? null
-        }
-      }));
-      while (this.linhasTracaoNormal.length < 10) {
-        const numero = this.linhasTracaoNormal.length + 1;
-        this.linhasTracaoNormal.push({
-          numero,
-          diametro: null,
-          area: null,
-          espessura: null,
-          subst: null,
-          junta: null,
-          carga: null,
-          resist: null,
-          validacao: "",
-          rupturas: {
-            sub: null,
-            subArga: null,
-            rupArga: null,
-            argaCola: null,
-            colarPastilha: null
-          }
-        });
-      }
-    } else {
-      this.linhasTracaoNormal = [];
-      for (let i = 1; i <= 10; i++) {
-        this.linhasTracaoNormal.push({
-          numero: i,
-          diametro: null,
-          area: null,
-          espessura: null,
-          subst: null,
-          junta: null,
-          carga: null,
-          resist: null,
-          validacao: "",
-          rupturas: {
-            sub: null,
-            subArga: null,
-            rupArga: null,
-            argaCola: null,
-            colarPastilha: null
-          }
-        });
-      }
-    }
-    this.modalDadosTracaoNormal = true;
-  }
-  salvarTracaoNormal(analise: any){
-
-    this.parecer_tracao_normal = this.linhasTracaoNormal;
-    this.modalDadosTracaoNormal = false;
-
-    const dadosAtualizados: Partial<Analise> = {
-      tracao_normal:{
-        linhas: this.linhasTracaoNormal,
-        media: this.tracao_normal_media
-      }
-    };
-   
-    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Tração Normal salva com sucesso!'
-        });
-        setTimeout(() => {
-        }, 1000);
-      },
-      error: (err) => {
-        console.error('Login error:', err); 
-      
-        if (err.status === 401) {
-          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
-        } else if (err.status === 403) {
-          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
-        } else if (err.status === 400) {
-          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
-        }
-        else {
-          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
-        } 
-      }
-    });    
-  }
-
-  abrirModalTracaoSubmersa(analise: any){
-    this.tracao_submersa_media = 0;
-    if(this.parecer_tracao_submersa){
-      this.linhasTracaoSubmersa = this.parecer_tracao_submersa.map((item: any, index: number) => ({
-        numero: item.numero ?? index + 1,
-        diametro: item.diametro ?? null,
-        area: item.area ?? null,
-        espessura: item.espessura ?? null,
-        subst: item.subst ?? null,
-        junta: item.junta ?? null,
-        carga: item.carga ?? null,
-        resist: item.resist ?? null,
-        validacao: item.validacao ?? "",
-        rupturas: {
-          sub: item.rupturas?.sub ?? null,
-          subArga: item.rupturas?.subArga ?? null,
-          rupArga: item.rupturas?.rupArga ?? null,
-          argaCola: item.rupturas?.argaCola ?? null,
-          colarPastilha: item.rupturas?.colarPastilha ?? null
-        }
-      }));
-    }else if (analise?.tracao_submersa?.linhas && Array.isArray(analise.tracao_submersa.linhas)) {
-      if(analise?.tracao_submersa.media){
-        this.tracao_submersa_media = analise?.tracao_submersa.media;
-      }
-      this.linhasTracaoSubmersa = analise.tracao_submersa.linhas.map((item: any, index: number) => ({
-        numero: item.numero ?? index + 1,
-        diametro: item.diametro ?? null,
-        area: item.area ?? null,
-        espessura: item.espessura ?? null,
-        subst: item.subst ?? null,
-        junta: item.junta ?? null,
-        carga: item.carga ?? null,
-        resist: item.resist ?? null,
-        validacao: item.validacao ?? "",
-        rupturas: {
-          sub: item.rupturas?.sub ?? null,
-          subArga: item.rupturas?.subArga ?? null,
-          rupArga: item.rupturas?.rupArga ?? null,
-          argaCola: item.rupturas?.argaCola ?? null,
-          colarPastilha: item.rupturas?.colarPastilha ?? null
-        }
-      }));
-      while (this.linhasTracaoSubmersa.length < 10) {
-        const numero = this.linhasTracaoSubmersa.length + 1;
-        this.linhasTracaoSubmersa.push({
-          numero,
-          diametro: null,
-          area: null,
-          espessura: null,
-          subst: null,
-          junta: null,
-          carga: null,
-          resist: null,
-          validacao: "",
-          rupturas: {
-            sub: null,
-            subArga: null,
-            rupArga: null,
-            argaCola: null,
-            colarPastilha: null
-          }
-        });
-      }
-    } else {
-      this.linhasTracaoSubmersa = [];
-      for (let i = 1; i <= 10; i++) {
-        this.linhasTracaoSubmersa.push({
-          numero: i,
-          diametro: null,
-          area: null,
-          espessura: null,
-          subst: null,
-          junta: null,
-          carga: null,
-          resist: null,
-          validacao: "",
-          rupturas: {
-            sub: null,
-            subArga: null,
-            rupArga: null,
-            argaCola: null,
-            colarPastilha: null
-          }
-        });
-      }
-    }
-    this.modalDadosTracaoSubmersa = true;
-  }
-  salvarTracaoSubmersa(analise: any){
-
-    this.parecer_tracao_submersa = this.linhasTracaoSubmersa;
-    this.modalDadosTracaoSubmersa = false;
-
-    const dadosAtualizados: Partial<Analise> = {
-      tracao_submersa:{
-        linhas: this.linhasTracaoSubmersa,
-        media: this.tracao_submersa_media
-      }
-    };
-   
-    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Tração Submersa salva com sucesso!'
-        });
-        setTimeout(() => {
-        }, 1000);
-      },
-      error: (err) => {
-        console.error('Login error:', err); 
-      
-        if (err.status === 401) {
-          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
-        } else if (err.status === 403) {
-          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
-        } else if (err.status === 400) {
-          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
-        }
-        else {
-          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
-        } 
-      }
-    });    
-  }
-
-  abrirModalTracaoEstufa(analise: any){
-    this.tracao_estufa_media = 0;
-    if(this.parecer_tracao_estufa){
-      this.linhasTracaoEstufa = this.parecer_tracao_estufa.map((item: any, index: number) => ({
-        numero: item.numero ?? index + 1,
-        diametro: item.diametro ?? null,
-        area: item.area ?? null,
-        espessura: item.espessura ?? null,
-        subst: item.subst ?? null,
-        junta: item.junta ?? null,
-        carga: item.carga ?? null,
-        resist: item.resist ?? null,
-        validacao: item.validacao ?? "",
-        rupturas: {
-          sub: item.rupturas?.sub ?? null,
-          subArga: item.rupturas?.subArga ?? null,
-          rupArga: item.rupturas?.rupArga ?? null,
-          argaCola: item.rupturas?.argaCola ?? null,
-          colarPastilha: item.rupturas?.colarPastilha ?? null
-        }
-      }));
-    }else if (analise?.tracao_estufa?.linhas && Array.isArray(analise.tracao_estufa.linhas)) {
-      if(analise?.tracao_estufa.media){
-        this.tracao_estufa_media = analise?.tracao_estufa.media;
-      }
-      this.linhasTracaoEstufa = analise.tracao_estufa.linhas.map((item: any, index: number) => ({
-        numero: item.numero ?? index + 1,
-        diametro: item.diametro ?? null,
-        area: item.area ?? null,
-        espessura: item.espessura ?? null,
-        subst: item.subst ?? null,
-        junta: item.junta ?? null,
-        carga: item.carga ?? null,
-        resist: item.resist ?? null,
-        validacao: item.validacao ?? "",
-        rupturas: {
-          sub: item.rupturas?.sub ?? null,
-          subArga: item.rupturas?.subArga ?? null,
-          rupArga: item.rupturas?.rupArga ?? null,
-          argaCola: item.rupturas?.argaCola ?? null,
-          colarPastilha: item.rupturas?.colarPastilha ?? null
-        }
-      }));
-      while (this.linhasTracaoEstufa.length < 10) {
-        const numero = this.linhasTracaoEstufa.length + 1;
-        this.linhasTracaoEstufa.push({
-          numero,
-          diametro: null,
-          area: null,
-          espessura: null,
-          subst: null,
-          junta: null,
-          carga: null,
-          resist: null,
-          validacao: "",
-          rupturas: {
-            sub: null,
-            subArga: null,
-            rupArga: null,
-            argaCola: null,
-            colarPastilha: null
-          }
-        });
-      }
-    } else {
-      this.linhasTracaoEstufa = [];
-      for (let i = 1; i <= 10; i++) {
-        this.linhasTracaoEstufa.push({
-          numero: i,
-          diametro: null,
-          area: null,
-          espessura: null,
-          subst: null,
-          junta: null,
-          carga: null,
-          resist: null,
-          validacao: "",
-          rupturas: {
-            sub: null,
-            subArga: null,
-            rupArga: null,
-            argaCola: null,
-            colarPastilha: null
-          }
-        });
-      }
-    }
-    this.modalDadosTracaoEstufa = true;
-  }
-  salvarTracaoEstufa(analise: any){
-
-    this.parecer_tracao_estufa = this.linhasTracaoEstufa;
-    this.modalDadosTracaoEstufa = false;
-
-    const dadosAtualizados: Partial<Analise> = {
-      tracao_estufa:{
-        linhas: this.linhasTracaoEstufa,
-        media: this.tracao_estufa_media
-      }
-    };
-   
-    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Tração Estufa salva com sucesso!'
-        });
-        setTimeout(() => {
-        }, 1000);
-      },
-      error: (err) => {
-        console.error('Login error:', err); 
-      
-        if (err.status === 401) {
-          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
-        } else if (err.status === 403) {
-          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
-        } else if (err.status === 400) {
-          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
-        }
-        else {
-          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
-        } 
-      }
-    });    
-  }
-
-  abrirModalTracaoAberto(analise: any){
-    this.tracao_aberto_media = 0;
-    if(this.parecer_tracao_aberto){
-      this.linhasTracaoAberto = this.parecer_tracao_aberto.map((item: any, index: number) => ({
-        numero: item.numero ?? index + 1,
-        diametro: item.diametro ?? null,
-        area: item.area ?? null,
-        espessura: item.espessura ?? null,
-        subst: item.subst ?? null,
-        junta: item.junta ?? null,
-        carga: item.carga ?? null,
-        resist: item.resist ?? null,
-        validacao: item.validacao ?? "",
-        rupturas: {
-          sub: item.rupturas?.sub ?? null,
-          subArga: item.rupturas?.subArga ?? null,
-          rupArga: item.rupturas?.rupArga ?? null,
-          argaCola: item.rupturas?.argaCola ?? null,
-          colarPastilha: item.rupturas?.colarPastilha ?? null
-        }
-      }));
-    }else if (analise?.tracao_tempo_aberto?.linhas && Array.isArray(analise.tracao_tempo_aberto.linhas)) {
-      if(analise?.tracao_tempo_aberto.media){
-        this.tracao_aberto_media = analise?.tracao_tempo_aberto.media;
-      }
-      this.linhasTracaoAberto = analise.tracao_tempo_aberto.linhas.map((item: any, index: number) => ({
-        numero: item.numero ?? index + 1,
-        diametro: item.diametro ?? null,
-        area: item.area ?? null,
-        espessura: item.espessura ?? null,
-        subst: item.subst ?? null,
-        junta: item.junta ?? null,
-        carga: item.carga ?? null,
-        resist: item.resist ?? null,
-        validacao: item.validacao ?? "",
-        rupturas: {
-          sub: item.rupturas?.sub ?? null,
-          subArga: item.rupturas?.subArga ?? null,
-          rupArga: item.rupturas?.rupArga ?? null,
-          argaCola: item.rupturas?.argaCola ?? null,
-          colarPastilha: item.rupturas?.colarPastilha ?? null
-        }
-      }));
-      while (this.linhasTracaoAberto.length < 10) {
-        const numero = this.linhasTracaoAberto.length + 1;
-        this.linhasTracaoAberto.push({
-          numero,
-          diametro: null,
-          area: null,
-          espessura: null,
-          subst: null,
-          junta: null,
-          carga: null,
-          resist: null,
-          validacao: "",
-          rupturas: {
-            sub: null,
-            subArga: null,
-            rupArga: null,
-            argaCola: null,
-            colarPastilha: null
-          }
-        });
-      }
-    } else {
-      this.linhasTracaoAberto = [];
-      for (let i = 1; i <= 10; i++) {
-        this.linhasTracaoAberto.push({
-          numero: i,
-          diametro: null,
-          area: null,
-          espessura: null,
-          subst: null,
-          junta: null,
-          carga: null,
-          resist: null,
-          validacao: "",
-          rupturas: {
-            sub: null,
-            subArga: null,
-            rupArga: null,
-            argaCola: null,
-            colarPastilha: null
-          }
-        });
-      }
-    }
-    this.modalDadosTracaoAberto = true;
-  }
-  salvarTracaoAberto(analise: any){
-
-    this.parecer_tracao_aberto = this.linhasTracaoAberto;
-    this.modalDadosTracaoAberto = false;
-
-    const dadosAtualizados: Partial<Analise> = {
-      tracao_tempo_aberto:{
-        linhas: this.linhasTracaoAberto,
-        media: this.parecer_tracao_aberto
-      }
-    };
-   
-    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Tração Tempo em Aberto salva com sucesso!'
-        });
-        setTimeout(() => {
-        }, 1000);
-      },
-      error: (err) => {
-        console.error('Login error:', err); 
-      
-        if (err.status === 401) {
-          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
-        } else if (err.status === 403) {
-          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
-        } else if (err.status === 400) {
-          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
-        }
-        else {
-          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
-        } 
-      }
-    });    
-  }
-
-  atualizarCalculosTracaoNormal(linha: any) {
-    const carga = Number(linha.carga);
-    const area = Number(linha.area);
-
-    // Calcula resistência individual
-    if (!isNaN(carga) && carga > 0 && !isNaN(area) && area > 0) {
-      const resist = (carga * 10) / area;
-      linha.resist = parseFloat(resist.toFixed(2));
-    } else {
-      linha.resist = '!#REF';
-    }
-
-    // Garante que há uma lista de linhas
-    if (!this.linhasTracaoNormal) {
-      this.linhasTracaoNormal = [];
-    }
-
-    // Filtra resist válidos (≠ null, '', '!#REF', NaN, 0)
-    const resistValidos = this.linhasTracaoNormal
-      .map(l => l.resist)
-      .filter((v: any) =>
-        v !== null &&
-        v !== undefined &&
-        v !== '' &&
-        v !== '!#REF' &&
-        !isNaN(Number(v)) &&
-        Number(v) !== 0
-      )
-      .map((v: any) => Number(v));
-
-    // Calcula média e armazena em this.media_substrato
-    if (resistValidos.length > 0) {
-      const soma = resistValidos.reduce((acc, val) => acc + val, 0);
-      this.tracao_normal_media = parseFloat((soma / resistValidos.length).toFixed(2));
-    } else {
-      this.tracao_normal_media = null;
-    }
-
-    // --- Validação de ±30% ---
-    if (this.tracao_normal_media !== null && linha.resist !== '!#REF') {
-      const valor_vezes_03 = 0.3 * this.tracao_normal_media;
-      const linha_mais_03 = this.tracao_normal_media + valor_vezes_03;
-      const linha_menos_03 = this.tracao_normal_media - valor_vezes_03;
-
-      if (linha.resist > linha_mais_03 || linha.resist < linha_menos_03) {
-        linha.validacao = 'Inválido';
-      } else {
-        linha.validacao = 'Válido';
-      }
-
-      console.log(
-        `Resistência: ${linha.resist} | Média: ${this.tracao_normal_media} | +30%: ${linha_mais_03} | -30%: ${linha_menos_03}`
-      );
-    } else {
-      linha.validacao = null;
-    }
-  }
-
-  atualizarCalculosTracaoSubmersa(linha: any) {
-    const carga = Number(linha.carga);
-    const area = Number(linha.area);
-
-    // Calcula resistência individual
-    if (!isNaN(carga) && carga > 0 && !isNaN(area) && area > 0) {
-      const resist = (carga * 10) / area;
-      linha.resist = parseFloat(resist.toFixed(2));
-    } else {
-      linha.resist = '!#REF';
-    }
-
-    // Garante que há uma lista de linhas
-    if (!this.linhasTracaoSubmersa) {
-      this.linhasTracaoSubmersa = [];
-    }
-
-    // Filtra resist válidos (≠ null, '', '!#REF', NaN, 0)
-    const resistValidos = this.linhasTracaoSubmersa
-      .map(l => l.resist)
-      .filter((v: any) =>
-        v !== null &&
-        v !== undefined &&
-        v !== '' &&
-        v !== '!#REF' &&
-        !isNaN(Number(v)) &&
-        Number(v) !== 0
-      )
-      .map((v: any) => Number(v));
-
-    // Calcula média e armazena em this.media_substrato
-    if (resistValidos.length > 0) {
-      const soma = resistValidos.reduce((acc, val) => acc + val, 0);
-      this.tracao_submersa_media = parseFloat((soma / resistValidos.length).toFixed(2));
-    } else {
-      this.tracao_submersa_media = null;
-    }
-
-    // --- Validação de ±30% ---
-    if (this.tracao_submersa_media !== null && linha.resist !== '!#REF') {
-      const valor_vezes_03 = 0.3 * this.tracao_submersa_media;
-      const linha_mais_03 = this.tracao_submersa_media + valor_vezes_03;
-      const linha_menos_03 = this.tracao_submersa_media - valor_vezes_03;
-
-      if (linha.resist > linha_mais_03 || linha.resist < linha_menos_03) {
-        linha.validacao = 'Inválido';
-      } else {
-        linha.validacao = 'Válido';
-      }
-
-      console.log(
-        `Resistência: ${linha.resist} | Média: ${this.tracao_submersa_media} | +30%: ${linha_mais_03} | -30%: ${linha_menos_03}`
-      );
-    } else {
-      linha.validacao = null;
-    }
-  }
-
-  atualizarCalculosTracaoEstufa(linha: any) {
-    const carga = Number(linha.carga);
-    const area = Number(linha.area);
-
-    // Calcula resistência individual
-    if (!isNaN(carga) && carga > 0 && !isNaN(area) && area > 0) {
-      const resist = (carga * 10) / area;
-      linha.resist = parseFloat(resist.toFixed(2));
-    } else {
-      linha.resist = '!#REF';
-    }
-
-    // Garante que há uma lista de linhas
-    if (!this.linhasTracaoEstufa) {
-      this.linhasTracaoEstufa = [];
-    }
-
-    // Filtra resist válidos (≠ null, '', '!#REF', NaN, 0)
-    const resistValidos = this.linhasTracaoEstufa
-      .map(l => l.resist)
-      .filter((v: any) =>
-        v !== null &&
-        v !== undefined &&
-        v !== '' &&
-        v !== '!#REF' &&
-        !isNaN(Number(v)) &&
-        Number(v) !== 0
-      )
-      .map((v: any) => Number(v));
-
-    // Calcula média e armazena em this.media_substrato
-    if (resistValidos.length > 0) {
-      const soma = resistValidos.reduce((acc, val) => acc + val, 0);
-      this.tracao_estufa_media = parseFloat((soma / resistValidos.length).toFixed(2));
-    } else {
-      this.tracao_estufa_media = null;
-    }
-
-    // --- Validação de ±30% ---
-    if (this.tracao_estufa_media !== null && linha.resist !== '!#REF') {
-      const valor_vezes_03 = 0.3 * this.tracao_estufa_media;
-      const linha_mais_03 = this.tracao_estufa_media + valor_vezes_03;
-      const linha_menos_03 = this.tracao_estufa_media - valor_vezes_03;
-
-      if (linha.resist > linha_mais_03 || linha.resist < linha_menos_03) {
-        linha.validacao = 'Inválido';
-      } else {
-        linha.validacao = 'Válido';
-      }
-
-      console.log(
-        `Resistência: ${linha.resist} | Média: ${this.tracao_estufa_media} | +30%: ${linha_mais_03} | -30%: ${linha_menos_03}`
-      );
-    } else {
-      linha.validacao = null;
-    }
-  }
-
-  atualizarCalculosTracaoAberto(linha: any) {
-    const carga = Number(linha.carga);
-    const area = Number(linha.area);
-
-    // Calcula resistência individual
-    if (!isNaN(carga) && carga > 0 && !isNaN(area) && area > 0) {
-      const resist = (carga * 10) / area;
-      linha.resist = parseFloat(resist.toFixed(2));
-    } else {
-      linha.resist = '!#REF';
-    }
-
-    // Garante que há uma lista de linhas
-    if (!this.linhasTracaoAberto) {
-      this.linhasTracaoNormal = [];
-    }
-
-    // Filtra resist válidos (≠ null, '', '!#REF', NaN, 0)
-    const resistValidos = this.linhasTracaoNormal
-      .map(l => l.resist)
-      .filter((v: any) =>
-        v !== null &&
-        v !== undefined &&
-        v !== '' &&
-        v !== '!#REF' &&
-        !isNaN(Number(v)) &&
-        Number(v) !== 0
-      )
-      .map((v: any) => Number(v));
-
-    // Calcula média e armazena em this.media_substrato
-    if (resistValidos.length > 0) {
-      const soma = resistValidos.reduce((acc, val) => acc + val, 0);
-      this.tracao_aberto_media = parseFloat((soma / resistValidos.length).toFixed(2));
-    } else {
-      this.tracao_aberto_media = null;
-    }
-
-    // --- Validação de ±30% ---
-    if (this.tracao_aberto_media !== null && linha.resist !== '!#REF') {
-      const valor_vezes_03 = 0.3 * this.tracao_aberto_media;
-      const linha_mais_03 = this.tracao_aberto_media + valor_vezes_03;
-      const linha_menos_03 = this.tracao_aberto_media - valor_vezes_03;
-
-      if (linha.resist > linha_mais_03 || linha.resist < linha_menos_03) {
-        linha.validacao = 'Inválido';
-      } else {
-        linha.validacao = 'Válido';
-      }
-
-      console.log(
-        `Resistência: ${linha.resist} | Média: ${this.tracao_aberto_media} | +30%: ${linha_mais_03} | -30%: ${linha_menos_03}`
-      );
-    } else {
-      linha.validacao = null;
-    }
-  }
-
-
-
-
 
 
 
@@ -7649,5 +6902,760 @@ canDeactivate(): boolean | Promise<boolean> {
   }
 
  
+
+
+
+
+
+
+
+
+
+  abrirModalTracaoNormal(analise: any){
+    this.tracao_normal_media = 0;
+    if(this.parecer_tracao_normal){
+      this.linhasTracaoNormal = this.parecer_tracao_normal.map((item: any, index: number) => ({
+        numero: item.numero ?? index + 1,
+        diametro: item.diametro ?? null,
+        area: item.area ?? null,
+        espessura: item.espessura ?? null,
+        subst: item.subst ?? null,
+        junta: item.junta ?? null,
+        carga: item.carga ?? null,
+        resist: item.resist ?? null,
+        validacao: item.validacao ?? "",
+        rupturas: {
+          sub: item.rupturas?.sub ?? null,
+          subArga: item.rupturas?.subArga ?? null,
+          rupArga: item.rupturas?.rupArga ?? null,
+          argaCola: item.rupturas?.argaCola ?? null,
+          colarPastilha: item.rupturas?.colarPastilha ?? null
+        }
+      }));
+    }else if (analise?.tracao_normal?.linhas && Array.isArray(analise.tracao_normal.linhas)) {
+      if(analise?.tracao_normal.media){
+        this.tracao_normal_media = analise?.tracao_normal.media;
+      }
+      this.linhasTracaoNormal = analise.tracao_normal.linhas.map((item: any, index: number) => ({
+        numero: item.numero ?? index + 1,
+        diametro: item.diametro ?? null,
+        area: item.area ?? null,
+        espessura: item.espessura ?? null,
+        subst: item.subst ?? null,
+        junta: item.junta ?? null,
+        carga: item.carga ?? null,
+        resist: item.resist ?? null,
+        validacao: item.validacao ?? "",
+        rupturas: {
+          sub: item.rupturas?.sub ?? null,
+          subArga: item.rupturas?.subArga ?? null,
+          rupArga: item.rupturas?.rupArga ?? null,
+          argaCola: item.rupturas?.argaCola ?? null,
+          colarPastilha: item.rupturas?.colarPastilha ?? null
+        }
+      }));
+      while (this.linhasTracaoNormal.length < 10) {
+        const numero = this.linhasTracaoNormal.length + 1;
+        this.linhasTracaoNormal.push({
+          numero,
+          diametro: null,
+          area: null,
+          espessura: null,
+          subst: null,
+          junta: null,
+          carga: null,
+          resist: null,
+          validacao: "",
+          rupturas: {
+            sub: null,
+            subArga: null,
+            rupArga: null,
+            argaCola: null,
+            colarPastilha: null
+          }
+        });
+      }
+    } else {
+      this.linhasTracaoNormal = [];
+      for (let i = 1; i <= 10; i++) {
+        this.linhasTracaoNormal.push({
+          numero: i,
+          diametro: null,
+          area: null,
+          espessura: null,
+          subst: null,
+          junta: null,
+          carga: null,
+          resist: null,
+          validacao: "",
+          rupturas: {
+            sub: null,
+            subArga: null,
+            rupArga: null,
+            argaCola: null,
+            colarPastilha: null
+          }
+        });
+      }
+    }
+    this.modalDadosTracaoNormal = true;
+  }
+  salvarTracaoNormal(analise: any){
+
+    this.parecer_tracao_normal = this.linhasTracaoNormal;
+    this.modalDadosTracaoNormal = false;
+
+    const dadosAtualizados: Partial<Analise> = {
+      tracao_normal:{
+        linhas: this.linhasTracaoNormal,
+        media: this.tracao_normal_media
+      }
+    };
+   
+    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Tração Normal salva com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });    
+  }
+
+  abrirModalTracaoSubmersa(analise: any){
+    this.tracao_submersa_media = 0;
+    if(this.parecer_tracao_submersa){
+      this.linhasTracaoSubmersa = this.parecer_tracao_submersa.map((item: any, index: number) => ({
+        numero: item.numero ?? index + 1,
+        diametro: item.diametro ?? null,
+        area: item.area ?? null,
+        espessura: item.espessura ?? null,
+        subst: item.subst ?? null,
+        junta: item.junta ?? null,
+        carga: item.carga ?? null,
+        resist: item.resist ?? null,
+        validacao: item.validacao ?? "",
+        rupturas: {
+          sub: item.rupturas?.sub ?? null,
+          subArga: item.rupturas?.subArga ?? null,
+          rupArga: item.rupturas?.rupArga ?? null,
+          argaCola: item.rupturas?.argaCola ?? null,
+          colarPastilha: item.rupturas?.colarPastilha ?? null
+        }
+      }));
+    }else if (analise?.tracao_submersa?.linhas && Array.isArray(analise.tracao_submersa.linhas)) {
+      if(analise?.tracao_submersa.media){
+        this.tracao_submersa_media = analise?.tracao_submersa.media;
+      }
+      this.linhasTracaoSubmersa = analise.tracao_submersa.linhas.map((item: any, index: number) => ({
+        numero: item.numero ?? index + 1,
+        diametro: item.diametro ?? null,
+        area: item.area ?? null,
+        espessura: item.espessura ?? null,
+        subst: item.subst ?? null,
+        junta: item.junta ?? null,
+        carga: item.carga ?? null,
+        resist: item.resist ?? null,
+        validacao: item.validacao ?? "",
+        rupturas: {
+          sub: item.rupturas?.sub ?? null,
+          subArga: item.rupturas?.subArga ?? null,
+          rupArga: item.rupturas?.rupArga ?? null,
+          argaCola: item.rupturas?.argaCola ?? null,
+          colarPastilha: item.rupturas?.colarPastilha ?? null
+        }
+      }));
+      while (this.linhasTracaoSubmersa.length < 10) {
+        const numero = this.linhasTracaoSubmersa.length + 1;
+        this.linhasTracaoSubmersa.push({
+          numero,
+          diametro: null,
+          area: null,
+          espessura: null,
+          subst: null,
+          junta: null,
+          carga: null,
+          resist: null,
+          validacao: "",
+          rupturas: {
+            sub: null,
+            subArga: null,
+            rupArga: null,
+            argaCola: null,
+            colarPastilha: null
+          }
+        });
+      }
+    } else {
+      this.linhasTracaoSubmersa = [];
+      for (let i = 1; i <= 10; i++) {
+        this.linhasTracaoSubmersa.push({
+          numero: i,
+          diametro: null,
+          area: null,
+          espessura: null,
+          subst: null,
+          junta: null,
+          carga: null,
+          resist: null,
+          validacao: "",
+          rupturas: {
+            sub: null,
+            subArga: null,
+            rupArga: null,
+            argaCola: null,
+            colarPastilha: null
+          }
+        });
+      }
+    }
+    this.modalDadosTracaoSubmersa = true;
+  }
+  salvarTracaoSubmersa(analise: any){
+
+    this.parecer_tracao_submersa = this.linhasTracaoSubmersa;
+    this.modalDadosTracaoSubmersa = false;
+
+    const dadosAtualizados: Partial<Analise> = {
+      tracao_submersa:{
+        linhas: this.linhasTracaoSubmersa,
+        media: this.tracao_submersa_media
+      }
+    };
+   
+    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Tração Submersa salva com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });    
+  }
+
+  abrirModalTracaoEstufa(analise: any){
+    this.tracao_estufa_media = 0;
+    if(this.parecer_tracao_estufa){
+      this.linhasTracaoEstufa = this.parecer_tracao_estufa.map((item: any, index: number) => ({
+        numero: item.numero ?? index + 1,
+        diametro: item.diametro ?? null,
+        area: item.area ?? null,
+        espessura: item.espessura ?? null,
+        subst: item.subst ?? null,
+        junta: item.junta ?? null,
+        carga: item.carga ?? null,
+        resist: item.resist ?? null,
+        validacao: item.validacao ?? "",
+        rupturas: {
+          sub: item.rupturas?.sub ?? null,
+          subArga: item.rupturas?.subArga ?? null,
+          rupArga: item.rupturas?.rupArga ?? null,
+          argaCola: item.rupturas?.argaCola ?? null,
+          colarPastilha: item.rupturas?.colarPastilha ?? null
+        }
+      }));
+    }else if (analise?.tracao_estufa?.linhas && Array.isArray(analise.tracao_estufa.linhas)) {
+      if(analise?.tracao_estufa.media){
+        this.tracao_estufa_media = analise?.tracao_estufa.media;
+      }
+      this.linhasTracaoEstufa = analise.tracao_estufa.linhas.map((item: any, index: number) => ({
+        numero: item.numero ?? index + 1,
+        diametro: item.diametro ?? null,
+        area: item.area ?? null,
+        espessura: item.espessura ?? null,
+        subst: item.subst ?? null,
+        junta: item.junta ?? null,
+        carga: item.carga ?? null,
+        resist: item.resist ?? null,
+        validacao: item.validacao ?? "",
+        rupturas: {
+          sub: item.rupturas?.sub ?? null,
+          subArga: item.rupturas?.subArga ?? null,
+          rupArga: item.rupturas?.rupArga ?? null,
+          argaCola: item.rupturas?.argaCola ?? null,
+          colarPastilha: item.rupturas?.colarPastilha ?? null
+        }
+      }));
+      while (this.linhasTracaoEstufa.length < 10) {
+        const numero = this.linhasTracaoEstufa.length + 1;
+        this.linhasTracaoEstufa.push({
+          numero,
+          diametro: null,
+          area: null,
+          espessura: null,
+          subst: null,
+          junta: null,
+          carga: null,
+          resist: null,
+          validacao: "",
+          rupturas: {
+            sub: null,
+            subArga: null,
+            rupArga: null,
+            argaCola: null,
+            colarPastilha: null
+          }
+        });
+      }
+    } else {
+      this.linhasTracaoEstufa = [];
+      for (let i = 1; i <= 10; i++) {
+        this.linhasTracaoEstufa.push({
+          numero: i,
+          diametro: null,
+          area: null,
+          espessura: null,
+          subst: null,
+          junta: null,
+          carga: null,
+          resist: null,
+          validacao: "",
+          rupturas: {
+            sub: null,
+            subArga: null,
+            rupArga: null,
+            argaCola: null,
+            colarPastilha: null
+          }
+        });
+      }
+    }
+    this.modalDadosTracaoEstufa = true;
+  }
+  salvarTracaoEstufa(analise: any){
+
+    this.parecer_tracao_estufa = this.linhasTracaoEstufa;
+    this.modalDadosTracaoEstufa = false;
+
+    const dadosAtualizados: Partial<Analise> = {
+      tracao_estufa:{
+        linhas: this.linhasTracaoEstufa,
+        media: this.tracao_estufa_media
+      }
+    };
+   
+    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Tração Estufa salva com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });    
+  }
+
+  abrirModalTracaoAberto(analise: any){
+    this.tracao_aberto_media = 0;
+    if(this.parecer_tracao_aberto){
+      this.linhasTracaoAberto = this.parecer_tracao_aberto.map((item: any, index: number) => ({
+        numero: item.numero ?? index + 1,
+        diametro: item.diametro ?? null,
+        area: item.area ?? null,
+        espessura: item.espessura ?? null,
+        subst: item.subst ?? null,
+        junta: item.junta ?? null,
+        carga: item.carga ?? null,
+        resist: item.resist ?? null,
+        validacao: item.validacao ?? "",
+        rupturas: {
+          sub: item.rupturas?.sub ?? null,
+          subArga: item.rupturas?.subArga ?? null,
+          rupArga: item.rupturas?.rupArga ?? null,
+          argaCola: item.rupturas?.argaCola ?? null,
+          colarPastilha: item.rupturas?.colarPastilha ?? null
+        }
+      }));
+    }else if (analise?.tracao_tempo_aberto?.linhas && Array.isArray(analise.tracao_tempo_aberto.linhas)) {
+      if(analise?.tracao_tempo_aberto.media){
+        this.tracao_aberto_media = analise?.tracao_tempo_aberto.media;
+      }
+      this.linhasTracaoAberto = analise.tracao_tempo_aberto.linhas.map((item: any, index: number) => ({
+        numero: item.numero ?? index + 1,
+        diametro: item.diametro ?? null,
+        area: item.area ?? null,
+        espessura: item.espessura ?? null,
+        subst: item.subst ?? null,
+        junta: item.junta ?? null,
+        carga: item.carga ?? null,
+        resist: item.resist ?? null,
+        validacao: item.validacao ?? "",
+        rupturas: {
+          sub: item.rupturas?.sub ?? null,
+          subArga: item.rupturas?.subArga ?? null,
+          rupArga: item.rupturas?.rupArga ?? null,
+          argaCola: item.rupturas?.argaCola ?? null,
+          colarPastilha: item.rupturas?.colarPastilha ?? null
+        }
+      }));
+      while (this.linhasTracaoAberto.length < 10) {
+        const numero = this.linhasTracaoAberto.length + 1;
+        this.linhasTracaoAberto.push({
+          numero,
+          diametro: null,
+          area: null,
+          espessura: null,
+          subst: null,
+          junta: null,
+          carga: null,
+          resist: null,
+          validacao: "",
+          rupturas: {
+            sub: null,
+            subArga: null,
+            rupArga: null,
+            argaCola: null,
+            colarPastilha: null
+          }
+        });
+      }
+    } else {
+      this.linhasTracaoAberto = [];
+      for (let i = 1; i <= 10; i++) {
+        this.linhasTracaoAberto.push({
+          numero: i,
+          diametro: null,
+          area: null,
+          espessura: null,
+          subst: null,
+          junta: null,
+          carga: null,
+          resist: null,
+          validacao: "",
+          rupturas: {
+            sub: null,
+            subArga: null,
+            rupArga: null,
+            argaCola: null,
+            colarPastilha: null
+          }
+        });
+      }
+    }
+    this.modalDadosTracaoAberto = true;
+  }
+  salvarTracaoAberto(analise: any){
+
+    this.parecer_tracao_aberto = this.linhasTracaoAberto;
+    this.modalDadosTracaoAberto = false;
+
+    const dadosAtualizados: Partial<Analise> = {
+      tracao_tempo_aberto:{
+        linhas: this.linhasTracaoAberto,
+        media: this.parecer_tracao_aberto
+      }
+    };
+   
+    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Tração Tempo em Aberto salva com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });    
+  }
+
+  atualizarCalculosTracaoNormal(linha: any) {
+    const carga = Number(linha.carga);
+    const area = Number(linha.area);
+
+    // Calcula resistência individual
+    if (!isNaN(carga) && carga > 0 && !isNaN(area) && area > 0) {
+      const resist = (carga * 10) / area;
+      linha.resist = parseFloat(resist.toFixed(2));
+    } else {
+      linha.resist = '!#REF';
+    }
+
+    // Garante que há uma lista de linhas
+    if (!this.linhasTracaoNormal) {
+      this.linhasTracaoNormal = [];
+    }
+
+    // Filtra resist válidos (≠ null, '', '!#REF', NaN, 0)
+    const resistValidos = this.linhasTracaoNormal
+      .map(l => l.resist)
+      .filter((v: any) =>
+        v !== null &&
+        v !== undefined &&
+        v !== '' &&
+        v !== '!#REF' &&
+        !isNaN(Number(v)) &&
+        Number(v) !== 0
+      )
+      .map((v: any) => Number(v));
+
+    // Calcula média e armazena em this.media_substrato
+    if (resistValidos.length > 0) {
+      const soma = resistValidos.reduce((acc, val) => acc + val, 0);
+      this.tracao_normal_media = parseFloat((soma / resistValidos.length).toFixed(2));
+    } else {
+      this.tracao_normal_media = null;
+    }
+
+    // --- Validação de ±30% ---
+    if (this.tracao_normal_media !== null && linha.resist !== '!#REF') {
+      const valor_vezes_03 = 0.3 * this.tracao_normal_media;
+      const linha_mais_03 = this.tracao_normal_media + valor_vezes_03;
+      const linha_menos_03 = this.tracao_normal_media - valor_vezes_03;
+
+      if (linha.resist > linha_mais_03 || linha.resist < linha_menos_03) {
+        linha.validacao = 'Inválido';
+      } else {
+        linha.validacao = 'Válido';
+      }
+
+      console.log(
+        `Resistência: ${linha.resist} | Média: ${this.tracao_normal_media} | +30%: ${linha_mais_03} | -30%: ${linha_menos_03}`
+      );
+    } else {
+      linha.validacao = null;
+    }
+  }
+
+  atualizarCalculosTracaoSubmersa(linha: any) {
+    const carga = Number(linha.carga);
+    const area = Number(linha.area);
+
+    // Calcula resistência individual
+    if (!isNaN(carga) && carga > 0 && !isNaN(area) && area > 0) {
+      const resist = (carga * 10) / area;
+      linha.resist = parseFloat(resist.toFixed(2));
+    } else {
+      linha.resist = '!#REF';
+    }
+
+    // Garante que há uma lista de linhas
+    if (!this.linhasTracaoSubmersa) {
+      this.linhasTracaoSubmersa = [];
+    }
+
+    // Filtra resist válidos (≠ null, '', '!#REF', NaN, 0)
+    const resistValidos = this.linhasTracaoSubmersa
+      .map(l => l.resist)
+      .filter((v: any) =>
+        v !== null &&
+        v !== undefined &&
+        v !== '' &&
+        v !== '!#REF' &&
+        !isNaN(Number(v)) &&
+        Number(v) !== 0
+      )
+      .map((v: any) => Number(v));
+
+    // Calcula média e armazena em this.media_substrato
+    if (resistValidos.length > 0) {
+      const soma = resistValidos.reduce((acc, val) => acc + val, 0);
+      this.tracao_submersa_media = parseFloat((soma / resistValidos.length).toFixed(2));
+    } else {
+      this.tracao_submersa_media = null;
+    }
+
+    // --- Validação de ±30% ---
+    if (this.tracao_submersa_media !== null && linha.resist !== '!#REF') {
+      const valor_vezes_03 = 0.3 * this.tracao_submersa_media;
+      const linha_mais_03 = this.tracao_submersa_media + valor_vezes_03;
+      const linha_menos_03 = this.tracao_submersa_media - valor_vezes_03;
+
+      if (linha.resist > linha_mais_03 || linha.resist < linha_menos_03) {
+        linha.validacao = 'Inválido';
+      } else {
+        linha.validacao = 'Válido';
+      }
+
+      console.log(
+        `Resistência: ${linha.resist} | Média: ${this.tracao_submersa_media} | +30%: ${linha_mais_03} | -30%: ${linha_menos_03}`
+      );
+    } else {
+      linha.validacao = null;
+    }
+  }
+
+  atualizarCalculosTracaoEstufa(linha: any) {
+    const carga = Number(linha.carga);
+    const area = Number(linha.area);
+
+    // Calcula resistência individual
+    if (!isNaN(carga) && carga > 0 && !isNaN(area) && area > 0) {
+      const resist = (carga * 10) / area;
+      linha.resist = parseFloat(resist.toFixed(2));
+    } else {
+      linha.resist = '!#REF';
+    }
+
+    // Garante que há uma lista de linhas
+    if (!this.linhasTracaoEstufa) {
+      this.linhasTracaoEstufa = [];
+    }
+
+    // Filtra resist válidos (≠ null, '', '!#REF', NaN, 0)
+    const resistValidos = this.linhasTracaoEstufa
+      .map(l => l.resist)
+      .filter((v: any) =>
+        v !== null &&
+        v !== undefined &&
+        v !== '' &&
+        v !== '!#REF' &&
+        !isNaN(Number(v)) &&
+        Number(v) !== 0
+      )
+      .map((v: any) => Number(v));
+
+    // Calcula média e armazena em this.media_substrato
+    if (resistValidos.length > 0) {
+      const soma = resistValidos.reduce((acc, val) => acc + val, 0);
+      this.tracao_estufa_media = parseFloat((soma / resistValidos.length).toFixed(2));
+    } else {
+      this.tracao_estufa_media = null;
+    }
+
+    // --- Validação de ±30% ---
+    if (this.tracao_estufa_media !== null && linha.resist !== '!#REF') {
+      const valor_vezes_03 = 0.3 * this.tracao_estufa_media;
+      const linha_mais_03 = this.tracao_estufa_media + valor_vezes_03;
+      const linha_menos_03 = this.tracao_estufa_media - valor_vezes_03;
+
+      if (linha.resist > linha_mais_03 || linha.resist < linha_menos_03) {
+        linha.validacao = 'Inválido';
+      } else {
+        linha.validacao = 'Válido';
+      }
+
+      console.log(
+        `Resistência: ${linha.resist} | Média: ${this.tracao_estufa_media} | +30%: ${linha_mais_03} | -30%: ${linha_menos_03}`
+      );
+    } else {
+      linha.validacao = null;
+    }
+  }
+
+  atualizarCalculosTracaoAberto(linha: any) {
+    const carga = Number(linha.carga);
+    const area = Number(linha.area);
+
+    // Calcula resistência individual
+    if (!isNaN(carga) && carga > 0 && !isNaN(area) && area > 0) {
+      const resist = (carga * 10) / area;
+      linha.resist = parseFloat(resist.toFixed(2));
+    } else {
+      linha.resist = '!#REF';
+    }
+
+    // Garante que há uma lista de linhas
+    if (!this.linhasTracaoAberto) {
+      this.linhasTracaoNormal = [];
+    }
+
+    // Filtra resist válidos (≠ null, '', '!#REF', NaN, 0)
+    const resistValidos = this.linhasTracaoNormal
+      .map(l => l.resist)
+      .filter((v: any) =>
+        v !== null &&
+        v !== undefined &&
+        v !== '' &&
+        v !== '!#REF' &&
+        !isNaN(Number(v)) &&
+        Number(v) !== 0
+      )
+      .map((v: any) => Number(v));
+
+    // Calcula média e armazena em this.media_substrato
+    if (resistValidos.length > 0) {
+      const soma = resistValidos.reduce((acc, val) => acc + val, 0);
+      this.tracao_aberto_media = parseFloat((soma / resistValidos.length).toFixed(2));
+    } else {
+      this.tracao_aberto_media = null;
+    }
+
+    // --- Validação de ±30% ---
+    if (this.tracao_aberto_media !== null && linha.resist !== '!#REF') {
+      const valor_vezes_03 = 0.3 * this.tracao_aberto_media;
+      const linha_mais_03 = this.tracao_aberto_media + valor_vezes_03;
+      const linha_menos_03 = this.tracao_aberto_media - valor_vezes_03;
+
+      if (linha.resist > linha_mais_03 || linha.resist < linha_menos_03) {
+        linha.validacao = 'Inválido';
+      } else {
+        linha.validacao = 'Válido';
+      }
+
+      console.log(
+        `Resistência: ${linha.resist} | Média: ${this.tracao_aberto_media} | +30%: ${linha_mais_03} | -30%: ${linha_menos_03}`
+      );
+    } else {
+      linha.validacao = null;
+    }
+  }
+
+
+
 
 }
