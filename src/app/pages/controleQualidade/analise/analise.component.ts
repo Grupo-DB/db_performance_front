@@ -146,6 +146,82 @@ interface LinhaPeneiraUmida {
   passante_acumulado: number | null;
 }
 
+interface LinhaTracaoNormal {
+  numero: number;
+  diametro: number | null;
+  area: number | null;
+  espessura: number | null;
+  subst: number | null;
+  junta: number | null;
+  carga: number | null;
+  resist: number | null;
+  validacao: string;
+  rupturas: {
+    sub: number | null;
+    subArga: number | null;
+    rupArga: number | null;
+    argaCola: number | null;
+    colarPastilha: number | null;
+  };
+}
+
+interface LinhaTracaoSubmersa {
+  numero: number;
+  diametro: number | null;
+  area: number | null;
+  espessura: number | null;
+  subst: number | null;
+  junta: number | null;
+  carga: number | null;
+  resist: number | null;
+  validacao: string;
+  rupturas: {
+    sub: number | null;
+    subArga: number | null;
+    rupArga: number | null;
+    argaCola: number | null;
+    colarPastilha: number | null;
+  };
+}
+
+interface LinhaTracaoEstufa {
+  numero: number;
+  diametro: number | null;
+  area: number | null;
+  espessura: number | null;
+  subst: number | null;
+  junta: number | null;
+  carga: number | null;
+  resist: number | null;
+  validacao: string;
+  rupturas: {
+    sub: number | null;
+    subArga: number | null;
+    rupArga: number | null;
+    argaCola: number | null;
+    colarPastilha: number | null;
+  };
+}
+
+interface LinhaTracaoAberto {
+  numero: number;
+  diametro: number | null;
+  area: number | null;
+  espessura: number | null;
+  subst: number | null;
+  junta: number | null;
+  carga: number | null;
+  resist: number | null;
+  validacao: string;
+  rupturas: {
+    sub: number | null;
+    subArga: number | null;
+    rupArga: number | null;
+    argaCola: number | null;
+    colarPastilha: number | null;
+  };
+}
+
 
 export interface Analise {
   id: number;
@@ -167,6 +243,12 @@ export interface Analise {
   variacao_dimensional: any;
   variacao_massa: any;
   modulo_elasticidade: any;
+  tracao_normal: any;
+  tracao_submersa: any;
+  tracao_estufa: any;
+  tracao_tempo_aberto: any;
+
+
 }
 interface FileWithInfo {
   file: File;
@@ -175,14 +257,7 @@ interface FileWithInfo {
 @Component({
   selector: 'app-analise',
   imports:[
-    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule, 
-    CardModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule,
-    FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,
-    ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,
-    InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, MessageModule,
-    StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule,
-    SpeedDialModule, AvatarModule, PopoverModule, BadgeModule, TooltipModule,HotTableModule,
-
+    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule, CardModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, MessageModule,StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule,SpeedDialModule, AvatarModule, PopoverModule, BadgeModule, TooltipModule,HotTableModule,
   ],
   animations: [
     trigger('efeitoFade', [
@@ -393,6 +468,50 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
 
   modalVisualizarPeneira = false;
   modalVisualizarPeneiraUmida = false;
+
+
+  substrato_media: any;
+  superficial_media: any;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  modalDadosTracaoNormal = false;
+  linhasTracaoNormal: LinhaTracaoNormal[] = [];
+  parecer_tracao_normal: any = null;
+  tracao_normal_media: any;
+
+  modalDadosTracaoSubmersa = false;
+  linhasTracaoSubmersa: LinhaTracaoSubmersa[] = [];
+  parecer_tracao_submersa: any = null;
+  tracao_submersa_media: any;
+
+  modalDadosTracaoEstufa = false;
+  linhasTracaoEstufa: LinhaTracaoEstufa[] = [];
+  parecer_tracao_estufa: any = null;
+  tracao_estufa_media: any;
+
+  modalDadosTracaoAberto = false;
+  linhasTracaoAberto: LinhaTracaoAberto[] = [];
+  parecer_tracao_aberto: any = null;
+  tracao_aberto_media: any;
+
+
+
 
   peneirasDados = [
     { value: '# 1.1/2 - ABNT/ASTM 1.1/2 - 37,5 mm' },
@@ -611,14 +730,8 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
     this.createForm();
   }
 //==================  Cálculos de Módulo de Elasticidade ==========================
-calculosModuloElasticidade(): void {
-  // Verificar se há valores válidos para cálculo
-  console.log('=== INÍCIO DOS CÁLCULOS ===');
-  console.log('Valores brutos - tempo1Cp1:', this.tempo1Cp1, typeof this.tempo1Cp1);
-  console.log('Valores brutos - tempo2Cp1:', this.tempo2Cp1, typeof this.tempo2Cp1);
-  console.log('Valores brutos - tempo3Cp1:', this.tempo3Cp1, typeof this.tempo3Cp1);
-  
-  // Converter explicitamente para número com parseFloat para preservar decimais
+calculosModuloElasticidade(): void {  
+  // Converter 
   const temposCp1 = [this.tempo1Cp1, this.tempo2Cp1, this.tempo3Cp1]
     .filter(t => t !== null && t !== undefined)
     .map(t => parseFloat(String(t)));
@@ -628,13 +741,9 @@ calculosModuloElasticidade(): void {
   const temposCp3 = [this.tempo1Cp3, this.tempo2Cp3, this.tempo3Cp3]
     .filter(t => t !== null && t !== undefined)
     .map(t => parseFloat(String(t)));
-  
-  console.log('Array filtrado temposCp1:', temposCp1);
-  console.log('Cada elemento:', temposCp1.map((t, i) => `[${i}] = ${t} (${typeof t})`));
-  
+    
   if (temposCp1.length > 0) {
     this.menorTempoCp1 = Math.min(...temposCp1);
-    console.log('Resultado de Math.min():', this.menorTempoCp1, typeof this.menorTempoCp1);
   } else {
     this.menorTempoCp1 = null;
   }
@@ -642,9 +751,6 @@ calculosModuloElasticidade(): void {
   this.menorTempoCp2 = temposCp2.length > 0 ? Math.min(...temposCp2) : null;
   this.menorTempoCp3 = temposCp3.length > 0 ? Math.min(...temposCp3) : null;
   
-  console.log('Menor tempo final CP1:', this.menorTempoCp1);
-  console.log('=== FIM DOS CÁLCULOS ===');
-
   // Cálculo do Volume (mm³ / 1000 = cm³)
   if (this.comprimentoCp1 != null && this.larguraCp1 != null && this.alturaCp1 != null) {
     this.volumeCp1 = (this.comprimentoCp1 * this.larguraCp1 * this.alturaCp1) / 1000;
@@ -1105,9 +1211,7 @@ realizarCalculosVariacaoDimensional(): void {
     
     if (valoresL1.length > 0) {
       this.l1VariacaoDimensionalMedia = mean(valoresL1) as number;
-      console.log('MEDIA', this.l1VariacaoDimensionalMedia);
       this.l1DesvioPadraoDimensional = valoresL1.length > 1 ? Number(std(valoresL1)) : 0;
-      console.log('DESVIO', this.l1DesvioPadraoDimensional);
     }
   }
   
@@ -1442,9 +1546,7 @@ realizarCalculosVariacaoMassa(): void {
   const m0Cp1Num = Number(this.m0Cp1);
   const m0Cp2Num = Number(this.m0Cp2);
   const m0Cp3Num = Number(this.m0Cp3);
-  
-  console.log('M0 Values:', { m0Cp1Num, m0Cp2Num, m0Cp3Num });
-  
+
   if (isNaN(m0Cp1Num) || isNaN(m0Cp2Num) || isNaN(m0Cp3Num)) {
     return;
   }
@@ -1457,7 +1559,6 @@ realizarCalculosVariacaoMassa(): void {
       if (!isNaN(m1Cp1Num)) {
         const calcCp1_M1 = ((m1Cp1Num - m0Cp1Num) / m0Cp1Num) * 100;
         valoresM1.push(calcCp1_M1);
-        console.log('calcCp1_M1:', calcCp1_M1);
       }
     }
     
@@ -1466,7 +1567,6 @@ realizarCalculosVariacaoMassa(): void {
       if (!isNaN(m1Cp2Num)) {
         const calcCp2_M1 = ((m1Cp2Num - m0Cp2Num) / m0Cp2Num) * 100;
         valoresM1.push(calcCp2_M1);
-        console.log('calcCp2_M1:', calcCp2_M1);
       }
     }
     
@@ -1475,14 +1575,12 @@ realizarCalculosVariacaoMassa(): void {
       if (!isNaN(m1Cp3Num)) {
         const calcCp3_M1 = ((m1Cp3Num - m0Cp3Num) / m0Cp3Num) * 100;
         valoresM1.push(calcCp3_M1);
-        console.log('calcCp3_M1:', calcCp3_M1);
       }
     }
     
     if (valoresM1.length > 0) {
       this.m1VariacaoMassaMedia = mean(valoresM1) as number;
       this.m1DesvioPadraoMassa = valoresM1.length > 1 ? Number(std(valoresM1)) : 0;
-      console.log('M1 Results:', { media: this.m1VariacaoMassaMedia, desvio: this.m1DesvioPadraoMassa, count: valoresM1.length });
     }
   }
   // Cálculo para M7 (7 dias após M0)
@@ -2467,6 +2565,8 @@ downloadImagemGrafico(): void {
         }
       );
     }
+
+
 
   }
 /////////==========CONSULTAR GARANTIA POR PRODUTO ===========///////////////////////////////////////
@@ -6701,22 +6801,7 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
         origem: 'ad-hoc',
         ordemDuplicata,
       };
-
       plano.ensaio_detalhes.push(novoEnsaio);
-
-      try {
-        // Log de diagnóstico para verificar distribuição de laboratório e variáveis nas duplicatas
-        console.log('[ADD ENSAIO LOTE]', {
-          id: novoEnsaio.id,
-          desc: novoEnsaio.descricao,
-          duplicata: novoEnsaio.duplicata,
-          ordemDuplicata: novoEnsaio.ordemDuplicata,
-          laboratorio: novoEnsaio.laboratorio,
-          instanceId: novoEnsaio.instanceId,
-          variaveis: (novoEnsaio.variavel_detalhes || []).map((v: any) => ({ k: v.tecnica || v.varTecnica || v.nome, valor: v.valor }))
-        });
-      } catch {}
-
       if (jaExistentesMesmoId.length) {
         adicionouDuplicata = true;
         this.messageService.add({
@@ -6905,16 +6990,6 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
       duplicata: false,
       instanceId: `${Date.now()}_${Math.random().toString(36).slice(2,9)}`
     };
-    try {
-      console.log('[ADD ENSAIO DIRETO]', {
-        id: novoEnsaio?.id,
-        desc: novoEnsaio?.descricao,
-        duplicata: novoEnsaio?.duplicata,
-        laboratorio: novoEnsaio?.laboratorio,
-        instanceId: novoEnsaio?.instanceId,
-        variaveis: (novoEnsaio?.variavel_detalhes || []).map((v: any) => ({ k: v.tecnica || v.varTecnica || v.nome, valor: v.valor }))
-      });
-    } catch {}
     if (novoEnsaio.duplicata) {
       this.messageService.add({
         severity: 'info',
@@ -8012,20 +8087,61 @@ canDeactivate(): boolean | Promise<boolean> {
   }
 
   getItensArgamassa(analise: any) {
-    return [
-      { label: 'Determinação da Resistência Potencial de Aderência à Tração ao Substrato - Mpa', icon: 'pi pi-eye', command: () => this.abrirModalSubstrato(analise) },
-      { label: 'Determinação da Resistência Potencial de Aderência à Tração Superficial', icon: 'pi pi-eye', command: () => this.abrirModalSuperficial(analise) },
+    const itens: any[] = [];
+    const nome = analise?.amostra_detalhes?.produto_amostra_detalhes?.nome?.toLowerCase() || '';
+    const isColante = nome.includes('colante');
+    // if (!isColante) {
+      itens.push(
+        {
+          label: 'Determinação da Resist. Pot. Ader. a Tração (Substrato)',
+          icon: 'pi pi-pencil',
+          command: () => this.abrirModalSubstrato(analise)
+        },
+        {
+          label: 'Determinação da Resist. Pot. Ader. a Tração (Superfície)',
+          icon: 'pi pi-pencil',
+          command: () => this.abrirModalSuperficial(analise)
+        }
+      );
+    // }
+
+    if (isColante) {
+      itens.push(
+        {
+          label: 'Resist. Ader. a Tração (Normal)',
+          icon: 'pi pi-pencil',
+          command: () => this.abrirModalTracaoNormal(analise)
+        },
+        {
+          label: 'Resist. Ader. a Tração (Submersa)',
+          icon: 'pi pi-pencil',
+          command: () => this.abrirModalTracaoSubmersa(analise)
+        },
+        {
+          label: 'Resist. Ader. a Tração (Estufa)',
+          icon: 'pi pi-pencil',
+          command: () => this.abrirModalTracaoEstufa(analise)
+        },
+        {
+          label: 'Resist. Ader. a Tração (Tempo em Aberto)',
+          icon: 'pi pi-pencil',
+          command: () => this.abrirModalTracaoAberto(analise)
+        }
+      );
+    }
+
+    itens.push(
       { 
         label: 'Determinação da Variação Dimencional Linear (Retração/Expansão)', 
-        icon: 'pi pi-eye', 
+        icon: 'pi pi-pencil', 
         command: () => {
           this.carregarVariacaoDimensionalSalva(analise); // Carregar dados salvos
           this.exibirModalVariacaoDimensional = true;
         }
       },
-      { 
+     { 
         label: 'Determinação da Variação de Massa (Retração/Expansão)', 
-        icon: 'pi pi-eye', 
+        icon: 'pi pi-pencil', 
         command: () => {
           this.carregarVariacaoMassaSalva(analise); // Carregar dados salvos
           this.exibirModalVariacaoMassa = true;
@@ -8033,21 +8149,24 @@ canDeactivate(): boolean | Promise<boolean> {
       },
       { 
         label: 'Módulo de Elasticidade Dinâmico', 
-        icon: 'pi pi-eye', 
+        icon: 'pi pi-pencil', 
         command: () => {
           this.carregarModuloElasticidadeSalvo(analise); // Carregar dados salvos
           this.atualizarTabelaModuloElasticidade(); // Garantir que a tabela seja inicializada
           this.exibirModalModuloElasticidade = true;
         }
       },
-      //{ label: 'Flexão', icon: 'pi pi-eye', command: () => this.abrirModalFlexao(analise) },
-      //{ label: 'Compressão', icon: 'pi pi-eye', command: () => this.abrirModalCompressao(analise) },
-      //{ label: 'Determinação do Coeficiente de Absorção de Água por Capilaridade', icon: 'pi pi-eye' },
-      { label: 'Gráfico Capilaridade', icon: 'pi pi-eye', command: () => this.exibirGrafico() },
-    ];
+      {
+        label: 'Gráfico Capilaridade',
+        icon: 'pi pi-pencil',
+        command: () => this.exibirGrafico()
+      }
+    );
+
+    return itens;
   }
 
-   getItensPeneira(analise: any) {
+  getItensPeneira(analise: any) {
     return [
       { label: 'Peneiras Secas', icon: 'pi pi-eye', command: () => this.abrirModalPeneira(analise) },
       { label: 'Peneiras Úmidas', icon: 'pi pi-eye', command: () => this.abrirModalPeneiraUmida(analise) },
@@ -8326,7 +8445,42 @@ canDeactivate(): boolean | Promise<boolean> {
     });    
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   abrirModalSubstrato(analise: any){
+    this.substrato_media = 0;
     if(this.parecer_substrato){
       this.linhasSubstrato = this.parecer_substrato.map((item: any, index: number) => ({
         numero: item.numero ?? index + 1,
@@ -8346,8 +8500,11 @@ canDeactivate(): boolean | Promise<boolean> {
           colarPastilha: item.rupturas?.colarPastilha ?? null
         }
       }));
-    }else if (analise?.substrato && Array.isArray(analise.substrato)) {
-      this.linhasSubstrato = analise.substrato.map((item: any, index: number) => ({
+    }else if (analise?.substrato.linhas && Array.isArray(analise.substrato.linhas)) {
+      if(analise?.substrato.media){
+        this.substrato_media = analise?.substrato.media;
+      }
+      this.linhasSubstrato = analise.substrato.linhas.map((item: any, index: number) => ({
         numero: item.numero ?? index + 1,
         diametro: item.diametro ?? null,
         area: item.area ?? null,
@@ -8415,7 +8572,10 @@ canDeactivate(): boolean | Promise<boolean> {
     this.parecer_substrato = this.linhasSubstrato;
     this.modalDadosLaudoSubstrato = false;
     const dadosAtualizados: Partial<Analise> = {
-      substrato: this.linhasSubstrato
+      substrato:{
+        linhas: this.linhasSubstrato,
+        media: this.substrato_media
+      }
     };
     this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
       next: () => {
@@ -8524,7 +8684,10 @@ canDeactivate(): boolean | Promise<boolean> {
     this.parecer_superficial = this.linhasSuperficial;
     this.modalDadosLaudoSuperficial = false;
     const dadosAtualizados: Partial<Analise> = {
-      superficial: this.linhasSuperficial
+      superficial:{
+        linhas: this.linhasSuperficial,
+        media: this.superficial_media
+      }
     };
     this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
       next: () => {
@@ -8850,37 +9013,54 @@ canDeactivate(): boolean | Promise<boolean> {
   atualizarCalculosSubstrato(linha: any) {
     const carga = Number(linha.carga);
     const area = Number(linha.area);
+
+    // Calcula resistência individual
     if (!isNaN(carga) && carga > 0 && !isNaN(area) && area > 0) {
       const resist = (carga * 10) / area;
       linha.resist = parseFloat(resist.toFixed(2));
     } else {
       linha.resist = '!#REF';
     }
-    let mediaResistSubstrato: any;
-    const resistValidos = this.linhasSubstrato.map(l => l.resist).filter((v: any) => v !== null && v !== undefined && v !== '' && v !== '!#REF' && !isNaN(Number(v))).map((v: any) => Number(v));
-    if (resistValidos.length > 0) {
-      const soma = resistValidos.reduce((acc, val) => acc + Number(val), 0);
-      mediaResistSubstrato = parseFloat((soma / resistValidos.length).toFixed(2));
-    } else {
-      mediaResistSubstrato = null;
+
+    // Garante que há uma lista de linhas
+    if (!this.linhasSubstrato) {
+      this.linhasSubstrato = [];
     }
-    let valor_vezes_03: any;
-    let linha_mais_03: any;
-    let linha_menos_03: any;
-    //BC linhas.resist
+
+    // Filtra resist válidos (≠ null, '', '!#REF', NaN, 0)
+    const resistValidos = this.linhasSubstrato
+      .map(l => l.resist)
+      .filter((v: any) =>
+        v !== null &&
+        v !== undefined &&
+        v !== '' &&
+        v !== '!#REF' &&
+        !isNaN(Number(v)) &&
+        Number(v) !== 0
+      )
+      .map((v: any) => Number(v));
+
+    // Calcula média e armazena em this.media_substrato
     if (resistValidos.length > 0) {
-      valor_vezes_03 = 0.3*mediaResistSubstrato;//BD
-      if (linha.resist != '!#REF') {
-        linha_mais_03 = mediaResistSubstrato+valor_vezes_03; //BE        
-        linha_menos_03 = mediaResistSubstrato-valor_vezes_03;//BF
-        if(linha.resist > linha_mais_03){
-          linha.validacao = 'Inválido'
-        }else if(linha.resist < linha_menos_03){
-          linha.validacao = 'Inválido'
-        }else{
-          linha.validacao = 'Válido'
-        }
+      const soma = resistValidos.reduce((acc, val) => acc + val, 0);
+      this.substrato_media = parseFloat((soma / resistValidos.length).toFixed(2));
+    } else {
+      this.substrato_media = null;
+    }
+
+    // --- Validação de ±30% ---
+    if (this.substrato_media !== null && linha.resist !== '!#REF') {
+      const valor_vezes_03 = 0.3 * this.substrato_media;
+      const linha_mais_03 = this.substrato_media + valor_vezes_03;
+      const linha_menos_03 = this.substrato_media - valor_vezes_03;
+
+      if (linha.resist > linha_mais_03 || linha.resist < linha_menos_03) {
+        linha.validacao = 'Inválido';
+      } else {
+        linha.validacao = 'Válido';
       }
+    } else {
+      linha.validacao = null;
     }
   }
 
@@ -8899,37 +9079,57 @@ canDeactivate(): boolean | Promise<boolean> {
   atualizarCalculosSuper(linha: any) {
     const carga = Number(linha.carga);
     const area = Number(linha.area);
+
+    // Cálculo da resistência individual
     if (!isNaN(carga) && carga > 0 && !isNaN(area) && area > 0) {
       const resist = (carga * 10) / area;
       linha.resist = parseFloat(resist.toFixed(2));
     } else {
       linha.resist = '!#REF';
     }
-    let mediaResistSuoerficial: any;
-    const resistValidos = this.linhasSuperficial.map(l => l.resist).filter((v: any) => v !== null && v !== undefined && v !== '' && v !== '!#REF' && !isNaN(Number(v))).map((v: any) => Number(v));
-    if (resistValidos.length > 0) {
-      const soma = resistValidos.reduce((acc, val) => acc + Number(val), 0);
-      mediaResistSuoerficial = parseFloat((soma / resistValidos.length).toFixed(2));
-    } else {
-      mediaResistSuoerficial = null;
+
+    // Garante que o array existe
+    if (!this.linhasSuperficial) {
+      this.linhasSuperficial = [];
     }
-    let valor_vezes_03: any;
-    let linha_mais_03: any;
-    let linha_menos_03: any;
-    //BC linhas.resist
+
+    // Filtrar resistências válidas
+    const resistValidos = this.linhasSuperficial
+      .map(l => l.resist)
+      .filter((v: any) =>
+        v !== null &&
+        v !== undefined &&
+        v !== '' &&
+        v !== '!#REF' &&
+        !isNaN(Number(v)) &&
+        Number(v) !== 0
+      )
+      .map((v: any) => Number(v));
+
+    // Calcular média
     if (resistValidos.length > 0) {
-      valor_vezes_03 = 0.3*mediaResistSuoerficial;//BD
-      if (linha.resist != '!#REF') {
-        linha_mais_03 = mediaResistSuoerficial+valor_vezes_03; //BE        
-        linha_menos_03 = mediaResistSuoerficial-valor_vezes_03;//BF
-        if(linha.resist > linha_mais_03){
-          linha.validacao = 'Inválido'
-        }else if(linha.resist < linha_menos_03){
-          linha.validacao = 'Inválido'
-        }else{
-          linha.validacao = 'Válido'
-        }
+      const soma = resistValidos.reduce((acc, val) => acc + val, 0);
+      this.superficial_media = parseFloat((soma / resistValidos.length).toFixed(2));
+    } else {
+      this.superficial_media = null;
+    }
+
+    // Copiar média para analise (o que aparece no HTML)
+    this.superficial_media = this.superficial_media;
+
+    // ---- Validação ±30% ----
+    if (this.superficial_media !== null && linha.resist !== '!#REF') {
+      const valor_vezes_03 = 0.3 * this.superficial_media;
+      const linha_mais_03 = this.superficial_media + valor_vezes_03;
+      const linha_menos_03 = this.superficial_media - valor_vezes_03;
+
+      if (linha.resist > linha_mais_03 || linha.resist < linha_menos_03) {
+        linha.validacao = 'Inválido';
+      } else {
+        linha.validacao = 'Válido';
       }
+    } else {
+      linha.validacao = null;
     }
   }
 
@@ -9030,5 +9230,742 @@ canDeactivate(): boolean | Promise<boolean> {
   }
 
  
+
+
+
+
+
+
+
+
+
+  abrirModalTracaoNormal(analise: any){
+    this.tracao_normal_media = 0;
+    if(this.parecer_tracao_normal){
+      this.linhasTracaoNormal = this.parecer_tracao_normal.map((item: any, index: number) => ({
+        numero: item.numero ?? index + 1,
+        diametro: item.diametro ?? null,
+        area: item.area ?? null,
+        espessura: item.espessura ?? null,
+        subst: item.subst ?? null,
+        junta: item.junta ?? null,
+        carga: item.carga ?? null,
+        resist: item.resist ?? null,
+        validacao: item.validacao ?? "",
+        rupturas: {
+          sub: item.rupturas?.sub ?? null,
+          subArga: item.rupturas?.subArga ?? null,
+          rupArga: item.rupturas?.rupArga ?? null,
+          argaCola: item.rupturas?.argaCola ?? null,
+          colarPastilha: item.rupturas?.colarPastilha ?? null
+        }
+      }));
+    }else if (analise?.tracao_normal?.linhas && Array.isArray(analise.tracao_normal.linhas)) {
+      if(analise?.tracao_normal.media){
+        this.tracao_normal_media = analise?.tracao_normal.media;
+      }
+      this.linhasTracaoNormal = analise.tracao_normal.linhas.map((item: any, index: number) => ({
+        numero: item.numero ?? index + 1,
+        diametro: item.diametro ?? null,
+        area: item.area ?? null,
+        espessura: item.espessura ?? null,
+        subst: item.subst ?? null,
+        junta: item.junta ?? null,
+        carga: item.carga ?? null,
+        resist: item.resist ?? null,
+        validacao: item.validacao ?? "",
+        rupturas: {
+          sub: item.rupturas?.sub ?? null,
+          subArga: item.rupturas?.subArga ?? null,
+          rupArga: item.rupturas?.rupArga ?? null,
+          argaCola: item.rupturas?.argaCola ?? null,
+          colarPastilha: item.rupturas?.colarPastilha ?? null
+        }
+      }));
+      while (this.linhasTracaoNormal.length < 10) {
+        const numero = this.linhasTracaoNormal.length + 1;
+        this.linhasTracaoNormal.push({
+          numero,
+          diametro: null,
+          area: null,
+          espessura: null,
+          subst: null,
+          junta: null,
+          carga: null,
+          resist: null,
+          validacao: "",
+          rupturas: {
+            sub: null,
+            subArga: null,
+            rupArga: null,
+            argaCola: null,
+            colarPastilha: null
+          }
+        });
+      }
+    } else {
+      this.linhasTracaoNormal = [];
+      for (let i = 1; i <= 10; i++) {
+        this.linhasTracaoNormal.push({
+          numero: i,
+          diametro: null,
+          area: null,
+          espessura: null,
+          subst: null,
+          junta: null,
+          carga: null,
+          resist: null,
+          validacao: "",
+          rupturas: {
+            sub: null,
+            subArga: null,
+            rupArga: null,
+            argaCola: null,
+            colarPastilha: null
+          }
+        });
+      }
+    }
+    this.modalDadosTracaoNormal = true;
+  }
+  salvarTracaoNormal(analise: any){
+
+    this.parecer_tracao_normal = this.linhasTracaoNormal;
+    this.modalDadosTracaoNormal = false;
+
+    const dadosAtualizados: Partial<Analise> = {
+      tracao_normal:{
+        linhas: this.linhasTracaoNormal,
+        media: this.tracao_normal_media
+      }
+    };
+   
+    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Tração Normal salva com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });    
+  }
+
+  abrirModalTracaoSubmersa(analise: any){
+    this.tracao_submersa_media = 0;
+    if(this.parecer_tracao_submersa){
+      this.linhasTracaoSubmersa = this.parecer_tracao_submersa.map((item: any, index: number) => ({
+        numero: item.numero ?? index + 1,
+        diametro: item.diametro ?? null,
+        area: item.area ?? null,
+        espessura: item.espessura ?? null,
+        subst: item.subst ?? null,
+        junta: item.junta ?? null,
+        carga: item.carga ?? null,
+        resist: item.resist ?? null,
+        validacao: item.validacao ?? "",
+        rupturas: {
+          sub: item.rupturas?.sub ?? null,
+          subArga: item.rupturas?.subArga ?? null,
+          rupArga: item.rupturas?.rupArga ?? null,
+          argaCola: item.rupturas?.argaCola ?? null,
+          colarPastilha: item.rupturas?.colarPastilha ?? null
+        }
+      }));
+    }else if (analise?.tracao_submersa?.linhas && Array.isArray(analise.tracao_submersa.linhas)) {
+      if(analise?.tracao_submersa.media){
+        this.tracao_submersa_media = analise?.tracao_submersa.media;
+      }
+      this.linhasTracaoSubmersa = analise.tracao_submersa.linhas.map((item: any, index: number) => ({
+        numero: item.numero ?? index + 1,
+        diametro: item.diametro ?? null,
+        area: item.area ?? null,
+        espessura: item.espessura ?? null,
+        subst: item.subst ?? null,
+        junta: item.junta ?? null,
+        carga: item.carga ?? null,
+        resist: item.resist ?? null,
+        validacao: item.validacao ?? "",
+        rupturas: {
+          sub: item.rupturas?.sub ?? null,
+          subArga: item.rupturas?.subArga ?? null,
+          rupArga: item.rupturas?.rupArga ?? null,
+          argaCola: item.rupturas?.argaCola ?? null,
+          colarPastilha: item.rupturas?.colarPastilha ?? null
+        }
+      }));
+      while (this.linhasTracaoSubmersa.length < 10) {
+        const numero = this.linhasTracaoSubmersa.length + 1;
+        this.linhasTracaoSubmersa.push({
+          numero,
+          diametro: null,
+          area: null,
+          espessura: null,
+          subst: null,
+          junta: null,
+          carga: null,
+          resist: null,
+          validacao: "",
+          rupturas: {
+            sub: null,
+            subArga: null,
+            rupArga: null,
+            argaCola: null,
+            colarPastilha: null
+          }
+        });
+      }
+    } else {
+      this.linhasTracaoSubmersa = [];
+      for (let i = 1; i <= 10; i++) {
+        this.linhasTracaoSubmersa.push({
+          numero: i,
+          diametro: null,
+          area: null,
+          espessura: null,
+          subst: null,
+          junta: null,
+          carga: null,
+          resist: null,
+          validacao: "",
+          rupturas: {
+            sub: null,
+            subArga: null,
+            rupArga: null,
+            argaCola: null,
+            colarPastilha: null
+          }
+        });
+      }
+    }
+    this.modalDadosTracaoSubmersa = true;
+  }
+  salvarTracaoSubmersa(analise: any){
+
+    this.parecer_tracao_submersa = this.linhasTracaoSubmersa;
+    this.modalDadosTracaoSubmersa = false;
+
+    const dadosAtualizados: Partial<Analise> = {
+      tracao_submersa:{
+        linhas: this.linhasTracaoSubmersa,
+        media: this.tracao_submersa_media
+      }
+    };
+   
+    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Tração Submersa salva com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });    
+  }
+
+  abrirModalTracaoEstufa(analise: any){
+    this.tracao_estufa_media = 0;
+    if(this.parecer_tracao_estufa){
+      this.linhasTracaoEstufa = this.parecer_tracao_estufa.map((item: any, index: number) => ({
+        numero: item.numero ?? index + 1,
+        diametro: item.diametro ?? null,
+        area: item.area ?? null,
+        espessura: item.espessura ?? null,
+        subst: item.subst ?? null,
+        junta: item.junta ?? null,
+        carga: item.carga ?? null,
+        resist: item.resist ?? null,
+        validacao: item.validacao ?? "",
+        rupturas: {
+          sub: item.rupturas?.sub ?? null,
+          subArga: item.rupturas?.subArga ?? null,
+          rupArga: item.rupturas?.rupArga ?? null,
+          argaCola: item.rupturas?.argaCola ?? null,
+          colarPastilha: item.rupturas?.colarPastilha ?? null
+        }
+      }));
+    }else if (analise?.tracao_estufa?.linhas && Array.isArray(analise.tracao_estufa.linhas)) {
+      if(analise?.tracao_estufa.media){
+        this.tracao_estufa_media = analise?.tracao_estufa.media;
+      }
+      this.linhasTracaoEstufa = analise.tracao_estufa.linhas.map((item: any, index: number) => ({
+        numero: item.numero ?? index + 1,
+        diametro: item.diametro ?? null,
+        area: item.area ?? null,
+        espessura: item.espessura ?? null,
+        subst: item.subst ?? null,
+        junta: item.junta ?? null,
+        carga: item.carga ?? null,
+        resist: item.resist ?? null,
+        validacao: item.validacao ?? "",
+        rupturas: {
+          sub: item.rupturas?.sub ?? null,
+          subArga: item.rupturas?.subArga ?? null,
+          rupArga: item.rupturas?.rupArga ?? null,
+          argaCola: item.rupturas?.argaCola ?? null,
+          colarPastilha: item.rupturas?.colarPastilha ?? null
+        }
+      }));
+      while (this.linhasTracaoEstufa.length < 10) {
+        const numero = this.linhasTracaoEstufa.length + 1;
+        this.linhasTracaoEstufa.push({
+          numero,
+          diametro: null,
+          area: null,
+          espessura: null,
+          subst: null,
+          junta: null,
+          carga: null,
+          resist: null,
+          validacao: "",
+          rupturas: {
+            sub: null,
+            subArga: null,
+            rupArga: null,
+            argaCola: null,
+            colarPastilha: null
+          }
+        });
+      }
+    } else {
+      this.linhasTracaoEstufa = [];
+      for (let i = 1; i <= 10; i++) {
+        this.linhasTracaoEstufa.push({
+          numero: i,
+          diametro: null,
+          area: null,
+          espessura: null,
+          subst: null,
+          junta: null,
+          carga: null,
+          resist: null,
+          validacao: "",
+          rupturas: {
+            sub: null,
+            subArga: null,
+            rupArga: null,
+            argaCola: null,
+            colarPastilha: null
+          }
+        });
+      }
+    }
+    this.modalDadosTracaoEstufa = true;
+  }
+  salvarTracaoEstufa(analise: any){
+
+    this.parecer_tracao_estufa = this.linhasTracaoEstufa;
+    this.modalDadosTracaoEstufa = false;
+
+    const dadosAtualizados: Partial<Analise> = {
+      tracao_estufa:{
+        linhas: this.linhasTracaoEstufa,
+        media: this.tracao_estufa_media
+      }
+    };
+   
+    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Tração Estufa salva com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });    
+  }
+
+  abrirModalTracaoAberto(analise: any){
+    this.tracao_aberto_media = 0;
+    if(this.parecer_tracao_aberto){
+      this.linhasTracaoAberto = this.parecer_tracao_aberto.map((item: any, index: number) => ({
+        numero: item.numero ?? index + 1,
+        diametro: item.diametro ?? null,
+        area: item.area ?? null,
+        espessura: item.espessura ?? null,
+        subst: item.subst ?? null,
+        junta: item.junta ?? null,
+        carga: item.carga ?? null,
+        resist: item.resist ?? null,
+        validacao: item.validacao ?? "",
+        rupturas: {
+          sub: item.rupturas?.sub ?? null,
+          subArga: item.rupturas?.subArga ?? null,
+          rupArga: item.rupturas?.rupArga ?? null,
+          argaCola: item.rupturas?.argaCola ?? null,
+          colarPastilha: item.rupturas?.colarPastilha ?? null
+        }
+      }));
+    }else if (analise?.tracao_tempo_aberto?.linhas && Array.isArray(analise.tracao_tempo_aberto.linhas)) {
+      if(analise?.tracao_tempo_aberto.media){
+        this.tracao_aberto_media = analise?.tracao_tempo_aberto.media;
+      }
+      this.linhasTracaoAberto = analise.tracao_tempo_aberto.linhas.map((item: any, index: number) => ({
+        numero: item.numero ?? index + 1,
+        diametro: item.diametro ?? null,
+        area: item.area ?? null,
+        espessura: item.espessura ?? null,
+        subst: item.subst ?? null,
+        junta: item.junta ?? null,
+        carga: item.carga ?? null,
+        resist: item.resist ?? null,
+        validacao: item.validacao ?? "",
+        rupturas: {
+          sub: item.rupturas?.sub ?? null,
+          subArga: item.rupturas?.subArga ?? null,
+          rupArga: item.rupturas?.rupArga ?? null,
+          argaCola: item.rupturas?.argaCola ?? null,
+          colarPastilha: item.rupturas?.colarPastilha ?? null
+        }
+      }));
+      while (this.linhasTracaoAberto.length < 10) {
+        const numero = this.linhasTracaoAberto.length + 1;
+        this.linhasTracaoAberto.push({
+          numero,
+          diametro: null,
+          area: null,
+          espessura: null,
+          subst: null,
+          junta: null,
+          carga: null,
+          resist: null,
+          validacao: "",
+          rupturas: {
+            sub: null,
+            subArga: null,
+            rupArga: null,
+            argaCola: null,
+            colarPastilha: null
+          }
+        });
+      }
+    } else {
+      this.linhasTracaoAberto = [];
+      for (let i = 1; i <= 10; i++) {
+        this.linhasTracaoAberto.push({
+          numero: i,
+          diametro: null,
+          area: null,
+          espessura: null,
+          subst: null,
+          junta: null,
+          carga: null,
+          resist: null,
+          validacao: "",
+          rupturas: {
+            sub: null,
+            subArga: null,
+            rupArga: null,
+            argaCola: null,
+            colarPastilha: null
+          }
+        });
+      }
+    }
+    this.modalDadosTracaoAberto = true;
+  }
+  salvarTracaoAberto(analise: any){
+
+    this.parecer_tracao_aberto = this.linhasTracaoAberto;
+    this.modalDadosTracaoAberto = false;
+
+    const dadosAtualizados: Partial<Analise> = {
+      tracao_tempo_aberto:{
+        linhas: this.linhasTracaoAberto,
+        media: this.parecer_tracao_aberto
+      }
+    };
+   
+    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Tração Tempo em Aberto salva com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });    
+  }
+
+  atualizarCalculosTracaoNormal(linha: any) {
+    const carga = Number(linha.carga);
+    const area = Number(linha.area);
+
+    // Calcula resistência individual
+    if (!isNaN(carga) && carga > 0 && !isNaN(area) && area > 0) {
+      const resist = (carga * 10) / area;
+      linha.resist = parseFloat(resist.toFixed(2));
+    } else {
+      linha.resist = '!#REF';
+    }
+
+    // Garante que há uma lista de linhas
+    if (!this.linhasTracaoNormal) {
+      this.linhasTracaoNormal = [];
+    }
+
+    // Filtra resist válidos (≠ null, '', '!#REF', NaN, 0)
+    const resistValidos = this.linhasTracaoNormal
+      .map(l => l.resist)
+      .filter((v: any) =>
+        v !== null &&
+        v !== undefined &&
+        v !== '' &&
+        v !== '!#REF' &&
+        !isNaN(Number(v)) &&
+        Number(v) !== 0
+      )
+      .map((v: any) => Number(v));
+
+    // Calcula média e armazena em this.media_substrato
+    if (resistValidos.length > 0) {
+      const soma = resistValidos.reduce((acc, val) => acc + val, 0);
+      this.tracao_normal_media = parseFloat((soma / resistValidos.length).toFixed(2));
+    } else {
+      this.tracao_normal_media = null;
+    }
+
+    // --- Validação de ±30% ---
+    if (this.tracao_normal_media !== null && linha.resist !== '!#REF') {
+      const valor_vezes_03 = 0.3 * this.tracao_normal_media;
+      const linha_mais_03 = this.tracao_normal_media + valor_vezes_03;
+      const linha_menos_03 = this.tracao_normal_media - valor_vezes_03;
+
+      if (linha.resist > linha_mais_03 || linha.resist < linha_menos_03) {
+        linha.validacao = 'Inválido';
+      } else {
+        linha.validacao = 'Válido';
+      }
+    } else {
+      linha.validacao = null;
+    }
+  }
+
+  atualizarCalculosTracaoSubmersa(linha: any) {
+    const carga = Number(linha.carga);
+    const area = Number(linha.area);
+
+    // Calcula resistência individual
+    if (!isNaN(carga) && carga > 0 && !isNaN(area) && area > 0) {
+      const resist = (carga * 10) / area;
+      linha.resist = parseFloat(resist.toFixed(2));
+    } else {
+      linha.resist = '!#REF';
+    }
+
+    // Garante que há uma lista de linhas
+    if (!this.linhasTracaoSubmersa) {
+      this.linhasTracaoSubmersa = [];
+    }
+
+    // Filtra resist válidos (≠ null, '', '!#REF', NaN, 0)
+    const resistValidos = this.linhasTracaoSubmersa
+      .map(l => l.resist)
+      .filter((v: any) =>
+        v !== null &&
+        v !== undefined &&
+        v !== '' &&
+        v !== '!#REF' &&
+        !isNaN(Number(v)) &&
+        Number(v) !== 0
+      )
+      .map((v: any) => Number(v));
+
+    // Calcula média e armazena em this.media_substrato
+    if (resistValidos.length > 0) {
+      const soma = resistValidos.reduce((acc, val) => acc + val, 0);
+      this.tracao_submersa_media = parseFloat((soma / resistValidos.length).toFixed(2));
+    } else {
+      this.tracao_submersa_media = null;
+    }
+
+    // --- Validação de ±30% ---
+    if (this.tracao_submersa_media !== null && linha.resist !== '!#REF') {
+      const valor_vezes_03 = 0.3 * this.tracao_submersa_media;
+      const linha_mais_03 = this.tracao_submersa_media + valor_vezes_03;
+      const linha_menos_03 = this.tracao_submersa_media - valor_vezes_03;
+
+      if (linha.resist > linha_mais_03 || linha.resist < linha_menos_03) {
+        linha.validacao = 'Inválido';
+      } else {
+        linha.validacao = 'Válido';
+      }
+    } else {
+      linha.validacao = null;
+    }
+  }
+
+  atualizarCalculosTracaoEstufa(linha: any) {
+    const carga = Number(linha.carga);
+    const area = Number(linha.area);
+
+    // Calcula resistência individual
+    if (!isNaN(carga) && carga > 0 && !isNaN(area) && area > 0) {
+      const resist = (carga * 10) / area;
+      linha.resist = parseFloat(resist.toFixed(2));
+    } else {
+      linha.resist = '!#REF';
+    }
+
+    // Garante que há uma lista de linhas
+    if (!this.linhasTracaoEstufa) {
+      this.linhasTracaoEstufa = [];
+    }
+
+    // Filtra resist válidos (≠ null, '', '!#REF', NaN, 0)
+    const resistValidos = this.linhasTracaoEstufa
+      .map(l => l.resist)
+      .filter((v: any) =>
+        v !== null &&
+        v !== undefined &&
+        v !== '' &&
+        v !== '!#REF' &&
+        !isNaN(Number(v)) &&
+        Number(v) !== 0
+      )
+      .map((v: any) => Number(v));
+
+    // Calcula média e armazena em this.media_substrato
+    if (resistValidos.length > 0) {
+      const soma = resistValidos.reduce((acc, val) => acc + val, 0);
+      this.tracao_estufa_media = parseFloat((soma / resistValidos.length).toFixed(2));
+    } else {
+      this.tracao_estufa_media = null;
+    }
+
+    // --- Validação de ±30% ---
+    if (this.tracao_estufa_media !== null && linha.resist !== '!#REF') {
+      const valor_vezes_03 = 0.3 * this.tracao_estufa_media;
+      const linha_mais_03 = this.tracao_estufa_media + valor_vezes_03;
+      const linha_menos_03 = this.tracao_estufa_media - valor_vezes_03;
+
+      if (linha.resist > linha_mais_03 || linha.resist < linha_menos_03) {
+        linha.validacao = 'Inválido';
+      } else {
+        linha.validacao = 'Válido';
+      }
+    } else {
+      linha.validacao = null;
+    }
+  }
+
+  atualizarCalculosTracaoAberto(linha: any) {
+    const carga = Number(linha.carga);
+    const area = Number(linha.area);
+
+    // Calcula resistência individual
+    if (!isNaN(carga) && carga > 0 && !isNaN(area) && area > 0) {
+      const resist = (carga * 10) / area;
+      linha.resist = parseFloat(resist.toFixed(2));
+    } else {
+      linha.resist = '!#REF';
+    }
+
+    // Garante que há uma lista de linhas
+    if (!this.linhasTracaoAberto) {
+      this.linhasTracaoNormal = [];
+    }
+
+    // Filtra resist válidos (≠ null, '', '!#REF', NaN, 0)
+    const resistValidos = this.linhasTracaoNormal
+      .map(l => l.resist)
+      .filter((v: any) =>
+        v !== null &&
+        v !== undefined &&
+        v !== '' &&
+        v !== '!#REF' &&
+        !isNaN(Number(v)) &&
+        Number(v) !== 0
+      )
+      .map((v: any) => Number(v));
+
+    // Calcula média e armazena em this.media_substrato
+    if (resistValidos.length > 0) {
+      const soma = resistValidos.reduce((acc, val) => acc + val, 0);
+      this.tracao_aberto_media = parseFloat((soma / resistValidos.length).toFixed(2));
+    } else {
+      this.tracao_aberto_media = null;
+    }
+
+    // --- Validação de ±30% ---
+    if (this.tracao_aberto_media !== null && linha.resist !== '!#REF') {
+      const valor_vezes_03 = 0.3 * this.tracao_aberto_media;
+      const linha_mais_03 = this.tracao_aberto_media + valor_vezes_03;
+      const linha_menos_03 = this.tracao_aberto_media - valor_vezes_03;
+
+      if (linha.resist > linha_mais_03 || linha.resist < linha_menos_03) {
+        linha.validacao = 'Inválido';
+      } else {
+        linha.validacao = 'Válido';
+      }
+    } else {
+      linha.validacao = null;
+    }
+  }
+
 
 }
