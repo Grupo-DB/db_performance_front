@@ -1888,351 +1888,340 @@
     [(visible)]="modalDadosTracaoNormal" 
     position="full" >
 
-        <div class="containerInterno w-12">
-        <div class="background-form">
-            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-                <div class="fg1 flex flex-column w-12 align-items-center">
+    <div class="background-form">
+        <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+            <div class="fg1 flex flex-column w-12 align-items-center">
 
-                    <p-card class="card w-12 text-center card-substrato">
-                        <ng-template #header>
-                            <div class="header-substrato w-full text-center">
-                                <b>Resist. Ader. a Tração (Normal)</b>
-                            </div>
-                        </ng-template>
-                        <div class="flex flex-row w-12 gap-3">
-                            <div class="w-12">
-                                   <strong> Média de Resist. MPa: {{ tracao_normal_media}} </strong>
-                                <p-table [value]="linhasTracaoNormal" stripedRows>
-                                    <ng-template pTemplate="header">
-                                        <tr>
-                                            <th>Nº</th>
-                                            <th>Diâmetro mm</th>
-                                            <th>Área mm²</th>
-                                            <th>Espessura mm</th>
-                                            <th>Subst</th>
-                                            <th>Junta</th>
-                                            <th>Carga kgf</th>
-                                            <th>RESIST. Mpa</th>
-                                            <th>Validação</th>
-                                            <th>(A) Sub</th>
-                                            <th>(B) Sub/Arga</th>
-                                            <th>(C) Rup Arga</th>
-                                            <th>(D) Arga Cola</th>
-                                            <th>(E) Colar pastilha</th>
-                                        </tr>
-                                    </ng-template>
-
-                                    <ng-template pTemplate="body" let-linha let-i="rowIndex">
-                                        <tr>
-                                            <td>{{ linha.numero }}</td>
-                                            <td><input 
-                                                    pInputText 
-                                                    [(ngModel)]="linha.diametro"
-                                                    type="number"
-                                                    (ngModelChange)="atualizarArea(linha)"
-                                                    style="width: 70px"
-
-                                                />
-                                            </td>
-                                            <td><input pInputText [(ngModel)]="linha.area" type="text" readonly (ngModelChange)="atualizarCalculosTracaoNormal(linha)" style="width: 95px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.espessura" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.subst" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.carga" type="number" (ngModelChange)="atualizarCalculosTracaoNormal(linha)" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.resist" type="text" readonly style="width: 80px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.validacao" type="text" style="width: 100px" readonly/></td>
-                                            <td><input pInputText [(ngModel)]="linha.rupturas.sub" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.rupturas.subArga" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.rupturas.rupArga" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.rupturas.argaCola" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.rupturas.colarPastilha" type="number" style="width: 70px"/></td>
-                                        </tr>
-                                    </ng-template>
-                                </p-table>
-                            </div>
+                <p-card class="card w-12 text-center card-substrato">
+                    <ng-template #header>
+                        <div class="header-substrato w-full text-center">
+                            <b>Resist. Ader. a Tração (Normal)</b>
                         </div>
-                        
-                        <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
-                            <p-button 
-                                label="Salvar Tração (Normal)" 
-                                severity="warn"
-                                icon="pi pi-check" 
-                                iconPos="right" 
-                                tooltipPosition="top"
-                                pTooltip="Salvar Tração (Normal)"
-                                (onClick)="salvarTracaoNormal(analise)"
-                            />
+                    </ng-template>
+                    <div class="flex flex-row w-12 gap-3">
+                        <div class="w-12">
+                                <strong> Média de Resist. MPa: {{ tracao_normal_media}} </strong>
+                            <p-table [value]="linhasTracaoNormal" stripedRows>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>Nº</th>
+                                        <th>Diâmetro mm</th>
+                                        <th>Área mm²</th>
+                                        <th>Espessura mm</th>
+                                        <th>Subst</th>
+                                        <th>Junta</th>
+                                        <th>Carga kgf</th>
+                                        <th>RESIST. Mpa</th>
+                                        <th>Validação</th>
+                                        <th>(A) Sub</th>
+                                        <th>(B) Sub/Arga</th>
+                                        <th>(C) Rup Arga</th>
+                                        <th>(D) Arga Cola</th>
+                                        <th>(E) Colar pastilha</th>
+                                    </tr>
+                                </ng-template>
+
+                                <ng-template pTemplate="body" let-linha let-i="rowIndex">
+                                    <tr>
+                                        <td>{{ linha.numero }}</td>
+                                        <td><input 
+                                                pInputText 
+                                                [(ngModel)]="linha.diametro"
+                                                type="number"
+                                                (ngModelChange)="atualizarArea(linha)"
+                                                style="width: 70px"
+
+                                            />
+                                        </td>
+                                        <td><input pInputText [(ngModel)]="linha.area" type="text" readonly (ngModelChange)="atualizarCalculosTracaoNormal(linha)" style="width: 95px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.espessura" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.subst" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.carga" type="number" (ngModelChange)="atualizarCalculosTracaoNormal(linha)" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.resist" type="text" readonly style="width: 80px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.validacao" type="text" style="width: 100px" readonly/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.sub" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.subArga" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.rupArga" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.argaCola" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.colarPastilha" type="number" style="width: 70px"/></td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
                         </div>
-                    </p-card>
-                </div>    
-            </div>
+                    </div>
+                    
+                    <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                        <p-button 
+                            label="Salvar Tração (Normal)" 
+                            severity="warn"
+                            icon="pi pi-check" 
+                            iconPos="right" 
+                            tooltipPosition="top"
+                            pTooltip="Salvar Tração (Normal)"
+                            (onClick)="salvarTracaoNormal(analise)"
+                        />
+                    </div>
+                </p-card>
+            </div>    
         </div>
     </div>
     
 </p-drawer>
-
 
 <!-- tração submersa -->
 <p-drawer 
     [(visible)]="modalDadosTracaoSubmersa" 
     position="full" >
 
-        <div class="containerInterno w-12">
-        <div class="background-form">
-            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-                <div class="fg1 flex flex-column w-12 align-items-center">
+    <div class="background-form">
+        <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+            <div class="fg1 flex flex-column w-12 align-items-center">
 
-                    <p-card class="card w-12 text-center card-substrato">
-                        <ng-template #header>
-                            <div class="header-substrato w-full text-center">
-                                <b>Resist. Ader. a Tração (Submersa)</b>
-                            </div>
-                        </ng-template>
-                        <div class="flex flex-row w-12 gap-3">
-                            <div class="w-12">
-                                   <strong> Média de Resist. MPa: {{ tracao_submersa_media}} </strong>
-                                <p-table [value]="linhasTracaoSubmersa" stripedRows>
-                                    <ng-template pTemplate="header">
-                                        <tr>
-                                            <th>Nº</th>
-                                            <th>Diâmetro mm</th>
-                                            <th>Área mm²</th>
-                                            <th>Espessura mm</th>
-                                            <th>Subst</th>
-                                            <th>Junta</th>
-                                            <th>Carga kgf</th>
-                                            <th>RESIST. Mpa</th>
-                                            <th>Validação</th>
-                                            <th>(A) Sub</th>
-                                            <th>(B) Sub/Arga</th>
-                                            <th>(C) Rup Arga</th>
-                                            <th>(D) Arga Cola</th>
-                                            <th>(E) Colar pastilha</th>
-                                        </tr>
-                                    </ng-template>
-
-                                    <ng-template pTemplate="body" let-linha let-i="rowIndex">
-                                        <tr>
-                                            <td>{{ linha.numero }}</td>
-                                            <td><input 
-                                                    pInputText 
-                                                    [(ngModel)]="linha.diametro"
-                                                    type="number"
-                                                    (ngModelChange)="atualizarArea(linha)"
-                                                    style="width: 70px"
-
-                                                />
-                                            </td>
-                                            <td><input pInputText [(ngModel)]="linha.area" type="text" readonly (ngModelChange)="atualizarCalculosTracaoSubmersa(linha)" style="width: 95px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.espessura" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.subst" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.carga" type="number" (ngModelChange)="atualizarCalculosTracaoSubmersa(linha)" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.resist" type="text" readonly style="width: 80px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.validacao" type="text" style="width: 100px" readonly/></td>
-                                            <td><input pInputText [(ngModel)]="linha.rupturas.sub" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.rupturas.subArga" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.rupturas.rupArga" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.rupturas.argaCola" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.rupturas.colarPastilha" type="number" style="width: 70px"/></td>
-                                        </tr>
-                                    </ng-template>
-                                </p-table>
-                            </div>
+                <p-card class="card w-12 text-center card-substrato">
+                    <ng-template #header>
+                        <div class="header-substrato w-full text-center">
+                            <b>Resist. Ader. a Tração (Submersa)</b>
                         </div>
-                        
-                        <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
-                            <p-button 
-                                label="Salvar Tração (Submersa)" 
-                                severity="warn"
-                                icon="pi pi-check" 
-                                iconPos="right" 
-                                tooltipPosition="top"
-                                pTooltip="Salvar Tração (Submersa)"
-                                (onClick)="salvarTracaoSubmersa(analise)"
-                            />
+                    </ng-template>
+                    <div class="flex flex-row w-12 gap-3">
+                        <div class="w-12">
+                                <strong> Média de Resist. MPa: {{ tracao_submersa_media}} </strong>
+                            <p-table [value]="linhasTracaoSubmersa" stripedRows>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>Nº</th>
+                                        <th>Diâmetro mm</th>
+                                        <th>Área mm²</th>
+                                        <th>Espessura mm</th>
+                                        <th>Subst</th>
+                                        <th>Junta</th>
+                                        <th>Carga kgf</th>
+                                        <th>RESIST. Mpa</th>
+                                        <th>Validação</th>
+                                        <th>(A) Sub</th>
+                                        <th>(B) Sub/Arga</th>
+                                        <th>(C) Rup Arga</th>
+                                        <th>(D) Arga Cola</th>
+                                        <th>(E) Colar pastilha</th>
+                                    </tr>
+                                </ng-template>
+
+                                <ng-template pTemplate="body" let-linha let-i="rowIndex">
+                                    <tr>
+                                        <td>{{ linha.numero }}</td>
+                                        <td><input 
+                                                pInputText 
+                                                [(ngModel)]="linha.diametro"
+                                                type="number"
+                                                (ngModelChange)="atualizarArea(linha)"
+                                                style="width: 70px"
+
+                                            />
+                                        </td>
+                                        <td><input pInputText [(ngModel)]="linha.area" type="text" readonly (ngModelChange)="atualizarCalculosTracaoSubmersa(linha)" style="width: 95px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.espessura" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.subst" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.carga" type="number" (ngModelChange)="atualizarCalculosTracaoSubmersa(linha)" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.resist" type="text" readonly style="width: 80px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.validacao" type="text" style="width: 100px" readonly/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.sub" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.subArga" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.rupArga" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.argaCola" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.colarPastilha" type="number" style="width: 70px"/></td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
                         </div>
-                    </p-card>
-                </div>    
-            </div>
+                    </div>
+                    
+                    <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                        <p-button 
+                            label="Salvar Tração (Submersa)" 
+                            severity="warn"
+                            icon="pi pi-check" 
+                            iconPos="right" 
+                            tooltipPosition="top"
+                            pTooltip="Salvar Tração (Submersa)"
+                            (onClick)="salvarTracaoSubmersa(analise)"
+                        />
+                    </div>
+                </p-card>
+            </div>    
         </div>
     </div>
     
 </p-drawer>
-
 
 <!-- tração estufa -->
 <p-drawer 
     [(visible)]="modalDadosTracaoEstufa" 
     position="full" >
 
-        <div class="containerInterno w-12">
-        <div class="background-form">
-            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-                <div class="fg1 flex flex-column w-12 align-items-center">
+    <div class="background-form">
+        <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+            <div class="fg1 flex flex-column w-12 align-items-center">
 
-                    <p-card class="card w-12 text-center card-substrato">
-                        <ng-template #header>
-                            <div class="header-substrato w-full text-center">
-                                <b>Resist. Ader. a Tração (Estufa)</b>
-                            </div>
-                        </ng-template>
-                        <div class="flex flex-row w-12 gap-3">
-                            <div class="w-12">
-                                   <strong> Média de Resist. MPa: {{ tracao_estufa_media}} </strong>
-                                <p-table [value]="linhasTracaoEstufa" stripedRows>
-                                    <ng-template pTemplate="header">
-                                        <tr>
-                                            <th>Nº</th>
-                                            <th>Diâmetro mm</th>
-                                            <th>Área mm²</th>
-                                            <th>Espessura mm</th>
-                                            <th>Subst</th>
-                                            <th>Junta</th>
-                                            <th>Carga kgf</th>
-                                            <th>RESIST. Mpa</th>
-                                            <th>Validação</th>
-                                            <th>(A) Sub</th>
-                                            <th>(B) Sub/Arga</th>
-                                            <th>(C) Rup Arga</th>
-                                            <th>(D) Arga Cola</th>
-                                            <th>(E) Colar pastilha</th>
-                                        </tr>
-                                    </ng-template>
-
-                                    <ng-template pTemplate="body" let-linha let-i="rowIndex">
-                                        <tr>
-                                            <td>{{ linha.numero }}</td>
-                                            <td><input 
-                                                    pInputText 
-                                                    [(ngModel)]="linha.diametro"
-                                                    type="number"
-                                                    (ngModelChange)="atualizarArea(linha)"
-                                                    style="width: 70px"
-
-                                                />
-                                            </td>
-                                            <td><input pInputText [(ngModel)]="linha.area" type="text" readonly (ngModelChange)="atualizarCalculosTracaoEstufa(linha)" style="width: 95px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.espessura" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.subst" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.carga" type="number" (ngModelChange)="atualizarCalculosTracaoEstufa(linha)" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.resist" type="text" readonly style="width: 80px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.validacao" type="text" style="width: 100px" readonly/></td>
-                                            <td><input pInputText [(ngModel)]="linha.rupturas.sub" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.rupturas.subArga" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.rupturas.rupArga" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.rupturas.argaCola" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.rupturas.colarPastilha" type="number" style="width: 70px"/></td>
-                                        </tr>
-                                    </ng-template>
-                                </p-table>
-                            </div>
+                <p-card class="card w-12 text-center card-substrato">
+                    <ng-template #header>
+                        <div class="header-substrato w-full text-center">
+                            <b>Resist. Ader. a Tração (Estufa)</b>
                         </div>
-                        
-                        <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
-                            <p-button 
-                                label="Salvar Tração (Estufa)" 
-                                severity="warn"
-                                icon="pi pi-check" 
-                                iconPos="right" 
-                                tooltipPosition="top"
-                                pTooltip="Salvar Tração (Estufa)"
-                                (onClick)="salvarTracaoEstufa(analise)"
-                            />
+                    </ng-template>
+                    <div class="flex flex-row w-12 gap-3">
+                        <div class="w-12">
+                                <strong> Média de Resist. MPa: {{ tracao_estufa_media}} </strong>
+                            <p-table [value]="linhasTracaoEstufa" stripedRows>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>Nº</th>
+                                        <th>Diâmetro mm</th>
+                                        <th>Área mm²</th>
+                                        <th>Espessura mm</th>
+                                        <th>Subst</th>
+                                        <th>Junta</th>
+                                        <th>Carga kgf</th>
+                                        <th>RESIST. Mpa</th>
+                                        <th>Validação</th>
+                                        <th>(A) Sub</th>
+                                        <th>(B) Sub/Arga</th>
+                                        <th>(C) Rup Arga</th>
+                                        <th>(D) Arga Cola</th>
+                                        <th>(E) Colar pastilha</th>
+                                    </tr>
+                                </ng-template>
+
+                                <ng-template pTemplate="body" let-linha let-i="rowIndex">
+                                    <tr>
+                                        <td>{{ linha.numero }}</td>
+                                        <td><input 
+                                                pInputText 
+                                                [(ngModel)]="linha.diametro"
+                                                type="number"
+                                                (ngModelChange)="atualizarArea(linha)"
+                                                style="width: 70px"
+
+                                            />
+                                        </td>
+                                        <td><input pInputText [(ngModel)]="linha.area" type="text" readonly (ngModelChange)="atualizarCalculosTracaoEstufa(linha)" style="width: 95px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.espessura" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.subst" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.carga" type="number" (ngModelChange)="atualizarCalculosTracaoEstufa(linha)" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.resist" type="text" readonly style="width: 80px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.validacao" type="text" style="width: 100px" readonly/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.sub" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.subArga" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.rupArga" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.argaCola" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.colarPastilha" type="number" style="width: 70px"/></td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
                         </div>
-                    </p-card>
-                </div>    
-            </div>
+                    </div>
+                    
+                    <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                        <p-button 
+                            label="Salvar Tração (Estufa)" 
+                            severity="warn"
+                            icon="pi pi-check" 
+                            iconPos="right" 
+                            tooltipPosition="top"
+                            pTooltip="Salvar Tração (Estufa)"
+                            (onClick)="salvarTracaoEstufa(analise)"
+                        />
+                    </div>
+                </p-card>
+            </div>    
         </div>
     </div>
-    
-</p-drawer>
 
+</p-drawer>
 
 <!-- tração tempo em aberto -->
 <p-drawer 
     [(visible)]="modalDadosTracaoAberto" 
     position="full" >
 
-        <div class="containerInterno w-12">
-        <div class="background-form">
-            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-                <div class="fg1 flex flex-column w-12 align-items-center">
+    <div class="background-form">
+        <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+            <div class="fg1 flex flex-column w-12 align-items-center">
 
-                    <p-card class="card w-12 text-center card-substrato">
-                        <ng-template #header>
-                            <div class="header-substrato w-full text-center">
-                                <b>Resist. Ader. a Tração (Tempo em Aberto)</b>
-                            </div>
-                        </ng-template>
-                        <div class="flex flex-row w-12 gap-3">
-                            <div class="w-12">
-                                   <strong> Média de Resist. MPa: {{ tracao_aberto_media}} </strong>
-                                <p-table [value]="linhasTracaoAberto" stripedRows>
-                                    <ng-template pTemplate="header">
-                                        <tr>
-                                            <th>Nº</th>
-                                            <th>Diâmetro mm</th>
-                                            <th>Área mm²</th>
-                                            <th>Espessura mm</th>
-                                            <th>Subst</th>
-                                            <th>Junta</th>
-                                            <th>Carga kgf</th>
-                                            <th>RESIST. Mpa</th>
-                                            <th>Validação</th>
-                                            <th>(A) Sub</th>
-                                            <th>(B) Sub/Arga</th>
-                                            <th>(C) Rup Arga</th>
-                                            <th>(D) Arga Cola</th>
-                                            <th>(E) Colar pastilha</th>
-                                        </tr>
-                                    </ng-template>
-
-                                    <ng-template pTemplate="body" let-linha let-i="rowIndex">
-                                        <tr>
-                                            <td>{{ linha.numero }}</td>
-                                            <td><input 
-                                                    pInputText 
-                                                    [(ngModel)]="linha.diametro"
-                                                    type="number"
-                                                    (ngModelChange)="atualizarArea(linha)"
-                                                    style="width: 70px"
-
-                                                />
-                                            </td>
-                                            <td><input pInputText [(ngModel)]="linha.area" type="text" readonly (ngModelChange)="atualizarCalculosTracaoAberto(linha)" style="width: 95px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.espessura" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.subst" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.carga" type="number" (ngModelChange)="atualizarCalculosTracaoAberto(linha)" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.resist" type="text" readonly style="width: 80px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.validacao" type="text" style="width: 100px" readonly/></td>
-                                            <td><input pInputText [(ngModel)]="linha.rupturas.sub" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.rupturas.subArga" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.rupturas.rupArga" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.rupturas.argaCola" type="number" style="width: 70px"/></td>
-                                            <td><input pInputText [(ngModel)]="linha.rupturas.colarPastilha" type="number" style="width: 70px"/></td>
-                                        </tr>
-                                    </ng-template>
-                                </p-table>
-                            </div>
+                <p-card class="card w-12 text-center card-substrato">
+                    <ng-template #header>
+                        <div class="header-substrato w-full text-center">
+                            <b>Resist. Ader. a Tração (Tempo em Aberto)</b>
                         </div>
-                        
-                        <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
-                            <p-button 
-                                label="Salvar Tração (Tempo em Aberto)" 
-                                severity="warn"
-                                icon="pi pi-check" 
-                                iconPos="right" 
-                                tooltipPosition="top"
-                                pTooltip="Salvar Tração (Tempo em Aberto)"
-                                (onClick)="salvarTracaoAberto(analise)"
-                            />
+                    </ng-template>
+                    <div class="flex flex-row w-12 gap-3">
+                        <div class="w-12">
+                                <strong> Média de Resist. MPa: {{ tracao_aberto_media}} </strong>
+                            <p-table [value]="linhasTracaoAberto" stripedRows>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>Nº</th>
+                                        <th>Diâmetro mm</th>
+                                        <th>Área mm²</th>
+                                        <th>Espessura mm</th>
+                                        <th>Subst</th>
+                                        <th>Junta</th>
+                                        <th>Carga kgf</th>
+                                        <th>RESIST. Mpa</th>
+                                        <th>Validação</th>
+                                        <th>(A) Sub</th>
+                                        <th>(B) Sub/Arga</th>
+                                        <th>(C) Rup Arga</th>
+                                        <th>(D) Arga Cola</th>
+                                        <th>(E) Colar pastilha</th>
+                                    </tr>
+                                </ng-template>
+
+                                <ng-template pTemplate="body" let-linha let-i="rowIndex">
+                                    <tr>
+                                        <td>{{ linha.numero }}</td>
+                                        <td><input 
+                                                pInputText 
+                                                [(ngModel)]="linha.diametro"
+                                                type="number"
+                                                (ngModelChange)="atualizarArea(linha)"
+                                                style="width: 70px"
+
+                                            />
+                                        </td>
+                                        <td><input pInputText [(ngModel)]="linha.area" type="text" readonly (ngModelChange)="atualizarCalculosTracaoAberto(linha)" style="width: 95px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.espessura" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.subst" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.carga" type="number" (ngModelChange)="atualizarCalculosTracaoAberto(linha)" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.resist" type="text" readonly style="width: 80px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.validacao" type="text" style="width: 100px" readonly/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.sub" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.subArga" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.rupArga" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.argaCola" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.colarPastilha" type="number" style="width: 70px"/></td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
                         </div>
-                    </p-card>
-                </div>    
-            </div>
+                    </div>
+                    
+                    <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                        <p-button 
+                            label="Salvar Tração (Tempo em Aberto)" 
+                            severity="warn"
+                            icon="pi pi-check" 
+                            iconPos="right" 
+                            tooltipPosition="top"
+                            pTooltip="Salvar Tração (Tempo em Aberto)"
+                            (onClick)="salvarTracaoAberto(analise)"
+                        />
+                    </div>
+                </p-card>
+            </div>    
         </div>
     </div>
     
@@ -2869,153 +2858,152 @@
     position="full" 
 >
 
-    <div class="containerInterno w-12">
-        <div class="background-form">
-            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-                <div class="fg1 flex flex-column w-12 align-items-center">
+    <div class="background-form">
+        <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+            <div class="fg1 flex flex-column w-12 align-items-center">
 
-                    <p-card class="card w-12 text-center card-peneira">
-                        <ng-template #header>
-                            <div class="header-substrato w-full text-center">
-                                <b>Peneiras Secas</b>
-                            </div>
-                        </ng-template>
-                         <div class="flex flex-row w-12 gap-4 justify-content-start mb-3">
-                            <label class="flex align-items-center gap-2">
-                                Massa da Amostra:
-                                <input 
-                                    pInputText 
-                                    id="massa_amostra" 
-                                    type="number" 
-                                    [(ngModel)]="massa_amostra"
-                                    style="width: 150px;"
-                                />
-                            </label>
-
-                            <label class="flex align-items-center gap-2">
-                                Finos:
-                                <input 
-                                    pInputText 
-                                    id="total_fino" 
-                                    type="number" 
-                                    readOnly="true"
-                                    [(ngModel)]="total_finos"
-                                    style="width: 150px;"
-                                />
-                            </label>
+                <p-card class="card w-12 text-center card-peneira">
+                    <ng-template #header>
+                        <div class="header-substrato w-full text-center">
+                            <b>Peneiras Secas</b>
                         </div>
-
-
-                        <div class="flex flex-row w-12 gap-3">
-                            <div class="w-12">
-                                <p-table [value]="linhasPeneira" stripedRows>
-                                      <ng-template pTemplate="header">
-                                        <tr>
-                                            <th>Peneira</th>
-                                            <th>Retido (g)</th>
-                                            <th>Retido (%)</th>
-                                            <th>Passante (%)</th>
-                                            <th>Acumulado (%)</th>
-                                            <th>Passante Acumulado(%)</th>
-                                        </tr>
-                                    </ng-template>
-                                    <ng-template pTemplate="body" let-linha let-i="rowIndex">
-                                        <tr>
-                                            <td>
-                                                <p-floatLabel variant="on">
-                                                    <p-select
-                                                        [options]="peneirasDados"
-                                                        [(ngModel)]="linha.peneira"
-                                                        optionLabel="value"
-                                                        optionValue="value"
-                                                        placeholder="Selecione a peneira"
-                                                        appendTo="body"
-                                                    ></p-select>
-                                                    <label for="float-label">Peneiras</label>
-                                                </p-floatLabel>
-                                            </td>
-
-                                            <td>
-                                                <input 
-                                                    pInputText 
-                                                    [(ngModel)]="linha.valor_retido"
-                                                    type="number"
-                                                    min="0"
-                                                    step="any"
-                                                    (ngModelChange)="atualizarValores(i)"
-                                                    style="width: 150px"
-                                                />
-                                            </td>
-
-                                            <td>
-                                            <input 
-                                                pInputText 
-                                                [(ngModel)]="linha.porcentual_retido"
-                                                type="number"
-                                                [readonly]="true"
-                                                style="width: 150px"
-                                            />
-                                            </td>
-
-                                            <td>
-                                            <input 
-                                                pInputText 
-                                                [(ngModel)]="linha.passante"
-                                                type="number"
-                                                [readonly]="true"
-                                                style="width: 150px"
-                                            />
-                                            </td>
-
-                                            <td>
-                                            <input 
-                                                pInputText 
-                                                [(ngModel)]="linha.acumulado"
-                                                type="number"
-                                                [readonly]="true"
-                                                style="width: 150px"
-                                            />
-                                            </td>
-
-                                            <td>
-                                            <input 
-                                                pInputText 
-                                                [(ngModel)]="linha.passante_acumulado"
-                                                type="number"
-                                                [readonly]="true"
-                                                style="width: 150px"
-                                            />
-                                            </td>
-                                        </tr>
-                                    </ng-template>
-                                </p-table>
-                            </div>
-                        </div>                   
-                        
-                        <p-button 
-                            (onClick)="addLinhaSeca()" 
-                            label="Adicionar Linha"
-                            iconPos="right"  
-                            tooltipPosition="top"
-                            pTooltip="Adicionar Linha"
-                            icon="pi pi-plus"
-                            severity="info"
-                        />
-
-                        <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
-                            <p-button 
-                                label="Salvar Peneiras Secas" 
-                                severity="info"
-                                icon="pi pi-check" 
-                                iconPos="right" 
-                                tooltipPosition="top"
-                                pTooltip="Salvar Peneiras Secas"
-                                (onClick)="salvarPeneiraSeca(analise)"
+                    </ng-template>
+                        <div class="flex flex-row w-12 gap-4 justify-content-start mb-3">
+                        <label class="flex align-items-center gap-2">
+                            Massa da Amostra:
+                            <input 
+                                pInputText 
+                                id="massa_amostra" 
+                                type="number" 
+                                [(ngModel)]="massa_amostra"
+                                style="width: 150px;"
                             />
+                        </label>
+
+                        <label class="flex align-items-center gap-2">
+                            Finos:
+                            <input 
+                                pInputText 
+                                id="total_fino" 
+                                type="number" 
+                                readOnly="true"
+                                [(ngModel)]="total_finos"
+                                style="width: 150px;"
+                            />
+                        </label>
+                    </div>
+
+
+                    <div class="flex flex-row w-12 gap-3">
+                        <div class="w-12">
+                            <p-table [value]="linhasPeneira" stripedRows>
+                                    <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>Peneira</th>
+                                        <th>Retido (g)</th>
+                                        <th>Retido (%)</th>
+                                        <th>Passante (%)</th>
+                                        <th>Acumulado (%)</th>
+                                        <th>Passante Acumulado(%)</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-linha let-i="rowIndex">
+                                    <tr>
+                                        <td>
+                                            <p-floatLabel variant="on">
+                                                <p-select
+                                                    [options]="peneirasDados"
+                                                    [(ngModel)]="linha.peneira"
+                                                    optionLabel="value"
+                                                    optionValue="value"
+                                                    placeholder="Selecione a peneira"
+                                                    appendTo="body"
+                                                ></p-select>
+                                                <label for="float-label">Peneiras</label>
+                                            </p-floatLabel>
+                                        </td>
+
+                                        <td>
+                                            <input 
+                                                pInputText 
+                                                [(ngModel)]="linha.valor_retido"
+                                                type="number"
+                                                min="0"
+                                                step="any"
+                                                (ngModelChange)="atualizarValores(i)"
+                                                style="width: 150px"
+                                            />
+                                        </td>
+
+                                        <td>
+                                        <input 
+                                            pInputText 
+                                            [(ngModel)]="linha.porcentual_retido"
+                                            type="number"
+                                            [readonly]="true"
+                                            style="width: 150px"
+                                        />
+                                        </td>
+
+                                        <td>
+                                        <input 
+                                            pInputText 
+                                            [(ngModel)]="linha.passante"
+                                            type="number"
+                                            [readonly]="true"
+                                            style="width: 150px"
+                                        />
+                                        </td>
+
+                                        <td>
+                                        <input 
+                                            pInputText 
+                                            [(ngModel)]="linha.acumulado"
+                                            type="number"
+                                            [readonly]="true"
+                                            style="width: 150px"
+                                        />
+                                        </td>
+
+                                        <td>
+                                        <input 
+                                            pInputText 
+                                            [(ngModel)]="linha.passante_acumulado"
+                                            type="number"
+                                            [readonly]="true"
+                                            style="width: 150px"
+                                        />
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
                         </div>
-                    </p-card>
-                </div>    
-            </div>
+                    </div>
+                    <br>
+                    <br>
+                    <p-button 
+                        (onClick)="addLinhaSeca()" 
+                        label="Adicionar Linha"
+                        iconPos="right"  
+                        tooltipPosition="top"
+                        pTooltip="Adicionar Linha"
+                        icon="pi pi-plus"
+                        severity="info"
+                    />
+
+                    <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                        <p-button 
+                            label="Salvar Peneiras Secas" 
+                            severity="info"
+                            icon="pi pi-check" 
+                            iconPos="right" 
+                            tooltipPosition="top"
+                            pTooltip="Salvar Peneiras Secas"
+                            (onClick)="salvarPeneiraSeca(analise)"
+                        />
+                    </div>
+                </p-card>
+            </div>    
         </div>
     </div>
     
@@ -3027,151 +3015,152 @@
     [(visible)]="modalDadosPeneiraUmida" 
     position="full" >
 
-    <div class="containerInterno w-12">
-        <div class="background-form">
-            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-                <div class="fg1 flex flex-column w-12 align-items-center">
+    <div class="background-form">
+        <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+            <div class="fg1 flex flex-column w-12 align-items-center">
 
-                    <p-card class="card w-12 text-center card-peneira">
-                        <ng-template #header>
-                            <div class="header-superficial w-full text-center">
-                                <b>Peneiras Úmidas</b>
-                            </div>
-                        </ng-template>
-                        
-                        <div class="flex flex-row w-12 gap-4 justify-content-start mb-3">
-                            <label class="flex align-items-center gap-2">
-                                Massa da Amostra:
-                                <input 
-                                    pInputText 
-                                    id="massa_amostra" 
-                                    type="number" 
-                                    [(ngModel)]="massa_amostra_umida"
-                                    style="width: 150px;"
-                                />
-                            </label>
-
-                            <label class="flex align-items-center gap-2">
-                                Finos:
-                                <input 
-                                    pInputText 
-                                    id="total_fino" 
-                                    type="number" 
-                                    readOnly="true"
-                                    [(ngModel)]="total_finos_umida"
-                                    style="width: 150px;"
-                                />
-                            </label>
+                <p-card class="card w-12 text-center card-peneira">
+                    <ng-template #header>
+                        <div class="header-superficial w-full text-center">
+                            <b>Peneiras Úmidas</b>
                         </div>
-                        <div class="flex flex-row w-12 gap-3">
-                            <div class="w-12">
-                                <p-table [value]="linhasPeneiraUmida" stripedRows>
-                                      <ng-template pTemplate="header">
-                                        <tr>
-                                            <th>Peneira</th>
-                                            <th>Retido (g)</th>
-                                            <th>Retido (%)</th>
-                                            <th>Passante (%)</th>
-                                            <th>Acumulado (%)</th>
-                                            <th>Passante Acumulado(%)</th>
-                                        </tr>
-                                    </ng-template>
-                                    <ng-template pTemplate="body" let-linha let-i="rowIndex">
-                                        <tr>
-                                            <td>
-                                                <p-floatLabel variant="on">
-                                                    <p-select
-                                                        [options]="peneirasDados"
-                                                        [(ngModel)]="linha.peneira"
-                                                        optionLabel="value"
-                                                        optionValue="value"
-                                                        placeholder="Selecione a peneira"
-                                                        appendTo="body"
-                                                    ></p-select>
-                                                    <label for="float-label">Peneiras</label>
-                                                </p-floatLabel>
-                                            </td>
-
-                                            <td>
-                                                <input 
-                                                    pInputText 
-                                                    [(ngModel)]="linha.valor_retido"
-                                                    type="number"
-                                                    min="0"
-                                                    step="any"
-                                                    (ngModelChange)="atualizarValoresUmida(i)"
-                                                    style="width: 150px"
-                                                />
-                                            </td>
-
-                                            <td>
-                                            <input 
-                                                    pInputText 
-                                                    [(ngModel)]="linha.porcentual_retido"
-                                                    type="number"
-                                                    [readonly]="true"
-                                                    style="width: 150px"
-                                                />
-                                            </td>
-
-                                            <td>
-                                                <input 
-                                                    pInputText 
-                                                    [(ngModel)]="linha.passante"
-                                                    type="number"
-                                                    [readonly]="true"
-                                                    style="width: 150px"
-                                                />
-                                            </td>
-
-                                            <td>
-                                                <input 
-                                                    pInputText 
-                                                    [(ngModel)]="linha.acumulado"
-                                                    type="number"
-                                                    [readonly]="true"
-                                                    style="width: 150px"
-                                                />
-                                            </td>
-
-                                            <td>
-                                                <input 
-                                                    pInputText 
-                                                    [(ngModel)]="linha.passante_acumulado"
-                                                    type="number"
-                                                    [readonly]="true"
-                                                    style="width: 150px"
-                                                />
-                                            </td>
-                                        </tr>
-                                    </ng-template>
-                                </p-table>
-                            </div>
-                        </div>
-
-                        <p-button 
-                            (onClick)="addLinha()" 
-                            label="Adicionar Linha"
-                            iconPos="right"  
-                            tooltipPosition="top"
-                            pTooltip="Adicionar Linha"
-                            icon="pi pi-plus"
-                            severity="info"
-                        />
-                        <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
-                            <p-button 
-                                label="Salvar Peneiras Umidas" 
-                                severity="info"
-                                icon="pi pi-check" 
-                                iconPos="right" 
-                                tooltipPosition="top"
-                                pTooltip="Salvar Peneiras Umidas"
-                                (onClick)="salvarPeneiraUmida(analise)"
+                    </ng-template>
+                    
+                    <div class="flex flex-row w-12 gap-4 justify-content-start mb-3">
+                        <label class="flex align-items-center gap-2">
+                            Massa da Amostra:
+                            <input 
+                                pInputText 
+                                id="massa_amostra" 
+                                type="number" 
+                                [(ngModel)]="massa_amostra_umida"
+                                style="width: 150px;"
                             />
+                        </label>
+
+                        <label class="flex align-items-center gap-2">
+                            Finos:
+                            <input 
+                                pInputText 
+                                id="total_fino" 
+                                type="number" 
+                                readOnly="true"
+                                [(ngModel)]="total_finos_umida"
+                                style="width: 150px;"
+                            />
+                        </label>
+                    </div>
+                    <div class="flex flex-row w-12 gap-3">
+                        <div class="w-12">
+                            <p-table [value]="linhasPeneiraUmida" stripedRows>
+                                    <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>Peneira</th>
+                                        <th>Retido (g)</th>
+                                        <th>Retido (%)</th>
+                                        <th>Passante (%)</th>
+                                        <th>Acumulado (%)</th>
+                                        <th>Passante Acumulado(%)</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-linha let-i="rowIndex">
+                                    <tr>
+                                        <td>
+                                            <p-floatLabel variant="on">
+                                                <p-select
+                                                    [options]="peneirasDados"
+                                                    [(ngModel)]="linha.peneira"
+                                                    optionLabel="value"
+                                                    optionValue="value"
+                                                    placeholder="Selecione a peneira"
+                                                    appendTo="body"
+                                                ></p-select>
+                                                <label for="float-label">Peneiras</label>
+                                            </p-floatLabel>
+                                        </td>
+
+                                        <td>
+                                            <input 
+                                                pInputText 
+                                                [(ngModel)]="linha.valor_retido"
+                                                type="number"
+                                                min="0"
+                                                step="any"
+                                                (ngModelChange)="atualizarValoresUmida(i)"
+                                                style="width: 150px"
+                                            />
+                                        </td>
+
+                                        <td>
+                                        <input 
+                                                pInputText 
+                                                [(ngModel)]="linha.porcentual_retido"
+                                                type="number"
+                                                [readonly]="true"
+                                                style="width: 150px"
+                                            />
+                                        </td>
+
+                                        <td>
+                                            <input 
+                                                pInputText 
+                                                [(ngModel)]="linha.passante"
+                                                type="number"
+                                                [readonly]="true"
+                                                style="width: 150px"
+                                            />
+                                        </td>
+
+                                        <td>
+                                            <input 
+                                                pInputText 
+                                                [(ngModel)]="linha.acumulado"
+                                                type="number"
+                                                [readonly]="true"
+                                                style="width: 150px"
+                                            />
+                                        </td>
+
+                                        <td>
+                                            <input 
+                                                pInputText 
+                                                [(ngModel)]="linha.passante_acumulado"
+                                                type="number"
+                                                [readonly]="true"
+                                                style="width: 150px"
+                                            />
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
                         </div>
-                    </p-card>
-                </div>    
-            </div>
+                    </div>
+
+                    <br>
+                    <br>
+
+                    <p-button 
+                        (onClick)="addLinha()" 
+                        label="Adicionar Linha"
+                        iconPos="right"  
+                        tooltipPosition="top"
+                        pTooltip="Adicionar Linha"
+                        icon="pi pi-plus"
+                        severity="info"
+                    />
+                    <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                        <p-button 
+                            label="Salvar Peneiras Umidas" 
+                            severity="info"
+                            icon="pi pi-check" 
+                            iconPos="right" 
+                            tooltipPosition="top"
+                            pTooltip="Salvar Peneiras Umidas"
+                            (onClick)="salvarPeneiraUmida(analise)"
+                        />
+                    </div>
+                </p-card>
+            </div>    
         </div>
     </div>
     
