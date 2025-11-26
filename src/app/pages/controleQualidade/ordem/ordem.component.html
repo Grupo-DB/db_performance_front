@@ -678,6 +678,401 @@
                     </div>
 
                 </div>
+            </div>
+
+            <!-- Cards de Variação de Massa -->
+            <div *ngIf="analiseSelecionada?.variacao_massa">
+                <h3 class="mb-3" style="color: #e6defa;">⚖️ Variação de Massa</h3>
+                <div class="grid">
+                    
+                    <!-- M0 - Massa Inicial -->
+                    <div class="col-12 md:col-6 lg:col-3" *ngIf="analiseSelecionada.variacao_massa.m0">
+                        <div
+                            class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                            style="border-radius: 12px; background-color: #4a4458; min-height: 200px;"
+                        >
+                            <div class="flex align-items-center mb-3">
+                                <i class="pi pi-box" style="color: #e3d8ff; font-size: 1.2rem; margin-right: 8px;"></i>
+                                <h5 class="m-0" style="color: #e3d8ff;">M0 - Inicial</h5>
+                            </div>
+                            <div style="color: #e6defa; font-size: 0.9rem;">
+                                <p class="mb-2"><b>Data:</b> {{ analiseSelecionada.variacao_massa.m0.data | date:'dd/MM/yyyy' }}</p>
+                                <p class="mb-1"><b>CP1:</b> {{ analiseSelecionada.variacao_massa.m0.cp1 }} g</p>
+                                <p class="mb-1"><b>CP2:</b> {{ analiseSelecionada.variacao_massa.m0.cp2 }} g</p>
+                                <p class="mb-0"><b>CP3:</b> {{ analiseSelecionada.variacao_massa.m0.cp3 }} g</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- M1 - 1 dia -->
+                    <div class="col-12 md:col-6 lg:col-3" *ngIf="analiseSelecionada.variacao_massa.m1">
+                        <div
+                            class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                            style="border-radius: 12px; background-color: #2b3a55; min-height: 200px;"
+                        >
+                            <div class="flex align-items-center mb-3">
+                                <i class="pi pi-calendar" style="color: #b3e5ff; font-size: 1.2rem; margin-right: 8px;"></i>
+                                <h5 class="m-0" style="color: #b3e5ff;">M1 - 1 dia</h5>
+                            </div>
+                            <div style="color: #d6f1ff; font-size: 0.9rem;">
+                                <p class="mb-2"><b>Data:</b> {{ analiseSelecionada.variacao_massa.m1.data | date:'dd/MM/yyyy' }}</p>
+                                <p class="mb-1"><b>CP1:</b> {{ analiseSelecionada.variacao_massa.m1.cp1 }} g</p>
+                                <p class="mb-1"><b>CP2:</b> {{ analiseSelecionada.variacao_massa.m1.cp2 }} g</p>
+                                <p class="mb-2"><b>CP3:</b> {{ analiseSelecionada.variacao_massa.m1.cp3 }} g</p>
+                                <div class="mt-2 p-2 text-center" style="background-color: rgba(179, 229, 255, 0.15); border-radius: 8px;">
+                                    <p class="font-bold mb-1" style="color: #b3e5ff;">Média: {{ analiseSelecionada.variacao_massa.m1.media | number:'1.2-4' }} %</p>
+                                    <p class="text-xs mb-0" style="color: #d6f1ff;">Desvio: {{ analiseSelecionada.variacao_massa.m1.desvio_padrao | number:'1.2-4' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- M7 - 7 dias -->
+                    <div class="col-12 md:col-6 lg:col-3" *ngIf="analiseSelecionada.variacao_massa.m7">
+                        <div
+                            class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                            style="border-radius: 12px; background-color: #26413c; min-height: 200px;"
+                        >
+                            <div class="flex align-items-center mb-3">
+                                <i class="pi pi-calendar-plus" style="color: #b2f5ea; font-size: 1.2rem; margin-right: 8px;"></i>
+                                <h5 class="m-0" style="color: #b2f5ea;">M7 - 7 dias</h5>
+                            </div>
+                            <div style="color: #ccfbf1; font-size: 0.9rem;">
+                                <p class="mb-2"><b>Data:</b> {{ analiseSelecionada.variacao_massa.m7.data | date:'dd/MM/yyyy' }}</p>
+                                <p class="mb-1"><b>CP1:</b> {{ analiseSelecionada.variacao_massa.m7.cp1 }} g</p>
+                                <p class="mb-1"><b>CP2:</b> {{ analiseSelecionada.variacao_massa.m7.cp2 }} g</p>
+                                <p class="mb-2"><b>CP3:</b> {{ analiseSelecionada.variacao_massa.m7.cp3 }} g</p>
+                                <div class="mt-2 p-2 text-center" style="background-color: rgba(178, 245, 234, 0.15); border-radius: 8px;">
+                                    <p class="font-bold mb-1" style="color: #b2f5ea;">Média: {{ analiseSelecionada.variacao_massa.m7.media | number:'1.2-4' }} %</p>
+                                    <p class="text-xs mb-0" style="color: #ccfbf1;">Desvio: {{ analiseSelecionada.variacao_massa.m7.desvio_padrao | number:'1.2-4' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- M28 - 28 dias -->
+                    <div class="col-12 md:col-6 lg:col-3" *ngIf="analiseSelecionada.variacao_massa.m28">
+                        <div
+                            class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                            style="border-radius: 12px; background-color: #3b3b32; min-height: 200px;"
+                        >
+                            <div class="flex align-items-center mb-3">
+                                <i class="pi pi-calendar-times" style="color: #fff3b0; font-size: 1.2rem; margin-right: 8px;"></i>
+                                <h5 class="m-0" style="color: #fff3b0;">M28 - 28 dias</h5>
+                            </div>
+                            <div style="color: #fff2a8; font-size: 0.9rem;">
+                                <p class="mb-2"><b>Data:</b> {{ analiseSelecionada.variacao_massa.m28.data | date:'dd/MM/yyyy' }}</p>
+                                <p class="mb-1"><b>CP1:</b> {{ analiseSelecionada.variacao_massa.m28.cp1 }} g</p>
+                                <p class="mb-1"><b>CP2:</b> {{ analiseSelecionada.variacao_massa.m28.cp2 }} g</p>
+                                <p class="mb-2"><b>CP3:</b> {{ analiseSelecionada.variacao_massa.m28.cp3 }} g</p>
+                                <div class="mt-2 p-2 text-center" style="background-color: rgba(255, 243, 176, 0.15); border-radius: 8px;">
+                                    <p class="font-bold mb-1" style="color: #fff3b0;">Média: {{ analiseSelecionada.variacao_massa.m28.media | number:'1.2-4' }} %</p>
+                                    <p class="text-xs mb-0" style="color: #fff2a8;">Desvio: {{ analiseSelecionada.variacao_massa.m28.desvio_padrao | number:'1.2-4' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Cards de Módulo de Elasticidade -->
+            <div *ngIf="analiseSelecionada?.modulo_elasticidade">
+                <h3 class="mb-3" style="color: #e6defa;">📊 Módulo de Elasticidade</h3>
+                
+                <!-- Card de Média Geral -->
+                <div class="mb-4" *ngIf="analiseSelecionada.modulo_elasticidade.media">
+                    <div
+                        class="shadow-2 hover:shadow-4 transition-duration-200 p-4"
+                        style="border-radius: 12px; background-color: #4a4458;"
+                    >
+                        <div class="flex align-items-center justify-content-center">
+                            <i class="pi pi-chart-line mr-3" style="color: #e3d8ff; font-size: 2rem;"></i>
+                            <div class="text-center">
+                                <p class="mb-1" style="color: #e6defa; font-size: 0.9rem;">Módulo de Elasticidade Médio (Ed)</p>
+                                <p class="mb-0" style="color: #e3d8ff; font-size: 2rem; font-weight: 700;">
+                                    {{ analiseSelecionada.modulo_elasticidade.media.ed | number:'1.2-4' }} MPa
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cards dos Corpos de Prova -->
+                <div class="grid">
+                    
+                    <!-- CP1 -->
+                    <div class="col-12 md:col-6 lg:col-4" *ngIf="analiseSelecionada.modulo_elasticidade.cp1">
+                        <div
+                            class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                            style="border-radius: 12px; background-color: #2b3a55; min-height: 380px;"
+                        >
+                            <div class="flex align-items-center mb-3">
+                                <i class="pi pi-building" style="color: #b3e5ff; font-size: 1.2rem; margin-right: 8px;"></i>
+                                <h5 class="m-0" style="color: #b3e5ff;">CP1</h5>
+                            </div>
+                            <div style="color: #d6f1ff; font-size: 0.85rem;">
+                                <!-- Resultado Principal -->
+                                <div class="mb-3 p-2 text-center" style="background-color: rgba(179, 229, 255, 0.15); border-radius: 8px;">
+                                    <p class="mb-1" style="color: #b3e5ff; font-size: 0.75rem;">Ed (MPa)</p>
+                                    <p class="mb-0 font-bold" style="color: #b3e5ff; font-size: 1.3rem;">
+                                        {{ analiseSelecionada.modulo_elasticidade.cp1.ed | number:'1.2-4' }}
+                                    </p>
+                                </div>
+                                
+                                <!-- Dimensões -->
+                                <p class="mb-1"><b>Comprimento:</b> {{ analiseSelecionada.modulo_elasticidade.cp1.comprimento }} mm</p>
+                                <p class="mb-1"><b>Largura:</b> {{ analiseSelecionada.modulo_elasticidade.cp1.largura }} mm</p>
+                                <p class="mb-1"><b>Altura:</b> {{ analiseSelecionada.modulo_elasticidade.cp1.altura }} mm</p>
+                                <p class="mb-2"><b>Volume:</b> {{ analiseSelecionada.modulo_elasticidade.cp1.volume | number:'1.2-2' }} mm³</p>
+                                
+                                <!-- Massa e Carga -->
+                                <p class="mb-1"><b>Massa:</b> {{ analiseSelecionada.modulo_elasticidade.cp1.massa }} g</p>
+                                <p class="mb-2"><b>P Máx:</b> {{ analiseSelecionada.modulo_elasticidade.cp1.pMax | number:'1.2-4' }} kN</p>
+                                
+                                <!-- Tempos -->
+                                <p class="mb-1"><b>Tempo 1:</b> {{ analiseSelecionada.modulo_elasticidade.cp1.tempo1 }} µs</p>
+                                <p class="mb-1"><b>Tempo 2:</b> {{ analiseSelecionada.modulo_elasticidade.cp1.tempo2 }} µs</p>
+                                <p class="mb-1"><b>Tempo 3:</b> {{ analiseSelecionada.modulo_elasticidade.cp1.tempo3 }} µs</p>
+                                <p class="mb-2"><b>Menor Tempo:</b> {{ analiseSelecionada.modulo_elasticidade.cp1.menorTempo }} µs</p>
+                                
+                                <!-- Velocidade -->
+                                <p class="mb-0"><b>Velocidade:</b> {{ analiseSelecionada.modulo_elasticidade.cp1.velocidade | number:'1.2-4' }} km/s</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CP2 -->
+                    <div class="col-12 md:col-6 lg:col-4" *ngIf="analiseSelecionada.modulo_elasticidade.cp2">
+                        <div
+                            class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                            style="border-radius: 12px; background-color: #26413c; min-height: 380px;"
+                        >
+                            <div class="flex align-items-center mb-3">
+                                <i class="pi pi-building" style="color: #b2f5ea; font-size: 1.2rem; margin-right: 8px;"></i>
+                                <h5 class="m-0" style="color: #b2f5ea;">CP2</h5>
+                            </div>
+                            <div style="color: #ccfbf1; font-size: 0.85rem;">
+                                <!-- Resultado Principal -->
+                                <div class="mb-3 p-2 text-center" style="background-color: rgba(178, 245, 234, 0.15); border-radius: 8px;">
+                                    <p class="mb-1" style="color: #b2f5ea; font-size: 0.75rem;">Ed (MPa)</p>
+                                    <p class="mb-0 font-bold" style="color: #b2f5ea; font-size: 1.3rem;">
+                                        {{ analiseSelecionada.modulo_elasticidade.cp2.ed | number:'1.2-4' }}
+                                    </p>
+                                </div>
+                                
+                                <!-- Dimensões -->
+                                <p class="mb-1"><b>Comprimento:</b> {{ analiseSelecionada.modulo_elasticidade.cp2.comprimento }} mm</p>
+                                <p class="mb-1"><b>Largura:</b> {{ analiseSelecionada.modulo_elasticidade.cp2.largura }} mm</p>
+                                <p class="mb-1"><b>Altura:</b> {{ analiseSelecionada.modulo_elasticidade.cp2.altura }} mm</p>
+                                <p class="mb-2"><b>Volume:</b> {{ analiseSelecionada.modulo_elasticidade.cp2.volume | number:'1.2-2' }} mm³</p>
+                                
+                                <!-- Massa e Carga -->
+                                <p class="mb-1"><b>Massa:</b> {{ analiseSelecionada.modulo_elasticidade.cp2.massa }} g</p>
+                                <p class="mb-2"><b>P Máx:</b> {{ analiseSelecionada.modulo_elasticidade.cp2.pMax | number:'1.2-4' }} kN</p>
+                                
+                                <!-- Tempos -->
+                                <p class="mb-1"><b>Tempo 1:</b> {{ analiseSelecionada.modulo_elasticidade.cp2.tempo1 }} µs</p>
+                                <p class="mb-1"><b>Tempo 2:</b> {{ analiseSelecionada.modulo_elasticidade.cp2.tempo2 }} µs</p>
+                                <p class="mb-1"><b>Tempo 3:</b> {{ analiseSelecionada.modulo_elasticidade.cp2.tempo3 }} µs</p>
+                                <p class="mb-2"><b>Menor Tempo:</b> {{ analiseSelecionada.modulo_elasticidade.cp2.menorTempo }} µs</p>
+                                
+                                <!-- Velocidade -->
+                                <p class="mb-0"><b>Velocidade:</b> {{ analiseSelecionada.modulo_elasticidade.cp2.velocidade | number:'1.2-4' }} km/s</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CP3 -->
+                    <div class="col-12 md:col-6 lg:col-4" *ngIf="analiseSelecionada.modulo_elasticidade.cp3">
+                        <div
+                            class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                            style="border-radius: 12px; background-color: #3b3b32; min-height: 380px;"
+                        >
+                            <div class="flex align-items-center mb-3">
+                                <i class="pi pi-building" style="color: #fff3b0; font-size: 1.2rem; margin-right: 8px;"></i>
+                                <h5 class="m-0" style="color: #fff3b0;">CP3</h5>
+                            </div>
+                            <div style="color: #fff2a8; font-size: 0.85rem;">
+                                <!-- Resultado Principal -->
+                                <div class="mb-3 p-2 text-center" style="background-color: rgba(255, 243, 176, 0.15); border-radius: 8px;">
+                                    <p class="mb-1" style="color: #fff3b0; font-size: 0.75rem;">Ed (MPa)</p>
+                                    <p class="mb-0 font-bold" style="color: #fff3b0; font-size: 1.3rem;">
+                                        {{ analiseSelecionada.modulo_elasticidade.cp3.ed | number:'1.2-4' }}
+                                    </p>
+                                </div>
+                                
+                                <!-- Dimensões -->
+                                <p class="mb-1"><b>Comprimento:</b> {{ analiseSelecionada.modulo_elasticidade.cp3.comprimento }} mm</p>
+                                <p class="mb-1"><b>Largura:</b> {{ analiseSelecionada.modulo_elasticidade.cp3.largura }} mm</p>
+                                <p class="mb-1"><b>Altura:</b> {{ analiseSelecionada.modulo_elasticidade.cp3.altura }} mm</p>
+                                <p class="mb-2"><b>Volume:</b> {{ analiseSelecionada.modulo_elasticidade.cp3.volume | number:'1.2-2' }} mm³</p>
+                                
+                                <!-- Massa e Carga -->
+                                <p class="mb-1"><b>Massa:</b> {{ analiseSelecionada.modulo_elasticidade.cp3.massa }} g</p>
+                                <p class="mb-2"><b>P Máx:</b> {{ analiseSelecionada.modulo_elasticidade.cp3.pMax | number:'1.2-4' }} kN</p>
+                                
+                                <!-- Tempos -->
+                                <p class="mb-1"><b>Tempo 1:</b> {{ analiseSelecionada.modulo_elasticidade.cp3.tempo1 }} µs</p>
+                                <p class="mb-1"><b>Tempo 2:</b> {{ analiseSelecionada.modulo_elasticidade.cp3.tempo2 }} µs</p>
+                                <p class="mb-1"><b>Tempo 3:</b> {{ analiseSelecionada.modulo_elasticidade.cp3.tempo3 }} µs</p>
+                                <p class="mb-2"><b>Menor Tempo:</b> {{ analiseSelecionada.modulo_elasticidade.cp3.menorTempo }} µs</p>
+                                
+                                <!-- Velocidade -->
+                                <p class="mb-0"><b>Velocidade:</b> {{ analiseSelecionada.modulo_elasticidade.cp3.velocidade | number:'1.2-4' }} km/s</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Cards de Peneiras Secas -->
+            <div *ngIf="analiseSelecionada?.peneiras?.peneiras && analiseSelecionada.peneiras.peneiras.length > 0">
+                <h3 class="mb-3" style="color: #e6defa;">🔬 Peneiras Secas</h3>
+                
+                <!-- Informações Gerais -->
+                <div class="mb-4">
+                    <div class="grid">
+                        <div class="col-12 md:col-6">
+                            <div
+                                class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                                style="border-radius: 12px; background-color: #2b3a55;"
+                            >
+                                <div class="flex align-items-center justify-content-center">
+                                    <i class="pi pi-box mr-2" style="color: #b3e5ff; font-size: 1.5rem;"></i>
+                                    <div>
+                                        <p class="mb-1" style="color: #d6f1ff; font-size: 0.8rem;">Massa da Amostra</p>
+                                        <p class="mb-0" style="color: #b3e5ff; font-size: 1.5rem; font-weight: 700;">
+                                            {{ analiseSelecionada.peneiras.amostra | number:'1.2-2' }} g
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-6">
+                            <div
+                                class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                                style="border-radius: 12px; background-color: #26413c;"
+                            >
+                                <div class="flex align-items-center justify-content-center">
+                                    <i class="pi pi-filter mr-2" style="color: #b2f5ea; font-size: 1.5rem;"></i>
+                                    <div>
+                                        <p class="mb-1" style="color: #ccfbf1; font-size: 0.8rem;">Total de Finos</p>
+                                        <p class="mb-0" style="color: #b2f5ea; font-size: 1.5rem; font-weight: 700;">
+                                            {{ analiseSelecionada.peneiras.finos | number:'1.2-2' }} g
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabela de Peneiras -->
+                <div class="mb-3">
+                    <div
+                        class="shadow-2 p-3"
+                        style="border-radius: 12px; background-color: #2b3a55; overflow-x: auto;"
+                    >
+                        <p-table [value]="analiseSelecionada.peneiras.peneiras" styleClass="p-datatable-sm">
+                            <ng-template pTemplate="header">
+                                <tr style="background-color: rgba(179, 229, 255, 0.1);">
+                                    <th style="color: #b3e5ff;">Peneira</th>
+                                    <th style="color: #b3e5ff;">Retido (g)</th>
+                                    <th style="color: #b3e5ff;">Retido (%)</th>
+                                    <th style="color: #b3e5ff;">Passante (%)</th>
+                                    <th style="color: #b3e5ff;">Acumulado (%)</th>
+                                    <th style="color: #b3e5ff;">Passante Acumulado (%)</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-linha>
+                                <tr style="color: #d6f1ff;">
+                                    <td><b>{{ linha.peneira }}</b></td>
+                                    <td>{{ linha.valor_retido | number:'1.2-2' }}</td>
+                                    <td>{{ linha.porcentual_retido | number:'1.2-2' }}</td>
+                                    <td>{{ linha.passante | number:'1.2-2' }}</td>
+                                    <td>{{ linha.acumulado | number:'1.2-2' }}</td>
+                                    <td>{{ linha.passante_acumulado | number:'1.2-2' }}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cards de Peneiras Úmidas -->
+            <div *ngIf="analiseSelecionada?.peneiras_umidas?.peneiras && analiseSelecionada.peneiras_umidas.peneiras.length > 0">
+                <h3 class="mb-3" style="color: #e6defa;">💧 Peneiras Úmidas</h3>
+                
+                <!-- Informações Gerais -->
+                <div class="mb-4">
+                    <div class="grid">
+                        <div class="col-12 md:col-6">
+                            <div
+                                class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                                style="border-radius: 12px; background-color: #2b3a55;"
+                            >
+                                <div class="flex align-items-center justify-content-center">
+                                    <i class="pi pi-box mr-2" style="color: #b3e5ff; font-size: 1.5rem;"></i>
+                                    <div>
+                                        <p class="mb-1" style="color: #d6f1ff; font-size: 0.8rem;">Massa da Amostra</p>
+                                        <p class="mb-0" style="color: #b3e5ff; font-size: 1.5rem; font-weight: 700;">
+                                            {{ analiseSelecionada.peneiras_umidas.amostra | number:'1.2-2' }} g
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-6">
+                            <div
+                                class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                                style="border-radius: 12px; background-color: #26413c;"
+                            >
+                                <div class="flex align-items-center justify-content-center">
+                                    <i class="pi pi-filter mr-2" style="color: #b2f5ea; font-size: 1.5rem;"></i>
+                                    <div>
+                                        <p class="mb-1" style="color: #ccfbf1; font-size: 0.8rem;">Total de Finos</p>
+                                        <p class="mb-0" style="color: #b2f5ea; font-size: 1.5rem; font-weight: 700;">
+                                            {{ analiseSelecionada.peneiras_umidas.finos | number:'1.2-2' }} g
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabela de Peneiras Úmidas -->
+                <div class="mb-3">
+                    <div
+                        class="shadow-2 p-3"
+                        style="border-radius: 12px; background-color: #26413c; overflow-x: auto;"
+                    >
+                        <p-table [value]="analiseSelecionada.peneiras_umidas.peneiras" styleClass="p-datatable-sm">
+                            <ng-template pTemplate="header">
+                                <tr style="background-color: rgba(178, 245, 234, 0.1);">
+                                    <th style="color: #b2f5ea;">Peneira</th>
+                                    <th style="color: #b2f5ea;">Retido (g)</th>
+                                    <th style="color: #b2f5ea;">Retido (%)</th>
+                                    <th style="color: #b2f5ea;">Passante (%)</th>
+                                    <th style="color: #b2f5ea;">Acumulado (%)</th>
+                                    <th style="color: #b2f5ea;">Passante Acumulado (%)</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-linha>
+                                <tr style="color: #ccfbf1;">
+                                    <td><b>{{ linha.peneira }}</b></td>
+                                    <td>{{ linha.valor_retido | number:'1.2-2' }}</td>
+                                    <td>{{ linha.porcentual_retido | number:'1.2-2' }}</td>
+                                    <td>{{ linha.passante | number:'1.2-2' }}</td>
+                                    <td>{{ linha.acumulado | number:'1.2-2' }}</td>
+                                    <td>{{ linha.passante_acumulado | number:'1.2-2' }}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
             </div>    
 
             <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
