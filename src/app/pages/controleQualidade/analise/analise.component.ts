@@ -1188,7 +1188,7 @@ realizarCalculosVariacaoDimensional(): void {
     if (this.l1Cp1 != null) {
       const l1Cp1Num = Number(this.l1Cp1);
       if (!isNaN(l1Cp1Num)) {
-        const calcCp1_L1 = (l1Cp1Num - l0Cp1Num) / 250;
+        const calcCp1_L1 = (l1Cp1Num - l0Cp1Num) / 0.25;
         valoresL1.push(calcCp1_L1);
       }
     }
@@ -1196,7 +1196,7 @@ realizarCalculosVariacaoDimensional(): void {
     if (this.l1Cp2 != null) {
       const l1Cp2Num = Number(this.l1Cp2);
       if (!isNaN(l1Cp2Num)) {
-        const calcCp2_L1 = (l1Cp2Num - l0Cp2Num) / 250;
+        const calcCp2_L1 = (l1Cp2Num - l0Cp2Num) / 0.25;
         valoresL1.push(calcCp2_L1);
       }
     }
@@ -1204,7 +1204,7 @@ realizarCalculosVariacaoDimensional(): void {
     if (this.l1Cp3 != null) {
       const l1Cp3Num = Number(this.l1Cp3);
       if (!isNaN(l1Cp3Num)) {
-        const calcCp3_L1 = (l1Cp3Num - l0Cp3Num) / 250;
+        const calcCp3_L1 = (l1Cp3Num - l0Cp3Num) / 0.25;
         valoresL1.push(calcCp3_L1);
       }
     }
@@ -1222,7 +1222,7 @@ realizarCalculosVariacaoDimensional(): void {
     if (this.l7Cp1 != null) {
       const l7Cp1Num = Number(this.l7Cp1);
       if (!isNaN(l7Cp1Num)) {
-        const calcCp1_L7 = (l7Cp1Num - l0Cp1Num) / 250;
+        const calcCp1_L7 = (l7Cp1Num - l0Cp1Num) / 0.25;
         valoresL7.push(calcCp1_L7);
       }
     }
@@ -1230,7 +1230,7 @@ realizarCalculosVariacaoDimensional(): void {
     if (this.l7Cp2 != null) {
       const l7Cp2Num = Number(this.l7Cp2);
       if (!isNaN(l7Cp2Num)) {
-        const calcCp2_L7 = (l7Cp2Num - l0Cp2Num) / 250;
+        const calcCp2_L7 = (l7Cp2Num - l0Cp2Num) / 0.25;
         valoresL7.push(calcCp2_L7);
       }
     }
@@ -1238,7 +1238,7 @@ realizarCalculosVariacaoDimensional(): void {
     if (this.l7Cp3 != null) {
       const l7Cp3Num = Number(this.l7Cp3);
       if (!isNaN(l7Cp3Num)) {
-        const calcCp3_L7 = (l7Cp3Num - l0Cp3Num) / 250;
+        const calcCp3_L7 = (l7Cp3Num - l0Cp3Num) / 0.25;
         valoresL7.push(calcCp3_L7);
       }
     }
@@ -1256,7 +1256,7 @@ realizarCalculosVariacaoDimensional(): void {
     if (this.l28Cp1 != null) {
       const l28Cp1Num = Number(this.l28Cp1);
       if (!isNaN(l28Cp1Num)) {
-        const calcCp1_L28 = (l28Cp1Num - l0Cp1Num) / 250;
+        const calcCp1_L28 = (l28Cp1Num - l0Cp1Num) / 0.25;
         valoresL28.push(calcCp1_L28);
       }
     }
@@ -1264,7 +1264,7 @@ realizarCalculosVariacaoDimensional(): void {
     if (this.l28Cp2 != null) {
       const l28Cp2Num = Number(this.l28Cp2);
       if (!isNaN(l28Cp2Num)) {
-        const calcCp2_L28 = (l28Cp2Num - l0Cp2Num) / 250;
+        const calcCp2_L28 = (l28Cp2Num - l0Cp2Num) / 0.25;
         valoresL28.push(calcCp2_L28);
       }
     }
@@ -1272,7 +1272,7 @@ realizarCalculosVariacaoDimensional(): void {
     if (this.l28Cp3 != null) {
       const l28Cp3Num = Number(this.l28Cp3);
       if (!isNaN(l28Cp3Num)) {
-        const calcCp3_L28 = (l28Cp3Num - l0Cp3Num) / 250;
+        const calcCp3_L28 = (l28Cp3Num - l0Cp3Num) / 0.25;
         valoresL28.push(calcCp3_L28);
       }
     }

@@ -240,6 +240,7 @@
                                                     </ng-template>
                                                 </p-multiselect>
                                             </th>
+                                            <th style="width: 25%; text-align: left;" type="text"field="fornecedor" display="menu">Produto</th>
                                             <th style="width: 15%; text-align: left;" type="text"field="fornecedor" display="menu">Número</th>
                                             <th pSortableColumn="data_entrada" style="width: 10%;">
                                                 <div class="flex justify-between items-left">
@@ -253,7 +254,7 @@
                                                         showMenu="false" />
                                                 </div>
                                             </th>
-                                            <th style="width: 15%; text-align: left;" type="text" field="numero" display="menu">Classificação da OS</th>
+                                            <!-- <th style="width: 10%; text-align: left;" type="text" field="numero" display="menu">Classificação da OS</th> -->
                                             <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">Responsável</th>
                                             <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">
                                                 <p-multiselect
@@ -281,7 +282,7 @@
                                                     </ng-template>
                                                 </p-multiselect>
                                             </th>
-                                            <th style="width: 12%; text-align: left;">
+                                            <th style="width: 8%; text-align: left;">
                                                 <p-multiselect
                                                     [(ngModel)]="laboratoriosSelecionados"
                                                     [options]="laboratoriosFiltro"
@@ -307,7 +308,7 @@
                                                     </ng-template>
                                                 </p-multiselect>
                                             </th>
-                                            <th style="width: 24%; text-align: center;" type="text" field="acoes"display="menu">Opções</th>
+                                            <th style="width: 12%; text-align: center;" type="text" field="acoes"display="menu">Opções</th>
                                         </tr>
                                     </ng-template>
   
@@ -337,11 +338,12 @@
                                                   [severity]="getSeverity(analise.amostra_detalhes?.material)"
                                                 />
                                             </td>
+                                            <td style="text-align: left;"> {{ analise.amostra_detalhes?.produto_amostra_detalhes.nome }} </td>
                                             <td style="text-align: left;"> {{ analise.amostra_detalhes?.numero }} </td>
                                             <td style="text-align: left;">
                                                 {{ (analise.amostra_detalhes?.expressa_detalhes?.data || analise.amostra_detalhes?.ordem_detalhes?.data) | date:'dd/MM/yy' }}
                                             </td>
-                                            <td style="text-align: left;"> {{ analise.amostra_detalhes?.expressa_detalhes?.classificacao || analise.amostra_detalhes?.ordem_detalhes?.classificacao }} </td>
+                                            <!-- <td style="text-align: left;"> {{ analise.amostra_detalhes?.expressa_detalhes?.classificacao || analise.amostra_detalhes?.ordem_detalhes?.classificacao }} </td> -->
                                             <td style="text-align: left;"> {{ analise.amostra_detalhes?.expressa_detalhes?.responsavel || analise.amostra_detalhes?.ordem_detalhes?.responsavel }} </td>
                                             <td style="text-align: left;">
                                                 <p-tag
@@ -879,7 +881,7 @@
 
 <!-- Componentes necessários para confirmações e notificações -->
 <p-confirmDialog></p-confirmDialog>
-<p-toast></p-toast>
+<p-toast position="top-left"></p-toast>
    
 
 

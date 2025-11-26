@@ -2800,14 +2800,14 @@
                         <p class="m-0 mb-2">
                             <strong>Aw (Laboratório):</strong> 
                             <span *ngIf="awLaboratorioCalculado !== null" style="font-weight: bold; color: #059669; font-size: 1.2em;">
-                                 {{ awLaboratorioCalculado | number:'1.2-4' }} kg/(m² · h¹/²)
+                                 {{ awLaboratorioCalculado | number:'1.2-2' }} kg/(m² · h¹/²)
                             </span>
                             <span *ngIf="awLaboratorioCalculado === null" class="text-muted">Aguardando dados válidos...</span>
                         </p>
                         <p class="m-0 mb-2">
                             <strong>Inclinação (m):</strong> 
                             <span *ngIf="awCalculado !== null" style="font-weight: bold; color: #059669; font-size: 1.2em;">
-                                {{ awCalculado | number:'1.4-11' }}
+                                {{ awCalculado | number:'1.2-2' }}
                             </span>
                         </p>
                         <p class="m-0 mb-2">

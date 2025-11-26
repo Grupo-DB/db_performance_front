@@ -121,6 +121,7 @@
                                                 optionValue="value"
                                                 [maxSelectedLabels]="3"
                                                 appendTo="body"
+                                                size="small"
                                             >
                                                 <ng-template pTemplate="selectedItems" let-selectedOptions>
                                                     <div class="flex gap-1 flex-wrap">
@@ -153,6 +154,7 @@
                                                 optionValue="value"
                                                 [maxSelectedLabels]="2"
                                                 appendTo="body"
+                                                size="small"
                                             >
                                                 <ng-template pTemplate="selectedItems" let-selectedOptions>
                                                     <div class="flex gap-1 flex-wrap">
@@ -181,9 +183,9 @@
                                                 />
                                             </div>
                                         </th>
-                                        <th style="width: 15%; text-align: left;" type="text" field="numero" display="menu">Classificação da OS</th>
+                                        <th style="width: 15%; text-align: left;" type="text" field="produto" display="menu">Produto</th>
                                         <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">Responsável</th>
-                                        <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">
+                                        <th style="width: 10%; text-align: left;" type="text" field="tipo" display="menu">
                                             <p-multiselect
                                                 [(ngModel)]="tipoSelecionados"
                                                 [options]="tipoFiltro"
@@ -194,6 +196,7 @@
                                                 optionValue="value"
                                                 [maxSelectedLabels]="3"
                                                 appendTo="body"
+                                                size="small"
                                             >
                                                 <ng-template pTemplate="selectedItems" let-selectedOptions>
                                                     <div class="flex gap-1 flex-wrap">
@@ -252,7 +255,7 @@
                                             <td style="text-align: left;">
                                                 {{ analise.amostra_detalhes?.expressa_detalhes?.data | date:'dd/MM/yy' }}
                                             </td>
-                                            <td style="text-align: left;"> {{ analise.amostra_detalhes.expressa_detalhes.classificacao }} </td>
+                                            <td style="text-align: left;"> {{ analise.amostra_detalhes?.produto_amostra_detalhes.nome }} </td>
                                             <td style="text-align: left;"> {{ analise.amostra_detalhes.expressa_detalhes.responsavel }} </td>
                                             <td style="text-align: left;"> 
                                                 <p-tag
@@ -265,7 +268,7 @@
                                             <td style="text-align: left;">
                                                 {{ analise.amostra_detalhes?.ordem_detalhes?.data | date:'dd/MM/yy' }}
                                             </td>
-                                            <td style="text-align: left;"> {{ analise.amostra_detalhes.ordem_detalhes.classificacao }} </td>
+                                            <td style="text-align: left;"> {{ analise.amostra_detalhes?.produto_amostra_detalhes.nome }} </td>
                                             <td style="text-align: left;"> {{ analise.amostra_detalhes.ordem_detalhes.responsavel }} </td>
                                             <td style="text-align: left;">
                                                 <p-tag
