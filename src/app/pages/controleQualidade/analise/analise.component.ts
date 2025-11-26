@@ -8500,7 +8500,7 @@ canDeactivate(): boolean | Promise<boolean> {
           colarPastilha: item.rupturas?.colarPastilha ?? null
         }
       }));
-    }else if (analise?.substrato.linhas && Array.isArray(analise.substrato.linhas)) {
+    }else if (analise?.substrato?.linhas && Array.isArray(analise?.substrato?.linhas)) {
       if(analise?.substrato.media){
         this.substrato_media = analise?.substrato.media;
       }
@@ -8621,7 +8621,7 @@ canDeactivate(): boolean | Promise<boolean> {
           colarPastilha: item.rupturas?.colarPastilha ?? null
         }
       }));
-    }else if (analise?.superficial && Array.isArray(analise.superficial)) {
+    }else if (analise?.superficial?.linhas && Array.isArray(analise?.superficial?.linhas)) {
       this.linhasSuperficial = analise.superficial.map((item: any, index: number) => ({
         numero: item.numero ?? index + 1,
         diametro: item.diametro ?? null,

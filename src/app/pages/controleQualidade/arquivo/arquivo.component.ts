@@ -3725,7 +3725,7 @@ duplicata(amostra: any): void {
           minimo
         ],
         [
-          { content: 'Desvio Padrão (Mpa)', colSpan: 4, styles: { halign: 'right' } },
+          { content: 'Desvio Padrão (Mpa)', colSpan: 7, styles: { halign: 'right' } },
           desvio2
         ],
         [
@@ -3785,7 +3785,7 @@ duplicata(amostra: any): void {
     ];
 
     if(amostra_detalhes_selecionada.superficial){
-      const resistencias2 = amostra_detalhes_selecionada.superficial
+      const resistencias2 = amostra_detalhes_selecionada.superficial.linhas
         .map((item: any) => item.resist)
         .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
 
@@ -3806,7 +3806,7 @@ duplicata(amostra: any): void {
 
       const body3 = [
         // espalha as linhas geradas pelo map
-        ...amostra_detalhes_selecionada.superficial.map((item: any) => [
+        ...amostra_detalhes_selecionada.superficial.linhas.map((item: any) => [
           item.numero ?? '',
           item.diametro ?? '',
           item.area ?? '',
