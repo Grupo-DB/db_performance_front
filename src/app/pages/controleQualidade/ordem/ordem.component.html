@@ -496,133 +496,196 @@
         styleClass="w-full md:w-10 lg:w-10 custom-drawer"
         [style]="{ height: '100vh' }"        
     >
-
         <div *ngIf="analiseSelecionada">
-            <p style="font-size: 24px; font-weight: bold">Dados</p>
-            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-                <div class="text-left w-12">
-                    <b>Número:</b> {{ analiseSelecionada.amostra_detalhes.numero }}<br>
-                    <b>Classificação:</b> {{ analiseSelecionada.amostra_detalhes.expressa_detalhes?.classificacao || analiseSelecionada.amostra_detalhes.ordem_detalhes?.classificacao }}<br>
-                    <b>Responsável:</b> {{ analiseSelecionada.amostra_detalhes.expressa_detalhes?.responsavel || analiseSelecionada.amostra_detalhes.ordem_detalhes?.responsavel }}<br>
-                    <b>Data de Abertura:</b> {{ (analiseSelecionada.amostra_detalhes.expressa_detalhes?.data || analiseSelecionada.amostra_detalhes.ordem_detalhes?.data) | date:'dd/MM/yyyy'}}<br>
-                </div>
-            </div>
-
-            <br>
-
-            <p style="font-size: 24px; font-weight: bold">Cálculos</p>
-            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-                <div class="text-left w-12" >
-                    <span *ngIf="analiseSelecionada?.ultimo_calculo?.length > 0">
-                        <span *ngFor="let ultimo_calculo of analiseSelecionada.ultimo_calculo">
-                            <b>Descrição:</b> {{ ultimo_calculo.calculos }} <br>
-                            <b>Resultado:</b> {{ ultimo_calculo.resultados }} <br><br>
-                                       
-                            <b>Ensaios Utilizados</b>
-                            <br>
-                            <br>
-                            <div class="indent" *ngFor="let ensaios_utilizados of ultimo_calculo.ensaios_utilizados; let last = last">
-                                <b>Descrição:</b> {{ ensaios_utilizados.descricao }} <br>
-                                <b>Resultado:</b> {{ ensaios_utilizados.valor }} 
-                                <hr *ngIf="!last" class="linha-tracejada">
-                            </div>
-                            <br>
-                            <hr>
-                        </span>
-                    </span>
-                </div>
-            </div>
-
-            <br>
-
-            <p style="font-size: 24px; font-weight: bold">Ensaios</p>
-            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-                <div class="text-left w-12" >
-                    <span *ngIf="analiseSelecionada?.ultimo_ensaio?.ensaios_utilizados?.length > 0">
-                        <span *ngFor="let ensaios_utilizados of analiseSelecionada.ultimo_ensaio.ensaios_utilizados">
-                            <b>Descrição:</b> {{ ensaios_utilizados.descricao }} <br>
-                            <b>Resultado:</b> {{ ensaios_utilizados.valor }}<hr>
-                        </span>
-                    </span>
-                </div>
-            </div>
-
-
-            <div *ngIf="analiseSelecionada?.variacao_dimensional">
-                <p style="font-size: 24px; font-weight: bold">Variação Dimensional Linear</p>
-        
-                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-                    <div class="text-left w-12">
-                        
-                        <!-- L0 - Medições Iniciais -->
-                        <div class="mb-4" *ngIf="analiseSelecionada.variacao_dimensional.l0">
-                            <p class="text-lg font-semibold mb-2">📏 L0 - Medições Iniciais</p>
-                            <div class="pl-3">
-                                <b>Data:</b> {{ analiseSelecionada.variacao_dimensional.l0.data | date:'dd/MM/yyyy' }}<br>
-                                <b>CP1:</b> {{ analiseSelecionada.variacao_dimensional.l0.cp1 }} mm<br>
-                                <b>CP2:</b> {{ analiseSelecionada.variacao_dimensional.l0.cp2 }} mm<br>
-                                <b>CP3:</b> {{ analiseSelecionada.variacao_dimensional.l0.cp3 }} mm
-                            </div>
-                            <hr class="mt-3">
-                        </div>
-
-                        <!-- L1 - 1 dia -->
-                        <div class="mb-4" *ngIf="analiseSelecionada.variacao_dimensional.l1">
-                            <p class="text-lg font-semibold mb-2">📊 L1 - Após 1 dia</p>
-                            <div class="pl-3">
-                                <b>Data:</b> {{ analiseSelecionada.variacao_dimensional.l1.data | date:'dd/MM/yyyy' }}<br>
-                                <b>CP1:</b> {{ analiseSelecionada.variacao_dimensional.l1.cp1 }} mm<br>
-                                <b>CP2:</b> {{ analiseSelecionada.variacao_dimensional.l1.cp2 }} mm<br>
-                                <b>CP3:</b> {{ analiseSelecionada.variacao_dimensional.l1.cp3 }} mm<br>
-                                <div class="mt-2 p-2 bg-blue-50 border-round">
-                                    <b>Média:</b> {{ analiseSelecionada.variacao_dimensional.l1.media | number:'1.2-4' }} %<br>
-                                    <b>Desvio Padrão:</b> {{ analiseSelecionada.variacao_dimensional.l1.desvio_padrao | number:'1.2-4' }}
-                                </div>
-                            </div>
-                            <hr class="mt-3">
-                        </div>
-
-                        <!-- L7 - 7 dias -->
-                        <div class="mb-4" *ngIf="analiseSelecionada.variacao_dimensional.l7">
-                            <p class="text-lg font-semibold mb-2">📊 L7 - Após 7 dias</p>
-                            <div class="pl-3">
-                                <b>Data:</b> {{ analiseSelecionada.variacao_dimensional.l7.data | date:'dd/MM/yyyy' }}<br>
-                                <b>CP1:</b> {{ analiseSelecionada.variacao_dimensional.l7.cp1 }} mm<br>
-                                <b>CP2:</b> {{ analiseSelecionada.variacao_dimensional.l7.cp2 }} mm<br>
-                                <b>CP3:</b> {{ analiseSelecionada.variacao_dimensional.l7.cp3 }} mm<br>
-                                <div class="mt-2 p-2 bg-green-50 border-round">
-                                    <b>Média:</b> {{ analiseSelecionada.variacao_dimensional.l7.media | number:'1.2-4' }} %<br>
-                                    <b>Desvio Padrão:</b> {{ analiseSelecionada.variacao_dimensional.l7.desvio_padrao | number:'1.2-4' }}
-                                </div>
-                            </div>
-                            <hr class="mt-3">
-                        </div>
-
-                        <!-- L28 - 28 dias -->
-                        <div class="mb-4" *ngIf="analiseSelecionada.variacao_dimensional.l28">
-                            <p class="text-lg font-semibold mb-2">📊 L28 - Após 28 dias</p>
-                            <div class="pl-3">
-                                <b>Data:</b> {{ analiseSelecionada.variacao_dimensional.l28.data | date:'dd/MM/yyyy' }}<br>
-                                <b>CP1:</b> {{ analiseSelecionada.variacao_dimensional.l28.cp1 }} mm<br>
-                                <b>CP2:</b> {{ analiseSelecionada.variacao_dimensional.l28.cp2 }} mm<br>
-                                <b>CP3:</b> {{ analiseSelecionada.variacao_dimensional.l28.cp3 }} mm<br>
-                                <div class="mt-2 p-2 bg-orange-50 border-round">
-                                    <b>Média:</b> {{ analiseSelecionada.variacao_dimensional.l28.media | number:'1.2-4' }} %<br>
-                                    <b>Desvio Padrão:</b> {{ analiseSelecionada.variacao_dimensional.l28.desvio_padrao | number:'1.2-4' }}
-                                </div>
-                            </div>
-                        </div>
-
+            <!-- Card de Dados -->
+            <div class="mb-4">
+                <div
+                    class="shadow-2 hover:shadow-4 transition-duration-200 p-4"
+                    style="border-radius: 12px; background-color: #4a4458;"
+                >
+                    <div class="flex align-items-center mb-3">
+                        <i class="pi pi-info-circle mr-2" style="color: #e3d8ff; font-size: 1.5rem;"></i>
+                        <h3 class="m-0" style="color: #e3d8ff;">Dados da OS</h3>
                     </div>
+                    <div class="text-left" style="color: #e6defa;">
+                        <p class="mb-2"><b>Número:</b> {{ analiseSelecionada.amostra_detalhes.numero }}</p>
+                        <p class="mb-2"><b>Produto:</b> {{ analiseSelecionada.amostra_detalhes.produto_amostra_detalhes?.nome }}</p>
+                        <p class="mb-2"><b>Classificação:</b> {{ analiseSelecionada.amostra_detalhes.expressa_detalhes?.classificacao || analiseSelecionada.amostra_detalhes.ordem_detalhes?.classificacao }}</p>
+                        <p class="mb-2"><b>Responsável:</b> {{ analiseSelecionada.amostra_detalhes.expressa_detalhes?.responsavel || analiseSelecionada.amostra_detalhes.ordem_detalhes?.responsavel }}</p>
+                        <p class="mb-0"><b>Data de Abertura:</b> {{ (analiseSelecionada.amostra_detalhes.expressa_detalhes?.data || analiseSelecionada.amostra_detalhes.ordem_detalhes?.data) | date:'dd/MM/yyyy'}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cards de Ensaios Compostos -->
+            <div *ngIf="analiseSelecionada?.ultimo_calculo?.length > 0">
+                <h3 class="mb-3" style="color: #e6defa;">🧪 Ensaios Compostos</h3>
+                <div class="grid">
+                    <div class="col-12" *ngFor="let ultimo_calculo of analiseSelecionada.ultimo_calculo">
+                        <div
+                            class="shadow-2 hover:shadow-4 transition-duration-200 p-4 mb-3"
+                            style="border-radius: 12px; background-color: #2b3a55;"
+                        >
+                            <div class="flex align-items-center mb-3">
+                                <i class="pi pi-flask mr-2" style="color: #b3e5ff; font-size: 1.3rem;"></i>
+                                <h4 class="m-0" style="color: #d6f1ff;">{{ ultimo_calculo.calculos }}</h4>
+                            </div>
+                            <div class="mb-3 p-3" style="background-color: rgba(179, 229, 255, 0.1); border-radius: 8px;">
+                                <p class="text-xl mb-0" style="color: #d6f1ff;"><b>Resultado:</b> <span style="font-size: 1.5rem; font-weight: 700;">{{ ultimo_calculo.resultados }}</span></p>
+                            </div>
+                            
+                            <div *ngIf="ultimo_calculo.ensaios_utilizados?.length > 0">
+                                <h5 class="mb-3" style="color: #b3e5ff;">Ensaios Utilizados</h5>
+                                <div class="grid">
+                                    <div class="col-12 md:col-6 lg:col-4" *ngFor="let ensaios_utilizados of ultimo_calculo.ensaios_utilizados">
+                                        <div
+                                            class="shadow-2 hover:shadow-3 transition-duration-200"
+                                            style="height: 100px; border-radius: 10px; background-color: #1e2f45; position: relative; cursor: pointer;"
+                                        >
+                                            <i class="pi pi-check-circle" style="position: absolute; top: 8px; left: 8px; color: #b3e5ff; font-size: 1rem;"></i>
+                                            <div
+                                                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #d6f1ff; font-size: 1.4rem; font-weight: 700; text-align: center;"
+                                            >
+                                                {{ ensaios_utilizados.valor }}
+                                            </div>
+                                            <div class="flex align-items-end h-full">
+                                                <span class="p-2 text-xs font-semibold" style="color: #d6f1ff;">{{ ensaios_utilizados.descricao }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cards de Ensaios Diretos -->
+            <div *ngIf="analiseSelecionada?.ultimo_ensaio?.ensaios_utilizados?.length > 0">
+                <h3 class="mb-3" style="color: #e6defa;">🔬 Ensaios Diretos</h3>
+                <div class="grid">
+                    <div class="col-12 md:col-6 lg:col-4" *ngFor="let ensaios_utilizados of analiseSelecionada.ultimo_ensaio.ensaios_utilizados">
+                        <div
+                            class="shadow-2 hover:shadow-4 transition-duration-200"
+                            style="height: 120px; border-radius: 12px; background-color: #26413c; position: relative; cursor: pointer;"
+                        >
+                            <i class="pi pi-chart-bar" style="position: absolute; top: 12px; left: 12px; color: #b2f5ea; font-size: 1.25rem;"></i>
+                            <div
+                                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ccfbf1; font-size: 1.8rem; font-weight: 700; text-align: center;"
+                            >
+                                {{ ensaios_utilizados.valor }}
+                            </div>
+                            <div class="flex align-items-end h-full">
+                                <span class="p-3 text-sm font-semibold" style="color: #ccfbf1;">{{ ensaios_utilizados.descricao }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Cards de Variação Dimensional -->
+            <div *ngIf="analiseSelecionada?.variacao_dimensional">
+                <h3 class="mb-3" style="color: #e6defa;">📐 Variação Dimensional Linear</h3>
+                <div class="grid">
+                    
+                    <!-- L0 - Medições Iniciais -->
+                    <div class="col-12 md:col-6 lg:col-3" *ngIf="analiseSelecionada.variacao_dimensional.l0">
+                        <div
+                            class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                            style="border-radius: 12px; background-color: #4a4458; min-height: 200px;"
+                        >
+                            <div class="flex align-items-center mb-3">
+                                <i class="pi pi-ruler" style="color: #e3d8ff; font-size: 1.2rem; margin-right: 8px;"></i>
+                                <h5 class="m-0" style="color: #e3d8ff;">L0 - Inicial</h5>
+                            </div>
+                            <div style="color: #e6defa; font-size: 0.9rem;">
+                                <p class="mb-2"><b>Data:</b> {{ analiseSelecionada.variacao_dimensional.l0.data | date:'dd/MM/yyyy' }}</p>
+                                <p class="mb-1"><b>CP1:</b> {{ analiseSelecionada.variacao_dimensional.l0.cp1 }} mm</p>
+                                <p class="mb-1"><b>CP2:</b> {{ analiseSelecionada.variacao_dimensional.l0.cp2 }} mm</p>
+                                <p class="mb-0"><b>CP3:</b> {{ analiseSelecionada.variacao_dimensional.l0.cp3 }} mm</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- L1 - 1 dia -->
+                    <div class="col-12 md:col-6 lg:col-3" *ngIf="analiseSelecionada.variacao_dimensional.l1">
+                        <div
+                            class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                            style="border-radius: 12px; background-color: #2b3a55; min-height: 200px;"
+                        >
+                            <div class="flex align-items-center mb-3">
+                                <i class="pi pi-calendar" style="color: #b3e5ff; font-size: 1.2rem; margin-right: 8px;"></i>
+                                <h5 class="m-0" style="color: #b3e5ff;">L1 - 1 dia</h5>
+                            </div>
+                            <div style="color: #d6f1ff; font-size: 0.9rem;">
+                                <p class="mb-2"><b>Data:</b> {{ analiseSelecionada.variacao_dimensional.l1.data | date:'dd/MM/yyyy' }}</p>
+                                <p class="mb-1"><b>CP1:</b> {{ analiseSelecionada.variacao_dimensional.l1.cp1 }} mm</p>
+                                <p class="mb-1"><b>CP2:</b> {{ analiseSelecionada.variacao_dimensional.l1.cp2 }} mm</p>
+                                <p class="mb-2"><b>CP3:</b> {{ analiseSelecionada.variacao_dimensional.l1.cp3 }} mm</p>
+                                <div class="mt-2 p-2 text-center" style="background-color: rgba(179, 229, 255, 0.15); border-radius: 8px;">
+                                    <p class="font-bold mb-1" style="color: #b3e5ff;">Média: {{ analiseSelecionada.variacao_dimensional.l1.media | number:'1.2-4' }} %</p>
+                                    <p class="text-xs mb-0" style="color: #d6f1ff;">Desvio: {{ analiseSelecionada.variacao_dimensional.l1.desvio_padrao | number:'1.2-4' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- L7 - 7 dias -->
+                    <div class="col-12 md:col-6 lg:col-3" *ngIf="analiseSelecionada.variacao_dimensional.l7">
+                        <div
+                            class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                            style="border-radius: 12px; background-color: #26413c; min-height: 200px;"
+                        >
+                            <div class="flex align-items-center mb-3">
+                                <i class="pi pi-calendar-plus" style="color: #b2f5ea; font-size: 1.2rem; margin-right: 8px;"></i>
+                                <h5 class="m-0" style="color: #b2f5ea;">L7 - 7 dias</h5>
+                            </div>
+                            <div style="color: #ccfbf1; font-size: 0.9rem;">
+                                <p class="mb-2"><b>Data:</b> {{ analiseSelecionada.variacao_dimensional.l7.data | date:'dd/MM/yyyy' }}</p>
+                                <p class="mb-1"><b>CP1:</b> {{ analiseSelecionada.variacao_dimensional.l7.cp1 }} mm</p>
+                                <p class="mb-1"><b>CP2:</b> {{ analiseSelecionada.variacao_dimensional.l7.cp2 }} mm</p>
+                                <p class="mb-2"><b>CP3:</b> {{ analiseSelecionada.variacao_dimensional.l7.cp3 }} mm</p>
+                                <div class="mt-2 p-2 text-center" style="background-color: rgba(178, 245, 234, 0.15); border-radius: 8px;">
+                                    <p class="font-bold mb-1" style="color: #b2f5ea;">Média: {{ analiseSelecionada.variacao_dimensional.l7.media | number:'1.2-4' }} %</p>
+                                    <p class="text-xs mb-0" style="color: #ccfbf1;">Desvio: {{ analiseSelecionada.variacao_dimensional.l7.desvio_padrao | number:'1.2-4' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- L28 - 28 dias -->
+                    <div class="col-12 md:col-6 lg:col-3" *ngIf="analiseSelecionada.variacao_dimensional.l28">
+                        <div
+                            class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                            style="border-radius: 12px; background-color: #3b3b32; min-height: 200px;"
+                        >
+                            <div class="flex align-items-center mb-3">
+                                <i class="pi pi-calendar-times" style="color: #fff3b0; font-size: 1.2rem; margin-right: 8px;"></i>
+                                <h5 class="m-0" style="color: #fff3b0;">L28 - 28 dias</h5>
+                            </div>
+                            <div style="color: #fff2a8; font-size: 0.9rem;">
+                                <p class="mb-2"><b>Data:</b> {{ analiseSelecionada.variacao_dimensional.l28.data | date:'dd/MM/yyyy' }}</p>
+                                <p class="mb-1"><b>CP1:</b> {{ analiseSelecionada.variacao_dimensional.l28.cp1 }} mm</p>
+                                <p class="mb-1"><b>CP2:</b> {{ analiseSelecionada.variacao_dimensional.l28.cp2 }} mm</p>
+                                <p class="mb-2"><b>CP3:</b> {{ analiseSelecionada.variacao_dimensional.l28.cp3 }} mm</p>
+                                <div class="mt-2 p-2 text-center" style="background-color: rgba(255, 243, 176, 0.15); border-radius: 8px;">
+                                    <p class="font-bold mb-1" style="color: #fff3b0;">Média: {{ analiseSelecionada.variacao_dimensional.l28.media | number:'1.2-4' }} %</p>
+                                    <p class="text-xs mb-0" style="color: #fff2a8;">Desvio: {{ analiseSelecionada.variacao_dimensional.l28.desvio_padrao | number:'1.2-4' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>    
 
             <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
                 <p-button 
-                    label="Gerar Impressão" 
+                    label="Imprimir" 
                     (onClick)="imprimirVisualizar(analiseSelecionada)"
                     severity="success"
-                    icon="pi pi-check" 
+                    icon="pi pi-print" 
                     iconPos="right" 
                     tooltipPosition="top"
                     pTooltip="Gerar Impressão"
@@ -630,7 +693,6 @@
             </div>
 
         </div>
-
     </p-drawer>
 
 <!---------------------------------Modal Edição---------------------------------------------->

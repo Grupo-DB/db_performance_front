@@ -29,7 +29,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     providePrimeNG({
         theme: {
-            preset: Aura,
+            preset: Lara,
         }
     }),
     HttpClientModule,
