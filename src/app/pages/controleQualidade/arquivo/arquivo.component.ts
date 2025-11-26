@@ -3872,6 +3872,421 @@ duplicata(amostra: any): void {
       contadorLinhas = 10;
     }
 
+    // ====== TABELA headTracaoNormal ==================================================
+    const headTracaoNormal = [
+      [
+        {content: 'Resist. Ader. a Tração (Normal)', colSpan: 11}
+      ],
+      [
+        { content: 'N°', rowSpan: 2 },
+        { content: 'Diâmetro mm', rowSpan: 2 },
+        { content: 'Área mm²', rowSpan: 2 },
+        { content: 'Espessura mm', rowSpan: 2 },
+        { content: 'Subst', rowSpan: 2 },
+        { content: 'Junta', rowSpan: 2 },
+        { content: 'Carga kgf', rowSpan: 2 },
+        { content: 'RESIST. Mpa', rowSpan: 2 },
+        { content: 'Validação', rowSpan: 2 },
+      ],
+      [
+        { content: '(A) Sub' },
+        { content: '(B) Sub/Arga' },
+        { content: '(C) Rup Arga' },
+        { content: '(D) Arga Cola' },
+        { content: '(E) Colar pastilha' },
+      ],
+    ];
+
+    if(amostra_detalhes_selecionada.tracao_normal){
+      const resistencias2 = amostra_detalhes_selecionada.tracao_normal.linhas
+        .map((item: any) => item.resist)
+        .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
+
+      const mediaResist2 = resistencias2.length
+        ? resistencias2.reduce((a: number, b: number) => a + b, 0) / resistencias2.length
+        : 0;
+
+      const maxResist2 = resistencias2.length ? Math.max(...resistencias2) : 0;
+      const minResist2 = resistencias2.length ? Math.min(...resistencias2) : 0;
+
+      const desvioPadrao2 = resistencias2.length > 1 ? Math.sqrt(resistencias2.map((valor: number) => Math.pow(valor - mediaResist2, 2)).reduce((a: number, b: number) => a + b, 0) / (resistencias2.length - 1)) : 0;
+
+      // Formatar para 2 casas decimais
+      const media2 = mediaResist2.toFixed(2);
+      const maximo2 = maxResist2.toFixed(2);
+      const minimo2 = minResist2.toFixed(2);
+      const desvio2 = desvioPadrao2.toFixed(2);
+
+      const bodyTracaoNormal = [
+        // espalha as linhas geradas pelo map
+        ...amostra_detalhes_selecionada.tracao_normal.linhas.map((item: any) => [
+          item.numero ?? '',
+          item.diametro ?? '',
+          item.area ?? '',
+          item.carga ?? '',
+          item.resist ?? '',
+          item.validacao ?? '',
+          item.rupturas?.sub ?? '',
+          item.rupturas?.subArga ?? '',
+          item.rupturas?.rupArga ?? '',
+          item.rupturas?.argaCola ?? '',
+          item.rupturas?.colarPastilha ?? ''
+        ]),
+
+          [
+            { content: 'Média Resistência Substrato', colSpan: 4, styles: { halign: 'right' } },
+            media2,
+            { content: 'Observações', colSpan: 6, rowSpan: 5, styles: { halign: 'left', valign: 'top' } }
+          ],
+          [
+            { content: 'Resultado MAX', colSpan: 4, styles: { halign: 'right' } },
+            maximo2
+          ],
+          [
+            { content: 'Resultado MIN', colSpan: 4, styles: { halign: 'right' } },
+            minimo2
+          ], 
+          [
+            { content: 'Desvio Padrão (Mpa)', colSpan: 4, styles: { halign: 'right' } },
+            desvio2
+          ],
+      ];
+
+      autoTable(doc, {
+        head: headTracaoNormal,
+        body: bodyTracaoNormal,
+        startY: contadorLinhas,
+        styles: {
+          fontSize: 8,
+          halign: 'center',
+          valign: 'middle',
+          cellPadding: 1,
+        },
+        headStyles: {
+          fillColor: [220, 220, 220],
+          textColor: 0,
+          lineWidth: 0.1,
+        },
+        bodyStyles: {
+          lineWidth: 0.1,
+        },
+      });
+
+      // Depois da head3/body3
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+    }
+
+    // ====== TABELA headTracaoSubmersa ==================================================
+    const headTracaoSubmersa = [
+      [
+        {content: 'Resist. Ader. a Tração (Submersa)', colSpan: 11}
+      ],
+      [
+        { content: 'N°', rowSpan: 2 },
+        { content: 'Diâmetro mm', rowSpan: 2 },
+        { content: 'Área mm²', rowSpan: 2 },
+        { content: 'Espessura mm', rowSpan: 2 },
+        { content: 'Subst', rowSpan: 2 },
+        { content: 'Junta', rowSpan: 2 },
+        { content: 'Carga kgf', rowSpan: 2 },
+        { content: 'RESIST. Mpa', rowSpan: 2 },
+        { content: 'Validação', rowSpan: 2 },
+      ],
+      [
+        { content: '(A) Sub' },
+        { content: '(B) Sub/Arga' },
+        { content: '(C) Rup Arga' },
+        { content: '(D) Arga Cola' },
+        { content: '(E) Colar pastilha' },
+      ],
+    ];
+
+    if(amostra_detalhes_selecionada.tracao_submersa){
+      const resistencias2 = amostra_detalhes_selecionada.tracao_submersa.linhas
+        .map((item: any) => item.resist)
+        .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
+
+      const mediaResist2 = resistencias2.length
+        ? resistencias2.reduce((a: number, b: number) => a + b, 0) / resistencias2.length
+        : 0;
+
+      const maxResist2 = resistencias2.length ? Math.max(...resistencias2) : 0;
+      const minResist2 = resistencias2.length ? Math.min(...resistencias2) : 0;
+
+      const desvioPadrao2 = resistencias2.length > 1 ? Math.sqrt(resistencias2.map((valor: number) => Math.pow(valor - mediaResist2, 2)).reduce((a: number, b: number) => a + b, 0) / (resistencias2.length - 1)) : 0;
+
+      // Formatar para 2 casas decimais
+      const media2 = mediaResist2.toFixed(2);
+      const maximo2 = maxResist2.toFixed(2);
+      const minimo2 = minResist2.toFixed(2);
+      const desvio2 = desvioPadrao2.toFixed(2);
+
+      const bodyTracaoSubmersa = [
+        // espalha as linhas geradas pelo map
+        ...amostra_detalhes_selecionada.tracao_submersa.linhas.map((item: any) => [
+          item.numero ?? '',
+          item.diametro ?? '',
+          item.area ?? '',
+          item.carga ?? '',
+          item.resist ?? '',
+          item.validacao ?? '',
+          item.rupturas?.sub ?? '',
+          item.rupturas?.subArga ?? '',
+          item.rupturas?.rupArga ?? '',
+          item.rupturas?.argaCola ?? '',
+          item.rupturas?.colarPastilha ?? ''
+        ]),
+
+          [
+            { content: 'Média Resistência Substrato', colSpan: 4, styles: { halign: 'right' } },
+            media2,
+            { content: 'Observações', colSpan: 6, rowSpan: 5, styles: { halign: 'left', valign: 'top' } }
+          ],
+          [
+            { content: 'Resultado MAX', colSpan: 4, styles: { halign: 'right' } },
+            maximo2
+          ],
+          [
+            { content: 'Resultado MIN', colSpan: 4, styles: { halign: 'right' } },
+            minimo2
+          ], 
+          [
+            { content: 'Desvio Padrão (Mpa)', colSpan: 4, styles: { halign: 'right' } },
+            desvio2
+          ],
+      ];
+
+      autoTable(doc, {
+        head: headTracaoSubmersa,
+        body: bodyTracaoSubmersa,
+        startY: contadorLinhas,
+        styles: {
+          fontSize: 8,
+          halign: 'center',
+          valign: 'middle',
+          cellPadding: 1,
+        },
+        headStyles: {
+          fillColor: [220, 220, 220],
+          textColor: 0,
+          lineWidth: 0.1,
+        },
+        bodyStyles: {
+          lineWidth: 0.1,
+        },
+      });
+
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+    }
+
+    // ====== TABELA headTracaoAberto ==================================================
+    const headTracaoAberto = [
+      [
+        {content: 'Resist. Ader. a Tração (Tempo Aberto)', colSpan: 11}
+      ],
+      [
+        { content: 'N°', rowSpan: 2 },
+        { content: 'Diâmetro mm', rowSpan: 2 },
+        { content: 'Área mm²', rowSpan: 2 },
+        { content: 'Espessura mm', rowSpan: 2 },
+        { content: 'Subst', rowSpan: 2 },
+        { content: 'Junta', rowSpan: 2 },
+        { content: 'Carga kgf', rowSpan: 2 },
+        { content: 'RESIST. Mpa', rowSpan: 2 },
+        { content: 'Validação', rowSpan: 2 },
+      ],
+      [
+        { content: '(A) Sub' },
+        { content: '(B) Sub/Arga' },
+        { content: '(C) Rup Arga' },
+        { content: '(D) Arga Cola' },
+        { content: '(E) Colar pastilha' },
+      ],
+    ];
+
+    if(amostra_detalhes_selecionada.tracao_tempo_aberto){
+      const resistencias2 = amostra_detalhes_selecionada.tracao_tempo_aberto.linhas
+        .map((item: any) => item.resist)
+        .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
+
+      const mediaResist2 = resistencias2.length
+        ? resistencias2.reduce((a: number, b: number) => a + b, 0) / resistencias2.length
+        : 0;
+
+      const maxResist2 = resistencias2.length ? Math.max(...resistencias2) : 0;
+      const minResist2 = resistencias2.length ? Math.min(...resistencias2) : 0;
+
+      const desvioPadrao2 = resistencias2.length > 1 ? Math.sqrt(resistencias2.map((valor: number) => Math.pow(valor - mediaResist2, 2)).reduce((a: number, b: number) => a + b, 0) / (resistencias2.length - 1)) : 0;
+
+      // Formatar para 2 casas decimais
+      const media2 = mediaResist2.toFixed(2);
+      const maximo2 = maxResist2.toFixed(2);
+      const minimo2 = minResist2.toFixed(2);
+      const desvio2 = desvioPadrao2.toFixed(2);
+
+      const bodyTracaoAberto = [
+        // espalha as linhas geradas pelo map
+        ...amostra_detalhes_selecionada.tracao_tempo_aberto.linhas.map((item: any) => [
+          item.numero ?? '',
+          item.diametro ?? '',
+          item.area ?? '',
+          item.carga ?? '',
+          item.resist ?? '',
+          item.validacao ?? '',
+          item.rupturas?.sub ?? '',
+          item.rupturas?.subArga ?? '',
+          item.rupturas?.rupArga ?? '',
+          item.rupturas?.argaCola ?? '',
+          item.rupturas?.colarPastilha ?? ''
+        ]),
+
+          [
+            { content: 'Média Resistência Substrato', colSpan: 4, styles: { halign: 'right' } },
+            media2,
+            { content: 'Observações', colSpan: 6, rowSpan: 5, styles: { halign: 'left', valign: 'top' } }
+          ],
+          [
+            { content: 'Resultado MAX', colSpan: 4, styles: { halign: 'right' } },
+            maximo2
+          ],
+          [
+            { content: 'Resultado MIN', colSpan: 4, styles: { halign: 'right' } },
+            minimo2
+          ], 
+          [
+            { content: 'Desvio Padrão (Mpa)', colSpan: 4, styles: { halign: 'right' } },
+            desvio2
+          ],
+      ];
+
+      autoTable(doc, {
+        head: headTracaoAberto,
+        body: bodyTracaoAberto,
+        startY: contadorLinhas,
+        styles: {
+          fontSize: 8,
+          halign: 'center',
+          valign: 'middle',
+          cellPadding: 1,
+        },
+        headStyles: {
+          fillColor: [220, 220, 220],
+          textColor: 0,
+          lineWidth: 0.1,
+        },
+        bodyStyles: {
+          lineWidth: 0.1,
+        },
+      });
+
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+    }
+
+    // ====== TABELA headTracaoEstufa ==================================================
+    const headTracaoEstufa = [
+      [
+        {content: 'Resist. Ader. a Tração (Estufa)', colSpan: 11}
+      ],
+      [
+        { content: 'N°', rowSpan: 2 },
+        { content: 'Diâmetro mm', rowSpan: 2 },
+        { content: 'Área mm²', rowSpan: 2 },
+        { content: 'Espessura mm', rowSpan: 2 },
+        { content: 'Subst', rowSpan: 2 },
+        { content: 'Junta', rowSpan: 2 },
+        { content: 'Carga kgf', rowSpan: 2 },
+        { content: 'RESIST. Mpa', rowSpan: 2 },
+        { content: 'Validação', rowSpan: 2 },
+      ],
+      [
+        { content: '(A) Sub' },
+        { content: '(B) Sub/Arga' },
+        { content: '(C) Rup Arga' },
+        { content: '(D) Arga Cola' },
+        { content: '(E) Colar pastilha' },
+      ],
+    ];
+
+    if(amostra_detalhes_selecionada.tracao_estufa){
+      const resistencias2 = amostra_detalhes_selecionada.tracao_estufa.linhas
+        .map((item: any) => item.resist)
+        .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
+
+      const mediaResist2 = resistencias2.length
+        ? resistencias2.reduce((a: number, b: number) => a + b, 0) / resistencias2.length
+        : 0;
+
+      const maxResist2 = resistencias2.length ? Math.max(...resistencias2) : 0;
+      const minResist2 = resistencias2.length ? Math.min(...resistencias2) : 0;
+
+      const desvioPadrao2 = resistencias2.length > 1 ? Math.sqrt(resistencias2.map((valor: number) => Math.pow(valor - mediaResist2, 2)).reduce((a: number, b: number) => a + b, 0) / (resistencias2.length - 1)) : 0;
+
+      // Formatar para 2 casas decimais
+      const media2 = mediaResist2.toFixed(2);
+      const maximo2 = maxResist2.toFixed(2);
+      const minimo2 = minResist2.toFixed(2);
+      const desvio2 = desvioPadrao2.toFixed(2);
+
+      const bodyTracaoEstufa = [
+        // espalha as linhas geradas pelo map
+        ...amostra_detalhes_selecionada.tracao_estufa.linhas.map((item: any) => [
+          item.numero ?? '',
+          item.diametro ?? '',
+          item.area ?? '',
+          item.carga ?? '',
+          item.resist ?? '',
+          item.validacao ?? '',
+          item.rupturas?.sub ?? '',
+          item.rupturas?.subArga ?? '',
+          item.rupturas?.rupArga ?? '',
+          item.rupturas?.argaCola ?? '',
+          item.rupturas?.colarPastilha ?? ''
+        ]),
+
+          [
+            { content: 'Média Resistência Substrato', colSpan: 4, styles: { halign: 'right' } },
+            media2,
+            { content: 'Observações', colSpan: 6, rowSpan: 5, styles: { halign: 'left', valign: 'top' } }
+          ],
+          [
+            { content: 'Resultado MAX', colSpan: 4, styles: { halign: 'right' } },
+            maximo2
+          ],
+          [
+            { content: 'Resultado MIN', colSpan: 4, styles: { halign: 'right' } },
+            minimo2
+          ], 
+          [
+            { content: 'Desvio Padrão (Mpa)', colSpan: 4, styles: { halign: 'right' } },
+            desvio2
+          ],
+      ];
+
+      autoTable(doc, {
+        head: headTracaoEstufa,
+        body: bodyTracaoEstufa,
+        startY: contadorLinhas,
+        styles: {
+          fontSize: 8,
+          halign: 'center',
+          valign: 'middle',
+          cellPadding: 1,
+        },
+        headStyles: {
+          fillColor: [220, 220, 220],
+          textColor: 0,
+          lineWidth: 0.1,
+        },
+        bodyStyles: {
+          lineWidth: 0.1,
+        },
+      });
+
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+    }
+
+    console.log('amostra_detalhes_selecionada', amostra_detalhes_selecionada);
+
     // ====== TABELA headRetracao/bodyRetracao ==================================================
     const headRetracao = [
       [
