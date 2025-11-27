@@ -9645,7 +9645,7 @@ canDeactivate(): boolean | Promise<boolean> {
         }
       }));
     }else if (analise?.tracao_tempo_aberto?.linhas && Array.isArray(analise.tracao_tempo_aberto.linhas)) {
-      if(analise?.tracao_tempo_aberto.media){
+      if(analise?.tracao_tempo_aberto.media && typeof analise.tracao_tempo_aberto.media === 'number'){
         this.tracao_aberto_media = analise?.tracao_tempo_aberto.media;
       }
       this.linhasTracaoAberto = analise.tracao_tempo_aberto.linhas.map((item: any, index: number) => ({
@@ -9720,7 +9720,7 @@ canDeactivate(): boolean | Promise<boolean> {
     const dadosAtualizados: Partial<Analise> = {
       tracao_tempo_aberto:{
         linhas: this.linhasTracaoAberto,
-        media: this.parecer_tracao_aberto
+        media: this.tracao_aberto_media
       }
     };
    
@@ -9927,11 +9927,11 @@ canDeactivate(): boolean | Promise<boolean> {
 
     // Garante que há uma lista de linhas
     if (!this.linhasTracaoAberto) {
-      this.linhasTracaoNormal = [];
+      this.linhasTracaoAberto = [];
     }
 
     // Filtra resist válidos (≠ null, '', '!#REF', NaN, 0)
-    const resistValidos = this.linhasTracaoNormal
+    const resistValidos = this.linhasTracaoAberto
       .map(l => l.resist)
       .filter((v: any) =>
         v !== null &&

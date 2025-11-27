@@ -319,6 +319,85 @@ export class OrdemComponent implements OnInit {
     this.modalVisualizar = true;
   }
 
+  // Métodos para verificar status das datas de rompimento
+  getStatusDataRompimento(dataBase: string, diasRompimento: number): { status: string, diasRestantes: number, cor: string, icone: string } {
+    if (!dataBase) {
+      return { status: 'Sem data', diasRestantes: 0, cor: '#6c757d', icone: 'pi-question-circle' };
+    }
+
+    const dataBaseDate = new Date(dataBase);
+    const dataRompimento = new Date(dataBaseDate);
+    dataRompimento.setDate(dataRompimento.getDate() + diasRompimento);
+    
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    dataRompimento.setHours(0, 0, 0, 0);
+    
+    const diffTime = dataRompimento.getTime() - hoje.getTime();
+    const diasRestantes = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diasRestantes < 0) {
+      return { 
+        status: `Vencido há ${Math.abs(diasRestantes)} dia(s)`, 
+        diasRestantes: diasRestantes, 
+        cor: '#dc3545', 
+        icone: 'pi-times-circle' 
+      };
+    } else if (diasRestantes === 0) {
+      return { 
+        status: 'Vence hoje!', 
+        diasRestantes: 0, 
+        cor: '#fd7e14', 
+        icone: 'pi-exclamation-triangle' 
+      };
+    } else if (diasRestantes <= 2) {
+      return { 
+        status: `Vence em ${diasRestantes} dia(s)`, 
+        diasRestantes: diasRestantes, 
+        cor: '#ffc107', 
+        icone: 'pi-exclamation-circle' 
+      };
+    } else if (diasRestantes <= 5) {
+      return { 
+        status: `${diasRestantes} dias restantes`, 
+        diasRestantes: diasRestantes, 
+        cor: '#17a2b8', 
+        icone: 'pi-info-circle' 
+      };
+    } else {
+      return { 
+        status: `${diasRestantes} dias restantes`, 
+        diasRestantes: diasRestantes, 
+        cor: '#28a745', 
+        icone: 'pi-check-circle' 
+      };
+    }
+  }
+
+  getStatusL1(dataL0: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataL0, 1);
+  }
+
+  getStatusL7(dataL0: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataL0, 7);
+  }
+
+  getStatusL28(dataL0: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataL0, 28);
+  }
+
+  getStatusM1(dataM0: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataM0, 1);
+  }
+
+  getStatusM7(dataM0: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataM0, 7);
+  }
+
+  getStatusM28(dataM0: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataM0, 28);
+  }
+
 
   abrirModalEdicao(amostra: Amostra) {
     this.editFormVisible = true;
