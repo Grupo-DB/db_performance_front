@@ -8090,7 +8090,7 @@ canDeactivate(): boolean | Promise<boolean> {
     const itens: any[] = [];
     const nome = analise?.amostra_detalhes?.produto_amostra_detalhes?.nome?.toLowerCase() || '';
     const isColante = nome.includes('colante');
-    // if (!isColante) {
+    if (!isColante) {
       itens.push(
         {
           label: 'Determinação da Resist. Pot. Ader. a Tração (Substrato)',
@@ -8103,7 +8103,7 @@ canDeactivate(): boolean | Promise<boolean> {
           command: () => this.abrirModalSuperficial(analise)
         }
       );
-    // }
+    }
 
     if (isColante) {
       itens.push(
@@ -8129,39 +8129,41 @@ canDeactivate(): boolean | Promise<boolean> {
         }
       );
     }
+    if (!isColante) {
 
-    itens.push(
+      itens.push(
+        { 
+          label: 'Determinação da Variação Dimencional Linear (Retração/Expansão)', 
+          icon: 'pi pi-pencil', 
+          command: () => {
+            this.carregarVariacaoDimensionalSalva(analise); // Carregar dados salvos
+            this.exibirModalVariacaoDimensional = true;
+          }
+        },
       { 
-        label: 'Determinação da Variação Dimencional Linear (Retração/Expansão)', 
-        icon: 'pi pi-pencil', 
-        command: () => {
-          this.carregarVariacaoDimensionalSalva(analise); // Carregar dados salvos
-          this.exibirModalVariacaoDimensional = true;
+          label: 'Determinação da Variação de Massa (Retração/Expansão)', 
+          icon: 'pi pi-pencil', 
+          command: () => {
+            this.carregarVariacaoMassaSalva(analise); // Carregar dados salvos
+            this.exibirModalVariacaoMassa = true;
+          }
+        },
+        { 
+          label: 'Módulo de Elasticidade Dinâmico', 
+          icon: 'pi pi-pencil', 
+          command: () => {
+            this.carregarModuloElasticidadeSalvo(analise); // Carregar dados salvos
+            this.atualizarTabelaModuloElasticidade(); // Garantir que a tabela seja inicializada
+            this.exibirModalModuloElasticidade = true;
+          }
+        },
+        {
+          label: 'Gráfico Capilaridade',
+          icon: 'pi pi-pencil',
+          command: () => this.exibirGrafico()
         }
-      },
-     { 
-        label: 'Determinação da Variação de Massa (Retração/Expansão)', 
-        icon: 'pi pi-pencil', 
-        command: () => {
-          this.carregarVariacaoMassaSalva(analise); // Carregar dados salvos
-          this.exibirModalVariacaoMassa = true;
-        }
-      },
-      { 
-        label: 'Módulo de Elasticidade Dinâmico', 
-        icon: 'pi pi-pencil', 
-        command: () => {
-          this.carregarModuloElasticidadeSalvo(analise); // Carregar dados salvos
-          this.atualizarTabelaModuloElasticidade(); // Garantir que a tabela seja inicializada
-          this.exibirModalModuloElasticidade = true;
-        }
-      },
-      {
-        label: 'Gráfico Capilaridade',
-        icon: 'pi pi-pencil',
-        command: () => this.exibirGrafico()
-      }
-    );
+      );
+    }
 
     return itens;
   }
@@ -9800,6 +9802,8 @@ canDeactivate(): boolean | Promise<boolean> {
       } else {
         linha.validacao = 'Válido';
       }
+          alert('oi');
+
     } else {
       linha.validacao = null;
     }
