@@ -8137,7 +8137,7 @@ canDeactivate(): boolean | Promise<boolean> {
     const itens: any[] = [];
     const nome = analise?.amostra_detalhes?.produto_amostra_detalhes?.nome?.toLowerCase() || '';
     const isColante = nome.includes('colante');
-    // if (!isColante) {
+    if (!isColante) {
       itens.push(
         {
           label: 'Determinação da Resist. Pot. Ader. a Tração (Substrato)',
@@ -8150,7 +8150,7 @@ canDeactivate(): boolean | Promise<boolean> {
           command: () => this.abrirModalSuperficial(analise)
         }
       );
-    // }
+    }
 
     if (isColante) {
       itens.push(
@@ -8176,7 +8176,7 @@ canDeactivate(): boolean | Promise<boolean> {
         }
       );
     }
-    // if (!isColante) {
+    if (!isColante) {
 
       itens.push(
         { 
@@ -8210,7 +8210,7 @@ canDeactivate(): boolean | Promise<boolean> {
           command: () => this.exibirGrafico()
         }
       );
-    // }
+    }
 
     return itens;
   }
