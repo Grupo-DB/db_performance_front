@@ -556,6 +556,7 @@ formulariosDisponiveis: { id: number; nome: string }[] = []; // Lista de formul�
       this.avaliadoService.getMeusAvaliadosSemAvaliacao(this.trimestre).subscribe(
         data => {
           this.avaliadosSA = data;
+          console.log('Avaliados sem avaliação carregados:', this.avaliadosSA);
         },
         error => {
           console.error('Erro na requisição:', error);

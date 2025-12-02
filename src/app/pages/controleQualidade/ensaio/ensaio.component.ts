@@ -32,7 +32,6 @@ import { EnsaioService } from '../../../services/controleQualidade/ensaio.servic
 import { InputNumberModule } from 'primeng/inputnumber';
 import { evaluate } from 'mathjs';
 import { Variavel } from '../variavel/variavel.component';
-import { CdkDragPlaceholder } from "@angular/cdk/drag-drop";
 
 interface RegisterEnsaioForm {
   descricao:FormControl;
@@ -951,20 +950,24 @@ filterVariaveis(event: any) {
   abrirModalEdicao(ensaio: Ensaio) {
   this.editFormVisible = true;
 
-  // Supondo que ensaio.tempoPrevisto seja uma string tipo "15 Minutos"
+  // Verifica se vem como tempo_previsto ou tempoPrevisto
+  const tempoPrevisto = ensaio.tempo_previsto || ensaio.tempoPrevisto;
+  const tempoTrabalho = ensaio.tempo_trabalho || ensaio.tempoTrabalho;
+
+  // Supondo que ensaio.tempo_previsto seja uma string tipo "15 Minutos"
   let tempoPrevistoValor = '';
   let tempoPrevistoUnidade = '';
-  if (ensaio.tempoPrevisto) {
-    const partes = ensaio.tempoPrevisto ? ensaio.tempoPrevisto.split(' ') : [];
+  if (tempoPrevisto) {
+    const partes = tempoPrevisto.split(' ').filter((p: string) => p.trim() !== '');
     tempoPrevistoValor = partes[0] || '';
     tempoPrevistoUnidade = partes.slice(1).join(' ') || '';
   }
 
-    // Supondo que ensaio.tempoTrtabalho seja uma string tipo "15 Minutos"
+  // Supondo que ensaio.tempo_trabalho seja uma string tipo "15 Minutos"
   let tempoTrabalhoValor = '';
   let tempoTrabalhoUnidade = '';
-  if (ensaio.tempoTrabalho) {
-    const partes = ensaio.tempoTrabalho ? ensaio.tempoTrabalho.split(' ') : [];
+  if (tempoTrabalho) {
+    const partes = tempoTrabalho.split(' ').filter((p: string) => p.trim() !== '');
     tempoTrabalhoValor = partes[0] || '';
     tempoTrabalhoUnidade = partes.slice(1).join(' ') || '';
   }
@@ -973,7 +976,7 @@ filterVariaveis(event: any) {
     id: ensaio.id,
     descricao: ensaio.descricao,
     valor: ensaio.valor,
-    tipo_ensaio: ensaio.tipo_ensaio_detalhes.id,
+    tipo_ensaio: ensaio.tipo_ensaio_detalhes?.id || ensaio.tipo_ensaio,
     unidade: ensaio.unidade,
     tempoPrevistoValor: tempoPrevistoValor,
     tempoPrevistoUnidade: tempoPrevistoUnidade,

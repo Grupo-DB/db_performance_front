@@ -1,0 +1,247 @@
+<div class="menu">
+    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+        <li nz-menu-item nzMatchRouter="#">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/dashControle">Início</a>
+        </li>
+        <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/tipoEnsaio">Tipo de Ensaio</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/variavel">Variáveis de Ensaio</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/ensaio" >Ensaio</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/calculoEnsaio" >Cálculo de Ensaio</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/plano" >Plano de Análise</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/tipoAmostra" >Tipo de Amostra</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/produtoAmostra" >Produto de Amostra</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/garantia" >Garantias</a>
+                </li>
+            </ul>
+        </li >
+        <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/amostra">Amostras</a>
+        </li>
+
+        <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/ordem">Ordens de Serviço</a>
+        </li>
+
+        <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/arquivo">Banco de Análises</a>
+        </li>
+
+        <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;">Banco de Relatórios</a>
+        </li>
+
+        <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/resultados">Histórico de Resultados</a>
+        </li>
+    </ul>
+</div>
+
+<div class="container flex flex-column align-items-center mb-4">
+    <div class="containerInterno w-12">
+        <div @swipeAnimation>
+            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                <div class="fg1 flex flex-column w-12 align-items-center">
+                    <p-card class="card w-12 text-left">
+                        <ng-template #header>
+                            <div class="header titulo-info w-full text-center">
+                                <h2>Histórico de Resultados</h2>
+                            </div>
+                        </ng-template>
+                        <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="w-full">
+                            
+                            <!-- Filtros de Data -->
+                            <div class="flex flex-column w-full lg:flex-row gap-3 mb-4">
+                                <div class="w-12 lg:w-6">
+                                    <p-floatlabel variant="on">
+                                        <p-datepicker
+                                            [style]="{'width':'100%'}"
+                                            id="dataInicio" 
+                                            [(ngModel)]="data_inicio"
+                                            dateFormat="dd/mm/yy"                  
+                                            [showIcon]="true"
+                                        />
+                                        <label for="dataInicio">Data Inicial</label>
+                                    </p-floatlabel> 
+                                </div>
+                                <div class="w-12 lg:w-6">
+                                    <p-floatlabel variant="on">
+                                        <p-datepicker
+                                            [style]="{'width':'100%'}"
+                                            id="dataFim" 
+                                            [(ngModel)]="data_fim"
+                                            dateFormat="dd/mm/yy"                  
+                                            [showIcon]="true"
+                                        />
+                                        <label for="dataFim">Data Final</label>
+                                    </p-floatlabel> 
+                                </div>
+                            </div>
+
+                            <!-- Seção de Ensaios -->
+                            <div class="mb-4">
+                                <h3 class="mb-3" style="color: #e6defa;">📊 Médias de Ensaios</h3>
+                                <div class="flex flex-column w-full lg:flex-row gap-3">
+                                    <div class="w-12 lg:w-10">
+                                        <p-floatlabel variant="on">
+                                            <p-multiSelect 
+                                                [(ngModel)]="ensaiosSelecionados"
+                                                [options]="ensaios"
+                                                optionLabel="descricao"
+                                                optionValue="id"
+                                                display="chip"
+                                                [filter]="true"
+                                                id="ensaiosSelect"
+                                                filterBy="descricao"
+                                                [style]="{width: '100%'}"
+                                                appendTo="body"
+                                            ></p-multiSelect>
+                                            <label for="ensaiosSelect">Selecione o(s) Ensaio(s)</label>
+                                        </p-floatlabel>
+                                    </div>
+                                    <div class="w-12 lg:w-2">
+                                        <p-button 
+                                            label="Buscar" 
+                                            icon="pi pi-search"
+                                            (onClick)="buscarMediasEnsaios()"
+                                            [style]="{width: '100%'}"
+                                            severity="success"
+                                        />
+                                    </div>
+                                </div>
+
+                                <!-- Cards de Resultados de Ensaios -->
+                                <div *ngIf="mediasEnsaios && mediasEnsaios.length > 0" class="mt-4">
+                                    <div class="mb-3">
+                                        <h4 style="color: #b3e5ff; font-weight: bold;">📊 Total de Ensaios: {{ totalEnsaios }}</h4>
+                                    </div>
+                                    <div class="grid">
+                                        <div *ngFor="let resultado of mediasEnsaios" class="col-12 md:col-6 lg:col-4">
+                                            <p-card styleClass="h-full">
+                                                <ng-template pTemplate="header">
+                                                    <div class="p-3" style="background: linear-gradient(135deg, #2b3a55 0%, #1a2537 100%);">
+                                                        <h4 class="m-0 text-white font-bold">{{ resultado.ensaio_descricao }}</h4>
+                                                    </div>
+                                                </ng-template>
+                                                <div class="flex flex-col gap-3">
+                                                    <div class="flex justify-between align-items-center border-bottom-1 surface-border pb-2">
+                                                        <span class="font-semibold text-600">Média:</span>
+                                                        <span class="text-900 font-bold text-xl">{{ resultado.media | number:'1.2-4' }} {{ resultado.unidade }}</span>
+                                                    </div>
+                                                    <div class="flex justify-between align-items-center">
+                                                        <span class="text-600">Valor Mínimo:</span>
+                                                        <span class="text-900 font-semibold">{{ resultado.valor_minimo | number:'1.2-4' }}</span>
+                                                    </div>
+                                                    <div class="flex justify-between align-items-center">
+                                                        <span class="text-600">Valor Máximo:</span>
+                                                        <span class="text-900 font-semibold">{{ resultado.valor_maximo | number:'1.2-4' }}</span>
+                                                    </div>
+                                                    <div class="flex justify-between align-items-center border-top-1 surface-border pt-2">
+                                                        <span class="text-600">Medições:</span>
+                                                        <p-tag [value]="resultado.quantidade_medicoes.toString()" severity="info"></p-tag>
+                                                    </div>
+                                                    <div class="text-center mt-2 p-2" style="background-color: #f8f9fa; border-radius: 6px;">
+                                                        <small class="text-600">Período: {{ resultado.periodo.data_inicial | date:'dd/MM/yyyy' }} - {{ resultado.periodo.data_final | date:'dd/MM/yyyy' }}</small>
+                                                    </div>
+                                                </div>
+                                            </p-card>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Seção de Cálculos -->
+                            <div class="mb-4">
+                                <h3 class="mb-3" style="color: #e6defa;">🧮 Médias de Cálculos Compostos</h3>
+                                <div class="flex flex-column w-full lg:flex-row gap-3">
+                                    <div class="w-12 lg:w-10">
+                                        <p-floatlabel variant="on">
+                                            <p-multiSelect 
+                                                [(ngModel)]="calculosSelecionados"
+                                                [options]="calculos"
+                                                optionLabel="descricao"
+                                                optionValue="descricao"
+                                                display="chip"
+                                                [filter]="true"
+                                                id="calculosSelect"
+                                                filterBy="descricao"
+                                                [style]="{width: '100%'}"
+                                                appendTo="body"
+                                            ></p-multiSelect>
+                                            <label for="calculosSelect">Selecione o(s) Cálculo(s) Composto(s)</label>
+                                        </p-floatlabel>
+                                    </div>
+                                    <div class="w-12 lg:w-2">
+                                        <p-button 
+                                            label="Buscar" 
+                                            icon="pi pi-search"
+                                            (onClick)="buscarMediasCalculos()"
+                                            [style]="{width: '100%'}"
+                                            severity="info"
+                                        />
+                                    </div>
+                                </div>
+
+                                <!-- Cards de Resultados de Cálculos -->
+                                <div *ngIf="mediasCalculos && mediasCalculos.length > 0" class="mt-4">
+                                    <div class="mb-3">
+                                        <h4 style="color: #b2f5ea; font-weight: bold;">🧮 Total de Cálculos: {{ totalCalculos }}</h4>
+                                    </div>
+                                    <div class="grid">
+                                        <div *ngFor="let resultado of mediasCalculos" class="col-12 md:col-6 lg:col-4">
+                                            <p-card styleClass="h-full">
+                                                <ng-template pTemplate="header">
+                                                    <div class="p-3" style="background: linear-gradient(135deg, #26413c 0%, #1a2e2a 100%);">
+                                                        <h4 class="m-0 text-white font-bold">{{ resultado.calculo }}</h4>
+                                                    </div>
+                                                </ng-template>
+                                                <div class="flex flex-col gap-3">
+                                                    <div class="flex justify-between align-items-center border-bottom-1 surface-border pb-2">
+                                                        <span class="font-semibold text-600">Média:</span>
+                                                        <span class="text-900 font-bold text-xl">{{ resultado.media | number:'1.2-4' }}</span>
+                                                    </div>
+                                                    <div class="flex justify-between align-items-center">
+                                                        <span class="text-600">Valor Mínimo:</span>
+                                                        <span class="text-900 font-semibold">{{ resultado.valor_minimo | number:'1.2-4' }}</span>
+                                                    </div>
+                                                    <div class="flex justify-between align-items-center">
+                                                        <span class="text-600">Valor Máximo:</span>
+                                                        <span class="text-900 font-semibold">{{ (resultado.valor_maximo?.parsedValue !== undefined ? resultado.valor_maximo.parsedValue : resultado.valor_maximo) | number:'1.2-4' }}</span>
+                                                    </div>
+                                                    <div class="flex justify-between align-items-center border-top-1 surface-border pt-2">
+                                                        <span class="text-600">Análises:</span>
+                                                        <p-tag [value]="resultado.quantidade_analises.toString()" severity="success"></p-tag>
+                                                    </div>
+                                                    <div class="text-center mt-2 p-2" style="background-color: #f8f9fa; border-radius: 6px;">
+                                                        <small class="text-600">Período: {{ resultado.periodo.data_inicial | date:'dd/MM/yyyy' }} - {{ resultado.periodo.data_final | date:'dd/MM/yyyy' }}</small>
+                                                    </div>
+                                                </div>
+                                            </p-card>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </p-card>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

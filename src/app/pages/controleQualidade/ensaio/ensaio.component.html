@@ -388,6 +388,7 @@
                                 <th style="width: 20%; text-align: center;" type="text" field="descricao" display="menu">Descrição</th>
                                 <th style="width: 20%; text-align: center;" type="text" field="valor" display="menu">Unidade</th>
                                 <th style="width: 20%; text-align: center;" type="text" field="tempo_previsto" display="menu">Tempo Previsto</th>
+                                <th style="width: 20%; text-align: center;" type="text" field="garantia" display="menu">Tempo de Trabalho</th>
                                 <th style="width: 20%; text-align: center;" type="text" field="norma" display="menu">Norma</th>
                                 <th style="width: 20%; text-align: center;">
                                     <p-columnFilter field="tipo_ensaio_detalhes.nome" matchMode="equals" [showMenu]="false">
@@ -420,6 +421,7 @@
                                 <td style="text-align: center;">{{ ensaios.descricao }}</td>
                                 <td style="text-align: center;">{{ ensaios.unidade }}</td>
                                 <td style="text-align: center;">{{ ensaios.tempo_previsto }}</td>
+                                <td style="text-align: center;">{{ ensaios.tempo_trabalho }}</td>
                                 <td style="text-align: center;">{{ ensaios.norma }}</td>
                                 <td style="text-align: start;">{{ ensaios.tipo_ensaio_detalhes.nome }}</td>
                                 <td style="text-align: center;">{{ ensaios.garantia }}</td>

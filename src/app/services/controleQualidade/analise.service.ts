@@ -9,6 +9,8 @@ import { Analise } from '../../pages/controleQualidade/analise/analise.component
 export class AnaliseService {
   private analiseUrl = 'http://172.50.10.79:8008/analise/analise/';
   private parecerUrl = 'http://172.50.10.79:8008/analise/chat/completions/';
+  private mediasEnsaiosUrl = 'http://172.50.10.79:8008/analise/analiseEnsaio/medias-ensaios-por-periodo/';
+  private mediasCalculosUrl = 'http://172.50.10.79:8008/analise/analiseCalculo/medias-por-periodo/';
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
@@ -149,6 +151,26 @@ export class AnaliseService {
       limit: limit
     };
     
+    return this.httpClient.post<any[]>(url, body);
+  }
+  //=================================MEDIAS POR PERIODO =====================================//////////
+  getMediasEnsaiosPorPeriodo(ensaios: any,inicio: string, fim: string): Observable<any[]> {
+    const url = this.mediasEnsaiosUrl;
+    const body = {
+      ensaios_ids: ensaios,
+      data_inicio: inicio,
+      data_fim: fim
+    };
+    return this.httpClient.post<any[]>(url, body);
+  }
+
+  getMediasCalculosPorPeriodo(calculos: any,inicio: string, fim: string): Observable<any[]> {
+    const url = this.mediasCalculosUrl;
+    const body = {
+      calculos_descricoes: calculos,
+      data_inicio: inicio,
+      data_fim: fim
+    };
     return this.httpClient.post<any[]>(url, body);
   }
   

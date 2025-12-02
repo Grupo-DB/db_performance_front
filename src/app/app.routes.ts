@@ -74,6 +74,8 @@ import { VariavelComponent } from './pages/controleQualidade/variavel/variavel.c
 import { OrdemComponent } from './pages/controleQualidade/ordem/ordem.component';
 import { ArquivoComponent } from './pages/controleQualidade/arquivo/arquivo.component';
 import { GarantiaComponent } from './pages/controleQualidade/garantia/garantia.component';
+import { ResultadosComponent } from './pages/controleQualidade/resultados/resultados.component';
+import { AcompanhamentoComponent } from './pages/controleQualidade/acompanhamento/acompanhamento.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -151,6 +153,8 @@ export const routes: Routes = [
       { path: 'controleQualidade/ordem', component: OrdemComponent },
       { path: 'controleQualidade/arquivo', component: ArquivoComponent  },
       { path: 'controleQualidade/garantia', component: GarantiaComponent },
+      { path: 'controleQualidade/resultados', component: ResultadosComponent },
+      { path: 'controleQualidade/acompanhamento', component: AcompanhamentoComponent },
     ],
   },
   
