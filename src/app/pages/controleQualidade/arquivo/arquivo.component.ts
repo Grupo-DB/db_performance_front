@@ -3022,7 +3022,7 @@ duplicata(amostra: any): void {
     let normasFiltradas: any[] = [];
 
     function temNormaTodas(lista: any[]): boolean {
-      return lista?.some(e => e.norma?.toLowerCase() === "todas");
+      return lista?.some(e => e.norma?.toLowerCase() === "todas" || e.norma?.toLowerCase() === "todos");
     }
 
     if (amostra_detalhes_selecionada?.ultimo_ensaio?.ensaios_utilizados) {
