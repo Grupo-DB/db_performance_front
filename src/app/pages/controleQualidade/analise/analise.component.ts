@@ -8640,7 +8640,6 @@ canDeactivate(): boolean | Promise<boolean> {
   }
 
   salvarSubstrato(analise: any){
-    alert(this.substrato_tempo_previsto)
     this.parecer_substrato = this.linhasSubstrato;
     this.modalDadosLaudoSubstrato = false;
     const dadosAtualizados: Partial<Analise> = {
@@ -9982,8 +9981,6 @@ canDeactivate(): boolean | Promise<boolean> {
       } else {
         linha.validacao = 'Válido';
       }
-          alert('oi');
-
     } else {
       linha.validacao = null;
     }
