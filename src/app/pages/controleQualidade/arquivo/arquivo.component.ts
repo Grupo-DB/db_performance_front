@@ -3068,7 +3068,7 @@ duplicata(amostra: any): void {
       doc.text(linha[2], 140, y);
       y += 7;
     });
-    let contadorLinhas = y; // começa logo depois do bloco anterior
+    let contadorLinhas = y;
 
     contadorLinhas = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 10 : contadorLinhas + 10;
 
@@ -3091,13 +3091,50 @@ duplicata(amostra: any): void {
       ["NBR 16605", "Determinação da massa específica"],
       ["NBR 16973", "Granulometria úmida"],
       ["NBR 17054", "Granulometria seca"],
+      ["NBR 6473", "Cal virgem e cal hidratada - Análise Química"],
+      ["NBR 9289", "Cal hidratada para argamassas - Determinação da finura"],
+      ["EN ISO 15.148 e NBR 13.281 Anexo A", "Determinação do coeficiente de absorção de água por capilaridade."],
+      ["NBR 14081 - 3", "Determinação do tempo em aberto - Argamassa colante industrializada para assetamento de placas cerâmicas"],
+      ["NBR 14081 - 4", "Determinação da resistência de aderência à tração - Argamassa colante industrializada para assetamento de placas cerâmicas"],
+      ["NBR 14081 - 5", "Determinação do deslizamento - Argamassa colante industrializada para assetamento de placas cerâmicas"],
     ];
+    
+    let normasFiltradas: any[] = [];
 
+    function temNormaTodas(lista: any[]): boolean {
+      return lista?.some(e => e.norma?.toLowerCase() === "todas" || e.norma?.toLowerCase() === "todos");
+    }
+
+    if (amostra_detalhes_selecionada?.ultimo_ensaio?.ensaios_utilizados) {
+
+      const ensaios = amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados;
+      if (temNormaTodas(ensaios)) {
+        normasFiltradas = [...linhas2];
+      } else {
+        const normasUtilizadas = ensaios.map((e: any) => e.norma).filter((n: any) => !!n);
+          normasFiltradas = linhas2.filter(linha => normasUtilizadas.includes(linha[0])
+        );
+      }
+    }
+
+    if (normasFiltradas.length === 0 && amostra_detalhes_selecionada?.ultimo_calculo) {
+      amostra_detalhes_selecionada.ultimo_calculo.forEach((ultimo_calculo: any) => {
+        const ensaios = ultimo_calculo.ensaios_utilizados || [];
+        if (temNormaTodas(ensaios)) {
+          normasFiltradas = [...linhas2];
+          return;
+        }
+
+        const normasUtilizadas = ensaios.map((e: any) => e.norma).filter((n: any) => !!n);
+          normasFiltradas = linhas2.filter(linha => normasUtilizadas.includes(linha[0])      
+        );
+      });
+    }
     contadorLinhas = contadorLinhas -10;
-    doc.rect(15, contadorLinhas, 182, 75); // moldura
+    // doc.rect(15, contadorLinhas, 182, 75); // moldura
 
     contadorLinhas = contadorLinhas + 4;
-    linhas2.forEach((linha) => {
+    normasFiltradas.forEach((linha) => {
       doc.setFontSize(8);
       doc.setFont("helvetica", "normal");
       doc.text(linha[0], 16, contadorLinhas);
@@ -3569,6 +3606,7 @@ duplicata(amostra: any): void {
     // Posição após a última tabela de ensaios
     contadorLinhas = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 10 : contadorLinhas + 10;
 
+    console.log(amostra_detalhes_selecionada)
     // === Tabela de FLEXÃO ===
     const headFlexao = [
       [
@@ -3752,7 +3790,7 @@ duplicata(amostra: any): void {
 
     // --- Cálculos da coluna 'resist' ---
     if(amostra_detalhes_selecionada.substrato){
-      const resistencias = amostra_detalhes_selecionada.substrato
+      const resistencias = amostra_detalhes_selecionada.substrato.linhas
         .map((item: any) => item.resist)
         .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
 
@@ -3774,7 +3812,7 @@ duplicata(amostra: any): void {
 
       const body2 = [
         // espalha as linhas geradas pelo map
-        ...amostra_detalhes_selecionada.substrato.map((item: any) => [
+        ...amostra_detalhes_selecionada.substrato.linhas.map((item: any) => [
           item.numero ?? '',
           item.diametro ?? '',
           item.area ?? '',

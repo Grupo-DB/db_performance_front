@@ -20,6 +20,15 @@ export class EnsaioService {
     private http: HttpClient,
   ) { }
 
+  getEnsaiosId(id: number): Observable<any>{
+    return this.http.get(`${this.apiUrlEnsaio}${id}/`);
+  }
+
+
+
+
+
+
   //tipos de ensaio
   getTiposEnsaio(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);

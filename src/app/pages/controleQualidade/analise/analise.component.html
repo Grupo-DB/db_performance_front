@@ -1900,7 +1900,25 @@
                     </ng-template>
                     <div class="flex flex-row w-12 gap-3">
                         <div class="w-12">
-                                <strong> Média de Resist. MPa: {{ tracao_normal_media}} </strong>
+                            <div class="flex gap-3">
+                                <div class="w-6">
+                                    <strong> Tempo Previsto:
+                                    <input pInputText [(ngModel)]="tracao_normal_tempo_previsto" style="width: 200px" />
+                                    </strong>
+                                </div>
+
+                                <div class="w-6">
+                                    <strong> Tempo Trabalhado:
+                                    <input pInputText [(ngModel)]="tracao_normal_tempo_trabalho" style="width: 200px" />
+                                    </strong>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="w-12"> 
+                                <h2 style="color: white">
+                                    <strong> Média de Resist. MPa: {{ tracao_normal_media}} </strong>
+                                </h2>
+                            </div>
                             <p-table [value]="linhasTracaoNormal" stripedRows>
                                 <ng-template pTemplate="header">
                                     <tr>
@@ -1986,7 +2004,26 @@
                     </ng-template>
                     <div class="flex flex-row w-12 gap-3">
                         <div class="w-12">
-                                <strong> Média de Resist. MPa: {{ tracao_submersa_media}} </strong>
+                            <div class="flex gap-3">
+                                <div class="w-6">
+                                    <strong> Tempo Previsto:
+                                    <input pInputText [(ngModel)]="tracao_submersa_tempo_previsto" style="width: 200px" />
+                                    </strong>
+                                </div>
+
+                                <div class="w-6">
+                                    <strong> Tempo Trabalhado:
+                                    <input pInputText [(ngModel)]="tracao_submersa_tempo_trabalho" style="width: 200px" />
+                                    </strong>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="w-12"> 
+                                <h2 style="color: white">
+                                    <strong> Média de Resist. MPa: {{ tracao_submersa_media}} </strong>
+                                </h2>
+                            </div>
+                                
                             <p-table [value]="linhasTracaoSubmersa" stripedRows>
                                 <ng-template pTemplate="header">
                                     <tr>
@@ -2072,7 +2109,25 @@
                     </ng-template>
                     <div class="flex flex-row w-12 gap-3">
                         <div class="w-12">
-                                <strong> Média de Resist. MPa: {{ tracao_estufa_media}} </strong>
+                            <div class="flex gap-3">
+                                <div class="w-6">
+                                    <strong> Tempo Previsto:
+                                    <input pInputText [(ngModel)]="tracao_estufa_tempo_previsto" style="width: 200px" />
+                                    </strong>
+                                </div>
+
+                                <div class="w-6">
+                                    <strong> Tempo Trabalhado:
+                                    <input pInputText [(ngModel)]="tracao_submersa_tempo_trabalho" style="width: 200px" />
+                                    </strong>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="w-12"> 
+                                <h2 style="color: white">
+                                    <strong> Média de Resist. MPa: {{ tracao_submersa_media}} </strong>
+                                </h2>
+                            </div>
                             <p-table [value]="linhasTracaoEstufa" stripedRows>
                                 <ng-template pTemplate="header">
                                     <tr>
@@ -2158,7 +2213,25 @@
                     </ng-template>
                     <div class="flex flex-row w-12 gap-3">
                         <div class="w-12">
-                                <strong> Média de Resist. MPa: {{ tracao_aberto_media}} </strong>
+                            <div class="flex gap-3">
+                                <div class="w-6">
+                                    <strong> Tempo Previsto:
+                                    <input pInputText [(ngModel)]="tracao_aberto_tempo_previsto" style="width: 200px" />
+                                    </strong>
+                                </div>
+
+                                <div class="w-6">
+                                    <strong> Tempo Trabalhado:
+                                    <input pInputText [(ngModel)]="tracao_aberto_tempo_trabalho" style="width: 200px" />
+                                    </strong>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="w-12"> 
+                                <h2 style="color: white">
+                                    <strong> Média de Resist. MPa: {{ tracao_aberto_media}} </strong>
+                                </h2>
+                            </div>
                             <p-table [value]="linhasTracaoAberto" stripedRows>
                                 <ng-template pTemplate="header">
                                     <tr>
@@ -2259,7 +2332,27 @@
                         </ng-template>
                         <div class="flex flex-row w-12 gap-3">
                             <div class="w-12">
-                                   <strong> Média de Resist. MPa: {{ substrato_media}} </strong>
+                                
+                                <div class="flex gap-3">
+                                    <div class="w-6">
+                                        <strong> Tempo Previsto:
+                                        <input pInputText [(ngModel)]="substrato_tempo_previsto" style="width: 200px" />
+                                        </strong>
+                                    </div>
+
+                                    <div class="w-6">
+                                        <strong> Tempo Trabalhado:
+                                        <input pInputText [(ngModel)]="substrato_tempo_trabalho" style="width: 200px" />
+                                        </strong>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="w-12"> 
+                                    <h2 style="color: white">
+                                        <strong> Média de Resist. MPa: {{ substrato_media}} </strong>
+                                    </h2>
+                                </div>
+                                   
                                 <p-table [value]="linhasSubstrato" stripedRows>
                                     <ng-template pTemplate="header">
                                         <tr>
@@ -2345,7 +2438,25 @@
                         </ng-template>
                         <div class="flex flex-row w-12 gap-3">
                             <div class="w-12">
-                                   <strong> Média de Resist. MPa: {{ superficial_media}} </strong>
+                                <div class="flex gap-3">
+                                    <div class="w-6">
+                                        <strong> Tempo Previsto:
+                                        <input pInputText [(ngModel)]="superficial_tempo_previsto" style="width: 200px" />
+                                        </strong>
+                                    </div>
+
+                                    <div class="w-6">
+                                        <strong> Tempo Trabalhado:
+                                        <input pInputText [(ngModel)]="superficial_tempo_trabalho" style="width: 200px" />
+                                        </strong>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="w-12"> 
+                                    <h2 style="color: white">
+                                        <strong> Média de Resist. MPa: {{ superficial_media}} </strong>
+                                    </h2>
+                                </div>
                                 <p-table 
                                     [value]="linhasSuperficial" 
                                     stripedRows
@@ -3350,6 +3461,26 @@
     [(visible)]="exibirModalVariacaoDimensional" 
     position="full" 
 >
+   <div class="flex gap-4 mb-4 w-full">
+        <div class="w-6">
+            <label class="font-bold text-lg mb-1 block">Tempo de Trabalho</label>
+            <input 
+                pInputText 
+                [(ngModel)]="variacao_dimensional_tempo_trabalho"
+                placeholder="Informe o tempo trabalhado"
+                style="width: 100%;"
+            />
+        </div>
+        <div class="w-6">
+            <label class="font-bold text-lg mb-1 block">Tempo Previsto</label>
+            <input 
+                pInputText 
+                [(ngModel)]="variacao_dimensional_tempo_previsto"
+                placeholder="Informe o tempo previsto"
+                style="width: 100%;"
+            />
+        </div>
+    </div>
     <!-- Seletor de Data Inicial -->
     <div class="mb-4">
         <label class="font-bold text-lg mb-2 block">📅 Data de Referência (L0)</label>
@@ -3480,6 +3611,26 @@
     [(visible)]="exibirModalVariacaoMassa" 
     position="full" 
 >
+    <div class="flex gap-4 mb-4 w-full">
+        <div class="w-6">
+            <label class="font-bold text-lg mb-1 block">Tempo de Trabalho</label>
+            <input 
+                pInputText 
+                [(ngModel)]="variacao_massa_tempo_trabalho"
+                placeholder="Informe o tempo trabalhado"
+                style="width: 100%;"
+            />
+        </div>
+        <div class="w-6">
+            <label class="font-bold text-lg mb-1 block">Tempo Previsto</label>
+            <input 
+                pInputText 
+                [(ngModel)]="variacao_massa_tempo_previsto"
+                placeholder="Informe o tempo previsto"
+                style="width: 100%;"
+            />
+        </div>
+    </div>
     <!-- Seletor de Data Inicial -->
     <div class="mb-4">
         <label class="font-bold text-lg mb-2 block">📅 Data de Referência (M0)</label>
@@ -3611,6 +3762,27 @@
 >
     <div class="mb-4">
         <h2 class="font-bold text-2xl mb-4" style="color: #ffffff;">🔬 Módulo de Elasticidade Dinâmico</h2>
+    </div>
+
+    <div class="flex gap-4 mb-4 w-full">
+        <div class="w-6">
+            <label class="font-bold text-lg mb-1 block">Tempo de Trabalho</label>
+            <input 
+                pInputText 
+                [(ngModel)]="elasticidade_tempo_trabalho"
+                placeholder="Informe o tempo trabalhado"
+                style="width: 100%;"
+            />
+        </div>
+        <div class="w-6">
+            <label class="font-bold text-lg mb-1 block">Tempo Previsto</label>
+            <input 
+                pInputText 
+                [(ngModel)]="elasticidade_tempo_previsto"
+                placeholder="Informe o tempo previsto"
+                style="width: 100%;"
+            />
+        </div>
     </div>
 
     <!-- Tabela de Módulo de Elasticidade -->

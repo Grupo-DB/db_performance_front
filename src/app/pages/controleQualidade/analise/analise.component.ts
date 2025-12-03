@@ -480,7 +480,25 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
 
 
 
-
+  ensaios: any;
+  substrato_tempo_previsto: any;
+  substrato_tempo_trabalho: any;
+  superficial_tempo_previsto: any;
+  superficial_tempo_trabalho: any;
+  tracao_normal_tempo_previsto: any;
+  tracao_normal_tempo_trabalho: any;
+  tracao_submersa_tempo_previsto: any;
+  tracao_submersa_tempo_trabalho: any;
+  tracao_estufa_tempo_previsto: any;
+  tracao_estufa_tempo_trabalho: any;
+  tracao_aberto_tempo_previsto: any;
+  tracao_aberto_tempo_trabalho: any;
+  variacao_dimensional_tempo_previsto: any;
+  variacao_dimensional_tempo_trabalho: any;
+  variacao_massa_tempo_previsto: any;
+  variacao_massa_tempo_trabalho: any;
+  elasticidade_tempo_previsto: any;
+  elasticidade_tempo_trabalho: any;
 
 
 
@@ -963,7 +981,9 @@ salvarModuloElasticidade(analise: any): void {
     },
     media: {
       ed: this.moduloElasticidadeMediaTotal
-    }
+    },
+    tempo_previsto: this.elasticidade_tempo_previsto,
+    tempo_trabalho: this.elasticidade_tempo_trabalho,
   };
   
   this.exibirModalModuloElasticidade = false;
@@ -1132,6 +1152,14 @@ carregarModuloElasticidadeSalvo(analise: any): void {
     // Carregar média
     if (dados.media) {
       this.moduloElasticidadeMediaTotal = dados.media.ed || null;
+    }
+
+    if (dados.tempo_previsto) {
+      this.elasticidade_tempo_previsto = dados.tempo_previsto || null;
+    }
+
+    if (dados.tempo_trabalho) {
+      this.elasticidade_tempo_trabalho = dados.tempo_trabalho || null;
     }
     
     // Atualizar tabela após carregar dados
@@ -1367,7 +1395,9 @@ salvarVariacaoDimensional(analise: any): void {
       data: this.l28Data ? this.toLocalYYYYMMDD(new Date(this.l28Data)) : null,
       media: this.l28VariacaoDimensionalMedia,
       desvio_padrao: this.l28DesvioPadraoDimensional
-    }
+    },
+    tempo_previsto: this.variacao_dimensional_tempo_previsto,
+    tempo_trabalho: this.variacao_dimensional_tempo_trabalho,
   };
 
   this.exibirModalVariacaoDimensional = false;
@@ -1506,7 +1536,15 @@ carregarVariacaoDimensionalSalva(analise: any): void {
       this.l28VariacaoDimensionalMedia = dados.l28.media || null;
       this.l28DesvioPadraoDimensional = dados.l28.desvio_padrao || null;
     }
+
+    if (dados.tempo_previsto) {
+      this.variacao_dimensional_tempo_previsto = dados.tempo_previsto || null;
+    }
     
+    if (dados.tempo_trabalho) {
+      this.variacao_dimensional_tempo_trabalho = dados.tempo_trabalho || null;
+    }
+
     // Atualizar tabela após carregar dados
     this.atualizarTabelaVariacaoDimensional();
     this.cd.detectChanges();
@@ -1762,7 +1800,9 @@ salvarVariacaoMassa(analise: any): void {
     total: {
       media: this.variacaoMassaMediaTotal,
       desvio_padrao: this.variacaoMassaDesvioPadraoTotal
-    }
+    },
+    tempo_previsto: this.variacao_massa_tempo_previsto,
+    tempo_trabalho: this.variacao_massa_tempo_trabalho,
   };
   this.exibirModalVariacaoMassa = false;
   // Preparar dados para atualização
@@ -1892,18 +1932,25 @@ carregarVariacaoMassaSalva(analise: any): void {
 
     // Carregar M28
     if (dados.m28) {
-    this.m28Cp1 = dados.m28.cp1 || null;
-    this.m28Cp2 = dados.m28.cp2 || null;
-    this.m28Cp3 = dados.m28.cp3 || null;
-    this.m28VariacaoMassaMedia = dados.m28.media || null;
-    this.m28DesvioPadraoMassa = dados.m28.desvio_padrao || null;
-    this.m28Data = dados.m28.data ? this.parseDateLocal(dados.m28.data) : null;
-  }
+      this.m28Cp1 = dados.m28.cp1 || null;
+      this.m28Cp2 = dados.m28.cp2 || null;
+      this.m28Cp3 = dados.m28.cp3 || null;
+      this.m28VariacaoMassaMedia = dados.m28.media || null;
+      this.m28DesvioPadraoMassa = dados.m28.desvio_padrao || null;
+      this.m28Data = dados.m28.data ? this.parseDateLocal(dados.m28.data) : null;
+    }
   
     // Carregar totais
     if (dados.total) {
       this.variacaoMassaMediaTotal = dados.total.media || null;
       this.variacaoMassaDesvioPadraoTotal = dados.total.desvio_padrao || null;
+    }
+
+    if (dados.tempo_previsto) {
+      this.variacao_massa_tempo_previsto = dados.tempo_previsto || null;
+    }
+    if (dados.tempo_trabalho) {
+      this.variacao_massa_tempo_trabalho = dados.tempo_trabalho || null;
     }
 
     // Atualizar tabela após carregar dados
@@ -8090,7 +8137,7 @@ canDeactivate(): boolean | Promise<boolean> {
     const itens: any[] = [];
     const nome = analise?.amostra_detalhes?.produto_amostra_detalhes?.nome?.toLowerCase() || '';
     const isColante = nome.includes('colante');
-    // if (!isColante) {
+    if (!isColante) {
       itens.push(
         {
           label: 'Determinação da Resist. Pot. Ader. a Tração (Substrato)',
@@ -8103,7 +8150,7 @@ canDeactivate(): boolean | Promise<boolean> {
           command: () => this.abrirModalSuperficial(analise)
         }
       );
-    // }
+    }
 
     if (isColante) {
       itens.push(
@@ -8129,39 +8176,41 @@ canDeactivate(): boolean | Promise<boolean> {
         }
       );
     }
+    if (!isColante) {
 
-    itens.push(
+      itens.push(
+        { 
+          label: 'Determinação da Variação Dimencional Linear (Retração/Expansão)', 
+          icon: 'pi pi-pencil', 
+          command: () => {
+            this.carregarVariacaoDimensionalSalva(analise); // Carregar dados salvos
+            this.exibirModalVariacaoDimensional = true;
+          }
+        },
       { 
-        label: 'Determinação da Variação Dimencional Linear (Retração/Expansão)', 
-        icon: 'pi pi-pencil', 
-        command: () => {
-          this.carregarVariacaoDimensionalSalva(analise); // Carregar dados salvos
-          this.exibirModalVariacaoDimensional = true;
+          label: 'Determinação da Variação de Massa (Retração/Expansão)', 
+          icon: 'pi pi-pencil', 
+          command: () => {
+            this.carregarVariacaoMassaSalva(analise); // Carregar dados salvos
+            this.exibirModalVariacaoMassa = true;
+          }
+        },
+        { 
+          label: 'Módulo de Elasticidade Dinâmico', 
+          icon: 'pi pi-pencil', 
+          command: () => {
+            this.carregarModuloElasticidadeSalvo(analise); // Carregar dados salvos
+            this.atualizarTabelaModuloElasticidade(); // Garantir que a tabela seja inicializada
+            this.exibirModalModuloElasticidade = true;
+          }
+        },
+        {
+          label: 'Gráfico Capilaridade',
+          icon: 'pi pi-pencil',
+          command: () => this.exibirGrafico()
         }
-      },
-     { 
-        label: 'Determinação da Variação de Massa (Retração/Expansão)', 
-        icon: 'pi pi-pencil', 
-        command: () => {
-          this.carregarVariacaoMassaSalva(analise); // Carregar dados salvos
-          this.exibirModalVariacaoMassa = true;
-        }
-      },
-      { 
-        label: 'Módulo de Elasticidade Dinâmico', 
-        icon: 'pi pi-pencil', 
-        command: () => {
-          this.carregarModuloElasticidadeSalvo(analise); // Carregar dados salvos
-          this.atualizarTabelaModuloElasticidade(); // Garantir que a tabela seja inicializada
-          this.exibirModalModuloElasticidade = true;
-        }
-      },
-      {
-        label: 'Gráfico Capilaridade',
-        icon: 'pi pi-pencil',
-        command: () => this.exibirGrafico()
-      }
-    );
+      );
+    }
 
     return itens;
   }
@@ -8480,6 +8529,27 @@ canDeactivate(): boolean | Promise<boolean> {
 
 
   abrirModalSubstrato(analise: any){
+
+    this.ensaioService.getEnsaiosId(226).subscribe(
+      response => {
+        this.ensaios = response;
+      }, error => {
+        console.error('Erro ao carregar ensaio de substrato:', error);
+      }
+    )
+
+    if(analise?.substrato?.tempo_trabalho){
+      this.substrato_tempo_trabalho = analise.substrato.tempo_trabalho;
+    }else{
+      this.substrato_tempo_trabalho = this.ensaios.tempo_trabalho;
+    }
+
+    if(analise?.substrato?.tempo_previsto){
+      this.substrato_tempo_previsto = analise.substrato.tempo_previsto;
+    }else{
+      this.substrato_tempo_previsto = this.ensaios.tempo_previsto;
+    }
+
     this.substrato_media = 0;
     if(this.parecer_substrato){
       this.linhasSubstrato = this.parecer_substrato.map((item: any, index: number) => ({
@@ -8568,13 +8638,17 @@ canDeactivate(): boolean | Promise<boolean> {
     }
     this.modalDadosLaudoSubstrato = true;
   }
+
   salvarSubstrato(analise: any){
+    alert(this.substrato_tempo_previsto)
     this.parecer_substrato = this.linhasSubstrato;
     this.modalDadosLaudoSubstrato = false;
     const dadosAtualizados: Partial<Analise> = {
       substrato:{
         linhas: this.linhasSubstrato,
-        media: this.substrato_media
+        media: this.substrato_media,
+        tempo_previsto: this.substrato_tempo_previsto,
+        tempo_trabalho: this.substrato_tempo_trabalho,
       }
     };
     this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
@@ -8604,6 +8678,26 @@ canDeactivate(): boolean | Promise<boolean> {
   }
 
   abrirModalSuperficial(analise: any){
+    this.ensaioService.getEnsaiosId(227).subscribe(
+      response => {
+        this.ensaios = response;
+      }, error => {
+        console.error('Erro ao carregar ensaio de superficial:', error);
+      }
+    )
+
+    if(analise?.superficial?.tempo_trabalho){
+      this.superficial_tempo_trabalho = analise.superficial.tempo_trabalho;
+    }else{
+      this.superficial_tempo_trabalho = this.ensaios.tempo_trabalho;
+    }
+
+    if(analise?.superficial?.tempo_previsto){
+      this.superficial_tempo_previsto = analise.superficial.tempo_previsto;
+    }else{
+      this.superficial_tempo_previsto = this.ensaios.tempo_previsto;
+    }
+
     if(this.parecer_superficial){
       this.linhasSuperficial = this.parecer_superficial.map((item: any, index: number) => ({
         numero: item.numero ?? index + 1,
@@ -8622,7 +8716,7 @@ canDeactivate(): boolean | Promise<boolean> {
         }
       }));
     }else if (analise?.superficial?.linhas && Array.isArray(analise?.superficial?.linhas)) {
-      this.linhasSuperficial = analise.superficial.map((item: any, index: number) => ({
+      this.linhasSuperficial = analise.superficial.linhas.map((item: any, index: number) => ({
         numero: item.numero ?? index + 1,
         diametro: item.diametro ?? null,
         area: item.area ?? null,
@@ -8686,7 +8780,9 @@ canDeactivate(): boolean | Promise<boolean> {
     const dadosAtualizados: Partial<Analise> = {
       superficial:{
         linhas: this.linhasSuperficial,
-        media: this.superficial_media
+        media: this.superficial_media,
+        tempo_previsto: this.superficial_tempo_previsto,
+        tempo_trabalho: this.superficial_tempo_trabalho,
       }
     };
     this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
@@ -9240,6 +9336,26 @@ canDeactivate(): boolean | Promise<boolean> {
 
 
   abrirModalTracaoNormal(analise: any){
+    this.ensaioService.getEnsaiosId(228).subscribe(
+      response => {
+        this.ensaios = response;
+      }, error => {
+        console.error('Erro ao carregar ensaio de normal:', error);
+      }
+    )
+
+    if(analise?.tracao_normal?.tempo_trabalho){
+      this.tracao_normal_tempo_trabalho = analise.tracao_normal.tempo_trabalho;
+    }else{
+      this.tracao_normal_tempo_trabalho = this.ensaios.tempo_trabalho;
+    }
+
+    if(analise?.tracao_normal?.tempo_previsto){
+      this.tracao_normal_tempo_previsto = analise.tracao_normal.tempo_previsto;
+    }else{
+      this.tracao_normal_tempo_previsto = this.ensaios.tempo_previsto;
+    }
+
     this.tracao_normal_media = 0;
     if(this.parecer_tracao_normal){
       this.linhasTracaoNormal = this.parecer_tracao_normal.map((item: any, index: number) => ({
@@ -9336,7 +9452,9 @@ canDeactivate(): boolean | Promise<boolean> {
     const dadosAtualizados: Partial<Analise> = {
       tracao_normal:{
         linhas: this.linhasTracaoNormal,
-        media: this.tracao_normal_media
+        media: this.tracao_normal_media,
+        tempo_previsto: this.tracao_normal_tempo_previsto,
+        tempo_trabalho: this.tracao_normal_tempo_trabalho,
       }
     };
    
@@ -9368,6 +9486,26 @@ canDeactivate(): boolean | Promise<boolean> {
   }
 
   abrirModalTracaoSubmersa(analise: any){
+    this.ensaioService.getEnsaiosId(229).subscribe(
+      response => {
+        this.ensaios = response;
+      }, error => {
+        console.error('Erro ao carregar ensaio de submersa:', error);
+      }
+    )
+
+    if(analise?.tracao_submersa?.tempo_trabalho){
+      this.tracao_submersa_tempo_trabalho = analise.tracao_submersa.tempo_trabalho;
+    }else{
+      this.tracao_submersa_tempo_trabalho = this.ensaios.tempo_trabalho;
+    }
+
+    if(analise?.tracao_submersa?.tempo_previsto){
+      this.tracao_submersa_tempo_previsto = analise.tracao_submersa.tempo_previsto;
+    }else{
+      this.tracao_submersa_tempo_previsto = this.ensaios.tempo_previsto;
+    }
+
     this.tracao_submersa_media = 0;
     if(this.parecer_tracao_submersa){
       this.linhasTracaoSubmersa = this.parecer_tracao_submersa.map((item: any, index: number) => ({
@@ -9464,7 +9602,9 @@ canDeactivate(): boolean | Promise<boolean> {
     const dadosAtualizados: Partial<Analise> = {
       tracao_submersa:{
         linhas: this.linhasTracaoSubmersa,
-        media: this.tracao_submersa_media
+        media: this.tracao_submersa_media,
+        tempo_previsto: this.tracao_submersa_tempo_previsto,
+        tempo_trabalho: this.tracao_submersa_tempo_trabalho,
       }
     };
    
@@ -9496,6 +9636,26 @@ canDeactivate(): boolean | Promise<boolean> {
   }
 
   abrirModalTracaoEstufa(analise: any){
+    this.ensaioService.getEnsaiosId(230).subscribe(
+      response => {
+        this.ensaios = response;
+      }, error => {
+        console.error('Erro ao carregar ensaio de estufa:', error);
+      }
+    )
+
+    if(analise?.tracao_estufa?.tempo_trabalho){
+      this.tracao_estufa_tempo_trabalho = analise.tracao_estufa.tempo_trabalho;
+    }else{
+      this.tracao_estufa_tempo_trabalho = this.ensaios.tempo_trabalho;
+    }
+
+    if(analise?.tracao_estufa?.tempo_previsto){
+      this.tracao_estufa_tempo_previsto = analise.tracao_estufa.tempo_previsto;
+    }else{
+      this.tracao_estufa_tempo_previsto = this.ensaios.tempo_previsto;
+    }
+
     this.tracao_estufa_media = 0;
     if(this.parecer_tracao_estufa){
       this.linhasTracaoEstufa = this.parecer_tracao_estufa.map((item: any, index: number) => ({
@@ -9592,7 +9752,9 @@ canDeactivate(): boolean | Promise<boolean> {
     const dadosAtualizados: Partial<Analise> = {
       tracao_estufa:{
         linhas: this.linhasTracaoEstufa,
-        media: this.tracao_estufa_media
+        media: this.tracao_estufa_media,
+        tempo_previsto: this.tracao_estufa_tempo_previsto,
+        tempo_trabalho: this.tracao_estufa_tempo_trabalho,
       }
     };
    
@@ -9624,6 +9786,26 @@ canDeactivate(): boolean | Promise<boolean> {
   }
 
   abrirModalTracaoAberto(analise: any){
+    this.ensaioService.getEnsaiosId(250).subscribe(
+      response => {
+        this.ensaios = response;
+      }, error => {
+        console.error('Erro ao carregar ensaio de tracao aberto:', error);
+      }
+    )
+
+    if(analise?.tracao_aberto?.tempo_trabalho){
+      this.tracao_aberto_tempo_trabalho = analise.tracao_aberto.tempo_trabalho;
+    }else{
+      this.tracao_aberto_tempo_trabalho = this.ensaios.tempo_trabalho;
+    }
+
+    if(analise?.tracao_aberto?.tempo_previsto){
+      this.tracao_aberto_tempo_previsto = analise.tracao_aberto.tempo_previsto;
+    }else{
+      this.tracao_aberto_tempo_previsto = this.ensaios.tempo_previsto;
+    }
+
     this.tracao_aberto_media = 0;
     if(this.parecer_tracao_aberto){
       this.linhasTracaoAberto = this.parecer_tracao_aberto.map((item: any, index: number) => ({
@@ -9800,6 +9982,8 @@ canDeactivate(): boolean | Promise<boolean> {
       } else {
         linha.validacao = 'Válido';
       }
+          alert('oi');
+
     } else {
       linha.validacao = null;
     }
