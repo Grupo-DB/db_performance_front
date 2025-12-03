@@ -1005,6 +1005,101 @@
                 </div>
             </div>
 
+            <!-- Cards de Deslizamento (Colantes) -->
+            <div *ngIf="analiseSelecionada?.deslizamento">
+                <h3 class="mb-3" style="color: #e6defa;">📏 Deslizamento (Colantes)</h3>
+                
+                <!-- Card de Resultado Principal -->
+                <div class="mb-4" *ngIf="analiseSelecionada.deslizamento.resultado !== null && analiseSelecionada.deslizamento.resultado !== undefined">
+                    <div class="shadow-3 hover:shadow-5 transition-duration-200 p-4" 
+                         style="border-radius: 12px; background: linear-gradient(135deg, #8b4789 0%, #6a3567 100%);">
+                        <div class="flex align-items-center justify-content-between">
+                            <div>
+                                <p class="text-white text-sm mb-2 font-semibold">Resultado do Deslizamento</p>
+                                <p class="text-white text-5xl font-bold m-0">
+                                    {{ analiseSelecionada.deslizamento.resultado | number:'1.2-2' }} mm
+                                </p>
+                            </div>
+                            <i class="pi pi-arrow-down-right text-6xl text-white" style="opacity: 0.3;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabela de Medidas -->
+                <div class="mb-4">
+                    <div class="shadow-2 p-3" style="border-radius: 12px; background-color: #2b3a55;">
+                        <h4 class="mb-3 text-white">📊 Medidas</h4>
+                        <div class="grid">
+                            <!-- Medidas Iniciais -->
+                            <div class="col-12 lg:col-6">
+                                <div class="p-3" style="border-radius: 8px; background-color: rgba(139, 71, 137, 0.2); border-left: 4px solid #8b4789;">
+                                    <h5 class="mb-3" style="color: #8b4789;">Medidas Iniciais (mm)</h5>
+                                    <div class="grid">
+                                        <div class="col-6 md:col-4" *ngIf="analiseSelecionada.deslizamento.medida_inicial_1 !== null && analiseSelecionada.deslizamento.medida_inicial_1 !== undefined">
+                                            <p class="text-xs mb-1" style="color: #999;">Medida 1</p>
+                                            <p class="font-bold mb-0" style="color: #8b4789;">{{ analiseSelecionada.deslizamento.medida_inicial_1 | number:'1.2-2' }}</p>
+                                        </div>
+                                        <div class="col-6 md:col-4" *ngIf="analiseSelecionada.deslizamento.medida_inicial_2 !== null && analiseSelecionada.deslizamento.medida_inicial_2 !== undefined">
+                                            <p class="text-xs mb-1" style="color: #999;">Medida 2</p>
+                                            <p class="font-bold mb-0" style="color: #8b4789;">{{ analiseSelecionada.deslizamento.medida_inicial_2 | number:'1.2-2' }}</p>
+                                        </div>
+                                        <div class="col-6 md:col-4" *ngIf="analiseSelecionada.deslizamento.medida_inicial_3 !== null && analiseSelecionada.deslizamento.medida_inicial_3 !== undefined">
+                                            <p class="text-xs mb-1" style="color: #999;">Medida 3</p>
+                                            <p class="font-bold mb-0" style="color: #8b4789;">{{ analiseSelecionada.deslizamento.medida_inicial_3 | number:'1.2-2' }}</p>
+                                        </div>
+                                        <div class="col-6 md:col-4" *ngIf="analiseSelecionada.deslizamento.medida_inicial_4 !== null && analiseSelecionada.deslizamento.medida_inicial_4 !== undefined">
+                                            <p class="text-xs mb-1" style="color: #999;">Medida 4</p>
+                                            <p class="font-bold mb-0" style="color: #8b4789;">{{ analiseSelecionada.deslizamento.medida_inicial_4 | number:'1.2-2' }}</p>
+                                        </div>
+                                        <div class="col-6 md:col-4" *ngIf="analiseSelecionada.deslizamento.medida_inicial_5 !== null && analiseSelecionada.deslizamento.medida_inicial_5 !== undefined">
+                                            <p class="text-xs mb-1" style="color: #999;">Medida 5</p>
+                                            <p class="font-bold mb-0" style="color: #8b4789;">{{ analiseSelecionada.deslizamento.medida_inicial_5 | number:'1.2-2' }}</p>
+                                        </div>
+                                        <div class="col-6 md:col-4" *ngIf="analiseSelecionada.deslizamento.medida_inicial_6 !== null && analiseSelecionada.deslizamento.medida_inicial_6 !== undefined">
+                                            <p class="text-xs mb-1" style="color: #999;">Medida 6</p>
+                                            <p class="font-bold mb-0" style="color: #8b4789;">{{ analiseSelecionada.deslizamento.medida_inicial_6 | number:'1.2-2' }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Medidas Finais -->
+                            <div class="col-12 lg:col-6">
+                                <div class="p-3" style="border-radius: 8px; background-color: rgba(136, 36, 71, 0.2); border-left: 4px solid #882447;">
+                                    <h5 class="mb-3" style="color: #882447;">Medidas Finais (mm)</h5>
+                                    <div class="grid">
+                                        <div class="col-6 md:col-4" *ngIf="analiseSelecionada.deslizamento.medida_final_1 !== null && analiseSelecionada.deslizamento.medida_final_1 !== undefined">
+                                            <p class="text-xs mb-1" style="color: #999;">Medida 1</p>
+                                            <p class="font-bold mb-0" style="color: #882447;">{{ analiseSelecionada.deslizamento.medida_final_1 | number:'1.2-2' }}</p>
+                                        </div>
+                                        <div class="col-6 md:col-4" *ngIf="analiseSelecionada.deslizamento.medida_final_2 !== null && analiseSelecionada.deslizamento.medida_final_2 !== undefined">
+                                            <p class="text-xs mb-1" style="color: #999;">Medida 2</p>
+                                            <p class="font-bold mb-0" style="color: #882447;">{{ analiseSelecionada.deslizamento.medida_final_2 | number:'1.2-2' }}</p>
+                                        </div>
+                                        <div class="col-6 md:col-4" *ngIf="analiseSelecionada.deslizamento.medida_final_3 !== null && analiseSelecionada.deslizamento.medida_final_3 !== undefined">
+                                            <p class="text-xs mb-1" style="color: #999;">Medida 3</p>
+                                            <p class="font-bold mb-0" style="color: #882447;">{{ analiseSelecionada.deslizamento.medida_final_3 | number:'1.2-2' }}</p>
+                                        </div>
+                                        <div class="col-6 md:col-4" *ngIf="analiseSelecionada.deslizamento.medida_final_4 !== null && analiseSelecionada.deslizamento.medida_final_4 !== undefined">
+                                            <p class="text-xs mb-1" style="color: #999;">Medida 4</p>
+                                            <p class="font-bold mb-0" style="color: #882447;">{{ analiseSelecionada.deslizamento.medida_final_4 | number:'1.2-2' }}</p>
+                                        </div>
+                                        <div class="col-6 md:col-4" *ngIf="analiseSelecionada.deslizamento.medida_final_5 !== null && analiseSelecionada.deslizamento.medida_final_5 !== undefined">
+                                            <p class="text-xs mb-1" style="color: #999;">Medida 5</p>
+                                            <p class="font-bold mb-0" style="color: #882447;">{{ analiseSelecionada.deslizamento.medida_final_5 | number:'1.2-2' }}</p>
+                                        </div>
+                                        <div class="col-6 md:col-4" *ngIf="analiseSelecionada.deslizamento.medida_final_6 !== null && analiseSelecionada.deslizamento.medida_final_6 !== undefined">
+                                            <p class="text-xs mb-1" style="color: #999;">Medida 6</p>
+                                            <p class="font-bold mb-0" style="color: #882447;">{{ analiseSelecionada.deslizamento.medida_final_6 | number:'1.2-2' }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Cards de Peneiras Secas -->
             <div *ngIf="analiseSelecionada?.peneiras?.peneiras && analiseSelecionada.peneiras.peneiras.length > 0">
                 <h3 class="mb-3" style="color: #e6defa;">🔬 Peneiras Secas</h3>

@@ -247,7 +247,7 @@ export interface Analise {
   tracao_submersa: any;
   tracao_estufa: any;
   tracao_tempo_aberto: any;
-
+  deslizamento: any;
 
 }
 interface FileWithInfo {
@@ -499,6 +499,12 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   variacao_massa_tempo_trabalho: any;
   elasticidade_tempo_previsto: any;
   elasticidade_tempo_trabalho: any;
+  deslizamento_tempo_previsto: any;
+  deslizamento_tempo_trabalho: any;
+  peneira_seca_tempo_previsto: any;
+  peneira_seca_tempo_trabalho: any;
+  peneira_umida_tempo_previsto: any;
+  peneira_umida_tempo_trabalho: any;
 
 
 
@@ -672,7 +678,31 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   edCp3: number | null = null;
   // Totais
   moduloElasticidadeMediaTotal: number | null = null;
-
+  
+  //=======================Variaveis para Peneiras =========================================
+  exibirModalPeneiraSeca: boolean = false;
+  exibirModalPeneiraUmida: boolean = false;
+  
+  ////////////////================== Variáveis para Deslizamento ==========================
+  exibirModalDeslizamento: boolean = false;
+  deslizamentoTableData: any[] = [];
+  //----Deslizamento Medida Inicial
+  medidaInicial1: number | null = null;
+  medidaInicial2: number | null = null;
+  medidaInicial3: number | null = null;
+  medidaInicial4: number | null = null;
+  medidaInicial5: number | null = null; 
+  medidaInicial6: number | null = null;
+  //------Deslizamento medida Final
+  medidaFinal1: number | null = null;
+  medidaFinal2: number | null = null;
+  medidaFinal3: number | null = null;
+  medidaFinal4: number | null = null;
+  medidaFinal5: number | null = null;
+  medidaFinal6: number | null = null;
+  //------Deslizamento Cálculos
+  deslizamentoTotal: number | null = null;
+  
   // GRAFICO
   @ViewChild('meuGrafico') chartRef!: ElementRef<HTMLCanvasElement>;
   chartInstance: any;
@@ -747,6 +777,159 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
     // Inicializar o formulário de dados do gráfico
     this.createForm();
   }
+//================== Cálculos de Deslizamento ==========================
+calculosDeslizamento(): void {
+  // Calcular médias das medidas iniciais e finais
+  const medidasIniciais = [
+    this.medidaInicial1, this.medidaInicial2, this.medidaInicial3,
+    this.medidaInicial4, this.medidaInicial5, this.medidaInicial6
+  ].filter(m => m !== null && m !== undefined) as number[];
+  
+  const medidasFinais = [
+    this.medidaFinal1, this.medidaFinal2, this.medidaFinal3,
+    this.medidaFinal4, this.medidaFinal5, this.medidaFinal6
+  ].filter(m => m !== null && m !== undefined) as number[];
+  
+  if (medidasIniciais.length > 0 && medidasFinais.length > 0) {
+    const somaInicial = medidasIniciais.reduce((a, b) => a + b, 0);
+    const somaFinal = medidasFinais.reduce((a, b) => a + b, 0);
+    const mediaInicial = somaInicial / medidasIniciais.length;
+    const mediaFinal = somaFinal / medidasFinais.length;
+    
+    // Resultado = (Soma Medidas Iniciais - Soma Medidas Finais) / 6
+    this.deslizamentoTotal = (somaInicial - somaFinal) / 6;
+  } else {
+    this.deslizamentoTotal = null;
+  }
+  
+  // Atualizar tabela inline
+  this.atualizarTabelaDeslizamentoInline();
+}
+
+// Método para atualizar dados da tabela de Deslizamento
+atualizarTabelaDeslizamento(): void {
+  this.deslizamentoTableData = [
+    {
+      label: 'Deslizamento (Colantes)',
+      medidaInicial1: this.medidaInicial1,
+      medidaInicial2: this.medidaInicial2,
+      medidaInicial3: this.medidaInicial3,
+      medidaInicial4: this.medidaInicial4,
+      medidaInicial5: this.medidaInicial5,
+      medidaInicial6: this.medidaInicial6,
+      medidaFinal1: this.medidaFinal1,
+      medidaFinal2: this.medidaFinal2,
+      medidaFinal3: this.medidaFinal3,
+      medidaFinal4: this.medidaFinal4,
+      medidaFinal5: this.medidaFinal5,
+      medidaFinal6: this.medidaFinal6,
+      resultado: this.deslizamentoTotal
+    }
+  ];
+}
+
+atualizarTabelaDeslizamentoInline(): void {
+  this.atualizarTabelaDeslizamento();
+}
+
+carregarDeslizamentoSalvo(analise: any): void {
+  if (analise?.deslizamento) {
+    const dados = analise.deslizamento;
+    
+    // Carregar medidas iniciais
+    this.medidaInicial1 = dados.medida_inicial_1 ?? null;
+    this.medidaInicial2 = dados.medida_inicial_2 ?? null;
+    this.medidaInicial3 = dados.medida_inicial_3 ?? null;
+    this.medidaInicial4 = dados.medida_inicial_4 ?? null;
+    this.medidaInicial5 = dados.medida_inicial_5 ?? null;
+    this.medidaInicial6 = dados.medida_inicial_6 ?? null;
+    
+    // Carregar medidas finais
+    this.medidaFinal1 = dados.medida_final_1 ?? null;
+    this.medidaFinal2 = dados.medida_final_2 ?? null;
+    this.medidaFinal3 = dados.medida_final_3 ?? null;
+    this.medidaFinal4 = dados.medida_final_4 ?? null;
+    this.medidaFinal5 = dados.medida_final_5 ?? null;
+    this.medidaFinal6 = dados.medida_final_6 ?? null;
+    
+    // Carregar resultado
+    this.deslizamentoTotal = dados.resultado ?? null;
+    
+    // Carregar tempo previsto e trabalho
+    if (dados.tempo_previsto) {
+      this.deslizamento_tempo_previsto = dados.tempo_previsto;
+    }
+    if (dados.tempo_trabalho) {
+      this.deslizamento_tempo_trabalho = dados.tempo_trabalho;
+    }
+    
+    // Atualizar tabela
+    this.atualizarTabelaDeslizamento();
+    this.cd.detectChanges();
+  } else {
+    // Inicializar com valores vazios
+    this.medidaInicial1 = null;
+    this.medidaInicial2 = null;
+    this.medidaInicial3 = null;
+    this.medidaInicial4 = null;
+    this.medidaInicial5 = null;
+    this.medidaInicial6 = null;
+    this.medidaFinal1 = null;
+    this.medidaFinal2 = null;
+    this.medidaFinal3 = null;
+    this.medidaFinal4 = null;
+    this.medidaFinal5 = null;
+    this.medidaFinal6 = null;
+    this.deslizamentoTotal = null;
+    this.deslizamento_tempo_previsto = null;
+    this.deslizamento_tempo_trabalho = null;
+    this.atualizarTabelaDeslizamento();
+  }
+}
+
+salvarDeslizamento(analise: any): void {
+  const dadosDeslizamento = {
+    medida_inicial_1: this.medidaInicial1,
+    medida_inicial_2: this.medidaInicial2,
+    medida_inicial_3: this.medidaInicial3,
+    medida_inicial_4: this.medidaInicial4,
+    medida_inicial_5: this.medidaInicial5,
+    medida_inicial_6: this.medidaInicial6,
+    medida_final_1: this.medidaFinal1,
+    medida_final_2: this.medidaFinal2,
+    medida_final_3: this.medidaFinal3,
+    medida_final_4: this.medidaFinal4,
+    medida_final_5: this.medidaFinal5,
+    medida_final_6: this.medidaFinal6,
+    resultado: this.deslizamentoTotal,
+    tempo_previsto: this.deslizamento_tempo_previsto,
+    tempo_trabalho: this.deslizamento_tempo_trabalho
+  };
+
+  this.analiseService.salvarDeslizamento(analise.id, dadosDeslizamento).subscribe({
+    next: (response) => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Sucesso',
+        detail: 'Deslizamento salvo com sucesso!',
+        life: 3000
+      });
+      this.getAnalise();
+      this.exibirModalDeslizamento = false;
+    },
+    error: (error) => {
+      console.error('Erro ao salvar deslizamento:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Erro ao salvar deslizamento',
+        life: 3000
+      });
+    }
+  });
+}
+//==================================================== FIM DESLIZAMENTO =========================================================//
+
 //==================  Cálculos de Módulo de Elasticidade ==========================
 calculosModuloElasticidade(): void {  
   // Converter 
@@ -1171,6 +1354,80 @@ carregarModuloElasticidadeSalvo(analise: any): void {
   }
 }
 //==================================================== FIM MÓDULO DE ELASTICIDADE =========================================================//
+
+//==================================================== PENEIRAS SECAS =========================================================//
+carregarPeneiraSecaSalva(analise: any): void {
+  if (analise?.peneiras?.peneiras && Array.isArray(analise.peneiras.peneiras)) {
+    this.linhasPeneira = analise.peneiras.peneiras.map((item: any) => ({
+      peneira: item.peneira ?? '',
+      valor_retido: item.valor_retido ?? null,
+      porcentual_retido: item.porcentual_retido ?? null,
+      acumulado: item.acumulado ?? null,
+      passante: item.passante ?? null,
+      passante_acumulado: item.passante_acumulado ?? null,
+    }));
+    this.massa_amostra = analise.peneiras.amostra ?? 0;
+    this.total_finos = analise.peneiras.finos ?? null;
+    
+    if (analise.peneiras.tempo_previsto) {
+      this.peneira_seca_tempo_previsto = analise.peneiras.tempo_previsto;
+    }
+    if (analise.peneiras.tempo_trabalho) {
+      this.peneira_seca_tempo_trabalho = analise.peneiras.tempo_trabalho;
+    }
+  } else {
+    // Inicializa com dados vazios
+    this.linhasPeneira = [{
+      peneira: '',
+      valor_retido: null,
+      porcentual_retido: null,
+      acumulado: null,
+      passante: null,
+      passante_acumulado: null,
+    }];
+    this.massa_amostra = 0;
+    this.total_finos = null;
+    this.peneira_seca_tempo_previsto = null;
+    this.peneira_seca_tempo_trabalho = null;
+  }
+}
+
+carregarPeneiraUmidaSalva(analise: any): void {
+  if (analise?.peneiras_umidas?.peneiras && Array.isArray(analise.peneiras_umidas.peneiras)) {
+    this.linhasPeneiraUmida = analise.peneiras_umidas.peneiras.map((item: any) => ({
+      peneira: item.peneira ?? '',
+      valor_retido: item.valor_retido ?? null,
+      porcentual_retido: item.porcentual_retido ?? null,
+      acumulado: item.acumulado ?? null,
+      passante: item.passante ?? null,
+      passante_acumulado: item.passante_acumulado ?? null,
+    }));
+    this.massa_amostra_umida = analise.peneiras_umidas.amostra ?? 0;
+    this.total_finos_umida = analise.peneiras_umidas.finos ?? null;
+    
+    if (analise.peneiras_umidas.tempo_previsto) {
+      this.peneira_umida_tempo_previsto = analise.peneiras_umidas.tempo_previsto;
+    }
+    if (analise.peneiras_umidas.tempo_trabalho) {
+      this.peneira_umida_tempo_trabalho = analise.peneiras_umidas.tempo_trabalho;
+    }
+  } else {
+    // Inicializa com dados vazios
+    this.linhasPeneiraUmida = [{
+      peneira: '',
+      valor_retido: null,
+      porcentual_retido: null,
+      acumulado: null,
+      passante: null,
+      passante_acumulado: null,
+    }];
+    this.massa_amostra_umida = 0;
+    this.total_finos_umida = null;
+    this.peneira_umida_tempo_previsto = null;
+    this.peneira_umida_tempo_trabalho = null;
+  }
+}
+//==================================================== FIM PENEIRAS =========================================================//
 
 
 //==============================Variação Dimensional=================================================
@@ -8173,6 +8430,15 @@ canDeactivate(): boolean | Promise<boolean> {
           label: 'Resist. Ader. a Tração (Tempo em Aberto)',
           icon: 'pi pi-pencil',
           command: () => this.abrirModalTracaoAberto(analise)
+        },
+        {
+          label: 'Deslizamento (Colantes)',
+          icon: 'pi pi-pencil',
+          command: () => {
+            this.carregarDeslizamentoSalvo(analise);
+            this.atualizarTabelaDeslizamento();
+            this.exibirModalDeslizamento = true;
+          }
         }
       );
     }
@@ -8217,8 +8483,32 @@ canDeactivate(): boolean | Promise<boolean> {
 
   getItensPeneira(analise: any) {
     return [
-      { label: 'Peneiras Secas', icon: 'pi pi-eye', command: () => this.abrirModalPeneira(analise) },
-      { label: 'Peneiras Úmidas', icon: 'pi pi-eye', command: () => this.abrirModalPeneiraUmida(analise) },
+      { 
+        label: 'Peneiras Secas (Visualizar)', 
+        icon: 'pi pi-eye', 
+        command: () => this.visualizarPeneira() 
+      },
+      { 
+        label: 'Peneiras Úmidas (Visualizar)', 
+        icon: 'pi pi-eye', 
+        command: () => this.visualizarPeneiraUmida() 
+      },
+      { 
+        label: 'Peneiras Secas', 
+        icon: 'pi pi-pencil', 
+        command: () => {
+          this.carregarPeneiraSecaSalva(analise);
+          this.exibirModalPeneiraSeca = true;
+        }
+      },
+      { 
+        label: 'Peneiras Úmidas', 
+        icon: 'pi pi-pencil', 
+        command: () => {
+          this.carregarPeneiraUmidaSalva(analise);
+          this.exibirModalPeneiraUmida = true;
+        }
+      }
     ];
   }
 

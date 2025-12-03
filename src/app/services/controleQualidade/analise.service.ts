@@ -11,6 +11,7 @@ export class AnaliseService {
   private parecerUrl = 'http://172.50.10.79:8008/analise/chat/completions/';
   private mediasEnsaiosUrl = 'http://172.50.10.79:8008/analise/analiseEnsaio/medias-ensaios-por-periodo/';
   private mediasCalculosUrl = 'http://172.50.10.79:8008/analise/analiseCalculo/medias-por-periodo/';
+  private acompanhamentoUrl = 'http://172.50.10.79:8008/analise/analiseEnsaio/tempo-por-analise/';
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
@@ -173,5 +174,30 @@ export class AnaliseService {
     };
     return this.httpClient.post<any[]>(url, body);
   }
-  
+//---------------------------------------------------FIM----------------------------------------------
+
+//------------------------Metodos para o acompanhamento de deslizamento ------------------------------
+  salvarDeslizamento(analiseId: number, dados: any): Observable<any> {
+    const url = `${this.analiseUrl}${analiseId}/`;
+    return this.httpClient.patch<any>(url, { deslizamento: dados });
+  }
+//------------------------Metodos para o acompanhamento de tempo ------------------------------
+
+  getAcompanhamentoTempoPorAnalise(
+    data_inicial: string,
+    data_final: string,
+    locais_coleta: string[],
+    apenas_finalizadas: boolean,
+    laboratorio: string
+  ): Observable<any> {
+    const url = this.acompanhamentoUrl;
+    const body = {
+      data_inicial: data_inicial,
+      data_final: data_final,
+      locais_coleta: locais_coleta,
+      apenas_finalizadas: apenas_finalizadas,
+      laboratorio: laboratorio
+    };
+    return this.httpClient.post<any>(url, body);
+  }
 }

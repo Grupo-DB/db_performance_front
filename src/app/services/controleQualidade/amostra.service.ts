@@ -21,6 +21,7 @@ export class AmostraService {
   private produtoUrl = 'http://172.50.10.79:8008/amostra/produto/';
   private sequencialUrl = 'http://172.50.10.79:8008/amostra/amostra/proximo-sequencial/';
   private representatividadeUrl = 'http://172.50.10.79:8008/cal/representatividade/';
+  private getLocaisColetaUrl = 'http://172.50.10.79:8008/amostra/amostra/locais-coleta/';
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
@@ -326,5 +327,10 @@ atualizarDescricaoImagem(imagemId: number, descricao: string): Observable<any> {
   getRrepresentatividade(data: any){
     return this.http.post<any>(this.representatividadeUrl, {data: data});
   }
+  //locais coleta
+  getLocaisDeColeta(): Observable<any[]> {
+    return this.http.get<any[]>(this.getLocaisColetaUrl);
+  }
+
 
 }

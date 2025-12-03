@@ -3971,3 +3971,310 @@
     </div>
 
 </p-drawer>
+
+<!-- ============================== Modal Deslizamento (Colantes) ============================== -->
+<p-drawer 
+    [(visible)]="exibirModalDeslizamento" 
+    position="full" 
+>
+    <div class="flex gap-4 mb-4 w-full">
+        <div class="w-6">
+            <label class="font-bold text-lg mb-1 block">Tempo de Trabalho</label>
+            <input 
+                pInputText 
+                [(ngModel)]="deslizamento_tempo_trabalho"
+                placeholder="Informe o tempo trabalhado"
+                style="width: 100%;"
+            />
+        </div>
+        <div class="w-6">
+            <label class="font-bold text-lg mb-1 block">Tempo Previsto</label>
+            <input 
+                pInputText 
+                [(ngModel)]="deslizamento_tempo_previsto"
+                placeholder="Informe o tempo previsto"
+                style="width: 100%;"
+            />
+        </div>
+    </div>
+
+    <!-- Tabela de Deslizamento -->
+    <div class="mb-4">
+        <h3 class="font-bold text-lg mb-3" style="color: #ffffff;">📊 Deslizamento (Colantes)</h3>
+        <p-table 
+            [value]="deslizamentoTableData" 
+            [tableStyle]="{'min-width': '50rem'}"
+            styleClass="p-datatable-striped"
+            [scrollable]="true"
+            scrollHeight="400px"
+        >
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 200px; background-color: #8b4789; color: white;">Descrição</th>
+                    <th style="width: 120px; background-color: #8b4789; color: white;">Medida Inicial 1</th>
+                    <th style="width: 120px; background-color: #8b4789; color: white;">Medida Inicial 2</th>
+                    <th style="width: 120px; background-color: #8b4789; color: white;">Medida Inicial 3</th>
+                    <th style="width: 120px; background-color: #8b4789; color: white;">Medida Inicial 4</th>
+                    <th style="width: 120px; background-color: #8b4789; color: white;">Medida Inicial 5</th>
+                    <th style="width: 120px; background-color: #8b4789; color: white;">Medida Inicial 6</th>
+                    <th style="width: 120px; background-color: #882447; color: white;">Medida Final 1</th>
+                    <th style="width: 120px; background-color: #882447; color: white;">Medida Final 2</th>
+                    <th style="width: 120px; background-color: #882447; color: white;">Medida Final 3</th>
+                    <th style="width: 120px; background-color: #882447; color: white;">Medida Final 4</th>
+                    <th style="width: 120px; background-color: #882447; color: white;">Medida Final 5</th>
+                    <th style="width: 120px; background-color: #882447; color: white;">Medida Final 6</th>
+                    <th style="width: 150px; background-color: #8b4789; color: white;">Resultado</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td>
+                        <span class="font-semibold" style="color: #8b4789;">{{ item.label }}</span>
+                    </td>
+                    <td style="background-color: rgba(139, 71, 137, 0.1);">
+                        <span [style]="{'color': item.medidaInicial1 !== null ? '#000' : '#999'}">
+                            {{ item.medidaInicial1 !== null ? (item.medidaInicial1 | number:'1.2-2') : '-' }}
+                        </span>
+                    </td>
+                    <td style="background-color: rgba(139, 71, 137, 0.1);">
+                        <span [style]="{'color': item.medidaInicial2 !== null ? '#000' : '#999'}">
+                            {{ item.medidaInicial2 !== null ? (item.medidaInicial2 | number:'1.2-2') : '-' }}
+                        </span>
+                    </td>
+                    <td style="background-color: rgba(139, 71, 137, 0.1);">
+                        <span [style]="{'color': item.medidaInicial3 !== null ? '#000' : '#999'}">
+                            {{ item.medidaInicial3 !== null ? (item.medidaInicial3 | number:'1.2-2') : '-' }}
+                        </span>
+                    </td>
+                    <td style="background-color: rgba(139, 71, 137, 0.1);">
+                        <span [style]="{'color': item.medidaInicial4 !== null ? '#000' : '#999'}">
+                            {{ item.medidaInicial4 !== null ? (item.medidaInicial4 | number:'1.2-2') : '-' }}
+                        </span>
+                    </td>
+                    <td style="background-color: rgba(139, 71, 137, 0.1);">
+                        <span [style]="{'color': item.medidaInicial5 !== null ? '#000' : '#999'}">
+                            {{ item.medidaInicial5 !== null ? (item.medidaInicial5 | number:'1.2-2') : '-' }}
+                        </span>
+                    </td>
+                    <td style="background-color: rgba(139, 71, 137, 0.1);">
+                        <span [style]="{'color': item.medidaInicial6 !== null ? '#000' : '#999'}">
+                            {{ item.medidaInicial6 !== null ? (item.medidaInicial6 | number:'1.2-2') : '-' }}
+                        </span>
+                    </td>
+                    <td style="background-color: rgba(136, 36, 71, 0.1);">
+                        <span [style]="{'color': item.medidaFinal1 !== null ? '#000' : '#999'}">
+                            {{ item.medidaFinal1 !== null ? (item.medidaFinal1 | number:'1.2-2') : '-' }}
+                        </span>
+                    </td>
+                    <td style="background-color: rgba(136, 36, 71, 0.1);">
+                        <span [style]="{'color': item.medidaFinal2 !== null ? '#000' : '#999'}">
+                            {{ item.medidaFinal2 !== null ? (item.medidaFinal2 | number:'1.2-2') : '-' }}
+                        </span>
+                    </td>
+                    <td style="background-color: rgba(136, 36, 71, 0.1);">
+                        <span [style]="{'color': item.medidaFinal3 !== null ? '#000' : '#999'}">
+                            {{ item.medidaFinal3 !== null ? (item.medidaFinal3 | number:'1.2-2') : '-' }}
+                        </span>
+                    </td>
+                    <td style="background-color: rgba(136, 36, 71, 0.1);">
+                        <span [style]="{'color': item.medidaFinal4 !== null ? '#000' : '#999'}">
+                            {{ item.medidaFinal4 !== null ? (item.medidaFinal4 | number:'1.2-2') : '-' }}
+                        </span>
+                    </td>
+                    <td style="background-color: rgba(136, 36, 71, 0.1);">
+                        <span [style]="{'color': item.medidaFinal5 !== null ? '#000' : '#999'}">
+                            {{ item.medidaFinal5 !== null ? (item.medidaFinal5 | number:'1.2-2') : '-' }}
+                        </span>
+                    </td>
+                    <td style="background-color: rgba(136, 36, 71, 0.1);">
+                        <span [style]="{'color': item.medidaFinal6 !== null ? '#000' : '#999'}">
+                            {{ item.medidaFinal6 !== null ? (item.medidaFinal6 | number:'1.2-2') : '-' }}
+                        </span>
+                    </td>
+                    <td style="background-color: rgba(139, 71, 137, 0.2);">
+                        <span class="font-bold" style="color: #8b4789; font-size: 16px;">
+                            {{ item.resultado !== null ? (item.resultado | number:'1.2-2') : '-' }}
+                        </span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <!-- Formulário de Entrada de Dados -->
+    <div class="grid mb-4">
+        <div class="col-12">
+            <h4 class="font-bold mb-3" style="color: #8b4789;">📝 Medidas Iniciais (mm)</h4>
+        </div>
+        <div class="col-12 md:col-6 lg:col-2">
+            <label class="block mb-2">Medida Inicial 1</label>
+            <p-inputNumber 
+                [(ngModel)]="medidaInicial1"
+                (ngModelChange)="calculosDeslizamento()"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                [style]="{'width':'100%'}"
+                placeholder="0.00"
+            />
+        </div>
+        <div class="col-12 md:col-6 lg:col-2">
+            <label class="block mb-2">Medida Inicial 2</label>
+            <p-inputNumber 
+                [(ngModel)]="medidaInicial2"
+                (ngModelChange)="calculosDeslizamento()"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                [style]="{'width':'100%'}"
+                placeholder="0.00"
+            />
+        </div>
+        <div class="col-12 md:col-6 lg:col-2">
+            <label class="block mb-2">Medida Inicial 3</label>
+            <p-inputNumber 
+                [(ngModel)]="medidaInicial3"
+                (ngModelChange)="calculosDeslizamento()"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                [style]="{'width':'100%'}"
+                placeholder="0.00"
+            />
+        </div>
+        <div class="col-12 md:col-6 lg:col-2">
+            <label class="block mb-2">Medida Inicial 4</label>
+            <p-inputNumber 
+                [(ngModel)]="medidaInicial4"
+                (ngModelChange)="calculosDeslizamento()"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                [style]="{'width':'100%'}"
+                placeholder="0.00"
+            />
+        </div>
+        <div class="col-12 md:col-6 lg:col-2">
+            <label class="block mb-2">Medida Inicial 5</label>
+            <p-inputNumber 
+                [(ngModel)]="medidaInicial5"
+                (ngModelChange)="calculosDeslizamento()"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                [style]="{'width':'100%'}"
+                placeholder="0.00"
+            />
+        </div>
+        <div class="col-12 md:col-6 lg:col-2">
+            <label class="block mb-2">Medida Inicial 6</label>
+            <p-inputNumber 
+                [(ngModel)]="medidaInicial6"
+                (ngModelChange)="calculosDeslizamento()"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                [style]="{'width':'100%'}"
+                placeholder="0.00"
+            />
+        </div>
+
+        <div class="col-12 mt-4">
+            <h4 class="font-bold mb-3" style="color: #882447;">📝 Medidas Finais (mm)</h4>
+        </div>
+        <div class="col-12 md:col-6 lg:col-2">
+            <label class="block mb-2">Medida Final 1</label>
+            <p-inputNumber 
+                [(ngModel)]="medidaFinal1"
+                (ngModelChange)="calculosDeslizamento()"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                [style]="{'width':'100%'}"
+                placeholder="0.00"
+            />
+        </div>
+        <div class="col-12 md:col-6 lg:col-2">
+            <label class="block mb-2">Medida Final 2</label>
+            <p-inputNumber 
+                [(ngModel)]="medidaFinal2"
+                (ngModelChange)="calculosDeslizamento()"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                [style]="{'width':'100%'}"
+                placeholder="0.00"
+            />
+        </div>
+        <div class="col-12 md:col-6 lg:col-2">
+            <label class="block mb-2">Medida Final 3</label>
+            <p-inputNumber 
+                [(ngModel)]="medidaFinal3"
+                (ngModelChange)="calculosDeslizamento()"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                [style]="{'width':'100%'}"
+                placeholder="0.00"
+            />
+        </div>
+        <div class="col-12 md:col-6 lg:col-2">
+            <label class="block mb-2">Medida Final 4</label>
+            <p-inputNumber 
+                [(ngModel)]="medidaFinal4"
+                (ngModelChange)="calculosDeslizamento()"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                [style]="{'width':'100%'}"
+                placeholder="0.00"
+            />
+        </div>
+        <div class="col-12 md:col-6 lg:col-2">
+            <label class="block mb-2">Medida Final 5</label>
+            <p-inputNumber 
+                [(ngModel)]="medidaFinal5"
+                (ngModelChange)="calculosDeslizamento()"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                [style]="{'width':'100%'}"
+                placeholder="0.00"
+            />
+        </div>
+        <div class="col-12 md:col-6 lg:col-2">
+            <label class="block mb-2">Medida Final 6</label>
+            <p-inputNumber 
+                [(ngModel)]="medidaFinal6"
+                (ngModelChange)="calculosDeslizamento()"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                [style]="{'width':'100%'}"
+                placeholder="0.00"
+            />
+        </div>
+    </div>
+
+    <!-- Card de Resultado -->
+    <div class="mb-4" *ngIf="deslizamentoTotal !== null">
+        <p-card styleClass="bg-purple-50">
+            <div class="flex align-items-center justify-content-between">
+                <div>
+                    <p class="text-500 mb-2 font-semibold">Resultado do Deslizamento</p>
+                    <p class="text-4xl font-bold m-0" style="color: #8b4789;">
+                        {{ deslizamentoTotal | number:'1.2-2' }} mm
+                    </p>
+                </div>
+                <i class="pi pi-arrow-down-right text-6xl" style="color: #8b4789; opacity: 0.3;"></i>
+            </div>
+        </p-card>
+    </div>
+
+    <!-- Botões de Ação -->
+    <div class="flex gap-3 justify-content-end mt-4">
+        <p-button 
+          label="Fechar" 
+          icon="pi pi-times" 
+          severity="secondary"
+          iconPos="right"
+          (onClick)="exibirModalDeslizamento = false">
+        </p-button>
+        <p-button 
+          label="Salvar" 
+          icon="pi pi-check" 
+          severity="success"
+          iconPos="right"
+          (onClick)="salvarDeslizamento(analise)">
+        </p-button>
+    </div>
+
+</p-drawer>

@@ -133,34 +133,54 @@
                                     </div>
                                     <div class="grid">
                                         <div *ngFor="let resultado of mediasEnsaios" class="col-12 md:col-6 lg:col-4">
-                                            <p-card styleClass="h-full">
-                                                <ng-template pTemplate="header">
-                                                    <div class="p-3" style="background: linear-gradient(135deg, #2b3a55 0%, #1a2537 100%);">
-                                                        <h4 class="m-0 text-white font-bold">{{ resultado.ensaio_descricao }}</h4>
+                                            <div class="surface-card shadow-2 border-round h-full overflow-hidden">
+                                                <!-- Header com gradiente -->
+                                                <div class="p-3" style="background: linear-gradient(135deg, #2b3a55 0%, #1a2537 100%);">
+                                                    <h4 class="m-0 text-white font-bold text-center">{{ resultado.ensaio_descricao }}</h4>
+                                                </div>
+                                                <!-- Conteúdo do card -->
+                                                <div class="p-4 flex flex-column gap-3">
+                                                    <!-- Média -->
+                                                    <div>
+                                                        <p class="text-sm text-500 mb-2">Média:</p>
+                                                        <p-tag 
+                                                            [value]="(resultado.media | number:'1.2-4') + ' ' + resultado.unidade" 
+                                                            severity="success"
+                                                            styleClass="text-base font-semibold"
+                                                        ></p-tag>
                                                     </div>
-                                                </ng-template>
-                                                <div class="flex flex-col gap-3">
-                                                    <div class="flex justify-between align-items-center border-bottom-1 surface-border pb-2">
-                                                        <span class="font-semibold text-600">Média:</span>
-                                                        <span class="text-900 font-bold text-xl">{{ resultado.media | number:'1.2-4' }} {{ resultado.unidade }}</span>
+
+                                                    <!-- Valor Mínimo -->
+                                                    <div>
+                                                        <p class="text-sm text-500 mb-2">Valor Mínimo:</p>
+                                                        <p-tag 
+                                                            [value]="(resultado.valor_minimo | number:'1.2-4') ?? '-'" 
+                                                            severity="warn"
+                                                            styleClass="text-base font-semibold"
+                                                        ></p-tag>
                                                     </div>
-                                                    <div class="flex justify-between align-items-center">
-                                                        <span class="text-600">Valor Mínimo:</span>
-                                                        <span class="text-900 font-semibold">{{ resultado.valor_minimo | number:'1.2-4' }}</span>
+
+                                                    <!-- Valor Máximo -->
+                                                    <div>
+                                                        <p class="text-sm text-500 mb-2">Valor Máximo:</p>
+                                                        <p-tag 
+                                                            [value]="(resultado.valor_maximo | number:'1.2-4') ?? '-'" 
+                                                            severity="info"
+                                                            styleClass="text-base font-semibold"
+                                                        ></p-tag>
                                                     </div>
-                                                    <div class="flex justify-between align-items-center">
-                                                        <span class="text-600">Valor Máximo:</span>
-                                                        <span class="text-900 font-semibold">{{ resultado.valor_maximo | number:'1.2-4' }}</span>
-                                                    </div>
-                                                    <div class="flex justify-between align-items-center border-top-1 surface-border pt-2">
-                                                        <span class="text-600">Medições:</span>
-                                                        <p-tag [value]="resultado.quantidade_medicoes.toString()" severity="info"></p-tag>
-                                                    </div>
-                                                    <div class="text-center mt-2 p-2" style="background-color: #f8f9fa; border-radius: 6px;">
-                                                        <small class="text-600">Período: {{ resultado.periodo.data_inicial | date:'dd/MM/yyyy' }} - {{ resultado.periodo.data_final | date:'dd/MM/yyyy' }}</small>
+
+                                                    <!-- Medições -->
+                                                    <div>
+                                                        <p class="text-sm text-500 mb-2">Análises:</p>
+                                                        <p-tag 
+                                                            [value]="resultado.quantidade_medicoes.toString()" 
+                                                            severity="secondary"
+                                                            [rounded]="true"
+                                                        ></p-tag>
                                                     </div>
                                                 </div>
-                                            </p-card>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -205,34 +225,54 @@
                                     </div>
                                     <div class="grid">
                                         <div *ngFor="let resultado of mediasCalculos" class="col-12 md:col-6 lg:col-4">
-                                            <p-card styleClass="h-full">
-                                                <ng-template pTemplate="header">
-                                                    <div class="p-3" style="background: linear-gradient(135deg, #26413c 0%, #1a2e2a 100%);">
-                                                        <h4 class="m-0 text-white font-bold">{{ resultado.calculo }}</h4>
+                                            <div class="surface-card shadow-2 border-round h-full overflow-hidden">
+                                                <!-- Header com gradiente -->
+                                                <div class="p-3" style="background: linear-gradient(135deg, #26413c 0%, #1a2e2a 100%);">
+                                                    <h4 class="m-0 text-white font-bold text-center">{{ resultado.calculo }}</h4>
+                                                </div>
+                                                <!-- Conteúdo do card -->
+                                                <div class="p-4 flex flex-column gap-3">
+                                                    <!-- Média -->
+                                                    <div>
+                                                        <p class="text-sm text-500 mb-2">Média:</p>
+                                                        <p-tag 
+                                                            [value]="(resultado.media | number:'1.2-4') ?? '-'" 
+                                                            severity="success"
+                                                            styleClass="text-base font-semibold"
+                                                        ></p-tag>
                                                     </div>
-                                                </ng-template>
-                                                <div class="flex flex-col gap-3">
-                                                    <div class="flex justify-between align-items-center border-bottom-1 surface-border pb-2">
-                                                        <span class="font-semibold text-600">Média:</span>
-                                                        <span class="text-900 font-bold text-xl">{{ resultado.media | number:'1.2-4' }}</span>
+
+                                                    <!-- Valor Mínimo -->
+                                                    <div>
+                                                        <p class="text-sm text-500 mb-2">Valor Mínimo:</p>
+                                                        <p-tag 
+                                                            [value]="(resultado.valor_minimo | number:'1.2-4') ?? '-'" 
+                                                            severity="warn"
+                                                            styleClass="text-base font-semibold"
+                                                        ></p-tag>
                                                     </div>
-                                                    <div class="flex justify-between align-items-center">
-                                                        <span class="text-600">Valor Mínimo:</span>
-                                                        <span class="text-900 font-semibold">{{ resultado.valor_minimo | number:'1.2-4' }}</span>
+
+                                                    <!-- Valor Máximo -->
+                                                    <div>
+                                                        <p class="text-sm text-500 mb-2">Valor Máximo:</p>
+                                                        <p-tag 
+                                                            [value]="((resultado.valor_maximo?.parsedValue !== undefined ? resultado.valor_maximo.parsedValue : resultado.valor_maximo) | number:'1.2-4') ?? '-'" 
+                                                            severity="info"
+                                                            styleClass="text-base font-semibold"
+                                                        ></p-tag>
                                                     </div>
-                                                    <div class="flex justify-between align-items-center">
-                                                        <span class="text-600">Valor Máximo:</span>
-                                                        <span class="text-900 font-semibold">{{ (resultado.valor_maximo?.parsedValue !== undefined ? resultado.valor_maximo.parsedValue : resultado.valor_maximo) | number:'1.2-4' }}</span>
-                                                    </div>
-                                                    <div class="flex justify-between align-items-center border-top-1 surface-border pt-2">
-                                                        <span class="text-600">Análises:</span>
-                                                        <p-tag [value]="resultado.quantidade_analises.toString()" severity="success"></p-tag>
-                                                    </div>
-                                                    <div class="text-center mt-2 p-2" style="background-color: #f8f9fa; border-radius: 6px;">
-                                                        <small class="text-600">Período: {{ resultado.periodo.data_inicial | date:'dd/MM/yyyy' }} - {{ resultado.periodo.data_final | date:'dd/MM/yyyy' }}</small>
+
+                                                    <!-- Análises -->
+                                                    <div>
+                                                        <p class="text-sm text-500 mb-2">Análises:</p>
+                                                        <p-tag 
+                                                            [value]="resultado.quantidade_analises.toString()" 
+                                                            severity="secondary"
+                                                            [rounded]="true"
+                                                        ></p-tag>
                                                     </div>
                                                 </div>
-                                            </p-card>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
