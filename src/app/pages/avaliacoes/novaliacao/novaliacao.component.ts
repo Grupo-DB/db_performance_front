@@ -65,6 +65,7 @@ import { TabMenuModule } from 'primeng/tabmenu';
 import { SelectModule } from 'primeng/select';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { Dialog, DialogModule } from 'primeng/dialog';
+import { CardModule } from 'primeng/card';
 
 // Custom validator function
 function respostaJustificativaValidator(control: AbstractControl): { [key: string]: any } | null {
@@ -119,7 +120,7 @@ interface Tipo{
     ReactiveFormsModule,FormsModule,StepperModule,CommonModule,MatStepperModule,MatFormFieldModule,CalendarModule,MatRadioModule,DividerModule,
     InputMaskModule,StepsModule,NzStepsModule,MatInputModule,MatButtonModule,MatSelectModule,RadioButtonModule,InputTextModule,
     RouterLink,TableModule,InputTextModule,InputGroupModule,InputGroupAddonModule,ButtonModule,DropdownModule,ToastModule,SafeHtmlPipe,
-    NzMenuModule,TabMenuModule,SelectModule,FloatLabelModule,DialogModule
+    NzMenuModule,TabMenuModule,SelectModule,FloatLabelModule,DialogModule, CardModule
   ],
   providers: [
     {
