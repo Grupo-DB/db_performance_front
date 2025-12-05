@@ -323,7 +323,6 @@ export class FeedbackComponent implements OnInit{
     this.loading = false;
   }
 
-
   getNomeAvaliado(id: number): string {
     const avaliado = this.avaliados?.find(avaliado => avaliado.id === id);
     return avaliado ? avaliado.nome : 'Avaliado não encontrada';
@@ -358,16 +357,16 @@ export class FeedbackComponent implements OnInit{
   }
   abrirModalEdicao(id:number,avaliacao:Avaliacao) {
     this.visible = true;
-     this.editForm.patchValue({
-       perguntasRespostas:avaliacao.perguntasRespostas ? JSON.stringify(avaliacao.perguntasRespostas, null, 2) : '',
-       observacoes:avaliacao.observacoes
-     });
- 
+    this.editForm.patchValue({
+      perguntasRespostas:avaliacao.perguntasRespostas ? JSON.stringify(avaliacao.perguntasRespostas, null, 2) : '',
+      observacoes:avaliacao.observacoes
+    });
+
     this.avaliacaoService.getAvaliacao(id).subscribe(
       data => {
         if (data.perguntasRespostas && typeof data.perguntasRespostas === 'object') {
           this.perguntasRespostasFormatada = this.formatarPr(data.perguntasRespostas);
-          
+
         } else{
           this.perguntasRespostasFormatada = data.perguntasRespostas;
           

@@ -249,6 +249,13 @@ export interface Analise {
   tracao_tempo_aberto: any;
 
 
+
+
+
+
+  materialOrganico: string;
+
+
 }
 interface FileWithInfo {
   file: File;
@@ -411,6 +418,33 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
     { value: 'MAE' },
     { value: 'MMV' },
   ];
+
+
+
+
+
+
+
+  materiasOrganicos = [
+    { value: 'Abaixo do Limite' },
+    { value: 'Acima do Limite' },
+    { value: 'No Limite' }
+  ];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
   
   @ViewChild('dt1') dt1!: Table;
   garantias: any;
@@ -2592,6 +2626,8 @@ downloadImagemGrafico(): void {
             (this.analise as any).metodoModelagem = (this.analise as any).metodoModelagem ?? (this.analise as any).metodo_modelagem ?? '';
             (this.analise as any).metodoMuro = (this.analise as any).metodoMuro ?? (this.analise as any).metodo_muro ?? '';
             (this.analise as any).observacoesMuro = (this.analise as any).observacoesMuro ?? (this.analise as any).observacoes_muro ?? '';
+            (this.analise as any).materialOrganico = (this.analise as any).materialOrganico ?? (this.analise as any).materialOrganico ?? '';
+
           }
           this.idAnalise = analise.id;
           this.loadAnalisePorId(analise);
@@ -2642,6 +2678,8 @@ loadAnalisePorId(analise: any) {
       (this.analise as any).metodoModelagem = (this.analise as any).metodoModelagem ?? (this.analise as any).metodo_modelagem ?? '';
       (this.analise as any).metodoMuro = (this.analise as any).metodoMuro ?? (this.analise as any).metodo_muro ?? '';
       (this.analise as any).observacoesMuro = (this.analise as any).observacoesMuro ?? (this.analise as any).observacoes_muro ?? '';
+      (this.analise as any).materialOrganico = (this.analise as any).materialOrganico ?? (this.analise as any).materialOrganico ?? '';
+
     }
   } catch {}
   let planoDetalhes: any[] = [];
@@ -6352,7 +6390,11 @@ salvarAnaliseResultados() {
     // Campos adicionais (snake_case) esperados pelo backend
     metodo_modelagem: this.analise?.metodoModelagem ?? null,
     metodo_muro: this.analise?.metodoMuro ?? null,
-    observacoes_muro: this.analise?.observacoesMuro ?? null
+    observacoes_muro: this.analise?.observacoesMuro ?? null,
+    materialOrganico: this.analise?.materialOrganico ?? null,
+
+
+
   };
   
   // Chamada para salvar a análise no backend
