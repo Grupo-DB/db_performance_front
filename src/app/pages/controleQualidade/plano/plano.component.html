@@ -46,6 +46,12 @@
         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
             <a style="font-size: 13px;">Banco de Relatórios</a>
         </li>
+         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/resultados">Histórico de Resultados</a>
+        </li>
+        <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/acompanhamento">Acompanhamento de Tempo</a>
+        </li>
     </ul>
 </div>
 
@@ -295,6 +301,7 @@
     styleClass="w-full md:w-12 lg:w-4"
 >
         <div class="background-form">
+            <p-toast></p-toast>
             <form
                 [formGroup]="editForm" title="Editar Plano de Análise" class="flex flex-column gap-4" 
             >

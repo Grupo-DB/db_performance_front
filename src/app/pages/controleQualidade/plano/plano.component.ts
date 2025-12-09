@@ -114,7 +114,7 @@ export class PlanoComponent implements OnInit {
   targetCalculos!: CalculoEnsaio[];
   targetEnsaios!: Ensaio[];
 
-  planEnsaios: any[] = [];
+  planEnsaios: any[] = [0];
   planCalculos: any[] = [0];
 
   registerForm!: FormGroup<RegisterPlanoForm>;
@@ -183,7 +183,11 @@ export class PlanoComponent implements OnInit {
   loadCalculosEnsaio(){
     this.ensaioService.getCalculoEnsaio().subscribe(
       response => {
-        this.calculosEnsaio = response;
+        this.calculosEnsaio = response/*.filter(calculo => 
+      !calculo.descricao.includes('(Cálculo composto Cal)') && 
+      !calculo.descricao.includes('(Calc PN Cal)') && 
+      !calculo.descricao.includes('(Calc PN Calc Cal)')
+    );*/
       }, error => {
         console.error('Erro ao carregar os ensaios:', error);
       }
@@ -202,7 +206,7 @@ export class PlanoComponent implements OnInit {
 
   // Sincroniza os IDs selecionados no PickList com os controles do formulário de cadastro
   syncEnsaios(): void {
-    const ids = (this.targetEnsaios || []).map(e => (e as any).id);
+    const ids = (this.targetEnsaios || []).map(e => (e as any).id ?? 0);
     this.registerForm.get('ensaios')?.setValue(ids);
     this.registerForm.get('ensaios')?.markAsDirty();
   }
@@ -296,7 +300,7 @@ export class PlanoComponent implements OnInit {
 
     this.planEnsaios = [];
     this.targetEnsaios.forEach(ensaio => {
-      this.planEnsaios.push(ensaio.id);
+      this.planEnsaios.push(ensaio.id || 0);
     });
 
     this.planCalculos = [];

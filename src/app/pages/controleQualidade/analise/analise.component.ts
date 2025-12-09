@@ -231,6 +231,7 @@ export interface Analise {
   metodoModelagem: string;
   metodoMuro: string;
   observacoesMuro: string;
+  materialOrganico: string;
   parecer: any;
   substrato: any;
   superficial: any;
@@ -248,6 +249,7 @@ export interface Analise {
   tracao_estufa: any;
   tracao_tempo_aberto: any;
   deslizamento: any;
+
 
 }
 interface FileWithInfo {
@@ -509,7 +511,11 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
 
 
 
-
+  materiaisOrganicos = [
+    { value: 'Abaixo do Limite' },
+    { value: 'Acima do Limite' },
+    { value: 'No Limite' }
+  ];
 
 
 
@@ -1357,6 +1363,7 @@ carregarModuloElasticidadeSalvo(analise: any): void {
 
 //==================================================== PENEIRAS SECAS =========================================================//
 carregarPeneiraSecaSalva(analise: any): void {
+  console.log('Carregando peneira seca salva:', analise);
   if (analise?.peneiras?.peneiras && Array.isArray(analise.peneiras.peneiras)) {
     this.linhasPeneira = analise.peneiras.peneiras.map((item: any) => ({
       peneira: item.peneira ?? '',
@@ -2849,6 +2856,7 @@ downloadImagemGrafico(): void {
             (this.analise as any).metodoModelagem = (this.analise as any).metodoModelagem ?? (this.analise as any).metodo_modelagem ?? '';
             (this.analise as any).metodoMuro = (this.analise as any).metodoMuro ?? (this.analise as any).metodo_muro ?? '';
             (this.analise as any).observacoesMuro = (this.analise as any).observacoesMuro ?? (this.analise as any).observacoes_muro ?? '';
+            (this.analise as any).materialOrganico = (this.analise as any).materialOrganico ?? (this.analise as any).material_organico ?? '';
           }
           this.idAnalise = analise.id;
           this.loadAnalisePorId(analise);
@@ -2899,6 +2907,7 @@ loadAnalisePorId(analise: any) {
       (this.analise as any).metodoModelagem = (this.analise as any).metodoModelagem ?? (this.analise as any).metodo_modelagem ?? '';
       (this.analise as any).metodoMuro = (this.analise as any).metodoMuro ?? (this.analise as any).metodo_muro ?? '';
       (this.analise as any).observacoesMuro = (this.analise as any).observacoesMuro ?? (this.analise as any).observacoes_muro ?? '';
+      (this.analise as any).materialOrganico = (this.analise as any).materialOrganico ?? (this.analise as any).material_organico ?? '';
     }
   } catch {}
   let planoDetalhes: any[] = [];
@@ -6609,7 +6618,8 @@ salvarAnaliseResultados() {
     // Campos adicionais (snake_case) esperados pelo backend
     metodo_modelagem: this.analise?.metodoModelagem ?? null,
     metodo_muro: this.analise?.metodoMuro ?? null,
-    observacoes_muro: this.analise?.observacoesMuro ?? null
+    observacoes_muro: this.analise?.observacoesMuro ?? null,
+    material_organico: this.analise?.materialOrganico ?? null
   };
   
   // Chamada para salvar a análise no backend
@@ -8474,7 +8484,8 @@ canDeactivate(): boolean | Promise<boolean> {
           label: 'Gráfico Capilaridade',
           icon: 'pi pi-pencil',
           command: () => this.exibirGrafico()
-        }
+        },
+         
       );
     }
 
@@ -8483,16 +8494,16 @@ canDeactivate(): boolean | Promise<boolean> {
 
   getItensPeneira(analise: any) {
     return [
-      { 
-        label: 'Peneiras Secas (Visualizar)', 
-        icon: 'pi pi-eye', 
-        command: () => this.visualizarPeneira() 
-      },
-      { 
-        label: 'Peneiras Úmidas (Visualizar)', 
-        icon: 'pi pi-eye', 
-        command: () => this.visualizarPeneiraUmida() 
-      },
+      // { 
+      //   label: 'Peneiras Secas (Visualizar)', 
+      //   icon: 'pi pi-eye', 
+      //   command: () => this.visualizarPeneira() 
+      // },
+      // { 
+      //   label: 'Peneiras Úmidas (Visualizar)', 
+      //   icon: 'pi pi-eye', 
+      //   command: () => this.visualizarPeneiraUmida() 
+      // },
       { 
         label: 'Peneiras Secas', 
         icon: 'pi pi-pencil', 
@@ -9528,7 +9539,7 @@ canDeactivate(): boolean | Promise<boolean> {
         passante: item.passante ?? null,
         passante_acumulado: item.passante_acumulado ?? null,
       }));
-    }else if (this.analise?.peneiras.peneiras && Array.isArray(this.analise.peneiras.peneiras)) {
+    }else if (this.analise?.peneiras?.peneiras && Array.isArray(this.analise.peneiras.peneiras)) {
       this.linhasPeneira = this.analise.peneiras.peneiras.map((item: any, index: number) => ({
         peneira: item.peneira ?? '',
         valor_retido: item.valor_retido ?? null,
@@ -9565,7 +9576,7 @@ canDeactivate(): boolean | Promise<boolean> {
         passante: item.passante ?? null,
         passante_acumulado: item.passante_acumulado ?? null,
       }));
-    }else if (this.analise?.peneiras_umidas.peneiras && Array.isArray(this.analise.peneiras_umidas.peneiras)) {
+    }else if (this.analise?.peneiras_umidas?.peneiras && Array.isArray(this.analise.peneiras_umidas.peneiras)) {
       this.linhasPeneiraUmida = this.analise.peneiras_umidas.peneiras.map((item: any, index: number) => ({
         peneira: item.peneira ?? '',
         valor_retido: item.valor_retido ?? null,

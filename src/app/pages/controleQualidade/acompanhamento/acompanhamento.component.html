@@ -50,12 +50,205 @@
         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
             <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/resultados">Histórico de Resultados</a>
         </li>
+         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/resultados">Histórico de Resultados</a>
+        </li>
+        <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/acompanhamento">Acompanhamento de Tempo</a>
+        </li>
     </ul>
 </div>
 
 <div class="container flex flex-column align-items-center mb-4">
+    <p-toast></p-toast>
     <div class="containerInterno w-12">
-        <div @swipeAnimation>
+        <div @swipeAnimation> 
+            <!-- Nova seção: Análises Agrupadas -->
+            <div class="form-geral flex flex-column gap-3 w-12 mt-4 mb-4" @swipeAnimation>
+                <div class="fg1 flex flex-column w-12 align-items-center">
+                    <p-card class="card w-12 text-left">
+                        <ng-template #header>
+                            <div class="header titulo-info w-full text-center">
+                                <h2>Análises Agrupadas</h2>
+                            </div>
+                        </ng-template>
+
+                        <!-- Filtros -->
+                        <div class="grid mb-4">
+                            <div class="col-12 md:col-4">
+                                <p-floatlabel variant="on">
+                                    <p-datepicker
+                                        [style]="{'width':'100%'}"
+                                        id="dataInicioAgrupada" 
+                                        [(ngModel)]="data_inicio"
+                                        dateFormat="dd/mm/yy"                  
+                                        [showIcon]="true"
+                                    />
+                                    <label for="dataInicioAgrupada">Data Inicial</label>
+                                </p-floatlabel>
+                            </div>
+                            <div class="col-12 md:col-4">
+                                <p-floatlabel variant="on">
+                                    <p-datepicker
+                                        [style]="{'width':'100%'}"
+                                        id="dataFimAgrupada" 
+                                        [(ngModel)]="data_fim"
+                                        dateFormat="dd/mm/yy"                  
+                                        [showIcon]="true"
+                                    />
+                                    <label for="dataFimAgrupada">Data Final</label>
+                                </p-floatlabel>
+                            </div>
+                            <div class="col-12 md:col-4">
+                                <p-floatlabel variant="on">
+                                    <p-select
+                                        [style]="{'width':'100%'}"
+                                        id="agruparPor"
+                                        [(ngModel)]="agruparPor"
+                                        [options]="opcoesAgrupamento"
+                                        optionLabel="label"
+                                        optionValue="value"
+                                    ></p-select>
+                                    <label for="agruparPor">Agrupar Por</label>
+                                </p-floatlabel>
+                            </div>
+                            <div class="col-12 md:col-4">
+                                <p-floatlabel variant="on">
+                                    <p-select
+                                        [style]="{'width':'100%'}"
+                                        id="laboratorioAgrupado"
+                                        [(ngModel)]="laboratorioAgrupado"
+                                        [options]="laboratorios"
+                                        optionLabel="label"
+                                        optionValue="value"
+                                        [showClear]="true"
+                                    ></p-select>
+                                    <label for="laboratorioAgrupado">Laboratório</label>
+                                </p-floatlabel>
+                            </div>
+                        </div>
+
+                        <!-- Botão Buscar -->
+                        <div class="flex justify-content-center mb-4">
+                            <p-button 
+                                label="Buscar Análises Agrupadas" 
+                                icon="pi pi-search"
+                                (onClick)="buscarAnaliseAgrupada()"
+                                severity="info"
+                                [style]="{width: '300px'}"
+                            />
+                        </div>
+
+                        <!-- Tabela de Resultados -->
+                        <div *ngIf="exibirTabelaAgrupada && resultadosAgrupados.length > 0" class="mt-4">
+                            <div class="mb-3">
+                                <h4 style="color: #b3e5ff;">📋 Resultados Agrupados por {{ agruparPor === 'laboratorio' ? 'Laboratório' : 'Local de Coleta' }}</h4>
+                            </div>
+                            
+                            <div class="shadow-2 border-round overflow-hidden" style="background-color: #2d3748;">
+                                <p-table 
+                                    [value]="resultadosAgrupados" 
+                                    [paginator]="true" 
+                                    [rows]="10"
+                                    [rowsPerPageOptions]="[5, 10, 20]"
+                                    styleClass="p-datatable-sm"
+                                    [style]="{'color': '#e2e8f0'}"
+                                >
+                                    <ng-template pTemplate="header">
+                                        <tr style="background: linear-gradient(135deg, #2b3a55 0%, #1a2537 100%);">
+                                            <th style="color: #e2e8f0;">{{ agruparPor === 'laboratorio' ? 'Laboratório' : 'Local de Coleta' }}</th>
+                                            <th style="color: #e2e8f0;">{{ agruparPor === 'laboratorio' ? 'Locais' : 'Laboratórios' }}</th>
+                                            <th style="color: #e2e8f0;">Quantidade</th>
+                                            <th style="color: #e2e8f0;">Tempo Previsto</th>
+                                            <th style="color: #e2e8f0;">Tempo Trabalho</th>
+                                            <th style="color: #e2e8f0;">% Previsto</th>
+                                            <th style="color: #e2e8f0;">% Trabalho</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-resultado>
+                                        <tr style="color: #e2e8f0;">
+                                            <td>
+                                                <span class="font-bold" style="color: #48bb78;">
+                                                    {{ agruparPor === 'laboratorio' ? resultado.laboratorio : resultado.local_coleta }}
+                                                </span>
+                                            </td>
+                                            <td style="color: #a0aec0;">
+                                                {{ agruparPor === 'laboratorio' ? resultado.local_coleta : resultado.laboratorio }}
+                                            </td>
+                                            <td>
+                                                <p-tag 
+                                                    [value]="resultado.quantidade_analises.toString()" 
+                                                    severity="secondary"
+                                                    [rounded]="true"
+                                                ></p-tag>
+                                            </td>
+                                            <td>
+                                                <p-tag 
+                                                    [value]="resultado.tempo_previsto" 
+                                                    severity="info"
+                                                ></p-tag>
+                                            </td>
+                                            <td>
+                                                <p-tag 
+                                                    [value]="resultado.tempo_trabalho" 
+                                                    severity="success"
+                                                ></p-tag>
+                                            </td>
+                                            <td style="color: #667eea;">
+                                                {{ (resultado.percentual_previsto?.parsedValue ?? resultado.percentual_previsto) | number:'1.2-2' }}%
+                                            </td>
+                                            <td style="color: #48bb78;">
+                                                {{ (resultado.percentual_trabalho?.parsedValue ?? resultado.percentual_trabalho) | number:'1.2-2' }}%
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="emptymessage">
+                                        <tr>
+                                            <td colspan="7" class="text-center" style="color: #a0aec0;">
+                                                Nenhum resultado encontrado
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+
+                            <!-- Totais Gerais -->
+                            <div *ngIf="totaisGeraisAgrupados" class="mt-4 shadow-2 border-round p-4" style="background: linear-gradient(135deg, #1a2537 0%, #2b3a55 100%);">
+                                <h5 style="color: #fbbf24; margin-bottom: 1rem;">
+                                    <i class="pi pi-chart-bar mr-2"></i>Totais Gerais
+                                </h5>
+                                <div class="grid">
+                                    <div class="col-12 md:col-4">
+                                        <div class="text-center p-3 border-round" style="background-color: #2d3748;">
+                                            <div style="color: #a0aec0; font-size: 0.875rem; margin-bottom: 0.5rem;">Total de Análises</div>
+                                            <div style="color: #e2e8f0; font-size: 1.5rem; font-weight: bold;">
+                                                {{ totaisGeraisAgrupados.quantidade_analises }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 md:col-4">
+                                        <div class="text-center p-3 border-round" style="background-color: #2d3748;">
+                                            <div style="color: #a0aec0; font-size: 0.875rem; margin-bottom: 0.5rem;">Tempo Previsto Total</div>
+                                            <div style="color: #667eea; font-size: 1.5rem; font-weight: bold;">
+                                                {{ totaisGeraisAgrupados.tempo_previsto }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 md:col-4">
+                                        <div class="text-center p-3 border-round" style="background-color: #2d3748;">
+                                            <div style="color: #a0aec0; font-size: 0.875rem; margin-bottom: 0.5rem;">Tempo Trabalho Total</div>
+                                            <div style="color: #48bb78; font-size: 1.5rem; font-weight: bold;">
+                                                {{ totaisGeraisAgrupados.tempo_trabalho }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </p-card>
+                </div>
+            </div>
+
             <div class="form-geral flex flex-column gap-3 w-12">
                 <div class="fg1 flex flex-column w-12 align-items-center">
                     <p-card class="card w-12 text-left">
@@ -219,7 +412,7 @@
                                 <ng-template pTemplate="content">
                                     <div class="grid">
                                         <div class="col-12 md:col-6 lg:col-4" *ngFor="let resultado of resultadosAcompanhamento">
-                                            <div class="surface-card shadow-2 border-round h-full overflow-hidden">
+                                            <div class="shadow-2 border-round h-full overflow-hidden" style="background-color: #2d3748;">
                                                 <!-- Header com gradiente -->
                                                 <div class="p-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                                                     <h3 class="text-white m-0 text-center">{{ resultado.amostra_numero }}</h3>
@@ -229,7 +422,7 @@
                                                 <div class="p-4">
                                                     <!-- Análise -->
                                                     <div class="mb-3">
-                                                        <p class="text-sm text-500 mb-2">Análise</p>
+                                                        <p class="text-sm mb-2" style="color: #a0aec0;">Análise</p>
                                                         <p class="text-2xl font-bold m-0" style="color: #667eea;">
                                                             #{{ resultado.analise_id }}
                                                         </p>
@@ -237,7 +430,7 @@
 
                                                     <!-- Tempo Previsto -->
                                                     <div class="mb-3">
-                                                        <p class="text-sm text-500 mb-2">Tempo Previsto</p>
+                                                        <p class="text-sm mb-2" style="color: #a0aec0;">Tempo Previsto</p>
                                                         <p-tag 
                                                             [value]="resultado.tempo_previsto_total" 
                                                             severity="info"
@@ -247,7 +440,7 @@
 
                                                     <!-- Tempo de Trabalho -->
                                                     <div class="mb-3">
-                                                        <p class="text-sm text-500 mb-2">Tempo de Trabalho</p>
+                                                        <p class="text-sm mb-2" style="color: #a0aec0;">Tempo de Trabalho</p>
                                                         <p-tag 
                                                             [value]="resultado.tempo_trabalho_total" 
                                                             severity="success"
@@ -264,6 +457,9 @@
                     </p-card>
                 </div>
             </div>
+
+
         </div>
     </div>
 </div>
+

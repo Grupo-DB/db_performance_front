@@ -46,6 +46,12 @@
         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
             <a style="font-size: 13px;">Banco de Relatórios</a>
         </li>
+         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/resultados">Histórico de Resultados</a>
+        </li>
+        <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/acompanhamento">Acompanhamento de Tempo</a>
+        </li>
     </ul>
 </div>
 
@@ -418,7 +424,7 @@
                         </ng-template>
                         <ng-template pTemplate="body" let-ensaios>
                             <tr class="row8">
-                                <td style="text-align: center;">{{ ensaios.descricao + ' - ' + ensaios.id}}</td>
+                                <td style="text-align: center;">{{ ensaios.descricao }}</td>
                                 <td style="text-align: center;">{{ ensaios.unidade }}</td>
                                 <td style="text-align: center;">{{ ensaios.tempo_previsto }}</td>
                                 <td style="text-align: center;">{{ ensaios.tempo_trabalho }}</td>

@@ -108,6 +108,15 @@ export class AcompanhamentoComponent implements OnInit {
       { label: 'Matriz', value: 'Matriz' },
       { label: 'ATM', value: 'ATM' },
     ];
+    agruparPor: string = 'laboratorio';
+    opcoesAgrupamento = [
+      { label: 'Laboratório', value: 'laboratorio' },
+      { label: 'Local de Coleta', value: 'local_coleta' }
+    ];
+    resultadosAgrupados: any[] = [];
+    totaisGeraisAgrupados: any = null;
+    exibirTabelaAgrupada: boolean = false;
+    laboratorioAgrupado: string = '';
    constructor(
       private analiseService: AnaliseService,
       private loginService: LoginService,
@@ -238,8 +247,77 @@ export class AcompanhamentoComponent implements OnInit {
     const dia = String(data.getDate()).padStart(2, '0');
     return `${ano}-${mes}-${dia}`;
   }
+  buscarAnaliseAgrupada(): void {
+    if (!this.data_inicio || !this.data_fim) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Atenção',
+        detail: 'Selecione o período (data início e data fim)',
+        life: 3000
+      });
+      return;
+    }
 
+    const dataInicial = this.formatarDataParaBackend(this.data_inicio);
+    const dataFinal = this.formatarDataParaBackend(this.data_fim);
 
-
-
+    this.analiseService.getAnaliseAgrupada(
+      dataInicial,
+      dataFinal,
+      this.agruparPor,
+      this.laboratorioAgrupado
+    ).subscribe({
+      next: (response: any) => {
+        console.log('Análises agrupadas obtidas:', response);
+        const resultados = response.resultados || [];
+        
+        // Encontrar o registro de totais (local_coleta ou laboratorio === "TOTAL" ou "Todos")
+        const registroTotais = resultados.find((r: any) => 
+          r.local_coleta === 'TOTAL' || r.laboratorio === 'TOTAL' || 
+          r.local_coleta === 'Todos' || r.laboratorio === 'Todos'
+        );
+        
+        if (registroTotais) {
+          // Extrair valores, tratando objetos parsedValue
+          this.totaisGeraisAgrupados = {
+            quantidade_analises: registroTotais.quantidade_analises,
+            tempo_previsto: registroTotais.tempo_previsto,
+            tempo_trabalho: registroTotais.tempo_trabalho,
+            percentual_previsto: typeof registroTotais.percentual_previsto === 'object' 
+              ? registroTotais.percentual_previsto.parsedValue 
+              : registroTotais.percentual_previsto,
+            percentual_trabalho: typeof registroTotais.percentual_trabalho === 'object'
+              ? registroTotais.percentual_trabalho.parsedValue
+              : registroTotais.percentual_trabalho
+          };
+          
+          // Remover o registro de totais da lista de resultados
+          this.resultadosAgrupados = resultados.filter((r: any) => 
+            r.local_coleta !== 'TOTAL' && r.laboratorio !== 'TOTAL' &&
+            r.local_coleta !== 'Todos' && r.laboratorio !== 'Todos'
+          );
+        } else {
+          this.resultadosAgrupados = resultados;
+          this.totaisGeraisAgrupados = null;
+        }
+        
+        this.exibirTabelaAgrupada = true;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: `${this.resultadosAgrupados.length} resultado(s) encontrado(s)`,
+          life: 3000
+        });
+      },
+      error: (error: any) => {
+        console.error('Erro ao buscar análises agrupadas:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao buscar dados agrupados',
+          life: 3000
+        });
+      }
+    });
+  }
 }

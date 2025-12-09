@@ -35,6 +35,7 @@ import { EnsaioService } from '../../../services/controleQualidade/ensaio.servic
 import { Ensaio } from '../ensaio/ensaio.component';
 import { CalculoEnsaio } from '../calculo-ensaio/calculo-ensaio.component';
 import { DatePickerModule } from 'primeng/datepicker';
+import { ProdutoAmostra } from '../produto-amostra/produto-amostra.component';
 
 @Component({
   selector: 'app-resultados',
@@ -90,14 +91,18 @@ import { DatePickerModule } from 'primeng/datepicker';
 export class ResultadosComponent implements OnInit {
   ensaios: Ensaio[] = [];
   calculos: CalculoEnsaio[] = [];
+  produtosAmostra: ProdutoAmostra[] = [];
   data_inicio: Date | null = null;
   data_fim: Date | null = null;
+  produtosSelecionados: any[] = [];
   ensaiosSelecionados: number[] = [];
   calculosSelecionados: string[] = [];
   mediasEnsaios: any[] = [];
   mediasCalculos: any[] = [];
   totalEnsaios: number = 0;
   totalCalculos: number = 0;
+  modalVisualizar: boolean = false;
+  analiseSelecionada: any = null;
   
   constructor(
     private analiseService: AnaliseService,
@@ -115,12 +120,16 @@ export class ResultadosComponent implements OnInit {
   ngOnInit(): void { 
     this.getEnsaios();
     this.getCalculos();
+    this.loadProdutosAmostra();
   }
 
   getEnsaios(): void{
     this.ensaioService.getEnsaios().subscribe(
       response => {
-        this.ensaios = response;
+        this.ensaios = response.filter(ensaio => 
+      ensaio.tipo_ensaio_detalhes?.nome !== 'Auxiliar' && 
+      ensaio.tipo_ensaio_detalhes?.nome !== 'Resistencia'
+    );
       }, error => {
         console.error('Erro ao obter os ensaios:', error);
       }
@@ -130,9 +139,24 @@ export class ResultadosComponent implements OnInit {
   getCalculos(): void{
     this.ensaioService.getCalculoEnsaio().subscribe(
       response => {
-        this.calculos = response;
+        this.calculos = response.filter(calculo => 
+      !calculo.descricao.includes('(Cálculo composto Cal)') && 
+      !calculo.descricao.includes('(Calc PN Cal)') && 
+      !calculo.descricao.includes('(Calc PN Calc Cal)')
+    );
       }, error => {
         console.error('Erro ao obter os cálculos:', error);
+      }
+    )
+  }
+
+  loadProdutosAmostra(): void{
+    this.amostraService.getProdutos().subscribe(
+      response => {
+        this.produtosAmostra = response;
+      }
+      , error => {
+        console.error('Erro ao carregar produtos de amostra', error);
       }
     )
   }
@@ -164,6 +188,7 @@ export class ResultadosComponent implements OnInit {
 
     this.analiseService.getMediasEnsaiosPorPeriodo(
       this.ensaiosSelecionados,
+      this.produtosSelecionados,
       dataInicio,
       dataFim
     ).subscribe({
@@ -230,6 +255,7 @@ export class ResultadosComponent implements OnInit {
     // Enviar descrições dos cálculos ao invés de IDs
     this.analiseService.getMediasCalculosPorPeriodo(
       this.calculosSelecionados,
+      this.produtosSelecionados,
       dataInicio,
       dataFim
     ).subscribe({
@@ -273,6 +299,101 @@ export class ResultadosComponent implements OnInit {
     const mes = String(data.getMonth() + 1).padStart(2, '0');
     const dia = String(data.getDate()).padStart(2, '0');
     return `${ano}-${mes}-${dia}`;
+  }
+
+  visualizarAnalise(analiseId: number): void {
+    this.analiseService.getAnaliseById(analiseId).subscribe({
+      next: (analise) => {
+        this.analiseSelecionada = analise;
+        this.modalVisualizar = true;
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro!',
+          detail: 'Erro ao carregar os detalhes da análise.'
+        });
+      }
+    });
+  }
+
+  getStatusL1(dataL0: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataL0, 1);
+  }
+
+  getStatusL7(dataL0: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataL0, 7);
+  }
+
+  getStatusL28(dataL0: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataL0, 28);
+  }
+
+  getStatusM1(dataM0: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataM0, 1);
+  }
+
+  getStatusM7(dataM0: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataM0, 7);
+  }
+
+  getStatusM28(dataM0: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataM0, 28);
+  }
+
+    // Métodos para verificar status das datas de rompimento
+  getStatusDataRompimento(dataBase: string, diasRompimento: number): { status: string, diasRestantes: number, cor: string, icone: string } {
+    if (!dataBase) {
+      return { status: 'Sem data', diasRestantes: 0, cor: '#6c757d', icone: 'pi-question-circle' };
+    }
+
+    const dataBaseDate = new Date(dataBase);
+    const dataRompimento = new Date(dataBaseDate);
+    dataRompimento.setDate(dataRompimento.getDate() + diasRompimento);
+    
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    dataRompimento.setHours(0, 0, 0, 0);
+    
+    const diffTime = dataRompimento.getTime() - hoje.getTime();
+    const diasRestantes = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diasRestantes < 0) {
+      return { 
+        status: `Vencido há ${Math.abs(diasRestantes)} dia(s)`, 
+        diasRestantes: diasRestantes, 
+        cor: '#dc3545', 
+        icone: 'pi-times-circle' 
+      };
+    } else if (diasRestantes === 0) {
+      return { 
+        status: 'Vence hoje!', 
+        diasRestantes: 0, 
+        cor: '#fd7e14', 
+        icone: 'pi-exclamation-triangle' 
+      };
+    } else if (diasRestantes <= 2) {
+      return { 
+        status: `Vence em ${diasRestantes} dia(s)`, 
+        diasRestantes: diasRestantes, 
+        cor: '#ffc107', 
+        icone: 'pi-exclamation-circle' 
+      };
+    } else if (diasRestantes <= 5) {
+      return { 
+        status: `${diasRestantes} dias restantes`, 
+        diasRestantes: diasRestantes, 
+        cor: '#17a2b8', 
+        icone: 'pi-info-circle' 
+      };
+    } else {
+      return { 
+        status: `${diasRestantes} dias restantes`, 
+        diasRestantes: diasRestantes, 
+        cor: '#28a745', 
+        icone: 'pi-check-circle' 
+      };
+    }
   }
 
 }

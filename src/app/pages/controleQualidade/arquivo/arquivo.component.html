@@ -46,6 +46,12 @@
         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
             <a style="font-size: 13px;">Banco de Relatórios</a>
         </li>
+         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/resultados">Histórico de Resultados</a>
+        </li>
+        <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/acompanhamento">Acompanhamento de Tempo</a>
+        </li>
     </ul>
 </div>
     <div class="container flex flex-column align-items-center mb-4">
@@ -644,6 +650,7 @@
                         <p class="mb-2"><b>Classificação:</b> {{ analiseSelecionada.amostra_detalhes.expressa_detalhes?.classificacao || analiseSelecionada.amostra_detalhes.ordem_detalhes?.classificacao }}</p>
                         <p class="mb-2"><b>Responsável:</b> {{ analiseSelecionada.amostra_detalhes.expressa_detalhes?.responsavel || analiseSelecionada.amostra_detalhes.ordem_detalhes?.responsavel }}</p>
                         <p class="mb-0"><b>Data de Abertura:</b> {{ (analiseSelecionada.amostra_detalhes.expressa_detalhes?.data || analiseSelecionada.amostra_detalhes.ordem_detalhes?.data) | date:'dd/MM/yyyy'}}</p>
+                        <p *ngIf="analiseSelecionada.material_organico" class="mb-0"><b>Material Orgânico:</b> {{ analiseSelecionada.material_organico }}</p>
                     </div>
                 </div>
             </div>

@@ -155,20 +155,22 @@ export class AnaliseService {
     return this.httpClient.post<any[]>(url, body);
   }
   //=================================MEDIAS POR PERIODO =====================================//////////
-  getMediasEnsaiosPorPeriodo(ensaios: any,inicio: string, fim: string): Observable<any[]> {
+  getMediasEnsaiosPorPeriodo(ensaios: any,produtos: any,inicio: string, fim: string): Observable<any[]> {
     const url = this.mediasEnsaiosUrl;
     const body = {
       ensaios_ids: ensaios,
+      produto_ids: produtos,
       data_inicio: inicio,
       data_fim: fim
     };
     return this.httpClient.post<any[]>(url, body);
   }
 
-  getMediasCalculosPorPeriodo(calculos: any,inicio: string, fim: string): Observable<any[]> {
+  getMediasCalculosPorPeriodo(calculos: any,produtos: any,inicio: string, fim: string): Observable<any[]> {
     const url = this.mediasCalculosUrl;
     const body = {
       calculos_descricoes: calculos,
+      produto_ids: produtos,
       data_inicio: inicio,
       data_fim: fim
     };
@@ -198,6 +200,26 @@ export class AnaliseService {
       apenas_finalizadas: apenas_finalizadas,
       laboratorio: laboratorio
     };
+    return this.httpClient.post<any>(url, body);
+  }
+  getAnaliseAgrupada(
+    data_inicial: string,
+    data_final: string,
+    agrupar_por: string,
+    laboratorio: string = ''
+  ): Observable<any> {
+    const url = 'http://172.50.10.79:8008/analise/analiseEnsaio/tempo-por-analise/';
+    const body: any = {
+      data_inicial: data_inicial,
+      data_final: data_final,
+      agrupar_por: agrupar_por
+    };
+    
+    // Adicionar laboratório ao body apenas se não estiver vazio
+    if (laboratorio) {
+      body.laboratorio = laboratorio;
+    }
+    
     return this.httpClient.post<any>(url, body);
   }
 }
