@@ -3224,6 +3224,9 @@ gerarNumero(materialNome: string, sequencial: number): string {
   }
 
   imprimirCalculoPDF(analise: any) {
+
+    console.log(analise);
+
     const resultado: { pai: string, filhos: string[] }[] = [];
 
     this.selectedEnsaios.forEach((selectedEnsaios: any) => {
@@ -3250,6 +3253,30 @@ gerarNumero(materialNome: string, sequencial: number): string {
     });
 
     const doc = new jsPDF({ unit: "mm", format: "a4" });
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     let contadorLinhas = 45;
     const data_entrada = formatDate(analise.amostra_detalhes.data_entrada, 'dd/MM/yyyy', 'en-US');
     const data_coleta = formatDate(analise.amostra_detalhes.data_coleta, 'dd/MM/yyyy', 'en-US');
@@ -3628,6 +3655,903 @@ gerarNumero(materialNome: string, sequencial: number): string {
       });
     }
 
+    //COMECEI AQUI
+    if(analise?.peneiras?.amostra){
+      const body = [
+        [
+          {
+            content: 'PENEIRAS',
+            colSpan: 6,
+            styles: {
+              halign: 'center',
+              fontSize: 12,
+              fontStyle: 'bold',
+              fillColor: [210, 210, 210]
+            }
+          }
+        ],
+        [
+          {
+            content: `Amostra: ${analise.peneiras.amostra}`,
+            colSpan: 6,
+            styles: { halign: 'left', fillColor: [240,240,240], fontStyle: 'bold' }
+          }
+        ],
+        [
+          {
+            content: `Finos: ${analise.peneiras.finos.toFixed(2)}%`,
+            colSpan: 6,
+            styles: { halign: 'left', fillColor: [240,240,240], fontStyle: 'bold' }
+          }
+        ],
+        [
+          'Peneira',
+          'Passante (%)',
+          'Acumulado (%)',
+          'Valor Retido',
+          '% Retido',
+          'Passante Acumulado'
+        ],
+
+        ...analise.peneiras.peneiras.map((p: any) => [
+          p.peneira,
+          p.passante.toFixed(2),
+          p.acumulado.toFixed(2),
+          p.valor_retido.toFixed(3),
+          p.porcentual_retido.toFixed(2),
+          p.passante_acumulado.toFixed(2)
+        ])
+      ];
+      autoTable(doc, {
+        startY: contadorLinhas,
+        body,
+        theme: 'grid',
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [230, 230, 230] }
+      });
+
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+
+    }
+
+    if(analise?.peneiras_umidas?.amostra){
+      const body = [
+        [
+          {
+            content: 'PENEIRAS ÚMIDAS',
+            colSpan: 6,
+            styles: {
+              halign: 'center',
+              fontSize: 12,
+              fontStyle: 'bold',
+              fillColor: [210, 210, 210]
+            }
+          }
+        ],
+        [
+          {
+            content: `Amostra: ${analise.peneiras_umidas.amostra}`,
+            colSpan: 6,
+            styles: { halign: 'left', fillColor: [240,240,240], fontStyle: 'bold' }
+          }
+        ],
+        [
+          {
+            content: `Finos: ${analise.peneiras_umidas.finos.toFixed(2)}%`,
+            colSpan: 6,
+            styles: { halign: 'left', fillColor: [240,240,240], fontStyle: 'bold' }
+          }
+        ], 
+        [
+          'Peneira',
+          'Passante (%)',
+          'Acumulado (%)',
+          'Valor Retido',
+          '% Retido',
+          'Passante Acumulado'
+        ],
+
+        ...analise.peneiras_umidas.peneiras.map((p: any) => [
+          p.peneira,
+          p.passante.toFixed(2),
+          p.acumulado.toFixed(2),
+          p.valor_retido.toFixed(3),
+          p.porcentual_retido.toFixed(2),
+          p.passante_acumulado.toFixed(2)
+        ])
+      ];
+
+      autoTable(doc, {
+        startY: contadorLinhas,
+        body,
+        theme: 'grid',
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [230, 230, 230] }
+      });
+
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+
+    }
+
+    if (analise?.substrato) {
+      const linhasValidas = analise.substrato.linhas.filter((l: any) =>
+        l.carga !== null ||
+        l.area !== null ||
+        l.resist !== null ||
+        l.diametro !== null
+      );
+
+      const body = [
+        [
+          {
+            content: 'SUBSTRATO',
+            colSpan: 6,
+            styles: {
+              halign: 'center',
+              fontSize: 12,
+              fontStyle: 'bold',
+              fillColor: [210, 210, 210]
+            }
+          }
+        ],
+        [
+          {
+            content: 'Tempo Previsto: '+analise.substrato.tempo_previsto,
+            colSpan: 6,
+            styles: { halign: 'left', fontStyle: 'bold', fillColor: [240, 240, 240] }
+          }
+        ],
+        [
+          {
+            content: 'Tempo Trabalhado: '+analise.substrato.tempo_trabalho,
+            colSpan: 6,
+            styles: { halign: 'left', fontStyle: 'bold', fillColor: [240, 240, 240] }
+          }
+        ],
+        [
+          {
+            content: 'Média: '+analise.substrato.media,
+            colSpan: 6,
+            styles: { halign: 'left', fontStyle: 'bold', fillColor: [240, 240, 240] }
+          }
+        ],
+        [
+          'Nº',
+          'Carga',
+          'Área',
+          'Resistência',
+          'Diâmetro',
+          'Validação'
+        ],
+
+        ...linhasValidas.map((l: any) => [
+          l.numero ?? '',
+          l.carga ?? '',
+          l.area ?? '',
+          l.resist ?? '',
+          l.diametro ?? '',
+          l.validacao ?? ''
+        ])
+      ];
+
+      autoTable(doc, {
+        startY: contadorLinhas,
+        body,
+        theme: 'grid',
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [230, 230, 230] }
+      });
+
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+    }
+
+    if (analise?.superficial) {
+      const linhasValidas = analise.superficial.linhas.filter((l: any) =>
+        l.area !== null ||
+        l.carga !== null ||
+        l.resist !== null ||
+        l.diametro !== null
+      );
+
+      const body = [
+        [
+          {
+            content: 'SUPERFICIAL',
+            colSpan: 6,
+            styles: {
+              halign: 'center',
+              fontSize: 12,
+              fontStyle: 'bold',
+              fillColor: [210, 210, 210]
+            }
+          }
+        ],
+        [
+          {
+            content: `Tempo Previsto: ${analise.superficial.tempo_previsto}`,
+            colSpan: 6,
+            styles: {
+              halign: 'left',
+              fontStyle: 'bold',
+              fillColor: [240, 240, 240]
+            }
+          }
+        ],
+        [
+          {
+            content: `Tempo Trabalhado: ${analise.superficial.tempo_trabalho}`,
+            colSpan: 6,
+            styles: {
+              halign: 'left',
+              fontStyle: 'bold',
+              fillColor: [240, 240, 240]
+            }
+          }
+        ],
+        [
+          {
+            content: 'Média: '+analise.superficial.media,
+            colSpan: 6,
+            styles: { halign: 'left', fontStyle: 'bold', fillColor: [240, 240, 240] }
+          }
+        ],
+        [
+          'Nº',
+          'Carga',
+          'Área',
+          'Resistência',
+          'Diâmetro',
+          'Validação'
+        ],
+
+        ...linhasValidas.map((l: any) => [
+          l.numero ?? '',
+          l.carga ?? '',
+          l.area ?? '',
+          l.resist ?? '',
+          l.diametro ?? '',
+          l.validacao ?? ''
+        ])
+      ];
+
+      autoTable(doc, {
+        startY: contadorLinhas,
+        body,
+        theme: 'grid',
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [230, 230, 230] }
+      });
+
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+    }
+
+    if (analise?.variacao_dimensional) {
+
+      const dados = analise.variacao_dimensional;
+      const linhasKeys = Object.keys(dados).filter(k => k.startsWith('l'));
+      const linhasValidas = linhasKeys
+        .map(k => ({ nome: k, ...dados[k] }))
+        .filter(l =>
+          l.cp1 !== null ||
+          l.cp2 !== null ||
+          l.cp3 !== null
+        );
+
+      const body = [
+        [
+          {
+            content: 'VARIAÇÃO DIMENSIONAL',
+            colSpan: 6,
+            styles: {
+              halign: 'center',
+              fontSize: 12,
+              fontStyle: 'bold',
+              fillColor: [210, 210, 210]
+            }
+          }
+        ],
+        [
+          {
+            content: `Tempo Previsto: ${dados.tempo_previsto}`,
+            colSpan: 6,
+            styles: { halign: 'left', fontStyle: 'bold', fillColor: [240, 240, 240] }
+          }
+        ],
+        [
+          {
+            content: `Tempo Trabalhado: ${dados.tempo_trabalho}`,
+            colSpan: 6,
+            styles: { halign: 'left', fontStyle: 'bold', fillColor: [240, 240, 240] }
+          }
+        ],
+        [
+          'Idade',
+          'CP1',
+          'CP2',
+          'CP3',
+          'Média',
+          'Desvio Padrão'
+        ],
+
+        ...linhasValidas.map((l: any) => [
+          l.nome.replace('l', '') + ' dias',
+          l.cp1 ?? '',
+          l.cp2 ?? '',
+          l.cp3 ?? '',
+          l.media ? l.media.toFixed(3) : '',
+          l.desvio_padrao ? l.desvio_padrao.toFixed(3) : ''
+        ])
+      ];
+
+      autoTable(doc, {
+        startY: contadorLinhas,
+        body,
+        theme: 'grid',
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [230, 230, 230] }
+      });
+
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+    }
+
+    if (analise?.variacao_massa) {
+      const dados = analise.variacao_massa;
+      const linhasKeys = Object.keys(dados).filter(k => k.startsWith('m'));
+      const linhasValidas = linhasKeys
+        .map(k => ({ nome: k, ...dados[k] }))
+        .filter(l =>
+          l.cp1 !== null ||
+          l.cp2 !== null ||
+          l.cp3 !== null
+        );
+
+      const body = [
+        [
+          {
+            content: 'VARIAÇÃO DA MASSA',
+            colSpan: 6,
+            styles: {
+              halign: 'center',
+              fontSize: 12,
+              fontStyle: 'bold',
+              fillColor: [210, 210, 210]
+            }
+          }
+        ],
+        [
+          {
+            content: `Tempo Previsto: ${dados.tempo_previsto}`,
+            colSpan: 6,
+            styles: {
+              fontStyle: 'bold',
+              fillColor: [240, 240, 240],
+              halign: 'left'
+            }
+          }
+        ],
+        [
+          {
+            content: `Tempo Trabalhado: ${dados.tempo_trabalho}`,
+            colSpan: 6,
+            styles: {
+              fontStyle: 'bold',
+              fillColor: [240, 240, 240],
+              halign: 'left'
+            }
+          }
+        ],
+        [
+          'Idade',
+          'CP1',
+          'CP2',
+          'CP3',
+          'Média (%)',
+          'Desvio Padrão'
+        ],
+
+        ...linhasValidas.map((l: any) => [
+          l.nome.replace('m', '') + ' dias',
+          l.cp1 ?? '',
+          l.cp2 ?? '',
+          l.cp3 ?? '',
+          l.media ? l.media.toFixed(3) : '',
+          l.desvio_padrao ? l.desvio_padrao.toFixed(3) : ''
+        ])
+      ];
+      if (dados.total) {
+        body.push([
+          {
+            content: 'TOTAL',
+            colSpan: 4,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'center',
+              fillColor: [230, 230, 230]
+            }
+          },
+          dados.total.media ? dados.total.media.toFixed(3) : '',
+          dados.total.desvio_padrao ? dados.total.desvio_padrao.toFixed(3) : ''
+        ]);
+      }
+
+      autoTable(doc, {
+        startY: contadorLinhas,
+        body,
+        theme: 'grid',
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [230, 230, 230] }
+      });
+
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+    }
+
+    if (analise?.modulo_elasticidade) {
+      const dados = analise.modulo_elasticidade;
+      const cpsKeys = Object.keys(dados).filter(k => k.startsWith('cp'));
+      const cpsValidos = cpsKeys
+        .map(k => ({ nome: k.toUpperCase(), ...dados[k] }))
+        .filter(c =>
+          c.ed !== null &&
+          c.ed !== undefined &&
+          c.ed !== ''
+        );
+      const body = [
+        [
+          {
+            content: 'MÓDULO DE ELASTICIDADE',
+            colSpan: 10,
+            styles: {
+              halign: 'center',
+              fontSize: 12,
+              fontStyle: 'bold',
+              fillColor: [210, 210, 210]
+            }
+          }
+        ],
+        [
+          {
+            content: `Tempo Previsto: ${dados.tempo_previsto}`,
+            colSpan: 10,
+            styles: {
+              fontStyle: 'bold',
+              fillColor: [240, 240, 240],
+              halign: 'left'
+            }
+          }
+        ],
+        [
+          {
+            content: `Tempo Trabalhado: ${dados.tempo_trabalho}`,
+            colSpan: 10,
+            styles: {
+              fontStyle: 'bold',
+              fillColor: [240, 240, 240],
+              halign: 'left'
+            }
+          }
+        ],
+        [
+          {
+            content: `Média: ${dados.media.ed.toFixed(2)} GPa`,
+            colSpan: 10,
+            styles: {
+              fontStyle: 'bold',
+              fillColor: [240, 240, 240],
+              halign: 'left'
+            }
+          }
+        ],
+        [
+          'CP',
+          'ED',
+          'PMax',
+          'Massa',
+          'Largura',
+          'Altura',
+          'Comprimento',
+          'Volume',
+          'Menor Tempo',
+          'Velocidade'
+        ],
+
+        ...cpsValidos.map((c: any) => [
+          c.nome,
+          c.ed?.toFixed(2) ?? '',
+          c.pMax?.toFixed(2) ?? '',
+          c.massa ?? '',
+          c.largura ?? '',
+          c.altura ?? '',
+          c.comprimento ?? '',
+          c.volume ?? '',
+          c.menorTempo ?? '',
+          c.velocidade?.toFixed(2) ?? ''
+        ])
+      ];    
+
+      autoTable(doc, {
+        startY: contadorLinhas,
+        body,
+        theme: 'grid',
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [230, 230, 230] }
+      });
+
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+    }
+
+    if (analise?.tracao_normal) {
+      const dados = analise.tracao_normal;
+      const linhasValidas = dados.linhas.filter((l: any)  =>
+        l.area !== null ||
+        l.carga !== null ||
+        l.resist !== null ||
+        l.diametro !== null
+      );
+
+      const body = [
+        [
+          {
+            content: 'TRAÇÃO NORMAL',
+            colSpan: 7,
+            styles: {
+              halign: 'center',
+              fontSize: 12,
+              fontStyle: 'bold',
+              fillColor: [210, 210, 210]
+            }
+          }
+        ],
+        [
+          {
+            content: `Tempo Previsto: ${dados.tempo_previsto}`,
+            colSpan: 7,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [240, 240, 240]
+            }
+          }
+        ],
+        [
+          {
+            content: `Tempo Trabalhado: ${dados.tempo_trabalho}`,
+            colSpan: 7,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [240, 240, 240]
+            }
+          }
+        ],
+        [
+          'Nº',
+          'Diâmetro (mm)',
+          'Área (cm²)',
+          'Carga (Kgf)',
+          'Resist (MPa)',
+          'Validação',
+          'Ruptura'
+        ],
+
+        ...linhasValidas.map((l: any) => [
+          l.numero ?? '',
+          l.diametro ?? '',
+          l.area ?? '',
+          l.carga ?? '',
+          l.resist ? l.resist.toFixed(2) : '',
+          l.validacao ?? '',
+          Object.values(l.rupturas).filter(v => v).join(', ') || ''
+        ])
+      ];
+
+      // Linha FINAL — Média geral
+      if (dados.media !== undefined && dados.media !== null) {
+        body.push([
+          {
+            content: 'MÉDIA',
+            colSpan: 4,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'center',
+              fillColor: [230, 230, 230]
+            }
+          },
+          dados.media.toFixed(2),
+          '', '' 
+        ]);
+      }
+
+      autoTable(doc, {
+        startY: contadorLinhas,
+        body,
+        theme: 'grid',
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [230, 230, 230] }
+      });
+
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+    }
+
+    if (analise?.tracao_estufa) {
+      const dados = analise.tracao_estufa;
+      const linhasValidas = dados.linhas.filter((l: any)  =>
+        l.area !== null ||
+        l.carga !== null ||
+        l.resist !== null ||
+        l.diametro !== null
+      );
+
+      const body = [
+        [
+          {
+            content: 'TRAÇÃO ESTUFA',
+            colSpan: 7,
+            styles: {
+              halign: 'center',
+              fontSize: 12,
+              fontStyle: 'bold',
+              fillColor: [210, 210, 210]
+            }
+          }
+        ],
+        [
+          {
+            content: `Tempo Previsto: ${dados.tempo_previsto}`,
+            colSpan: 7,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [240, 240, 240]
+            }
+          }
+        ],
+        [
+          {
+            content: `Tempo Trabalhado: ${dados.tempo_trabalho}`,
+            colSpan: 7,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [240, 240, 240]
+            }
+          }
+        ],
+        [
+          'Nº',
+          'Diâmetro (mm)',
+          'Área (cm²)',
+          'Carga (Kgf)',
+          'Resist (MPa)',
+          'Validação',
+          'Ruptura'
+        ],
+
+        ...linhasValidas.map((l: any) => [
+          l.numero ?? '',
+          l.diametro ?? '',
+          l.area ?? '',
+          l.carga ?? '',
+          l.resist ? l.resist.toFixed(2) : '',
+          l.validacao ?? '',
+          Object.values(l.rupturas).filter(v => v).join(', ') || ''
+        ])
+      ];
+
+      // Linha FINAL — Média geral
+      if (dados.media !== undefined && dados.media !== null) {
+        body.push([
+          {
+            content: 'MÉDIA',
+            colSpan: 4,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'center',
+              fillColor: [230, 230, 230]
+            }
+          },
+          dados.media.toFixed(2),
+          '', ''
+        ]);
+      }
+
+      autoTable(doc, {
+        startY: contadorLinhas,
+        body,
+        theme: 'grid',
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [230, 230, 230] }
+      });
+
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+    }
+
+    if (analise?.tracao_submersa) {
+      const dados = analise.tracao_submersa;
+      const linhasValidas = dados.linhas.filter((l: any)  =>
+        l.area !== null ||
+        l.carga !== null ||
+        l.resist !== null ||
+        l.diametro !== null
+      );
+
+      const body = [
+        [
+          {
+            content: 'TRAÇÃO SUBMERSA',
+            colSpan: 7,
+            styles: {
+              halign: 'center',
+              fontSize: 12,
+              fontStyle: 'bold',
+              fillColor: [210, 210, 210]
+            }
+          }
+        ],
+        [
+          {
+            content: `Tempo Previsto: ${dados.tempo_previsto}`,
+            colSpan: 7,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [240, 240, 240]
+            }
+          }
+        ],
+        [
+          {
+            content: `Tempo Trabalhado: ${dados.tempo_trabalho}`,
+            colSpan: 7,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [240, 240, 240]
+            }
+          }
+        ],
+        [
+          'Nº',
+          'Diâmetro (mm)',
+          'Área (cm²)',
+          'Carga (Kgf)',
+          'Resist (MPa)',
+          'Validação',
+          'Ruptura'
+        ],
+
+        ...linhasValidas.map((l: any) => [
+          l.numero ?? '',
+          l.diametro ?? '',
+          l.area ?? '',
+          l.carga ?? '',
+          l.resist ? l.resist.toFixed(2) : '',
+          l.validacao ?? '',
+          Object.values(l.rupturas).filter(v => v).join(', ') || ''
+        ])
+      ];
+
+      // Linha FINAL — Média geral
+      if (dados.media !== undefined && dados.media !== null) {
+        body.push([
+          {
+            content: 'MÉDIA',
+            colSpan: 4,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'center',
+              fillColor: [230, 230, 230]
+            }
+          },
+          dados.media.toFixed(2),
+          '', ''
+        ]);
+      }
+
+      autoTable(doc, {
+        startY: contadorLinhas,
+        body,
+        theme: 'grid',
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [230, 230, 230] }
+      });
+
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+    }
+
+    if (analise?.tracao_tempo_aberto) {
+      const dados = analise.tracao_tempo_aberto;
+      const linhasValidas = dados.linhas.filter((l: any)  =>
+        l.area !== null ||
+        l.carga !== null ||
+        l.resist !== null ||
+        l.diametro !== null
+      );
+
+      const body = [
+        [
+          {
+            content: 'TRAÇÃO TEMPO ABERTO',
+            colSpan: 7,
+            styles: {
+              halign: 'center',
+              fontSize: 12,
+              fontStyle: 'bold',
+              fillColor: [210, 210, 210]
+            }
+          }
+        ],
+        [
+          {
+            content: `Tempo Previsto: ${dados.tempo_previsto}`,
+            colSpan: 7,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [240, 240, 240]
+            }
+          }
+        ],
+        [
+          {
+            content: `Tempo Trabalhado: ${dados.tempo_trabalho}`,
+            colSpan: 7,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [240, 240, 240]
+            }
+          }
+        ],
+        [
+          'Nº',
+          'Diâmetro (mm)',
+          'Área (cm²)',
+          'Carga (Kgf)',
+          'Resist (MPa)',
+          'Validação',
+          'Ruptura'
+        ],
+
+        ...linhasValidas.map((l: any) => [
+          l.numero ?? '',
+          l.diametro ?? '',
+          l.area ?? '',
+          l.carga ?? '',
+          l.resist ? l.resist.toFixed(2) : '',
+          l.validacao ?? '',
+          Object.values(l.rupturas).filter(v => v).join(', ') || ''
+        ])
+      ];
+
+      // Linha FINAL — Média geral
+      if (dados.media !== undefined && dados.media !== null) {
+        body.push([
+          {
+            content: 'MÉDIA',
+            colSpan: 4,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'center',
+              fillColor: [230, 230, 230]
+            }
+          },
+          dados.media.toFixed(2),
+          '', ''
+        ]);
+      }
+
+      autoTable(doc, {
+        startY: contadorLinhas,
+        body,
+        theme: 'grid',
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [230, 230, 230] }
+      });
+
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+    }
+
+    //TERMINEI AQUI
     const blobUrl = doc.output("bloburl");
     window.open(blobUrl, "_blank");
     
