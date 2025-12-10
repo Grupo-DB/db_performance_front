@@ -3224,9 +3224,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
   }
 
   imprimirCalculoPDF(analise: any) {
-
-    console.log(analise);
-
     const resultado: { pai: string, filhos: string[] }[] = [];
 
     this.selectedEnsaios.forEach((selectedEnsaios: any) => {
@@ -3253,29 +3250,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
     });
 
     const doc = new jsPDF({ unit: "mm", format: "a4" });
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     
     let contadorLinhas = 45;
     const data_entrada = formatDate(analise.amostra_detalhes.data_entrada, 'dd/MM/yyyy', 'en-US');
@@ -3326,11 +3300,15 @@ gerarNumero(materialNome: string, sequencial: number): string {
 
           linha.push({ content: ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold", fillColor: [220, 220, 220]  } });
           linha.push({ content: 'Técnico', styles: { halign: "center", fontStyle: "bold" } });
-          linha.push({ content: 'Nº Cadinho', styles: { halign: "center", fontStyle: "bold" } });
+          if(ensaio_detalhes.id == 130 || ensaio_detalhes.id == 76 || ensaio_detalhes.id == 114 || ensaio_detalhes.id == 159){
+            linha.push({ content: 'Nº Cadinho', styles: { halign: "center", fontStyle: "bold" } });
+          }
           
           linhaVazia.push({ content: '', styles: { halign: "center", fillColor: [220, 220, 220]  } });
           linhaVazia.push({ content: '', styles: { halign: "center" } });
-          linhaVazia.push({ content: '', styles: { halign: "center" } });
+          if(ensaio_detalhes.id == 130 || ensaio_detalhes.id == 76 || ensaio_detalhes.id == 114 || ensaio_detalhes.id == 159){
+            linhaVazia.push({ content: '', styles: { halign: "center" } });
+          }
 
           body.push(linha);
           body.push(linhaVazia);
@@ -3417,11 +3395,16 @@ gerarNumero(materialNome: string, sequencial: number): string {
 
           linha.push({ content: calculo_ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold" } });
           linha.push({ content: 'Técnico', styles: { halign: "center", fontStyle: "bold" } });
-          linha.push({ content: 'Nº Cadinho', styles: { halign: "center", fontStyle: "bold" } });
+          if(calculo_ensaio_detalhes.id == 130 || calculo_ensaio_detalhes.id == 76 || calculo_ensaio_detalhes.id == 114 || calculo_ensaio_detalhes.id == 159){
+            linha.push({ content: 'Nº Cadinho', styles: { halign: "center", fontStyle: "bold" } });
+          }
 
           linhaVazia.push({ content: '', styles: { halign: "center", fillColor: [220, 220, 220]  } });
           linhaVazia.push({ content: '', styles: { halign: "center" } });
-          linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+          if(calculo_ensaio_detalhes.id == 130 || calculo_ensaio_detalhes.id == 76 || calculo_ensaio_detalhes.id == 114 || calculo_ensaio_detalhes.id == 159){
+            linhaVazia.push({ content: '', styles: { halign: "center" } });
+          }
 
           body.push(linha);
           body.push(linhaVazia);
@@ -3502,11 +3485,15 @@ gerarNumero(materialNome: string, sequencial: number): string {
             
             linha.push({ content:  ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold", fillColor: [220, 220, 220]  } });
             linha.push({ content: 'Técnico', styles: { halign: "center", fontStyle: "bold" } });
-            linha.push({ content: 'Nº Cadinho', styles: { halign: "center", fontStyle: "bold" } });
+            if(ensaio_detalhes.id == 130 || ensaio_detalhes.id == 76 || ensaio_detalhes.id == 114 || ensaio_detalhes.id == 159){
+              linha.push({ content: 'Nº Cadinho', styles: { halign: "center", fontStyle: "bold" } });
+            }
 
             linhaVazia.push({ content: '', styles: { halign: "center", fillColor: [220, 220, 220] } });
             linhaVazia.push({ content: '', styles: { halign: "center" } });
-            linhaVazia.push({ content: '', styles: { halign: "center" } });
+            if(ensaio_detalhes.id == 130 || ensaio_detalhes.id == 76 || ensaio_detalhes.id == 114 || ensaio_detalhes.id == 159){
+              linhaVazia.push({ content: '', styles: { halign: "center" } });
+            }
             body.push(linha);
             body.push(linhaVazia);
 
@@ -3583,11 +3570,17 @@ gerarNumero(materialNome: string, sequencial: number): string {
 
             linha.push({ content: calculo_ensaio_detalhes.descricao, styles: { halign: "center", fontStyle: "bold", fillColor: [220, 220, 220] } });
             linha.push({ content: 'Técnico', styles: { halign: "center", fontStyle: "bold" } });
-            linha.push({ content: 'Nº Cadinho', styles: { halign: "center", fontStyle: "bold" } });
+            if(calculo_ensaio_detalhes.id == 130 || calculo_ensaio_detalhes.id == 76 || calculo_ensaio_detalhes.id == 114 || calculo_ensaio_detalhes.id == 159){
+              linha.push({ content: 'Nº Cadinho', styles: { halign: "center", fontStyle: "bold" } });
+            }
 
             linhaVazia.push({ content: '', styles: { halign: "center", fillColor: [220, 220, 220] } });
             linhaVazia.push({ content: '', styles: { halign: "center" } });
-            linhaVazia.push({ content: '', styles: { halign: "center" } });
+
+            if(calculo_ensaio_detalhes.id == 130 || calculo_ensaio_detalhes.id == 76 || calculo_ensaio_detalhes.id == 114 || calculo_ensaio_detalhes.id == 159){
+              linhaVazia.push({ content: '', styles: { halign: "center" } });
+            }
+
             body.push(linha);
             body.push(linhaVazia);
 
