@@ -441,6 +441,7 @@
                         <p class="mb-2"><b>Classificação:</b> {{ analiseSelecionada.amostra_detalhes.expressa_detalhes?.classificacao || analiseSelecionada.amostra_detalhes.ordem_detalhes?.classificacao }}</p>
                         <p class="mb-2"><b>Responsável:</b> {{ analiseSelecionada.amostra_detalhes.expressa_detalhes?.responsavel || analiseSelecionada.amostra_detalhes.ordem_detalhes?.responsavel }}</p>
                         <p class="mb-0"><b>Data de Abertura:</b> {{ (analiseSelecionada.amostra_detalhes.expressa_detalhes?.data || analiseSelecionada.amostra_detalhes.ordem_detalhes?.data) | date:'dd/MM/yyyy'}}</p>
+                        <p class="mb-2"><b>Classificação:</b> {{ analiseSelecionada.classificacao }} </p>
                     </div>
                 </div>
             </div>

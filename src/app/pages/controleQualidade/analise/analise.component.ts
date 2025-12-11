@@ -7133,7 +7133,7 @@ salvarAnaliseResultados() {
     metodo_muro: this.analise?.metodoMuro ?? null,
     observacoes_muro: this.analise?.observacoesMuro ?? null,
     material_organico: this.analise?.materialOrganico ?? null,
-    classificacao: this.analise?.clasificacao ?? null
+    classificacao: this.analise?.classificacao ?? null
   };
   
   // Chamada para salvar a análise no backend
