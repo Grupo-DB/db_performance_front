@@ -1,0 +1,786 @@
+<div class="menu">
+    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+        <li nz-menu-item nzMatchRouter="#">
+            <a style="font-size: 13px;" routerLink="/welcome/baseOrcamentaria/orcamentoBase/homeOrcamento">Início</a>
+        </li>
+        <li *ngIf="hasGroup(['Admin','Master'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizAnalitica" >Raízes Analíticas</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/centrocustopai" >Centro de Custo Pai</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/centrocusto" >Centro de Custo </a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizSintetica" >Raiz Sintética</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/contaContabil" >Conta Contábil</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/grupoItens" >Grupos de Itens</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/orcamentoBase" >Orçamento Base</a>
+                </li>
+            </ul>
+        </li >
+        
+        <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorSetor','OrcamentoGestorItens'])" nz-submenu nzTitle="Acompanhamento "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorSetor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoRealizado/realizado"> Orçado x Realizado Setorial</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorItens'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoGrupoItens/orcamentogrupoitens"> Orçado x Realizado Grupo de Itens</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/projetado"> DRE Projetado</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorProd'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/indicadorescp">Indicadores Custo de Produção</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/curva">Curva ABC</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/ppr">PPR - Orçamento</a>
+                </li>   
+            </ul>
+           
+        </li>    
+    </ul>
+</div>
+
+<div class="container flex flex-column align-items-center mb-4"> 
+    <div class="containerInterno w-12">
+        <div @swipeAnimation>
+            <form
+                [formGroup]="registerForm"
+                title="Cadastrar novo Orçamento Base" 
+                class="flex flex-column gap-4"    
+            >
+                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                    <div class="fg1 flex flex-column w-12 align-items-center">
+                        <p-card class="card w-12 text-center">
+                            <ng-template #header>
+                                <div class="header titulo-info w-full text-center">
+                                    <h2>Orçamento Base</h2>
+                                </div>
+                            </ng-template>
+                            <!-- selects -->
+                            <div class="wrapper"> 
+                                <div class="fg1 flex flex-column w-12 align-items-center  lg:flex-row justify-content-around mr-1">
+                                        <div class="form2 w-12 lg:w-6 text-left mr-2">
+                                            <p-floatLabel variant="on">
+                                                <p-select
+                                                    variant="filled" 
+                                                    inputId="float-label" 
+                                                    [style]="{'width':'100%'}"
+                                                    [options]="ccsPai" 
+                                                    formControlName="ccPai"
+                                                    optionLabel="label"
+                                                    [(ngModel)]="selectedCcPai"
+                                                    (onChange)="onCcPaiSelecionado($event.value)"
+                                                    optionValue="id"
+                                                    [filter]="true" 
+                                                    filterBy="label"
+                                                    [showClear]="true"  
+                                                >
+                                                </p-select>
+                                                <label for="float-label">Selecione o Centro de Custo Pai</label>
+                                            </p-floatLabel>
+                                        </div>
+                                    
+                                        <div class="form2 w-12 lg:w-6 text-left ml-2">
+                                            <p-floatLabel variant="on">
+                                                <p-select
+                                                    variant="filled"
+                                                    inputId="float-label" 
+                                                    [style]="{'width':'100%'}"
+                                                    [options]="centrosCusto" 
+                                                    formControlName="centroCusto"
+                                                    optionLabel="nome"
+                                                    optionValue="id"
+                                                    [(ngModel)]="selectedCc"
+                                                    (onChange)="onCcSelecionado($event.value)" 
+                                                    [filter]="true" 
+                                                    filterBy="nome"
+                                                    [showClear]="true"                             
+                                                >
+                                                </p-select>
+                                                <label for="float-label">Selecione o Centro de Custo</label>  
+                                            </p-floatLabel>  
+                                        </div>
+                                </div>    
+                                <!-- cards -->
+                                <div class="fg2 -mt-2 flex flex-column w-12 align-items-center  lg:flex-row justify-content-around">
+                                    <div class="form2 w-12 text-xs flex justify-content-around lg:text-sm align-items-center mr-2">
+                                        <p-card class="card2 w-12 text-center">
+                                            <div class="text-left">
+                                                Nome:  <strong>{{ ccsPaiDetalhes?.nome }}</strong><br>
+                                                Empresa:  <strong>{{ ccsPaiDetalhes?.empresa_detalhes?.nome }}</strong><br>
+                                                Filial:  <strong>{{ ccsPaiDetalhes?.filial_detalhes?.nome }}</strong><br>
+                                                Área:   <strong>{{ ccsPaiDetalhes?.area_detalhes?.nome }}</strong><br>
+                                                Setor:  <strong>{{ ccsPaiDetalhes?.setor_detalhes?.nome }}</strong><br>
+                                                Ambiente: <strong>{{ ccsPaiDetalhes?.ambiente_detalhes?.nome }}</strong><br>
+
+                                                <div *ngIf="ccsPaiDetalhes">
+                                                    <input type="hidden" formControlName="empresa" [(ngModel)]="ccsPaiDetalhes.empresa_detalhes.nome">
+                                                    <input type="hidden" formControlName="filial" [(ngModel)]="ccsPaiDetalhes.filial_detalhes.nome">
+                                                    <input type="hidden" formControlName="area" [(ngModel)]="ccsPaiDetalhes.area_detalhes.nome">
+                                                    <input type="hidden" formControlName="setor" [(ngModel)]="ccsPaiDetalhes.setor_detalhes.nome">
+                                                    <input type="hidden" formControlName="ambiente" [(ngModel)]="ccsPaiDetalhes.ambiente_detalhes.nome">
+                                                </div>
+                                            </div>
+                                        </p-card>
+                                                                        
+                                    </div>
+                                    <div class="fg2 mt-0 flex flex-column w-12 align-items-center  lg:justify-content-around ml-2">
+                                        <div class="form2 w-12 text-xs flex justify-content-around lg:text-sm justify-content-around align-items-center" >
+                                            <p-card class="card w-12 text-center" [style]="{ background: '#e3e7ec' }">
+                                                <div class="text-left" >
+                                                    Codigo: <strong>{{ ccsDetalhes?.codigo }}</strong><br>
+                                                    Nome: <strong>{{ ccsDetalhes?.nome }}</strong><br>
+                                                    Gestor: <strong>{{ ccsDetalhes?.gestor_detalhes?.nome }}</strong><br>
+                                                    Raiz Sintetica: <strong>{{ raizSinteticaDetalhes?.raiz_contabil }}</strong><br>
+                                                    Raiz Sintetica Descrição: <strong>{{ raizSinteticaDetalhes?.descricao }}</strong><br>
+                                                    &nbsp;
+
+                                                    <div *ngIf="raizSinteticaDetalhes">
+                                                        <input type="hidden" formControlName="gestor" [(ngModel)]="ccsDetalhes.gestor_detalhes.nome ">
+                                                        <input type="hidden" formControlName="raizSintetica" [(ngModel)]="raizSinteticaDetalhes.raiz_contabil">
+                                                        <input type="hidden" formControlName="raizSinteticaDesc" [(ngModel)]="raizSinteticaDetalhes.descricao">
+                                                    </div>
+
+                                                </div>  
+                                            </p-card>
+                                        
+                                        
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- base orcamento e raiz analitica -->
+                            <div class="fg2 flex flex-column w-12 align-items-center  lg:flex-row justify-content-around">      
+                                <div class="form2 w-12 mr-2 text-left">   
+                                    <p-floatLabel variant="on">
+                                        <p-select
+                                            variant="filled"
+                                            [style]="{'width':'100%'}"
+                                            [options]="baseOrcamentos"
+                                            formControlName="baseOrcamento"
+                                            optionLabel="value"
+                                            optionValue="value"
+                                            inputId="float-label"
+                                        >
+                                        </p-select>
+                                        <label for="float-label">Selecione a Base de Orçamento</label>
+                                    </p-floatLabel>   
+                                </div>
+                                <div class="form2 w-12 ml-2 text-left">
+                                    <p-floatLabel variant="on">
+                                        <p-select
+                                            variant="filled"
+                                            inputId="float-label" 
+                                            [style]="{'width':'100%'}"
+                                            [options]="raizesFiltradas" 
+                                            formControlName="raizAnalitica"
+                                            optionLabel="label"
+                                            [(ngModel)]="selectedRaizAnalitica"
+                                            (onChange)="onRaizAnaliticaSelecionada($event.value)"
+                                            [filter]="true" 
+                                            filterBy="descricao"
+                                            [showClear]="true" 
+                                        >
+                                            <ng-template pTemplate="filter" let-options="options">
+                                                <div class="flex gap-1">
+                                                    <div class="p-inputgroup" (click)="$event.stopPropagation()">
+                                                        <p-iconfield>
+                                                            <p-inputicon styleClass="pi pi-search" />
+                                                            <input
+                                                                variant="filled"
+                                                                [style]="{'width':'100%'}"
+                                                                type="text"
+                                                                pInputText
+                                                                placeholder="Filter"
+                                                                [value]="filterValue"
+                                                                (click)="customFilterFunction(options)"
+                                                                (keyup)="customFilterFunction(options)" 
+                                                            />
+                                                        </p-iconfield>
+                                                    </div>
+                                                    <button pButton icon="pi pi-times" (click)="resetFunction(options)"></button>
+                                                </div>
+                                            </ng-template>
+                                        </p-select>
+                                        <label for="float-label">Selecione a Raiz Analítica</label>
+                                        <input type="hidden" formControlName="contaContabilDesc" [(ngModel)]="contaContabilDesc">
+                                    </p-floatLabel>    
+                                </div>
+                            </div>
+
+                            <!-- suplementacao ano Conta Contábil -->
+                            <div class="wrapper mt-3"> 
+                                <div class="flex flex-column lg:flex-row justify-content-around mr-2">
+                                    <div class="fg2 flex flex-column w-12 align-items-center">
+                                        <div class="form2 w-12 text-left">
+                                            <p><label for="sit">Suplementação </label></p>
+                                                <p-toggleswitch 
+                                                    id="sit"
+                                                    formControlName="suplementacao"
+                                                >
+                                                </p-toggleswitch>
+                                            </div>                               
+                                        <div class="form2 w-12 text-left ml-1">
+                                            <p-floatLabel variant="on">
+                                                <p-inputNumber 
+                                                    class="w-full"
+                                                    variant="filled"
+                                                    mode="decimal"
+                                                    [(ngModel)]="ano"
+                                                    formControlName="ano"
+                                                    [showButtons]="true" 
+                                                    inputId="ano" 
+                                                    [min]="2024" 
+                                                    [max]="2999"
+                                                    [useGrouping]="false" 
+                                                />
+                                                <label for="ano">Ano</label>
+                                            </p-floatLabel>    
+                                        </div>
+                                    </div><!--endRow-->  
+
+                                    <!-- conta conta_contabil -->
+                                    <div class="fg2 mt-3 flex-column w-12 ml-3">
+                                        <div class="md:flex flex-row w-full lg:flex flex-row text-0 w-full ml-2">
+                                            <div class="form2 w-12 text-xs flex justify-content-around lg:text-sm align-items-center">
+                                                <p-card class="card w-12 text-center" [style]="{ background: '#e3e7ec' }">
+                                                    <div class="text-left">
+                                                        Conta Contábil:  <strong>{{ contaContabil }}</strong><br>
+                                                        Raiz Contabil Grupo: <strong>{{ rcGrupoDesc }}</strong><br>
+                                                        Id Base: <strong>{{ idBase }}</strong>
+                                                    </div>
+                                                </p-card>
+                                                                                
+                                            </div>
+                                        
+                                        </div>
+                                    
+                                    </div>
+                                </div>    
+                            </div>    
+                                <!-- valor periodicidade -->
+                            <div class="wrapper mt-3">     
+                                <div class="fg2 mb-5 flex flex-column w-12 align-items-center  lg:flex-row justify-content-around">
+                                    <div class="form2 w-12 text-left">
+                                        <p-floatLabel variant="on" >
+                                            <p-inputNumber
+                                                class="w-full"
+                                                variant="filled"
+                                                inputId="on_label"
+                                                formControlName="valor"
+                                                inputId="currency-us"
+                                                mode="currency"
+                                                currency="BRL"
+                                                locale="pt-BR"
+                                                [style]="{'width':'100%'}"
+                                            />
+                                            <label for="on_label">Valor</label>
+                                        </p-floatLabel>
+                                    </div>
+                                    <div class="form2 w-12 text-left ml-3">
+                                            <p-floatLabel variant="on"> 
+                                                <p-select
+                                                    inputId="float-label"
+                                                    [style]="{'width':'100%'}"
+                                                    [options]="recorrencias" 
+                                                    formControlName="periodicidade"
+                                                    optionLabel="value"
+                                                    optionValue="key"
+                                                >
+                                                </p-select>
+                                                <label for="float-label">Selecione a Periodicidade</label>
+                                            </p-floatLabel> 
+                                    </div>
+                                </div> 
+
+                                <!-- ocorrencia mes e messe -->
+                                <div class="fg2 mb-5 flex flex-column w-12 align-items-center  lg:flex-row justify-content-around ">
+                                    <div class="form2 w-12 text-left mr-2">
+                                        <div class="raiz" *ngIf="registerForm.get('periodicidade')?.value === 'mensal'">
+                                            <p-floatLabel variant="on">
+                                                <p-select
+                                                    variant="filled"
+                                                    inputId="float-label"
+                                                    [style]="{'width':'100%'}"
+                                                    [options]="mensalTipos"
+                                                    formControlName="mensalTipo"
+                                                    optionLabel="value"
+                                                    optionValue="key"
+                                                >
+                                                </p-select>
+                                                <label for="float-label">Selecione o Tipo de Ocorrência</label>
+                                            </p-floatLabel>    
+                                        </div>    
+                                    </div>
+                                    <div class="form2 w-12 text-left ml-2">
+                                        <div class="raiz" *ngIf="registerForm.get('mensalTipo')?.value === 'especifico'">
+                                            <p-floatLabel variant="on">
+                                                <p-select
+                                                    variant="filled"
+                                                    inputId="float-label"
+                                                    [style]="{'width':'100%'}"
+                                                    [options]="meses"
+                                                    formControlName="mesEspecifico"
+                                                    optionLabel="value"
+                                                    optionValue="key"
+                                                >
+                                                </p-select>
+                                                <label for="float-label">Selecione o Mês</label>
+                                            </p-floatLabel>    
+                                        </div>
+                                        <div class="raiz" *ngIf="registerForm.get('mensalTipo')?.value === 'recorrente'">
+                                            <p-floatLabel variant="on">    
+                                                <p-multiSelect
+                                                    variant="filled"
+                                                    [style]="{'width':'100%'}"
+                                                    [options]="meses"
+                                                    formControlName="mesesRecorrentes"
+                                                    optionLabel="value"
+                                                    optionValue="key"
+                                                    inputId="float-label"
+                                                >
+                                                </p-multiSelect>
+                                                <label for="float-label">Selecione os Meses</label>
+                                            </p-floatLabel>    
+                                        </div>
+                                    </div>
+                                </div> <!--endRow>-->
+                            </div>    
+                            <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                                <p-button 
+                                    (onClick)="clearForm()" 
+                                    label="Limpar"
+                                    iconPos="right"  
+                                    tooltipPosition="top"
+                                    pTooltip="Limpar"
+                                    icon="pi pi-eraser"
+                                    severity="info"
+                                />
+                                <p-button 
+                                    (onClick)="submit()" 
+                                    label="Salvar" 
+                                    severity="success"
+                                    icon="pi pi-check" 
+                                    iconPos="right" 
+                                    tooltipPosition="top"
+                                    pTooltip="Salvar Orçamento Base"
+                                />
+                            </div>
+                        </p-card>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="background-form mt-4 w-12" @swipeAnimation>
+            <div class="tabela text-left w-12">
+                <p-toast />
+                <p-confirmDialog />
+                <p-inplace closable="true" closeIcon="pi pi-angle-up">
+                    <ng-template pTemplate="display">
+                        <p-button 
+                            label="Exibir Orçamentos Bases" 
+                            tooltipPosition="top"
+                            pTooltip="Exibir Orçamentos Bases"
+                            severity="info"
+                        >
+                            <div class="inline-flex align-items-center">
+                                <span><i class="pi pi-angle-down"></i></span>
+                            </div>
+                        </p-button>
+
+                    </ng-template>
+                    <ng-template pTemplate="content">
+                    <p-table
+                            #dt1
+                            [value]="orcamentosBases"
+                            [paginator]="true"
+                            [rows]="10"
+                            [rowsPerPageOptions]="[10, 20, 50]"
+                            [globalFilterFields]="['id','ano','raiz_analitica_desc','raiz_contabil_grupo_desc','mes_especifico']"
+                            [showCurrentPageReport]="true"
+                            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Orçamentos Bases"
+                            scrollable="true"
+                            dataKey="id" 
+                            sortMode="multiple"
+                        >
+                            <ng-template pTemplate="caption" >
+                                <div class="flex flex-row md: justify-content-end mr-2">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
+                                            <input
+                                                variant="filled"
+                                                [(ngModel)] = "inputValue"
+                                                [style]="{'width':'100%'}"
+                                                pInputText id="on_label"
+                                                autocomplete="off"
+                                                type="text"
+                                                (keyup)="filterTable()"
+                                                style="border-color:#1b91ff;"
+                                            />
+                                        </p-iconfield>
+                                        <label for="on_label" style="color: #1b91ff">Pesquisar</label>
+                                    </p-floatlabel>
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <input
+                                                [style]="{'width':'100%'}"
+                                                variant="filled"
+                                                [(ngModel)]="porcentagemDissidio"
+                                                pInputText
+                                                prefix="%"  
+                                            />
+                                        </p-iconfield>
+                                        <label for="on_label">% Dissídio</label>    
+                                    </p-floatlabel>
+                                    <button size="small" pButton label="Aplicar Dissídio" severity="info" icon="pi pi-filter-slash" (click)="calcularDissidio(porcentagemDissidio)"></button>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th pSortableColumn="id" style="width:10%; text-align: center;" type="text" field="id" display="menu">
+                                        Id <p-sortIcon field="id" />
+                                    </th>
+                                    <th pSortableColumn="ano" style="width:10%; text-align: center;" type="text" field="ano" display="menu">
+                                        Ano <p-sortIcon field="ano" />
+                                    </th>          
+                                    <th pSortableColumn="raiz_analitica_desc" style="width:10%; text-align: center;" type="text" field="raiz_analitica_desc" display="menu">
+                                        Raiz Analítica Descrição <p-sortIcon field="raiz_analitica_desc"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="raiz_contabil_grupo_desc" style="width:10%; text-align: center;" type="text" field="raiz_contabil_grupo_desc" display="menu">
+                                        Raiz CC Grupo Descrição <p-sortIcon field="raiz_contabil_grupo_desc"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="mes_especifico" style="width:10%; text-align: center;" type="text" field="mes_especifico" display="menu">
+                                        Mês <p-sortIcon field="mes_especifico"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="periodicidade" style="width:10%; text-align: center;" type="text" field="periodicidade" display="menu">
+                                        Periodicidade <p-sortIcon field="periodicidade"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="valor" style="width:10%; text-align: center;" type="text" field="valor" display="menu">
+                                        Valor <p-sortIcon field="valor"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="setor" style="width:10%; text-align: center;" type="text" field="setor" display="menu">
+                                        Setor <p-sortIcon field="setor"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="ambiente" style="width:10%; text-align: center;" type="text" field="ambiente" display="menu">
+                                        Ambiente <p-sortIcon field="ambiente"></p-sortIcon>
+                                    </th>
+                                    <th style="width: 10%;text-align: center;">Ações</th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <p-columnFilter 
+                                            showMenu="false"
+                                            type="text"
+                                            field="id" 
+                                            placeholder="Pesquisar" 
+                                            ariaLabel="Filter" />
+                                    </th>
+                                    <th>
+                                        <p-columnFilter 
+                                            showMenu="false"
+                                            type="text"
+                                            field="ano" 
+                                            placeholder="Pesquisar" 
+                                            ariaLabel="Filter" />
+                                    </th>
+                                    <th>
+                                        <p-columnFilter 
+                                            showMenu="false"
+                                            type="text"
+                                            field="raiz_analitica_desc" 
+                                            placeholder="Pesquisar" 
+                                            ariaLabel="Filter" />
+                                    </th>
+                                    <th>
+                                        <p-columnFilter 
+                                            showMenu="false"
+                                            type="text"
+                                            field="raiz_contabil_grupo_desc" 
+                                            placeholder="Pesquisar" 
+                                            ariaLabel="Filter" />
+                                    </th>
+                                    <th>
+                                        <p-columnFilter 
+                                            showMenu="false"
+                                            type="text"
+                                            field="mes_especifico" 
+                                            placeholder="Pesquisar" 
+                                            ariaLabel="Filter" />
+                                    </th>
+                                    <th>
+                                        <p-columnFilter
+                                            showMenu="false" 
+                                            type="text"
+                                            field="periodicidade" 
+                                            placeholder="Pesquisar" 
+                                            ariaLabel="Filter" />
+                                    </th>
+                                    <th>
+                                        <p-columnFilter 
+                                            showMenu="false"
+                                            type="text"
+                                            field="valor" 
+                                            placeholder="Pesquisar" 
+                                            ariaLabel="Filter" />
+                                    </th>
+                                    <th>
+                                        <p-columnFilter
+                                            showMenu="false"
+                                            type="text"
+                                            field="setor" 
+                                            placeholder="Pesquisar" 
+                                            ariaLabel="Filter" />
+                                    </th>
+                                    <th>
+                                        <p-columnFilter 
+                                            showMenu="false"
+                                            type="text"
+                                            field="ambiente" 
+                                            placeholder="Pesquisar" 
+                                            ariaLabel="Filter" />
+                                    </th>
+                                    <th></th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-orcamentoBase>
+                                <tr>
+                                    <td style="text-align: center;">{{ orcamentoBase.id }}</td>                 
+                                    <td style="text-align: center;">{{ orcamentoBase.ano }}</td>
+                                    <td style="text-align: center;">{{ orcamentoBase.raiz_analitica_desc }}</td>
+                                    <td style="text-align: center;">{{ orcamentoBase.raiz_contabil_grupo_desc }}</td>
+                                    <td style="text-align: center;">{{ orcamentoBase.mes_especifico }}</td>
+                                    <td style="text-align: center;">{{ orcamentoBase.periodicidade }}</td>
+                                    <td style="text-align: center;">{{ orcamentoBase.valor }} </td>
+                                    <td style="text-align: center;">{{ orcamentoBase.setor }}</td>
+                                    <td style="text-align: center;">{{ orcamentoBase.ambiente }}</td>
+                                    <td style="text-align: center;">
+                                        <div class="flex justify-content-center gap-2">
+                                            <p-button
+                                                icon="pi pi-eye"
+                                                size="small" 
+                                                [raised]="true"
+                                                severity="contrast"
+                                                tooltipPosition="top"
+                                                pTooltip="visualizar"
+                                                (onClick)="visualizarOrcamentoBaseDetalhes(orcamentoBase.id)"
+                                            ></p-button>
+                                            <p-button 
+                                                icon="pi pi-file-edit" 
+                                                severity="info" 
+                                                size="small" 
+                                                [raised]="true"
+                                                pTooltip="Editar" 
+                                                tooltipPosition="top"
+                                                (onClick)="abrirModalEdicao(orcamentoBase)"
+                                            ></p-button>
+                                            <p-button 
+                                                icon="pi pi-trash" 
+                                                severity="danger" 
+                                                size="small" 
+                                                [raised]="true"
+                                                pTooltip="Excluir" 
+                                                tooltipPosition="top"
+                                                (onClick)="excluirOrcamentoBase(orcamentoBase.id)"
+                                            ></p-button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="paginatorleft">
+                                <p-button type="button"  styleClass="p-button-text"></p-button>
+                            </ng-template>
+                            <ng-template pTemplate="paginatorright">
+                                <p-button type="button"  styleClass="p-button-text"></p-button>
+                            </ng-template> 
+                        </p-table>
+
+                    </ng-template>
+                </p-inplace>
+            </div>
+        </div>
+    </div>
+        
+        
+</div>
+
+<!---------------------------------Modal Edição---------------------------------------------->
+
+<p-drawer
+    [(visible)]="editFormVisible"
+    position="right"
+    [style]="{ width: '60vw' }"
+    styleClass="w-full md:w-12 lg:w-4"
+>
+        <div class="background-form">
+            <form
+                [formGroup]="editForm" title="Editar Orçamento Base" class="flex flex-column gap-4" 
+            >
+                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                    <div class="fg1 flex flex-column w-12 align-items-center">
+                        <p-card class="card w-12 text-center">
+                            <ng-template #header>
+                                <div class="header titulo-info w-full text-center">
+                                    <b>Editar Orçamento Base</b>
+                                </div>
+                            </ng-template>
+                            <div class="bloco flex flex-column w-12 gap-3">
+                                <div class="w-12 text-left">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-dollar" />
+                                            <input
+                                                variant="filled"
+                                                [style]="{'width':'100%'}"
+                                                pInputText id="on_label"
+                                                autocomplete="off"
+                                                formControlName="valor"
+                                                type="text"
+                                            />
+                                        </p-iconfield>
+                                        <label for="on_label">Valor</label>
+                                    </p-floatlabel>
+                                </div>
+
+                                <div class="w-12 text-left">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-dollar" />
+                                            <input
+                                                variant="filled"
+                                                [style]="{'width':'100%'}"
+                                                pInputText id="on_label"
+                                                autocomplete="off"
+                                                formControlName="valor_ajustado"
+                                                type="text"
+                                            />
+                                        </p-iconfield>
+                                        <label for="on_label">Valor Previsto</label>
+                                    </p-floatlabel>
+                                </div>
+
+                                <div class="w-12 text-left">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-dollar" />
+                                            <input
+                                                variant="filled"
+                                                [style]="{'width':'100%'}"
+                                                pInputText id="on_label"
+                                                autocomplete="off"
+                                                formControlName="valor_real"
+                                                type="text"
+                                            />
+                                        </p-iconfield>
+                                        <label for="on_label">Valor Real</label>
+                                    </p-floatlabel>
+                                </div>
+
+                            </div>
+                            <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                                <p-button 
+                                    (onClick)="clearEditForm()" 
+                                    label="Limpar"
+                                    iconPos="right"  
+                                    tooltipPosition="top"
+                                    pTooltip="Limpar"
+                                    icon="pi pi-eraser"
+                                    severity="info"
+                                />
+                                <p-button 
+                                    (onClick)="saveEdit()" 
+                                    label="Salvar" 
+                                    severity="success"
+                                    icon="pi pi-check" 
+                                    iconPos="right" 
+                                    tooltipPosition="top"
+                                    pTooltip="Salvar"
+                                />
+                            </div>
+                        </p-card>
+                    </div>    
+                </div>
+            </form>
+        </div>
+</p-drawer>
+
+<!---------------------------Visualizar Moda-------------------------------->
+<p-drawer
+    [(visible)]="detalhaOrcamentoBaseVisible"
+    position="top"
+    [style]="{ height: 'auto' }"
+>
+        <div class="background-form">
+            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                <div class="fg1 flex flex-column w-12 align-items-center">
+                    <p-card class="card w-12 text-center">
+                        <ng-template #header>
+                            <div class="header titulo-info w-full text-center">
+                                <b>Detalha Orçamento Base</b>
+                            </div>
+                        </ng-template>
+                        <div class="bloco flex flex-column w-12 gap-3">
+                            <div *ngIf="orcamentoBaseDetalhes">
+                                <div class="w-12 text-left">
+                                    <div class="visualizar">
+        
+                                        <div class="detalha">
+                                            <p>Ano: <strong>{{  orcamentoBaseDetalhes.ano }}</strong></p>
+                                            <p>Gestor: <strong>{{  orcamentoBaseDetalhes.gestor }}</strong></p>
+                                            <p>Empresa: <strong>{{  orcamentoBaseDetalhes.empresa }}</strong></p>
+                                            <p>Filial: <strong>{{  orcamentoBaseDetalhes.filial }}</strong></p>
+                                            <p>Area: <strong>{{  orcamentoBaseDetalhes.area }}</strong></p>
+                                            <p>Ambiente: <strong>{{  orcamentoBaseDetalhes.setor }}</strong></p>
+                                            <p>Setor: <strong>{{  orcamentoBaseDetalhes.ambiente }}</strong></p>
+                                            <p>Raiz Sintética: <strong>{{  orcamentoBaseDetalhes.raiz_sintetica }}</strong></p>
+                                            <p>Raiz Sintética Descrição: <strong>{{  orcamentoBaseDetalhes.raiz_sintetica_desc }}</strong></p>
+                                            <p>Raiz Analítica: <strong>{{  orcamentoBaseDetalhes.raiz_analitica_cod }}</strong></p>
+                                            <p>Raiz Analítica Descrição: <strong>{{  orcamentoBaseDetalhes.raiz_analitica_desc }}</strong></p>
+                                            <p>Conta Contábil: <strong>{{  orcamentoBaseDetalhes.conta_contabil }}</strong></p>
+                                            <p>Conta Contábil Descrição: <strong>{{  orcamentoBaseDetalhes.conta_contabil_desc }}</strong></p>
+                                            <p>Grupo Contábil Raiz Descrição: <strong>{{  orcamentoBaseDetalhes.raiz_contabil_grupo_desc }}</strong></p>
+                                        </div>
+                                        <div class="detalha">    
+                                            <p>Periodicidade: <strong>{{  orcamentoBaseDetalhes.periodicidade }}</strong></p>
+                                            <p>Tipo Mensal: <strong>{{  orcamentoBaseDetalhes.mensal_tipo }}</strong></p>
+                                            <p>Mês Específico: <strong>{{  orcamentoBaseDetalhes.mes_especifico }}</strong></p>
+                                            <p>Meses Recorrentes: <strong> {{ orcamentoBaseDetalhes.meses_recorrentes }}</strong></p>
+                                            <p>Suplementação: <strong> {{ orcamentoBaseDetalhes.suplementacao }}</strong></p>
+                                            <p>Base Orçamento: <strong> {{ orcamentoBaseDetalhes.base_orcamento }}</strong></p>
+                                            <p>Id Base: <strong> {{ orcamentoBaseDetalhes.id_base }}</strong></p>
+                                            <p>Tipo de Custo: <strong> {{ orcamentoBaseDetalhes.tipo_custo }}</strong></p>
+                                            <p>Valor: <strong> {{ orcamentoBaseDetalhes.valor }}</strong></p>
+                                            <p>Valor Ajustado: <strong> {{ orcamentoBaseDetalhes.valor_ajustado }}</strong></p>
+                                            <p>Valor Real: <strong> {{ orcamentoBaseDetalhes.valor_real }}</strong></p>
+                                            <p>Centro de Custo Pai: <strong>{{ getNomeCcPai(orcamentoBaseDetalhes.centro_de_custo_pai)}}</strong></p>
+                                            <p>Centro de custo: <strong>{{ getNomeCc(orcamentoBaseDetalhes.centro_custo_nome)}}</strong></p>
+                                        </div>  
+                                    </div>  
+                                </div>
+
+                            </div>
+                        </div>
+                    </p-card>
+                </div>    
+            </div>
+        </div>
+</p-drawer>
+
+

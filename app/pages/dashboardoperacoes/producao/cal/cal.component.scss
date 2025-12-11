@@ -1,0 +1,741 @@
+@import "primeicons/primeicons.css";
+.container {
+    height: 100%;
+}
+.titulo a {
+    color: inherit; 
+    text-decoration: none; 
+}
+.titulo a:hover {
+    color:#1890FF; 
+}
+.tituloCarregamento{
+    font-family: 'Aptos', sans-serif;
+    margin-left: 25px;
+    margin-top: 5px;
+    margin-bottom: 8px;
+}
+.tituloCarregamento2{
+    font-family: 'Aptos', sans-serif;
+    margin-left: 25px;
+    margin-top: 35px;
+    margin-bottom: 8px;
+}
+.titulo{
+    font-family: 'Aptos', sans-serif;
+    margin-left: 15px;
+    margin-top: 5px;
+    //position: fixed;
+    margin-bottom: 8px;
+}
+.row1 {
+    display: flex;
+    width: 90%;
+    flex-direction: row-reverse;
+    margin: 5px auto;
+}
+.row1 .carregamentos{
+    background-color: #E3E7EC;
+    width: 50%;
+    border-radius: 8px;
+}
+.carregamentos .carregamentoWrap{
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 8px;
+}
+.cardProd{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    margin: 5px;
+    text-align: center;
+    height: 150px;
+    width: 250px;
+    border-radius: 10px;
+    background-color:#002B5C;
+    box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+}
+.cardCarregmento{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    margin-left: 5px;
+    text-align: center;
+    height: 80px;
+    width: 180px;
+    border-radius: 10px;
+    background-color:#002B5C;
+    box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+}
+.valorCarregamento{
+    font-size: 20px;
+    flex: 1;
+    display: flex;
+    margin-bottom: 5px;
+    align-items: center; /* Centraliza verticalmente */
+    justify-content: center; /* Centraliza horizontalmente */
+    height: 100%; /* Certifique-se de que o contêiner tenha uma altura definida */
+    font-family: 'Aptos', sans-serif;
+    font-weight: 700;
+    color: #eee;
+    p {
+        margin: 0; /* Remove a margem padrão */
+        text-align: center;
+    }
+}
+.valorCarregamentoProd{
+    font-size: 24px;
+    flex: 1;
+    display: flex;
+    margin-bottom: 5px;
+    align-items: center; /* Centraliza verticalmente */
+    justify-content: center; /* Centraliza horizontalmente */
+    height: 100%; /* Certifique-se de que o contêiner tenha uma altura definida */
+    font-family: 'Aptos', sans-serif;
+    font-weight: 700;
+    color: #eee;
+    p {
+        margin: 0; /* Remove a margem padrão */
+        text-align: center;
+    }
+}
+.unidadeCarregamento{
+    border-top: 1px solid #eee; /* Adiciona uma borda superior para separar o rodapé */
+    padding-top: 2px;
+    text-align: center; /* Centraliza o texto do rodapé */
+    font-size: 12px;
+    font-family: 'Aptos', sans-serif;
+    font-weight: 200;
+    color: #eee;
+}
+.unidadeCarregamentoProd{
+    border-top: 1px solid #eee; /* Adiciona uma borda superior para separar o rodapé */
+    padding-top: 2px;
+    text-align: center; /* Centraliza o texto do rodapé */
+    font-size: 16px;
+    font-family: 'Aptos', sans-serif;
+    font-weight: 200;
+    color: #eee;
+}
+.row2{
+    background-color: #E3E7EC;
+    margin: 5px auto;
+    border-radius: 10px;
+}
+.totaisWrap{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    //background-color: blueviolet;
+    
+}
+.totais{
+    display: flex;
+    justify-content: space-around;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    //background-color: antiquewhite;
+}
+.nomes{
+    display: flex;
+    width: 100px;
+    align-items: center;
+    justify-content:center;
+    font-family: 'Aptos', sans-serif;
+    font-weight: 700;
+    margin-left: 10px;
+}
+.card{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    margin-left: 5px;
+    text-align: center;
+    height: 140px;
+    width: 220px;
+    border-radius: 10px;
+    background-color:#002B5C;
+    box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+}
+.cardForno{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    margin: 10px;
+    text-align: center;
+    height: 100px;
+    //width: 400px;
+    border-radius: 10px;
+    background-color:#4972B0;
+    box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+}
+.unidadeForno {
+    border-top: 1px solid #eee; /* Adiciona uma borda superior para separar o rodapé */
+    padding-top: 1px;
+    text-align: center; /* Centraliza o texto do rodapé */
+    font-family: 'Aptos', sans-serif;
+    font-weight: 200;
+    color: #eee;
+}
+.valor {
+    font-size: 30px;
+    flex: 1;
+    display: flex;
+    align-items: center; /* Centraliza verticalmente */
+    justify-content: center; /* Centraliza horizontalmente */
+    height: 100%; /* Certifique-se de que o contêiner tenha uma altura definida */
+    font-family: 'Aptos', sans-serif;
+    font-weight: 700;
+    color: #eee;
+    margin-bottom: 15px;
+    p {
+        margin: 0; /* Remove a margem padrão */
+        text-align: center;
+    }
+}
+.valorForno {
+    font-size: 30px;
+    flex: 1;
+    display: flex;
+    align-items: center; /* Centraliza verticalmente */
+    justify-content: center; /* Centraliza horizontalmente */
+    height: 100%; /* Certifique-se de que o contêiner tenha uma altura definida */
+    font-family: 'Aptos', sans-serif;
+    font-weight: 700;
+    color: #eee;
+    p {
+        margin: 5; /* Remove a margem padrão */
+        text-align: center;
+    }
+}
+.unidade {
+    border-top: 1px solid #eee; /* Adiciona uma borda superior para separar o rodapé */
+    padding-top: 2px;
+    text-align: center; /* Centraliza o texto do rodapé */
+    font-family: 'Aptos', sans-serif;
+    font-weight: 200;
+    color: #eee;
+}
+.produtividadeWrap{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 50%;   
+}
+.produtividade{
+    //background-color: #2d53da;
+    margin-top: 2px;
+}
+.cardCalcinacao{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    margin-left: 5px;
+    text-align: center;
+    height: 100px;
+    width: 200px;
+    border-radius: 10px;
+    background-color:#002B5C;
+    box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+}
+.unidadeCalcinacao{
+    border-top: 1px solid #eee; /* Adiciona uma borda superior para separar o rodapé */
+    padding-top: 1px;
+    text-align: center; /* Centraliza o texto do rodapé */
+    font-family: 'Aptos', sans-serif;
+    font-weight: 200;
+    color: #eee;
+}
+.valorCalcinacao {
+    font-size: 30px;
+    flex: 1;
+    display: flex;
+    align-items: center; /* Centraliza verticalmente */
+    justify-content: center; /* Centraliza horizontalmente */
+    height: 100%; /* Certifique-se de que o contêiner tenha uma altura definida */
+    font-family: 'Aptos', sans-serif;
+    font-weight: 700;
+    color: #eee;
+    p {
+        margin: 5; /* Remove a margem padrão */
+        text-align: center;
+    }
+}
+.cardEnsacado{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    margin-left: 5px;
+    text-align: center;
+    height: 100px;
+    width: 200px;
+    border-radius: 10px;
+    background-color:#4972B0;
+    box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+}
+.chartBarEnsacados{
+    width: 80%;
+    height: 100%;
+    background-color: #E3E7EC;
+    border-radius: 8px;
+    box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+  }
+  .rowBotoes{
+    width: 99%;
+    display: flex;
+    justify-content: end;
+    margin-top: -10px;
+    margin-bottom: 20px;
+}
+.rowBotoesFabricas{
+    width: 99%;
+    display: flex;
+    justify-content: start;
+    margin-top: -10px;
+    margin-bottom: 20px;
+}
+.btnCalc{
+    cursor: pointer;
+    background-color: #444959;
+    color: #fff;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    margin-left: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}
+.btnCalc.active {
+    background-color: #4972B0; /* Cor quando o botão for clicado */
+    color: white;
+  }
+
+.media{
+    display: flex;
+    justify-content: center;
+    height: 50%;
+    border-radius: 8px;
+  }
+  .projecao {
+    display: flex;
+    justify-content: center;
+    height: 50%;
+    border-radius: 8px;
+  }
+  .titulo2{
+    font-family: 'Aptos', sans-serif;
+    text-align: center;
+    margin-top: 10px;
+    position: relative;
+    margin-bottom: 8px;
+  }
+  .result{
+    background-color: #71AAE0;
+    border-radius: 8px;
+    width: 80%;
+    height: 90%;
+    box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+  }
+  .containerModal{
+    display: flex;
+    justify-content: end;
+    width: 100%;
+    height: 80%;
+}
+  .projecoes{
+    display: flex;
+    flex-direction: column;
+    justify-self: flex-end;
+    height: 100%;
+    width: 20%;
+    margin-left: 5px;
+    border-radius: 8px;
+    background-color: #E3E7EC;
+  }
+  .card2{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    margin-left: 5px;
+    text-align: center;
+    height: 90%;
+    width: 80%;
+    border-radius: 10px;
+    background-color:#002B5C;
+    box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    .unidade2 {
+        border-top: 1px solid #eee; /* Adiciona uma borda superior para separar o rodapé */
+        padding-top: 1px;
+        text-align: center; /* Centraliza o texto do rodapé */
+        font-family: 'Aptos', sans-serif;
+        font-weight: 200;
+        color: #eee;
+    }
+}
+////////////
+.cardCarregamentoEqpto{
+display: flex;
+flex-direction: column;
+align-items: center;
+text-align: center;
+height: 90px;
+width: 200px;
+border-radius: 10px;
+background-color:#E3E7EC;
+box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+-webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+-moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+}        
+.valorCarregamentoEqpto{
+font-size: 16px;
+flex: 1;
+display: flex;
+align-items: center; /* Centraliza verticalmente */
+justify-content: center; /* Centraliza horizontalmente */
+height: 100%; /* Certifique-se de que o contêiner tenha uma altura definida */
+font-family: 'Aptos', sans-serif;
+font-weight: 700;
+color: #eee;
+    p {
+        margin: 0; /* Remove a margem padrão */
+        text-align: center;
+    }
+}
+.unidadeCarregamentoEqpto{
+border-top: 1px solid #eee; /* Adiciona uma borda superior para separar o rodapé */
+padding-top: 2px;
+text-align: center; /* Centraliza o texto do rodapé */
+font-size: 10px;
+font-family: 'Aptos', sans-serif;
+font-weight: 200;
+color: #eee;
+}
+.containerInterno{
+display: flex;
+height: 100%;
+}
+.containerInterno .esquerda{
+margin-top: 15px;
+height: 80%;
+width: 80%;
+border-radius: 8px;
+
+}
+
+.coluna1{
+width: 70%;
+height: 240px;
+margin-top: 10px;
+align-items: center;
+justify-content: space-around;
+display: flex;
+}
+.coluna1FCM3{
+width: 70%;
+height: 360px;
+margin-top: 10px;
+}
+.rowWrapFCM2{
+display: flex;
+flex-direction: column;
+height: 10%;
+border-radius: 8px;
+background-color:#E3E7EC;
+margin: 5px;
+}
+.coluna1FCM2{
+display: flex;
+width: 70%;
+height: 10px;
+margin-top: 10px;
+}
+.cardFabFCM2{
+display: flex;
+flex-direction: column;
+//justify-content: space-between;
+align-items: center;
+padding: 20px;
+margin: 20px;
+margin-bottom: 23px;
+text-align: center;
+height: 158px;
+width: 200px;
+border-radius: 10px;
+background-color:#E3E7EC;
+box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+-webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+-moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+}
+.cardFab{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    margin: 20px;
+    margin-bottom: 23px;
+    text-align: center;
+    height: 208px;
+    width: 200px;
+    border-radius: 10px;
+    background-color:#002B5C;
+    box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+}
+.rowEsqFCM2{
+display: flex;
+height: 130px;
+margin: 5px;    
+}
+.coluna2FCM2{
+display: flex;
+margin-top: 10px;
+height: 140px;
+align-items: end;
+}
+.linha1{
+display: flex;
+width: 90%;
+align-items: center;
+justify-content: space-around;
+}
+.eqpto {
+// display: flex;
+// justify-content: center;  /* Centraliza horizontalmente */
+// align-items: center;      /* Centraliza verticalmente */
+// height: 120px;            /* Define uma altura qualquer para o exemplo */
+// width: 100px;
+font-family: 'Aptos', sans-serif;
+font-weight: 700;
+}
+.linha2{
+display: flex;
+}
+.linha3{
+display: flex;
+}
+.esquerda .rowEsq{
+display: flex;
+height: 13%;
+margin: 5px;    
+}
+.coluna2{
+display: flex;
+margin-top: 10px;
+height: 240px;
+align-items: end;
+}
+.coluna2FCM3{
+display: flex;
+justify-content: center;
+margin-top: 10px;
+//height: 240px;
+align-items: center;
+}
+.rowWrap{
+display: flex;
+flex-direction: column;
+//height: 10%;
+border-radius: 8px;
+background-color: #E3E7EC;
+//margin: 5px;
+}
+.containerInterno .direita{
+
+width: 20%;
+border-radius: 8px;
+display: flex;
+flex-direction: column;
+margin: 5px;
+}
+.direita .totais{
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+height: 700px;
+border-radius: 8px;
+background-color: #E3E7EC;
+
+}
+.direita .estoques{
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+border-radius: 8px;
+//background-color: rgb(230, 234, 238);
+}
+.cardFabDir{
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+align-items: center;
+padding: 20px;
+margin: 20px;
+margin-bottom: 23px;
+text-align: center;
+height: 208px;
+width: 200px;
+border-radius: 10px;
+background-color:#4972B0; /* cor base */
+
+box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+-webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+-moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+}
+.cardEst{
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+align-items: center;
+padding: 20px;
+margin: 8px;
+text-align: center;
+height: 120px;
+width: 100%;
+border-radius: 8px;
+background-color:rgb(230, 234, 238);
+box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+-webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+-moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+}
+.btnCalcProd{
+cursor: pointer;
+background-color: #002B5C;
+color: #eee;
+width: 320px;
+height: 53px;
+border-radius: 5px;
+margin-left: 5px;
+p{
+    text-align: center;
+    margin-top: 15px;
+}
+}
+.rowSuperior{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    vertical-align: baseline;
+  }
+  .rowSuperior .buttons{
+    display: flex;
+    width: 50%;
+    align-items: center;
+    justify-content: space-around;
+  } 
+  .rightEqpto{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 20%;
+    height: 140px;
+    background-color: #E3E7EC;
+    border-radius: 8px;
+    margin: 5px;
+}    
+.tituloEqpto{
+    font-family: 'Aptos', sans-serif;
+    font-size: 12px;
+    margin-bottom: 8px;
+    margin-top: -30px;
+    text-align: center;
+}
+.media2{
+    display: flex;
+    justify-content: center;
+    height: 50%;
+    border-radius: 8px;
+}    
+.cardCarregamentoEqpto{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    height: 90px;
+    width: 200px;
+    border-radius: 10px;
+    background-color:#002B5C;
+    box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+}        
+.valorCarregamentoEqpto{
+    font-size: 16px;
+    flex: 1;
+    display: flex;
+    align-items: center; /* Centraliza verticalmente */
+    justify-content: center; /* Centraliza horizontalmente */
+    height: 100%; /* Certifique-se de que o contêiner tenha uma altura definida */
+    font-family: 'Aptos', sans-serif;
+    font-weight: 700;
+    color: #eee;
+        p {
+            margin: 0; /* Remove a margem padrão */
+            text-align: center;
+        }
+}
+.unidadeCarregamentoEqpto{
+    border-top: 1px solid #eee; /* Adiciona uma borda superior para separar o rodapé */
+    padding-top: 2px;
+    text-align: center; /* Centraliza o texto do rodapé */
+    font-size: 10px;
+    font-family: 'Aptos', sans-serif;
+    font-weight: 200;
+    color: #eee;
+}
+.containerInterno{
+    display: flex;
+    height: 100%;
+}
+.containerInterno .esquerda{
+    height: 80%;
+    width: 80%;
+    border-radius: 8px;
+    
+}
+
+.tituloFab{
+    font-family: 'Aptos', sans-serif;
+    margin-left: 25px;
+    margin-top: 10px;
+    margin-bottom: 8px;
+}

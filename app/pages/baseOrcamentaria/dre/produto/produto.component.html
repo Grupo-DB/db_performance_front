@@ -1,0 +1,321 @@
+<div class="menu">
+    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+        <li nz-menu-item nzMatchRouter="#">
+            <a style="font-size: 13px;" routerLink="/welcome/baseOrcamentaria/orcamentoBase/homeOrcamento">Início</a>
+        </li>
+        <li *ngIf="hasGroup(['Admin','Master'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizAnalitica" >Raízes Analíticas</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/centrocustopai" >Centro de Custo Pai</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/centrocusto" >Centro de Custo </a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizSintetica" >Raiz Sintética</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/contaContabil" >Conta Contábil</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/grupoItens" >Grupos de Itens</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/orcamentoBase" >Orçamento Base</a>
+                </li>
+            </ul>
+        </li >
+        
+        <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorSetor','OrcamentoGestorItens'])" nz-submenu nzTitle="Acompanhamento "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorSetor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoRealizado/realizado"> Orçado x Realizado Setorial</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorItens'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoGrupoItens/orcamentogrupoitens"> Orçado x Realizado Grupo de Itens</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/projetado"> DRE Projetado</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorProd'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/indicadorescp">Indicadores Custo de Produção</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/curva">Curva ABC</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/ppr">PPR - Orçamento</a>
+                </li> 
+            </ul>
+           
+        </li>    
+    </ul>
+</div>
+<div class="container flex flex-column align-items-center mb-4">
+    <div class="containerInterno w-12">
+        <div @swipeAnimation>
+            <form
+                [formGroup]="registerForm" 
+                title="Cadastrar novo Produto" 
+                class="flex flex-column gap-4" 
+            >
+                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                    <div class="bloco fg1 flex flex-column w-12 align-items-center">
+                        <p-card class="card w-12 text-center">
+                            <ng-template #header>
+                                <div class="header titulo-info w-full text-center">
+                                    <h2>Produto</h2>
+                                </div>
+                            </ng-template>
+                            <div class="flex flex-column w-12 gap-3">
+
+                                <div class="w-12 text-left">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-file-edit" />
+                                            <input
+                                                variant="filled"
+                                                [style]="{'width':'100%'}"
+                                                pInputText id="on_label"
+                                                autocomplete="off"
+                                                formControlName="nome"
+                                                type="text"
+                                            />
+                                        </p-iconfield>
+                                        <label for="on_label">Informe o nome</label>
+                                    </p-floatlabel>
+                                </div>
+
+                                <div class="w-12 text-left">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-file-edit" />
+                                            <input
+                                                variant="filled"
+                                                [style]="{'width':'100%'}"
+                                                pInputText id="on_label"
+                                                autocomplete="off"
+                                                formControlName="aliquota"
+                                                type="text"
+                                            />
+                                        </p-iconfield>
+                                        <label for="on_label">Informe à aliquota</label>
+                                    </p-floatlabel>
+                                </div>
+                           
+                                
+
+                            </div>
+                            <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                                <p-button 
+                                    (onClick)="clearForm()" 
+                                    label="Limpar"
+                                    severity="info"
+                                    iconPos="right"
+                                    icon="pi pi-eraser"  
+                                    tooltipPosition="top"
+                                    pTooltip="Limpar"
+                                />
+                                <p-button 
+                                    (onClick)="submit()" 
+                                    label="Salvar Produto" 
+                                    severity="success"
+                                    icon="pi pi-check" 
+                                    iconPos="right" 
+                                    tooltipPosition="top"
+                                    pTooltip="Salvar Produto"
+                                />
+                            </div>
+                        </p-card>
+                    </div>    
+                </div>
+            </form>
+
+        </div>
+
+        <div class="background-form mt-4 w-12" @swipeAnimation>
+            <div class="text-left w-12">
+                <p-toast />
+                <p-confirmDialog />
+                <p-inplace closable="true" closeIcon="pi pi-angle-up">
+                    <ng-template pTemplate="display">
+                        <p-button 
+                            label="Produtos" 
+                            tooltipPosition="top"
+                            pTooltip="Exibir Produtos"
+                            severity="info"      
+                        >
+                            <div class="inline-flex align-items-center">
+                                <span><i class="pi pi-angle-down"></i></span>
+                            </div>
+                        </p-button>
+
+                    </ng-template>
+                    <ng-template pTemplate="content">
+                    <p-table
+                            #dt1
+                            [value]="produtos"
+                            [paginator]="true"
+                            [rows]="10"
+                            [rowsPerPageOptions]="[10, 20, 50]"
+                            [globalFilterFields]="['id', 'nome','aliquota']"
+                            [showCurrentPageReport]="true"
+                            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Produtos"
+                            scrollable="true"
+                        >
+                            <ng-template pTemplate="caption">
+                                <div class="flex flex-row md: justify-content-end">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-search" style="color: #1b91ff;" />
+                                                <input 
+                                                variant="filled" 
+                                                [(ngModel)]="inputValue"
+                                                [style]="{'width':'100%'}" 
+                                                pInputText id="on_label"
+                                                autocomplete="off" 
+                                                type="text" 
+                                                (keydown)="filterTable()"
+                                                />
+                                        </p-iconfield>
+                                        <label for="on_label" style="color: #1b91ff">Pesquisar</label>
+                                    </p-floatlabel>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr class="tabela">
+                                    <th style="width:50%; text-align: center;" type="text" field="nome" display="menu">
+                                        Nome
+                                    </th>
+                                    <th style="width:50%; text-align: center;" type="text" field="aliquota" display="menu">
+                                        Aliquota
+                                    </th>
+                                    <th style="width: 50%; text-align: center;">Ações</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-produto>
+                                <tr>
+                                    <td style="text-align: center;">{{ produto.nome }}</td>
+                                    <td style="text-align: center;">{{ produto.aliquota }}</td>
+                                    <td style="text-align: center;">
+                                        <div class="flex justify-content-center gap-2">
+                                            <p-button
+                                                icon="pi pi-file-edit"
+                                                size="small"
+                                                [raised]="true"
+                                                severity="info"
+                                                class="ml-1"
+                                                tooltipPosition="top"
+                                                pTooltip="Editar"
+                                                (onClick)="abrirModalEdicao(produto)"
+                                            ></p-button>
+                                            <p-button 
+                                                icon="pi pi-trash" 
+                                                severity="danger" 
+                                                size="small" 
+                                                [raised]="true"
+                                                pTooltip="Excluir" 
+                                                tooltipPosition="top"
+                                                (onClick)="excluirProduto(produto.id)"
+                                            ></p-button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="paginatorleft">
+                                <p-button type="button"  styleClass="p-button-text"></p-button>
+                            </ng-template>
+                            <ng-template pTemplate="paginatorright">
+                                <p-button type="button"  styleClass="p-button-text"></p-button>
+                            </ng-template> 
+                        </p-table>
+
+                    </ng-template>
+                </p-inplace>
+            </div>
+        </div>
+
+    </div>
+    
+</div>
+
+<p-drawer
+    [(visible)]="editFormVisible"
+    position="right"
+    [style]="{ width: '60vw' }"
+    styleClass="w-full md:w-12 lg:w-4"
+>
+        <div class="background-form">
+            <form
+                [formGroup]="editForm" title="Editar Produto" class="flex flex-column gap-4" 
+            >
+                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                    <div class="flex flex-column w-12 align-items-center">
+                        <p-card class="card w-12 text-center">
+                            <ng-template #header>
+                                <div class="header w-full text-center">
+                                    <b>Editar Produto</b>
+                                </div>
+                            </ng-template>
+                            <div class="bloco flex flex-column w-12 gap-3">
+                                <div class="w-12 text-left">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-file-edit" />
+                                            <input
+                                                variant="filled"
+                                                [style]="{'width':'100%'}"
+                                                pInputText id="on_label"
+                                                autocomplete="off"
+                                                formControlName="nome"
+                                                type="text"
+                                            />
+                                        </p-iconfield>
+                                        <label for="on_label">Informe o nome</label>
+                                    </p-floatlabel>
+                                </div>
+                                
+                                <div class="w-12 text-left">
+                                    <p-floatlabel variant="on">
+                                        <p-inputNumber
+                                            variant="filled"
+                                            [style]="{'width':'100%'}"
+                                            pInputText id="on_label"
+                                            autocomplete="off"
+                                            formControlName="aliquota"
+                                            mode="decimal"
+                                            [minFractionDigits]="2"
+                                        />
+                                        <label for="on_label">Informe à aliquota</label>
+                                    </p-floatlabel>
+                                </div>
+                            </div>
+                            <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                                <p-button 
+                                    (onClick)="clearEditForm()" 
+                                    label="Limpar"
+                                    iconPos="right"  
+                                    tooltipPosition="top"
+                                    pTooltip="Limpar"
+                                    icon="pi pi-eraser"
+                                    severity="info"
+                                />
+                                <p-button 
+                                    (onClick)="saveEdit()" 
+                                    label="Salvar" 
+                                    severity="success"
+                                    icon="pi pi-check" 
+                                    iconPos="right" 
+                                    tooltipPosition="top"
+                                    pTooltip="Salvar"
+                                />
+                            </div>
+                        </p-card>
+                    </div>    
+                </div>
+            </form>
+        </div>
+</p-drawer>

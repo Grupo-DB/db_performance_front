@@ -1,0 +1,22 @@
+<p-dialog [(visible)]="display" [modal]="true" [style]="{ width: '65rem' }" [closable]="false" header="Termos de Uso">
+    <div>
+      <p>Por este termo de confidencialidade e sigilo comprometo-me:</p>
+      <p>1 - A não utilizar as informações confidenciais a que tiver acesso, para gerar benefício próprio exclusivo e /ou unilateral, presente ou futuro, ou para uso de terceiros;</p>
+      <p>2 - Não efetuar nenhuma gravação ou cópia da documentação confidencial a que tiver acesso;</p>
+      <p>3 - A não apropriar-me de naterial confidencial e/ou sigiloso da tecnologia que venha a ser disponível;</p>
+      <p>4 - Não revelar, fora do âmbito profissional, fato ou informação de qualquer natureza de que tenha conhecimento por força das minhas atribuições, salvo em decorrência de decisão competente na esfera legal ou judicial;</p>
+      <p>5 - A não repassar o conhecimento das informações confidenciais, responsabilizando-me por todas as pessoas que vierem a ter acesso às informações, por meu intermédio, e obrigando-me, 
+         assim, a ressarcir a ocorrência de qualquer dano e/ou prejuízo oriundo de uma eventual quebra de sigilo das informações fornecidas.
+      </p>
+      <br>
+      <p>Neste Termo, as seguintes expressões serão assim definidas: </p>
+      <br>
+      <br>
+      <p>Informação Confidencial inclui, mas não se limita, à informação relativa às operações, processos, planos ou intenções,informações sobre produção, tecnologia, instalações,
+        equipamentos, segredos de negócio, segredos de fábrica, dados, habilidadees especializadas, projetos, métodos e metodologia, fluxogramas, especializações, componentes, fórmulas,
+        produtos, amostras, diagramas, desenhos de esquema industrial, patentes, oportunidades de mercado, dados cadastrais de clientes e funcionários. 
+      </p>
+
+      <button pButton type="button" label="Aceitar" icon="pi pi-check" (click)="acceptTerms()"></button>
+    </div>
+  </p-dialog>

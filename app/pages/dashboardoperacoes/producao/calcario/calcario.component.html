@@ -1,0 +1,837 @@
+<div class="container">
+    <div class="titulo mt-6 mb-6 text-2xl">
+        <p-divider align="left" type="solid">
+            <b><a routerLink="../../">Painel Operacional</a> / <a routerLink="../">Produção</a> / Fábricas de Calcário</b>
+        </p-divider>
+    </div>
+    <div class="rows"@swipeAnimation><!--Carregamentos-->
+        <div class="row1">
+            <div class="right w-12 lg:w-6">
+                <div class="titulo3">
+                    <span> <b> Carregamento geral</b></span><br>
+                </div>
+
+                <!-- Indicador de carregamento -->
+                <div *ngIf="loading" class="loading-indicator">
+                    <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                </div>
+
+                <div class="carregamento flex flex-column gap-1 align-items-center lg:flex-row" *ngIf="!loading">
+                    <div class="cardCarregmento w-10 lg:w-3">
+                        <div class="valorCarregamento">
+                            <p>{{ movimentacaoDia }}</p>
+                        </div>
+                        <div class="unidadeCarregamento">
+                            <p>Último dia</p>
+                        </div>
+                    </div>
+                    <div class="cardCarregmento w-10 lg:w-3">
+                        <div class="valorCarregamento">
+                            <p>{{ movimentacaoMes }}</p>
+                        </div>
+                        <div class="unidadeCarregamento">
+                            <p>Acomulado mês atual</p>
+                        </div>
+                    </div>
+                    <div class="cardCarregmento w-10 lg:w-3">
+                        <div class="valorCarregamento">
+                            <p>{{ movimentacaoAno }}</p>
+                        </div>
+                        <div class="unidadeCarregamento">
+                            <p>Acomulado ano atual</p>
+                        </div>
+                    </div>
+                </div>
+            </div>    
+        </div>
+        <div class="row2 flex flex-column lg:flex-row"@efeitoFade><!--FCM1-->
+            <div class="justify-content-center lg:w-12">
+                <div class="titulo3">
+                    <i class="pi pi-plus-circle"></i>
+                    <span (click)="exibirGrafico()" style="cursor: pointer;"><b> FCMI</b></span><br>
+                </div>
+        
+                <!-- Indicador de carregamento -->
+                <div *ngIf="loading" class="loading-indicator">
+                    <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                </div>
+        
+                <!-- Conteúdo a ser exibido após o carregamento -->
+                <div class="flex flex-column justify-content-center align-items-center gap-3 lg:flex-row lg:mt-3" *ngIf="!loading">
+                    <div class="card w-10 lg:w-3">
+                        <div class="valor">
+                            <p>{{ fcmiTotalDia || 'N/A' }}</p>
+                        </div>
+                        <div class="unidade">
+                            <p>Último dia</p>
+                        </div>
+                    </div>
+                    <div class="card w-10 lg:w-3">
+                        <div class="valor">
+                            <p>{{ fcmiTotalMes || 'N/A' }}</p>
+                        </div>
+                        <div class="unidade">
+                            <p>Acumulado mês atual</p>
+                        </div>
+                    </div>
+                    <div class="card w-10 lg:w-3">
+                        <div class="valor">
+                            <p>{{ fcmiTotalAno || 'N/A' }}</p>
+                        </div>
+                        <div class="unidade">
+                            <p>Acumulado ano atual</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="loading" class="loading-indicator">
+                <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+            </div>
+
+            <div class="tabelaProdutividade w-12 lg:w-10" *ngIf="!loading">
+                <div class="titulo3">
+                    <span><b>Produtividade</b></span><br>
+                </div>
+                
+                <p-table [value]="fcmiDados" [scrollable]="true" scrollHeight="350px">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Período</th>
+                            <th>Horas Produção</th>
+                            <th>Tn/h</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-fcmiDado>
+                        <tr>
+                            <td>{{ fcmiDado.dia || fcmiDado.mes || fcmiDado.ano || 'N/A' }}</td>
+                            <td>{{ fcmiDado.hsProdDia || fcmiDado.hsProdMes || fcmiDado.hsProdAno || 'N/A' }}</td>
+                            <td>{{ fcmiDado.tnHoraDia || fcmiDado.tnHoraMes || fcmiDado.tnHoraAno || 'N/A' }}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+        <div class="row3 flex flex-column lg:flex-row"><!--FCMII-->
+            <div class="justify-content-center lg:w-12">
+                <div class="titulo3">
+                    <i class="pi pi-plus-circle"></i><span (click)="exibirGrafico()" style="cursor: pointer;"> <b> FCMII </b></span><br>
+                </div>
+                 <!-- Indicador de carregamento -->
+                <div *ngIf="loading2" class="loading-indicator">
+                    <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                </div>
+                <div class="flex flex-column justify-content-center align-items-center gap-3 lg:flex-row lg:mt-3" *ngIf="!loading2">
+                        <div class="card w-10 lg:w-3">
+                            <div class="valor">
+                                <p>{{ fcmiiTotalDia }}</p>
+                            </div>
+                            <div class="unidade">
+                            <p>Último dia</p>
+                            </div>
+                        </div>
+                        <div class="card w-10 lg:w-3">
+                            <div class="valor">
+                                <p>{{ fcmiiTotalMes }}</p>
+                            </div>
+                            <div class="unidade">
+                            <p>Acomulado mês atual</p>
+                            </div>
+                        </div>
+                        <div class="card w-10 lg:w-3">
+                            <div class="valor">
+                                <p>{{ fcmiiTotalAno }}</p>
+                            </div>
+                            <div class="unidade">
+                            <p>Acomulado ano atual</p>
+                            </div>
+                        </div>
+                </div>
+            </div>
+            <div *ngIf="loading2" class="loading-indicator">
+                <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+            </div>
+            <div class="tabelaProdutividade w-12 lg:w-10" *ngIf="!loading2">   
+                <div class="titulo3">
+                    <span> <b> Produtividade</b></span><br>
+                </div>
+                <p-table 
+                    [value]="fcmiiDados"
+                    [scrollable]="true" 
+                    scrollHeight="350px"  
+                >
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Período</th>
+                            <th>Horas Produção</th>
+                            <th>Tn/h</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-fcmiiDado>
+                        <tr *ngIf="fcmiiDado.dia">
+                            <td>{{ fcmiiDado.dia }}</td>
+                            <td>{{ fcmiiDado.hsProdDia }}</td>
+                            <td>{{ fcmiiDado.tnHoraDia }}</td>
+                        </tr>
+                        <tr *ngIf="fcmiiDado.mes">
+                            <td>{{ fcmiiDado.mes }}</td>
+                            <td>{{ fcmiiDado.hsProdMes }}</td>
+                            <td>{{ fcmiiDado.tnHoraMes }}</td>
+                        </tr>
+                        <tr *ngIf="fcmiiDado.ano">
+                            <td>{{ fcmiiDado.ano }}</td>
+                            <td>{{ fcmiiDado.hsProdAno }}</td>
+                            <td>{{ fcmiiDado.tnHoraAno }}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>            
+        </div>
+        <div class="row4 flex flex-column lg:flex-row"@swipeAnimationReverse><!--FCMIII-->
+            <div class="justify-content-center lg:w-12">
+                <div class="titulo3">
+                    <i class="pi pi-plus-circle"></i><span (click)="exibirGrafico()" style="cursor: pointer;"> <b> FCMIII </b></span><br>
+                </div>
+                <div *ngIf="loading3" class="loading-indicator">
+                    <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                </div>
+                <div class="flex flex-column justify-content-center align-items-center gap-3 lg:flex-row lg:mt-3" *ngIf="!loading3">
+                    <div class="card w-10 lg:w-3">
+                        <div class="valor">
+                            <p>{{ fcmiiiTotalDia }}</p>
+                        </div>
+                        <div class="unidade">
+                        <p>Último dia</p>
+                        </div>
+                    </div>
+                    <div class="card w-10 lg:w-3">
+                        <div class="valor">
+                            <p>{{ fcmiiiTotalMes }}</p>
+                        </div>
+                        <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                        </div>
+                    </div>
+                    <div class="card w-10 lg:w-3">
+                        <div class="valor">
+                            <p>{{ fcmiiiTotalAno }}</p>
+                        </div>
+                        <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="loading3" class="loading-indicator">
+                <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+            </div>
+            <div class="tabelaProdutividade w-12 lg:w-10" *ngIf="!loading3">   
+                <div class="titulo3">
+                    <span> <b> Produtividade</b></span><br>
+                </div>
+                <p-table 
+                    [value]="fcmiiiDados"
+                    [scrollable]="true" 
+                    scrollHeight="350px"
+                    
+                >
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Período</th>
+                            <th>Horas Produção</th>
+                            <th>Tn/h</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-fcmiiiDado>
+                        <tr *ngIf="fcmiiiDado.dia">
+                            <td>{{ fcmiiiDado.dia }}</td>
+                            <td>{{ fcmiiiDado.hsProdDia }}</td>
+                            <td>{{ fcmiiiDado.tnHoraDia }}</td>
+                        </tr>
+                        <tr *ngIf="fcmiiiDado.mes">
+                            <td>{{ fcmiiiDado.mes }}</td>
+                            <td>{{ fcmiiiDado.hsProdMes }}</td>
+                            <td>{{ fcmiiiDado.tnHoraMes }}</td>
+                        </tr>
+                        <tr *ngIf="fcmiiiDado.ano">
+                            <td>{{ fcmiiiDado.ano }}</td>
+                            <td>{{ fcmiiiDado.hsProdAno }}</td>
+                            <td>{{ fcmiiiDado.tnHoraAno }}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>   
+        </div>
+    </div>
+</div>
+
+
+
+<!------------------------MOdal---------------------->
+<p-dialog 
+    [modal]="true"
+    [(visible)]="graficoVisivel" 
+    [style]="{ width: '95%', height: '95%' }" 
+>
+    <div class="titulo">
+        <p-divider align="left" type="solid">
+            <b>Produção  Calcário</b>
+        </p-divider> 
+    </div>
+    <div class="flex flex-row justify-content-center lg:justify-content-end ">
+        <div 
+            class="btnCalc"
+            (click)="gerarGrafico('mensal','acumulado')"
+            [ngClass]="{'active': selectedButton === 'mensal'}" 
+        >
+            <p>No mês</p>
+        </div>
+        <div 
+            class="btnCalc" 
+            (click)="gerarGrafico('anual','acumulado')"
+            [ngClass]="{'active': selectedButton === 'anual'}" 
+        >
+            <p>No ano</p>
+        </div>
+    </div>
+    <div class="rowBotoesFabricas mt-3 w-12 flex-column gap-2 align-items-center lg:flex-row">
+        <div 
+            class="btnCalc w-10 lg:w-1"
+            (click)="gerarGrafico(selectedButton,'acumulado')"
+            [ngClass]="{'active': selectedFactory === 'acumulado'}"
+        >
+            <p>Acumulado</p>
+        </div>
+        <div 
+            class="btnCalc w-10 lg:w-1"
+           (click)="gerarGrafico(selectedButton,'fcmi')"
+           [ngClass]="{'active': selectedFactory === 'fcmi'}"
+        >
+            <p>FCM I</p>
+        </div>
+        <div 
+            class="btnCalc w-10 lg:w-1"
+            (click)="gerarGrafico(selectedButton,'fcmii')"
+            [ngClass]="{'active': selectedFactory === 'fcmii'}"
+        >
+            <p>FCM II</p>
+        </div>
+        <div class="btnCalc w-10 lg:w-1"
+        (click)="gerarGrafico(selectedButton,'fcmiii')"
+        [ngClass]="{'active': selectedFactory === 'fcmiii'}"
+        >
+            <p>FCM III</p>
+        </div>
+        <div 
+            class="btnCalc w-10 lg:w-1" 
+        >
+            <a (click)="exibirEquipamentos()" style="color: inherit;"><p>Detalhar</p></a>
+        </div>
+    </div>
+    <div class="w-full justify-content-center flex flex-column lg:flex-row lg:h-18rem">
+        <div class="chartRadarAvaliadores h-24rem w-full lg:w-10">
+            <canvas id="graficoTotalProducaoDiariaFcmi"></canvas>
+        </div>
+
+        <div class="projecoes mt-3 w-full flex-row lg:flex-column lg:w-2 lg:mt-0 lg:justify-content-center align-items-center lg:h-24rem">
+            <div class="af w-6 lg:w-full">
+                <div class="titulo2">
+                    <span> <b>Média do Período</b></span><br>
+                </div>
+                <div class="media">
+                    <div class="card2 gap-3 h-6rem">
+                        <div class="valor">
+                            <p>{{ media }}</p>
+                        </div>
+                        <div class="unidade2">
+                            <p>Tn</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="af w-6 lg:w-full">    
+                <div class="titulo2">
+                    <span> <b> Projeção no Período</b></span><br>
+                </div>
+                <div class="projecao">
+                    <div class="card2 gap-3 h-6rem">
+                        <div class="valor">
+                            <p>{{ projecao }}</p>
+                        </div>
+                        <div class="unidade2">
+                            <p>Tn</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="w-full mt-3 justify-content-center flex flex-column  lg:flex-row lg:h-18rem">
+        <div class="chartRadarAvaliadores h-24rem  w-full lg:w-10 lg:mt-8 ">
+            <canvas id="graficoTotalCarregamentoDiario"></canvas>
+        </div>
+        <div class="projecoes mt-3 w-full flex-row lg:flex-column lg:w-2 lg:mt-8 lg:h-24rem lg:justify-content-center align-items-center">
+            <div class="af w-6 lg:w-full">
+                <div class="titulo2">
+                    <span> <b>Média do Período</b></span><br>
+                </div>
+                <div class="media">
+                    <div class="card2 gap-3 h-6rem">
+                        <div class="valor">
+                            <p>{{ mediaCarregamento }}</p>
+                        </div>
+                        <div class="unidade2">
+                            <p>Tn</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="af w-6 lg:w-full">    
+                <div class="titulo2">
+                    <span> <b> Projeção no Período</b></span><br>
+                </div>
+                <div class="projecao">
+                    <div class="card2 gap-3 h-6rem">
+                        <div class="valor">
+                            <p>{{ projecaoCarregamento }}</p>
+                        </div>
+                        <div class="unidade2">
+                            <p>Tn</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>     
+
+</p-dialog>
+<!--MODAL EQUIPAMENTOS-->
+<p-dialog 
+    [modal]="true"
+    [(visible)]="equipamentosVisivel" 
+    [style]="{ width: '95%', height: '95%' }" 
+>
+<div class="titulo3">
+    <p-divider align="left" type="solid">
+        <b>Produtividade Fábricas</b>
+    </p-divider>
+    <div class="container">
+        <div class="rowSuperior flex-wrap">
+            <div class="buttons flex flex-column gap-3 w-12 lg:w-6 lg:flex-row lg:ml-7">
+                <p-datepicker
+                    [style]="{'width':'100%'}"
+                    id="da" 
+                    [(ngModel)]="data"
+                    dateFormat="dd/mm/yy"                  
+                    [showIcon]="true"
+                    placeholder="Data Inicio"
+                    appendTo="body"
+                >
+                </p-datepicker>
+                <p-datepicker
+                    [style]="{'width':'100%'}"
+                    id="da" 
+                    [(ngModel)]="dataFim"
+                    dateFormat="dd/mm/yy"                  
+                    [showIcon]="true"
+                    placeholder="Data Fim"
+                    appendTo="body"
+                >
+                </p-datepicker>
+                <div class="btnCalcProd" 
+                    (click)="calcularEquipamentos(data,dataFim)">
+                    <p>Calcular</p>
+                </div>
+            </div>
+            <div class="rightEqpto w-12 mt-3 lg:mt-0 lg:w-15rem">
+                <div class="tituloEqpto">
+                    <span> <b>Carregamento geral Tn</b></span><br>
+                </div>
+                <div class="media2">
+                    <div class="cardCarregamentoEqpto w-10">
+                        <div class="valorCarregamentoEqpto">
+                            <p>{{ totalCarregamento }}</p>
+                        </div>
+                          
+                    </div>
+                </div>    
+            </div>    
+        </div><!--end rowSupeiror-->
+        <div class=" flex flex-column justify-content-center lg:w-12 lg:flex-row">
+            <div class=" flex flex-column align-items-center justify-content-center  lg:w-12">
+                <div class="rowWrap mt-3 w-12 flex flex-column md:mt-3 w-11  lg:w-11 lg:mt-3">
+                    <div class="tituloFab lg:w-2">
+                        <b> FCM I </b>
+                    </div>    
+                    <div *ngIf="loadingResults" class="loading-indicator">
+                        <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                    </div>
+                    <div class="flex flex-column lg:flex-row lg:w-12"*ngIf="!loadingResults">
+                            <div class="flex flex-column lg:w-12"@swipeAnimation>
+                                <div class="flex flex-column align-items-center lg:flex-row lg:mt-2">
+                                    <div class="text-center font-bold w-4 -ml-8 lg:w-2 lg:ml-0">
+                                        <p>MG-01</p>
+                                    </div>
+                                    <div class="cardProd w-10 lg:w-3">
+                                        <div class="valorCarregamentoProd">
+                                            <p>{{ fcmiMg01HoraProd }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoProd">
+                                            <p>Hora produção</p>
+                                        </div>
+                                    </div>
+                                    <div class="cardProd w-10 lg:w-3">
+                                        <div class="valorCarregamentoProd">
+                                            <p>{{ fcmiMg01HoraParado }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoProd">
+                                            <p>Hora parado</p>
+                                        </div>
+                                    </div>
+                                    <div class="cardProd w-10 lg:w-3">
+                                        <div class="valorCarregamentoProd">
+                                            <p>{{ fcmiMg01Producao }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoProd">
+                                            <p>Tn produzida</p>
+                                        </div>
+                                    </div>
+                                    <div class="cardProd w-10 lg:w-3">
+                                        <div class="valorCarregamentoProd">
+                                            <p>{{ fcmiMg01Produtividade }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoProd">
+                                            <p>Produtividade</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-column mt-3 align-items-center lg:flex-row"><!--MG02-->
+                                    <div class="text-center font-bold w-2 -ml-8 lg:w-2 lg:ml-0">
+                                        <p>MG-02</p>
+                                    </div>
+                                    <div class="cardProd w-10 lg:w-3">
+                                        <div class="valorCarregamentoProd">
+                                            <p>{{ fcmiMg02HoraProd }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoProd">
+                                            <p>Hora produção</p>
+                                        </div>
+                                    </div>
+                                    <div class="cardProd w-10 lg:w-3">
+                                        <div class="valorCarregamentoProd">
+                                            <p>{{ fcmiMg02HoraParado }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoProd">
+                                            <p>Hora parado</p>
+                                        </div>
+                                    </div>
+                                    <div class="cardProd w-10 lg:w-3">
+                                        <div class="valorCarregamentoProd">
+                                            <p>{{ fcmiMg02Producao }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoProd">
+                                            <p>Tn produzida</p>
+                                        </div>
+                                    </div>
+                                    <div class="cardProd w-10 lg:w-3">
+                                        <div class="valorCarregamentoProd">
+                                            <p>{{ fcmiMg02Produtividade }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoProd">
+                                            <p>Produtividade</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-column align-items-center lg:w-4 lg:-mt-2 lg:flex-row"@swipeAnimationReverse>
+                                <div class="cardFab">
+                                    <div class="valorCarregamentoFab">
+                                        <p>{{ fcmiProdutividadeGeral }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoFab">
+                                        <p>Produtividade fábrica</p>
+                                    </div>
+                                </div>
+
+                                <div class="cardFab">
+                                    <div class="valorCarregamentoFab">
+                                        <p>{{ fcmiProducaoGeral }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoFab">
+                                        <p>Produção fábrica</p>
+                                    </div>
+                                </div>
+        
+                            </div>  
+                    </div><!--end row1-->
+                </div>    
+                <div class="rowWrapFCM2 mt-3 w-12 flex flex-column  lg:w-11 lg:mt-3">
+                    <div class="tituloFab lg:w-2">
+                        <b> FCM II </b>
+                    </div>
+                    <div *ngIf="loadingResults" class="loading-indicator">
+                        <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                    </div>
+                    <div class="flex flex-column lg:flex-row lg:w-12"*ngIf="!loadingResults">   
+                        <div class="flex flex-column lg:w-12"@swipeAnimationReverse>
+                            <div class="flex w-12 flex-column align-items-center lg:flex-row">
+                                <div class="text-center font-bold w-2 -ml-8 lg:w-1 lg:ml-0">
+                                    <p>MG-01</p>
+                                </div>
+                                <div class="cardProd w-10 lg:w-2">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ fcmiiMg01HoraProd }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Hora produção</p>
+                                    </div>
+                                </div>
+                                <div class="cardProd w-10 lg:w-2">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ fcmiiMg01HoraParado }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Hora parado</p>
+                                    </div>
+                                </div>
+                                <div class="cardProd w-10 lg:w-2">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ fcmiiMg01Producao }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Tn produzida</p>
+                                    </div>
+                                </div>
+                                <div class="cardProd w-10 lg:w-2">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ fcmiiMg01Produtividade }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Produtividade</p>
+                                    </div>
+                                </div>
+                                <div class="cardFabFCM2 w-10 lg:w-2">
+                                    <div class="valorCarregamentoFab">
+                                        <p>{{ fcmiiMg01Produtividade }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoFab">
+                                        <p>Produtividade fábrica</p>
+                                    </div>
+                                </div>
+                                <div class="cardFabFCM2 w-10 lg:w-2">
+                                    <div class="valorCarregamentoFab">
+                                        <p>{{ fcmiiMg01Producao }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoFab">
+                                        <p>Produção fábrica</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div><!--end row2-->
+                </div><!--EndTitle-->    
+                <div class="rowWrap mt-3 w-12 flex flex-column md:mt-3 w-11  lg:w-11 lg:mt-3">
+                    <div class="tituloFab lg:w-2">
+                        <b> FCM III </b>
+                    </div>
+                    <div *ngIf="loadingResults" class="loading-indicator">
+                        <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                    </div>
+                    <div class="flex flex-column  lg:w-12 lg:flex-row"*ngIf="!loadingResults">
+                        <div class="flex flex-column lg:w-12"@swipeAnimation>
+                            <div class="flex flex-column align-items-center lg:flex-row lg:mt-5 ">
+                                <div class="text-center font-bold w-2 -ml-8 lg:w-2 lg:ml-0">
+                                    <p>MG-01</p>
+                                </div>
+                                <div class="cardProd w-10 lg:w-3">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ fcmiiiMg01HoraProd }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Hora produção</p>
+                                    </div>
+                                </div>
+                                <div class="cardProd w-10 lg:w-3">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ fcmiiiMg01HoraParado }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Hora parado</p>
+                                    </div>
+                                </div>
+                                <div class="cardProd w-10 lg:w-3">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ fcmiiiMg01Producao }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Tn produzida</p>
+                                    </div>
+                                </div>
+                                <div class="cardProd w-10 lg:w-3">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ fcmiiiMg01Produtividade }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Produtividade</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-column mt-3 align-items-center lg:flex-row">
+                                <div class="text-center font-bold w-2 -ml-8 lg:w-2 lg:ml-0">
+                                    <p>MG-02</p>
+                                </div>
+                                <div class="cardProd w-10 lg:w-3">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ fcmiiiMg02HoraProd }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Hora produção</p>
+                                    </div>
+                                </div>
+                                <div class="cardProd w-10 lg:w-3">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ fcmiiiMg02HoraParado }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Hora parado</p>
+                                    </div>
+                                </div>
+                                <div class="cardProd w-10 lg:w-3">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ fcmiiiMg02Producao }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Tn produzida</p>
+                                    </div>
+                                </div>
+                                <div class="cardProd w-10 lg:w-3">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ fcmiiiMg02Produtividade }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Produtividade</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-column mt-3 align-items-center lg:flex-row">
+                                <div class="text-center font-bold w-2 -ml-8 lg:w-2 lg:ml-0">
+                                    <p>MG-03</p>
+                                </div>
+                                <div class="cardProd w-10 lg:w-3">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ fcmiiiMg03HoraProd }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Hora produção</p>
+                                    </div>
+                                </div>
+                                <div class="cardProd w-10 lg:w-3">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ fcmiiiMg03HoraParado }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Hora parado</p>
+                                    </div>
+                                </div>
+                                <div class="cardProd w-10 lg:w-3">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ fcmiiiMg03Producao }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Tn produzida</p>
+                                    </div>
+                                </div>
+                                <div class="cardProd w-10 lg:w-3">
+                                    <div class="valorCarregamentoProd">
+                                        <p>{{ fcmiiiMg03Produtividade }}</p>
+                                    </div>
+                                    <div class="unidadeCarregamentoProd">
+                                        <p>Produtividade</p>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="flex flex-column align-items-center lg:w-2 lg:-mt-5"@swipeAnimationReverse>    
+                            <div class="cardFab w-10 lg:w-11">
+                                <div class="valorCarregamentoFab">
+                                    <p>{{ fcmiiiProdutividadeGera }}</p>
+                                </div>
+                                <div class="unidadeCarregamentoFab">
+                                    <p>Produtividade fábrica</p>
+                                </div>
+                            </div>
+                            <div class="cardFab w-10 lg:w-11 lg:-mt-2">
+                                <div class="valorCarregamentoFab">
+                                    <p>{{ fcmiiiProducaoGeral }}</p>
+                                </div>
+                                <div class="unidadeCarregamentoFab">
+                                    <p>Produção fábrica</p>
+                                </div>
+                            </div>
+                        </div>    
+                    </div><!--end row3-->
+                </div>       
+            </div><!--end Esquerda-->
+            <div *ngIf="loadingResults" class="loading-indicator">
+                <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+            </div>
+            <div class="direita mt-3 lg:w-2"*ngIf="!loadingResults">
+                <div class="totais"@efeitoFade>
+                    <div class="cardFabDir w-10">
+                        <div class="valorCarregamentoFab">
+                            <p>{{ produtividadeFabricasGeral }}</p>
+                        </div>
+                        <div class="unidadeCarregamentoFab">
+                            <p>Produtividade</p>
+                        </div>
+                    </div>
+                    <div class="cardFabDir w-10">
+                        <div class="valorCarregamentoFab">
+                            <p>{{ producaoGeralFabrica }}</p>
+                        </div>
+                        <div class="unidadeCarregamentoFab">
+                            <p>Produção diária</p>
+                        </div>
+                    </div>
+                    <div class="cardFabDir w-10">
+                        <div class="valorCarregamentoFab">
+                            <p>{{ estoqueFcms }}</p>
+                        </div>
+                        <div class="unidadeCarregamentoFab">
+                            <p>Estq. FCM I/II</p>
+                        </div>
+                    </div>
+                    <div class="cardFabDir w-10">
+                        <div class="valorCarregamentoFab">
+                            <p>{{ estoqueFcmiii }}</p>
+                        </div>
+                        <div class="unidadeCarregamentoFab">
+                            <p>Estq. FCM III</p>
+                        </div>
+                    </div>
+                    <div class="cardFabDir w-10">
+                        <div class="valorCarregamentoFab">
+                            <p>{{ estoqueTotal }}</p>
+                        </div>
+                        <div class="unidadeCarregamentoFab">
+                            <p>Estq. Total</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="periodo-selecionado mt-3">
+                    <p style="font-size: 20px;" *ngIf="data && dataFim">
+                      Período: 
+                    </p>
+                    <b><p style="font-size: 20px;" >{{ data | date: 'dd/MM/yyyy' }} - {{ dataFim | date: 'dd/MM/yyyy' }}</p></b>
+                    <p *ngIf="!data || !dataFim">
+                      Nenhum período selecionado.
+                    </p>
+                </div>
+            </div><!--End Direita-->
+        </div><!--end containerInterno--> 
+    </div><!--end container--> 
+</div>
+</p-dialog>

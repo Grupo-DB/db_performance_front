@@ -1,0 +1,200 @@
+<!-- <app-arquivo [mostrarMenu]="false"></app-arquivo> -->
+<div class="menu">
+    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+        <li nz-menu-item nzMatchRouter="#">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/dashControle">Início</a>
+        </li>
+        <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/tipoEnsaio">Tipo de Ensaio</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/variavel">Variáveis de Ensaio</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/ensaio" >Ensaio</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/calculoEnsaio" >Cálculo de Ensaio</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/plano" >Plano de Análise</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/tipoAmostra" >Tipo de Amostra</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/produtoAmostra" >Produto de Amostra</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/garantia" >Garantias</a>
+                </li>
+            </ul>
+        </li >
+        <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/amostra">Amostras</a>
+        </li>
+
+        <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/ordem">Ordens de Serviço</a>
+        </li>
+
+        <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/arquivo">Banco de Análises</a>
+        </li>
+
+        <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;">Banco de Relatórios</a>
+        </li>
+
+        <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/resultados">Histórico de Resultados</a>
+        </li>
+        <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/acompanhamento">Acompanhamento de Tempo</a>
+        </li>
+    </ul>
+</div>
+
+    <div class="container flex flex-column align-items-center mb-4">
+        <div class="containerInterno w-12">
+            <div @swipeAnimation>
+                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                    <div class="fg1 flex flex-column w-12 align-items-center">
+                        <p-card class="card w-12 text-left">
+                            <ng-template #header>
+                                <div class="header titulo-info w-full text-center">
+                                <h2>Controle de Qualidade</h2>
+                                </div>
+                            </ng-template>
+                            <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="w-full">
+                                <div class="flex flex-column w-full">
+                                    <div class="flex flex-column w-full lg:flex-row">
+                                        <div class="flex  gap-2 w-full">
+                                            <div class="w-12 sm:w-6 lg:w-3">
+                                                <div
+                                                    class="shadow-2 hover:shadow-5 transition-duration-200"
+                                                    style="height: 110px; border-radius: 12px; background-color: #4a4458; position: relative; cursor: pointer;"
+                                                >
+                                                    <i class="pi pi-tags" style="position: absolute; top: 12px; left: 12px; color: #e3d8ff; font-size: 1.25rem;"></i>
+                                                    <div
+                                                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #e6defa; font-size: 1.6rem; font-weight: 700; text-align: center;"
+                                                        aria-label="Total de Amostras"
+                                                    >
+                                                        {{ totalAmostras }}
+                                                    </div>
+                                                    <div class="flex align-items-end h-full">
+                                                        <span class="p-3 text-sm font-semibold" style="color: #e6defa;">Total de Amostras</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="w-12 sm:w-6 lg:w-3">
+                                                <div
+                                                    class="shadow-2 hover:shadow-5 transition-duration-200"
+                                                    style="height: 110px; border-radius: 12px; background-color: #3b3b32; position: relative; cursor: pointer;"
+                                                >
+                                                    <i class="pi pi-thumbtack" style="position: absolute; top: 12px; left: 12px; color: #fff3b0; font-size: 1.25rem;"></i>
+                                                    <div
+                                                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #fff2a8; font-size: 1.6rem; font-weight: 700; text-align: center;"
+                                                    >
+                                                        {{ totalSemOrdem }}
+                                                    </div>
+                                                    <div class="flex align-items-end h-full">
+                                                        <span class="p-3 text-sm font-semibold" style="color: #fff2a8;">Sem Ordem</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Insights -->
+                                            <div class="w-12 sm:w-6 lg:w-3">
+                                                <div
+                                                    class="shadow-2 hover:shadow-5 transition-duration-200"
+                                                    style="height: 110px; border-radius: 12px; background-color: #2b3a55; position: relative; cursor: pointer;"
+                                                >
+                                                    <i class="pi pi-clipboard" style="position: absolute; top: 12px; left: 12px; color: #b3e5ff; font-size: 1.25rem;"></i>
+                                                    <div
+                                                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #d6f1ff; font-size: 1.6rem; font-weight: 700; text-align: center;"
+                                                    >
+                                                        {{ totalAbertas }}
+                                                    </div>
+                                                    <div class="flex align-items-end h-full">
+                                                        <span class="p-3 text-sm font-semibold" style="color: #d6f1ff;">Total Abertas</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Dashboard -->
+                                            <div class="w-12 sm:w-6 lg:w-3">
+                                                <div
+                                                    class="shadow-2 hover:shadow-5 transition-duration-200"
+                                                    style="height: 110px; border-radius: 12px; background-color: #26413c; position: relative; cursor: pointer;"
+                                                >
+                                                    <i class="pi pi-paperclip" style="position: absolute; top: 12px; left: 12px; color: #b2f5ea; font-size: 1.25rem;"></i>
+                                                    <div
+                                                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ccfbf1; font-size: 1.6rem; font-weight: 700; text-align: center;"
+                                                    >
+                                                        {{ totalLaudos }}
+                                                    </div>
+                                                    <div class="flex align-items-end h-full">
+                                                        <span class="p-3 text-sm font-semibold" style="color: #ccfbf1;">Para Laudo</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="w-12 sm:w-6 lg:w-3">
+                                                <div
+                                                    class="shadow-2 hover:shadow-5 transition-duration-200"
+                                                    style="height: 110px; border-radius: 12px; background-color: #4a4458; position: relative; cursor: pointer;"
+                                                >
+                                                    <i class="pi pi-check-square" style="position: absolute; top: 12px; left: 12px; color: #e3d8ff; font-size: 1.25rem;"></i>
+                                                    <div
+                                                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #e6defa; font-size: 1.6rem; font-weight: 700; text-align: center;"
+                                                        aria-label="Total de Amostras"
+                                                    >
+                                                        {{ totalAprovadas }}
+                                                    </div>
+                                                    <div class="flex align-items-end h-full">
+                                                        <span class="p-3 text-sm font-semibold" style="color: #e6defa;">Total Aprovadas</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="flex flex-column w-full mt-3">
+                                        <div class="flex flex-column w-full gap-2 lg:flex-row">
+                                            <div class="graphs w-12 m-2 lg:w-4 p-2">
+                                                <canvas id="pieChartFornecedores"></canvas>
+                                            </div>
+                                            <div class="graphs w-12 m-2 lg:w-4 p-2">
+                                                <canvas id="barChartFinalidades"></canvas>
+                                            </div>
+                                            <div class="graphs w-12 m-2 lg:w-4 p-2">
+                                                <canvas id="doughnutChartMaterial"></canvas>
+                                            </div>                                           
+                                        </div>
+                                        <div class="flex flex-column gap-2 w-full lg:flex-row">
+                                            <div class="graphs w-12 m-2 lg:w-4 p-2">
+                                                <canvas id="barChartTipo"></canvas>
+                                            </div>
+                                            <div class="graphs w-12 m-2 lg:w-4 p-2">
+                                                <canvas id="lineChartColeta"></canvas>
+                                            </div>
+                                            <div class="graphs w-12 m-2 lg:w-4 p-2">
+                                                <canvas id="polarChartStatus"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </p-card>
+                    </div>
+                </div>
+            </div>
+        </div>  
+    </div>
+
+    

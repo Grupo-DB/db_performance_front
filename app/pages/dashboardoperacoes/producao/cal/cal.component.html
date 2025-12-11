@@ -1,0 +1,763 @@
+<div class="container">
+    <div class="titulo mt-6 mb-6 text-2xl">
+        <p-divider align="left" type="solid">
+            <b><a routerLink="../../">Painel Operacional</a> / <a routerLink="../">Produção</a> / Fábrica de Cal</b>
+        </p-divider>
+    </div>
+    <div class="row1"@efeitoFade>
+        <div class="carregamentos w-12 lg:w-6">
+            <div class="tituloCarregamento">
+                <span> <b> Carregamento geral</b></span><br>
+            </div>
+                <div class="carregamentoWrap flex flex-column gap-1 align-items-center lg:flex-row">
+
+                    <div class="cardCarregmento w-10 lg:w-3">
+                        <div class="valorCarregamento">
+                            <p>{{ carregamentoGeralDia }}</p>
+                        </div>
+                        <div class="unidadeCarregamento">
+                            <p>Último dia</p>
+                        </div>
+                    </div>
+                    <div class="cardCarregmento w-10 lg:w-3">
+                        <div class="valorCarregamento">
+                            <p>{{ carregamentoGeralMes }}</p>
+                        </div>
+                        <div class="unidadeCarregamento">
+                            <p>Acomulado mês atual</p>
+                        </div>
+                    </div>
+                    <div class="cardCarregmento w-10 lg:w-3">
+                        <div class="valorCarregamento">
+                            <p>{{ carregamentoGeralAno }}</p>
+                        </div>
+                        <div class="unidadeCarregamento">
+                            <p>Acomulado ano atual</p>
+                        </div>
+                    </div>
+                </div>        
+        </div>
+    </div><!--EndCarregamento-->
+    <div class="row2 flex flex-column lg:flex-row"@efeitoFade>
+        <div class="justify-content-center lg:w-12">
+            <div class="tituloCarregamento2 mt-2">
+                <b> Calcinação Tn</b>
+            </div>
+            <div class="flex flex-column align-items-center gap-3 lg:flex-row lg:mt-6">
+                <div class="nomes">
+                    <p>AZBE</p>
+                </div>
+                <div class="card w-10 lg:w-3">
+                    <div class="valor">
+                        <p>{{ azbeDia }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Último dia</p>
+                    </div>
+                </div>
+                <div class="card w-10 lg:w-3">
+                    <div class="valor">
+                        <p>{{ azbeMes }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                    </div>
+                </div>
+                <div class="card w-10 lg:w-3">
+                    <div class="valor">
+                        <p>{{ azbeAno }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                    </div>
+                </div>
+            </div><!--EndTotais-->
+            <div class="flex flex-column align-items-center gap-3 mt-3 lg:flex-row">
+                <div class="nomes">
+                    <p>Metálicos</p>
+                </div>
+                <div class="card w-10 lg:w-3">
+                    <div class="valor">
+                        <p>{{ metalicosDia }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Último dia</p>
+                    </div>
+                </div>
+                <div class="card w-10 lg:w-3">
+                    <div class="valor">
+                        <p>{{ metalicosMes }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                    </div>
+                </div>
+                <div class="card w-10 lg:w-3">
+                    <div class="valor">
+                        <p>{{ metalicosAno }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                    </div>
+                </div>
+            </div><!--EndTotais-->
+        </div>    
+        <div class="produtividadeWrap w-12 ">
+            <div class="tituloCarregamento2 w-12 mt-2">
+                <b>Total dos Fornos Tn</b>
+            </div>
+            <div class="produtividade flex flex-column align-items-center w-12 ">
+                <div class="cardForno w-10">
+                    <div class="valorForno">
+                        <p>{{ fornosTotalDia }}</p>
+                    </div>
+                    <div class="unidadeForno">
+                        <p>Último dia</p>
+                    </div>
+                </div>
+                <div class="cardForno w-10">
+                    <div class="valorForno">
+                        <p>{{ fornosTotalMes }}</p>
+                    </div>
+                    <div class="unidadeForno">
+                        <p>Acomulado mês atual</p>
+                    </div>
+                </div>
+                <div class="cardForno w-10">
+                    <div class="valorForno">
+                        <p>{{ fornosTotalAno }}</p>
+                    </div>
+                    <div class="unidadeForno">
+                        <p>Acomulado ano atual</p>
+                    </div>
+                </div>
+            </div>
+        </div><!--EndProdutividade-->
+    </div><!--enRow2-->
+    <div class="row2 flex-column md:flex-row"@efeitoFade>
+        <div class="justify-content-center mt-3">
+
+            <div class="flex flex-column align-items-center gap-3 lg:flex-row">
+                <div class="tituloCarregamento2 w-6">
+                    <i class="pi pi-plus-circle mt-2"></i><span (click)="exibirGrafico()" style="cursor: pointer;"> <b> Beneficiamento Tn </b></span><br>
+                </div>
+
+                <div class="tituloCarregamento2 w-6">
+                    <b> Ensacados Tn </b><br>
+                </div>
+            </div>
+
+            <div class="nomes w-10 lg:w-2 lg:mb-0">
+                <p>Cal Virgem CV-C</p>
+            </div>
+
+            <div class=" w-12 flex flex-column align-items-center gap-1 lg:flex-row lg:justify-content-center">
+                
+                <div class="cardCalcinacao w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ cvcTotalDia }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Último dia</p>
+                    </div>
+                </div>
+                <div class="cardCalcinacao w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ cvcTotalMes }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                    </div>
+                </div>
+                <div class="cardCalcinacao w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ cvcTotalAno }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                    </div>
+                </div>
+
+                <div class="cardEnsacado w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ cvcEnsacadosTotalDia }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Último dia</p>
+                    </div>
+                </div>
+                <div class="cardEnsacado w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ cvcEnsacadosTotalMes }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                    </div>
+                </div>
+                <div class="cardEnsacado w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ cvcEnsacadosTotalAno }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                    </div>
+                </div>
+
+            </div><!--EndTotais-->
+
+            <div class="nomes mt-2 w-10 lg:w-2 lg:-mb-4 lg:mt-3">
+                <p>Cal Hidratada CH-II</p>
+            </div>
+
+            <div class="mt-3 w-12 flex flex-column align-items-center gap-1 lg:flex-row lg:justify-content-center ">
+                
+                <div class="cardCalcinacao w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ hidraulicaTotalDia }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Último dia</p>
+                    </div>
+                </div>
+                <div class="cardCalcinacao w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ hidraulicaTotalMes }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                    </div>
+                </div>
+                <div class="cardCalcinacao w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ hidraulicaTotalAno }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                    </div>
+                </div>
+
+                <div class="cardEnsacado w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ ch2EnsacadosTotalDia }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Último dia</p>
+                    </div>
+                </div>
+                <div class="cardEnsacado w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ ch2EnsacadosTotalMes }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                    </div>
+                </div>
+                <div class="cardEnsacado w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ ch2EnsacadosTotalAno }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                    </div>
+                </div>
+            
+            </div><!--EndTotais-->
+
+            <div class="nomes mt-2 w-10 lg:w-1">
+                <p>Cal Hidráulica</p>
+            </div>
+
+            <div class="flex flex-column w-12 mt-1 align-items-center gap-1 lg:flex-row lg:justify-content-center">
+                
+                <div class="cardCalcinacao w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ ch2TotalDia }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Último dia</p>
+                    </div>
+                </div>
+                <div class="cardCalcinacao w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ ch2TotalMes }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                    </div>
+                </div>
+                <div class="cardCalcinacao w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ ch2TotalAno }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                    </div>
+                </div>
+                 <div class="cardEnsacado w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ hidraulicaEnsacadosTotalDia }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Último dia</p>
+                    </div>
+                </div>
+                <div class="cardEnsacado w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ hidraulicaEnsacadosTotalMes }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado mês atual</p>
+                    </div>
+                </div>
+                <div class="cardEnsacado w-10 lg:w-2">
+                    <div class="valor">
+                        <p>{{ hidraulicaEnsacadosTotalAno }}</p>
+                    </div>
+                    <div class="unidade">
+                        <p>Acomulado ano atual</p>
+                    </div>
+                </div>
+            </div><!--EndTotais-->
+        </div>    
+        
+<!---------------------------------------------MODAIS--------------------------------->
+    <p-dialog
+        [modal]="true"
+        [(visible)]="abrirModal"
+        [style]="{ width: '95%', height:'95%' }"
+        
+    >
+    <div class="titulo">
+        <p-divider align="left" type="solid">
+            <b>Produção e Carregamento Cal</b>
+        </p-divider> 
+    </div>
+    <div class="flex flex-row justify-content-center lg:justify-content-end ">
+        <div 
+            class="btnCalc"
+            (click)="gerarGrafico('mensal','acumulado')"
+            [ngClass]="{'active': selectedButton === 'mensal'}" 
+        >
+            <p>No mês</p>
+        </div>
+        <div 
+            class="btnCalc" 
+            (click)="gerarGrafico('anual','acumulado')"
+            [ngClass]="{'active': selectedButton === 'anual'}" 
+        >
+            <p>No ano</p>
+        </div>
+    </div>
+    <div class="rowBotoesFabricas mt-3 w-12 flex-column gap-2 align-items-center lg:flex-row">
+        <div 
+            class="btnCalc w-10 lg:w-1"
+            (click)="gerarGrafico(selectedButton,'acumulado')"
+            [ngClass]="{'active': selectedProduct === 'acumulado'}"
+        >
+            <p>Acumulado</p>
+        </div>
+        <div 
+            class="btnCalc w-10 lg:w-1"
+           (click)="gerarGrafico(selectedButton,'cvc')"
+           [ngClass]="{'active': selectedProduct === 'cvc'}"
+        >
+            <p>CVC</p>
+        </div>
+        <div 
+            class="btnCalc w-10 lg:w-1"
+            (click)="gerarGrafico(selectedButton,'ch2')"
+            [ngClass]="{'active': selectedProduct === 'ch2'}"
+        >
+            <p>CH2</p>
+        </div>
+        <div class="btnCalc w-10 lg:w-1"
+        (click)="gerarGrafico(selectedButton,'hidraulica')"
+        [ngClass]="{'active': selectedProduct === 'hidraulica'}"
+        >
+            <p>Hidráulica</p>
+        </div>
+        <div 
+            class="btnCalc w-10 lg:w-1" 
+        >
+             <a (click)="exibirEquipamentos()" style="color: inherit;"><p>Detalhar</p></a> 
+        </div>
+    </div>
+
+    <div class="w-full justify-content-center flex flex-column lg:flex-row lg:h-18rem">
+
+        <div class="chartBarEnsacados w-full h-24rem lg:w-10">
+            <canvas id="graficoTotalProducaoDiaria"></canvas>
+        </div>
+        
+        <div class="projecoes mt-3  w-full flex-row lg:flex-column lg:w-2  lg:h-24rem lg:justify-content-center lg:align-items-center lg:mt-0">
+            <div class="af w-6 lg:w-full">
+                <div class="titulo2">
+                    <span> <b>Média do Período</b></span><br>
+                </div>
+                <div class="media">
+                    <div class="card2 h-6rem">
+                        <div class="valor">
+                            <p>{{ mediaEnsacados }}</p>
+                        </div>
+                        <div class="unidade2">
+                            <p>Tn</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="af w-6 lg:w-full">    
+                <div class="titulo2">
+                    <span> <b> Projeção no Período</b></span><br>
+                </div>
+                <div class="projecao">
+                    <div class="card2 h-6rem">
+                        <div class="valor">
+                            <p>{{ projecaoEnsacados }}</p>
+                        </div>
+                        <div class="unidade2">
+                            <p>Tn</p>
+                        </div>
+                    </div>
+                </div>
+            </div>                           
+        </div>
+    </div>
+    <br/>
+    <div class="w-full mt-3 justify-content-center flex flex-column lg:flex-row lg:h-18rem lg:mt-8">
+        <div class="chartBarEnsacados w-full h-24rem lg:w-10">
+            <canvas id="graficoTotalCarregamentoDiario"></canvas>
+        </div>    
+        <div class="projecoes mt-3 w-full flex-row lg:flex-column lg:w-2  lg:h-24rem lg:justify-content-center align-items-center lg:mt-1">
+            <div class="af w-6 lg:w-full">
+                <div class="titulo2">
+                    <span> <b>Média do Período</b></span><br>
+                </div>
+                <div class="media">
+                    <div class="card2 h-6rem">
+                        <div class="valor">
+                            <p>{{ mediaEnsacadosCarregamento }}</p>
+                        </div>
+                        <div class="unidade2">
+                            <p>Tn</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="af w-6 lg:w-full">
+                <div class="titulo2">
+                    <span> <b> Projeção no Período</b></span><br>
+                </div>
+                <div class="projecao">
+                    <div class="card2 h-6rem">
+                        <div class="valor">
+                            <p>{{ projecaoEnsacadosCarregamento }}</p>
+                        </div>
+                        <div class="unidade2">
+                            <p>Tn</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </p-dialog>
+ <!---------------------------------  detalhes equipamentos ------------------ -->
+    <p-dialog 
+        [modal]="true"
+        [(visible)]="equipamentosVisivel" 
+        [style]="{ width: '95%', height: '95%' }" 
+    >
+        <div class="titulo">
+            <p-divider align="left" type="solid">
+                <b>Produtividade Fábricas</b>
+            </p-divider>   
+            <div class="container">
+                <div class="rowSuperior flex-wrap">
+                    <div class="buttons gap-3 w-12 flex flex-column lg:w-6 lg:flex-row">
+                        <p-datepicker
+                            [style]="{'width':'100%'}"
+                            id="da" 
+                            [(ngModel)]="data"
+                            dateFormat="dd/mm/yy"                  
+                            [showIcon]="true"
+                            placeholder="Data Início"
+                            appendTo="body"
+                        >
+                        </p-datepicker>
+                        <p-datepicker
+                            [style]="{'width':'100%'}"
+                            id="da" 
+                            [(ngModel)]="dataFim"
+                            dateFormat="dd/mm/yy"                  
+                            [showIcon]="true"
+                            placeholder="Data Fim"
+                            appendTo="body"
+                        >
+                        </p-datepicker>
+                        <div class="btnCalcProd" 
+                            (click)="calcularEquipamentosDetalhes(data,dataFim)">
+                            <p>Calcular</p>
+                        </div>
+                    </div>    
+                    <div class="rightEqpto w-12 lg:w-21rem">
+                        <div class="tituloEqpto">
+                            <span> <b>Carregamento geral</b></span><br>
+                        </div>
+                        <div class="media2">
+                            <div class="cardCarregamentoEqpto">
+                                <div class="valorCarregamentoEqpto">
+                                    <p>{{ ensacadosCarregamento }}</p>
+                                </div>
+                                <div class="unidadeCarregamentoEqpto">
+                                    <p>Carregamento geral</p>
+                                </div>    
+                            </div>
+                        </div>    
+                    </div>    
+                </div><!--end rowSupeiror-->
+                
+                <div class=" flex flex-column justify-content-center lg:flex-row lg:w-12">
+                    <div class=" flex flex-column justify-content-center lg:w-12">
+                        <div class="rowWrap w-12 flex flex-column lg:flex-row lg:w-11 lg:mt-3">
+                            <div class="tituloFab w-1">
+                                <b> Ensacados </b>
+                            </div>
+                            <div *ngIf="loading" class="loading-indicator">
+                                <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                            </div> 
+                            <div class="flex flex-column lg:flex-row lg:w-12" *ngIf="!loading">
+                                <div class="flex flex-column lg:flex-row">
+                                    <div class="flex w-12 flex-column align-items-center lg:flex-row"@swipeAnimation>
+                                        <div class="eqpto w-2 -ml-8">
+                                            <p>MB-01</p>
+                                        </div>
+                                        <div class="cardProd">
+                                            <div class="valorCarregamentoProd">
+                                                <p>{{ mb01HoraProd }}</p>
+                                            </div>
+                                            <div class="unidadeCarregamentoProd">
+                                                <p>Hora produção</p>
+                                            </div>
+                                        </div>
+                                        <div class="cardProd">
+                                            <div class="valorCarregamentoProd">
+                                                <p>{{ mb01HoraParado }}</p>
+                                            </div>
+                                            <div class="unidadeCarregamentoProd">
+                                                <p>Hora parado</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="loading" class="loading-indicator">
+                                    <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                                </div> 
+                                <div class="flex flex-column w-12 align-items-center lg:flex-row lg:justify-content-center"@swipeAnimationReverse>
+                                    <div class="cardProd  w-10 lg:w-5">
+                                        <div class="valorCarregamentoProd">
+                                            <p>{{ mb01Produtividade }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoProd">
+                                            <p>Produtividade equipamento</p>
+                                        </div>
+                                    </div>
+                                    <div class="cardProd  w-10 lg:w-5">
+                                        <div class="valorCarregamentoProd">
+                                            <p>{{ mb01Producao }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoProd">
+                                            <p>Produção equipamento</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!--end row1-->
+                        </div>    
+                        <div class="rowWrap w-12 flex flex-column md:mt-3 w-11 lg:flex-row lg:w-11 lg:mt-3">
+                            <div class="tituloFab w-1">
+                                <b> Ensacados</b>
+                            </div>
+                            <div *ngIf="loading" class="loading-indicator">
+                                <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                            </div> 
+                            <div class="flex flex-column lg:flex-row lg:w-12"*ngIf="!loading">   
+                                <div class="flex flex-column lg:flex-row">
+                                    <div class="flex flex-column align-items-center lg:flex-row"@swipeAnimation>
+                                        <div class="eqpto text-left w-2 -ml-8">
+                                            <p>MB-02</p>
+                                        </div>
+                                        <div class="cardProd">
+                                            <div class="valorCarregamentoProd">
+                                                <p>{{ mb02HoraProd }}</p>
+                                            </div>
+                                            <div class="unidadeCarregamentoProd">
+                                                <p>Hora produção</p>
+                                            </div>
+                                        </div>
+                                        <div class="cardProd">
+                                            <div class="valorCarregamentoProd">
+                                                <p>{{ mb02HoraParado }}</p>
+                                            </div>
+                                            <div class="unidadeCarregamentoProd">
+                                                <p>Hora parado</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex flex-column w-12 align-items-center lg:flex-row lg:justify-content-center"@swipeAnimationReverse>
+                                    <div class="cardProd w-10 lg:w-5">
+                                        <div class="valorCarregamentoProd">
+                                            <p>{{ mb02Produtividade }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoProd">
+                                            <p>Produtividade equipamento</p>
+                                        </div>
+                                    </div>
+                                    <div class="cardProd w-10 lg:w-5">
+                                        <div class="valorCarregamentoProd">
+                                            <p>{{ mb02Producao }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoProd">
+                                            <p>Produção equipamento</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!--end row2-->
+                        </div><!--EndTitle-->    
+                        <div class="rowWrap w-12 flex flex-column md:mt-3 w-11 lg:flex-row lg:w-11 lg:mt-3">
+                            <div class="tituloFab w-1">
+                                <b> Ensacados </b>
+                            </div>
+                            <div *ngIf="loading" class="loading-indicator">
+                                <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                            </div> 
+                            <div class="flex flex-column lg:flex-row lg:w-12"*ngIf="!loading">
+                                <div class="flex flex-column lg:flex-row"@swipeAnimation>
+                                    <div class="flex flex-column align-items-center w-12 lg:flex-row lg:justify-content-center">
+                                        <div class="eqpto text-left w-2 -ml-8">
+                                            <p>MB-03</p>
+                                        </div>
+                                        <div class="cardProd">
+                                            <div class="valorCarregamentoProd">
+                                                <p>{{ mb03HoraProd }}</p>
+                                            </div>
+                                            <div class="unidadeCarregamentoProd">
+                                                <p>Hora produção</p>
+                                            </div>
+                                        </div>
+                                        <div class="cardProd">
+                                            <div class="valorCarregamentoProd">
+                                                <p>{{ mb03HoraParado }}</p>
+                                            </div>
+                                            <div class="unidadeCarregamentoProd">
+                                                <p>Hora parado</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>    
+                                <div class="flex flex-column w-12 align-items-center lg:flex-row lg:justify-content-center"@swipeAnimationReverse>
+                                    <div class="cardProd w-10 lg:w-5">
+                                        <div class="valorCarregamentoProd">
+                                            <p>{{ mb03Produtividade }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoProd">
+                                            <p>Produtividade equipamento</p>
+                                        </div>
+                                    </div>
+                                    <div class="cardProd w-10 lg:w-5">
+                                        <div class="valorCarregamentoProd">
+                                            <p>{{ mb03Producao }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoProd">
+                                            <p>Produção equipamento</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!--end row3-->
+                        </div>
+                        <div class="mt-3 rowWrap w-12 flex flex-column md:mt-3 w-11 lg:flex-row lg:w-11 lg:mt-3">
+                            <div class="tituloFab w-1">
+                                <b> Ensacados </b>
+                            </div>
+                            <div *ngIf="loading" class="loading-indicator">
+                                <p-progressSpinner strokeWidth="6" ariaLabel="loading" />
+                            </div> 
+                            <div class="flex flex-column lg:flex-row lg:w-12"*ngIf="!loading">
+                                <div class="flex flex-column lg:flex-row">
+                                    <div class="flex flex-column align-items-center lg:flex-row lg:justify-content-center"@swipeAnimation>
+                                        <div class="eqpto  text-left w-2 -ml-8">
+                                            <p>MG-01</p>
+                                        </div>
+                                        <div class="cardProd">
+                                            <div class="valorCarregamentoProd">
+                                                <p>{{ mg01HoraProd }}</p>
+                                            </div>
+                                            <div class="unidadeCarregamentoProd">
+                                                <p>Hora produção</p>
+                                            </div>
+                                        </div>
+                                        <div class="cardProd">
+                                            <div class="valorCarregamentoProd">
+                                                <p>{{ mg01HoraParado }}</p>
+                                            </div>
+                                            <div class="unidadeCarregamentoProd">
+                                                <p>Hora parado</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>    
+                                <div class="flex flex-column w-12 align-items-center lg:flex-row lg:justify-content-center"@swipeAnimationReverse>
+                                    <div class="cardProd w-10 lg:w-5">
+                                        <div class="valorCarregamentoProd">
+                                            <p>{{ mg01Produtividade }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoProd">
+                                            <p>Produtividade equipamento</p>
+                                        </div>
+                                    </div>
+                                    <div class="cardProd w-10 lg:w-5">
+                                        <div class="valorCarregamentoProd">
+                                            <p>{{ mg01Producao }}</p>
+                                        </div>
+                                        <div class="unidadeCarregamentoProd">
+                                            <p>Produção equipamento</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!--end row3-->
+                        </div>        
+                    </div><!--end Esquerda-->
+                    <div class="direita w-12 lg:w-3 lg:mt-3"*ngIf="!loading">
+                        <div class="totais"@efeitoFade>
+                            <div class="cardFabDir w-10 lg:w-8">
+                                <div class="valorCarregamentoProd">
+                                    <p>{{ ensacadosProdutividade }}</p>
+                                </div>
+                                <div class="unidadeCarregamentoProd">
+                                    <p>Produtividade</p>
+                                </div>
+                            </div>
+                            <div class="cardFabDir w-10 lg:w-8">
+                                <div class="valorCarregamentoProd">
+                                    <p>{{ ensacadosProducaoGeral }}</p>
+                                </div>
+                                <div class="unidadeCarregamentoProd">
+                                    <p>Produção total</p>
+                                </div>
+                            </div>
+                            <div class="cardFabDir w-10 lg:w-8">
+                                <div class="valorCarregamentoProd">
+                                    <p>{{ ensacadosEstoque }}</p>
+                                </div>
+                                <div class="unidadeCarregamentoProd">
+                                    <p>Estoque ensacados</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--End Direita-->
+                </div><!--end containerInterno--> 
+            </div><!--end container--> 
+        </div>
+        
+</p-dialog>       
+

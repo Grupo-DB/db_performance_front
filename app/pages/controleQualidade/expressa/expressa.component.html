@@ -1,0 +1,267 @@
+<div class="menu">
+    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+        <li nz-menu-item nzMatchRouter="#">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/dashControle">Início</a>
+        </li>
+        <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/tipoEnsaio">Tipo de Ensaio</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/variavel">Variáveis de Ensaio</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/ensaio" >Ensaio</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/calculoEnsaio" >Cálculo de Ensaio</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/plano" >Plano de Análise</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/tipoAmostra" >Tipo de Amostra</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/produtoAmostra" >Produto de Amostra</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/controleQualidade/garantia" >Garantias</a>
+                </li>
+            </ul>
+        </li >
+        <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/amostra">Amostras</a>
+        </li>
+
+        <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/ordem">Ordens de Serviço</a>
+        </li>
+
+        <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;">Banco de Análises</a>
+        </li>
+
+        <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;">Banco de Relatórios</a>
+        </li>
+         <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/resultados">Histórico de Resultados</a>
+        </li>
+        <li nz-menu-item nzMatchRouter="#" *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])">
+            <a style="font-size: 13px;" routerLink="/welcome/controleQualidade/acompanhamento">Acompanhamento de Tempo</a>
+        </li>
+    </ul>
+</div>
+<div class="container flex flex-column align-items-center mb-4">
+    <div class="containerInterno w-12">
+        <div @swipeAnimation>
+            <form [formGroup]="expressaForm" title="Cadastrar nova OS Expressa">
+            <p-toast/>
+                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                    <div class="bloco fg1 flex flex-column w-12 align-items-center">
+                        <p-card *ngIf="amostraData" class="card w-12 mb-4">
+                            <ng-template #header>
+                                <div class="header titulo-info w-full text-center">
+                                    <h2>OS Expressa</h2>
+                                </div>
+                            </ng-template>
+                            <div class="grid">
+                                <div class="text-left col-12 md:col-6 lg:col-4">
+                                    <strong>Número:</strong> {{ amostraData.numero || 'N/A' }}
+                                </div>
+                                <div class="text-left col-12 md:col-6 lg:col-4">
+                                    <strong>Material:</strong> {{ amostraData.materialInfo?.nome || amostraData.material || 'N/A' }}
+                                </div>
+                                <div class="text-left col-12 md:col-6 lg:col-4">
+                                    <strong>Tipo Amostra:</strong> {{ amostraData.tipoAmostraInfo?.nome || amostraData.tipoAmostra
+                                    || 'N/A' }}
+                                </div>
+                                <div class="text-left col-12 md:col-6 lg:col-4">
+                                    <strong>Produto Amostra:</strong> {{ amostraData.produtoAmostraInfo?.nome ||
+                                    amostraData.produtoAmostra || 'N/A' }}
+                                </div>
+                                <div class="text-left col-12 md:col-6 lg:col-4">
+                                    <strong>Data Coleta:</strong> {{ amostraData.dataColeta ? (amostraData.dataColeta |
+                                    date:'dd/MM/yyyy') : 'N/A' }}
+                                </div>
+                                <div class="text-left col-12 md:col-6 lg:col-4">
+                                    <strong>Local Coleta:</strong> {{ amostraData.localColetaInfo?.nome || amostraData.localColeta
+                                    || 'N/A' }}
+                                </div>
+                                <div class="text-left col-12 md:col-6 lg:col-4">
+                                    <strong>Fornecedor:</strong> {{ amostraData.fornecedorInfo?.nome || amostraData.fornecedor ||
+                                    'N/A' }}
+                                </div>
+                                <div class="text-left col-12 md:col-6 lg:col-4">
+                                    <strong>Periodicidade:</strong> {{ amostraData.periodoTurnoInfo?.nome ||
+                                    amostraData.periodoTurno || 'N/A' }}
+                                </div>
+                                <div class="text-left col-12 md:col-6 lg:col-4">
+                                    <strong>Status:</strong> {{ amostraData.statusInfo?.nome || amostraData.status || 'N/A' }}
+                                </div>
+                                <div class="text-left col-12 md:col-6 lg:col-4">
+                                    <strong>Subtipo:</strong> {{ amostraData.subtipo || 'N/A' }}
+                                </div>
+                                <div class="text-left col-12 md:col-6 lg:col-4">
+                                    <strong>Tipo Amostragem:</strong> {{ amostraData.tipoAmostragem || 'N/A' }}
+                                </div>
+                                <div class="text-left col-12 md:col-6 lg:col-4">
+                                    <strong>Identificação Comp:</strong> {{ amostraData.identificacaoComplementar || 'N/A' }}
+                                </div>
+                                <div class="text-left col-12 md:col-6 lg:col-4">
+                                    <strong>Complemento:</strong> {{ amostraData.complemento || 'N/A' }}
+                                </div>
+                                <div class="text-left col-12 md:col-6 lg:col-4">
+                                    <strong>Representividade Lote:</strong> {{ amostraData.representatividadeLote || 'N/A' }}
+                                </div>
+                                <div class="text-left col-12 md:col-6 lg:col-4">
+                                    <strong>Digitador:</strong> {{ amostraData.digitador || 'N/A' }}
+                                </div>
+                            </div>    
+                            <div class="w-12 flex flex-column mt-6 lg:flex-row">
+                                <div class="flex flex-column w-12 gap-2  lg:w-12">
+                                    <div class="w-12 text-left mb-3">
+                                        <p-floatLabel variant="on">
+                                            <p-datepicker variant="filled" [style]="{'width':'100%'}" id="da" formControlName="data"
+                                                dateFormat="dd/mm/yy" inputId="float-label" [showIcon]="true">
+                                            </p-datepicker>
+                                            <label for="float-label">Data de Abertura</label>
+                                        </p-floatLabel>
+                                    </div>
+                                    <div class="w-12 text-left mb-3">
+                                        <p-floatLabel variant="on">
+                                            <p-select inputId="float-label" [style]="{'width':'100%'}" [options]="classificacoes"
+                                                formControlName="classificacao" optionLabel="nome" optionValue="nome"
+                                                appendTo="body" [filter]="true" filterBy="nome" [showClear]="true">
+                                            </p-select>
+                                            <label for="float-label">Selecione a Classificação</label>
+                                        </p-floatLabel>
+                                    </div>
+                                </div>
+                                <div class="flex flex-column w-12 gap-2 lg:w-12 ml-4">
+                                    <div class="w-12 text-left mb-3">
+                                        <p-floatLabel variant="on">
+                                            <p-select inputId="float-label" [style]="{'width':'100%'}" [options]="responsaveis"
+                                                formControlName="responsavel" optionLabel="value" optionValue="value"
+                                                appendTo="body" [filter]="true" filterBy="value" [showClear]="true">
+                                            </p-select>
+                                            <label for="float-label">Selecione o Responsável</label>
+                                        </p-floatLabel>
+                                    </div>
+                                    <div class="w-12 text-left mb-3">
+                                        <p-floatlabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-file-edit" />
+                                                <input variant="filled" [style]="{'width':'100%'}" pInputText id="on_label"
+                                                    autocomplete="off" formControlName="numero" type="text" />
+                                            </p-iconfield>
+                                            <label for="on_label">Número</label>
+                                        </p-floatlabel>
+                                    </div>
+                                </div>
+                            </div> 
+                            <div class="w-12 text-left mb-5">
+                                    <div class="step1 mt-2 mb-5 w-12 ">
+                                        <p-message severity="info" class="w-11">
+                                            <b>Selecione os Ensaios</b>
+                                        </p-message>
+                                    </div>                            
+                                    <p-pickList 
+                                        [source]="ensaios" 
+                                        [target]="targetEnsaios" 
+                                        sourceHeader="Ensaios"
+                                        targetHeader="Selecionados" 
+                                        [dragdrop]="true" 
+                                        [responsive]="true"
+                                        [sourceStyle]="{ height: '20rem' }" 
+                                        [targetStyle]="{ height: '20rem' }" 
+                                        filterBy="descricao"
+                                        sourceFilterPlaceholder="Pesquisa por nome" 
+                                        targetFilterPlaceholder="Pesquisa por nome"
+                                        breakpoint="412px"
+                                        styleClass="picklist-black"
+                                        (onMoveToTarget)="onEnsaiosChange($event)"
+                                        (onMoveToSource)="onEnsaiosChange($event)"
+                                        (onSourceReorder)="onEnsaiosChange($event)"
+                                        (onTargetReorder)="onEnsaiosChange($event)"
+                                        >
+                                        <ng-template let-ensaio pTemplate="item">
+                                            <div class="flex flex-wrap p-2 align-items-center gap-3">
+                                                <div class="flex-1 flex flex-column gap-2">
+                                                    <span class="font-bold">{{ ensaio.descricao }}</span>
+                                                    <div class="flex align-products-center gap-2">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                    </p-pickList>
+                            </div>
+                                
+                            <div class="w-12 text-left mt-5 mb-5">
+                                <!-- <div class="step1 mt-2 mb-5 w-12 ">
+                                    <p-message severity="info" class="w-11">
+                                        <b>Selecione os Cálculos</b>
+                                    </p-message>
+                                </div> -->
+                                <p-pickList 
+                                    [source]="calculos" 
+                                    [target]="targetCalculos" 
+                                    sourceHeader="Cálculos de Ensaio"
+                                    targetHeader="Selecionados" 
+                                    [dragdrop]="true" 
+                                    [responsive]="true"
+                                    [sourceStyle]="{ height: '20rem' }" 
+                                    [targetStyle]="{ height: '20rem' }" 
+                                    filterBy="descricao"
+                                    sourceFilterPlaceholder="Pesquisa por nome" 
+                                    targetFilterPlaceholder="Pesquisa por nome"
+                                    breakpoint="412px"
+                                    (onMoveToTarget)="onCalculosChange($event)"
+                                    (onMoveToSource)="onCalculosChange($event)"
+                                    (onSourceReorder)="onCalculosChange($event)"
+                                    (onTargetReorder)="onCalculosChange($event)"
+                                >
+                                    <ng-template let-ensaio pTemplate="item">
+                                        <div class="flex flex-wrap p-2 align-items-center gap-3">
+                                            <div class="flex-1 flex flex-column gap-2">
+                                                <span class="font-bold">{{ ensaio.descricao }}</span>
+                                                <div class="flex align-products-center gap-2">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                </p-pickList>
+                            </div>
+                             <div class="step1 w-12 mt-5 mb-5 flex flex-column align-items-center">
+                                <div class="flex flex-column w-12 align-items-center">
+                                    <div class=" flex w-12 gap-3 justify-content-center text-center">
+                                        <p-button 
+                                            label="limpar" 
+                                            severity="info"
+                                            (onClick)="clearForm()" 
+                                            icon="pi pi-eraser" 
+                                            iconPos="right" 
+                                            tooltipPosition="top"
+                                            pTooltip="Limpar"
+                                        />
+                                        <p-button 
+                                            (onClick)="criarAmostra()" 
+                                            label="Salvar" 
+                                            severity="success"
+                                            icon="pi pi-save" 
+                                            iconPos="right" 
+                                            tooltipPosition="top"
+                                            pTooltip="Salvar"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </p-card>    
+                    </div>
+                </div>         
+            </form>        
+        </div>
+    </div>
+</div>    

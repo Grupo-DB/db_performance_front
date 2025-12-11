@@ -1,0 +1,415 @@
+@import "primeicons/primeicons.css";
+
+// Definições dos ícones para os títulos das seções
+.titulo {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    
+    &::before {
+        margin-right: 8px;
+        font-family: 'primeicons';
+        font-size: 1.2em;
+        color: #0ea5e9;
+    }
+    
+    // Ícone para Informações Gerais
+    &.titulo-info::before {
+        content: '\e934'; // pi-tags
+    }
+    
+    // Ícone para Material
+    &.titulo-material::before {
+        content: '\e91f'; // pi-box
+    }
+    
+    // Ícone para Complementos
+    &.titulo-complementos::before {
+        content: '\e925'; // pi-clipboard
+    }
+}
+
+:host ::ng-deep .p-card-body{
+    background-color: #2C323A;
+    border-radius: 0 0 10px 10px;
+}
+
+.tabela{
+    background-color: #3B3E44;
+    color: #ffffff;
+    border-radius: 10px;
+    width: 100%;
+    th{
+        font-size: 14px;
+        background-color: #3B3E44 !important;
+        color: white !important;
+    }
+    td{
+        font-size:12px ;
+    }
+}
+
+.card{
+    border-radius: 10px;
+    .header{
+        background-color: #3B3E44;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        h2{
+            color: #ffffff;
+            font-weight: 700;
+        }
+    }
+    .header-substrato{
+        background-color: #f97316 !important;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        h2{
+            color: #ffffff;
+            font-weight: 700;
+        }
+    }
+    .header-superficial{
+        background-color: #0ea5e9 !important;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        h2{
+            color: #ffffff;
+            font-weight: 700;
+        }
+    }
+
+    .header-flexao{
+        background-color: purple !important;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        h2{
+            color: #ffffff;
+            font-weight: 700;
+        }
+    }
+
+    .header-compressao{
+        background-color: brown !important;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        h2{
+            color: #ffffff;
+            font-weight: 700;
+        }
+    }
+
+    .header-retracao{
+        background-color: rgb(108, 165, 42) !important;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        h2{
+            color: #ffffff;
+            font-weight: 700;
+        }
+    }
+
+    .header-elasticidade{
+        background-color: rgb(182, 109, 32) !important;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        h2{
+            color: #ffffff;
+            font-weight: 700;
+        }
+    }
+    .header{
+        background-color: #3B3E44;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        h2{
+            color: #ffffff;
+            font-weight: 700;
+            margin-top: 16px;
+        }
+        display: flex;
+        align-items: center;
+        font-size: 18px;
+        color: #F8F9FA;
+        margin-bottom: 1rem;
+        font-weight: 500;
+        &::before {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 0.75rem;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+            flex-shrink: 0;
+            font-family: 'primeicons';
+            margin-left: 16px;
+        }
+        
+        // Ícone para Informações Gerais
+        &.titulo-info::before {
+            content: '\e95d'; // pi-tags
+        }
+    }
+}
+
+
+.container{
+    max-width: 100%;
+}
+
+.containerInterno{
+    background-color: #ffffff;
+    border: 10px solid #ffffff;
+    padding: 10px;
+    //box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.titulo{
+    font-size: 22px;
+    //background-color: #4A90E2;
+    background-color: #ffffff;
+    border: 20px solid #ffffff;
+}
+
+.form-geral{
+    width: 98%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 8px;
+    // box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    .fg1{
+        width: 100%;
+        //margin-top: 10px;
+        //margin-bottom: 25px;
+        p{
+            margin-left: 20px;
+        }
+        .form1{
+           margin-top: 16px; 
+        }
+        .form2{
+            margin-top: 16px;
+        } 
+    }
+    .fg2{
+        width: 100%;
+        //margin-top: 10px;
+        //margin-bottom: 25px;
+        p{
+            margin-left: 20px;
+        }
+        .form2{
+            margin-top: 16px;
+            
+        } 
+    }
+    .fg3{
+        width: 100%;
+        //margin-top: 10px;
+        margin-bottom: 25px;
+        p{
+            margin-left: 20px;
+        }
+        .form2{
+            margin-top: 16px;
+            
+        }
+    }
+}   
+.background-form{
+    background-color: #2C323A;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+// Estilos para o modal de parecer da IA
+:host ::ng-deep .parecer-modal {
+    .p-dialog {
+        min-width: 60vw;
+        max-width: 80vw;
+        
+        @media (max-width: 768px) {
+            width: 95vw;
+            min-width: 95vw;
+        }
+    }
+    
+    .p-dialog-header {
+        background: linear-gradient(135deg, #353636, #444547);
+        color: white;
+        border-radius: 8px 8px 0 0;
+        
+        .p-dialog-title {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+    }
+}
+
+.parecer-container {
+    .parecer-header {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        background: linear-gradient(135deg, #2C323A, #e2e8f0);
+        border-radius: 8px;
+        border-left: 4px solid #3b82f6;
+        margin-top: 20px;
+        i {
+            font-size: 1.5rem;
+        }
+    }
+    
+    .parecer-conteudo {
+        font-family: system-ui, -apple-system, sans-serif;
+        font-size: 14px;
+        line-height: 1.6;
+        background: #2C323A;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 1rem;
+        max-height: 60vh;
+        overflow-y: auto;
+        word-wrap: break-word;
+    }
+    
+    .parecer-loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 200px;
+        
+        p {
+            color: #6b7280;
+            font-weight: 500;
+            margin: 0;
+        }
+        
+        small {
+            color: #9ca3af;
+            margin: 0;
+        }
+    }
+    
+    .parecer-empty {
+        min-height: 150px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        
+        i {
+            color: #f59e0b;
+        }
+        
+        p {
+            margin: 0;
+            color: #6b7280;
+        }
+    }
+    
+    .parecer-footer {
+        padding: 0.75rem;
+        background: linear-gradient(135deg, #2C323A, #e2e8f0);
+        border-radius: 6px;
+        border: 1px solid #f3f4f6;
+        margin-bottom: 20px;
+        small {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #6b7280;
+            
+            i {
+                color: #3b82f6;
+            }
+        }
+    }
+}
+
+/* Loading overlay para parecer da IA */
+.parecer-loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    
+    .loading-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        text-align: center;
+        max-width: 400px;
+        margin: 1rem;
+        
+        h4 {
+            color: #374151;
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        p {
+            color: #6b7280;
+            margin: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+        
+        small {
+            color: #9ca3af;
+            font-size: 0.85rem;
+        }
+    }
+}
+:host ::ng-deep {
+    .p-speeddial-action{ 
+        background-color: #0ea5e9 !important;
+        color: white !important;
+    }
+
+    .speeddial-linear-demo {
+        .p-speeddial-direction-up {
+            left: calc(50% - 2rem);
+            bottom: 0;
+        }
+
+        .p-speeddial-direction-down {
+            left: calc(50% - 2rem);
+            top: 0;
+        }
+
+        .p-speeddial-direction-left {
+            right: 0;
+            top: calc(50% - 2rem);
+        }
+
+        .p-speeddial-direction-right {
+            left: 0;
+            top: calc(50% - 2rem);
+        }
+    }
+}

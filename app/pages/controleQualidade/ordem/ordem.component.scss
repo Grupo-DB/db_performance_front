@@ -1,0 +1,444 @@
+@import "primeicons/primeicons.css";
+.indent {
+  margin-left: 4em;  /* funciona como um TAB */
+}
+.linha-tracejada {
+  border: none;             // remove a linha padrão do <hr> 
+  border-top: 1px dashed #333; // define espessura, tipo e cor
+  margin: 10px 0;          // espaço em cima e embaixo
+}
+::ng-deep .custom-drawer .p-drawer-header {
+  justify-content: center; // centraliza o conteúdo
+}
+::ng-deep .custom-drawer .p-drawer-header .p-drawer-title {
+  flex: unset; // evita que ocupe espaço lateral
+  text-align: center;
+  width: 100%;
+}
+:host ::ng-deep .p-card-body{
+    background-color: #3B3E44;
+    border-radius: 0 0 10px 10px;
+}
+
+:host ::ng-deep .p-select{
+    background-color: #3B3E44;
+    .p-select-overlay{
+        background-color: #3B3E44;
+    }
+    .p-select-list-container{
+        background-color: #3B3E44;
+        color: #F8F9FA;
+    }
+}
+.p-select-overlay{
+        background-color: #3B3E44;
+    }
+    .p-select-option-group-label{
+        background-color: #3B3E44;
+        color: #F8F9FA;
+    }
+ ::ng-deep .bloco {
+  // Inputs de texto
+  .p-inputtext {
+    background-color: #3B3E44 !important;
+    border: 1px solid #4A5157 !important;
+    color: #F8F9FA !important;
+    
+    &:enabled:focus {
+      border-color: #0ea5e9 !important;
+      box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.2) !important;
+    }
+    
+    &:enabled:hover {
+      border-color: #5A6069 !important;
+    }
+    
+    &::placeholder {
+      color: #9CA3AF !important;
+    }
+  }
+}    
+.bloco{
+    background-color: #2C323A;
+    border-radius: 8px;
+     .p-select{
+    background-color: #3B3E44;
+    .p-select-overlay{
+        background-color: #3B3E44;
+    }
+    .p-select-list-container{
+        background-color: #3B3E44;
+        color: #F8F9FA;
+    }
+}
+.p-select-overlay{
+        background-color: #3B3E44;
+    }
+    .p-select-option-group-label{
+        background-color: #3B3E44;
+        color: #F8F9FA;
+    }    
+}
+.header-modal{
+    color: #ffffff;
+}
+.tabela{
+    background-color: #3B3E44;
+    color: #ffffff;
+    border-radius: 10px;
+    width: 100%;
+    th{
+        font-size: 14px;
+        background-color: #3B3E44 !important;
+        color: white !important;
+    }
+    td{
+        font-size:12px ;
+    }
+}
+.step1{
+    //background-color: #F7F8FA;
+    background-color: #2C2E35;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+.card{
+    border-radius: 10px;
+    .header{
+        background-color: #3B3E44;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        h2{
+            color: #ffffff;
+            font-weight: 700;
+            margin-top: 16px;
+        }
+        display: flex;
+        align-items: center;
+        font-size: 18px;
+        color: #F8F9FA;
+        margin-bottom: 1rem;
+        font-weight: 500;
+        &::before {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 0.75rem;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+            flex-shrink: 0;
+            font-family: 'primeicons';
+            margin-left: 16px;
+        }
+        
+        // Ícone para Informações Gerais
+        &.titulo-info::before {
+            content: '\e95d'; // pi-tags
+        }
+        }
+    }
+
+.container{
+    max-width: 100%;
+}
+
+.containerInterno{
+    background-color: #ffffff;
+    border: 10px solid #ffffff;
+    padding: 10px;
+    //box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.titulo{
+    font-size: 22px;
+    //background-color: #4A90E2;
+    background-color: #ffffff;
+    border: 20px solid #ffffff;
+}
+
+.form-geral{
+    width: 98%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 8px;
+    // box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    .fg1{
+        width: 100%;
+        //margin-top: 10px;
+        //margin-bottom: 25px;
+        p{
+            margin-left: 20px;
+        }
+        .form1{
+           margin-top: 16px; 
+        }
+        .form2{
+            margin-top: 16px;
+        } 
+    }
+    .fg2{
+        width: 100%;
+        //margin-top: 10px;
+        //margin-bottom: 25px;
+        p{
+            margin-left: 20px;
+        }
+        .form2{
+            margin-top: 16px;
+            
+        } 
+    }
+    .fg3{
+        width: 100%;
+        //margin-top: 10px;
+        margin-bottom: 25px;
+        p{
+            margin-left: 20px;
+        }
+        .form2{
+            margin-top: 16px;
+            
+        }
+    }
+}   
+
+.background-form{
+    background-color: #242730;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+// Estilos para inputs e selects escuros
+::ng-deep .bloco {
+  // Inputs de texto
+  .p-inputtext {
+    background-color: #3B3E44 !important;
+    border: 1px solid #4A5157 !important;
+    color: #F8F9FA !important;
+    
+    &:enabled:focus {
+      border-color: #0ea5e9 !important;
+      box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.2) !important;
+    }
+    
+    &:enabled:hover {
+      border-color: #5A6069 !important;
+    }
+    
+    &::placeholder {
+      color: #9CA3AF !important;
+    }
+  }
+  
+  // Selects/Dropdowns
+  .p-dropdown {
+    background-color: #3B3E44 !important;
+    border: 1px solid #4A5157 !important;
+    border-radius: 6px !important;
+    transition: all 0.2s ease !important;
+    
+    .p-dropdown-label {
+      color: #F8F9FA !important;
+      padding: 12px !important;
+      
+      &.p-placeholder {
+        color: #9CA3AF !important;
+      }
+    }
+    
+    .p-dropdown-trigger {
+      background-color: transparent !important;
+      color: #9CA3AF !important;
+      border-left: 1px solid #4A5157 !important;
+      width: 40px !important;
+      
+      .p-dropdown-trigger-icon {
+        color: #9CA3AF !important;
+      }
+    }
+    
+    &:not(.p-disabled):hover {
+      border-color: #5A6069 !important;
+      
+      .p-dropdown-trigger {
+        .p-dropdown-trigger-icon {
+          color: #0ea5e9 !important;
+        }
+      }
+    }
+    
+    &:not(.p-disabled).p-focus {
+      border-color: #0ea5e9 !important;
+      box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.2) !important;
+    }
+    
+    &.p-dropdown-clearable {
+      .p-dropdown-clear-icon {
+        color: #9CA3AF !important;
+        
+        &:hover {
+          color: #F87171 !important;
+        }
+      }
+    }
+  }
+  
+  // Multiselect
+  .p-multiselect {
+    background-color: #3B3E44 !important;
+    border: 1px solid #4A5157 !important;
+    border-radius: 6px !important;
+    
+    .p-multiselect-label {
+      color: #F8F9FA !important;
+      
+      &.p-placeholder {
+        color: #9CA3AF !important;
+      }
+    }
+    
+    .p-multiselect-trigger {
+      background-color: transparent !important;
+      color: #9CA3AF !important;
+      border-left: 1px solid #4A5157 !important;
+    }
+    
+    &:not(.p-disabled):hover {
+      border-color: #5A6069 !important;
+    }
+    
+    &:not(.p-disabled).p-focus {
+      border-color: #0ea5e9 !important;
+      box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.2) !important;
+    }
+  }
+  
+  // Datepicker
+  .p-calendar {
+    .p-inputtext {
+      background-color: #3B3E44 !important;
+      border: 1px solid #4A5157 !important;
+      color: #F8F9FA !important;
+    }
+    
+    .p-datepicker-trigger {
+      background-color: #4A5157 !important;
+      border: 1px solid #4A5157 !important;
+      color: #9CA3AF !important;
+      border-radius: 0 6px 6px 0 !important;
+      transition: all 0.2s ease !important;
+      
+      &:hover {
+        background-color: #5A6069 !important;
+        color: #0ea5e9 !important;
+        border-color: #5A6069 !important;
+      }
+      
+      &:focus {
+        box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.2) !important;
+        border-color: #0ea5e9 !important;
+      }
+    }
+  }
+  
+  // Labels flutuantes
+  .p-float-label label {
+    color: #9CA3AF !important;
+    
+    &.p-label-focus {
+      color: #0ea5e9 !important;
+    }
+  }
+  
+  // Ícones nos inputs
+  .p-input-icon {
+    color: #9CA3AF !important;
+  }
+}
+
+// Estilos para dropdowns no overlay
+::ng-deep .p-dropdown-panel {
+  background-color: #3B3E44 !important;
+  border: 1px solid #4A5157 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  
+  .p-dropdown-items {
+    .p-dropdown-item {
+      background-color: transparent !important;
+      color: #F8F9FA !important;
+      padding: 8px 12px !important;
+      transition: all 0.2s ease !important;
+      
+      &:not(.p-highlight):not(.p-disabled):hover {
+        background-color: #4A5157 !important;
+        color: #F8F9FA !important;
+      }
+      
+      &.p-highlight {
+        background-color: #0ea5e9 !important;
+        color: white !important;
+      }
+    }
+  }
+  
+  .p-dropdown-filter {
+    background-color: #3B3E44 !important;
+    border: 1px solid #4A5157 !important;
+    color: #F8F9FA !important;
+    
+    &:focus {
+      border-color: #0ea5e9 !important;
+      box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.2) !important;
+    }
+  }
+  
+  .p-dropdown-filter-icon {
+    color: #9CA3AF !important;
+  }
+  
+  .p-dropdown-empty-message {
+    color: #9CA3AF !important;
+    background-color: transparent !important;
+    padding: 8px 12px !important;
+  }
+}
+
+:host ::ng-deep {
+    .p-speeddial-action{ 
+        background-color: #0ea5e9 !important;
+        color: white !important;
+    }
+
+    .speeddial-linear-demo {
+        .p-speeddial-direction-up {
+            left: calc(50% - 2rem);
+            bottom: 0;
+        }
+
+        .p-speeddial-direction-down {
+            left: calc(50% - 2rem);
+            top: 0;
+        }
+
+        .p-speeddial-direction-left {
+            right: 0;
+            top: calc(50% - 2rem);
+        }
+
+        .p-speeddial-direction-right {
+            left: 0;
+            top: calc(50% - 2rem);
+        }
+    }
+}
+
+

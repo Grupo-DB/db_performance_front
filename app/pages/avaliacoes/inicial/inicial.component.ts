@@ -1,0 +1,116 @@
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzLayoutModule } from 'ng-zorro-antd/layout';
+import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { MessageService } from 'primeng/api';
+import { DividerModule } from 'primeng/divider';
+import { UploadService } from '../../../services/avaliacoesServices/upload.service';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { NotificacoesService } from '../../../services/avaliacoesServices/notifications/notificacoes.service';
+import { UserService } from '../../../services/avaliacoesServices/users/user.service';
+import { MessagesModule } from 'primeng/messages';
+import { ToastModule } from 'primeng/toast';
+import { MessageModule } from 'primeng/message';
+@Component({
+  selector: 'app-inicial',
+  standalone: true,
+  imports: [
+    CommonModule,NzIconModule,NzUploadModule, NzLayoutModule, NzMenuModule,
+    DividerModule,FormsModule,MessagesModule,ToastModule,MessageModule
+  ],
+  providers: [MessageService,UploadService],
+  templateUrl: './inicial.component.html',
+  styleUrl: './inicial.component.scss'
+})
+export class InicialComponent implements OnInit {
+  notificacoes: any[] = [];
+  unreadCount: number = 0;
+  messages: any[] = [];
+  isLoading: boolean = true;
+  constructor(
+    private msg: NzMessageService,
+    private userService: UserService,
+    private notificacoesService: NotificacoesService,
+    private messageService: MessageService,
+  ){}
+
+  ngOnInit(): void {
+
+    this.getUnreadCount();
+
+    this.notificacoesService.getNotifications().subscribe(
+      notificacoes => {
+        this.notificacoes = notificacoes;
+        this.updateMessages();
+        
+      
+      },
+      error => {
+        console.error('Error fetching users:',error);
+        this.isLoading = false;
+        setTimeout(() => {
+          this.isLoading = false; // Defina como false mesmo em caso de erro após o tempo de atraso
+        }, 2000);
+      }
+    );
+  }
+
+  getUnreadNotifications(): void {
+    this.notificacoesService.getUnreadNotifications().subscribe(
+      (data: any) => {
+        this.notificacoes = data;
+      },
+      (error: any) => {
+        console.error('Erro ao buscar notificações não lidas:', error);
+      }
+    );
+  }
+
+  markAllAsRead(): void {
+    this.notificacoesService.markAllAsRead().subscribe(
+      (data: any) => {
+        this.getUnreadNotifications();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Todas as notificações foram marcadas como lidas!'
+        });
+        setTimeout(() => {
+          window.location.reload(); // Atualiza a página após a exclusão
+         }, 1000); // Tempo em milissegundos (1 segundo de atraso)
+      },
+      (error: any) => {
+        console.error('Erro ao marcar notificações como lidas:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao marcar todas as notificações como lidas.'
+        });
+      }
+    );
+  }
+
+  getUnreadCount(): void {
+    this.notificacoesService.getUnreadCount().subscribe(
+      (data: any) => {
+        this.unreadCount = data.unread_count;
+      },
+      (error: any) => {
+        console.error('Erro ao contar notificações não lidas:', error);
+      }
+    );
+  }
+
+  updateMessages(): void {
+    this.unreadCount = this.notificacoes.length;
+    this.messages = this.notificacoes.map(notificacao => ({
+      severity: 'success',
+      summary: notificacao.verb,
+      detail: notificacao.description
+    }));
+  }
+}
+

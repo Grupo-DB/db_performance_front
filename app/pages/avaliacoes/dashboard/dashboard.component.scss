@@ -1,0 +1,272 @@
+@import "primeicons/primeicons.css";
+.menu{
+    position:static;
+     //transform: translate(-1%, -180%);
+     
+     width: 100%;
+ }
+ .titulo{
+    justify-content: center;
+    margin-top: 50px;
+    h2{
+        color:slategrey;
+    }
+}
+
+ .cards{
+    display: flex;
+    justify-content: space-around;
+        p{
+            color:#1890FF;
+        }
+        .cardsWidth{
+            margin-top: 20px;
+            //box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            width: 250px;
+        }
+        .mediasal{
+            margin-left: 10px;
+        }
+        .mediaidade{
+            margin-left: 10px;
+        }
+ }
+ .filtros{
+    display: flex;
+    margin-top: 50px;
+    justify-content: space-around;
+ }
+ .graficos{
+    display: flex;
+    margin-top: 50px;
+    justify-content: space-around;
+}
+.graficos2 {
+    display: flex;
+    margin-top: 50px;
+    justify-content: space-around;
+}
+
+.cardFb{
+    width: 300px;
+    margin-left: 80px;
+    nz-progress{
+        margin-top: 15px;
+        margin-left: 80px;
+        }
+    p{
+        text-align: center;
+    }
+    
+}
+
+.avaliacoes{
+    display: flex;
+    margin-top: 50px;
+    margin-bottom: 50px; 
+    justify-content: center;
+    p{
+        color:#1890FF;
+    }
+    .avGeral{
+        display: flex;
+        margin-left: -20px;
+        .progressFb{
+            margin-left: 50px;
+            box-shadow: 0px 0px 10px rgba(0.1, 0, 0, 0.1);
+            border-radius: 5px;
+            width: 300px;
+            height: 168px;
+            
+            .test{
+                margin-top: 10px;
+                vertical-align: bottom;
+                
+            }
+            nz-progress{  
+                margin-top: 105px;
+                margin-left: 88px;
+            }
+            p{
+                margin-bottom: -92px;
+                text-align: center;
+            }
+        }
+        .cardNota{
+            margin-left: 80px;
+            width: 200px;
+        }
+    }
+}
+// .calendarios{
+//     display: flex;
+    
+//     .form5{
+//         width: 320px;
+//     }
+// }
+.cardNota2{
+   
+    width: 300px;
+}
+.avaliacoesgerais{
+    display: flex;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    height: 300px;
+    vertical-align: middle;
+    .avTotais{
+        display: flex;
+        margin-left: 10px;
+        p{
+            color:#1890FF;
+        }
+        .chartRadarGeral{
+            width: 700px;
+            height: 400px;
+            margin-left: 100px;
+            margin-top: -50px;
+        }
+        .progressFbGeral{
+            margin-left: 10px;
+            margin-top: 80px;
+            box-shadow: 0px 0px 10px rgba(0.1, 0, 0, 0.1);
+            border-radius: 5px;
+            width: 300px;
+            height: 168px;
+            
+            nz-progress{  
+                margin-top: 105px;
+                margin-left: 88px;
+            }
+            p{
+                margin-bottom: -92px;
+                text-align: center;
+            }
+        }
+        .cardAvTot{
+            margin-left: 10px;
+            margin-top: 80px;
+            width: 200px;
+        }
+    }    
+}
+
+.chartAmbientes{
+    height: 500px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.avaliacoesGestores{
+    display: flex;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    height: 300px;
+    .avGestor{
+        display: flex;
+        margin-left: 30px;
+        p{
+            color:#1890FF;
+        }
+        .cardAvGes{
+            margin-left: 10px;
+            margin-top: 80px;
+            width: 200px;
+        }
+        .progressFbGestor{
+            margin-left: 10px;
+            margin-top: 80px;
+            box-shadow: 0px 0px 10px rgba(0.1, 0, 0, 0.1);
+            border-radius: 5px;
+            width: 300px;
+            height: 168px;
+            
+            nz-progress{  
+                margin-top: 105px;
+                margin-left: 88px;
+            }
+            p{
+                margin-bottom: -92px;
+                text-align: center;
+            }
+        }
+        .chartRadarGestor{
+            width: 700px;
+            height: 400px;
+            margin-left: 100px;
+            margin-top: -50px;
+        }
+        .cardAvGes1{
+            margin-left: 0px;
+            margin-top: 80px;
+            width: 200px;
+            p{
+                font-size: 14px;
+            }
+        }
+    }
+}
+ 
+.filtroAv{
+    margin-left: 30px;
+}
+.filtroAvaliador{
+    margin-left: 30px;
+}
+
+.dashAvaliador{
+    display: flex;
+    margin-top: 0px;
+    margin-bottom: 50px;
+    height: 300px;
+    vertical-align: middle;
+    .avTotais{
+        display: flex;
+        margin-left: 10px;
+        p{
+            color:#1890FF;
+        }
+        .chartRadarAvaliadores{
+            width: 700px;
+            height: 380px;
+            //margin-left: 100px;
+            margin-top: -30px;
+        }
+        .progressFbGeral{
+            margin-left: 10px;
+            margin-top: 80px;
+            box-shadow: 0px 0px 10px rgba(0.1, 0, 0, 0.1);
+            border-radius: 5px;
+            width: 300px;
+            height: 168px;
+            
+            nz-progress{  
+                margin-top: 105px;
+                margin-left: 88px;
+            }
+            p{
+                margin-bottom: -92px;
+                text-align: center;
+            }
+        }
+        .cardAvTot{
+            margin-left: 50px;
+            margin-top: 80px;
+            width: 300px;
+        }
+        .cardAvTot2{
+            margin-left: 20px;
+            margin-top: 80px;
+            width: 200px;
+        }
+        .cardAvTot3{
+            margin-left: 20px;
+            margin-top: 80px;
+            width: 200px;
+            p{
+                font-size: 12px;
+            }
+        }
+    }    
+}

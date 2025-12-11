@@ -1,0 +1,228 @@
+@import "../../../../../node_modules/quill/dist/quill.core.css";
+@import "../../../../../node_modules/quill/dist/quill.snow.css";
+
+:host {
+  display: flex;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.app-layout {
+  min-height: 100vh;
+  background-color: #2C323A;
+}
+
+.menu-sidebar {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  background-color: #2C323A;
+}
+
+.header-trigger {
+  height: 64px;
+  padding: 20px 24px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all .3s, padding 0s;
+}
+
+.trigger:hover {
+  color: #4C5264;
+}
+
+.sidebar-logo {
+  position: relative;
+  height: 75px;
+  padding-left: 10px;
+  overflow: hidden;
+  line-height: 64px;
+  background: #2C323A;
+  transition: all .3s;
+}
+
+.sidebar-logo img {
+  display: inline-block;
+  width: 60px;
+  vertical-align: middle;
+}
+
+.sidebar-logo h1 {
+  display: inline-block;
+  margin: 0 0 0 20px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
+  vertical-align: middle;
+}
+
+nz-header {
+  padding: 0;
+  width: 100%;
+  z-index: 2;
+}
+
+.app-header {
+  position: relative;
+  display: flex;
+  height: 64px;
+  padding: 0;
+  //background: #E3E7EC;
+  background-color: #2C323A;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
+}
+.app-header .inicio {
+  display: flex;
+  position: absolute;
+  margin-left: 70px;
+  color: #ffffff;
+  .divnot {
+    display: block;
+    margin-top: -5px;
+    font-size: 12px;
+  }
+
+  .divnot2 {
+    height: 20px;
+    margin-top: 30px;
+    margin-left: -55px;
+    font-size: 12px;
+    background-color: #4c5264;
+  }
+}
+
+.app-header .btn-menu {
+  font-size: 25px;
+  padding-left: 15px;
+  cursor: pointer;
+  color: #ffffff; // Cor padrão do ícone (branco)
+  
+  .trigger {
+    color: #ffffff; // Cor do ícone
+    transition: color 0.3s ease;
+    
+    &:hover {
+      color: #1890ff; // Cor azul no hover
+    }
+  }
+}
+
+.app-header .top {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  color: #ffffff;
+}
+
+.app-header .final {
+  display: flex;
+  position: absolute;
+  right: 120px;
+  color: #ffffff;
+  .empresa {
+    display: block;
+    font-size: 12px;
+    margin-top: -5px;
+  }
+
+  .btn {
+    cursor: pointer;
+    margin-left: 30px;
+    margin-right: -100px;
+    font-size: 20px;
+    margin-top: 5px;
+  }
+}
+
+nz-content {
+  background-color: #fff;
+  overflow-y: scroll;
+}
+
+.inner-content {
+  padding: 0px;
+  background: #fff;
+  height: 100vh;
+}
+
+nz-sider {
+  a:hover {
+    color: #1890ff;
+  }
+
+  li {
+    background-color: #2C323A;
+    color: #e0ede9;
+    margin: 0 0 0 0px;
+    border-bottom: 0.5px solid;
+    border-top: 0.5px solid;
+    border-left: 0.5px solid;
+    border-color: #242730;
+  }
+
+  a {
+    color: #e0ede9;
+  }
+}
+
+.rodape {
+  display: flex;
+  justify-content: center;
+  font-size: 10px;
+  color: #ffffff;
+  background-color: #2C323A;
+}
+
+.loading-animation {
+  text-align: center;
+  margin: auto;
+}
+
+@media screen and (max-width: 760px) {
+  .app-header {
+    height: 64px;
+    align-items: center;
+  }
+  .app-header .header-trigger {
+    display: none;
+  }
+
+  .app-header .btn-menu {
+    display: none;
+  }
+
+  .app-header .inicio
+  .app-header .inicio .divnot{
+    font-size: 12px;
+    
+  }
+  .app-header .top{
+    display: none;
+  }
+  .app-header .final{
+    margin-top: 10vh;
+    margin-right: -202px;
+    align-self: center;
+    position: relative;
+  }
+  .app-header .final .empresa{
+   display: none;
+  }
+
+  .app-header .final .btn{
+    margin-top: -50px;
+    margin-left: 400px;
+  }
+} 
+ .cor-menu {
+    background-color: #4c5264;
+    color: #e0ede9;
+  }
+
+  .cor-menu-a {
+    color: #e0ede9;
+  }

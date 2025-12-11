@@ -1,0 +1,56 @@
+  
+<div class="container">
+  <div class="formulario">
+      <div class="lgimg">
+          <img  src="/assets/imagens/logotelalogin.png"/>
+      </div>
+      <div class="titulo">
+          <h1>Redefinir Senha</h1>
+      </div>
+      <form [formGroup]="resetPasswordForm">
+          <div class="f1">
+            <p-floatlabel variant="on">
+                <p-iconfield>
+                    <p-inputicon class="pi pi-key" />
+                    <input
+                        [style]="{'width':'100%'}"
+                        pInputText id="on_label"  
+                        autocomplete="off" 
+                        formControlName="newPassword"
+                        type="password"
+                        id="newPassword"    
+                    />
+                </p-iconfield>
+                <label for="on_label">Nova Senha</label>
+            </p-floatlabel>
+          </div>
+          <div class="f2">    
+            <p-floatlabel variant="on">
+                <p-iconfield>
+                    <p-inputicon class="pi pi-key" />
+                    <input
+                        [style]="{'width':'100%'}"
+                        pInputText id="on_label"  
+                        autocomplete="off" 
+                        formControlName="confirmPassword"
+                        type="password"
+                        id="newPassword"    
+                    />
+                </p-iconfield>
+                <label for="on_label">Confirmar Senha</label>
+            </p-floatlabel>
+              <div class="botoes-form">
+                  <p-toast></p-toast>
+                  <div class="btnsec" (click)="clearForm()">
+                      <p>Limpar</p>
+                  </div>
+                  <div class="btnpri" (click)="submit()">
+                      <p>Criar</p>            
+                  </div>
+              </div>  
+          </div>    
+      </form>
+  </div>    
+</div>
+
+ 

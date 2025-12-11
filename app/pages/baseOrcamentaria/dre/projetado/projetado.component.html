@@ -1,0 +1,407 @@
+<div class="menu">
+    <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 40px;box-shadow: 2px 0 6px ; ">
+        <li nz-menu-item nzMatchRouter="#">
+            <a style="font-size: 13px;" routerLink="/welcome/baseOrcamentaria/orcamentoBase/homeOrcamento">Início</a>
+        </li>
+        <li *ngIf="hasGroup(['Admin','Master'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizAnalitica" >Raízes Analíticas</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/centrocustopai" >Centro de Custo Pai</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/centrocusto" >Centro de Custo </a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/raizSintetica" >Raiz Sintética</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/contaContabil" >Conta Contábil</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/grupoItens" >Grupos de Itens</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoBase/orcamentoBase" >Orçamento Base</a>
+                </li>
+            </ul>
+        </li >
+        
+        <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorSetor','OrcamentoGestorItens'])" nz-submenu nzTitle="Acompanhamento "  style="font-size: 13px; ">
+            <ul>
+                <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorSetor'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoRealizado/realizado"> Orçado x Realizado Setorial</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorItens'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/orcamentoGrupoItens/orcamentogrupoitens"> Orçado x Realizado Grupo de Itens</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/projetado"> DRE Projetado</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master','OrcamentoGestorProd'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/indicadorescp">Indicadores Custo de Produção</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/curva">Curva ABC</a>
+                </li>
+                <li *ngIf="hasGroup(['Admin','Master'])" nz-menu-item  nzMatchRouter>
+                    <a routerLink="/welcome/baseOrcamentaria/dre/ppr">PPR - Orçamento</a>
+                </li> 
+            </ul>
+           
+        </li>    
+    </ul>
+</div>
+
+<div *ngIf="loading" class="loading-animation flex flex-column form2 w-5 justify-content-center m-auto">
+    <!-- Coloque aqui a sua animação de carregamento -->
+    <img src="assets/imagens/startmanager2.gif" alt="Loading..." class="w-12">
+</div> 
+<p-toast></p-toast>
+<div class="container flex flex-column align-items-center mb-4">
+    <div class="containerInterno w-12">
+        <div @swipeAnimation>
+                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+                    <div class="bloco fg1 flex flex-column w-12 align-items-center">
+                        <p-card class="card w-12 text-center">
+                            <ng-template #header>
+                                <div class="header titulo-info w-full text-center">
+                                    <h2>DRE Projetado</h2>
+                                </div>
+                            </ng-template>
+                            <div class="flex flex-column align-items-center justify-content-around lg:flex-row">
+                                <div class="w-10 mt-2 lg:w-4">
+                                    <p-floatlabel variant="on">
+                                        <p-inputnumber
+                                            fluid="true" 
+                                            variant="filled"
+                                            mode="decimal"
+                                            [(ngModel)]="ano"
+                                            [showButtons]="true" 
+                                            [min]="2024" 
+                                            [max]="2999"
+                                            [useGrouping]="false"                       
+                                        />
+                                        <label>Ano</label>
+                                    </p-floatlabel>
+                                </div>
+                                <div class="w-10 mt-2 lg:w-4">
+                                    <p-floatLabel variant="on">    
+                                        <p-multiSelect
+                                            variant="filled"
+                                            [style]="{'width':'100%'}"
+                                            [options]="meses"
+                                            optionLabel="value"
+                                            optionValue="key"
+                                            inputId="float-label"
+                                            [(ngModel)]="periodo"
+                                        >
+                                        </p-multiSelect>
+                                        <label for="float-label">Selecione os Meses</label>
+                                    </p-floatLabel>
+                                </div>
+                                <div 
+                                    class="mt-2 w-10 lg:w-2 h-3rem"
+                                    style="background-color: #002B5C; cursor: pointer; border-radius: 4px; color: #ffffff; display: flex; justify-content: center; align-items: center;font-size: 16px;"
+                                    (click)="executaCalculos()"
+                                >
+                                    Calcular
+                                </div>
+                            </div>    
+                            <div *ngIf="!loading" class="tabela mt-3" @efeitoFade>
+                                <p-table
+                                    #dt1
+                                    [value]="resultados"
+                                    [paginator]="false"
+                                    [rows]="20"
+                                    dataKey="id" 
+                                    [showCurrentPageReport]="false"
+                                    [tableStyle]="{ 'min-width': '50rem' }"
+                                    currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
+                                    [rowsPerPageOptions]="[20, 40, 60]"
+                                    [globalFilterFields]="['id','ano','raiz_analitica_desc','raiz_contabil_grupo_desc','mes_especifico']"
+                                    sortMode="single"
+                                    scrollable="true"
+                                    sortField="quantidade" 
+                                    [sortOrder]="-1"
+                                >
+                                
+                                    <ng-template pTemplate="header">
+                                        <tr class="footer-row1">
+                                            <th style="width:10%" type="text" field="label" display="menu">
+                                                Linha de Produtos 
+                                            </th>
+                                            <th pSortableColumn="quantidade" style="width:10%" type="text" field="quantidade" display="menu">
+                                                Quantidade (tn) <p-sortIcon field="quantidade" />
+                                            </th>
+                                            <th pSortableColumn="preco" style="width:10%" type="text" field="preco" display="menu">
+                                                Preço Médio (R$) <p-sortIcon field="preco" />
+                                            </th>
+                                            <th pSortableColumn="faturamento" style="width:10%" type="text" field="faturamento" display="menu">
+                                            Faturamento <p-sortIcon field="faturamento" />
+                                            </th>
+                                            <th pSortableColumn="aliquota" style="width:10%" type="text" field="aliquota" display="menu">
+                                                Aliquota Dedução (%) <p-sortIcon field="aliquota" />
+                                            </th>
+                                            <th pSortableColumn="deducao" style="width:10%" type="text" field="deducao" display="menu">
+                                                Dedução <p-sortIcon field="deducao" />
+                                            </th>
+                                            <th pSortableColumn="receitaLiquida" style="width:10%" type="text" field="receitaLiquida" display="menu">
+                                                Receita Liquida <p-sortIcon field="receitaLiquida" />
+                                            </th>
+                                            <th pSortableColumn="percentual" style="width:10%" type="text" field="percentual" display="menu">
+                                                % <p-sortIcon field="percentual" />
+                                            </th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-resultado>
+                                        <tr class="resultados-row">                      
+                                            <td>{{ resultado.label }}</td>
+                                            <td>{{ resultado.quantidade }}</td>
+                                            <td>{{ resultado.preco  }}</td>
+                                            <td>{{ resultado.faturamento  }}</td>
+                                            <td>{{ resultado.aliquota }}</td>
+                                            <td>{{ resultado.deducao  }}</td>
+                                            <td>{{ resultado.receitaLiquida  }}</td>
+                                            <td>{{ resultado.percentual }}</td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="footer">
+                                        <tr class="footer-rowtab">
+                                            <td colspan="1" class="text-left">Totais</td>
+                                            <td>{{ quantidadeTotal }}</td>
+                                            <td></td>
+                                            <td>{{ receitaBrutaFormatada }} </td>
+                                            <td></td>
+                                            <td>{{ deducaoTotal }}</td>
+                                            <td>{{ receitaLiquida }}</td>
+                                            <td></td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                            <div *ngIf="!loading" class="tabela mt-3"@swipeAnimation>
+                                <p-table
+                                    #dt1
+                                    [value]="resultados"
+                                    [paginator]="false"
+                                    [rows]="20"
+                                    dataKey="id" 
+                                    [showCurrentPageReport]="false"
+                                    [tableStyle]="{ 'min-width': '50rem' }"
+                                    currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
+                                    [rowsPerPageOptions]="[20, 40, 60]"
+                                    [globalFilterFields]="['id','ano','raiz_analitica_desc','raiz_contabil_grupo_desc','mes_especifico']"
+                                    sortMode="multiple"
+                                    scrollable="true"
+                                    stripedRows
+                                >
+                                    <ng-template pTemplate="header">
+                                        <tr class="footer-row3">
+                                            <th colspan="6" class="text-left font-bold pr-6 w-9 ">Receita Bruta</th>
+                                            <th class="text-left font-bold pr-6 w-3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ receitaBrutaFormatada }}</th>
+                                        </tr>
+                                        <tr class="footer-row3">
+                                            <th colspan="6" class="text-left font-bold pr-6 w-9">&nbsp;&nbsp;&nbsp;&nbsp;Deduções</th>
+                                            <th class="text-left font-bold pr-6 ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ deducaoTotal  }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ percentDeducao  }}%</th>
+                                        </tr>
+
+                                        <tr class="footer-row3">
+                                            <th colspan="6" class="text-left font-bold pr-6 w-9">Receita Liquida</th>  
+                                            <th class="text-left font-bold pr-6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ receitaLiquida }}</th>
+                                        </tr> 
+
+                                    </ng-template>    
+                                </p-table>
+                            </div>
+                            <div class="tabela mt-3" @swipeAnimationReverse>  
+                                <p-treeTable [value]="orcados" [scrollable]="true" scrollHeight="600px" [tableStyle]="{'min-width':'60rem'}" stripedRows>
+                                
+                                    <!-- Corpo da Tabela -->
+                                    <ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-rowIndex="rowIndex">
+                                        <!-- Linhas dinâmicas -->
+                                        <tr style="background-color:#2C323A; font-weight:bold;">
+                                            <td colspan="6" class="w-9">
+                                                <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                                                {{ rowData.tipo || rowData.nome }} 
+                                            </td>
+                                            <td colspan="2" style="font-weight: bold; font-size: 15px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ rowData.total }}</td>
+                                            <td *ngIf="!rowNode.parent">{{ percentualTotalGeral }}%</td> 
+                                            <td>{{ rowData.percentual }}</td>
+                                        </tr>
+                                    </ng-template>
+                                
+                                    <!-- Detalhes expandidos -->
+                                    <ng-template pTemplate="rowexpansion" let-rowNode let-rowData="rowData">
+                                    <tr>
+                                        <td >
+                                        <div class="p-3">
+                                            <p-treeTable [value]="rowData.centrosCusto" dataKey="nome">
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                <th>Centro de Custo</th>
+                                                <th>Total</th>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-subRowNode let-subRowData="rowData">
+                                                <tr>
+                                                <td>
+                                                    <p-treeTableToggler [rowNode]="subRowNode"></p-treeTableToggler>
+                                                    {{ subRowData.nome }}
+                                                </td>
+                                                <td>{{ subRowData.total | currency:'BRL' }}</td>
+                                                
+                                                </tr>
+                                            </ng-template>
+                                            </p-treeTable>
+                                        </div>
+                                        </td>
+                                    </tr>
+                                    </ng-template>
+                                
+                                    <!-- Rodapé do Grupo (Total Geral) -->
+                                    <ng-template pTemplate="footer">
+                                    <tr class="footerp-row">
+                                        <td style="font-size: 15px;" colspan="6" class="text-left font-bold w-9">Lucro Bruto</td>
+                    
+                                        <td style="font-size: 15px;" class="text-left font-bold">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ lucroBrutoFormatado }}</td>
+                                    </tr>
+                                    </ng-template>
+                                </p-treeTable> 
+                            </div>
+                            <div *ngIf="!loading" class="tabela mt-3"@swipeAnimation>  
+                                <p-treeTable [value]="despesas" [scrollable]="true" scrollHeight="600px" [tableStyle]="{'min-width':'60rem'}">
+                                    <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+                                    <!-- Linhas dinâmicas -->
+                                    <tr style="background-color: #f2f1f0; font-weight:bold;">
+                                        <td colspan="6" class="w-9">
+                                        <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                                        {{ rowData.tipo || rowData.nome }}
+                                        </td>
+                                        <td colspan="2" style="font-weight: bold; font-size: 15px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ rowData.total  }}</td>
+                                        <td *ngIf="!rowNode.parent">{{ percentualDespesaGeral }}%</td>
+                                        <td>{{ rowData.percentual }}</td> 
+                                    </tr>
+                                    </ng-template>
+                                
+                                    <!-- Detalhes expandidos -->
+                                    <ng-template pTemplate="rowexpansion" let-rowNode let-rowData="rowData">
+                                    <tr>
+                                        <td colspan="1">
+                                        <div class="p-3">
+                                            <p-treeTable [value]="rowData.centrosCusto" dataKey="nome">
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                <th>Centro de Custo</th>
+                                                <th>Total</th>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-subRowNode let-subRowData="rowData">
+                                                <tr>
+                                                    <td></td>
+                                                <td>
+                                                    <p-treeTableToggler [rowNode]="subRowNode"></p-treeTableToggler>
+                                                    {{ subRowData.nome }}
+                                                </td>
+                                                <td>{{ subRowData.total  }}</td>
+                                                <td>{{ rowData.percentual }}</td>
+                                                </tr>
+                                            </ng-template>
+                                            </p-treeTable>
+                                        </div>
+                                        </td>
+                                    </tr>
+                                    </ng-template>
+                                
+                                    <!-- Rodapé do Grupo (Total Geral) -->
+                                    <ng-template pTemplate="footer">
+                                        <tr class="footerp-row">
+                                            <td colspan="6" style="font-size: 15px;" class="text-left font-bold pr-6 w-9">Resultado Operacional</td>
+                                            <td style="font-size: 15px;" class="text-left font-bold pr-6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ resultadoOperacionalFormatado }}</td>
+                                        </tr>
+                                    </ng-template>
+                                </p-treeTable> 
+                            </div>
+                            <div class="tabela mt-3"@swipeAnimationReverse>
+                                <p-table
+                                    #dt1
+                                    [value]="resultados"
+                                    [paginator]="false"
+                                    [rows]="20"
+                                    dataKey="id" 
+                                    [showCurrentPageReport]="false"
+                                    [tableStyle]="{ 'min-width': '50rem' }"
+                                    currentPageReportTemplate="Mostrando do {first} ao {last} de {totalRecords} registros"
+                                    [rowsPerPageOptions]="[20, 40, 60]"
+                                    [globalFilterFields]="['id','ano','raiz_analitica_desc','raiz_contabil_grupo_desc','mes_especifico']"
+                                    sortMode="multiple"
+                                    scrollable="true"
+                                    stripedRows
+                                >
+                                    <ng-template pTemplate="footer">
+                                        <tr class="footerp-row2">
+                                            <td colspan="6" style="font-size: 15px;" class="text-left font-bold pr-6">Resultado Financeiro</td>
+                                            <td style="font-size: 15px;" class="text-left font-bold pr-6 nowrap">
+                                                <div class="flex text-left">
+                                                    <p-floatLabel variant="on" style="flex: 1;">
+                                                        <p-inputNumber
+                                                            currency="BRL"
+                                                            locale="pt-BR"
+                                                            mode="currency"
+                                                            [(ngModel)]="resultadoFinanceiro"
+                                                        ></p-inputNumber>
+                                                        <label for="resultadoFinanceiro">Informe o valor</label>
+                                                    </p-floatLabel>
+                                                    <p-button (click)="calcularLucroAntesImpostos()" styleClass="p-button-info ml-2" size="small" icon="pi pi-calculator" label="Calcular"></p-button>
+                                                </div>
+                                            </td>
+                                            
+                                        </tr>
+                                        <tr class="footerp-row2">
+                                            <td colspan="6" style="font-size: 15px;" class="text-left font-bold pr-6">Lucro antes dos Impostos</td>
+                                            <td style="font-size: 15px;" class="text-left font-bold pr-6">{{ lucroAntesImpostosFormatado}}</td>
+                                        </tr>
+                                        <tr class="footerp-row2">
+                                            <td colspan="6" style="font-size: 15px;" class="text-left font-bold pr-6">CSSL/IRPJ</td>
+                                            <td style="font-size: 15px;" class="text-left font-bold pr-6 nowrap">
+                                                <div class="flex text-left">
+                                                    <p-floatLabel variant="on" style="flex: 1;">
+                                                        <p-inputNumber
+                                                            currency="BRL"
+                                                            locale="pt-BR"
+                                                            mode="currency"
+                                                            [(ngModel)]="impostos"
+                                                        ></p-inputNumber>
+                                                        <label for="resultadoFinanceiro">Informe o valor</label>
+                                                    </p-floatLabel>
+                                                    <p-button (click)="calcularLucroLiquido()" styleClass="p-button-info ml-2" size="small" icon="pi pi-calculator" label="Calcular"></p-button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="footerp-row2">
+                                            <td colspan="6" style="font-size: 15px;" class="text-left font-bold pr-6">Lucro Liquido</td>
+                                            <td style="font-size: 15px;" class="text-left font-bold pr-6">{{ lucroLiquidoFormatado }}</td>
+                                        </tr>
+                                        <tr class="footerp-row2">
+                                            <td colspan="6" style="font-size: 15px;" class="text-left font-bold pr-6">Depreciação Total</td>
+                                            <td style="font-size: 15px;" class="text-left font-bold pr-6">{{ totalDepreciacaoFormatada }}</td>
+                                        </tr> 
+                                        <tr class="footerp-row2">
+                                            <td colspan="6" style="font-size: 15px;" class="text-left font-bold pr-6 w-9">Ebitda</td>
+                                            <td style="font-size: 15px;" class="text-left font-bold pr-6">{{ ebitdaFormatado }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ percentualTotalEbitda }}%</td>
+                                        
+                                        </tr>
+                                    </ng-template>
+                                </p-table>             
+                            </div>            
+                        </p-card>
+                    </div>
+                </div>    
+            </div>
+        </div>
+    </div>
+
+
+

@@ -1,0 +1,110 @@
+@import "primeicons/primeicons.css";
+.rowBotoes{
+    width: 99%;
+    display: flex;
+    justify-content: end;
+}
+.btnCalc{
+    cursor: pointer;
+    background-color: #444959;
+    color: #fff;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    margin-left: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}
+.rowProducao{
+    width: 99%;
+    margin-left: 3px;
+    display: flex;
+    justify-content: left;
+    margin-bottom: 30px;
+}
+.rowMineracao{
+    width: 99%;
+    margin-left: 3px;
+    display: flex;
+    justify-content: left;
+    margin-bottom: 30px;
+}
+.rowManutencao{
+    width: 99%;
+    margin-left: 3px;
+    display: flex;
+    justify-content: left;
+    margin-bottom: 30px;
+}
+.card{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    margin-left: 10px;
+    text-align: center;
+    height: 140px;
+    width: 220px;
+    border-radius: 10px;
+    background-color:#e3e3f3;
+    box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 4px 17px -6px rgba(0,0,0,0.75);
+}
+
+.valor {
+    font-size: 30px;
+    flex: 1;
+    display: flex;
+    align-items: center; /* Centraliza verticalmente */
+    justify-content: center; /* Centraliza horizontalmente */
+    height: 100%; /* Certifique-se de que o contêiner tenha uma altura definida */
+    font-family: 'Aptos', sans-serif;
+    font-weight: 700;
+    p {
+        margin: 0; /* Remove a margem padrão */
+        text-align: center;
+    }
+}
+.unidade {
+    border-top: 1px solid #ccc; /* Adiciona uma borda superior para separar o rodapé */
+    padding-top: 10px;
+    text-align: center; /* Centraliza o texto do rodapé */
+    font-family: 'Aptos', sans-serif;
+    font-weight: 200;
+    color: #1890FF;
+}
+.titulo{
+    font-family: 'Aptos', sans-serif;
+    margin-left: 15px;
+    position: relative;
+    margin-bottom: 8px;
+        a {
+            color: #444959; 
+            text-decoration: none;
+            :hover{
+                color: #1890FF;
+            } 
+        }
+}
+.titulo2{
+    font-family: 'Aptos', sans-serif;
+    margin-left: 15px;
+    position: relative;
+    margin-bottom: 8px;
+        a {
+            color: #444959; 
+            text-decoration: none;
+            :hover{
+                color: #1890FF;
+            } 
+        }
+}
+.selecionado {
+    background-color: #4972B0; /* Cor de fundo do botão selecionado */
+    color: white;              /* Cor do texto do botão selecionado */
+    /* Adicione outros estilos, como borda ou sombra, se quiser */
+}

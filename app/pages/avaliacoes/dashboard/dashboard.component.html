@@ -1,0 +1,654 @@
+<div class="menu w-full">
+  <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 45px;box-shadow: 2px 0 6px ; ">
+      <li nz-menu-item nzMatchRouter="#">
+          <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
+      </li>
+      <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+          <ul>
+              <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item  nzMatchRouter>
+                  <a routerLink="../tipoavaliacao" >Tipos de Avaliações</a>
+              </li>
+              <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item  nzMatchRouter>
+                  <a routerLink="../pergunta" >Perguntas</a>
+              </li>
+              <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item  nzMatchRouter>
+                  <a routerLink="../formulario" >Formulários</a>
+              </li>
+          </ul>
+      </li>    
+      
+      <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
+          <ul>
+              <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item   nzMatchRouter>
+                  <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
+              </li>
+              <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item   nzMatchRouter>
+                  <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados a um Formulário</a>
+              </li>
+              <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item   nzMatchRouter>
+                  <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
+              </li>
+          </ul>    
+      </li>
+
+      
+      <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])">
+          <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
+      </li>
+      <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])">
+          <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
+      </li>
+  
+      <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-submenu nzTitle="Relatórios" style="font-size: 13px;">
+        <ul>
+          <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../mapaavaliadores">Mapa de Avaliadores</a>
+          </li>
+          <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../comparativoavaliadores">Comparativo entre Avaliadores</a>
+          </li>
+          <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../mapaavaliados">Mapa de Avaliados</a>
+          </li>
+          <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../evolucaoavaliacoes">Evolução das Avaliações</a>
+          </li>
+          <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../relatoriospdf">Relatŕorios em PDF</a>
+          </li>
+        </ul>
+      </li> 
+      
+  </ul>
+</div>
+
+
+<div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="titulo mt-6 mb-6 text-2xl">
+  <p-divider align="left" type="solid">
+      <b>Mapa de Colaboradores</b>
+  </p-divider> 
+</div>
+
+<div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="flex flex-column w-full align-items-center lg:flex-row w-full justify-content-around">
+    <div class="flex w-10 m-3 lg:w-3">
+      <p-multi-select
+        [style]="{'width': '100%'}"
+        variant="filled"
+        [options]="filiais"
+        [(ngModel)]="selectedFiliais"
+        optionLabel="nome"
+        optionValue="id"
+        defaultLabel="Selecione a Filial"
+        (onChange)="onFilialSelecionada($event.value)">
+      </p-multi-select>
+
+    </div>
+    <div class="flex w-10 m-3 lg:w-3">  
+      <p-multi-select
+        [style]="{'width': '100%'}"
+        variant="filled"
+        [options]="areas"
+        [(ngModel)]="selectedAreas"
+        optionLabel="nome"
+        optionValue="id"
+        defaultLabel="Selecione a Área"
+        (onChange)="onAreaSelecionada($event.value)">
+      </p-multi-select>
+
+    </div>   
+    <div class="flex w-10 m-3 lg:w-3">  
+      <p-multi-select
+        variant="filled"
+        [style]="{'width': '100%'}"
+        [options]="setores"
+        [(ngModel)]="selectedSetores"
+        optionLabel="nome"
+        optionValue="id"
+        defaultLabel="Selecione o Ambiente"
+        (onChange)="onSetorSelecionado($event.value)"></p-multi-select>
+
+    </div>
+    <div class="flex w-10 m-3 lg:w-3">  
+      <p-multi-select
+        variant="filled"
+        [style]="{'width': '100%'}"
+        [options]="ambientes"
+        [(ngModel)]="selectedAmbientes"
+        optionLabel="nome"
+        optionValue="id"
+        defaultLabel="Selecione o Setor"
+        (onChange)="onAmbienteSelecionado($event.value)"></p-multi-select>
+
+    </div>
+    <div class="flex w-10 m-3 lg:w-3">
+      <p-multi-select
+        variant="filled"
+        [style]="{'width': '100%'}"
+        [options]="cargos"
+        [(ngModel)]="selectedCargos"
+        optionLabel="nome"
+        optionValue="id"
+        defaultLabel="Selecione o Cargo"
+        (onChange)="applyFilters()"></p-multi-select>
+    </div>
+</div>
+  
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="cards flex flex-wrap w-full">
+     
+      <p-card 
+        *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
+        class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+        header="{{ totalColaboradores }}"
+      >
+        <p class="m-0">
+           Colaboradores
+           <p-divider></p-divider>
+        </p>
+      </p-card>
+       
+    
+      <p-card 
+        *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
+        class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+        header=" {{ mediaSalarios | currency:'BRL':'symbol':'1.2-2' }}"
+      >
+        <p class="m-0">
+          Média Salarial
+          <p-divider></p-divider>
+        </p>
+      </p-card>
+    
+    
+      <p-card 
+        *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
+        class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+        header="{{ mediaIdade }} anos"
+      >
+        <p class="m-0">
+          Média Idade
+          <p-divider></p-divider>
+        </p>
+      </p-card>
+    
+    
+      <p-card 
+        *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
+        class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+        header="{{ mediaTempoServico }} anos"
+      >
+        <p class="m-0">
+          Média Tempo de Serviço
+          <p-divider></p-divider>
+        </p>
+      </p-card>
+
+  </div>
+
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="graficos flex flex-wrap w-full">
+    <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="chart-container">
+      <canvas id="pieChart"></canvas>
+    </div>
+    <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="chart-container">
+      <canvas id="doughnutChart"></canvas>
+    </div>
+    <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="chart-container">
+        <canvas id="salarioInstrucaoChart"></canvas>
+    </div>
+      
+  </div>
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="graficos2 flex flex-wrap w-full">
+    <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="chart-container">
+      <canvas id="salarioRacaChart"></canvas>
+    </div>
+    <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="chart-container">
+      <canvas id="salarioGeneroChart"></canvas>
+    </div>
+    <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="chart-container">
+      <canvas id="polarAreaChart"></canvas>
+    </div>
+
+  </div>
+ 
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="chartAmbientes">
+    <canvas id="ambientesInfosChart"></canvas>
+  </div>
+
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="chartRacaGen">
+    <canvas id="instrucaoRacaGeneroChart"></canvas>
+  </div>
+  
+
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="titulo mt-6 mb-6 text-2xl">
+    <p-divider align="left" type="solid">
+        <b>Avaliações e Feedbacks Totais</b>
+    </p-divider> 
+  </div>
+
+<div 
+  *ngIf="hasGroup(['Admin','Master','RHGestor'])"
+  class=
+    "flex flex-column w-full align-items-center
+    md:flex-row w-full align-items-center 
+    lg:flex-row w-full justify-content-end"
+>
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="flex w-10 mt-3 lg:w-3">
+    <p-floatlabel variant="on">
+      <p-datepicker
+          [style]="{'width':'100%'}"
+          id="da" 
+          [(ngModel)] = "data_inicio"
+          dateFormat="dd/mm/yy"                  
+          [showIcon]="true"
+          (ngModelChange)="applyFilters()"
+      />
+      <label for="da">Data de Inicio</label>
+    </p-floatlabel>  
+     
+  </div>
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="flex w-10 mt-3 lg:w-3">
+    <p-floatlabel variant="on">
+      <p-datepicker
+          [style]="{'width':'100%'}"
+          id="da" 
+          [(ngModel)] = "data_fim"
+          dateFormat="dd/mm/yy"                  
+          [showIcon]="true"
+          (ngModelChange)="applyFilters()"
+      />
+      <label for="da">Data do Fim</label>
+    </p-floatlabel>
+  </div>   
+</div>
+
+
+<div 
+  *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
+  class="flex flex-column w-full 
+        md:flex-row w-full   
+        lg:flex-row w-full justify-content-center"
+>
+    <div 
+      class="cards flex flex-column align-items-center 
+          md:flex-row w-full justify-content-around"
+    >
+        <p-card 
+          *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
+          class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+          header="{{ totalAvaliacoesGeral }}" 
+        >
+          <p class="m-0">
+            Avaliações Totais
+            <p-divider></p-divider>
+          </p>
+        </p-card>
+      
+        <p-card 
+          *ngIf="hasGroup(['Admin','Master','RHGestor'])"
+          class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6"  
+          header="{{ avMediaTotal }}" 
+        >
+          <p class="m-0">
+            Nota Média
+            <p-divider></p-divider>
+          </p>
+        </p-card>
+  
+        <div class="test mt-4">
+          <nz-progress
+            [nzSize]="'small'"
+            [nzStatus]="'normal'"
+            [nzWidth]="125"
+            [nzGapDegree]="80"
+            [nzGapPosition]="'bottom'"
+            [nzPercent]="percentCompleteGeral" 
+            nzType="dashboard" 
+            [nzFormat]="formatCompletedFeedbacksGeral">
+          </nz-progress>
+          <p>Feedbacks Realizados</p>
+        </div>   
+    </div>
+  </div> 
+
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="titulo mt-6 mb-6 text-2xl">
+    <p-divider *ngIf="hasGroup(['Admin','Master','RHGestor'])" align="left" type="solid">
+        <b>Avaliações e Feedbacks Gerais</b>
+    </p-divider> 
+  </div>
+
+  <div 
+    *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
+    class="flex flex-column w-full 
+          md:flex-row w-full   
+          lg:flex-row justify-content-around w-full"
+  >
+    <div 
+      class="cards flex flex-column align-items-center 
+            lg:flex-row w-full justify-content-around"
+    >
+          <p-card
+            *ngIf="hasGroup(['Admin','Master','RHGestor'])"  
+            class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+            header="{{ totalAvaliacoes }}">
+            <p>
+              Avaliações Geral
+              <p-divider></p-divider>
+            </p>
+          </p-card>
+        
+          <p-card 
+            *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
+            class="cardsWidth shadow-4 border-round-3xl hover:shadow-6" 
+            header="{{ mediaRespostas }}"
+          >
+            <p class="m-0">
+              Nota Média
+              <p-divider></p-divider>
+            </p>
+          </p-card>
+
+
+          <div class="progressFbGeral mt-5">  
+            <nz-progress
+              [nzSize]="'small'"
+              [nzStatus]="'normal'"
+              [nzWidth]="125"
+              [nzGapDegree]="80"
+              [nzGapPosition]="'bottom'"
+              [nzPercent]="percentComplete" 
+              nzType="circle" 
+              [nzFormat]="formatCompletedFeedbacks">
+            </nz-progress>
+            <p>Feedbacks Realizados</p>
+          </div>
+      
+          <div class="chartRadarGeral md:w-10 lg:w-6">
+            <canvas id="notaPerguntasChart"></canvas>
+          </div>
+            
+    </div>
+    
+  </div>
+
+
+
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="titulo mt-6 mb-6 text-2xl">
+    <p-divider align="left" type="solid">
+        <b>Avaliações e Feedbacks Gestores</b>
+    </p-divider> 
+  </div>
+
+  <div 
+    *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
+    class="flex flex-column w-full 
+          md:flex-row w-full   
+          lg:flex-row justify-content-around w-full"
+  >
+    <div 
+      *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
+      class="cards flex flex-column align-items-center 
+            lg:flex-row w-full justify-content-around"
+    >
+      
+        <p-card 
+          *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
+          class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+          header="{{ totalAvaliacoesGestor }}">
+          <p class="m-0">
+            Avaliações do Gestor
+            <p-divider></p-divider>
+          </p>
+        </p-card>
+        
+        <p-card 
+          *ngIf="hasGroup(['Admin','Master','RHGestor'])" 
+          class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+          header="{{ avMediaGestor }}" 
+        >
+          <p class="m-0">
+            Nota Média
+            <p-divider></p-divider>
+          </p>
+        </p-card>
+
+        <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="progressFbGestor mt-5">  
+          <nz-progress
+            [nzSize]="'small'"
+            [nzStatus]="'normal'"
+            [nzWidth]="125"
+            [nzGapDegree]="80"
+            [nzGapPosition]="'bottom'"
+            [nzPercent]="percentCompleteGestor" 
+            nzType="circle" 
+            [nzFormat]="formatCompletedFeedbacksGestor">
+          </nz-progress>
+          <p>Feedbacks Realizados</p>
+        </div>
+      <div *ngIf="hasGroup(['Admin','Master','RHGestor'])" class="chartRadarGestor md:w-10 lg:w-6">
+        <canvas id="notaGestorPerguntasChart"></canvas>
+      </div>
+
+    </div>  
+  </div>
+
+  <div *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" class="titulo mt-6 mb-6 text-2xl">
+    <p-divider align="left" type="solid">
+        <b>Meus Indicadores Avaliação Geral</b>
+    </p-divider> 
+  </div>
+
+  
+  <div 
+    *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" 
+    class="flex flex-column w-full 
+          md:flex-row w-full   
+          lg:flex-row justify-content-around w-full"
+  >
+    <div 
+      class="cards flex flex-column align-items-center 
+            lg:flex-row w-full justify-content-around"
+    >
+
+      <p-card
+        *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" 
+        class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+        header=" {{ totalAvaliacoesAvaliador }}">
+        <p class="m-0">
+          Total de avaliações
+          <p-divider></p-divider>
+        </p>
+      </p-card>
+
+      <p-card 
+        *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" 
+        class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+        header=" {{ mediaNotaAvaliador }}">
+        <p class="m-0">
+          Nota média
+          <p-divider></p-divider>
+        </p>
+      </p-card>
+
+      <p-card 
+        *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])"
+        class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+        header=" {{ avSemAvaliacao }}">
+        <p class="m-0">
+          Avaliados sem avaliação
+          <p-divider></p-divider>
+        </p>
+      </p-card>
+
+      <div class="chartRadarAvaliadores md:w-10 lg:w-6">
+        <canvas id="notaAvaliadoresChart"></canvas>
+      </div>
+    </div>
+</div>
+
+<div class="titulo mt-6 mb-6 text-2xl">
+  <p-divider align="left" type="solid">
+      <b>Meus Indicadores Avaliação do Gestor</b>
+  </p-divider> 
+</div>
+
+
+<div 
+    *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" 
+    class="flex flex-column w-full 
+          md:flex-row w-full   
+          lg:flex-row justify-content-around w-full"
+  >
+    <div 
+      class="cards flex flex-column align-items-center 
+            lg:flex-row w-full justify-content-around"
+    >
+
+      <p-card
+        *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" 
+        class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+        header=" {{ avaliador_total_av_gestor }}">
+        <p class="m-0">
+          Total de avaliações
+          <p-divider></p-divider>
+        </p>
+      </p-card>
+
+      <p-card
+        *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" 
+        class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+        header=" {{ avaliador_media_nota_gestor }}">
+        <p class="m-0">
+          Nota média
+          <p-divider></p-divider>
+        </p>
+      </p-card>
+
+    <div class="chartRadarAvaliadores md:w-10 lg:w-6">
+      <canvas id="notaAvaliadorGestorChart"></canvas>
+    </div>
+
+  </div>
+</div>
+
+
+
+  <div class="titulo mt-6 mb-6 text-2xl">
+    <p-divider align="left" type="solid">
+        <b>Indicadores Meus Avaliados Avaliação Geral</b>
+    </p-divider> 
+  </div>
+
+<div 
+  *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" 
+  class="flex flex-column w-full 
+        md:flex-row w-full   
+        lg:flex-row justify-content-around w-full"
+>
+  <div 
+    class="cards flex flex-column  align-items-center 
+          lg:flex-row w-full justify-content-around"
+  >
+
+      <div class=" w-10 m-3 lg:w-3 ">
+          <p-float-label variant="on">
+              <p-multiselect
+                variant="filled"
+                [style]="{'width': '100%'}"
+                [options]="avaliados"
+                [(ngModel)]="avaliadoSelecionadoId"
+                optionLabel="nome"
+                optionValue="id"
+                appendTo="body"
+                (ngModelChange)="onAvaliadoSelecionado($event.value)"
+              >
+              </p-multiselect>
+              <label>Selecione o avaliado</label>
+          </p-float-label>
+      </div>
+        <p-card  
+          *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])"
+          class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+          header="{{ totalAvaliacoesAvaliado }}">
+          <p class="m-0">
+            Avaliações
+            <p-divider></p-divider>
+          </p>
+        </p-card>
+
+        <p-card
+          *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" 
+          class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+          header=" {{ mediaNotaAvaliado}}">
+          <p class="m-0">
+            Nota Média
+            <p-divider></p-divider>
+          </p>
+        </p-card>
+
+        <div class="chartRadarAvaliadores md:w-10 lg:w-6">
+          <canvas id="notaAvaliadosChart"></canvas>
+        </div>
+   
+  </div>
+</div>
+
+
+<div class="titulo mt-6 mb-6 text-2xl">
+  <p-divider align="left" type="solid">
+      <b>Indicadores Meus Avaliados Avaliação do Gestor</b>
+  </p-divider> 
+</div>
+
+
+
+<div 
+    *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" 
+    class="flex flex-column w-full 
+          md:flex-row w-full   
+          lg:flex-row justify-content-around w-full"
+>
+    <div 
+      class="cards flex flex-column align-items-center 
+            lg:flex-row w-full justify-content-around"
+    >
+
+      <div class="w-10 m-3 lg:w-3">
+        <p-float-label variant="on">
+          <p-multiselect
+            variant="filled"
+            [style]="{'width': '100%'}"
+            [options]="avaliados"
+            [(ngModel)]="avaliadoSelecionadoId2"
+            optionLabel="nome"
+            optionValue="id"
+            appendTo="body"
+            (ngModelChange)="onAvaliadoSelecionado2($event.value)"
+          >
+          </p-multiselect>
+          <label>Selecione o avaliado</label>
+        </p-float-label>
+      </div>
+        <p-card 
+          *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])"
+          class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+          header="{{ avaliado_total_av_gestor }}">
+          <p class="m-0">
+            Avaliações
+            <p-divider></p-divider>
+          </p>
+        </p-card>
+
+        <p-card
+          *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" 
+          class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+          header=" {{ avaliado_media_nota_gestor }}">
+          <p class="m-0">
+            Nota Média
+            <p-divider></p-divider>
+          </p>
+        </p-card>
+
+        <div class="chartRadarAvaliadores md:w-10 lg:w-6">
+          <canvas id="notaAvaliadoGestorChart"></canvas>
+        </div>
+      </div> 
+</div>

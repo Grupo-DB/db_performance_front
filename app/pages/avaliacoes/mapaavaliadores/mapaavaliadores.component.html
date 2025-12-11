@@ -1,0 +1,164 @@
+<div class="menu w-full">
+  <ul nz-menu nzMode="horizontal" style="overflow-x: auto; white-space: nowrap; background-color:#f2f2f2;height: 45px;box-shadow: 2px 0 6px ; ">
+      <li nz-menu-item nzMatchRouter="#">
+          <a style="font-size: 13px;" routerLink="../dashboard">Início</a>
+      </li>
+      <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-submenu nzTitle="Cadastros "  style="font-size: 13px; ">
+          <ul>
+              <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item  nzMatchRouter>
+                  <a routerLink="../tipoavaliacao" >Tipos de Avaliações</a>
+              </li>
+              <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item  nzMatchRouter>
+                  <a routerLink="../pergunta" >Perguntas</a>
+              </li>
+              <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item  nzMatchRouter>
+                  <a routerLink="../formulario" >Formulários</a>
+              </li>
+          </ul>
+      </li>    
+      
+      <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-submenu nzTitle="Relacionamentos"  style="font-size: 13px;">
+          <ul>
+              <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item   nzMatchRouter>
+                  <a style="font-size: 13px; " routerLink="../questionario" ><span  nzTheme="outline" ></span> Montar Formulários</a>
+              </li>
+              <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item   nzMatchRouter>
+                  <a style="font-size: 13px" routerLink="../tipoavaliacaoavaliados" ><span  nzTheme="outline"></span> Associar Avaliados a um Formulário</a>
+              </li>
+              <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item   nzMatchRouter>
+                  <a style="font-size: 13px;" routerLink="../avaliadoravaliados" ><span  nzTheme="outline"></span> Associar Avaliados aos Avaliadores</a>
+              </li>
+          </ul>    
+      </li>
+
+      
+      <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])">
+          <a style="font-size: 13px;" routerLink="../avaliacao" >Avaliações</a>
+      </li>
+      <li nz-menu-item nzMatchRouter="" *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])">
+          <a style="font-size: 13px;" routerLink="../historico" >Histórico de Avaliações</a>
+      </li>
+  
+      <li *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-submenu nzTitle="Relatórios" style="font-size: 13px;">
+        <ul>
+          <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../mapaavaliadores">Mapa de Avaliadores</a>
+          </li>
+          <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../comparativoavaliadores">Comparativo entre Avaliadores</a>
+          </li>
+          <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../mapaavaliados">Mapa de Avaliados</a>
+          </li>
+          <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../evolucaoavaliacoes">Evolução das Avaliações</a>
+          </li>
+          <li nz-menu-item nzMatchRouter="">
+            <a style="font-size: 13px;" routerLink="../relatoriospdf">Relatŕorios em PDF</a>
+          </li>
+        </ul>
+      </li> 
+      
+  </ul>
+</div>
+
+
+    <div class="titulo mt-6 mb-6 text-2xl">
+        <p-divider align="left" type="solid">
+            <b>Mapa de Avaliadores</b>
+        </p-divider> 
+    </div>
+
+    <div class="flex flex-column w-full align-items-center lg:flex-row w-full justify-content-around">
+        <div class="w-10 m-3 lg:w-4">
+              <p-floatlabel variant="on">
+                <p-multiselect
+                  variant="filled"
+                  [style]="{'width': '100%'}"
+                  [options]="avaliadores"
+                  [(ngModel)]="avaliadorSelecionadoId2"
+                  optionLabel="nome"
+                  [filter]="true"
+                  filterBy="nome"
+                  optionValue="id"
+                  (onChange)="onAvaliadorSelecionado($event.value)"
+                ></p-multiselect>
+                <label for="avaliador">Selecione o(s) Avaliador(es)</label>
+              </p-floatlabel>
+        </div>
+        <div class="w-10 m-3 lg:w-4">
+            <p-floatlabel variant="on">
+              <p-select
+                variant="filled"
+                [style]="{'width': '100%'}"
+                [options]="tipos"
+                [(ngModel)]="tipoSelecionado2"
+                (ngModelChange)="onAvaliadorSelecionado($event.value)"
+              ></p-select>
+              <label for="tipo">Selecione o Tipo de Avaliação</label>
+            </p-floatlabel>
+        </div>
+          <div class="flex flex-column w-full align-items-center md:flex-row lg:justify-content-end">
+            <div class="flex w-10 m-3 md:w-6 lg:w-4">
+              <p-floatlabel variant="on">
+                <p-datepicker
+                    [style]="{'width':'100%'}"
+                    id="da" 
+                    [(ngModel)] = "data_inicio"
+                    dateFormat="dd/mm/yy"                  
+                    [showIcon]="true"
+                    (ngModelChange)="applyFilters()"
+                />
+                <label for="da">Data de Inicio</label>
+              </p-floatlabel>  
+              
+            </div>
+            <div  class="flex w-10 m-3 md:w-6 lg:w-4">
+              <p-floatlabel variant="on">
+                <p-datepicker
+                    [style]="{'width':'100%'}"
+                    id="da" 
+                    [(ngModel)] = "data_fim"
+                    dateFormat="dd/mm/yy"                  
+                    [showIcon]="true"
+                    (ngModelChange)="applyFilters()"
+                />
+                <label for="da">Data do Fim</label>
+              </p-floatlabel>
+            </div>
+          </div>     
+        </div>
+      
+      
+      
+        <div 
+            class="flex flex-column w-full 
+              md:flex-row w-full   
+              lg:flex-row w-full justify-content-center"
+        >
+          <div 
+            class="cards flex flex-column align-items-center 
+                md:flex-row w-full justify-content-around"
+          >
+            <p-card 
+              class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+              header="{{ totalAvaliacoesAvaliador }}">
+              <p class="m-0">
+                Avaliações
+                <p-divider></p-divider>
+              </p>
+            </p-card>
+      
+            <p-card 
+              class="cardsWidth shadow-4 border-round-3xl  hover:shadow-6" 
+              header=" {{ mediaNotaAvaliador}}">
+                <p class="m-0">
+                  Nota Média
+                  <p-divider></p-divider>
+                </p>
+            </p-card>
+          <div class="chartRadarAvaliadores md:w-10 lg:w-6">
+            <canvas id="notaAvaliadoresChart"></canvas>
+          </div>
+        </div>  
+      </div>

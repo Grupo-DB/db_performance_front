@@ -1,0 +1,203 @@
+@import "primeicons/primeicons.css";
+.container{
+    max-width: 100%;
+}
+.containerInterno{
+    background-color: #ffffff;
+    border: 10px solid #ffffff;
+    border-radius: 20px;
+    padding: 10px;
+    //box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.titulo{
+    font-size: 22px;
+    //background-color: #4A90E2;
+    background-color: #ffffff;
+    border: 20px solid #ffffff;
+}
+
+.card{
+    .header{
+        background-color: #4A90E2;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        
+        h2{
+            color: #ffffff;
+            font-weight: 700;
+        }
+    }
+}
+
+.form-geral{
+    width: 98%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 8px;
+    // box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    .fg1{
+        width: 100%;
+        //margin-top: 10px;
+        //margin-bottom: 25px;
+        p{
+            margin-left: 20px;
+        }
+        .form1{
+           margin-top: 16px; 
+        }
+        .form2{
+            margin-top: 16px;
+        } 
+    }
+    .fg2{
+        width: 100%;
+        //margin-top: 10px;
+        //margin-bottom: 25px;
+        p{
+            margin-left: 20px;
+        }
+        .form2{
+            margin-top: 16px;
+            
+        } 
+    }
+    .fg3{
+        width: 100%;
+        //margin-top: 10px;
+        margin-bottom: 25px;
+        p{
+            margin-left: 20px;
+        }
+        .form2{
+            margin-top: 16px;
+            
+        }
+    }
+}   
+
+.background-form{
+    background-color: #F7F8FA;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+ 
+ .botoes-form{
+    width: 37%;
+    margin-bottom: 2%;
+    margin-top: 1%;
+    display: flex;
+    justify-content: end;
+    
+    p-button{
+        margin-right: 3%;
+        
+    }
+}
+
+.flex{
+    
+    text-align: end;
+    button{
+        margin-left: 1%;
+    }
+}
+
+.tabela{
+    border-radius: 10px;
+    width: 100%;
+    th{
+        font-size: 14px;
+    }
+    td{
+        font-size:12px ;
+    }
+    .td-acao{
+        display: flex;
+        margin-top: 50px;
+        button{
+            margin-left: 2px;
+        }
+    
+    
+    }
+}
+
+.td-acao{
+    display: flex;
+    button{
+        margin-left: 2px;
+    }
+}
+
+.btnpri{
+    cursor: pointer;
+    background-color: #444959;
+    color: #fff;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    margin-left: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}   
+.btnsec{
+    cursor: pointer;
+    background-color: #e3e3f3;
+    color: #444959;
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    p{
+        text-align: center;
+        margin-top: 10px;
+    }
+}
+.menu{
+    position:static;
+     //transform: translate(-1%, -180%);
+     
+     width: 100%;
+ }
+ .editGeral{
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    .fg1edit{
+        width: 50%;
+        margin-top: 10px;
+        .form2{
+            margin-top: 25px;
+        }
+    }
+    .fg2edit{
+        width: 50%;
+        margin-top: 10px;
+        .form2{
+            margin-top: 25px;
+        }
+    }
+    .fg3edit{
+        width: 50%;
+        margin-top: 10px;
+        .form2{
+            margin-top: 25px;
+            margin-bottom: 20px;;
+        }
+    }
+}
+
+ .botoes-formed{
+    width: 98%;
+    margin-bottom: 2%;
+    margin-top: 2%;
+    display: flex;
+    justify-content: end;
+    
+}
