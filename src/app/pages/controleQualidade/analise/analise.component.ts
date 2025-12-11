@@ -3117,6 +3117,7 @@ gerarESalvarImagemGrafico(): void {
             }
           });
         }, 'image/png', 0.95); // Qualidade 95% para PNG
+        this.modalGrafico = false;
       } catch (error) {
         this.salvandoImagemGrafico = false;
         console.error('Erro ao converter gráfico para imagem:', error);
@@ -8936,9 +8937,9 @@ canDeactivate(): boolean | Promise<boolean> {
           }
         },
       );
-    }
+    // }
 
-    if (isColante) {
+    // if (isColante) {
       itens.push(
         {
           label: 'Resist. Ader. a Tração (Normal)',
