@@ -103,14 +103,17 @@
                                         [dragdrop]="true" 
                                         [responsive]="true"
                                         [sourceStyle]="{ height: '20rem' }" 
-                                        [targetStyle]="{ height: '20rem' }" filterBy="descricao"
-                                        sourceFilterPlaceholder="Pesquisa por nome" targetFilterPlaceholder="Pesquisa por nome"
+                                        [targetStyle]="{ height: '20rem' }" 
+                                        filterBy="descricao"
+                                        sourceFilterPlaceholder="Pesquisa por nome" 
+                                        targetFilterPlaceholder="Pesquisa por nome"
                                         breakpoint="412px"
                                         styleClass="picklist-black"
                                         [trackBy]="trackByFn"
-                                        (onMoveToTarget)="syncEnsaios()"
-                                        (onMoveToSource)="syncEnsaios()"
-                                        (onReorder)="syncEnsaios()"
+                                        (onMoveToTarget)="onEnsaiosChange($event)"
+                                        (onMoveToSource)="onEnsaiosChange($event)"
+                                        (onSourceReorder)="onEnsaiosChange($event)"
+                                        (onTargetReorder)="onEnsaiosChange($event)"
                                     >
                                         <ng-template let-ensaio pTemplate="item">
                                             <div class="flex flex-wrap p-2 align-items-center gap-3">
@@ -129,7 +132,7 @@
                                         [source]="calculosEnsaio" 
                                         [target]="targetCalculos"
                                         [trackBy]="trackByFn"
-                                       
+                                        sourceHeader="Cálculos de Ensaio"
                                         targetHeader="Selecionados"
                                         [dragdrop]="true"
                                         [responsive]="true"
@@ -139,11 +142,11 @@
                                         sourceFilterPlaceholder="Pesquisa por nome" 
                                         targetFilterPlaceholder="Pesquisa por nome"
                                         breakpoint="412px"
-                                        (onMoveToTarget)="syncCalculos()"
-                                        (onMoveToSource)="syncCalculos()"
-                                        (onReorder)="syncCalculos()"
-                                    
-                                        >
+                                        (onMoveToTarget)="onCalculosChange($event)"
+                                        (onMoveToSource)="onCalculosChange($event)"
+                                        (onSourceReorder)="onCalculosChange($event)"
+                                        (onTargetReorder)="onCalculosChange($event)"
+                                    >
                                         <ng-template let-ensaio pTemplate="item">
                                             <div class="flex flex-wrap p-2 align-items-center gap-3">
                                             <div class="flex-1 flex flex-column gap-2">

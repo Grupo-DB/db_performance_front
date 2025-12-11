@@ -189,6 +189,24 @@
                             </p-floatlabel> 
                         </div>
                     </div>
+                    <div class="w-4 text-left">
+                            <p-floatLabel variant="on">
+                                <p-select 
+                                    inputId="float-label" 
+                                    [style]="{'width':'100%'}" 
+                                    [options]="status" 
+                                    [(ngModel)]="analise.classificacao"
+                                    optionLabel="nome" 
+                                    optionValue="nome" 
+                                    appendTo="body" 
+                                    [filter]="true" 
+                                    filterBy="nome" 
+                                    [showClear]="true"
+                                >
+                                </p-select>
+                                <label for="float-label">Classificação</label>
+                                </p-floatLabel>
+                    </div>
                     <div *ngIf="analise?.amostra_detalhes?.material==='Argamassa'" class="flex flex-column mt-3 lg:flex-row w-full lg:justify-content-around">
                         <div class="flex flex-column w-5 gap-3">
                             <p-floatLabel variant="on"> 
@@ -452,7 +470,7 @@
                                     <td style="text-align: end;">
                                         <div class="flex align-items-end justify-content-end">
                                             <span class="valor-result font-bold text-lg text-primary">
-                                                {{ ensaioTemVariavelData(ensaio) ? (formatarDataExibicao(ensaio.valorTimestamp || ensaio.valor) || '—') : (ensaio.valor || 0) }}
+                                                {{ ensaioTemVariavelData(ensaio) ? (formatarDataExibicao(ensaio.valorTimestamp || ensaio.valor) || '—') : formatEnsaioValue(ensaio.valor || 0, ensaio.id) }}
                                             </span>
                                         </div>
                                         <div 
@@ -602,7 +620,7 @@
                                                                 <span 
                                                                     class="text-2xl font-bold text-primary resultado-valor"
                                                                 >
-                                                                    {{ ensaioTemVariavelData(ensaio) ? (formatarDataExibicao(ensaio.valorTimestamp || ensaio.valor) || '—') : (ensaio.valor || 0) }}
+                                                                    {{ ensaioTemVariavelData(ensaio) ? (formatarDataExibicao(ensaio.valorTimestamp || ensaio.valor) || '—') : formatEnsaioValue(ensaio.valor || 0, ensaio.id) }}
                                                                 </span>
                                                                 <span class="ml-2 text-lg text-600">{{ ensaio.unidade }}</span>
                                                             </div>
@@ -885,7 +903,7 @@
                                     <td style="text-align: end;">
                                         <div class="flex align-items-end justify-content-end gap-2">
                                             <span class="valor-result font-bold text-lg text-primary">
-                                                {{ calcResultadoEhData(calc) ? formatarDataExibicao(calc.resultado) : (typeof calc.resultado === 'number' ? formatForDisplay(calc.resultado) : (calc.resultado || 0)) }}
+                                                {{ calcResultadoEhData(calc) ? formatarDataExibicao(calc.resultado) : (typeof calc.resultado === 'number' ? formatForDisplayPorId(calc.resultado, calc) : (calc.resultado || 0)) }}
                                             </span>
                                             <span class="text-sm text-600" *ngIf="calc.unidade">
                                                 {{ calc.unidade }}
@@ -1093,7 +1111,7 @@
                                                                             </div>
                                                                             <div class="bg-gray-50 border-round mt-2 text-center">
                                                                                                           <span class="text-2xl font-bold text-primary">
-                                                                                                              {{ ensaioTemVariavelData(ensaio) || (ensaio.tipo_ensaio_detalhes?.nome === 'data' && !ensaio.descricao?.toLowerCase()?.includes('variação')) ? (formatarDataExibicao(ensaio.valorTimestamp || ensaio.valor) || '—') : (ensaio.valor || 0) }}
+                                                                                                              {{ ensaioTemVariavelData(ensaio) || (ensaio.tipo_ensaio_detalhes?.nome === 'data' && !ensaio.descricao?.toLowerCase()?.includes('variação')) ? (formatarDataExibicao(ensaio.valorTimestamp || ensaio.valor) || '—') : formatEnsaioValue(ensaio.valor || 0, ensaio.id) }}
                                                                                                           </span>
                                                                                 <span class="ml-2 text-lg text-600">{{ ensaio.unidade }}</span>
                                                                             </div>
@@ -1211,7 +1229,7 @@
                                                     </div>
                                                     <div class="bg-gray-50 border-round mt-2 text-center">
                                                             <span class="text-2xl font-bold text-primary">
-                                                                {{ calcResultadoEhData(calc) ? formatarDataExibicao(calc.resultado) : (typeof calc.resultado === 'number' ? formatForDisplay(calc.resultado) : (calc.resultado || 0)) }}
+                                                                {{ calcResultadoEhData(calc) ? formatarDataExibicao(calc.resultado) : (typeof calc.resultado === 'number' ? formatForDisplayPorId(calc.resultado, calc) : (calc.resultado || 0)) }}
                                                             </span>
                                                         <span class="ml-2 text-lg text-600">{{ calc.unidade }}</span>
                                                     </div>
@@ -2668,129 +2686,372 @@
         </div>
 </p-drawer>
 
-<!-- ruptura a flexao -->
+<!-- Modal Compressão e Flexão -->
 <p-drawer 
-    [(visible)]="modalDadosLaudoFlexao" 
-    position="full" >
-    <p-toast />
-        <div class="background-form">
-            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-                <div class="fg1 flex flex-column w-12 align-items-center">
+    [(visible)]="exibirModalCompressaoFlexao" 
+    position="full" 
+>
+    <div class="mb-4">
+        <h2 class="font-bold text-2xl mb-4" style="color: #ffffff;"> Resistência à Tração na Flexão e à Compressão</h2>
+    </div>
 
-                    <p-card class="card w-12 text-center card-superficial">
-                        <ng-template #header>
-                            <div class="header-flexao w-full text-center">
-                                <b>Carga de Ruptura a Flexão</b>
-                            </div>
-                        </ng-template>
-                        <div class="flex flex-row w-12 gap-3">
-                            <div class="w-12">
-                                <p-table 
-                                    [value]="linhasFlexao" 
-                                    stripedRows
-                                >
-                                    <ng-template pTemplate="header">
-                                        <tr>
-                                            <th>CP</th>
-                                            <th>Carga de Ruptura à Flexão (N)</th>
-                                            <th>Resist. à Tração na Flexão (Mpa)</th>
-                                            <th>Resist. Média (Mpa)</th>
-                                            <th>Resist. Tração Flexão</th>
-                                        </tr>
-                                    </ng-template>
+    <!-- Data de Moldagem -->
+    <div class="mb-4">
+        <label class="font-bold text-lg mb-2 block">Data de Moldagem</label>
+        <p-datePicker 
+            [(ngModel)]="moldagemData" 
+            (ngModelChange)="onMoldagemDataChange()"
+            dateFormat="dd/mm/yy"
+            placeholder="Selecione a data de moldagem"
+            [style]="{'width':'100%'}"
+        />
+    </div>
 
-                                    <ng-template pTemplate="body" let-flexao let-i="rowIndex">
-                                        <tr>
-                                            <td>{{ flexao.cp }}</td>
-                                            <td><input pInputText [(ngModel)]="flexao.flexao_n" type="number" /></td>
-                                            <td><input pInputText [(ngModel)]="flexao.flexao_mpa" type="number" /></td>
-                                            <td><input pInputText [(ngModel)]="flexao.media_mpa" type="number" /></td>
-                                            <td><input pInputText [(ngModel)]="flexao.tracao_flexao" type="number" /></td>
-                                        </tr>
-                                    </ng-template>
-                                </p-table>
-
-                            </div>
-                        </div>
-                        
-                        <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
-                            <p-button 
-                                label="Salvar Ruptura a Flexão" 
-                                (onClick)="salvarFlexao(analise)"
-                                severity="info"
-                                icon="pi pi-check" 
-                                iconPos="right" 
-                                tooltipPosition="top"
-                                pTooltip="Salvar Ruptura a Flexão"
-                                [style]="{'background-color': 'purple', 'border-color': 'purple'}"
-                            />
-                        </div>
-                    </p-card>
-                </div>    
+    <!-- Seção Flexão -->
+    <div class="mb-5">
+        <h3 class="font-bold text-xl mb-3" style="color: #48bb78;">Resistência à Tração na Flexão</h3>
+        
+        <!-- Data de Rompimento -->
+        <div class="mb-3">
+            <label class="font-semibold mb-2 block">Data de Rompimento (28 dias)</label>
+            <div class="grid">
+                <div class="col-12 md:col-6">
+                    <label class="text-sm mb-1 block">Argamassa</label>
+                    <p-datePicker 
+                        [(ngModel)]="rompimentoFlexaoArgamassa28"
+                        dateFormat="dd/mm/yy"
+                        placeholder="Data rompimento argamassa"
+                        [style]="{'width':'100%'}"
+                    />
+                </div>
+                <div class="col-12 md:col-6">
+                    <label class="text-sm mb-1 block">Cimento</label>
+                    <p-datePicker 
+                        [(ngModel)]="rompimentoFlexaoCimento28"
+                        dateFormat="dd/mm/yy"
+                        placeholder="Data rompimento cimento"
+                        [style]="{'width':'100%'}"
+                    />
+                </div>
             </div>
         </div>
-</p-drawer>
 
-<!-- ruptura a compressao -->
-<p-drawer 
-    [(visible)]="modalDadosLaudoCompressao" 
-    position="full" >
-    <p-toast />
-        <div class="background-form">
-            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-                <div class="fg1 flex flex-column w-12 align-items-center">
-                    <p-card class="card w-12 text-center card-superficial">
-                        <ng-template #header>
-                            <div class="header-compressao w-full text-center">
-                                <b>Carga de Ruptura a Compressão</b>
-                            </div>
-                        </ng-template>
-                        <div class="flex flex-row w-12 gap-3">
-                            <div class="w-12">
-                                <p-table 
-                                    [value]="linhasCompressao" 
-                                    stripedRows
-                                >
-                                    <ng-template pTemplate="header">
-                                        <tr>
-                                            <th>CP</th>
-                                            <th>Carga de Ruptura à Compressão (N)</th>
-                                            <th>Resist. à Tração na Compressão (Mpa)</th>
-                                            <th>Resist. Média (Mpa)</th>
-                                            <th>Resist. Tração Compressão</th>
-                                        </tr>
-                                    </ng-template>
+        <!-- Tabela Flexão -->
+        <p-table 
+            [value]="tabelaFlexaoData" 
+            [tableStyle]="{'min-width': '50rem'}"
+            styleClass="p-datatable-striped"
+        >
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 100px;">CP</th>
+                    <th style="width: 180px;">Carga de Ruptura (kN)</th>
+                    <th style="width: 180px;">Resistência (MPa)</th>
+                    <th style="width: 200px;">Resis. Média (Mpa)</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row>
+                <tr>
+                    <td>
+                        <span class="font-semibold">{{ row.cp }}</span>
+                    </td>
+                    <td>
+                        <p-inputNumber
+                            *ngIf="row.cp === 1"
+                            [(ngModel)]="cargaRupturaFlexaoCp1"
+                            mode="decimal"
+                            [minFractionDigits]="2" 
+                            [maxFractionDigits]="4" 
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                        ></p-inputNumber>
+                        <p-inputNumber
+                            *ngIf="row.cp === 2"
+                            [(ngModel)]="cargaRupturaFlexaoCp2"
+                            mode="decimal"
+                            [minFractionDigits]="2" 
+                            [maxFractionDigits]="4" 
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                        ></p-inputNumber>
+                        <p-inputNumber
+                            *ngIf="row.cp === 3"
+                            [(ngModel)]="cargaRupturaFlexaoCp3"
+                            mode="decimal"
+                            [minFractionDigits]="2" 
+                            [maxFractionDigits]="4" 
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                        ></p-inputNumber>
+                    </td>
+                    <td>
+                        <p-inputNumber
+                            *ngIf="row.cp === 1"
+                            [(ngModel)]="resistenciaFlexaoCp1"
+                            mode="decimal"
+                            [minFractionDigits]="2" 
+                            [maxFractionDigits]="4" 
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                        ></p-inputNumber>
+                        <p-inputNumber
+                            *ngIf="row.cp === 2"
+                            [(ngModel)]="resistenciaFlexaoCp2"
+                            mode="decimal"
+                            [minFractionDigits]="2" 
+                            [maxFractionDigits]="4" 
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                        ></p-inputNumber>
+                        <p-inputNumber
+                            *ngIf="row.cp === 3"
+                            [(ngModel)]="resistenciaFlexaoCp3"
+                            mode="decimal"
+                            [minFractionDigits]="2" 
+                            [maxFractionDigits]="4" 
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                        ></p-inputNumber>
+                    </td>
+                    <td>
+                        <p-inputNumber
+                            *ngIf="row.cp === 1"
+                            [(ngModel)]="resistenciaFlexaoMediaCp1"
+                            (ngModelChange)="realizarCalculosCompressaoFlexao()"
+                            mode="decimal"
+                            [minFractionDigits]="2" 
+                            [maxFractionDigits]="4" 
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                        ></p-inputNumber>
+                        <p-inputNumber
+                            *ngIf="row.cp === 2"
+                            [(ngModel)]="resistenciaFlexaoMediaCp2"
+                            (ngModelChange)="realizarCalculosCompressaoFlexao()"
+                            mode="decimal"
+                            [minFractionDigits]="2" 
+                            [maxFractionDigits]="4" 
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                        ></p-inputNumber>
+                        <p-inputNumber
+                            *ngIf="row.cp === 3"
+                            [(ngModel)]="resistenciaFlexaoMediaCp3"
+                            (ngModelChange)="realizarCalculosCompressaoFlexao()"
+                            mode="decimal"
+                            [minFractionDigits]="2" 
+                            [maxFractionDigits]="4" 
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                        ></p-inputNumber>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <tr style="background-color: #1a2537; border-top: 3px solid #48bb78;">
+                    <td colspan="3" style="text-align: right; color: #48bb78; font-weight: 700; font-size: 17px; padding: 14px;">
+                        Resistência Média à Tração na Flexão:
+                    </td>
+                    <td style="text-align: center; color: #48bb78; font-weight: 900; font-size: 24px; padding: 14px;">
+                        <span *ngIf="resistenciaFlexaoMediaGeral !== null && !isNaN(resistenciaFlexaoMediaGeral)">
+                            {{ resistenciaFlexaoMediaGeral | number:'1.2-2' }} MPa
+                        </span>
+                        <span *ngIf="resistenciaFlexaoMediaGeral === null || isNaN(resistenciaFlexaoMediaGeral)">
+                            - MPa
+                        </span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
 
-                                    <ng-template pTemplate="body" let-compressao let-i="rowIndex">
-                                        <tr>
-                                            <td>{{ compressao.cp }}</td>
-                                            <td><input pInputText [(ngModel)]="compressao.compressao_n" type="number" /></td>
-                                            <td><input pInputText [(ngModel)]="compressao.compressao_mpa" type="number" /></td>
-                                            <td><input pInputText [(ngModel)]="compressao.media_mpa" type="number" /></td>
-                                            <td><input pInputText [(ngModel)]="compressao.tracao_compressao" type="number" /></td>
-                                        </tr>
-                                    </ng-template>
-                                </p-table>
+    </div>
 
-                            </div>
-                        </div>
-                        
-                        <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
-                            <p-button 
-                                label="Salvar Ruptura a Compressão" 
-                                (onClick)="salvarCompressao(analise)"
-                                severity="info"
-                                icon="pi pi-check" 
-                                iconPos="right" 
-                                tooltipPosition="top"
-                                pTooltip="Salvar Ruptura a Compressão"
-                                [style]="{'background-color': 'brown', 'border-color': 'purple'}"
-                            />
-                        </div>
-                    </p-card>
-                </div>    
+    <!-- Seção Compressão -->
+    <div class="mb-5">
+        <h3 class="font-bold text-xl mb-3" style="color: #667eea;"> Resistência à Compressão</h3>
+        
+        <!-- Datas de Rompimento -->
+        <div class="mb-3">
+            <label class="font-semibold mb-2 block">Datas de Rompimento</label>
+            <div class="grid">
+                <div class="col-12 md:col-4">
+                    <label class="text-sm mb-1 block">Argamassa (28 dias)</label>
+                    <p-datePicker 
+                        [(ngModel)]="rompimentoCompressaoArgamassa28"
+                        dateFormat="dd/mm/yy"
+                        placeholder="Data rompimento"
+                        [style]="{'width':'100%'}"
+                    />
+                </div>
+                <div class="col-12 md:col-4">
+                    <label class="text-sm mb-1 block">Cimento (7 dias)</label>
+                    <p-datePicker 
+                        [(ngModel)]="rompimentoCompressaoCimento7"
+                        dateFormat="dd/mm/yy"
+                        placeholder="Data rompimento"
+                        [style]="{'width':'100%'}"
+                    />
+                </div>
+                <div class="col-12 md:col-4">
+                    <label class="text-sm mb-1 block">Cimento (28 dias)</label>
+                    <p-datePicker 
+                        [(ngModel)]="rompimentoCompressaoCimento28"
+                        dateFormat="dd/mm/yy"
+                        placeholder="Data rompimento"
+                        [style]="{'width':'100%'}"
+                    />
+                </div>
             </div>
         </div>
+
+        <!-- Tabela Compressão -->
+        <p-table 
+            [value]="tabelaCompressaoData" 
+            [tableStyle]="{'min-width': '50rem'}"
+            styleClass="p-datatable-striped"
+        >
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 100px;">CP</th>
+                    <th style="width: 200px;">Carga de Ruptura a Compressão (N)</th>
+                    <th style="width: 180px;">Resis. à Tração na Compressão (Mpa)</th>
+                    <th style="width: 200px;">Resis. Média (Mpa)</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row>
+                <tr>
+                    <td>
+                        <span class="font-semibold">{{ row.cp }}</span>
+                    </td>
+                    <td>
+                        <p-inputNumber
+                            *ngIf="row.cp === 1"
+                            [(ngModel)]="cargaRupturaCompressaoCp1"
+                            mode="decimal"
+                            [minFractionDigits]="2" 
+                            [maxFractionDigits]="4" 
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                        ></p-inputNumber>
+                        <p-inputNumber
+                            *ngIf="row.cp === 2"
+                            [(ngModel)]="cargaRupturaCompressaoCp2"
+                            mode="decimal"
+                            [minFractionDigits]="2" 
+                            [maxFractionDigits]="4" 
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                        ></p-inputNumber>
+                        <p-inputNumber
+                            *ngIf="row.cp === 3"
+                            [(ngModel)]="cargaRupturaCompressaoCp3"
+                            mode="decimal"
+                            [minFractionDigits]="2" 
+                            [maxFractionDigits]="4" 
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                        ></p-inputNumber>
+                    </td>
+                    <td>
+                        <p-inputNumber
+                            *ngIf="row.cp === 1"
+                            [(ngModel)]="resistenciaCompressaoCp1"
+                            mode="decimal"
+                            [minFractionDigits]="2" 
+                            [maxFractionDigits]="4" 
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                        ></p-inputNumber>
+                        <p-inputNumber
+                            *ngIf="row.cp === 2"
+                            [(ngModel)]="resistenciaCompressaoCp2"
+                            mode="decimal"
+                            [minFractionDigits]="2" 
+                            [maxFractionDigits]="4" 
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                        ></p-inputNumber>
+                        <p-inputNumber
+                            *ngIf="row.cp === 3"
+                            [(ngModel)]="resistenciaCompressaoCp3"
+                            mode="decimal"
+                            [minFractionDigits]="2" 
+                            [maxFractionDigits]="4" 
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                        ></p-inputNumber>
+                    </td>
+                    <td>
+                        <p-inputNumber
+                            *ngIf="row.cp === 1"
+                            [(ngModel)]="resistenciaCompressaoMediaCp1"
+                            (ngModelChange)="realizarCalculosCompressaoFlexao()"
+                            mode="decimal"
+                            [minFractionDigits]="2" 
+                            [maxFractionDigits]="4" 
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                        ></p-inputNumber>
+                        <p-inputNumber
+                            *ngIf="row.cp === 2"
+                            [(ngModel)]="resistenciaCompressaoMediaCp2"
+                            (ngModelChange)="realizarCalculosCompressaoFlexao()"
+                            mode="decimal"
+                            [minFractionDigits]="2" 
+                            [maxFractionDigits]="4" 
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                        ></p-inputNumber>
+                        <p-inputNumber
+                            *ngIf="row.cp === 3"
+                            [(ngModel)]="resistenciaCompressaoMediaCp3"
+                            (ngModelChange)="realizarCalculosCompressaoFlexao()"
+                            mode="decimal"
+                            [minFractionDigits]="2" 
+                            [maxFractionDigits]="4" 
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                        ></p-inputNumber>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <tr style="background-color: #1a2537; border-top: 3px solid #667eea;">
+                    <td colspan="3" style="text-align: right; color: #667eea; font-weight: 700; font-size: 17px; padding: 14px;">
+                        Resistência Média à Tração na Compressão:
+                    </td>
+                    <td style="text-align: center; color: #667eea; font-weight: 900; font-size: 24px; padding: 14px;">
+                        <span *ngIf="resistenciaCompressaoMediaGeral !== null && !isNaN(resistenciaCompressaoMediaGeral)">
+                            {{ resistenciaCompressaoMediaGeral | number:'1.2-2' }} MPa
+                        </span>
+                        <span *ngIf="resistenciaCompressaoMediaGeral === null || isNaN(resistenciaCompressaoMediaGeral)">
+                            - MPa
+                        </span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+    </div>
+
+    <!-- Botões -->
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <p-button 
+          label="Limpar" 
+          icon="pi pi-eraser" 
+          severity="info"
+          iconPos="right"
+          (onClick)="limparCompressaoFlexao()">
+        </p-button>
+        <p-button 
+          label="Salvar" 
+          icon="pi pi-check" 
+          severity="success"
+          iconPos="right"
+          (onClick)="salvarCompressaoFlexao(analise)">
+        </p-button>
+    </div>
+
 </p-drawer>
 
 <!-- Gráfico -->
@@ -3499,7 +3760,7 @@
     </div>
     <!-- Seletor de Data Inicial -->
     <div class="mb-4">
-        <label class="font-bold text-lg mb-2 block">📅 Data de Referência (L0)</label>
+        <label class="font-bold text-lg mb-2 block"> Data de Referência (L0)</label>
         <p-datePicker 
             [(ngModel)]="l0Data" 
             (ngModelChange)="onL0DataChange()"
@@ -3511,7 +3772,7 @@
 
     <!-- Tabela de Variação Dimensional -->
     <div class="mb-4" *ngIf="variacaoDimensionalTableData.length > 0">
-        <h3 class="font-bold text-lg mb-3" style="color: #ffffff;">📊 Variação Dimensional</h3>
+        <h3 class="font-bold text-lg mb-3" style="color: #ffffff;"> Variação Dimensional</h3>
         <p-table 
             [value]="variacaoDimensionalTableData" 
             [tableStyle]="{'min-width': '50rem'}"
@@ -3649,7 +3910,7 @@
     </div>
     <!-- Seletor de Data Inicial -->
     <div class="mb-4">
-        <label class="font-bold text-lg mb-2 block">📅 Data de Referência (M0)</label>
+        <label class="font-bold text-lg mb-2 block"> Data de Referência (M0)</label>
         <p-datePicker 
             [(ngModel)]="m0Data" 
             (ngModelChange)="onM0DataChange()"
@@ -3660,7 +3921,7 @@
     </div>
     <!-- Tabela de Variação de Massa -->
     <div class="mb-4" *ngIf="variacaoMassaTableData.length > 0">
-        <h3 class="font-bold text-lg mb-3" style="color: #ffffff;">📊 Variação de Massa</h3>
+        <h3 class="font-bold text-lg mb-3" style="color: #ffffff;"> Variação de Massa</h3>
         <p-table 
             [value]="variacaoMassaTableData" 
             [tableStyle]="{'min-width': '50rem'}"
@@ -3777,7 +4038,7 @@
     position="full" 
 >
     <div class="mb-4">
-        <h2 class="font-bold text-2xl mb-4" style="color: #ffffff;">🔬 Módulo de Elasticidade Dinâmico</h2>
+        <h2 class="font-bold text-2xl mb-4" style="color: #ffffff;">Módulo de Elasticidade Dinâmico</h2>
     </div>
 
     <div class="flex gap-4 mb-4 w-full">
@@ -3803,7 +4064,7 @@
 
     <!-- Tabela de Módulo de Elasticidade -->
     <div class="mb-4" *ngIf="moduloElasticidadeTableData.length > 0">
-        <h3 class="font-bold text-lg mb-3" style="color: #ffffff;">📊 Medições e Resultados</h3>
+        <h3 class="font-bold text-lg mb-3" style="color: #ffffff;">Medições e Resultados</h3>
         <p-table 
             [value]="moduloElasticidadeTableData" 
             [tableStyle]="{'min-width': '80rem'}"

@@ -172,8 +172,7 @@ export class PlanoComponent implements OnInit {
     this.ensaioService.getEnsaios().subscribe(
       response => {
         this.ensaios = response.filter((ensaio: Ensaio) => 
-          ensaio.tipo_ensaio_detalhes.nome !== 'Auxiliar' && 
-          ensaio.tipo_ensaio_detalhes.nome !== 'Resistencia',
+          ensaio.descricao.includes('(Análise)')
         );
       }, error => {
         console.error('Erro ao carregar os ensaios:', error);
@@ -183,12 +182,9 @@ export class PlanoComponent implements OnInit {
   loadCalculosEnsaio(){
     this.ensaioService.getCalculoEnsaio().subscribe(
       response => {
-        this.calculosEnsaio = response/*.filter(calculo => 
-      !calculo.descricao.includes('(Cálculo composto Cal)') && 
-      !calculo.descricao.includes('(Calc PN Cal)') && 
-      !calculo.descricao.includes('(Calc PN Calc Cal)')
-    );*/
-      }, error => {
+        this.calculosEnsaio = response.filter(calculo => 
+        calculo.descricao.includes('(Análise)')
+    )}, error => {
         console.error('Erro ao carregar os ensaios:', error);
       }
     )
@@ -199,22 +195,23 @@ export class PlanoComponent implements OnInit {
   }
   clearForm(){
     this.registerForm.reset();
+    this.targetEnsaios = [];
+    this.targetCalculos = [];
   }
   clearEditForm(){
     this.editForm.reset();
   }
 
-  // Sincroniza os IDs selecionados no PickList com os controles do formulário de cadastro
-  syncEnsaios(): void {
-    const ids = (this.targetEnsaios || []).map(e => (e as any).id ?? 0);
-    this.registerForm.get('ensaios')?.setValue(ids);
-    this.registerForm.get('ensaios')?.markAsDirty();
+  // Captura eventos de mudança no PickList de Ensaios
+  onEnsaiosChange(event: any): void {
+    // O evento tem as propriedades: items (itens movidos) e from/to (origem/destino)
+    // Mas o mais importante é que targetEnsaios já foi atualizado pelo PrimeNG
+    this.targetEnsaios = event.items ? [...this.targetEnsaios] : this.targetEnsaios;
   }
 
-  syncCalculos(): void {
-    const ids = (this.targetCalculos || []).map(c => (c as any).id ?? 0);
-    this.registerForm.get('calculos_ensaio')?.setValue(ids);
-    this.registerForm.get('calculos_ensaio')?.markAsDirty();
+  // Captura eventos de mudança no PickList de Cálculos
+  onCalculosChange(event: any): void {
+    this.targetCalculos = event.items ? [...this.targetCalculos] : this.targetCalculos;
   }
 
   abrirModalEdicao(planoAnalise: Plano){
@@ -294,18 +291,29 @@ export class PlanoComponent implements OnInit {
   }
 
   submit(){
-    // Garante sincronização antes do envio
-    this.syncEnsaios();
-    this.syncCalculos();
+    console.log('===== INÍCIO DO SUBMIT =====');
+    console.log('targetEnsaios:', this.targetEnsaios);
+    console.log('targetCalculos:', this.targetCalculos);
 
+    // Constrói os arrays com todos os IDs selecionados
     this.planEnsaios = [];
     this.targetEnsaios.forEach(ensaio => {
+      console.log('Processando ensaio:', ensaio);
       this.planEnsaios.push(ensaio.id || 0);
     });
+    console.log('planEnsaios final:', this.planEnsaios);
 
     this.planCalculos = [];
     this.targetCalculos.forEach(calculo => {
+      console.log('Processando cálculo:', calculo);
       this.planCalculos.push(calculo.id || 0);
+    });
+    console.log('planCalculos final:', this.planCalculos);
+
+    console.log('Payload completo:', {
+      descricao: this.registerForm.value.descricao,
+      ensaios: this.planEnsaios,
+      calculos_ensaio: this.planCalculos
     });
 
     this.ensaioService.registerPlanoAnalise(

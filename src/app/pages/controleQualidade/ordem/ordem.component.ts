@@ -398,6 +398,161 @@ export class OrdemComponent implements OnInit {
     return this.getStatusDataRompimento(dataM0, 28);
   }
 
+  // Métodos para Flexão
+  getStatusFlexaoArgamassa28(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 28);
+  }
+
+  getStatusFlexaoCimento28(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 28);
+  }
+
+  // Métodos para Compressão
+  getStatusCompressaoArgamassa28(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 28);
+  }
+
+  getStatusCompressaoCimento7(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 7);
+  }
+
+  getStatusCompressaoCimento28(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 28);
+  }
+
+  // Método para verificar se um rompimento foi marcado como concluído
+  isRompimentoConcluido(tipo: string, periodo: string): boolean {
+    if (!this.analiseSelecionada) return false;
+    
+    const campos: { [key: string]: string } = {
+      'variacao_dimensional_l1': 'variacao_dimensional.l1.data',
+      'variacao_dimensional_l7': 'variacao_dimensional.l7.data',
+      'variacao_dimensional_l28': 'variacao_dimensional.l28.data',
+      'variacao_massa_m1': 'variacao_massa.m1.data',
+      'variacao_massa_m7': 'variacao_massa.m7.data',
+      'variacao_massa_m28': 'variacao_massa.m28.data',
+      'flexao_argamassa_28': 'flexao.concluido_argamassa_28',
+      'flexao_cimento_28': 'flexao.concluido_cimento_28',
+      'compressao_argamassa_28': 'compressao.concluido_argamassa_28',
+      'compressao_cimento_7': 'compressao.concluido_cimento_7',
+      'compressao_cimento_28': 'compressao.concluido_cimento_28'
+    };
+    
+    const chave = `${tipo}_${periodo}`;
+    const campoData = campos[chave];
+    
+    if (!campoData) return false;
+    
+    // Navega pelo objeto aninhado
+    const partes = campoData.split('.');
+    let valor: any = this.analiseSelecionada;
+    for (const parte of partes) {
+      valor = valor?.[parte];
+      if (valor === undefined) return false;
+    }
+    
+    // Para flexão e compressão, verifica se há um campo boolean de concluído
+    if (campoData.includes('concluido')) {
+      return valor === true;
+    }
+    
+    // Para variação dimensional e massa, verifica se a data está no futuro (marcado como concluído)
+    const dataRompimento = new Date(valor);
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    
+    // Se a data for mais de 300 dias no futuro, considera como concluído
+    const diasDiferenca = (dataRompimento.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24);
+    return diasDiferenca > 300;
+  }
+
+  // Método para marcar/desmarcar rompimento como concluído
+  marcarRompimentoConcluido(tipo: string, periodo: string): void {
+    if (!this.analiseSelecionada) return;
+    
+    const campos: { [key: string]: string } = {
+      'variacao_dimensional_l1': 'variacao_dimensional.l1',
+      'variacao_dimensional_l7': 'variacao_dimensional.l7',
+      'variacao_dimensional_l28': 'variacao_dimensional.l28',
+      'variacao_massa_m1': 'variacao_massa.m1',
+      'variacao_massa_m7': 'variacao_massa.m7',
+      'variacao_massa_m28': 'variacao_massa.m28',
+      'flexao_argamassa_28': 'flexao',
+      'flexao_cimento_28': 'flexao',
+      'compressao_argamassa_28': 'compressao',
+      'compressao_cimento_7': 'compressao',
+      'compressao_cimento_28': 'compressao'
+    };
+    
+    const chave = `${tipo}_${periodo}`;
+    const caminho = campos[chave];
+    
+    if (!caminho) return;
+    
+    // Navega até o objeto correto
+    const partes = caminho.split('.');
+    let obj: any = this.analiseSelecionada;
+    for (const parte of partes) {
+      if (!obj[parte]) return;
+      obj = obj[parte];
+    }
+    
+    // Para todos os tipos, alterna o campo concluído ou manipula a data
+    if (tipo === 'flexao' || tipo === 'compressao') {
+      const campoConcluido = `concluido_${periodo}`;
+      obj[campoConcluido] = !obj[campoConcluido];
+    } else if (tipo === 'variacao_dimensional' || tipo === 'variacao_massa') {
+      // Para variação dimensional e massa, manipula a data para indicar conclusão
+      const hoje = new Date();
+      const dataAtual = new Date(obj.data);
+      
+      // Se já está concluído (data > 300 dias no futuro), restaura a data original
+      const diasDiferenca = (dataAtual.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24);
+      if (diasDiferenca > 300) {
+        // Reabrir: calcular a data correta baseada em l0/m0
+        const partesPai = caminho.split('.').slice(0, -1);
+        let objPai: any = this.analiseSelecionada;
+        for (const parte of partesPai) {
+          objPai = objPai[parte];
+        }
+        
+        const diasPeriodo = periodo === 'l1' || periodo === 'm1' ? 1 : 
+                           periodo === 'l7' || periodo === 'm7' ? 7 : 28;
+        const dataBase = new Date(objPai[periodo.charAt(0) + '0'].data);
+        const novaData = new Date(dataBase);
+        novaData.setDate(novaData.getDate() + diasPeriodo);
+        obj.data = novaData.toISOString().split('T')[0];
+      } else {
+        // Marcar como concluído: adiciona 365 dias
+        const dataFutura = new Date(hoje);
+        dataFutura.setFullYear(dataFutura.getFullYear() + 1);
+        obj.data = dataFutura.toISOString().split('T')[0];
+      }
+    }
+    
+    // Salvar no backend
+    const analiseId = this.analiseSelecionada.id;
+    this.analiseService.editAnalise(analiseId, this.analiseSelecionada).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: `Rompimento marcado como ${tipo === 'flexao' || tipo === 'compressao' ? 'concluído' : 'concluído'}`,
+          life: 3000
+        });
+      },
+      error: (err: any) => {
+        console.error('Erro ao atualizar status:', err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao atualizar status do rompimento',
+          life: 3000
+        });
+      }
+    });
+  }
+
 
   abrirModalEdicao(amostra: Amostra) {
     this.editFormVisible = true;
@@ -725,7 +880,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
         // Define lista filtrada e libera carregamento (skeleton some)
         this.loading=false;
         //Carregar dados completos e verificar alertas de rompimento
-        this.carregarDadosCompletosEVerificarAlertas();
+        //this.carregarDadosCompletosEVerificarAlertas();
       },
       (error) => {
         console.error('Erro ao carregar análises', error);

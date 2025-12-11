@@ -249,7 +249,7 @@ export interface Analise {
   tracao_estufa: any;
   tracao_tempo_aberto: any;
   deslizamento: any;
-
+  classificacao: string;
 
 }
 interface FileWithInfo {
@@ -413,6 +413,13 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
     { value: 'MAE' },
     { value: 'MMV' },
   ];
+
+  status = [
+    { id: 0, nome: 'Simples' },
+    { id: 1, nome: 'Parcial' },
+    { id: 2, nome: 'Complexa' },
+    { id: 3, nome: 'Super Complexa' },
+  ]
   
   @ViewChild('dt1') dt1!: Table;
   garantias: any;
@@ -708,7 +715,54 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   medidaFinal6: number | null = null;
   //------Deslizamento Cálculos
   deslizamentoTotal: number | null = null;
+
+  /////////////================== Variáveis para Resistência Flexão e Compressão ==========================
+  exibirModalResistenciaFlexaoCompressao: boolean = false;
+  resistenciaFlexaoCompressaoTableData: any[] = [];
+  // DATAS
+  moldagemData: Date | null = null;
+  // Argamassa
+  rompimentoFlexaoArgamassa28: Date | null = null;
+  rompimentoCompressaoArgamassa28: Date | null = null;
+  //Cimento
+  rompimentoFlexaoCimento28: Date | null = null;
+  rompimentoCompressaoCimento7: Date | null = null;
+  rompimentoCompressaoCimento28: Date | null = null;
+  //flexao
+  cargaRupturaFlexaoCp1: number | null = null;
+  cargaRupturaFlexaoCp2: number | null = null;
+  cargaRupturaFlexaoCp3: number | null = null;
+  resistenciaFlexaoCp1: number | null = null;
+  resistenciaFlexaoCp2: number | null = null;
+  resistenciaFlexaoCp3: number | null = null;
+  resistenciaFlexaoMediaCp1: number | null = null;
+  resistenciaFlexaoMediaCp2: number | null = null;
+  resistenciaFlexaoMediaCp3: number | null = null;
+  resistenciaFlexaoMediaGeral: number | null = null;
+  //compressao
+  cargaRupturaCompressaoCp1: number | null = null;
+  cargaRupturaCompressaoCp2: number | null = null;
+  cargaRupturaCompressaoCp3: number | null = null;
+  resistenciaCompressaoCp1: number | null = null;
+  resistenciaCompressaoCp2: number | null = null;
+  resistenciaCompressaoCp3: number | null = null;
+  resistenciaCompressaoMediaCp1: number | null = null;
+  resistenciaCompressaoMediaCp2: number | null = null;
+  resistenciaCompressaoMediaCp3: number | null = null;
+  resistenciaCompressaoMediaGeral: number | null = null;
   
+   exibirModalCompressaoFlexao: boolean = false;
+  tabelaFlexaoData: any[] = [
+    {cp: 1},
+    {cp: 2},
+    {cp: 3}
+  ];
+  tabelaCompressaoData: any[] = [
+    {cp: 1},
+    {cp: 2},
+    {cp: 3}
+  ];
+
   // GRAFICO
   @ViewChild('meuGrafico') chartRef!: ElementRef<HTMLCanvasElement>;
   chartInstance: any;
@@ -1363,7 +1417,6 @@ carregarModuloElasticidadeSalvo(analise: any): void {
 
 //==================================================== PENEIRAS SECAS =========================================================//
 carregarPeneiraSecaSalva(analise: any): void {
-  console.log('Carregando peneira seca salva:', analise);
   if (analise?.peneiras?.peneiras && Array.isArray(analise.peneiras.peneiras)) {
     this.linhasPeneira = analise.peneiras.peneiras.map((item: any) => ({
       peneira: item.peneira ?? '',
@@ -2226,6 +2279,398 @@ carregarVariacaoMassaSalva(analise: any): void {
   }
 }
 //================================================= FIM VARIAÇÃO DE MASSA =========================================================//
+
+
+//==================================================== COMPRESSÃO E FLEXÃO ===================================================//
+onMoldagemDataChange(): void {
+  //this.exibirModalCompressaoFlexao = true;
+  if (this.moldagemData) {
+    const dataBase = new Date(this.moldagemData);
+    // Calcular compressaoData Argamassa (+ 28 dias)
+    const novaDataCompressaoArgamassa28 = new Date(dataBase);
+    novaDataCompressaoArgamassa28.setDate(dataBase.getDate() + 28);
+    this.rompimentoCompressaoArgamassa28 = novaDataCompressaoArgamassa28;
+
+    // Calcular felxao data Argamassa (+ 28 dias)
+    const novaDataFlexaoArgamassa28 = new Date(dataBase);
+    novaDataFlexaoArgamassa28.setDate(dataBase.getDate() + 28);
+    this.rompimentoFlexaoArgamassa28 = novaDataFlexaoArgamassa28;
+  
+  //Cimento
+  //compressão 7 dias
+    const novaDataCompressaoCimento7 = new Date(dataBase);
+    novaDataCompressaoCimento7.setDate(dataBase.getDate() + 7);
+    this.rompimentoCompressaoCimento7 = novaDataCompressaoCimento7;
+  //compressão 28 dias
+    const novaDataCompressaoCimento28 = new Date(dataBase);
+    novaDataCompressaoCimento28.setDate(dataBase.getDate() + 28);
+    this.rompimentoCompressaoCimento28 = novaDataCompressaoCimento28
+  //flexão 28 dias
+    const novaDataFlexaoCimento28 = new Date(dataBase);
+    novaDataFlexaoCimento28.setDate(dataBase.getDate() + 28);
+    this.rompimentoFlexaoCimento28 = novaDataFlexaoCimento28;
+  // Atualizar tabela
+    //this.atualizarTabelaCompressaoFlexao();  
+  }
+}
+
+realizarCalculosCompressaoFlexao(): void {
+  // Verificar data de moldagem
+  if (this.moldagemData == null) {
+    return;
+  }
+
+  // Calcular média de Flexão
+  const valoresFlexao: number[] = [];
+  
+  if (this.resistenciaFlexaoMediaCp1 != null) {
+    const flexaoCp1Num = Number(this.resistenciaFlexaoMediaCp1);
+    if (!isNaN(flexaoCp1Num)) {
+      valoresFlexao.push(flexaoCp1Num);
+    }
+  }
+  
+  if (this.resistenciaFlexaoMediaCp2 != null) {
+    const flexaoCp2Num = Number(this.resistenciaFlexaoMediaCp2);
+    if (!isNaN(flexaoCp2Num)) {
+      valoresFlexao.push(flexaoCp2Num);
+    }
+  }
+  
+  if (this.resistenciaFlexaoMediaCp3 != null) {
+    const flexaoCp3Num = Number(this.resistenciaFlexaoMediaCp3);
+    if (!isNaN(flexaoCp3Num)) {
+      valoresFlexao.push(flexaoCp3Num);
+    }
+  }
+  
+  if (valoresFlexao.length > 0) {
+    this.resistenciaFlexaoMediaGeral = mean(valoresFlexao) as number;
+  } else {
+    this.resistenciaFlexaoMediaGeral = null;
+  }
+
+  // Calcular média de Compressão
+  const valoresCompressao: number[] = [];
+  
+  if (this.resistenciaCompressaoMediaCp1 != null) {
+    const compressaoCp1Num = Number(this.resistenciaCompressaoMediaCp1);
+    if (!isNaN(compressaoCp1Num)) {
+      valoresCompressao.push(compressaoCp1Num);
+    }
+  }
+  
+  if (this.resistenciaCompressaoMediaCp2 != null) {
+    const compressaoCp2Num = Number(this.resistenciaCompressaoMediaCp2);
+    if (!isNaN(compressaoCp2Num)) {
+      valoresCompressao.push(compressaoCp2Num);
+    }
+  }
+  
+  if (this.resistenciaCompressaoMediaCp3 != null) {
+    const compressaoCp3Num = Number(this.resistenciaCompressaoMediaCp3);
+    if (!isNaN(compressaoCp3Num)) {
+      valoresCompressao.push(compressaoCp3Num);
+    }
+  }
+  
+  if (valoresCompressao.length > 0) {
+    this.resistenciaCompressaoMediaGeral = mean(valoresCompressao) as number;
+  } else {
+    this.resistenciaCompressaoMediaGeral = null;
+  }
+}
+
+salvarCompressaoFlexao(analise: any): void {
+  // Salvar flexão
+  const dadosFlexao = {
+    moldagem: {
+      data: this.moldagemData ? this.toLocalYYYYMMDD(new Date(this.moldagemData)) : null
+    },
+    rompimento: {
+      argamassa_28: this.rompimentoFlexaoArgamassa28 ? this.toLocalYYYYMMDD(new Date(this.rompimentoFlexaoArgamassa28)) : null,
+      cimento_28: this.rompimentoFlexaoCimento28 ? this.toLocalYYYYMMDD(new Date(this.rompimentoFlexaoCimento28)) : null
+    },
+    carga_ruptura: {
+      cp1: this.cargaRupturaFlexaoCp1,
+      cp2: this.cargaRupturaFlexaoCp2,
+      cp3: this.cargaRupturaFlexaoCp3
+    },
+    resistencia: {
+      cp1: this.resistenciaFlexaoCp1,
+      cp2: this.resistenciaFlexaoCp2,
+      cp3: this.resistenciaFlexaoCp3
+    },
+    media_individual: {
+      cp1: this.resistenciaFlexaoMediaCp1,
+      cp2: this.resistenciaFlexaoMediaCp2,
+      cp3: this.resistenciaFlexaoMediaCp3
+    },
+    media_geral: this.resistenciaFlexaoMediaGeral
+  };
+
+  // Salvar compressão
+  const dadosCompressao = {
+    moldagem: {
+      data: this.moldagemData ? this.toLocalYYYYMMDD(new Date(this.moldagemData)) : null
+    },
+    rompimento: {
+      argamassa_28: this.rompimentoCompressaoArgamassa28 ? this.toLocalYYYYMMDD(new Date(this.rompimentoCompressaoArgamassa28)) : null,
+      cimento_7: this.rompimentoCompressaoCimento7 ? this.toLocalYYYYMMDD(new Date(this.rompimentoCompressaoCimento7)) : null,
+      cimento_28: this.rompimentoCompressaoCimento28 ? this.toLocalYYYYMMDD(new Date(this.rompimentoCompressaoCimento28)) : null
+    },
+    carga_ruptura: {
+      cp1: this.cargaRupturaCompressaoCp1,
+      cp2: this.cargaRupturaCompressaoCp2,
+      cp3: this.cargaRupturaCompressaoCp3
+    },
+    resistencia: {
+      cp1: this.resistenciaCompressaoCp1,
+      cp2: this.resistenciaCompressaoCp2,
+      cp3: this.resistenciaCompressaoCp3
+    },
+    media_individual: {
+      cp1: this.resistenciaCompressaoMediaCp1,
+      cp2: this.resistenciaCompressaoMediaCp2,
+      cp3: this.resistenciaCompressaoMediaCp3
+    },
+    media_geral: this.resistenciaCompressaoMediaGeral
+  };
+
+  // Salvar ambos ao mesmo tempo
+  const dadosAtualizados: Partial<Analise> = {
+    flexao: dadosFlexao,
+    compressao: dadosCompressao
+  };
+
+  this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+    next: () => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Sucesso',
+        detail: 'Dados de Compressão e Flexão salvos com sucesso!'
+      });
+      
+      this.analise.flexao = dadosFlexao;
+      this.analise.compressao = dadosCompressao;
+      
+      setTimeout(() => {
+        this.cd.detectChanges();
+      }, 1000);
+    },
+    error: (err) => {
+      console.error('Erro ao salvar compressão e flexão:', err);
+      
+      if (err.status === 401) {
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Timeout!', 
+          detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' 
+        });
+      } else if (err.status === 403) {
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Erro!', 
+          detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' 
+        });
+      } else if (err.status === 400) {
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Erro!', 
+          detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' 
+        });
+      } else {
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Falha!', 
+          detail: 'Erro interno, comunicar o administrador do sistema.' 
+        });
+      }
+    }
+  });
+}
+
+
+limparFlexao(): void {
+  // Limpar data de moldagem
+  this.moldagemData = null;
+  
+  // Limpar datas de rompimento
+  this.rompimentoFlexaoArgamassa28 = null;
+  this.rompimentoFlexaoCimento28 = null;
+  
+  // Limpar Flexão
+  this.cargaRupturaFlexaoCp1 = null;
+  this.cargaRupturaFlexaoCp2 = null;
+  this.cargaRupturaFlexaoCp3 = null;
+  this.resistenciaFlexaoCp1 = null;
+  this.resistenciaFlexaoCp2 = null;
+  this.resistenciaFlexaoCp3 = null;
+  this.resistenciaFlexaoMediaCp1 = null;
+  this.resistenciaFlexaoMediaCp2 = null;
+  this.resistenciaFlexaoMediaCp3 = null;
+  this.resistenciaFlexaoMediaGeral = null;
+  
+  this.messageService.add({
+    severity: 'info',
+    summary: 'Campos Limpos',
+    detail: 'Todos os campos de Flexão foram limpos com sucesso!'
+  });
+}
+
+limparCompressao(): void {
+  // Limpar data de moldagem
+  this.moldagemData = null;
+  
+  // Limpar datas de rompimento
+  this.rompimentoCompressaoArgamassa28 = null;
+  this.rompimentoCompressaoCimento7 = null;
+  this.rompimentoCompressaoCimento28 = null;
+  
+  // Limpar Compressão
+  this.cargaRupturaCompressaoCp1 = null;
+  this.cargaRupturaCompressaoCp2 = null;
+  this.cargaRupturaCompressaoCp3 = null;
+  this.resistenciaCompressaoCp1 = null;
+  this.resistenciaCompressaoCp2 = null;
+  this.resistenciaCompressaoCp3 = null;
+  this.resistenciaCompressaoMediaCp1 = null;
+  this.resistenciaCompressaoMediaCp2 = null;
+  this.resistenciaCompressaoMediaCp3 = null;
+  this.resistenciaCompressaoMediaGeral = null;
+  
+  this.messageService.add({
+    severity: 'info',
+    summary: 'Campos Limpos',
+    detail: 'Todos os campos de Compressão foram limpos com sucesso!'
+  });
+}
+
+limparCompressaoFlexao(): void {
+  // Limpar data de moldagem
+  this.moldagemData = null;
+  
+  // Limpar datas de rompimento - Argamassa
+  this.rompimentoFlexaoArgamassa28 = null;
+  this.rompimentoCompressaoArgamassa28 = null;
+  
+  // Limpar datas de rompimento - Cimento
+  this.rompimentoFlexaoCimento28 = null;
+  this.rompimentoCompressaoCimento7 = null;
+  this.rompimentoCompressaoCimento28 = null;
+  
+  // Limpar Flexão
+  this.cargaRupturaFlexaoCp1 = null;
+  this.cargaRupturaFlexaoCp2 = null;
+  this.cargaRupturaFlexaoCp3 = null;
+  this.resistenciaFlexaoCp1 = null;
+  this.resistenciaFlexaoCp2 = null;
+  this.resistenciaFlexaoCp3 = null;
+  this.resistenciaFlexaoMediaCp1 = null;
+  this.resistenciaFlexaoMediaCp2 = null;
+  this.resistenciaFlexaoMediaCp3 = null;
+  this.resistenciaFlexaoMediaGeral = null;
+  
+  // Limpar Compressão
+  this.cargaRupturaCompressaoCp1 = null;
+  this.cargaRupturaCompressaoCp2 = null;
+  this.cargaRupturaCompressaoCp3 = null;
+  this.resistenciaCompressaoCp1 = null;
+  this.resistenciaCompressaoCp2 = null;
+  this.resistenciaCompressaoCp3 = null;
+  this.resistenciaCompressaoMediaCp1 = null;
+  this.resistenciaCompressaoMediaCp2 = null;
+  this.resistenciaCompressaoMediaCp3 = null;
+  this.resistenciaCompressaoMediaGeral = null;
+  
+  this.messageService.add({
+    severity: 'info',
+    summary: 'Campos Limpos',
+    detail: 'Todos os campos de Compressão e Flexão foram limpos com sucesso!'
+  });
+}
+
+
+carregarCompressaoFlexaoSalva(analise: any): void {
+  // Carregar flexão
+  if (analise?.flexao) {
+    const dados = analise.flexao;
+    
+    if (dados.moldagem?.data) {
+      this.moldagemData = this.parseDateLocal(dados.moldagem.data);
+    }
+    
+    if (dados.rompimento) {
+      this.rompimentoFlexaoArgamassa28 = dados.rompimento.argamassa_28 
+        ? this.parseDateLocal(dados.rompimento.argamassa_28) : null;
+      this.rompimentoFlexaoCimento28 = dados.rompimento.cimento_28 
+        ? this.parseDateLocal(dados.rompimento.cimento_28) : null;
+    }
+    
+    if (dados.carga_ruptura) {
+      this.cargaRupturaFlexaoCp1 = dados.carga_ruptura.cp1 || null;
+      this.cargaRupturaFlexaoCp2 = dados.carga_ruptura.cp2 || null;
+      this.cargaRupturaFlexaoCp3 = dados.carga_ruptura.cp3 || null;
+    }
+    
+    if (dados.resistencia) {
+      this.resistenciaFlexaoCp1 = dados.resistencia.cp1 || null;
+      this.resistenciaFlexaoCp2 = dados.resistencia.cp2 || null;
+      this.resistenciaFlexaoCp3 = dados.resistencia.cp3 || null;
+    }
+    
+    if (dados.media_individual) {
+      this.resistenciaFlexaoMediaCp1 = dados.media_individual.cp1 || null;
+      this.resistenciaFlexaoMediaCp2 = dados.media_individual.cp2 || null;
+      this.resistenciaFlexaoMediaCp3 = dados.media_individual.cp3 || null;
+    }
+    
+    this.resistenciaFlexaoMediaGeral = dados.media_geral || null;
+  }
+  
+  // Carregar compressão
+  if (analise?.compressao) {
+    const dados = analise.compressao;
+    
+    if (dados.moldagem?.data) {
+      this.moldagemData = this.parseDateLocal(dados.moldagem.data);
+    }
+    
+    if (dados.rompimento) {
+      this.rompimentoCompressaoArgamassa28 = dados.rompimento.argamassa_28 
+        ? this.parseDateLocal(dados.rompimento.argamassa_28) : null;
+      this.rompimentoCompressaoCimento7 = dados.rompimento.cimento_7 
+        ? this.parseDateLocal(dados.rompimento.cimento_7) : null;
+      this.rompimentoCompressaoCimento28 = dados.rompimento.cimento_28 
+        ? this.parseDateLocal(dados.rompimento.cimento_28) : null;
+    }
+    
+    if (dados.carga_ruptura) {
+      this.cargaRupturaCompressaoCp1 = dados.carga_ruptura.cp1 || null;
+      this.cargaRupturaCompressaoCp2 = dados.carga_ruptura.cp2 || null;
+      this.cargaRupturaCompressaoCp3 = dados.carga_ruptura.cp3 || null;
+    }
+    
+    if (dados.resistencia) {
+      this.resistenciaCompressaoCp1 = dados.resistencia.cp1 || null;
+      this.resistenciaCompressaoCp2 = dados.resistencia.cp2 || null;
+      this.resistenciaCompressaoCp3 = dados.resistencia.cp3 || null;
+    }
+    
+    if (dados.media_individual) {
+      this.resistenciaCompressaoMediaCp1 = dados.media_individual.cp1 || null;
+      this.resistenciaCompressaoMediaCp2 = dados.media_individual.cp2 || null;
+      this.resistenciaCompressaoMediaCp3 = dados.media_individual.cp3 || null;
+    }
+    
+    this.resistenciaCompressaoMediaGeral = dados.media_geral || null;
+  }
+  
+  this.cd.detectChanges();
+}
+//==================================================== FIM COMPRESSÃO E FLEXÃO ===================================================//
+
+
 //==================================================== GRÁFICO CAPILARIDADE ============================================================//
 exibirGrafico(): void {
     this.modalGrafico = true;
@@ -2857,6 +3302,7 @@ downloadImagemGrafico(): void {
             (this.analise as any).metodoMuro = (this.analise as any).metodoMuro ?? (this.analise as any).metodo_muro ?? '';
             (this.analise as any).observacoesMuro = (this.analise as any).observacoesMuro ?? (this.analise as any).observacoes_muro ?? '';
             (this.analise as any).materialOrganico = (this.analise as any).materialOrganico ?? (this.analise as any).material_organico ?? '';
+            (this.analise as any).classificacao = (this.analise as any).classificacao ?? (this.analise as any).classificacao ?? '';
           }
           this.idAnalise = analise.id;
           this.loadAnalisePorId(analise);
@@ -3982,6 +4428,22 @@ getClasseTipoEnsaio(ensaio: any): string | undefined {
     if (!isFinite(num)) return 0;
     return Math.round(num * 10000) / 10000;
   }
+  
+  // Arredonda com base no ID do ensaio (ID 125 não arredonda)
+  // Também aceita 'true' para forçar não arredondar
+  private roundPorEnsaio(value: any, ensaioIdOuFlag?: number | boolean): number {
+    const num = typeof value === 'number' ? value : Number(value);
+    if (!isFinite(num)) return 0;
+    
+    // ID 125 não arredonda - retorna valor bruto
+    // Ou se receber true como flag
+    if (ensaioIdOuFlag === 125 || ensaioIdOuFlag === true) {
+      return num;
+    }
+    
+    // Demais ensaios usam 4 casas decimais (padrão)
+    return Math.round(num * 10000) / 10000;
+  }
   // Arredonda números para 4 casas decimais (função adicional para clareza)
   private round4(value: any): number {
     const num = typeof value === 'number' ? value : Number(value);
@@ -3996,6 +4458,51 @@ getClasseTipoEnsaio(ensaio: any): string | undefined {
     const num = typeof value === 'number' ? value : Number(value);
     if (!isFinite(num)) return '0';
     // Usar até 4 casas decimais, mas remover zeros à direita
+    return parseFloat(num.toFixed(4)).toString();
+  }
+  
+  /**
+   * Formata números para exibição com base no ID ou objeto do cálculo
+   */
+  formatForDisplayPorId(value: any, idOuCalculo?: number | any): string {
+    const num = typeof value === 'number' ? value : Number(value);
+    if (!isFinite(num)) return '0';
+    
+    // Se receber um objeto (cálculo), verificar se tem ensaios com ID 125
+    let deveUsarPrecisaoTotal = false;
+    
+    if (typeof idOuCalculo === 'object' && idOuCalculo !== null) {
+      // É um objeto de cálculo
+      const calc = idOuCalculo;
+      deveUsarPrecisaoTotal = Array.isArray(calc.ensaios_detalhes) && 
+        calc.ensaios_detalhes.some((e: any) => e.id === 125);
+    } else if (idOuCalculo === 125) {
+      // É o ID 125 diretamente
+      deveUsarPrecisaoTotal = true;
+    }
+    
+    // Sem arredondamento para ID 125 ou cálculos que usam ensaio 125
+    if (deveUsarPrecisaoTotal) {
+      return num.toString();
+    }
+    
+    // Demais usam 4 casas decimais
+    return parseFloat(num.toFixed(4)).toString();
+  }
+
+  /**
+   * Formata valor de ensaio para exibição com base no ID do ensaio
+   */
+  formatEnsaioValue(value: any, ensaioId?: number): string {
+    const num = typeof value === 'number' ? value : Number(value);
+    if (!isFinite(num)) return '0';
+    
+    // Se for ensaio ID 125, retornar valor sem arredondamento
+    if (ensaioId === 125) {
+      return num.toString();
+    }
+    
+    // Demais ensaios usam 4 casas decimais
     return parseFloat(num.toFixed(4)).toString();
   }
   // Formata valores (timestamp/Date/string) em DD/MM/YYYY para exibição
@@ -5081,7 +5588,13 @@ recalcularTodosCalculos() {
       } else {
         // Se já existia resultado e não há expressão significativa, não sobrescrever
         if (varList.length === 0 && calc.resultado !== undefined && calc.resultado !== null) return;
-        calc.resultado = (typeof resultado === 'number' && isFinite(resultado)) ? resultado : resultadoAnterior;
+        
+        // Verificar se algum ENSAIO interno tem ID 125
+        const temEnsaio125 = Array.isArray(calc.ensaios_detalhes) && 
+          calc.ensaios_detalhes.some((e: any) => e.id === 125);
+        
+        // Se tem ensaio ID 125, passar true para não arredondar
+        calc.resultado = (typeof resultado === 'number' && isFinite(resultado)) ? this.roundPorEnsaio(resultado, temEnsaio125) : resultadoAnterior;
       }
       // Verificar alertas após o cálculo
       this.verificarAlertaPRNT(calc);
@@ -5455,7 +5968,7 @@ recalcularTodosCalculos() {
           ensaio.valor = resultado;
         }
       } else {
-        ensaio.valor = (typeof resultado === 'number' && isFinite(resultado)) ? this.round2(resultado) : valorAnterior;
+        ensaio.valor = (typeof resultado === 'number' && isFinite(resultado)) ? this.roundPorEnsaio(resultado, ensaio.id) : valorAnterior;
       }
     } catch (e) {
       // Mantém valor anterior se ocorrer erro
@@ -5637,7 +6150,7 @@ onValorEnsaioChange(ensaio: any, novoValor: any) {
   if (this._ensaioChangeTimer) clearTimeout(this._ensaioChangeTimer);
   this._ensaioChangeTimer = setTimeout(() => {
   const num = typeof novoValor === 'number' ? novoValor : Number(novoValor?.toString().replace(',', '.')) || 0;
-  ensaio.valor = this.round2(num);
+  ensaio.valor = this.roundPorEnsaio(num, ensaio.id);
     const plano = this.encontrarPlanoDoEnsaio(ensaio);
     // Verificar alerta Fechamento após alteração manual
     this.verificarAlertaFechamento(ensaio, plano);
@@ -5690,7 +6203,7 @@ calcularDatasAutomaticas(ensaio: any, variavelAlterada: any) {
   // Permite editar o valor de um ensaio listado dentro do cálculo expandido
   onValorEnsaioDentroCalculoChange(plano: any, ensaioCalc: any, novoValor: any) {
   const num = typeof novoValor === 'number' ? novoValor : Number(novoValor?.toString().replace(',', '.')) || 0;
-  ensaioCalc.valor = this.round2(num);
+  ensaioCalc.valor = this.roundPorEnsaio(num, ensaioCalc.id);
     // Recalcula apenas os cálculos deste plano (o cálculo atual certamente será recalculado)
     if (plano?.calculo_ensaio_detalhes) {
       const calcRef = plano.calculo_ensaio_detalhes.find((c: any) => Array.isArray(c.ensaios_detalhes) && c.ensaios_detalhes.includes(ensaioCalc));
@@ -5971,8 +6484,8 @@ calcularEnsaioDireto(ensaio: any, planoRef?: any) {
       }
       } else {
         if (typeof resultado === 'number' && isFinite(resultado)) {
-          // Arredondar sempre para 4 casas decimais
-          const arredondado = this.roundN(resultado, 4);
+          // Se for ensaio ID 125, não arredondar
+          const arredondado = ensaio.id === 125 ? resultado : this.roundN(resultado, 4);
           ensaio.valor = arredondado;
         } else {
           // Mantém valor anterior se resultado inválido
@@ -6317,7 +6830,7 @@ salvarAnaliseResultados() {
         valorTimestampSalvar = valorFinal;
       } else {
         // numérico comum
-        valorParaSalvar = this.round2(this.parseNumeroFlex(valorFinal));
+        valorParaSalvar = this.roundPorEnsaio(this.parseNumeroFlex(valorFinal), ensaio.id);
       }
       // Fallback extra: se é data e ainda ficou 0 ou inválido, tentar reconstruir novamente
       if (isTipoData && (valorParaSalvar === 0 || valorParaSalvar === null || valorParaSalvar === ''
@@ -6584,7 +7097,7 @@ salvarAnaliseResultados() {
         id: e.id,
         descricao: e.descricao,
         instanceId: e.instanceId || null,
-        valor: eEhData ? (tsInterno || 0) : this.round2(e.valor),
+        valor: eEhData ? (tsInterno || 0) : this.roundPorEnsaio(e.valor, e.id),
         valor_data: eEhData ? valorDataInterno : undefined,
         variavel: e.variavel || e.tecnica,
         responsavel: typeof e.responsavel === 'object' && e.responsavel !== null
@@ -6619,7 +7132,8 @@ salvarAnaliseResultados() {
     metodo_modelagem: this.analise?.metodoModelagem ?? null,
     metodo_muro: this.analise?.metodoMuro ?? null,
     observacoes_muro: this.analise?.observacoesMuro ?? null,
-    material_organico: this.analise?.materialOrganico ?? null
+    material_organico: this.analise?.materialOrganico ?? null,
+    classificacao: this.analise?.clasificacao ?? null
   };
   
   // Chamada para salvar a análise no backend
@@ -7832,10 +8346,9 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
     // Retorna todos os ensaios disponíveis, exceto Auxiliar e Resistencia
     // Não filtra por IDs existentes para permitir que o mesmo ensaio seja adicionado
     // múltiplas vezes (diferentes laboratórios)
-    return this.ensaiosDisponiveis.filter(ensaio => 
-      ensaio.tipo_ensaio_detalhes?.nome !== 'Auxiliar' && 
-      ensaio.tipo_ensaio_detalhes?.nome !== 'Resistencia'
-    );
+    return this.ensaiosDisponiveis.filter(ensaio  => 
+              ensaio.descricao.includes('(Análise)')
+      );
   }
   // Obtém cálculos disponíveis para adicionar
   // PERMITE DUPLICATAS para que múltiplos laboratórios possam realizar o mesmo cálculo
@@ -7844,9 +8357,7 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
     // Não filtra por IDs existentes para permitir que o mesmo cálculo seja adicionado
     // múltiplas vezes (diferentes laboratórios)
     return this.calculosDisponiveis.filter(calculo => 
-      !calculo.descricao.includes('(Cálculo composto Cal)') && 
-      !calculo.descricao.includes('(Calc PN Cal)') && 
-      !calculo.descricao.includes('(Calc PN Calc Cal)')
+      calculo.descricao.includes('(Análise)')    
     );
   }
   //Fecha o modal de adicionar ensaios
@@ -8415,7 +8926,15 @@ canDeactivate(): boolean | Promise<boolean> {
           label: 'Determinação da Resist. Pot. Ader. a Tração (Superfície)',
           icon: 'pi pi-pencil',
           command: () => this.abrirModalSuperficial(analise)
-        }
+        },
+        {
+          label: 'Determinação das Resist.a Tração na flexão e à compressão',
+          icon: 'pi pi-pencil',
+          command: () => {
+            this.carregarCompressaoFlexaoSalva(analise);
+            this.exibirModalCompressaoFlexao = true;
+          }
+        },
       );
     }
 

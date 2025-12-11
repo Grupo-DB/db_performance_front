@@ -242,23 +242,38 @@ receberDadosAmostra(): void {
     this.ensaioService.getEnsaios().subscribe(
       response => {
         this.ensaios = response.filter((ensaio: Ensaio) => 
-          ensaio.tipo_ensaio_detalhes.nome !== 'Auxiliar' && 
-          ensaio.tipo_ensaio_detalhes.nome !== 'Resistencia',
+          ensaio.descricao.includes('(Análise)')
         );
       }, error => {
         console.error('Erro ao carregar os ensaios:', error);
       }
     )
-}
+  }
 
   loadCalculos(): void{
     this.ensaioService.getCalculoEnsaio().subscribe(
       response => {
-        this.calculos = response;
+        this.calculos = response.filter((calculo: CalculoEnsaio) => 
+          calculo.descricao.includes('(Análise)')
+        );
       }, error =>{
         console.error('Erro ao carregar os cálculos de ensaio:', error);
       }
     )
+  }
+
+
+
+  // Captura eventos de mudança no PickList de Ensaios
+  onEnsaiosChange(event: any): void {
+    this.targetEnsaios = event.items ? [...this.targetEnsaios] : this.targetEnsaios;
+  }
+
+  // Captura eventos de mudança no PickList de Cálculos
+  onCalculosChange(event: any): void {
+
+    this.targetCalculos = event.items ? [...this.targetCalculos] : this.targetCalculos;
+   
   }
 
   ngOnDestroy(): void {
@@ -384,7 +399,8 @@ receberDadosAmostra(): void {
   if (dataValue instanceof Date && !isNaN(dataValue.getTime())) {
     dataFormatada = formatDate(dataValue, 'yyyy-MM-dd', 'en-US');
   }  
-  // Preparar os IDs dos ensaios e cálculos selecionados
+ 
+  
   const ensaiosSelecionados = this.targetEnsaios
     .map(ensaio => ensaio.id)
     .filter(id => id != null && !isNaN(Number(id)))
@@ -394,6 +410,7 @@ receberDadosAmostra(): void {
     .map(calculo => calculo.id)
     .filter(id => id != null && !isNaN(Number(id)))
     .map(id => Number(id));
+  
     
   // Criar ordem expressa
   this.ordemService.registerExpressa(

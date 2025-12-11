@@ -1099,6 +1099,73 @@ private processarParecer(analise: any) {
     return this.getStatusDataRompimento(dataM0, 28);
   }
 
+   getStatusFlexaoCimento28(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 28);
+  }
+  // Métodos para Flexão
+  getStatusFlexaoArgamassa28(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 28);
+  }
+
+  // Métodos para Compressão
+  getStatusCompressaoArgamassa28(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 28);
+  }
+
+  getStatusCompressaoCimento7(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 7);
+  }
+
+  getStatusCompressaoCimento28(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 28);
+  }
+
+    // Método para verificar se um rompimento foi marcado como concluído
+  isRompimentoConcluido(tipo: string, periodo: string): boolean {
+    if (!this.analiseSelecionada) return false;
+    
+    const campos: { [key: string]: string } = {
+      'variacao_dimensional_l1': 'variacao_dimensional.l1.data',
+      'variacao_dimensional_l7': 'variacao_dimensional.l7.data',
+      'variacao_dimensional_l28': 'variacao_dimensional.l28.data',
+      'variacao_massa_m1': 'variacao_massa.m1.data',
+      'variacao_massa_m7': 'variacao_massa.m7.data',
+      'variacao_massa_m28': 'variacao_massa.m28.data',
+      'flexao_argamassa_28': 'flexao.concluido_argamassa_28',
+      'flexao_cimento_28': 'flexao.concluido_cimento_28',
+      'compressao_argamassa_28': 'compressao.concluido_argamassa_28',
+      'compressao_cimento_7': 'compressao.concluido_cimento_7',
+      'compressao_cimento_28': 'compressao.concluido_cimento_28'
+    };
+    
+    const chave = `${tipo}_${periodo}`;
+    const campoData = campos[chave];
+    
+    if (!campoData) return false;
+    
+    // Navega pelo objeto aninhado
+    const partes = campoData.split('.');
+    let valor: any = this.analiseSelecionada;
+    for (const parte of partes) {
+      valor = valor?.[parte];
+      if (valor === undefined) return false;
+    }
+    
+    // Para flexão e compressão, verifica se há um campo boolean de concluído
+    if (campoData.includes('concluido')) {
+      return valor === true;
+    }
+    
+    // Para variação dimensional e massa, verifica se a data está no futuro (marcado como concluído)
+    const dataRompimento = new Date(valor);
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    
+    // Se a data for mais de 300 dias no futuro, considera como concluído
+    const diasDiferenca = (dataRompimento.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24);
+    return diasDiferenca > 300;
+  }
+
   imprimirVisualizar(analise: any){
       const doc = new jsPDF();
       let y = 10; // posição inicial Y
