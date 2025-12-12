@@ -1617,42 +1617,42 @@ gerarNumero(materialNome: string, sequencial: number): string {
           );
         }
 
-      if(analise?.amostra_detalhes?.material?.toLowerCase() === 'argamassa'){
-         this.ensaios_laudo.push({
-          data: {
-            id: 'separador',
-            descricao: '---------- SELEÇÃO ARGAMASSA ---------',
-            disabled: true
-          },
-          leaf: true
-        });
+        if(analise?.amostra_detalhes?.material?.toLowerCase() === 'argamassa'){
+          this.ensaios_laudo.push({
+            data: {
+              id: 'separador',
+              descricao: '---------- SELEÇÃO ARGAMASSA ---------',
+              disabled: true
+            },
+            leaf: true
+          });
 
-        const itens = [
-          ['-peneira_seca', 'Peneira Seca'],
-          ['-peneira_umida', 'Peneira Úmida'],
-          ['-substrato', 'Resist. Ader a Tração (Substrato)'],
-          ['-superficie', 'Resist. Ader a Tração (Superfície)'],
-          ['-normal', 'Resist. Ader a Tração (Normal)'],
-          ['-submersa', 'Resist. Ader a Tração (Submersa)'],
-          ['-estufa', 'Resist. Ader a Tração (Estufa)'],
-          ['-aberto', 'Resist. Ader a Tração (Tempo em Aberto)'],
-          ['-linear', 'Determinação da Variação Dimencional Linear (Retração/Expansão)'],
-          ['-massa', 'Determinação da Variação de Massa (Retração/Expansão)'],
-          ['-elasticidade', 'Módulo de Elasticidade Dinâmico'],
-          ['-compressao', 'Compressão'],
-          ['-flexao', 'Flexão'],
-        ];
+          const itens = [
+            ['-peneira_seca', 'Peneira Seca'],
+            ['-peneira_umida', 'Peneira Úmida'],
+            ['-substrato', 'Resist. Ader a Tração (Substrato)'],
+            ['-superficie', 'Resist. Ader a Tração (Superfície)'],
+            ['-normal', 'Resist. Ader a Tração (Normal)'],
+            ['-submersa', 'Resist. Ader a Tração (Submersa)'],
+            ['-estufa', 'Resist. Ader a Tração (Estufa)'],
+            ['-aberto', 'Resist. Ader a Tração (Tempo em Aberto)'],
+            ['-linear', 'Determinação da Variação Dimencional Linear (Retração/Expansão)'],
+            ['-massa', 'Determinação da Variação de Massa (Retração/Expansão)'],
+            ['-elasticidade', 'Módulo de Elasticidade Dinâmico'],
+            ['-compressao', 'Compressão'],
+            ['-flexao', 'Flexão'],
+          ];
 
-        this.ensaios_laudo.push(
-          ...itens.map(([id, descricao]) => ({
-            data: { id, descricao, disabled: false },
-            leaf: true,
-            expanded: false,
-            partialSelected: false,
-            children: undefined
-          }))
-        );
-      }
+          this.ensaios_laudo.push(
+            ...itens.map(([id, descricao]) => ({
+              data: { id, descricao, disabled: false },
+              leaf: true,
+              expanded: false,
+              partialSelected: false,
+              children: undefined
+            }))
+          );
+        }
 
       });
     }
@@ -1770,7 +1770,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
     }
   }
 
-  ///////AQUIIII
    imprimirLaudoCalcPDF(amostra_detalhes_selecionada: any) {
 
     const doc = new jsPDF({ 
@@ -3332,7 +3331,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
       }
     });
 
-    console.log(variaveis_argamassa);
     const doc = new jsPDF({ unit: "mm", format: "a4" });
     
     let contadorLinhas = 45;
