@@ -184,18 +184,30 @@
                     
                                                             <div class="w-11">
                                                                 <p-floatLabel variant="on">
-                                                                    <p-datepicker variant="filled" [style]="{'width':'100%'}" id="da"
-                                                                        formControlName="dataEntrada" dateFormat="dd/mm/yy"
-                                                                        inputId="float-label" [showIcon]="true">
+                                                                    <p-datepicker 
+                                                                        variant="filled" 
+                                                                        [style]="{'width':'100%'}" 
+                                                                        id="da"
+                                                                        formControlName="dataEntrada" 
+                                                                        dateFormat="dd/mm/yy"
+                                                                        inputId="float-label" 
+                                                                        [showIcon]="true"
+                                                                    >
                                                                     </p-datepicker>
                                                                     <label for="float-label">Data de Entrada</label>
                                                                 </p-floatLabel>
                                                             </div>
                                                             <div class="w-11">
                                                                 <p-floatLabel variant="on">
-                                                                    <p-datepicker variant="filled" [style]="{'width':'100%'}" id="da"
-                                                                        formControlName="dataColeta" dateFormat="dd/mm/yy"
-                                                                        inputId="float-label" [showIcon]="true">
+                                                                    <p-datepicker 
+                                                                        variant="filled" 
+                                                                        [style]="{'width':'100%'}" 
+                                                                        id="da"
+                                                                        formControlName="dataColeta" 
+                                                                        dateFormat="dd/mm/yy"
+                                                                        inputId="float-label" 
+                                                                        [showIcon]="true"
+                                                                    >
                                                                     </p-datepicker>
                                                                     <label for="float-label">Data da Amostra</label>
                                                                 </p-floatLabel>
@@ -641,6 +653,15 @@
                                         <div *ngIf="mostrarFormulario" class="step1 flex flex-column w-12 gap-3 mb-5 mt-5 justify-content-end lg:w-12 lg:flex-row">
                                            
                                             <div class=" flex w-6 gap-3 justify-content-end text-right">
+                                                <p-button
+                                                    (onClick)="clearForm()"
+                                                    label="Limpar"
+                                                    severity="warn"
+                                                    icon="pi pi-eraser"
+                                                    iconPos="right"
+                                                    tooltipPosition="top"
+                                                    pTooltip="Limpar Formulário"
+                                                />
                                                 <p-button 
                                                     (onClick)="navegarParaOs()" 
                                                     label="Abrir OS"
@@ -1418,10 +1439,18 @@
                                         </div>
                                         <div class="w-12 text-left">
                                             <p-floatLabel variant="on">
-                                                <p-select inputId="float-label" [style]="{'width':'100%'}"
-                                                    [options]="reter" formControlName="reter" optionLabel="nome"
-                                                    optionValue="value" appendTo="body" [filter]="true" filterBy="value"
-                                                    [showClear]="true">
+                                                <p-select 
+                                                    inputId="float-label" 
+                                                    [style]="{'width':'100%'}"
+                                                    [options]="reter" 
+                                                    formControlName="reter" 
+                                                    optionLabel="nome"
+                                                    optionValue="value" 
+                                                    appendTo="body" 
+                                                    [filter]="true" 
+                                                    filterBy="value"
+                                                    [showClear]="true"
+                                                >
                                                 </p-select>
                                                 <label for="float-label">Reter</label>
                                             </p-floatLabel>

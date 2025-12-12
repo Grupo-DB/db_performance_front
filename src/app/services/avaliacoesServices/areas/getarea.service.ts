@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class GetAreaService {
-  private apiUrl = 'http://172.50.10.79:8008/management/get_area/'; 
+  private apiUrl = 'http://localhost:8000/management/get_area/'; 
   constructor(private http: HttpClient) { }
 
   getAreas(): Observable<any[]>{

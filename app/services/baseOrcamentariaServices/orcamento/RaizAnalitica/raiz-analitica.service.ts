@@ -8,8 +8,8 @@ import { RaizAnalitica } from '../../../../pages/baseOrcamentaria/orcamentoBase/
   providedIn: 'root'
 })
 export class RaizAnaliticaService {
-  private apiUrl = 'http://172.50.10.79:8008/orcamento/raizesanaliticas/';
-  private gestorUrl = 'http://172.50.10.79:8008/management/gestores/'
+  private apiUrl = 'http://localhost:8000/orcamento/raizesanaliticas/';
+  private gestorUrl = 'http://localhost:8000/management/gestores/'
   constructor(
     private httpClient: HttpClient,
     private router: Router

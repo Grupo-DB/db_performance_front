@@ -8,8 +8,8 @@ import { Produto } from '../../../pages/baseOrcamentaria/dre/produto/produto.com
   providedIn: 'root',
 })
 export class ProjecaoService {
-  private apiUrl = 'http://172.50.10.79:8008/dre/linhas/';
-  private produtoUrl = 'http://172.50.10.79:8008/dre/produtos/';
+  private apiUrl = 'http://localhost:8000/dre/linhas/';
+  private produtoUrl = 'http://localhost:8000/dre/produtos/';
 
   constructor(private http: HttpClient) {}
 

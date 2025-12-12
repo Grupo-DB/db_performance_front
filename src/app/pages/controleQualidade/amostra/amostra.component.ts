@@ -425,11 +425,11 @@ export class AmostraComponent implements OnInit {
       dataEnvio: new FormControl('',),
       destinoEnvio: new FormControl('',),
       dataRecebimento: new FormControl('',),
-      reter: new FormControl(true),
+      reter: new FormControl(false),
       registroEp: new FormControl('',),
       registroProduto: new FormControl('',),
       numeroLote: new FormControl(''),
-      dataColeta: new FormControl(''),
+      dataColeta: new FormControl(new Date()),
       dataEntrada: new FormControl(new Date()),
       numero: new FormControl(''),
       tipoAmostra: new FormControl(''),
@@ -1280,7 +1280,6 @@ submitAmostra() {
         if (this.uploadedFilesWithInfo.length > 0) {
           this.uploadImages();
         } else {
-          this.clearForm();
           this.loadAmostras();
           //this.activeStep = 1;
         }
@@ -1859,11 +1858,40 @@ navegarParaOs() {
   this.activeStep = 2;
 }
 receberDadosAmostra(): void {
-  Object.keys(this.registerForm.controls).forEach(key => {
-    const control = this.registerForm.get(key);
-    if (control && control.invalid) {
-    }
+  // Validar campos obrigatórios antes de prosseguir
+  const camposObrigatorios = ['material', 'finalidade', 'dataColeta', 'dataEntrada'];
+  const camposInvalidos = camposObrigatorios.filter(campo => {
+    const control = this.registerForm.get(campo);
+    return !control || !control.value;
   });
+
+  if (camposInvalidos.length > 0) {
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Campos Obrigatórios',
+      detail: 'Por favor, preencha todos os campos obrigatórios da amostra antes de continuar.'
+    });
+    return;
+  }
+
+  // Se não tiver amostraData já carregado, capturar do formulário
+  if (!this.amostraData) {
+    const formData = this.registerForm.value;
+    this.amostraData = this.enriquecerDadosFormulario(formData);
+    
+    // Adiciona as imagens aos dados
+    if (this.uploadedFilesWithInfo && this.uploadedFilesWithInfo.length > 0) {
+      this.amostraData.imagens = this.uploadedFilesWithInfo.map(fileInfo => ({
+        file: fileInfo.file,
+        descricao: fileInfo.descricao,
+        nome: fileInfo.file.name,
+        tamanho: fileInfo.file.size,
+        tipo: fileInfo.file.type
+      }));
+    }
+  }
+  
+  // Verificar se veio de navegação com dados
   if (window.history.state && window.history.state.amostraData) {
     this.amostraData = window.history.state.amostraData;    
     // Lidar com imagens novas do formulário
@@ -1876,56 +1904,26 @@ receberDadosAmostra(): void {
     
     // Lidar com imagens existentes de amostra salva
     if (this.amostraData.imagensExistentes && this.amostraData.imagensExistentes.length > 0) {
-      //criar uma propriedade separada para exibir essas imagens
       this.imagensExistentes = this.amostraData.imagensExistentes;
     }
-    
-    return;
   }
+  
+  // Preencher formulário da OS com dados da amostra
+  this.preencherFormularioOSComAmostraFormulario(this.amostraData);
+  
   this.activeStep = 3;
 }
 criarOSDoFormulario() {
-  // Validação para campos  mínimos
-  const camposEssenciais = {
-    'material': 'Material',
-    'tipoAmostra': 'Tipo de Amostra', 
-    'dataColeta': 'Data de Coleta',
-    'dataEntrada': 'Data de Entrada',
-    'finalidade': 'Finalidade',
-    'fornecedor': 'Fornecedor',
-    'status': 'Status'
-  }; 
-  const camposVazios = [];
-  // Verificar campos 
-  for (const [campo, nome] of Object.entries(camposEssenciais)) {
-    const control = this.registerForm.get(campo);
-    if (!control || !control.value || control.value === '') {
-      camposVazios.push(nome);
-    }
-  }
-  if (camposVazios.length > 0) {
+  console.log('Dados da amostra antes de criar OS:', this.amostraData);
+  
+  // Verificar se amostraData existe
+  if (!this.amostraData) {
     this.messageService.add({
-      severity: 'warn',
-      summary: 'Campos Obrigatórios da Amostra',
-      detail: `Por favor, preencha: ${camposVazios.join(', ')}`
+      severity: 'error',
+      summary: 'Erro',
+      detail: 'Dados da amostra não encontrados. Por favor, volte e preencha o formulário da amostra.'
     });
     return;
-  }
-
-  // VERIFICAR OU CAPTURAR DADOS DA AMOSTRA
-  if (!this.amostraData) {
-    const formData = this.registerForm.value;
-    this.amostraData = this.enriquecerDadosFormulario(formData);
-    
-    if (this.uploadedFilesWithInfo && this.uploadedFilesWithInfo.length > 0) {
-      this.amostraData.imagens = this.uploadedFilesWithInfo.map(fileInfo => ({
-        file: fileInfo.file,
-        descricao: fileInfo.descricao,
-        nome: fileInfo.file.name,
-        tamanho: fileInfo.file.size,
-        tipo: fileInfo.file.type
-      }));
-    }
   }
   // Validação customizada 
   const camposEssenciaisOrdem = {
