@@ -1740,7 +1740,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
       const separador = {
         data: {
           id: 'separador',
-          descricao: '---------- CÁLCULOS ---------',
+          descricao: '---------- ENSAIOS COMPOSTOS ---------',
           disabled: true
         },
         leaf: true
@@ -1780,7 +1780,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
       const separador_peneira = {
         data: {
           id: 'separador',
-          descricao: '---------- SELEÇÃO ARGAMASSA ---------',
+          descricao: '---------- SELEÇÃO PENEIRAS ---------',
           disabled: true
         },
         leaf: true
