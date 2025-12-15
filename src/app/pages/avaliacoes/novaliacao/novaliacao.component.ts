@@ -553,6 +553,7 @@ formulariosDisponiveis: { id: number; nome: string }[] = []; // Lista de formulÃ
 
 
   carregarMeusAvaliadosSemAvaliacao(): void {
+    this.trimestre = 'Quarto Trimestre de 2025';
     if (this.trimestre && this.trimestre !== 'Indeterminado' ) {
       this.avaliadoService.getMeusAvaliadosSemAvaliacao(this.trimestre).subscribe(
         data => {

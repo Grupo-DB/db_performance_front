@@ -8937,9 +8937,9 @@ canDeactivate(): boolean | Promise<boolean> {
           }
         },
       );
-    // }
+     }
 
-    // if (isColante) {
+     if (isColante) {
       itens.push(
         {
           label: 'Resist. Ader. a Tração (Normal)',

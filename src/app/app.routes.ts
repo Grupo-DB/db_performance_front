@@ -76,6 +76,7 @@ import { ArquivoComponent } from './pages/controleQualidade/arquivo/arquivo.comp
 import { GarantiaComponent } from './pages/controleQualidade/garantia/garantia.component';
 import { ResultadosComponent } from './pages/controleQualidade/resultados/resultados.component';
 import { AcompanhamentoComponent } from './pages/controleQualidade/acompanhamento/acompanhamento.component';
+import { RegistrosComponent } from './pages/horasExtras/registros/registros.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -155,6 +156,7 @@ export const routes: Routes = [
       { path: 'controleQualidade/garantia', component: GarantiaComponent },
       { path: 'controleQualidade/resultados', component: ResultadosComponent },
       { path: 'controleQualidade/acompanhamento', component: AcompanhamentoComponent },
+      { path: 'horasExtras/registros', component: RegistrosComponent }
     ],
   },
   
