@@ -244,9 +244,9 @@ formulariosDisponiveis: { id: number; nome: string }[] = []; // Lista de formul√
   }
 
   ngOnInit(): void {
-    this.trimestre = '';
-    this.obterTrimestre();
-    this.periodo = this.obterTrimestre();
+    this.trimestre = 'Quarto Trimestre';
+    //this.obterTrimestre();
+    //this.periodo = this.obterTrimestre();
     this.carregarMeusAvaliadosSemAvaliacao();
 
     this.tipos =[
