@@ -573,7 +573,7 @@
 
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
-                                <div class="header w-full text-center">
+                                <div class="header w-full text-center" style="margin-bottom: unset;">
                                     <b>Selecionar Ánalises para Impressão</b>
                                 </div>
                             </ng-template>
@@ -2477,74 +2477,74 @@
        
     </p-drawer>
 
-<!-- Modal para exibir o parecer da IA -->
-<p-dialog
-    header="Parecer Técnico - Análise Laboratorial"
-    [(visible)]="mostrarParecer"
-    [modal]="true"
-    [closable]="true"
-    [draggable]="false"
-    [resizable]="false"
-    [maximizable]="true"
-    styleClass="parecer-modal"
->
-    <div class="parecer-container">
-        <div class="parecer-header mb-3">
-            <i class="pi pi-robot mr-2" style="color: #3b82f6;"></i>
-            <span class="font-semibold text-lg">Análise Técnica Automatizada</span>
+    <!-- Modal para exibir o parecer da IA -->
+    <p-dialog
+        header="Parecer Técnico - Análise Laboratorial"
+        [(visible)]="mostrarParecer"
+        [modal]="true"
+        [closable]="true"
+        [draggable]="false"
+        [resizable]="false"
+        [maximizable]="true"
+        styleClass="parecer-modal"
+    >
+        <div class="parecer-container">
+            <div class="parecer-header mb-3">
+                <i class="pi pi-robot mr-2" style="color: #3b82f6;"></i>
+                <span class="font-semibold text-lg">Análise Técnica Automatizada</span>
+            </div>
+            
+            <!-- Loading State -->
+            <div *ngIf="parecerCarregando" class="parecer-loading text-center p-5">
+                <p-progressSpinner strokeWidth="3" [style]="{ width: '50px', height: '50px' }"></p-progressSpinner>
+                <p class="mt-3 text-600">Gerando parecer técnico...</p>
+                <small class="text-500">Por favor, aguarde enquanto o sistema consulta a ficha técnica e as normas do produto.</small>
+            </div>
+            
+            <!-- Content State -->
+            <div *ngIf="!parecerCarregando && parecerResposta" class="parecer-conteudo" [innerHTML]="formatarParecer(parecerResposta)">
+            </div>
+            
+            <!-- Empty State -->
+            <div *ngIf="!parecerCarregando && !parecerResposta" class="parecer-empty text-center p-4">
+                <i class="pi pi-exclamation-triangle text-4xl text-orange-400 mb-2"></i>
+                <p class="text-600">Nenhum parecer disponível</p>
+            </div>
+            
+            <div *ngIf="!parecerCarregando" class="parecer-footer mt-4 text-center">
+                <small class="text-500">
+                    <i class="pi pi-info-circle mr-1"></i>
+                    Este parecer foi gerado automaticamente por inteligência artificial
+                </small>
+            </div>
         </div>
         
-        <!-- Loading State -->
-        <div *ngIf="parecerCarregando" class="parecer-loading text-center p-5">
-            <p-progressSpinner strokeWidth="3" [style]="{ width: '50px', height: '50px' }"></p-progressSpinner>
-            <p class="mt-3 text-600">Gerando parecer técnico...</p>
-            <small class="text-500">Por favor, aguarde enquanto o sistema consulta a ficha técnica e as normas do produto.</small>
-        </div>
-        
-        <!-- Content State -->
-        <div *ngIf="!parecerCarregando && parecerResposta" class="parecer-conteudo" [innerHTML]="formatarParecer(parecerResposta)">
-        </div>
-        
-        <!-- Empty State -->
-        <div *ngIf="!parecerCarregando && !parecerResposta" class="parecer-empty text-center p-4">
-            <i class="pi pi-exclamation-triangle text-4xl text-orange-400 mb-2"></i>
-            <p class="text-600">Nenhum parecer disponível</p>
-        </div>
-        
-        <div *ngIf="!parecerCarregando" class="parecer-footer mt-4 text-center">
-            <small class="text-500">
-                <i class="pi pi-info-circle mr-1"></i>
-                Este parecer foi gerado automaticamente por inteligência artificial
-            </small>
-        </div>
-    </div>
-    
-    <ng-template pTemplate="footer">
-        <p-button 
-            label="Fechar" 
-            icon="pi pi-times" 
-            (onClick)="fecharParecer()"
-            severity="secondary"
-        ></p-button>
-        <p-button 
-            label="Copiar Texto" 
-            icon="pi pi-copy" 
-            (onClick)="copiarParecer()"
-            severity="info"
-            class="ml-2"
-        ></p-button>
-    </ng-template>
-</p-dialog>
+        <ng-template pTemplate="footer">
+            <p-button 
+                label="Fechar" 
+                icon="pi pi-times" 
+                (onClick)="fecharParecer()"
+                severity="secondary"
+            ></p-button>
+            <p-button 
+                label="Copiar Texto" 
+                icon="pi pi-copy" 
+                (onClick)="copiarParecer()"
+                severity="info"
+                class="ml-2"
+            ></p-button>
+        </ng-template>
+    </p-dialog>
 
-<!-- Loading overlay global para parecer da IA -->
-<div *ngIf="parecerCarregando && !mostrarParecer" class="parecer-loading-overlay">
-    <div class="loading-content">
-        <p-progressSpinner strokeWidth="3" [style]="{ width: '60px', height: '60px' }"></p-progressSpinner>
-        <h4 class="mt-3">Gerando Parecer Técnico</h4>
-        <p class="text-600 mb-2">A IA está analisando os dados laboratoriais...</p>
-        <small class="text-500">Por favor, aguarde. Isso pode levar alguns segundos.</small>
+    <!-- Loading overlay global para parecer da IA -->
+    <div *ngIf="parecerCarregando && !mostrarParecer" class="parecer-loading-overlay">
+        <div class="loading-content">
+            <p-progressSpinner strokeWidth="3" [style]="{ width: '60px', height: '60px' }"></p-progressSpinner>
+            <h4 class="mt-3">Gerando Parecer Técnico</h4>
+            <p class="text-600 mb-2">A IA está analisando os dados laboratoriais...</p>
+            <small class="text-500">Por favor, aguarde. Isso pode levar alguns segundos.</small>
+        </div>
     </div>
-</div>
 
     <!-- ruptura a flexao -->
     <p-drawer 

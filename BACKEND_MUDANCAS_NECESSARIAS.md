@@ -235,7 +235,7 @@ class OrdemExpressaViewSet(viewsets.ModelViewSet):
 ### 1. Enviar dados com duplicatas:
 
 ```bash
-curl -X PATCH http://localhost:8000/ordem/expressa/23/ \
+curl -X PATCH http://172.50.10.79:8008/ordem/expressa/23/ \
   -H "Content-Type: application/json" \
   -d '{
     "ensaios": [
@@ -252,7 +252,7 @@ curl -X PATCH http://localhost:8000/ordem/expressa/23/ \
 ### 2. Verificar que retorna 3 ensaios (incluindo o ID 76 duas vezes):
 
 ```bash
-curl http://localhost:8000/ordem/expressa/23/
+curl http://172.50.10.79:8008/ordem/expressa/23/
 ```
 
 Esperado:

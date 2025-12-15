@@ -6,9 +6,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ProjetadoService {
-  private apiUrl='http://localhost:8000/dre/linhas/calculosDre/'
-  private orcadoUrl='http://localhost:8000/orcamento/orcamentosbase/calculosOrcado/'
-  private despesasUrl='http://localhost:8000/orcamento/orcamentosbase/calculosDespesa/'
+  private apiUrl='http://172.50.10.79:8008/dre/linhas/calculosDre/'
+  private orcadoUrl='http://172.50.10.79:8008/orcamento/orcamentosbase/calculosOrcado/'
+  private despesasUrl='http://172.50.10.79:8008/orcamento/orcamentosbase/calculosDespesa/'
   constructor(private http: HttpClient) { }
 
   getCalculodDre(ano:number, periodo: number): Observable<any>{

@@ -52,7 +52,7 @@
 
  
 //   updatePasswordFirstLogin(newPassword: string): Observable<any> {
-//   return this.httpClient.post('http://localhost:8000/management/update-password-first-login/', { new_password: newPassword });
+//   return this.httpClient.post('http://172.50.10.79:8008/management/update-password-first-login/', { new_password: newPassword });
 //   }
 
 //   getUserId(): number | null {
@@ -100,7 +100,7 @@ interface LoginResponse {
   providedIn: 'root'
 })
 export class LoginService {
-  private apiUrl = 'http://localhost:8000/management/token/';
+  private apiUrl = 'http://172.50.10.79:8008/management/token/';
   private currentUserSubject: BehaviorSubject<any>;
   public currentUser: Observable<any>;
   
@@ -141,7 +141,7 @@ export class LoginService {
   }
 
   updatePasswordFirstLogin(newPassword: string): Observable<any> {
-    return this.httpClient.post('http://localhost:8000/management/update-password-first-login/', { new_password: newPassword });
+    return this.httpClient.post('http://172.50.10.79:8008/management/update-password-first-login/', { new_password: newPassword });
   }
 
   getUserId(): number | null {
