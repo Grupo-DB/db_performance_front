@@ -1522,8 +1522,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
       };
 
       const itens = [
-        ['-peneira_seca', 'Peneira Seca'],
-        ['-peneira_umida', 'Peneira Úmida'],
         ['-substrato', 'Resist. Ader a Tração (Substrato)'],
         ['-superficie', 'Resist. Ader a Tração (Superfície)'],
         ['-normal', 'Resist. Ader a Tração (Normal)'],
@@ -1545,10 +1543,32 @@ gerarNumero(materialNome: string, sequencial: number): string {
         children: undefined
       }));
 
+      const separador_peneira = {
+        data: {
+          id: 'separador',
+          descricao: '---------- SELEÇÃO ARGAMASSA ---------',
+          disabled: true
+        },
+        leaf: true
+      };
+
+      const item_peneiras = [
+        ['-peneira_seca', 'Peneira Seca'],
+        ['-peneira_umida', 'Peneira Úmida']
+      ];
+
+      const itens_peneiras = item_peneiras.map(([id, descricao]) => ({
+        data: { id, descricao, disabled: false },
+        leaf: true,
+        expanded: false,
+        partialSelected: false,
+        children: undefined
+      }));
+
       if(analise?.amostra_detalhes?.material?.toLowerCase() === 'argamassa'){
-        this.ensaios_laudo = [...ensaios, separador, ...calculos, separador_argamassa, ...itens_argamassa];
+        this.ensaios_laudo = [...ensaios, separador, ...calculos, separador_peneira, ...itens_peneiras,  separador_argamassa, ...itens_argamassa];
       }else{
-        this.ensaios_laudo = [...ensaios, separador, ...calculos];
+        this.ensaios_laudo = [...ensaios, separador, ...calculos, separador_peneira, ...itens_peneiras];
       }
     }
 
@@ -1617,6 +1637,29 @@ gerarNumero(materialNome: string, sequencial: number): string {
           );
         }
 
+          this.ensaios_laudo.push({
+            data: {
+              id: 'separador',
+              descricao: '---------- SELEÇÃO PENEIRAS ---------',
+              disabled: true
+            },
+            leaf: true
+          });
+
+          const itens = [
+            ['-peneira_seca', 'Peneira Seca'],
+            ['-peneira_umida', 'Peneira Úmida'],
+          ];
+
+          this.ensaios_laudo.push(
+            ...itens.map(([id, descricao]) => ({
+              data: { id, descricao, disabled: false },
+              leaf: true,
+              expanded: false,
+              partialSelected: false,
+              children: undefined
+            }))
+          );
         if(analise?.amostra_detalhes?.material?.toLowerCase() === 'argamassa'){
           this.ensaios_laudo.push({
             data: {
@@ -1628,8 +1671,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
           });
 
           const itens = [
-            ['-peneira_seca', 'Peneira Seca'],
-            ['-peneira_umida', 'Peneira Úmida'],
             ['-substrato', 'Resist. Ader a Tração (Substrato)'],
             ['-superficie', 'Resist. Ader a Tração (Superfície)'],
             ['-normal', 'Resist. Ader a Tração (Normal)'],
