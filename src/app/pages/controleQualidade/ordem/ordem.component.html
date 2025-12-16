@@ -248,20 +248,20 @@
                                             </th>
                                             <th style="width: 25%; text-align: left;" type="text"field="fornecedor" display="menu">Produto</th>
                                             <th style="width: 15%; text-align: left;" type="text"field="fornecedor" display="menu">Número</th>
-                                            <th pSortableColumn="data_entrada" style="width: 10%;">
+                                            <th pSortableColumn="data_coleta" style="width: 10%;">
                                                 <div class="flex justify-between items-left">
-                                                    Data de Abertura
-                                                    <p-sortIcon field="data_entrada" />
+                                                    Data de Coleta
+                                                    <p-sortIcon field="data_coleta" />
                                                     <p-columnFilter 
                                                         type="date" 
-                                                        field="data_entrada" 
+                                                        field="data_coleta" 
                                                         display="menu"  
                                                         class="ml-auto" 
                                                         showMenu="false" />
                                                 </div>
                                             </th>
                                             <!-- <th style="width: 10%; text-align: left;" type="text" field="numero" display="menu">Classificação da OS</th> -->
-                                            <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">Responsável</th>
+                                            <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">Local de Coleta</th>
                                             <th style="width: 10%; text-align: left;" type="text" field="responsavel" display="menu">
                                                 <p-multiselect
                                                     [(ngModel)]="tipoSelecionados"
@@ -347,10 +347,10 @@
                                             <td style="text-align: left;"> {{ analise.amostra_detalhes?.produto_amostra_detalhes.nome }} </td>
                                             <td style="text-align: left;"> {{ analise.amostra_detalhes?.numero }} </td>
                                             <td style="text-align: left;">
-                                                {{ (analise.amostra_detalhes?.expressa_detalhes?.data || analise.amostra_detalhes?.ordem_detalhes?.data) | date:'dd/MM/yy' }}
+                                                {{ (analise.amostra_detalhes?.data_coleta) | date:'dd/MM/yy' }}
                                             </td>
                                             <!-- <td style="text-align: left;"> {{ analise.amostra_detalhes?.expressa_detalhes?.classificacao || analise.amostra_detalhes?.ordem_detalhes?.classificacao }} </td> -->
-                                            <td style="text-align: left;"> {{ analise.amostra_detalhes?.expressa_detalhes?.responsavel || analise.amostra_detalhes?.ordem_detalhes?.responsavel }} </td>
+                                            <td style="text-align: left;"> {{ analise.amostra_detalhes?.local_coleta }} </td>
                                             <td style="text-align: left;">
                                                 <p-tag
                                                     [value]="analise?.amostra_detalhes?.expressa_detalhes ? 'Expressa' : 'Plano'"
@@ -474,6 +474,7 @@
                                                             tooltipPosition="top" 
                                                         />
                                                     </div>
+
                                                 </div>
                                             </td>
                                         </tr>

@@ -1444,6 +1444,8 @@ carregarPeneiraSecaSalva(analise: any): void {
     }));
     this.massa_amostra = analise.peneiras.amostra ?? 0;
     this.total_finos = analise.peneiras.finos ?? null;
+    this.total_finos_digitado = analise.peneiras.finos_digitado ?? null;
+    this.total_finos_calculado = analise.peneiras.finos_calculo ?? null;
     
     if (analise.peneiras.tempo_previsto) {
       this.peneira_seca_tempo_previsto = analise.peneiras.tempo_previsto;
@@ -1465,6 +1467,8 @@ carregarPeneiraSecaSalva(analise: any): void {
     this.total_finos = null;
     this.peneira_seca_tempo_previsto = null;
     this.peneira_seca_tempo_trabalho = null;
+    this.total_finos_digitado = null;
+    this.total_finos_calculado = null;
   }
 }
 
@@ -1480,6 +1484,8 @@ carregarPeneiraUmidaSalva(analise: any): void {
     }));
     this.massa_amostra_umida = analise.peneiras_umidas.amostra ?? 0;
     this.total_finos_umida = analise.peneiras_umidas.finos ?? null;
+    this.total_finos_umida_digitado = analise.peneiras_umidas.finos_digitado ?? null;
+    this.total_finos_umida_calculado = analise.peneiras_umidas.finos_calculo ?? null;
     
     if (analise.peneiras_umidas.tempo_previsto) {
       this.peneira_umida_tempo_previsto = analise.peneiras_umidas.tempo_previsto;
@@ -1501,6 +1507,9 @@ carregarPeneiraUmidaSalva(analise: any): void {
     this.total_finos_umida = null;
     this.peneira_umida_tempo_previsto = null;
     this.peneira_umida_tempo_trabalho = null;
+    this.total_finos_umida_digitado = null;
+    this.total_finos_umida_calculado = null;
+    
   }
 }
 //==================================================== FIM PENEIRAS =========================================================//
@@ -9059,52 +9068,68 @@ canDeactivate(): boolean | Promise<boolean> {
     ];
   }
 
-  abrirModalPeneira(analise: any){
+  // abrirModalPeneira(analise: any){
     
-    if(this.peneira_seca){
-      this.linhasPeneira = this.peneira_seca.map((item: any, index: number) => ({
-        peneira: item.peneira ?? '',
-        valor_retido: item.valor_retido ?? null,
-        porcentual_retido: item.porcentual_retido ?? null,
-        acumulado: item.acumulado ?? null,
-        passante: item.passante ?? null,
-        passante_acumulado: item.passante_acumulado ?? null,
-      }));
-    }else if (analise?.peneiras?.peneiras && Array.isArray(analise.peneiras?.peneiras)) {
-      this.linhasPeneira = analise.peneiras.peneiras.map((item: any, index: number) => ({
-        peneira: item.peneira ?? '',
-        valor_retido: item.valor_retido ?? null,
-        porcentual_retido: item.porcentual_retido ?? null,
-        acumulado: item.acumulado ?? null,
-        passante: item.passante ?? null,
-        passante_acumulado: item.passante_acumulado ?? null,
-      }));
+  //   if(this.peneira_seca){
+  //     this.linhasPeneira = this.peneira_seca.map((item: any, index: number) => ({
+  //       peneira: item.peneira ?? '',
+  //       valor_retido: item.valor_retido ?? null,
+  //       porcentual_retido: item.porcentual_retido ?? null,
+  //       acumulado: item.acumulado ?? null,
+  //       passante: item.passante ?? null,
+  //       passante_acumulado: item.passante_acumulado ?? null,
+  //     }));
+  //   }else if (analise?.peneiras?.peneiras && Array.isArray(analise.peneiras?.peneiras)) {
+  //           alert('fdsfsd');
 
-      this.massa_amostra = analise.peneiras.amostra;
-      this.total_finos = analise.peneiras.finos;
-    } else {
-      this.linhasPeneira = [];
-      this.linhasPeneira.push({
-        peneira: '',
-        valor_retido: null,
-        porcentual_retido: null,
-        acumulado: null,
-        passante: null,
-        passante_acumulado: null,
-      });
-    }
-    this.modalDadosPeneira = true;
-  }
+  //     this.linhasPeneira = analise.peneiras.peneiras.map((item: any, index: number) => ({
+  //       peneira: item.peneira ?? '',
+  //       valor_retido: item.valor_retido ?? null,
+  //       porcentual_retido: item.porcentual_retido ?? null,
+  //       acumulado: item.acumulado ?? null,
+  //       passante: item.passante ?? null,
+  //       passante_acumulado: item.passante_acumulado ?? null,
+  //     }));
+
+  //     this.massa_amostra = analise.peneiras.amostra;
+  //     this.total_finos = analise.peneiras.finos;
+  //     this.total_finos_calculado = analise.peneiras.finos_calculado;
+  //     this.total_finos_digitado = analise.peneiras.finos_digitado;
+  //   } else {
+  //     this.linhasPeneira = [];
+  //     this.linhasPeneira.push({
+  //       peneira: '',
+  //       valor_retido: null,
+  //       porcentual_retido: null,
+  //       acumulado: null,
+  //       passante: null,
+  //       passante_acumulado: null,
+  //     });
+  //   }
+  //   this.modalDadosPeneira = true;
+  // }
 
   massa_amostra: number = 0;
   total_finos: number | null = null;
+  total_finos_digitado: number | null = null;
+  total_finos_calculado: number | null = null;
 
   atualizarValores(index: number) {
     this.calcularPercentuaisEAcumulado();
+    this.atualizaValoresCalculoPeneira();
   }
 
   atualizarTodosValores() {
     this.calcularPercentuaisEAcumulado();
+    this.atualizaValoresCalculoPeneira();
+  }
+
+  get bloqueiaSalvarPeneiraSeca(): boolean {
+    return (this.total_finos_calculado ?? 0) > 2;
+  }
+
+  atualizaValoresCalculoPeneira(){
+    this.total_finos_calculado =  100 - ( ((this.total_finos_digitado ?? 0) * 100) /(this.total_finos ?? 0) ) ;
   }
 
   calcularPercentuaisEAcumulado() {
@@ -9152,6 +9177,7 @@ canDeactivate(): boolean | Promise<boolean> {
       ultimaLinhaComAcumulado && ultimaLinhaComAcumulado.acumulado != null
         ? 100 - ultimaLinhaComAcumulado.acumulado
         : null;
+
   }
 
   salvarPeneiraSeca(analise: any){
@@ -9163,7 +9189,9 @@ canDeactivate(): boolean | Promise<boolean> {
       peneiras:{
         peneiras: this.linhasPeneira,
         amostra: this.massa_amostra,
-        finos: this.total_finos
+        finos: this.total_finos,
+        finos_digitado: this.total_finos_digitado,
+        finos_calculo: this.total_finos_calculado
       }
     };
    
@@ -9195,52 +9223,28 @@ canDeactivate(): boolean | Promise<boolean> {
   }
 
 
-  abrirModalPeneiraUmida(analise: any){
-    
-    if(this.peneira_umida){
-      this.linhasPeneiraUmida = this.peneira_umida.map((item: any, index: number) => ({
-        peneira: item.peneira ?? '',
-        valor_retido: item.valor_retido ?? null,
-        porcentual_retido: item.porcentual_retido ?? null,
-        acumulado: item.acumulado ?? null,
-        passante: item.passante ?? null,
-        passante_acumulado: item.passante_acumulado ?? null,
-      }));
-    }else if (analise?.peneiras_umidas?.peneiras && Array.isArray(analise.peneiras_umidas?.peneiras)) {
-      this.linhasPeneiraUmida = analise.peneiras_umidas.peneiras.map((item: any, index: number) => ({
-        peneira: item.peneira ?? '',
-        valor_retido: item.valor_retido ?? null,
-        porcentual_retido: item.porcentual_retido ?? null,
-        acumulado: item.acumulado ?? null,
-        passante: item.passante ?? null,
-        passante_acumulado: item.passante_acumulado ?? null,
-      }));
-      
-      this.massa_amostra_umida = analise.peneiras.amostra;
-      this.total_finos_umida = analise.peneiras.finos;
-    } else {
-      this.linhasPeneiraUmida = [];
-      this.linhasPeneiraUmida.push({
-        peneira: '',
-        valor_retido: null,
-        porcentual_retido: null,
-        acumulado: null,
-        passante: null,
-        passante_acumulado: null,
-      });
-    }
-    this.modalDadosPeneiraUmida = true;
-  }
 
   massa_amostra_umida: number = 0;
   total_finos_umida: number | null = null;
+  total_finos_umida_digitado: number | null = null;
+  total_finos_umida_calculado: number | null = null;
 
   atualizarValoresUmida(index: number) {
     this.calcularPercentuaisEAcumuladoUmida();
+    this.atualizaValoresCalculoPeneiraUmida();
+  }
+
+  get bloqueiaSalvarPeneiraUmida(): boolean {
+    return (this.total_finos_umida_calculado ?? 0) > 2;
   }
 
   atualizarTodosValoresUmida() {
     this.calcularPercentuaisEAcumuladoUmida();
+    this.atualizaValoresCalculoPeneiraUmida();
+  }
+
+  atualizaValoresCalculoPeneiraUmida(){
+    this.total_finos_umida_calculado =  100 - ( ((this.total_finos_umida_digitado ?? 0) * 100) /(this.total_finos_umida ?? 0) ) ;
   }
 
   calcularPercentuaisEAcumuladoUmida() {
@@ -9299,7 +9303,9 @@ canDeactivate(): boolean | Promise<boolean> {
       peneiras_umidas:{
         peneiras: this.linhasPeneiraUmida,
         amostra: this.massa_amostra_umida,
-        finos: this.total_finos_umida
+        finos: this.total_finos_umida,
+        finos_digitado: this.total_finos_umida_digitado,
+        finos_calculo: this.total_finos_umida_calculado
       }
     };
     
