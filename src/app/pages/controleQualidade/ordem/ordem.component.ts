@@ -420,6 +420,33 @@ export class OrdemComponent implements OnInit {
     return this.getStatusDataRompimento(dataMoldagem, 28);
   }
 
+  // Método para Substrato
+  getStatusSubstrato28(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 28);
+  }
+
+  // Método para Superficial
+  getStatusSuperficial28(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 28);
+  }
+
+  // Métodos para Tração
+  getStatusTracaoNormal28(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 28);
+  }
+
+  getStatusTracaoEstufa28(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 28);
+  }
+
+  getStatusTracaoSubmersa28(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 28);
+  }
+
+  getStatusTracaoTempoAberto28(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 28);
+  }
+
   // Método para verificar se um rompimento foi marcado como concluído
   isRompimentoConcluido(tipo: string, periodo: string): boolean {
     if (!this.analiseSelecionada) return false;
@@ -435,7 +462,13 @@ export class OrdemComponent implements OnInit {
       'flexao_cimento_28': 'flexao.concluido_cimento_28',
       'compressao_argamassa_28': 'compressao.concluido_argamassa_28',
       'compressao_cimento_7': 'compressao.concluido_cimento_7',
-      'compressao_cimento_28': 'compressao.concluido_cimento_28'
+      'compressao_cimento_28': 'compressao.concluido_cimento_28',
+      'substrato_28': 'substrato.concluido_28',
+      'superficial_28': 'superficial.concluido_28',
+      'tracao_normal_28': 'tracao_normal.concluido_28',
+      'tracao_estufa_28': 'tracao_estufa.concluido_28',
+      'tracao_submersa_28': 'tracao_submersa.concluido_28',
+      'tracao_tempo_aberto_28': 'tracao_tempo_aberto.concluido_28'
     };
     
     const chave = `${tipo}_${periodo}`;
@@ -481,7 +514,13 @@ export class OrdemComponent implements OnInit {
       'flexao_cimento_28': 'flexao',
       'compressao_argamassa_28': 'compressao',
       'compressao_cimento_7': 'compressao',
-      'compressao_cimento_28': 'compressao'
+      'compressao_cimento_28': 'compressao',
+      'substrato_28': 'substrato',
+      'superficial_28': 'superficial',
+      'tracao_normal_28': 'tracao_normal',
+      'tracao_estufa_28': 'tracao_estufa',
+      'tracao_submersa_28': 'tracao_submersa',
+      'tracao_tempo_aberto_28': 'tracao_tempo_aberto'
     };
     
     const chave = `${tipo}_${periodo}`;
@@ -498,7 +537,8 @@ export class OrdemComponent implements OnInit {
     }
     
     // Para todos os tipos, alterna o campo concluído ou manipula a data
-    if (tipo === 'flexao' || tipo === 'compressao') {
+    if (tipo === 'flexao' || tipo === 'compressao' || tipo === 'substrato' || tipo === 'superficial' || 
+        tipo === 'tracao_normal' || tipo === 'tracao_estufa' || tipo === 'tracao_submersa' || tipo === 'tracao_tempo_aberto') {
       const campoConcluido = `concluido_${periodo}`;
       obj[campoConcluido] = !obj[campoConcluido];
     } else if (tipo === 'variacao_dimensional' || tipo === 'variacao_massa') {

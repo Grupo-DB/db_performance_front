@@ -1,1 +1,82 @@
-<p>registros works!</p>
+<p-select
+    [style]="{'width':'80%'}"
+    [options]="ambientes"
+    optionLabel="nome"
+    placeholder="Selecione o Ambiente"
+    optionValue="id"
+    filter="true"
+    filterBy="nome"
+    [(ngModel)]="selectedAmbiente"
+    (onChange)="colaboradoeresByAmbiente($event.value)"
+>
+</p-select>
+<br>
+<p-select
+    [style]="{'width':'80%'}"
+    [options]="colaboradores"
+    optionLabel="nome"  
+    placeholder="Selecione o Colaborador"
+    optionValue="id"
+    filter="true"
+    filterBy="nome"
+    [(ngModel)]="selectedColaborador"
+>
+</p-select>
+<br>
+<p-datePicker 
+    [(ngModel)]="data" 
+    placeholder="Data Inicial" 
+    [style]="{'width':'80%'}"
+    dateFormat="dd/mm/yy"
+></p-datePicker>
+<p-datePicker 
+    [(ngModel)]="horaInicial" 
+    placeholder="Hora Inicial" 
+    [style]="{'width':'80%'}"
+    dateFormat="dd/mm/yy"
+    [timeOnly]="true"
+    (ngModelChange)="calcularTempo()"
+></p-datePicker>
+<br>
+<p-datePicker 
+    [(ngModel)]="horaFinal" 
+    placeholder="Hora Final" 
+    [style]="{'width':'80%'}"
+    dateFormat="dd/mm/yy"
+    [timeOnly]="true"
+    (ngModelChange)="calcularTempo()"
+></p-datePicker>
+<br>
+<div *ngIf="horasCalculadas" style="margin-top: 20px; padding: 10px; background-color: #f0f0f0; border-radius: 5px;">
+    <strong>Total de Horas:</strong> {{ horasCalculadas }}
+</div>
+
+<br>
+<textarea 
+    pInputTextarea
+    [(ngModel)]="motivo" 
+    placeholder="Motivo da Hora Extra" 
+    [style]="{'width':'80%'}"
+    rows="3"
+></textarea>
+<br><br>
+
+<p><strong>Digitador:</strong> {{ digitador }}</p>
+
+<br>
+<div style="display: flex; gap: 10px; width: 80%;">
+    <p-button 
+        label="Limpar" 
+        icon="pi pi-times" 
+        severity="secondary"
+        (onClick)="limparFormulario()"
+        [style]="{'flex': '1'}"
+    ></p-button>
+    <p-button 
+        label="Cadastrar Hora Extra" 
+        icon="pi pi-check" 
+        severity="success"
+        (onClick)="cadastrarRegistro()"
+        [style]="{'flex': '1'}"
+    ></p-button>
+</div>

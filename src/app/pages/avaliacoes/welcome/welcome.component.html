@@ -83,6 +83,11 @@
               <a class="cor-menu-a" routerLink="dashboard" ><span nz-icon nzType="audit" nzTheme="outline"></span> Avaliação de Funcionários</a>
             </li> 
           </ul>
+          <ul>
+            <li class="cor-menu" *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item nzMatchRouter>
+              <a class="cor-menu-a" routerLink="horasExtras/registros" ><span nz-icon nzType="clock-circle" nzTheme="outline"></span> Registros de Horas Extras</a>
+            </li>
+          </ul>
         </li>
         <li class="" *ngIf="hasGroup(['Admin','Master','GestorOperacoes','LabGestor','LabOperacoes','LabMaster'])" nz-submenu nzTitle="Gestão Operacional" nzIcon="bar-chart">
           <ul>

@@ -363,6 +363,34 @@ export class ResultadosComponent implements OnInit {
     return this.getStatusDataRompimento(dataMoldagem, 28);
   }
 
+   // Método para Substrato
+  getStatusSubstrato28(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 28);
+  }
+
+  // Método para Superficial
+  getStatusSuperficial28(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 28);
+  }
+
+  // Métodos para Tração
+  getStatusTracaoNormal28(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 28);
+  }
+
+  getStatusTracaoEstufa28(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 28);
+  }
+
+  getStatusTracaoSubmersa28(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 28);
+  }
+
+  getStatusTracaoTempoAberto28(dataMoldagem: string): { status: string, diasRestantes: number, cor: string, icone: string } {
+    return this.getStatusDataRompimento(dataMoldagem, 28);
+  }
+
+
   // Método para verificar se um rompimento foi marcado como concluído
   isRompimentoConcluido(tipo: string, periodo: string): boolean {
     if (!this.analiseSelecionada) return false;
@@ -378,7 +406,13 @@ export class ResultadosComponent implements OnInit {
       'flexao_cimento_28': 'flexao.concluido_cimento_28',
       'compressao_argamassa_28': 'compressao.concluido_argamassa_28',
       'compressao_cimento_7': 'compressao.concluido_cimento_7',
-      'compressao_cimento_28': 'compressao.concluido_cimento_28'
+      'compressao_cimento_28': 'compressao.concluido_cimento_28',
+      'substrato_28': 'substrato.concluido_28',
+      'superficial_28': 'superficial.concluido_28',
+      'tracao_normal_28': 'tracao_normal.concluido_28',
+      'tracao_estufa_28': 'tracao_estufa.concluido_28',
+      'tracao_submersa_28': 'tracao_submersa.concluido_28',
+      'tracao_tempo_aberto_28': 'tracao_tempo_aberto.concluido_28'
     };
     
     const chave = `${tipo}_${periodo}`;

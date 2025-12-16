@@ -117,7 +117,7 @@
 
                             <!-- Seção de Ensaios -->
                             <div class="mb-4">
-                                <h3 class="mb-3" style="color: #e6defa;">📊 Médias de Ensaios</h3>
+                                <h3 class="mb-3" style="color: #e6defa;">Médias de Ensaios</h3>
                                 <div class="flex flex-column w-full lg:flex-row gap-3">
                                     <div class="w-12 lg:w-10">
                                         <p-floatlabel variant="on">
@@ -150,7 +150,7 @@
                                 <!-- Cards de Resultados de Ensaios -->
                                 <div *ngIf="mediasEnsaios && mediasEnsaios.length > 0" class="mt-4">
                                     <div class="mb-3">
-                                        <h4 style="color: #b3e5ff; font-weight: bold;">📊 Total de Ensaios: {{ totalEnsaios }}</h4>
+                                        <h4 style="color: #b3e5ff; font-weight: bold;">Total de Ensaios: {{ totalEnsaios }}</h4>
                                     </div>
                                     <div class="grid">
                                         <div *ngFor="let resultado of mediasEnsaios" class="col-12 md:col-6 lg:col-4">
@@ -264,7 +264,7 @@
 
                             <!-- Seção de Cálculos -->
                             <div class="mb-4">
-                                <h3 class="mb-3" style="color: #e6defa;">🧮 Médias de Cálculos Compostos</h3>
+                                <h3 class="mb-3" style="color: #e6defa;">Médias de Ensaios Compostos</h3>
                                 <div class="flex flex-column w-full lg:flex-row gap-3">
                                     <div class="w-12 lg:w-10">
                                         <p-floatlabel variant="on">
@@ -297,7 +297,7 @@
                                 <!-- Cards de Resultados de Cálculos -->
                                 <div *ngIf="mediasCalculos && mediasCalculos.length > 0" class="mt-4">
                                     <div class="mb-3">
-                                        <h4 style="color: #b2f5ea; font-weight: bold;">🧮 Total de Cálculos: {{ totalCalculos }}</h4>
+                                        <h4 style="color: #b2f5ea; font-weight: bold;">Total de Ensaios Compostos: {{ totalCalculos }}</h4>
                                     </div>
                                     <div class="grid">
                                         <div *ngFor="let resultado of mediasCalculos" class="col-12 md:col-6 lg:col-4">
@@ -448,7 +448,7 @@
 
             <!-- Cards de Ensaios Compostos -->
             <div *ngIf="analiseSelecionada?.ultimo_calculo?.length > 0">
-                <h3 class="mb-3" style="color: #e6defa;">🧪 Ensaios Compostos</h3>
+                <h3 class="mb-3" style="color: #e6defa;">Ensaios Compostos</h3>
                 <div class="grid">
                     <div class="col-12" *ngFor="let ultimo_calculo of analiseSelecionada.ultimo_calculo">
                         <div
@@ -491,7 +491,7 @@
 
             <!-- Cards de Ensaios Diretos -->
             <div *ngIf="analiseSelecionada?.ultimo_ensaio?.ensaios_utilizados?.length > 0">
-                <h3 class="mb-3" style="color: #e6defa;">🔬 Ensaios Diretos</h3>
+                <h3 class="mb-3" style="color: #e6defa;">Ensaios Diretos</h3>
                 <div class="grid">
                     <div class="col-12 md:col-6 lg:col-4" *ngFor="let ensaios_utilizados of analiseSelecionada.ultimo_ensaio.ensaios_utilizados">
                         <div
@@ -515,7 +515,7 @@
 
             <!-- Cards de Variação Dimensional -->
             <div *ngIf="analiseSelecionada?.variacao_dimensional">
-                <h3 class="mb-3" style="color: #e6defa;">📐 Variação Dimensional Linear</h3>
+                <h3 class="mb-3" style="color: #e6defa;">Variação Dimensional Linear</h3>
                 <div class="grid">
                     
                     <!-- L0 - Medições Iniciais -->
@@ -689,7 +689,7 @@
 
             <!-- Cards de Variação de Massa -->
              <div *ngIf="analiseSelecionada?.variacao_massa">
-                <h3 class="mb-3" style="color: #e6defa;">⚖️ Variação de Massa</h3>
+                <h3 class="mb-3" style="color: #e6defa;">Variação de Massa</h3>
                 <div class="grid">
                     
                     <!-- M0 - Massa Inicial -->
@@ -862,7 +862,7 @@
 
             <!-- Cards de Módulo de Elasticidade -->
             <div *ngIf="analiseSelecionada?.modulo_elasticidade">
-                <h3 class="mb-3" style="color: #e6defa;">📊 Módulo de Elasticidade</h3>
+                <h3 class="mb-3" style="color: #e6defa;">Módulo de Elasticidade</h3>
                 
                 <!-- Card de Média Geral -->
                 <div class="mb-4" *ngIf="analiseSelecionada.modulo_elasticidade.media">
@@ -1013,7 +1013,7 @@
 
             <!-- Cards de Deslizamento (Colantes) -->
             <div *ngIf="analiseSelecionada?.deslizamento">
-                <h3 class="mb-3" style="color: #e6defa;">📏 Deslizamento (Colantes)</h3>
+                <h3 class="mb-3" style="color: #e6defa;">Deslizamento (Colantes)</h3>
                 
                 <!-- Card de Resultado Principal -->
                 <div class="mb-4" *ngIf="analiseSelecionada.deslizamento.resultado !== null && analiseSelecionada.deslizamento.resultado !== undefined">
@@ -1108,7 +1108,7 @@
 
             <!-- Cards de Peneiras Secas -->
             <div *ngIf="analiseSelecionada?.peneiras?.peneiras && analiseSelecionada.peneiras.peneiras.length > 0">
-                <h3 class="mb-3" style="color: #e6defa;">🔬 Peneiras Secas</h3>
+                <h3 class="mb-3" style="color: #e6defa;">Peneiras Secas</h3>
                 
                 <!-- Informações Gerais -->
                 <div class="mb-4">
@@ -1182,7 +1182,7 @@
 
             <!-- Cards de Peneiras Úmidas -->
             <div *ngIf="analiseSelecionada?.peneiras_umidas?.peneiras && analiseSelecionada.peneiras_umidas.peneiras.length > 0">
-                <h3 class="mb-3" style="color: #e6defa;">💧 Peneiras Úmidas</h3>
+                <h3 class="mb-3" style="color: #e6defa;">Peneiras Úmidas</h3>
                 
                 <!-- Informações Gerais -->
                 <div class="mb-4">
@@ -1256,8 +1256,68 @@
 
             <!-- Cards de Substrato -->
             <div *ngIf="analiseSelecionada?.substrato?.linhas && analiseSelecionada.substrato.linhas.length > 0">
-                <h3 class="mb-3" style="color: #e6defa;">🏗️ Resistência de Aderência ao Substrato</h3>
+                <h3 class="mb-3" style="color: #e6defa;">Resistência de Aderência ao Substrato</h3>
                 
+                <div class="flex flex-row gap-3 mb-4" *ngIf="analiseSelecionada.substrato.data_moldagem">
+                    <!-- Card Data Moldagem -->
+                    <div class="flex-1">
+                        <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                             style="border-radius: 12px; background-color: #4a4458;">
+                            <div class="flex align-items-center mb-2">
+                                <i class="pi pi-calendar mr-2" style="color: #c8b6e2;"></i>
+                                <h5 class="m-0" style="color: #c8b6e2;">Data Moldagem</h5>
+                            </div>
+                            <p class="mb-0" style="color: #e6defa; font-size: 1.1rem; font-weight: 600;">
+                                {{ analiseSelecionada.substrato.data_moldagem | date:'dd/MM/yyyy' }}
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Card Data Rompimento -->
+                    <div class="flex-1" *ngIf="analiseSelecionada?.substrato.data_rompimento">
+                        <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                             style="border-radius: 12px; background-color: #2b3a55;">
+                            <div class="flex align-items-center mb-2">
+                                <i class="pi pi-calendar-plus mr-2" style="color: #7ba8db;"></i>
+                                <h5 class="m-0" style="color: #7ba8db;">Data Rompimento</h5>
+                            </div>
+                            <p class="mb-0" style="color: #c8d8eb; font-size: 1.1rem; font-weight: 600;">
+                                <span *ngIf="analiseSelecionada?.substrato.data_rompimento">
+                                    {{ analiseSelecionada.substrato.data_rompimento | date:'dd/MM/yyyy' }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Card Status -->
+                    <div class="flex-1">
+                        <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                             [style.background-color]="isRompimentoConcluido('substrato', analiseSelecionada?.amostra_detalhes?.material?.toLowerCase() === 'argamassa' ? 'substrato_28' : '') ? '#1a4d2e' : getStatusSubstrato28(analiseSelecionada.substrato.data_moldagem).cor + '15'"
+                             [style.border-color]="isRompimentoConcluido('substrato', analiseSelecionada?.amostra_detalhes?.material?.toLowerCase() === 'argamassa' ? 'substrato_28' : '') ? '#10b981' : getStatusSubstrato28(analiseSelecionada.substrato.data_moldagem).cor"
+                             style="border-radius: 12px; border: 2px solid;">
+                            <div class="flex align-items-center justify-content-between mb-2">
+                                <div class="flex align-items-center">
+                                    <i class="pi pi-info-circle mr-2" 
+                                       [style.color]="getStatusSubstrato28(analiseSelecionada.substrato.data_moldagem).cor"></i>
+                                    <h5 class="m-0" [style.color]="getStatusSubstrato28(analiseSelecionada.substrato.data_moldagem).cor">
+                                        Status
+                                    </h5>
+                                </div>
+                               
+                            </div>
+                            <div class="flex align-items-center" 
+                                 *ngIf="!isRompimentoConcluido('substrato', analiseSelecionada?.amostra_detalhes?.material?.toLowerCase() === 'argamassa' ? 'substrato_28' : '')">
+                                <i class="pi mr-2" 
+                                   [ngClass]="getStatusSubstrato28(analiseSelecionada.substrato.data_moldagem).icone"
+                                   [style.color]="getStatusSubstrato28(analiseSelecionada.substrato.data_moldagem).cor"
+                                   style="font-size: 1.2rem;"></i>
+                                <span [style.color]="getStatusSubstrato28(analiseSelecionada.substrato.data_moldagem).cor"
+                                      style="font-size: 0.95rem; font-weight: 600;">
+                                    {{ getStatusSubstrato28(analiseSelecionada.substrato.data_moldagem).status }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Média Geral -->
                 <div class="mb-4" *ngIf="analiseSelecionada.substrato.media">
                     <div
@@ -1333,8 +1393,68 @@
 
             <!-- Cards de Superficial -->
             <div *ngIf="analiseSelecionada?.superficial?.linhas && analiseSelecionada.superficial.linhas.length > 0">
-                <h3 class="mb-3" style="color: #e6defa;">🔍 Resistência de Aderência Superficial</h3>
+                <h3 class="mb-3" style="color: #e6defa;">Resistência de Aderência Superficial</h3>
                 
+                <div class="flex flex-row gap-3 mb-4" *ngIf="analiseSelecionada.superficial.data_moldagem">
+                    <!-- Card Data Moldagem -->
+                    <div class="flex-1">
+                        <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                             style="border-radius: 12px; background-color: #4a4458;">
+                            <div class="flex align-items-center mb-2">
+                                <i class="pi pi-calendar mr-2" style="color: #c8b6e2;"></i>
+                                <h5 class="m-0" style="color: #c8b6e2;">Data Moldagem</h5>
+                            </div>
+                            <p class="mb-0" style="color: #e6defa; font-size: 1.1rem; font-weight: 600;">
+                                {{ analiseSelecionada.superficial.data_moldagem | date:'dd/MM/yyyy' }}
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Card Data Rompimento -->
+                    <div class="flex-1" *ngIf="analiseSelecionada?.superficial.data_rompimento">
+                        <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                             style="border-radius: 12px; background-color: #2b3a55;">
+                            <div class="flex align-items-center mb-2">
+                                <i class="pi pi-calendar-plus mr-2" style="color: #7ba8db;"></i>
+                                <h5 class="m-0" style="color: #7ba8db;">Data Rompimento</h5>
+                            </div>
+                            <p class="mb-0" style="color: #c8d8eb; font-size: 1.1rem; font-weight: 600;">
+                                <span *ngIf="analiseSelecionada?.superficial.data_rompimento">
+                                    {{ analiseSelecionada.superficial.data_rompimento | date:'dd/MM/yyyy' }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Card Status -->
+                    <div class="flex-1">
+                        <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                             [style.background-color]="isRompimentoConcluido('superficial', analiseSelecionada?.amostra_detalhes?.material?.toLowerCase() === 'argamassa' ? 'superficial_28' : '') ? '#1a4d2e' : getStatusSuperficial28(analiseSelecionada.superficial.data_moldagem).cor + '15'"
+                             [style.border-color]="isRompimentoConcluido('substrato', analiseSelecionada?.amostra_detalhes?.material?.toLowerCase() === 'argamassa' ? 'superficial_28' : '') ? '#10b981' : getStatusSuperficial28(analiseSelecionada.superficial.data_moldagem).cor"
+                             style="border-radius: 12px; border: 2px solid;">
+                            <div class="flex align-items-center justify-content-between mb-2">
+                                <div class="flex align-items-center">
+                                    <i class="pi pi-info-circle mr-2" 
+                                       [style.color]="getStatusSuperficial28(analiseSelecionada.superficial.data_moldagem).cor"></i>
+                                    <h5 class="m-0" [style.color]="getStatusSuperficial28(analiseSelecionada.superficial.data_moldagem).cor">
+                                        Status
+                                    </h5>
+                                </div>
+                               
+                            </div>
+                            <div class="flex align-items-center" 
+                                 *ngIf="!isRompimentoConcluido('superficial', analiseSelecionada?.amostra_detalhes?.material?.toLowerCase() === 'argamassa' ? 'superficial_28' : '')">
+                                <i class="pi mr-2" 
+                                   [ngClass]="getStatusSuperficial28(analiseSelecionada.superficial.data_moldagem).icone"
+                                   [style.color]="getStatusSuperficial28(analiseSelecionada.superficial.data_moldagem).cor"
+                                   style="font-size: 1.2rem;"></i>
+                                <span [style.color]="getStatusSuperficial28(analiseSelecionada.superficial.data_moldagem).cor"
+                                      style="font-size: 0.95rem; font-weight: 600;">
+                                    {{ getStatusSuperficial28(analiseSelecionada.superficial.data_moldagem).status }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Média Geral -->
                 <div class="mb-4" *ngIf="analiseSelecionada.superficial.media">
                     <div
@@ -1410,8 +1530,68 @@
 
             <!-- Cards de Tração Normal -->
             <div *ngIf="analiseSelecionada?.tracao_normal?.linhas && analiseSelecionada.tracao_normal.linhas.length > 0">
-                <h3 class="mb-3" style="color: #e6defa;">💪 Tração Normal</h3>
+                <h3 class="mb-3" style="color: #e6defa;">Tração Normal</h3>
                 
+                <div class="flex flex-row gap-3 mb-4" *ngIf="analiseSelecionada.tracao_normal.data_moldagem">
+                    <!-- Card Data Moldagem -->
+                    <div class="flex-1">
+                        <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                             style="border-radius: 12px; background-color: #4a4458;">
+                            <div class="flex align-items-center mb-2">
+                                <i class="pi pi-calendar mr-2" style="color: #c8b6e2;"></i>
+                                <h5 class="m-0" style="color: #c8b6e2;">Data Moldagem</h5>
+                            </div>
+                            <p class="mb-0" style="color: #e6defa; font-size: 1.1rem; font-weight: 600;">
+                                {{ analiseSelecionada.tracao_normal.data_moldagem | date:'dd/MM/yyyy' }}
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Card Data Rompimento -->
+                    <div class="flex-1" *ngIf="analiseSelecionada?.tracao_normal.data_rompimento">
+                        <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                             style="border-radius: 12px; background-color: #2b3a55;">
+                            <div class="flex align-items-center mb-2">
+                                <i class="pi pi-calendar-plus mr-2" style="color: #7ba8db;"></i>
+                                <h5 class="m-0" style="color: #7ba8db;">Data Rompimento</h5>
+                            </div>
+                            <p class="mb-0" style="color: #c8d8eb; font-size: 1.1rem; font-weight: 600;">
+                                <span *ngIf="analiseSelecionada?.tracao_normal.data_rompimento">
+                                    {{ analiseSelecionada.tracao_normal.data_rompimento | date:'dd/MM/yyyy' }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Card Status -->
+                    <div class="flex-1">
+                        <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                             [style.background-color]="isRompimentoConcluido('tracao_normal', analiseSelecionada?.amostra_detalhes?.material?.toLowerCase() === 'argamassa' ? 'tracao_normal_28' : '') ? '#1a4d2e' : getStatusTracaoNormal28(analiseSelecionada.tracao_normal.data_moldagem).cor + '15'"
+                             [style.border-color]="isRompimentoConcluido('tracao_normal', analiseSelecionada?.amostra_detalhes?.material?.toLowerCase() === 'argamassa' ? 'tracao_normal_28' : '') ? '#10b981' : getStatusTracaoNormal28(analiseSelecionada.tracao_normal.data_moldagem).cor"
+                             style="border-radius: 12px; border: 2px solid;">
+                            <div class="flex align-items-center justify-content-between mb-2">
+                                <div class="flex align-items-center">
+                                    <i class="pi pi-info-circle mr-2" 
+                                       [style.color]="getStatusTracaoNormal28(analiseSelecionada.tracao_normal.data_moldagem).cor"></i>
+                                    <h5 class="m-0" [style.color]="getStatusTracaoNormal28(analiseSelecionada.tracao_normal.data_moldagem).cor">
+                                        Status
+                                    </h5>
+                                </div>
+                               
+                            </div>
+                            <div class="flex align-items-center" 
+                                 *ngIf="!isRompimentoConcluido('tracao_normal', analiseSelecionada?.amostra_detalhes?.material?.toLowerCase() === 'argamassa' ? 'tracao_normal_28' : '')">
+                                <i class="pi mr-2" 
+                                   [ngClass]="getStatusTracaoNormal28(analiseSelecionada.tracao_normal.data_moldagem).icone"
+                                   [style.color]="getStatusTracaoNormal28(analiseSelecionada.tracao_normal.data_moldagem).cor"
+                                   style="font-size: 1.2rem;"></i>
+                                <span [style.color]="getStatusTracaoNormal28(analiseSelecionada.tracao_normal.data_moldagem).cor"
+                                      style="font-size: 0.95rem; font-weight: 600;">
+                                    {{ getStatusTracaoNormal28(analiseSelecionada.tracao_normal.data_moldagem).status }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Média Geral -->
                 <div class="mb-4" *ngIf="analiseSelecionada.tracao_normal.media">
                     <div
@@ -1487,8 +1667,68 @@
 
             <!-- Cards de Tração Submersa -->
             <div *ngIf="analiseSelecionada?.tracao_submersa?.linhas && analiseSelecionada.tracao_submersa.linhas.length > 0">
-                <h3 class="mb-3" style="color: #e6defa;">🌊 Tração Submersa</h3>
+                <h3 class="mb-3" style="color: #e6defa;">Tração Submersa</h3>
                 
+                <div class="flex flex-row gap-3 mb-4" *ngIf="analiseSelecionada.tracao_submersa.data_moldagem">
+                    <!-- Card Data Moldagem -->
+                    <div class="flex-1">
+                        <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                             style="border-radius: 12px; background-color: #4a4458;">
+                            <div class="flex align-items-center mb-2">
+                                <i class="pi pi-calendar mr-2" style="color: #c8b6e2;"></i>
+                                <h5 class="m-0" style="color: #c8b6e2;">Data Moldagem</h5>
+                            </div>
+                            <p class="mb-0" style="color: #e6defa; font-size: 1.1rem; font-weight: 600;">
+                                {{ analiseSelecionada.tracao_submersa.data_moldagem | date:'dd/MM/yyyy' }}
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Card Data Rompimento -->
+                    <div class="flex-1" *ngIf="analiseSelecionada?.tracao_submersa.data_rompimento">
+                        <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                             style="border-radius: 12px; background-color: #2b3a55;">
+                            <div class="flex align-items-center mb-2">
+                                <i class="pi pi-calendar-plus mr-2" style="color: #7ba8db;"></i>
+                                <h5 class="m-0" style="color: #7ba8db;">Data Rompimento</h5>
+                            </div>
+                            <p class="mb-0" style="color: #c8d8eb; font-size: 1.1rem; font-weight: 600;">
+                                <span *ngIf="analiseSelecionada?.tracao_submersa.data_rompimento">
+                                    {{ analiseSelecionada.tracao_submersa.data_rompimento | date:'dd/MM/yyyy' }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Card Status -->
+                    <div class="flex-1">
+                        <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                             [style.background-color]="isRompimentoConcluido('tracao_submersa', analiseSelecionada?.amostra_detalhes?.material?.toLowerCase() === 'argamassa' ? 'tracao_submersa_28' : '') ? '#1a4d2e' : getStatusTracaoSubmersa28(analiseSelecionada.tracao_submersa.data_moldagem).cor + '15'"
+                             [style.border-color]="isRompimentoConcluido('tracao_submersa', analiseSelecionada?.amostra_detalhes?.material?.toLowerCase() === 'argamassa' ? 'tracao_submersa_28' : '') ? '#10b981' : getStatusTracaoSubmersa28(analiseSelecionada.tracao_submersa.data_moldagem).cor"
+                             style="border-radius: 12px; border: 2px solid;">
+                            <div class="flex align-items-center justify-content-between mb-2">
+                                <div class="flex align-items-center">
+                                    <i class="pi pi-info-circle mr-2" 
+                                       [style.color]="getStatusTracaoSubmersa28(analiseSelecionada.tracao_submersa.data_moldagem).cor"></i>
+                                    <h5 class="m-0" [style.color]="getStatusTracaoSubmersa28(analiseSelecionada.tracao_submersa.data_moldagem).cor">
+                                        Status
+                                    </h5>
+                                </div>
+                               
+                            </div>
+                            <div class="flex align-items-center" 
+                                 *ngIf="!isRompimentoConcluido('tracao_submersa', analiseSelecionada?.amostra_detalhes?.material?.toLowerCase() === 'argamassa' ? 'tracao_submersa_28' : '')">
+                                <i class="pi mr-2" 
+                                   [ngClass]="getStatusTracaoSubmersa28(analiseSelecionada.tracao_submersa.data_moldagem).icone"
+                                   [style.color]="getStatusTracaoSubmersa28(analiseSelecionada.tracao_submersa.data_moldagem).cor"
+                                   style="font-size: 1.2rem;"></i>
+                                <span [style.color]="getStatusTracaoSubmersa28(analiseSelecionada.tracao_submersa.data_moldagem).cor"
+                                      style="font-size: 0.95rem; font-weight: 600;">
+                                    {{ getStatusTracaoSubmersa28(analiseSelecionada.tracao_submersa.data_moldagem).status }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Média Geral -->
                 <div class="mb-4" *ngIf="analiseSelecionada.tracao_submersa.media">
                     <div
@@ -1564,8 +1804,68 @@
 
             <!-- Cards de Tração Estufa -->
             <div *ngIf="analiseSelecionada?.tracao_estufa?.linhas && analiseSelecionada.tracao_estufa.linhas.length > 0">
-                <h3 class="mb-3" style="color: #e6defa;">🔥 Tração Estufa</h3>
+                <h3 class="mb-3" style="color: #e6defa;">Tração Estufa</h3>
                 
+                <div class="flex flex-row gap-3 mb-4" *ngIf="analiseSelecionada.tracao_estufa.data_moldagem">
+                    <!-- Card Data Moldagem -->
+                    <div class="flex-1">
+                        <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                             style="border-radius: 12px; background-color: #4a4458;">
+                            <div class="flex align-items-center mb-2">
+                                <i class="pi pi-calendar mr-2" style="color: #c8b6e2;"></i>
+                                <h5 class="m-0" style="color: #c8b6e2;">Data Moldagem</h5>
+                            </div>
+                            <p class="mb-0" style="color: #e6defa; font-size: 1.1rem; font-weight: 600;">
+                                {{ analiseSelecionada.tracao_estufa.data_moldagem | date:'dd/MM/yyyy' }}
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Card Data Rompimento -->
+                    <div class="flex-1" *ngIf="analiseSelecionada?.tracao_estufa.data_rompimento">
+                        <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                             style="border-radius: 12px; background-color: #2b3a55;">
+                            <div class="flex align-items-center mb-2">
+                                <i class="pi pi-calendar-plus mr-2" style="color: #7ba8db;"></i>
+                                <h5 class="m-0" style="color: #7ba8db;">Data Rompimento</h5>
+                            </div>
+                            <p class="mb-0" style="color: #c8d8eb; font-size: 1.1rem; font-weight: 600;">
+                                <span *ngIf="analiseSelecionada?.tracao_estufa.data_rompimento">
+                                    {{ analiseSelecionada.tracao_estufa.data_rompimento | date:'dd/MM/yyyy' }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Card Status -->
+                    <div class="flex-1">
+                        <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                             [style.background-color]="isRompimentoConcluido('tracao_estufa', analiseSelecionada?.amostra_detalhes?.material?.toLowerCase() === 'argamassa' ? 'tracao_estufa_28' : '') ? '#1a4d2e' : getStatusTracaoEstufa28(analiseSelecionada.tracao_estufa.data_moldagem).cor + '15'"
+                             [style.border-color]="isRompimentoConcluido('tracao_estufa', analiseSelecionada?.amostra_detalhes?.material?.toLowerCase() === 'argamassa' ? 'tracao_estufa_28' : '') ? '#10b981' : getStatusTracaoEstufa28(analiseSelecionada.tracao_estufa.data_moldagem).cor"
+                             style="border-radius: 12px; border: 2px solid;">
+                            <div class="flex align-items-center justify-content-between mb-2">
+                                <div class="flex align-items-center">
+                                    <i class="pi pi-info-circle mr-2" 
+                                       [style.color]="getStatusTracaoEstufa28(analiseSelecionada.tracao_estufa.data_moldagem).cor"></i>
+                                    <h5 class="m-0" [style.color]="getStatusTracaoEstufa28(analiseSelecionada.tracao_estufa.data_moldagem).cor">
+                                        Status
+                                    </h5>
+                                </div>
+                               
+                            </div>
+                            <div class="flex align-items-center" 
+                                 *ngIf="!isRompimentoConcluido('tracao_estufa', analiseSelecionada?.amostra_detalhes?.material?.toLowerCase() === 'argamassa' ? 'tracao_estufa_28' : '')">
+                                <i class="pi mr-2" 
+                                   [ngClass]="getStatusTracaoEstufa28(analiseSelecionada.tracao_estufa.data_moldagem).icone"
+                                   [style.color]="getStatusTracaoEstufa28(analiseSelecionada.tracao_estufa.data_moldagem).cor"
+                                   style="font-size: 1.2rem;"></i>
+                                <span [style.color]="getStatusTracaoEstufa28(analiseSelecionada.tracao_estufa.data_moldagem).cor"
+                                      style="font-size: 0.95rem; font-weight: 600;">
+                                    {{ getStatusTracaoEstufa28(analiseSelecionada.tracao_estufa.data_moldagem).status }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Média Geral -->
                 <div class="mb-4" *ngIf="analiseSelecionada.tracao_estufa.media">
                     <div
@@ -1641,8 +1941,68 @@
 
             <!-- Cards de Tração Tempo Aberto -->
             <div *ngIf="analiseSelecionada?.tracao_tempo_aberto?.linhas && analiseSelecionada.tracao_tempo_aberto.linhas.length > 0">
-                <h3 class="mb-3" style="color: #e6defa;">⏱️ Tração Tempo Aberto</h3>
+                <h3 class="mb-3" style="color: #e6defa;">Tração Tempo Aberto</h3>
                 
+                <div class="flex flex-row gap-3 mb-4" *ngIf="analiseSelecionada.tracao_tempo_aberto.data_moldagem">
+                    <!-- Card Data Moldagem -->
+                    <div class="flex-1">
+                        <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                             style="border-radius: 12px; background-color: #4a4458;">
+                            <div class="flex align-items-center mb-2">
+                                <i class="pi pi-calendar mr-2" style="color: #c8b6e2;"></i>
+                                <h5 class="m-0" style="color: #c8b6e2;">Data Moldagem</h5>
+                            </div>
+                            <p class="mb-0" style="color: #e6defa; font-size: 1.1rem; font-weight: 600;">
+                                {{ analiseSelecionada.tracao_tempo_aberto.data_moldagem | date:'dd/MM/yyyy' }}
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Card Data Rompimento -->
+                    <div class="flex-1" *ngIf="analiseSelecionada?.tracao_tempo_aberto.data_rompimento">
+                        <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                             style="border-radius: 12px; background-color: #2b3a55;">
+                            <div class="flex align-items-center mb-2">
+                                <i class="pi pi-calendar-plus mr-2" style="color: #7ba8db;"></i>
+                                <h5 class="m-0" style="color: #7ba8db;">Data Rompimento</h5>
+                            </div>
+                            <p class="mb-0" style="color: #c8d8eb; font-size: 1.1rem; font-weight: 600;">
+                                <span *ngIf="analiseSelecionada?.tracao_tempo_aberto.data_rompimento">
+                                    {{ analiseSelecionada.tracao_tempo_aberto.data_rompimento | date:'dd/MM/yyyy' }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Card Status -->
+                    <div class="flex-1">
+                        <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                             [style.background-color]="isRompimentoConcluido('tracao_tempo_aberto', analiseSelecionada?.amostra_detalhes?.material?.toLowerCase() === 'argamassa' ? 'tracao_tempo_aberto_28' : '') ? '#1a4d2e' : getStatusTracaoTempoAberto28(analiseSelecionada.tracao_tempo_aberto.data_moldagem).cor + '15'"
+                             [style.border-color]="isRompimentoConcluido('tracao_tempo_aberto', analiseSelecionada?.amostra_detalhes?.material?.toLowerCase() === 'argamassa' ? 'tracao_tempo_aberto_28' : '') ? '#10b981' : getStatusTracaoTempoAberto28(analiseSelecionada.tracao_tempo_aberto.data_moldagem).cor"
+                             style="border-radius: 12px; border: 2px solid;">
+                            <div class="flex align-items-center justify-content-between mb-2">
+                                <div class="flex align-items-center">
+                                    <i class="pi pi-info-circle mr-2" 
+                                       [style.color]="getStatusTracaoTempoAberto28(analiseSelecionada.tracao_tempo_aberto.data_moldagem).cor"></i>
+                                    <h5 class="m-0" [style.color]="getStatusTracaoTempoAberto28(analiseSelecionada.tracao_tempo_aberto.data_moldagem).cor">
+                                        Status
+                                    </h5>
+                                </div>
+                               
+                            </div>
+                            <div class="flex align-items-center" 
+                                 *ngIf="!isRompimentoConcluido('tracao_tempo_aberto', analiseSelecionada?.amostra_detalhes?.material?.toLowerCase() === 'argamassa' ? 'tracao_tempo_aberto_28' : '')">
+                                <i class="pi mr-2" 
+                                   [ngClass]="getStatusTracaoTempoAberto28(analiseSelecionada.tracao_tempo_aberto.data_moldagem).icone"
+                                   [style.color]="getStatusTracaoTempoAberto28(analiseSelecionada.tracao_tempo_aberto.data_moldagem).cor"
+                                   style="font-size: 1.2rem;"></i>
+                                <span [style.color]="getStatusTracaoTempoAberto28(analiseSelecionada.tracao_tempo_aberto.data_moldagem).cor"
+                                      style="font-size: 0.95rem; font-weight: 600;">
+                                    {{ getStatusTracaoTempoAberto28(analiseSelecionada.tracao_tempo_aberto.data_moldagem).status }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Média Geral -->
                 <div class="mb-4" *ngIf="analiseSelecionada.tracao_tempo_aberto.media && typeof analiseSelecionada.tracao_tempo_aberto.media === 'number'">
                     <div
@@ -1990,19 +2350,6 @@
                     </div>
                 </div>
             </div>
-
-
-            <!-- <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
-                <p-button 
-                    label="Imprimir" 
-                    (onClick)="imprimirVisualizar(analiseSelecionada)"
-                    severity="success"
-                    icon="pi pi-print" 
-                    iconPos="right" 
-                    tooltipPosition="top"
-                    pTooltip="Gerar Impressão"
-                />
-            </div> -->
 
         </div>
     </p-drawer>

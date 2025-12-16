@@ -24,6 +24,10 @@ export class ColaboradorService {
     getColaboradores(): Observable<any[]>{
       return this.httpClient.get<any[]>(this.apiUrl);  
     }
+    getColaboradoresByAmbiente(ambienteId: number): Observable<any[]> {
+      const url = `${this.apiUrl}byAmbiente/?ambiente_id=${ambienteId}`;
+      return this.httpClient.get<any[]>(url);  
+    }
     editColaborador(id: number, dadosAtualizados: Partial<Colaborador>): Observable<any> {
       const url = `${this.apiUrl}${id}/`;
       return this.httpClient.patch(url, dadosAtualizados);

@@ -482,7 +482,23 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   substrato_media: any;
   superficial_media: any;
 
+  substratoDataMoldagem: Date | null = null;
+  substratoDataRompimento: Date | null = null;
 
+  superficialDataMoldagem: Date | null = null;
+  superficialDataRompimento: Date | null = null;
+
+  tracaoNormalDataMoldagem: Date | null = null;
+  tracaoNormalDataRompimento: Date | null = null;
+
+  tracaoSubmersaDataMoldagem: Date | null = null;
+  tracaoSubmersaDataRompimento: Date | null = null;
+
+  tracaoEstufaDataMoldagem: Date | null = null;
+  tracaoEstufaDataRompimento: Date | null = null;
+
+  tracaoAbertoDataMoldagem: Date | null = null;
+  tracaoAbertoDataRompimento: Date | null = null;
 
 
 
@@ -9341,12 +9357,65 @@ canDeactivate(): boolean | Promise<boolean> {
 
 
 
+onSubstratoDataMoldagemChange():void {
+  this.modalDadosLaudoSubstrato = true;
+  if (this.substratoDataMoldagem) {
+    const dataBase = new Date(this.substratoDataMoldagem);
+    const novaDataRompimento = new Date(dataBase);
+    novaDataRompimento.setDate(dataBase.getDate() + 28); // Adiciona 28 dias
+    this.substratoDataRompimento = novaDataRompimento;
+  }
+}
 
+onSuperficialDataMoldagemChange():void {
+  this.modalDadosLaudoSuperficial = true;
+  if (this.superficialDataMoldagem) {
+    const dataBase = new Date(this.superficialDataMoldagem);
+    const novaDataRompimento = new Date(dataBase);
+    novaDataRompimento.setDate(dataBase.getDate() + 28); // Adiciona 28 dias
+    this.superficialDataRompimento = novaDataRompimento;
+  }
+}
 
+onTracaoNormalDataMoldagemChange():void {
+  this.modalDadosTracaoNormal = true;
+  if (this.tracaoNormalDataMoldagem) {
+    const dataBase = new Date(this.tracaoNormalDataMoldagem);
+    const novaDataRompimento = new Date(dataBase);
+    novaDataRompimento.setDate(dataBase.getDate() + 28); // Adiciona 28 dias
+    this.tracaoNormalDataRompimento = novaDataRompimento;
+  }
+}
 
+onTracaoSubmersaDataMoldagemChange():void {
+  this.modalDadosTracaoSubmersa = true;
+  if (this.tracaoSubmersaDataMoldagem) {
+    const dataBase = new Date(this.tracaoSubmersaDataMoldagem);
+    const novaDataRompimento = new Date(dataBase);
+    novaDataRompimento.setDate(dataBase.getDate() + 28); // Adiciona 28 dias
+    this.tracaoSubmersaDataRompimento = novaDataRompimento;
+  }
+}
 
+onTracaoEstufaDataMoldagemChange():void {
+  this.modalDadosTracaoEstufa = true;
+  if (this.tracaoEstufaDataMoldagem) {
+    const dataBase = new Date(this.tracaoEstufaDataMoldagem);
+    const novaDataRompimento = new Date(dataBase);
+    novaDataRompimento.setDate(dataBase.getDate() + 28); // Adiciona 28 dias
+    this.tracaoEstufaDataRompimento = novaDataRompimento;
+  }
+}
 
-
+onTracaoAbertoDataMoldagemChange():void {
+  this.modalDadosTracaoAberto = true;
+  if (this.tracaoAbertoDataMoldagem) {
+    const dataBase = new Date(this.tracaoAbertoDataMoldagem);
+    const novaDataRompimento = new Date(dataBase);
+    novaDataRompimento.setDate(dataBase.getDate() + 28); // Adiciona 28 dias
+    this.tracaoAbertoDataRompimento = novaDataRompimento;
+  }
+}
 
 
   abrirModalSubstrato(analise: any){
@@ -9469,6 +9538,8 @@ canDeactivate(): boolean | Promise<boolean> {
         media: this.substrato_media,
         tempo_previsto: this.substrato_tempo_previsto,
         tempo_trabalho: this.substrato_tempo_trabalho,
+        data_moldagem: this.substratoDataMoldagem,
+        data_rompimento: this.substratoDataRompimento,
       }
     };
     this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
@@ -9603,6 +9674,8 @@ canDeactivate(): boolean | Promise<boolean> {
         media: this.superficial_media,
         tempo_previsto: this.superficial_tempo_previsto,
         tempo_trabalho: this.superficial_tempo_trabalho,
+        data_moldagem: this.superficialDataMoldagem,
+        data_rompimento: this.superficialDataRompimento,
       }
     };
     this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
@@ -10275,6 +10348,8 @@ canDeactivate(): boolean | Promise<boolean> {
         media: this.tracao_normal_media,
         tempo_previsto: this.tracao_normal_tempo_previsto,
         tempo_trabalho: this.tracao_normal_tempo_trabalho,
+        data_moldagem: this.tracaoNormalDataMoldagem,
+        data_rompimento: this.tracaoNormalDataRompimento,
       }
     };
    
@@ -10425,6 +10500,8 @@ canDeactivate(): boolean | Promise<boolean> {
         media: this.tracao_submersa_media,
         tempo_previsto: this.tracao_submersa_tempo_previsto,
         tempo_trabalho: this.tracao_submersa_tempo_trabalho,
+        data_moldagem: this.tracaoSubmersaDataMoldagem,
+        data_rompimento: this.tracaoSubmersaDataRompimento,
       }
     };
    
@@ -10575,6 +10652,8 @@ canDeactivate(): boolean | Promise<boolean> {
         media: this.tracao_estufa_media,
         tempo_previsto: this.tracao_estufa_tempo_previsto,
         tempo_trabalho: this.tracao_estufa_tempo_trabalho,
+        data_moldagem: this.tracaoEstufaDataMoldagem,
+        data_rompimento: this.tracaoEstufaDataRompimento,
       }
     };
    
@@ -10722,7 +10801,11 @@ canDeactivate(): boolean | Promise<boolean> {
     const dadosAtualizados: Partial<Analise> = {
       tracao_tempo_aberto:{
         linhas: this.linhasTracaoAberto,
-        media: this.tracao_aberto_media
+        media: this.tracao_aberto_media,
+        data_moldagem: this.tracaoAbertoDataMoldagem,
+        data_rompimento: this.tracaoAbertoDataRompimento,
+        tempo_previsto: this.tracao_aberto_tempo_previsto,
+        tempo_trabalho: this.tracao_aberto_tempo_trabalho,
       }
     };
    
