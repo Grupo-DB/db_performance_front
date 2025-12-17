@@ -3392,6 +3392,7 @@
                                 type="number" 
                                 [(ngModel)]="total_finos_digitado"
                                 style="width: 150px;"
+                                (ngModelChange)="atualizaValoresCalculoPeneira()"
                             />
                         </label>
 
@@ -3566,31 +3567,6 @@
                                 style="width: 150px;"
                             />
                         </label>
-
-                        <label class="flex align-items-center gap-2">
-                            Finos Digitado:
-                            <input 
-                                pInputText 
-                                id="total_fino_umida_digitado" 
-                                type="number" 
-                                [(ngModel)]="total_finos_umida_digitado"
-                                style="width: 150px;"
-                            />
-                        </label>
-
-                        <label class="flex align-items-center gap-2">
-                            Finos Cálculo:
-                            <input 
-                                pInputText 
-                                id="total_fino_umida_calculado" 
-                                type="number" 
-                                readOnly="true"
-                                [(ngModel)]="total_finos_umida_calculado"
-                                style="width: 150px;"
-                                [ngStyle]="{ color: (total_finos_umida_calculado ?? 0) > 2 ? 'red' : (total_finos_umida_calculado ?? 0) > 1 ? 'orange' : 'inherit' }"
-
-                            />
-                        </label>
                     </div>
                     <div class="flex flex-row w-12 gap-3">
                         <div class="w-12">
@@ -3699,8 +3675,6 @@
                             tooltipPosition="top"
                             pTooltip="Salvar Peneiras Umidas"
                             (onClick)="salvarPeneiraUmida(analise)"
-                            [disabled]="bloqueiaSalvarPeneiraUmida"
-                            [pTooltip]="bloqueiaSalvarPeneiraUmida ? 'Resultado maior que 2% — ajuste os valores' : 'Salvar Peneiras Úmidas'"
                         />
                     </div>
                 </p-card>

@@ -9129,7 +9129,11 @@ canDeactivate(): boolean | Promise<boolean> {
   }
 
   atualizaValoresCalculoPeneira(){
-    this.total_finos_calculado =  100 - ( ((this.total_finos_digitado ?? 0) * 100) /(this.total_finos ?? 0) ) ;
+    if(this.total_finos_digitado == 0 || this.total_finos_digitado == null){
+      this.total_finos_calculado = 0;
+    }else{
+      this.total_finos_calculado =  100 - ( ((this.total_finos_digitado ?? 0) * 100) /(this.total_finos ?? 0) ) ;
+    }
   }
 
   calcularPercentuaisEAcumulado() {
@@ -9231,20 +9235,11 @@ canDeactivate(): boolean | Promise<boolean> {
 
   atualizarValoresUmida(index: number) {
     this.calcularPercentuaisEAcumuladoUmida();
-    this.atualizaValoresCalculoPeneiraUmida();
   }
 
-  get bloqueiaSalvarPeneiraUmida(): boolean {
-    return (this.total_finos_umida_calculado ?? 0) > 2;
-  }
 
   atualizarTodosValoresUmida() {
     this.calcularPercentuaisEAcumuladoUmida();
-    this.atualizaValoresCalculoPeneiraUmida();
-  }
-
-  atualizaValoresCalculoPeneiraUmida(){
-    this.total_finos_umida_calculado =  100 - ( ((this.total_finos_umida_digitado ?? 0) * 100) /(this.total_finos_umida ?? 0) ) ;
   }
 
   calcularPercentuaisEAcumuladoUmida() {
