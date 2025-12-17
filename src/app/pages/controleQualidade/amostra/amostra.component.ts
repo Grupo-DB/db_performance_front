@@ -1284,6 +1284,27 @@ submitAmostra() {
           //this.activeStep = 1;
         }
       }, 2000);
+
+      if (material) {
+        const materialNormalizado = this.normalize(material);    
+        this.amostraService.getProximoSequencialPorNome(materialNormalizado).subscribe({
+          next: (sequencial) => {
+            const numero = this.gerarNumero(materialNormalizado, sequencial);
+            this.registerForm.get('numero')?.setValue(numero);
+          },
+          error: (err) => {
+            console.error('Erro ao buscar sequencial:', err);
+            const sequencialFallback = this.gerarSequencialFallback(materialNormalizado);
+            const numero = this.gerarNumero(materialNormalizado, sequencialFallback);
+            this.registerForm.get('numero')?.setValue(numero);
+            this.messageService.add({ 
+              severity: 'warn', 
+              summary: 'Aviso', 
+              detail: 'Usando numeração local. Verifique a conectividade.' 
+            });
+          }
+        });
+      }
     },
     error: (err) => {
       console.error('Erro ao registrar amostra:', err);
