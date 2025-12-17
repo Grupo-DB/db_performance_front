@@ -311,6 +311,7 @@ interface FileWithInfo {
   styleUrl: './analise.component.scss'
 })
 export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivate {  
+  
   planosAnalise: Plano[] = [];
   produtosAmostra: ProdutoAmostra[] = [];
   materiais: Produto[] = [];
@@ -849,9 +850,9 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
     //chamo os itens aqui para não ficar chamamdo toda hora
     //AQUI NÃO FUNCIONOU______na linha 454 funcionou
     // this.menuArgamassa = this.getItensArgamassa(this.analise);
-
     // Inicializar o formulário de dados do gráfico
     this.createForm();
+    this.canDeactivate();
   }
 //================== Cálculos de Deslizamento ==========================
 calculosDeslizamento(): void {
@@ -8865,22 +8866,22 @@ fecharDrawerResultadosEnsaios(): void {
 }
 // Implementação do CanComponentDeactivate
 canDeactivate(): boolean | Promise<boolean> {
+
     if (!this.hasUnsavedChanges) {
       return true;
     }
     
     // Criar chave única para confirmação de saída
     const chaveConfirmacao = 'sair_sem_salvar';
-    
+
     // Verificar se já há uma confirmação aberta
     if (this.confirmacoesAbertas.has(chaveConfirmacao)) {
       return false; // Evitar múltiplas confirmações
     }
-    
+
     return new Promise((resolve) => {
       // Marcar confirmação como aberta
       this.confirmacoesAbertas.add(chaveConfirmacao);
-      
       this.confirmationService.confirm({
         message: 'Você tem alterações não salvas. Deseja sair sem salvar?',
         header: 'Confirmação',
@@ -9986,6 +9987,17 @@ onTracaoAbertoDataMoldagemChange():void {
         } 
       }
     });
+  }
+
+  atualizarAreaQuadrado(numero: any) {
+    const diametro = Number(numero.diametro);
+    if (!isNaN(diametro) && diametro > 0) {
+      const area = diametro*diametro;
+      numero.area = parseFloat(area.toFixed(2));
+    } else {
+      numero.area = '!#REF';
+    }
+    this.atualizarCalculosSubstrato(numero);
   }
 
   atualizarArea(numero: any) {
