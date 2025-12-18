@@ -207,7 +207,7 @@
                                 <label for="float-label">Classificação</label>
                                 </p-floatLabel>
                     </div>
-                    <div *ngIf="analise?.amostra_detalhes?.material==='Argamassa'" class="flex flex-column mt-3 lg:flex-row w-full lg:justify-content-around">
+                    <div *ngIf="analise?.amostra_detalhes?.material?.toLowerCase() === 'argamassa'" class="flex flex-column mt-3 lg:flex-row w-full lg:justify-content-around">
                         <div class="flex flex-column w-5 gap-3">
                             <p-floatLabel variant="on"> 
                                 <p-select
@@ -2817,7 +2817,7 @@
         <div class="mb-3">
             <label class="font-semibold mb-2 block">Data de Rompimento (28 dias)</label>
             <div class="grid">
-                <div class="col-12 md:col-6">
+                <div class="col-12 md:col-6" *ngIf="analise?.amostra_detalhes?.material?.toLowerCase() === 'argamassa'" >
                     <label class="text-sm mb-1 block">Argamassa</label>
                     <p-datePicker 
                         [(ngModel)]="rompimentoFlexaoArgamassa28"
@@ -2826,7 +2826,7 @@
                         [style]="{'width':'100%'}"
                     />
                 </div>
-                <div class="col-12 md:col-6">
+                <div class="col-12 md:col-6" *ngIf="analise?.amostra_detalhes?.material?.toLowerCase() === 'cimento'">
                     <label class="text-sm mb-1 block">Cimento</label>
                     <p-datePicker 
                         [(ngModel)]="rompimentoFlexaoCimento28"
@@ -2848,8 +2848,7 @@
                 <tr>
                     <th style="width: 100px;">CP</th>
                     <th style="width: 180px;">Carga de Ruptura (kN)</th>
-                    <th style="width: 180px;">Resistência (MPa)</th>
-                    <th style="width: 200px;">Resis. Média (Mpa)</th>
+                    <th style="width: 200px;">Resistência (Mpa)</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-row>
@@ -2886,40 +2885,12 @@
                             variant="filled"
                         ></p-inputNumber>
                     </td>
-                    <td>
-                        <p-inputNumber
-                            *ngIf="row.cp === 1"
-                            [(ngModel)]="resistenciaFlexaoCp1"
-                            mode="decimal"
-                            [minFractionDigits]="2" 
-                            [maxFractionDigits]="4" 
-                            [style]="{'width':'100%'}"
-                            variant="filled"
-                        ></p-inputNumber>
-                        <p-inputNumber
-                            *ngIf="row.cp === 2"
-                            [(ngModel)]="resistenciaFlexaoCp2"
-                            mode="decimal"
-                            [minFractionDigits]="2" 
-                            [maxFractionDigits]="4" 
-                            [style]="{'width':'100%'}"
-                            variant="filled"
-                        ></p-inputNumber>
-                        <p-inputNumber
-                            *ngIf="row.cp === 3"
-                            [(ngModel)]="resistenciaFlexaoCp3"
-                            mode="decimal"
-                            [minFractionDigits]="2" 
-                            [maxFractionDigits]="4" 
-                            [style]="{'width':'100%'}"
-                            variant="filled"
-                        ></p-inputNumber>
-                    </td>
+                   
                     <td>
                         <p-inputNumber
                             *ngIf="row.cp === 1"
                             [(ngModel)]="resistenciaFlexaoMediaCp1"
-                            (ngModelChange)="realizarCalculosCompressaoFlexao()"
+                            (ngModelChange)="realizarCalculosFlexao()"
                             mode="decimal"
                             [minFractionDigits]="2" 
                             [maxFractionDigits]="4" 
@@ -2929,7 +2900,7 @@
                         <p-inputNumber
                             *ngIf="row.cp === 2"
                             [(ngModel)]="resistenciaFlexaoMediaCp2"
-                            (ngModelChange)="realizarCalculosCompressaoFlexao()"
+                            (ngModelChange)="realizarCalculosFlexao()"
                             mode="decimal"
                             [minFractionDigits]="2" 
                             [maxFractionDigits]="4" 
@@ -2939,7 +2910,7 @@
                         <p-inputNumber
                             *ngIf="row.cp === 3"
                             [(ngModel)]="resistenciaFlexaoMediaCp3"
-                            (ngModelChange)="realizarCalculosCompressaoFlexao()"
+                            (ngModelChange)="realizarCalculosFlexao()"
                             mode="decimal"
                             [minFractionDigits]="2" 
                             [maxFractionDigits]="4" 
@@ -2963,6 +2934,32 @@
                         </span>
                     </td>
                 </tr>
+                <tr style="background-color: #1a2537;">
+                    <td colspan="3" style="text-align: right; color: #48bb78; font-weight: 700; font-size: 15px; padding: 10px;">
+                        Desvio Absoluto (MAD):
+                    </td>
+                    <td style="text-align: center; color: #48bb78; font-weight: 700; font-size: 18px; padding: 10px;">
+                        <span *ngIf="desvioAbsolutoFlexao !== null && !isNaN(desvioAbsolutoFlexao)">
+                            {{ desvioAbsolutoFlexao | number:'1.2-2' }} MPa
+                        </span>
+                        <span *ngIf="desvioAbsolutoFlexao === null || isNaN(desvioAbsolutoFlexao)">
+                            - MPa
+                        </span>
+                    </td>
+                </tr>
+                <tr style="background-color: #1a2537;">
+                    <td colspan="3" style="text-align: right; color: #48bb78; font-weight: 700; font-size: 15px; padding: 10px;">
+                        Desvio Absoluto Máximo:
+                    </td>
+                    <td style="text-align: center; color: #48bb78; font-weight: 700; font-size: 18px; padding: 10px;">
+                        <span *ngIf="desvioAbsolutoMaximoFlexao !== null && !isNaN(desvioAbsolutoMaximoFlexao)">
+                            {{ desvioAbsolutoMaximoFlexao | number:'1.2-2' }} MPa
+                        </span>
+                        <span *ngIf="desvioAbsolutoMaximoFlexao === null || isNaN(desvioAbsolutoMaximoFlexao)">
+                            - MPa
+                        </span>
+                    </td>
+                </tr>
             </ng-template>
         </p-table>
 
@@ -2976,7 +2973,7 @@
         <div class="mb-3">
             <label class="font-semibold mb-2 block">Datas de Rompimento</label>
             <div class="grid">
-                <div class="col-12 md:col-4">
+                <div class="col-12 md:col-4" *ngIf="analise?.amostra_detalhes?.material?.toLowerCase() === 'argamassa'">
                     <label class="text-sm mb-1 block">Argamassa (28 dias)</label>
                     <p-datePicker 
                         [(ngModel)]="rompimentoCompressaoArgamassa28"
@@ -2985,7 +2982,7 @@
                         [style]="{'width':'100%'}"
                     />
                 </div>
-                <div class="col-12 md:col-4">
+                <div class="col-12 md:col-4" *ngIf="analise?.amostra_detalhes?.material?.toLowerCase() === 'cimento'">
                     <label class="text-sm mb-1 block">Cimento (7 dias)</label>
                     <p-datePicker 
                         [(ngModel)]="rompimentoCompressaoCimento7"
@@ -2994,7 +2991,7 @@
                         [style]="{'width':'100%'}"
                     />
                 </div>
-                <div class="col-12 md:col-4">
+                <div class="col-12 md:col-4" *ngIf="analise?.amostra_detalhes?.material?.toLowerCase() === 'cimento'">
                     <label class="text-sm mb-1 block">Cimento (28 dias)</label>
                     <p-datePicker 
                         [(ngModel)]="rompimentoCompressaoCimento28"
@@ -3017,7 +3014,10 @@
                     <th style="width: 100px;">CP</th>
                     <th style="width: 200px;">Carga de Ruptura a Compressão (N)</th>
                     <th style="width: 180px;">Resis. à Tração na Compressão (Mpa)</th>
-                    <th style="width: 200px;">Resis. Média (Mpa)</th>
+                    <th style="width: 80px;">
+                        <i class="pi pi-times-circle" style="margin-right: 5px;"></i>
+                        Ignorar
+                    </th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-row>
@@ -3053,11 +3053,9 @@
                             [style]="{'width':'100%'}"
                             variant="filled"
                         ></p-inputNumber>
-                    </td>
-                    <td>
                         <p-inputNumber
-                            *ngIf="row.cp === 1"
-                            [(ngModel)]="resistenciaCompressaoCp1"
+                            *ngIf="row.cp === 4"
+                            [(ngModel)]="cargaRupturaCompressaoCp4"
                             mode="decimal"
                             [minFractionDigits]="2" 
                             [maxFractionDigits]="4" 
@@ -3065,8 +3063,8 @@
                             variant="filled"
                         ></p-inputNumber>
                         <p-inputNumber
-                            *ngIf="row.cp === 2"
-                            [(ngModel)]="resistenciaCompressaoCp2"
+                            *ngIf="row.cp === 5"
+                            [(ngModel)]="cargaRupturaCompressaoCp5"
                             mode="decimal"
                             [minFractionDigits]="2" 
                             [maxFractionDigits]="4" 
@@ -3074,8 +3072,8 @@
                             variant="filled"
                         ></p-inputNumber>
                         <p-inputNumber
-                            *ngIf="row.cp === 3"
-                            [(ngModel)]="resistenciaCompressaoCp3"
+                            *ngIf="row.cp === 6"
+                            [(ngModel)]="cargaRupturaCompressaoCp6"
                             mode="decimal"
                             [minFractionDigits]="2" 
                             [maxFractionDigits]="4" 
@@ -3087,7 +3085,7 @@
                         <p-inputNumber
                             *ngIf="row.cp === 1"
                             [(ngModel)]="resistenciaCompressaoMediaCp1"
-                            (ngModelChange)="realizarCalculosCompressaoFlexao()"
+                            (ngModelChange)="realizarCalculosCompressao()"
                             mode="decimal"
                             [minFractionDigits]="2" 
                             [maxFractionDigits]="4" 
@@ -3097,7 +3095,7 @@
                         <p-inputNumber
                             *ngIf="row.cp === 2"
                             [(ngModel)]="resistenciaCompressaoMediaCp2"
-                            (ngModelChange)="realizarCalculosCompressaoFlexao()"
+                            (ngModelChange)="realizarCalculosCompressao()"
                             mode="decimal"
                             [minFractionDigits]="2" 
                             [maxFractionDigits]="4" 
@@ -3107,13 +3105,81 @@
                         <p-inputNumber
                             *ngIf="row.cp === 3"
                             [(ngModel)]="resistenciaCompressaoMediaCp3"
-                            (ngModelChange)="realizarCalculosCompressaoFlexao()"
+                            (ngModelChange)="realizarCalculosCompressao()"
                             mode="decimal"
                             [minFractionDigits]="2" 
                             [maxFractionDigits]="4" 
                             [style]="{'width':'100%'}"
                             variant="filled"
                         ></p-inputNumber>
+                        <p-inputNumber
+                            *ngIf="row.cp === 4"
+                            [(ngModel)]="resistenciaCompressaoMediaCp4"
+                            (ngModelChange)="realizarCalculosCompressao()"
+                            mode="decimal"
+                            [minFractionDigits]="2" 
+                            [maxFractionDigits]="4" 
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                        ></p-inputNumber>
+                        <p-inputNumber
+                            *ngIf="row.cp === 5"
+                            [(ngModel)]="resistenciaCompressaoMediaCp5"
+                            (ngModelChange)="realizarCalculosCompressao()"
+                            mode="decimal"
+                            [minFractionDigits]="2" 
+                            [maxFractionDigits]="4" 
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                        ></p-inputNumber>
+                        <p-inputNumber
+                            *ngIf="row.cp === 6"
+                            [(ngModel)]="resistenciaCompressaoMediaCp6"
+                            (ngModelChange)="realizarCalculosCompressao()"
+                            mode="decimal"
+                            [minFractionDigits]="2" 
+                            [maxFractionDigits]="4" 
+                            [style]="{'width':'100%'}"
+                            variant="filled"
+                        ></p-inputNumber>
+                    </td>
+                    <td style="text-align: center;">
+                        <p-checkbox
+                            *ngIf="row.cp === 1"
+                            [(ngModel)]="desconsiderarCompressaoCp1"
+                            (ngModelChange)="realizarCalculosCompressao()"
+                            [binary]="true"
+                        ></p-checkbox>
+                        <p-checkbox
+                            *ngIf="row.cp === 2"
+                            [(ngModel)]="desconsiderarCompressaoCp2"
+                            (ngModelChange)="realizarCalculosCompressao()"
+                            [binary]="true"
+                        ></p-checkbox>
+                        <p-checkbox
+                            *ngIf="row.cp === 3"
+                            [(ngModel)]="desconsiderarCompressaoCp3"
+                            (ngModelChange)="realizarCalculosCompressao()"
+                            [binary]="true"
+                        ></p-checkbox>
+                        <p-checkbox
+                            *ngIf="row.cp === 4"
+                            [(ngModel)]="desconsiderarCompressaoCp4"
+                            (ngModelChange)="realizarCalculosCompressao()"
+                            [binary]="true"
+                        ></p-checkbox>
+                        <p-checkbox
+                            *ngIf="row.cp === 5"
+                            [(ngModel)]="desconsiderarCompressaoCp5"
+                            (ngModelChange)="realizarCalculosCompressao()"
+                            [binary]="true"
+                        ></p-checkbox>
+                        <p-checkbox
+                            *ngIf="row.cp === 6"
+                            [(ngModel)]="desconsiderarCompressaoCp6"
+                            (ngModelChange)="realizarCalculosCompressao()"
+                            [binary]="true"
+                        ></p-checkbox>
                     </td>
                 </tr>
             </ng-template>
@@ -3127,6 +3193,32 @@
                             {{ resistenciaCompressaoMediaGeral | number:'1.2-2' }} MPa
                         </span>
                         <span *ngIf="resistenciaCompressaoMediaGeral === null || isNaN(resistenciaCompressaoMediaGeral)">
+                            - MPa
+                        </span>
+                    </td>
+                </tr>
+                <tr style="background-color: #1a2537;">
+                    <td colspan="3" style="text-align: right; color: #667eea; font-weight: 700; font-size: 15px; padding: 10px;">
+                        Desvio Absoluto (MAD):
+                    </td>
+                    <td style="text-align: center; color: #667eea; font-weight: 700; font-size: 18px; padding: 10px;">
+                        <span *ngIf="desvioAbsolutoCompressao !== null && !isNaN(desvioAbsolutoCompressao)">
+                            {{ desvioAbsolutoCompressao | number:'1.2-2' }} MPa
+                        </span>
+                        <span *ngIf="desvioAbsolutoCompressao === null || isNaN(desvioAbsolutoCompressao)">
+                            - MPa
+                        </span>
+                    </td>
+                </tr>
+                <tr style="background-color: #1a2537;">
+                    <td colspan="3" style="text-align: right; color: #667eea; font-weight: 700; font-size: 15px; padding: 10px;">
+                        Desvio Absoluto Máximo:
+                    </td>
+                    <td style="text-align: center; color: #667eea; font-weight: 700; font-size: 18px; padding: 10px;">
+                        <span *ngIf="desvioAbsolutoMaximoCompressao !== null && !isNaN(desvioAbsolutoMaximoCompressao)">
+                            {{ desvioAbsolutoMaximoCompressao | number:'1.2-2' }} MPa
+                        </span>
+                        <span *ngIf="desvioAbsolutoMaximoCompressao === null || isNaN(desvioAbsolutoMaximoCompressao)">
                             - MPa
                         </span>
                     </td>

@@ -2390,37 +2390,46 @@
                     </div>
 
                     <!-- Resistência À Tração na Flexão -->
-                    <div class="col-12 md:col-6 lg:col-4" *ngIf="analiseSelecionada.flexao.resistencia">
-                        <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
-                             [style.background-color]="isRompimentoConcluido('variacao_dimensional', 'l1') ? '#1a4d2e' : '#2b3a55'" style="border-radius: 12px; min-height: 200px;">
-                            <div class="flex align-items-center mb-3">
-                                <h5 class="m-0" style="color: #b3e5ff;">Resis. À Tração na Flexão</h5>
-                            </div>
-                            <div style="color: #d6f1ff; font-size: 0.9rem;"> 
-                                <p class="mb-1"><b>CP1:</b> {{ analiseSelecionada.flexao.resistencia?.cp1 | number:'1.2-2' }} MPa</p>
-                                <p class="mb-1"><b>CP2:</b> {{ analiseSelecionada.flexao.resistencia?.cp2 | number:'1.2-2' }} MPa</p>
-                                <p class="mb-0"><b>CP3:</b> {{ analiseSelecionada.flexao.resistencia?.cp3 | number:'1.2-2' }} MPa</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Média -->
                     <div class="col-12 md:col-6 lg:col-4" *ngIf="analiseSelecionada.flexao.media_individual">
                         <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
                              [style.background-color]="isRompimentoConcluido('variacao_massa', 'm7') ? '#1a4d2e' : '#26413c'" style="border-radius: 12px; min-height: 200px;">
                             <div class="flex align-items-center mb-3">
-                                <h5 class="m-0" style="color: #b2f5ea;">Resist. Tração Flexão</h5>
+                                <h5 class="m-0" style="color: #b2f5ea;">Resis. À Tração na Flexão</h5>
                             </div>
                             <div style="color: #ccfbf1; font-size: 0.9rem;">
                                 <p class="mb-1"><b>CP1:</b> {{ analiseSelecionada.flexao.media_individual?.cp1 | number:'1.2-2' }} MPa</p>
                                 <p class="mb-1"><b>CP2:</b> {{ analiseSelecionada.flexao.media_individual?.cp2 | number:'1.2-2' }} MPa</p>
                                 <p class="mb-1"><b>CP3:</b> {{ analiseSelecionada.flexao.media_individual?.cp3 | number:'1.2-2' }} MPa</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resultados -->
+                    <div class="col-12 md:col-6 lg:col-4" *ngIf="analiseSelecionada.flexao.media_individual">
+                        <div 
+                            class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                            [style.background-color]="isRompimentoConcluido('variacao_massa', 'm7') ? '#1a4d2e' : '#26413c'" 
+                            style="border-radius: 12px; min-height: 200px;"
+                        >
+                            
+                            <div style="color: #ccfbf1; font-size: 0.9rem;">
+                                <div class="flex align-items-center mb-3">
+                                    <h5 class="m-0" style="color: #b2f5ea;">Resultados</h5>
+                                </div>
+                              
                                 <div class="mt-2 p-2 text-center" style="background-color: rgba(178, 245, 234, 0.15); border-radius: 8px;">
                                     <p class="font-bold mb-0" style="color: #b2f5ea;">Média: {{ analiseSelecionada.flexao.media_geral | number:'1.2-2' }} MPa</p>
+                                </div>
+                                <div class="mt-2 p-2 text-center" style="background-color: rgba(178, 245, 234, 0.15); border-radius: 8px;">
+                                    <p class="font-bold mb-0" style="color: #b2f5ea;">Desvio Absoluto: {{ analiseSelecionada.flexao.desvio_absoluto | number:'1.2-2' }} MPa</p>
+                                </div>    
+                                <div class="mt-2 p-2 text-center" style="background-color: rgba(178, 245, 234, 0.15); border-radius: 8px;">    
+                                    <p class="font-bold mb-0" style="color: #b2f5ea;">Desvio Absoluto Máximo: {{ analiseSelecionada.flexao.desvio_absoluto_maximo | number:'1.2-2' }} MPa</p>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
 
@@ -2540,21 +2549,9 @@
                                 <p class="mb-1"><b>CP1:</b> {{ analiseSelecionada.compressao.carga_ruptura.cp1 || 0  }} N </p>
                                 <p class="mb-1"><b>CP2:</b> {{ analiseSelecionada.compressao.carga_ruptura.cp2 || 0 }} N </p>
                                 <p class="mb-1"><b>CP3:</b> {{ analiseSelecionada.compressao.carga_ruptura.cp3 || 0 }} N </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Resis. à Tração na Compressão (Mpa) -->
-                    <div class="col-12 md:col-6 lg:col-4" *ngIf="analiseSelecionada.compressao.resistencia">
-                        <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
-                             style="border-radius: 12px; background-color: #26413c; min-height: 200px;">
-                            <div class="flex align-items-center mb-3">
-                                <h5 class="m-0" style="color: #b2f5ea;">Resis. à Tração na Compressão (Mpa)</h5>
-                            </div>
-                            <div style="color: #ccfbf1; font-size: 0.9rem;">
-                                <p class="mb-1"><b>CP1:</b> {{ analiseSelecionada.compressao.resistencia?.cp1 || 0 }} MPa</p>
-                                <p class="mb-1"><b>CP2:</b> {{ analiseSelecionada.compressao.resistencia?.cp2 || 0 }} MPa</p>
-                                <p class="mb-1"><b>CP3:</b> {{ analiseSelecionada.compressao.resistencia?.cp3 || 0 }} MPa</p>
+                                <p class="mb-0"><b>CP4:</b> {{ analiseSelecionada.compressao.carga_ruptura.cp4 || 0 }} N </p>
+                                <p class="mb-0"><b>CP5:</b> {{ analiseSelecionada.compressao.carga_ruptura.cp5 || 0 }} N </p>
+                                <p class="mb-0"><b>CP6:</b> {{ analiseSelecionada.compressao.carga_ruptura.cp6 || 0 }} N </p>
                             </div>
                         </div>
                     </div>
@@ -2564,14 +2561,40 @@
                         <div class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
                              [style.background-color]="isRompimentoConcluido('variacao_massa', 'm28') ? '#1a4d2e' : '#3b3b32'" style="border-radius: 12px; min-height: 200px;">
                             <div class="flex align-items-center mb-3">
-                                <h5 class="m-0" style="color: #fff3b0;">Resist. Tração compressão </h5>
+                                <h5 class="m-0" style="color: #fff3b0;">Resis. à Tração na Compressão (Mpa)</h5>
                             </div>
                             <div style="color: #fff2a8; font-size: 0.9rem;">
                                 <p class="mb-1"><b>CP1:</b> {{ analiseSelecionada.compressao.media_individual?.cp1 || 0 }} MPa</p>
                                 <p class="mb-1"><b>CP2:</b> {{ analiseSelecionada.compressao.media_individual?.cp2 || 0 }} MPa</p>
                                 <p class="mb-1"><b>CP3:</b> {{ analiseSelecionada.compressao.media_individual?.cp3 || 0 }} MPa</p>
-                                <div class="mt-2 p-2 text-center" style="background-color: rgba(255, 243, 176, 0.15); border-radius: 8px;">
-                                    <p class="font-bold mb-0" style="color: #fff3b0;">Média: {{ analiseSelecionada.compressao.media_geral | number:'1.2-2' }} MPa</p>
+                                <p class="mb-0"><b>CP4:</b> {{ analiseSelecionada.compressao.media_individual?.cp4 || 0 }} MPa</p>
+                                <p class="mb-0"><b>CP5:</b> {{ analiseSelecionada.compressao.media_individual?.cp5 || 0 }} MPa</p>
+                                <p class="mb-0"><b>CP6:</b> {{ analiseSelecionada.compressao.media_individual?.cp6 || 0 }} MPa</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resultados Compressão -->
+                    <div class="col-12 md:col-6 lg:col-4" *ngIf="analiseSelecionada.compressao.media_individual">
+                        <div 
+                            class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                            [style.background-color]="isRompimentoConcluido('variacao_massa', 'm7') ? '#1a4d2e' : '#26413c'" 
+                            style="border-radius: 12px; min-height: 200px;"
+                        >
+                            
+                            <div style="color: #ccfbf1; font-size: 0.9rem;">
+                                <div class="flex align-items-center mb-3">
+                                    <h5 class="m-0" style="color: #b2f5ea;">Resultados</h5>
+                                </div>
+                              
+                                <div class="mt-2 p-2 text-center" style="background-color: rgba(178, 245, 234, 0.15); border-radius: 8px;">
+                                    <p class="font-bold mb-0" style="color: #b2f5ea;">Média: {{ analiseSelecionada.compressao.media_geral | number:'1.2-2' }} MPa</p>
+                                </div>
+                                <div class="mt-2 p-2 text-center" style="background-color: rgba(178, 245, 234, 0.15); border-radius: 8px;">
+                                    <p class="font-bold mb-0" style="color: #b2f5ea;">Desvio Absoluto: {{ analiseSelecionada.compressao.desvio_absoluto | number:'1.2-2' }} MPa</p>
+                                </div>    
+                                <div class="mt-2 p-2 text-center" style="background-color: rgba(178, 245, 234, 0.15); border-radius: 8px;">    
+                                    <p class="font-bold mb-0" style="color: #b2f5ea;">Desvio Absoluto Máximo: {{ analiseSelecionada.compressao.desvio_absoluto_maximo | number:'1.2-2' }} MPa</p>
                                 </div>
                             </div>
                         </div>

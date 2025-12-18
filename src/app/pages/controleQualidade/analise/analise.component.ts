@@ -7,6 +7,7 @@ import { ReactiveFormsModule, FormsModule, FormGroup, FormBuilder, FormArray, Va
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
+import { CheckboxModule } from 'primeng/checkbox';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DialogModule } from 'primeng/dialog';
@@ -55,6 +56,7 @@ import { linearRegression, linearRegressionLine, rSquared } from 'simple-statist
 import AnnotationPlugin from 'chartjs-plugin-annotation';
 import { MessageModule } from 'primeng/message';
 import { min } from 'date-fns';
+import { th } from 'date-fns/locale';
 
 Chart.register(ScatterController, LinearScale, PointElement, LineElement, Tooltip, Legend, AnnotationPlugin);
 
@@ -259,7 +261,7 @@ interface FileWithInfo {
 @Component({
   selector: 'app-analise',
   imports:[
-    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule, CardModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, MessageModule,StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule,SpeedDialModule, AvatarModule, PopoverModule, BadgeModule, TooltipModule,HotTableModule,
+    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule, CardModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, MessageModule,StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule,SpeedDialModule, AvatarModule, PopoverModule, BadgeModule, TooltipModule,HotTableModule,CheckboxModule,
   ],
   animations: [
     trigger('efeitoFade', [
@@ -755,19 +757,38 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   resistenciaFlexaoMediaCp2: number | null = null;
   resistenciaFlexaoMediaCp3: number | null = null;
   resistenciaFlexaoMediaGeral: number | null = null;
+  desvioAbsolutoFlexao: number | null = null;
+  desvioAbsolutoMaximoFlexao: number | null = null;
   //compressao
   cargaRupturaCompressaoCp1: number | null = null;
   cargaRupturaCompressaoCp2: number | null = null;
   cargaRupturaCompressaoCp3: number | null = null;
+  cargaRupturaCompressaoCp4: number | null = null;
+  cargaRupturaCompressaoCp5: number | null = null;
+  cargaRupturaCompressaoCp6: number | null = null;
   resistenciaCompressaoCp1: number | null = null;
   resistenciaCompressaoCp2: number | null = null;
   resistenciaCompressaoCp3: number | null = null;
+  resistenciaCompressaoCp4: number | null = null;
+  resistenciaCompressaoCp5: number | null = null;
+  resistenciaCompressaoCp6: number | null = null;
   resistenciaCompressaoMediaCp1: number | null = null;
   resistenciaCompressaoMediaCp2: number | null = null;
   resistenciaCompressaoMediaCp3: number | null = null;
+  resistenciaCompressaoMediaCp4: number | null = null;
+  resistenciaCompressaoMediaCp5: number | null = null;
+  resistenciaCompressaoMediaCp6: number | null = null;
   resistenciaCompressaoMediaGeral: number | null = null;
-  
-   exibirModalCompressaoFlexao: boolean = false;
+  desvioAbsolutoCompressao: number | null = null;
+  desvioAbsolutoMaximoCompressao: number | null = null;
+  // Checkboxes para desconsiderar valores na média de compressão
+  desconsiderarCompressaoCp1: boolean = false;
+  desconsiderarCompressaoCp2: boolean = false;
+  desconsiderarCompressaoCp3: boolean = false;
+  desconsiderarCompressaoCp4: boolean = false;
+  desconsiderarCompressaoCp5: boolean = false;
+  desconsiderarCompressaoCp6: boolean = false;
+  exibirModalCompressaoFlexao: boolean = false;
   tabelaFlexaoData: any[] = [
     {cp: 1},
     {cp: 2},
@@ -776,7 +797,10 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   tabelaCompressaoData: any[] = [
     {cp: 1},
     {cp: 2},
-    {cp: 3}
+    {cp: 3},
+    {cp: 4},
+    {cp: 5},
+    {cp: 6}
   ];
 
   // GRAFICO
@@ -1003,6 +1027,7 @@ salvarDeslizamento(analise: any): void {
       });
     }
   });
+  this.exibirModalDeslizamento = false;
 }
 //==================================================== FIM DESLIZAMENTO =========================================================//
 
@@ -1298,6 +1323,7 @@ salvarModuloElasticidade(analise: any): void {
       }
     }
   });
+  this.exibirModalModuloElasticidade = false;
 }
 
 limparModuloElasticidade(): void {
@@ -1794,6 +1820,7 @@ salvarVariacaoDimensional(analise: any): void {
       }
     }
   });
+  this.exibirModalVariacaoDimensional = false;
 }
 
 limparVariacaoDimensional(): void {
@@ -2195,6 +2222,7 @@ salvarVariacaoMassa(analise: any): void {
       }
     }
   });
+  this.exibirModalVariacaoMassa = false;
 }
 
 limparVariacaoMassa(): void {
@@ -2339,12 +2367,7 @@ onMoldagemDataChange(): void {
   }
 }
 
-realizarCalculosCompressaoFlexao(): void {
-  // Verificar data de moldagem
-  if (this.moldagemData == null) {
-    return;
-  }
-
+realizarCalculosFlexao(): void {
   // Calcular média de Flexão
   const valoresFlexao: number[] = [];
   
@@ -2371,39 +2394,87 @@ realizarCalculosCompressaoFlexao(): void {
   
   if (valoresFlexao.length > 0) {
     this.resistenciaFlexaoMediaGeral = mean(valoresFlexao) as number;
+    
+    // Calcular desvio absoluto (MAD - Median Absolute Deviation)
+    const math = create(all);
+    const medianaFlexao = math.median(valoresFlexao) as number;
+    const desviosAbsolutos = valoresFlexao.map(valor => Math.abs(valor - medianaFlexao));
+    this.desvioAbsolutoFlexao = math.median(desviosAbsolutos) as number;
+    
+    // Calcular desvio absoluto máximo
+    this.desvioAbsolutoMaximoFlexao = Math.max(...desviosAbsolutos);
   } else {
     this.resistenciaFlexaoMediaGeral = null;
+    this.desvioAbsolutoFlexao = null;
+    this.desvioAbsolutoMaximoFlexao = null;
   }
+}
 
+realizarCalculosCompressao(): void {
   // Calcular média de Compressão
   const valoresCompressao: number[] = [];
   
-  if (this.resistenciaCompressaoMediaCp1 != null) {
+  if (this.resistenciaCompressaoMediaCp1 != null && !this.desconsiderarCompressaoCp1) {
     const compressaoCp1Num = Number(this.resistenciaCompressaoMediaCp1);
     if (!isNaN(compressaoCp1Num)) {
       valoresCompressao.push(compressaoCp1Num);
     }
   }
   
-  if (this.resistenciaCompressaoMediaCp2 != null) {
+  if (this.resistenciaCompressaoMediaCp2 != null && !this.desconsiderarCompressaoCp2) {
     const compressaoCp2Num = Number(this.resistenciaCompressaoMediaCp2);
     if (!isNaN(compressaoCp2Num)) {
       valoresCompressao.push(compressaoCp2Num);
     }
   }
   
-  if (this.resistenciaCompressaoMediaCp3 != null) {
+  if (this.resistenciaCompressaoMediaCp3 != null && !this.desconsiderarCompressaoCp3) {
     const compressaoCp3Num = Number(this.resistenciaCompressaoMediaCp3);
     if (!isNaN(compressaoCp3Num)) {
       valoresCompressao.push(compressaoCp3Num);
     }
   }
+
+  if (this.resistenciaCompressaoMediaCp4 != null && !this.desconsiderarCompressaoCp4) {
+    const compressaoCp4Num = Number(this.resistenciaCompressaoMediaCp4);
+    if (!isNaN(compressaoCp4Num)) {
+      valoresCompressao.push(compressaoCp4Num);
+    }
+  }
+
+  if (this.resistenciaCompressaoMediaCp5 != null && !this.desconsiderarCompressaoCp5) {
+    const compressaoCp5Num = Number(this.resistenciaCompressaoMediaCp5);
+    if (!isNaN(compressaoCp5Num)) {
+      valoresCompressao.push(compressaoCp5Num);
+    }
+  }
+
+  if (this.resistenciaCompressaoMediaCp6 != null && !this.desconsiderarCompressaoCp6) {
+    const compressaoCp6Num = Number(this.resistenciaCompressaoMediaCp6);
+    if (!isNaN(compressaoCp6Num)) {
+      valoresCompressao.push(compressaoCp6Num);
+    }
+  }
   
   if (valoresCompressao.length > 0) {
     this.resistenciaCompressaoMediaGeral = mean(valoresCompressao) as number;
+    
+    // Calcular desvio absoluto (MAD - Median Absolute Deviation)
+    const math = create(all);
+    const medianaCompressao = math.median(valoresCompressao) as number;
+    const desviosAbsolutos = valoresCompressao.map(valor => Math.abs(valor - medianaCompressao));
+    this.desvioAbsolutoCompressao = math.median(desviosAbsolutos) as number;
+    
+    // Calcular desvio absoluto máximo
+    this.desvioAbsolutoMaximoCompressao = Math.max(...desviosAbsolutos);
   } else {
     this.resistenciaCompressaoMediaGeral = null;
+    this.desvioAbsolutoCompressao = null;
+    this.desvioAbsolutoMaximoCompressao = null;
   }
+
+  
+
 }
 
 salvarCompressaoFlexao(analise: any): void {
@@ -2431,7 +2502,9 @@ salvarCompressaoFlexao(analise: any): void {
       cp2: this.resistenciaFlexaoMediaCp2,
       cp3: this.resistenciaFlexaoMediaCp3
     },
-    media_geral: this.resistenciaFlexaoMediaGeral
+    media_geral: this.resistenciaFlexaoMediaGeral,
+    desvio_absoluto: this.desvioAbsolutoFlexao,
+    desvio_absoluto_maximo: this.desvioAbsolutoMaximoFlexao
   };
 
   // Salvar compressão
@@ -2447,19 +2520,30 @@ salvarCompressaoFlexao(analise: any): void {
     carga_ruptura: {
       cp1: this.cargaRupturaCompressaoCp1,
       cp2: this.cargaRupturaCompressaoCp2,
-      cp3: this.cargaRupturaCompressaoCp3
+      cp3: this.cargaRupturaCompressaoCp3,
+      cp4: this.cargaRupturaCompressaoCp4,
+      cp5: this.cargaRupturaCompressaoCp5,
+      cp6: this.cargaRupturaCompressaoCp6
     },
     resistencia: {
       cp1: this.resistenciaCompressaoCp1,
       cp2: this.resistenciaCompressaoCp2,
-      cp3: this.resistenciaCompressaoCp3
+      cp3: this.resistenciaCompressaoCp3,
+      cp4: this.resistenciaCompressaoCp4,
+      cp5: this.resistenciaCompressaoCp5,
+      cp6: this.resistenciaCompressaoCp6
     },
     media_individual: {
       cp1: this.resistenciaCompressaoMediaCp1,
       cp2: this.resistenciaCompressaoMediaCp2,
-      cp3: this.resistenciaCompressaoMediaCp3
+      cp3: this.resistenciaCompressaoMediaCp3,
+      cp4: this.resistenciaCompressaoMediaCp4,
+      cp5: this.resistenciaCompressaoMediaCp5,
+      cp6: this.resistenciaCompressaoMediaCp6
     },
-    media_geral: this.resistenciaCompressaoMediaGeral
+    media_geral: this.resistenciaCompressaoMediaGeral,
+    desvio_absoluto: this.desvioAbsolutoCompressao,
+    desvio_absoluto_maximo: this.desvioAbsolutoMaximoCompressao
   };
 
   // Salvar ambos ao mesmo tempo
@@ -2513,6 +2597,7 @@ salvarCompressaoFlexao(analise: any): void {
       }
     }
   });
+  this.exibirModalCompressaoFlexao = false;
 }
 
 
@@ -2556,13 +2641,24 @@ limparCompressao(): void {
   this.cargaRupturaCompressaoCp1 = null;
   this.cargaRupturaCompressaoCp2 = null;
   this.cargaRupturaCompressaoCp3 = null;
+  this.cargaRupturaCompressaoCp4 = null;
+  this.cargaRupturaCompressaoCp5 = null;
+  this.cargaRupturaCompressaoCp6 = null;
   this.resistenciaCompressaoCp1 = null;
   this.resistenciaCompressaoCp2 = null;
   this.resistenciaCompressaoCp3 = null;
+  this.resistenciaCompressaoCp4 = null;
+  this.resistenciaCompressaoCp5 = null;
+  this.resistenciaCompressaoCp6 = null;
   this.resistenciaCompressaoMediaCp1 = null;
   this.resistenciaCompressaoMediaCp2 = null;
   this.resistenciaCompressaoMediaCp3 = null;
+  this.resistenciaCompressaoMediaCp4 = null;
+  this.resistenciaCompressaoMediaCp5 = null;
+  this.resistenciaCompressaoMediaCp6 = null;
   this.resistenciaCompressaoMediaGeral = null;
+  this.desvioAbsolutoCompressao = null;
+  this.desvioAbsolutoMaximoCompressao = null;
   
   this.messageService.add({
     severity: 'info',
@@ -2595,18 +2691,31 @@ limparCompressaoFlexao(): void {
   this.resistenciaFlexaoMediaCp2 = null;
   this.resistenciaFlexaoMediaCp3 = null;
   this.resistenciaFlexaoMediaGeral = null;
+  this.desvioAbsolutoFlexao = null;
+  this.desvioAbsolutoMaximoFlexao = null;
   
   // Limpar Compressão
   this.cargaRupturaCompressaoCp1 = null;
   this.cargaRupturaCompressaoCp2 = null;
   this.cargaRupturaCompressaoCp3 = null;
+  this.cargaRupturaCompressaoCp4 = null;
+  this.cargaRupturaCompressaoCp5 = null;
+  this.cargaRupturaCompressaoCp6 = null;
   this.resistenciaCompressaoCp1 = null;
   this.resistenciaCompressaoCp2 = null;
   this.resistenciaCompressaoCp3 = null;
+  this.resistenciaCompressaoCp4 = null;
+  this.resistenciaCompressaoCp5 = null;
+  this.resistenciaCompressaoCp6 = null;
   this.resistenciaCompressaoMediaCp1 = null;
   this.resistenciaCompressaoMediaCp2 = null;
   this.resistenciaCompressaoMediaCp3 = null;
+  this.resistenciaCompressaoMediaCp4 = null;
+  this.resistenciaCompressaoMediaCp5 = null;
+  this.resistenciaCompressaoMediaCp6 = null;
   this.resistenciaCompressaoMediaGeral = null;
+  this.desvioAbsolutoCompressao = null;
+  this.desvioAbsolutoMaximoCompressao = null;
   
   this.messageService.add({
     severity: 'info',
@@ -2651,6 +2760,8 @@ carregarCompressaoFlexaoSalva(analise: any): void {
     }
     
     this.resistenciaFlexaoMediaGeral = dados.media_geral || null;
+    this.desvioAbsolutoFlexao = dados.desvio_absoluto || null;
+    this.desvioAbsolutoMaximoFlexao = dados.desvio_absoluto_maximo || null;
   }
   
   // Carregar compressão
@@ -2674,21 +2785,32 @@ carregarCompressaoFlexaoSalva(analise: any): void {
       this.cargaRupturaCompressaoCp1 = dados.carga_ruptura.cp1 || null;
       this.cargaRupturaCompressaoCp2 = dados.carga_ruptura.cp2 || null;
       this.cargaRupturaCompressaoCp3 = dados.carga_ruptura.cp3 || null;
+      this.cargaRupturaCompressaoCp4 = dados.carga_ruptura.cp4 || null;
+      this.cargaRupturaCompressaoCp5 = dados.carga_ruptura.cp5 || null;
+      this.cargaRupturaCompressaoCp6 = dados.carga_ruptura.cp6 || null;
     }
     
     if (dados.resistencia) {
       this.resistenciaCompressaoCp1 = dados.resistencia.cp1 || null;
       this.resistenciaCompressaoCp2 = dados.resistencia.cp2 || null;
       this.resistenciaCompressaoCp3 = dados.resistencia.cp3 || null;
+      this.resistenciaCompressaoCp4 = dados.resistencia.cp4 || null;
+      this.resistenciaCompressaoCp5 = dados.resistencia.cp5 || null;
+      this.resistenciaCompressaoCp6 = dados.resistencia.cp6 || null;
     }
     
     if (dados.media_individual) {
       this.resistenciaCompressaoMediaCp1 = dados.media_individual.cp1 || null;
       this.resistenciaCompressaoMediaCp2 = dados.media_individual.cp2 || null;
       this.resistenciaCompressaoMediaCp3 = dados.media_individual.cp3 || null;
+      this.resistenciaCompressaoMediaCp4 = dados.media_individual.cp4 || null;
+      this.resistenciaCompressaoMediaCp5 = dados.media_individual.cp5 || null;
+      this.resistenciaCompressaoMediaCp6 = dados.media_individual.cp6 || null;
     }
     
     this.resistenciaCompressaoMediaGeral = dados.media_geral || null;
+    this.desvioAbsolutoCompressao = dados.desvio_absoluto || null;
+    this.desvioAbsolutoMaximoCompressao = dados.desvio_absoluto_maximo || null;
   }
   
   this.cd.detectChanges();
@@ -3163,6 +3285,7 @@ gerarESalvarImagemGrafico(): void {
       detail: 'Erro inesperado ao gerar imagem do gráfico.'
     });
   }
+  this.modalGrafico = false;
 }
 
 /**
@@ -8880,7 +9003,7 @@ canDeactivate(): boolean | Promise<boolean> {
     return new Promise((resolve) => {
       // Marcar confirmação como aberta
       this.confirmacoesAbertas.add(chaveConfirmacao);
-      
+
       this.confirmationService.confirm({
         message: 'Você tem alterações não salvas. Deseja sair sem salvar?',
         header: 'Confirmação',
