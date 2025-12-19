@@ -1,82 +1,276 @@
-<p-select
-    [style]="{'width':'80%'}"
-    [options]="ambientes"
-    optionLabel="nome"
-    placeholder="Selecione o Ambiente"
-    optionValue="id"
-    filter="true"
-    filterBy="nome"
-    [(ngModel)]="selectedAmbiente"
-    (onChange)="colaboradoeresByAmbiente($event.value)"
->
-</p-select>
-<br>
-<p-select
-    [style]="{'width':'80%'}"
-    [options]="colaboradores"
-    optionLabel="nome"  
-    placeholder="Selecione o Colaborador"
-    optionValue="id"
-    filter="true"
-    filterBy="nome"
-    [(ngModel)]="selectedColaborador"
->
-</p-select>
-<br>
-<p-datePicker 
-    [(ngModel)]="data" 
-    placeholder="Data Inicial" 
-    [style]="{'width':'80%'}"
-    dateFormat="dd/mm/yy"
-></p-datePicker>
-<p-datePicker 
-    [(ngModel)]="horaInicial" 
-    placeholder="Hora Inicial" 
-    [style]="{'width':'80%'}"
-    dateFormat="dd/mm/yy"
-    [timeOnly]="true"
-    (ngModelChange)="calcularTempo()"
-></p-datePicker>
-<br>
-<p-datePicker 
-    [(ngModel)]="horaFinal" 
-    placeholder="Hora Final" 
-    [style]="{'width':'80%'}"
-    dateFormat="dd/mm/yy"
-    [timeOnly]="true"
-    (ngModelChange)="calcularTempo()"
-></p-datePicker>
-<br>
-<div *ngIf="horasCalculadas" style="margin-top: 20px; padding: 10px; background-color: #f0f0f0; border-radius: 5px;">
-    <strong>Total de Horas:</strong> {{ horasCalculadas }}
-</div>
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
 
-<br>
-<textarea 
-    pInputTextarea
-    [(ngModel)]="motivo" 
-    placeholder="Motivo da Hora Extra" 
-    [style]="{'width':'80%'}"
-    rows="3"
-></textarea>
-<br><br>
+<div class="page-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-title">
+      <i class="pi pi-clock"></i>
+      <h1>Gestão de Horas Extras</h1>
+    </div>
+    <span class="user-greeting">Olá, {{ responsavel }}</span>
+  </div>
 
-<p><strong>Digitador:</strong> {{ digitador }}</p>
+  <!-- Cards de Estatísticas -->
+  <div class="stats-cards">
+    <div class="stat-card blue">
+      <div class="stat-content">
+        <div class="stat-info">
+          <span class="stat-label">Total de Horas</span>
+          <h2 class="stat-value">{{ totalHoras }}h</h2>
+        </div>
+        <div class="stat-icon">
+          <i class="pi pi-clock"></i>
+        </div>
+      </div>
+    </div>
 
-<br>
-<div style="display: flex; gap: 10px; width: 80%;">
-    <p-button 
-        label="Limpar" 
-        icon="pi pi-times" 
+    <div class="stat-card green">
+      <div class="stat-content">
+        <div class="stat-info">
+          <span class="stat-label">Funcionários</span>
+          <h2 class="stat-value">{{ totalFuncionarios }}</h2>
+        </div>
+        <div class="stat-icon">
+          <i class="pi pi-users"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card orange">
+      <div class="stat-content">
+        <div class="stat-info">
+          <span class="stat-label">Registros</span>
+          <h2 class="stat-value">{{ totalRegistros }}</h2>
+        </div>
+        <div class="stat-icon">
+          <i class="pi pi-file"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros e Ações -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <div class="filter-item">
+        <i class="pi pi-filter"></i>
+        <input 
+          type="text" 
+          pInputText 
+          placeholder="Digite o nome do funcionário..."
+          [(ngModel)]="filtroFuncionario"
+          (ngModelChange)="aplicarFiltros()"
+          class="filter-input"
+        />
+      </div>
+      
+      <div class="filter-item">
+        <i class="pi pi-calendar"></i>
+        <p-select 
+          [options]="meses" 
+          [(ngModel)]="filtroMes"
+          (ngModelChange)="aplicarFiltros()"
+          placeholder="Selecione o mês"
+          optionLabel="label"
+          optionValue="value"
+          [showClear]="true"
+          class="filter-select"
+        ></p-select>
+      </div>
+      
+      <div class="filter-item">
+        <i class="pi pi-calendar"></i>
+        <p-select 
+          [options]="anos" 
+          [(ngModel)]="filtroAno"
+          (ngModelChange)="aplicarFiltros()"
+          placeholder="Selecione o ano"
+          class="filter-select"
+        ></p-select>
+      </div>
+      
+      <div class="filter-item">
+        <p-button 
+          label="Limpar" 
+          icon="pi pi-times" 
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="limparFiltros()"
+        ></p-button>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <p-button 
+        label="PDF" 
+        icon="pi pi-file-pdf" 
+        severity="danger"
+        [outlined]="true"
+        (onClick)="exportarPDF()"
+      ></p-button>
+      <p-button 
+        label="Novo Registro" 
+        icon="pi pi-plus" 
+        (onClick)="toggleFormulario()"
+      ></p-button>
+    </div>
+  </div>
+
+  <!-- Formulário de Novo Registro -->
+  <div class="form-card" *ngIf="mostrarFormulario">
+    <h2 class="form-title">{{ modoEdicao ? 'Editar' : 'Novo' }} Registro de Hora Extra</h2>
+    
+    <div class="form-grid">
+      <div class="form-field">
+        <label for="funcionario">Nome do Funcionário *</label>
+        <p-select
+          id="funcionario"
+          [options]="colaboradores"
+          optionLabel="nome"
+          placeholder="Selecione o colaborador"
+          optionValue="id"
+          filter="true"
+          filterBy="nome"
+          [(ngModel)]="selectedColaborador"
+          [style]="{'width':'100%'}"
+        >
+        </p-select>
+      </div>
+
+      <div class="form-field">
+        <label for="horas">Horas Trabalhadas *</label>
+        <input 
+          type="text" 
+          id="horas"
+          pInputText 
+          placeholder="Ex: 2.5"
+          [(ngModel)]="horasDecimal"
+          [style]="{'width':'100%'}"
+          [disabled]="true"
+        />
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-field">
+        <label for="data">Data *</label>
+        <p-datePicker 
+          id="data"
+          [(ngModel)]="data" 
+          placeholder="mm/dd/yyyy"
+          [style]="{'width':'100%'}"
+          dateFormat="dd/mm/yy"
+        ></p-datePicker>
+      </div>
+
+      <div class="form-field">
+        <label for="horaInicial">Hora Inicial *</label>
+        <p-datePicker 
+          id="horaInicial"
+          [(ngModel)]="horaInicial" 
+          placeholder="Hora Inicial"
+          [style]="{'width':'100%'}"
+          [timeOnly]="true"
+          (ngModelChange)="calcularTempo()"
+        ></p-datePicker>
+      </div>
+
+      <div class="form-field">
+        <label for="horaFinal">Hora Final *</label>
+        <p-datePicker 
+          id="horaFinal"
+          [(ngModel)]="horaFinal" 
+          placeholder="Hora Final"
+          [style]="{'width':'100%'}"
+          [timeOnly]="true"
+          (ngModelChange)="calcularTempo()"
+        ></p-datePicker>
+      </div>
+    </div>
+
+    <div class="form-field-full">
+      <label for="motivo">Motivo da Autorização *</label>
+      <textarea 
+        id="motivo"
+        pInputTextarea
+        [(ngModel)]="motivo" 
+        placeholder="Digite o motivo da autorização..."
+        [style]="{'width':'100%'}"
+        rows="4"
+      ></textarea>
+    </div>
+
+    <div class="form-actions">
+      <p-button 
+        label="Cancelar" 
         severity="secondary"
-        (onClick)="limparFormulario()"
-        [style]="{'flex': '1'}"
-    ></p-button>
-    <p-button 
-        label="Cadastrar Hora Extra" 
-        icon="pi pi-check" 
-        severity="success"
+        [outlined]="true"
+        (onClick)="cancelarFormulario()"
+      ></p-button>
+      <p-button 
+        label="Salvar Registro" 
+        icon="pi pi-check"
         (onClick)="cadastrarRegistro()"
-        [style]="{'flex': '1'}"
-    ></p-button>
+      ></p-button>
+    </div>
+  </div>
+
+  <!-- Tabela de Registros -->
+  <div class="table-section">
+    <h2 class="section-title">Registros de Horas Extras</h2>
+    
+    <div class="table-card" *ngIf="registros.length > 0">
+      <p-table [value]="registros" [paginator]="true" [rows]="10">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Funcionário</th>
+            <th>Data</th>
+            <th>Hora Inicial</th>
+            <th>Hora Final</th>
+            <th>Horas</th>
+            <th>Motivo</th>
+            <th>Responsável</th>
+            <th>Ações</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-registro>
+          <tr>
+            <td>{{ registro.colaborador }}</td>
+            <td>{{ registro.data | date:'dd/MM/yyyy' }}</td>
+            <td>{{ registro.hora_inicial }}</td>
+            <td>{{ registro.hora_final }}</td>
+            <td>{{ registro.horas }}h</td>
+            <td>{{ registro.motivo }}</td>
+            <td>{{ registro.responsavel }}</td>
+            <td>
+              <p-button 
+                icon="pi pi-pencil" 
+                [rounded]="true" 
+                [text]="true"
+                severity="info"
+                (onClick)="editarRegistro(registro)"
+                pTooltip="Editar"
+                tooltipPosition="top"
+              ></p-button>
+              <p-button 
+                icon="pi pi-trash" 
+                [rounded]="true" 
+                [text]="true"
+                severity="danger"
+                (onClick)="excluirRegistro(registro)"
+                pTooltip="Excluir"
+                tooltipPosition="top"
+              ></p-button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <div class="empty-state" *ngIf="registros.length === 0">
+      <i class="pi pi-inbox"></i>
+      <p>Nenhum registro encontrado</p>
+    </div>
+  </div>
 </div>

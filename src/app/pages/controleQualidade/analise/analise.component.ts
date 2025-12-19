@@ -313,6 +313,7 @@ interface FileWithInfo {
   styleUrl: './analise.component.scss'
 })
 export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivate {  
+  
   planosAnalise: Plano[] = [];
   produtosAmostra: ProdutoAmostra[] = [];
   materiais: Produto[] = [];
@@ -873,9 +874,9 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
     //chamo os itens aqui para não ficar chamamdo toda hora
     //AQUI NÃO FUNCIONOU______na linha 454 funcionou
     // this.menuArgamassa = this.getItensArgamassa(this.analise);
-
     // Inicializar o formulário de dados do gráfico
     this.createForm();
+    this.canDeactivate();
   }
 //================== Cálculos de Deslizamento ==========================
 calculosDeslizamento(): void {
@@ -8988,22 +8989,22 @@ fecharDrawerResultadosEnsaios(): void {
 }
 // Implementação do CanComponentDeactivate
 canDeactivate(): boolean | Promise<boolean> {
+
     if (!this.hasUnsavedChanges) {
       return true;
     }
     
     // Criar chave única para confirmação de saída
     const chaveConfirmacao = 'sair_sem_salvar';
-    
+
     // Verificar se já há uma confirmação aberta
     if (this.confirmacoesAbertas.has(chaveConfirmacao)) {
       return false; // Evitar múltiplas confirmações
     }
-    
+
     return new Promise((resolve) => {
       // Marcar confirmação como aberta
       this.confirmacoesAbertas.add(chaveConfirmacao);
-
       this.confirmationService.confirm({
         message: 'Você tem alterações não salvas. Deseja sair sem salvar?',
         header: 'Confirmação',
@@ -9252,7 +9253,11 @@ canDeactivate(): boolean | Promise<boolean> {
   }
 
   atualizaValoresCalculoPeneira(){
-    this.total_finos_calculado =  100 - ( ((this.total_finos_digitado ?? 0) * 100) /(this.total_finos ?? 0) ) ;
+    if(this.total_finos_digitado == 0 || this.total_finos_digitado == null){
+      this.total_finos_calculado = 0;
+    }else{
+      this.total_finos_calculado =  100 - ( ((this.total_finos_digitado ?? 0) * 100) /(this.total_finos ?? 0) ) ;
+    }
   }
 
   calcularPercentuaisEAcumulado() {
@@ -9354,20 +9359,11 @@ canDeactivate(): boolean | Promise<boolean> {
 
   atualizarValoresUmida(index: number) {
     this.calcularPercentuaisEAcumuladoUmida();
-    this.atualizaValoresCalculoPeneiraUmida();
   }
 
-  get bloqueiaSalvarPeneiraUmida(): boolean {
-    return (this.total_finos_umida_calculado ?? 0) > 2;
-  }
 
   atualizarTodosValoresUmida() {
     this.calcularPercentuaisEAcumuladoUmida();
-    this.atualizaValoresCalculoPeneiraUmida();
-  }
-
-  atualizaValoresCalculoPeneiraUmida(){
-    this.total_finos_umida_calculado =  100 - ( ((this.total_finos_umida_digitado ?? 0) * 100) /(this.total_finos_umida ?? 0) ) ;
   }
 
   calcularPercentuaisEAcumuladoUmida() {
@@ -10114,6 +10110,17 @@ onTracaoAbertoDataMoldagemChange():void {
         } 
       }
     });
+  }
+
+  atualizarAreaQuadrado(numero: any) {
+    const diametro = Number(numero.diametro);
+    if (!isNaN(diametro) && diametro > 0) {
+      const area = diametro*diametro;
+      numero.area = parseFloat(area.toFixed(2));
+    } else {
+      numero.area = '!#REF';
+    }
+    this.atualizarCalculosSubstrato(numero);
   }
 
   atualizarArea(numero: any) {

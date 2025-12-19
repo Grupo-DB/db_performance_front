@@ -1323,42 +1323,42 @@ submitAmostra() {
 
 // Método para fazer upload das imagens
 uploadImages(): void {
-    if (!this.amostraId || this.uploadedFilesWithInfo.length === 0) {
-      this.activeStep = 3;
-      return;
-    }
-    // Verificar estado dos arquivos antes do upload
-    this.verificarEstadoArquivos();
-    const formData = new FormData();
-    // Adiciona arquivos com suas descrições
-    this.uploadedFilesWithInfo.forEach((fileInfo, index) => {
-      formData.append('images', fileInfo.file, fileInfo.file.name);
-      // Garante que a descrição não seja undefined ou null
-      const descricao = fileInfo.descricao || '';
-      formData.append(`descricao_${index}`, descricao);
-    });
-    this.amostraService.uploadImagens(this.amostraId, formData).subscribe({
-      next: (response) => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: `${this.uploadedFilesWithInfo.length} imagem(ns) enviada(s) com sucesso!`
-        });
-        
-        this.uploadedFilesWithInfo = [];
-        this.activeStep = 3;
-      },
-      error: (error) => {
-        console.error('Erro ao enviar imagens:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erro',
-          detail: 'Erro ao enviar imagens. A amostra foi salva, mas as imagens não foram anexadas.'
-        });
-        this.activeStep = 3;
-      }
-    });
+  if (!this.amostraId || this.uploadedFilesWithInfo.length === 0) {
+    this.activeStep = 3;
+    return;
   }
+  // Verificar estado dos arquivos antes do upload
+  this.verificarEstadoArquivos();
+  const formData = new FormData();
+  // Adiciona arquivos com suas descrições
+  this.uploadedFilesWithInfo.forEach((fileInfo, index) => {
+    formData.append('images', fileInfo.file, fileInfo.file.name);
+    // Garante que a descrição não seja undefined ou null
+    const descricao = fileInfo.descricao || '';
+    formData.append(`descricao_${index}`, descricao);
+  });
+  this.amostraService.uploadImagens(this.amostraId, formData).subscribe({
+    next: (response) => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Sucesso',
+        detail: `${this.uploadedFilesWithInfo.length} imagem(ns) enviada(s) com sucesso!`
+      });
+      
+      this.uploadedFilesWithInfo = [];
+      this.activeStep = 3;
+    },
+    error: (error) => {
+      console.error('Erro ao enviar imagens:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Erro ao enviar imagens. A amostra foi salva, mas as imagens não foram anexadas.'
+      });
+      this.activeStep = 3;
+    }
+  });
+}
 
 // Método para fazer upload das imagens durante edição
 uploadImagesForEdit(amostraId: number): void {

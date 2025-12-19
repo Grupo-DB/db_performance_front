@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface RegistroHoraExtra {
@@ -11,6 +11,12 @@ export interface RegistroHoraExtra {
   horas: number;
   motivo?: string;
   responsavel?: string;
+}
+
+export interface RegistrosResponse {
+  registros: RegistroHoraExtra[];
+  total_horas: number;
+  quantidade_registros: number;
 }
 
 @Injectable({
@@ -28,8 +34,42 @@ export class RegistrosHsExtrasService {
     return this.http.post<RegistroHoraExtra>(this.apiUrl, registro, { headers });
   }
 
-  getRegistros(): Observable<RegistroHoraExtra[]> {
-    return this.http.get<RegistroHoraExtra[]>(this.apiUrl);
+  getRegistros(filtros?: {
+    colaborador?: string;
+    responsavel?: string;
+    mes?: number;
+    ano?: number;
+    data_inicial?: string;
+    data_final?: string;
+  }): Observable<RegistrosResponse> {
+    let params = new HttpParams();
+    
+    if (filtros) {
+      if (filtros.colaborador) {
+        params = params.set('colaborador', filtros.colaborador);
+      }
+      if (filtros.responsavel) {
+        params = params.set('responsavel', filtros.responsavel);
+      }
+      if (filtros.mes) {
+        params = params.set('mes', filtros.mes.toString());
+      }
+      if (filtros.ano) {
+        params = params.set('ano', filtros.ano.toString());
+      }
+      if (filtros.data_inicial) {
+        params = params.set('data_inicial', filtros.data_inicial);
+      }
+      if (filtros.data_final) {
+        params = params.set('data_final', filtros.data_final);
+      }
+    }
+    
+    return this.http.get<RegistrosResponse>(this.apiUrl, { params });
+  }
+
+  getRegistrosByColaborador(colaborador: string): Observable<RegistrosResponse> {
+    return this.getRegistros({ colaborador });
   }
 
   getRegistroById(id: number): Observable<RegistroHoraExtra> {
@@ -40,7 +80,7 @@ export class RegistrosHsExtrasService {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
-    return this.http.put<RegistroHoraExtra>(`${this.apiUrl}${id}/`, registro, { headers });
+    return this.http.patch<RegistroHoraExtra>(`${this.apiUrl}${id}/`, registro, { headers });
   }
 
   deleteRegistro(id: number): Observable<void> {
