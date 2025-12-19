@@ -171,161 +171,157 @@
     margin-right: auto;
     border-radius: 8px;
     // box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-        .fg1{
-            width: 100%;
-            // margin-top: 45px;
+    .fg1{
+        width: 100%;
+        // margin-top: 45px;
+        
+        p{
+            margin-left: 20px;
+        }
+        .form1{
+            margin-top: 16px;
+            // margin-left: 20px;
             
             p{
-                margin-left: 20px;
+                margin-left: auto;
             }
-            .form1{
-                margin-top: 16px;
-               // margin-left: 20px;
-                
-                p{
-                    margin-left: auto;
-                }
-                p-inputGroup{
-                    width: 75%;
-                }
-            }
-            .form2{
-                margin-top: 35px;
-              //  margin-left: 20px;
-            }
-            .filial{
-                margin-top: 35px;
-               // margin-left: 20px;
-            }
-            .form3{
-                margin-top: 35px;
-               // margin-left: 20px;
-            }
-            .dvset{
-                margin-top: 35px;
-               // margin-left: 20px;
-            }
-            .form4{
-                margin-top: 35px;
-                
-            }
-            .dvcarg{
-                margin-top: 35px;
-                //margin-left: 20px;
-            }
-            .dvtc{
-                margin-top: 35px;
-                //margin-left: 20px;
-            }
-            .dvraca{
-                margin-top: 35px;
-                //margin-left: 20px;
-            }
-            .dvinst{
-                margin-top: 35px;
-                //margin-left: 20px;
-            }
-            .sistemas{
-                display: flex;
-               
-               
-                margin-top: 3%;
-                
-            }
-        }
-        .fg2{
-            width: 100%;
-            // margin-top: 45px;
-           
-            .dvgen{
-                margin-top: 35px;
-
-            }
-            .dvcat{
-                margin-top: 35px;
-                
-                //margin-left: 15px;
-                
-            }
-            .dvsal{
-                margin-top: 16px;
-                p-inputNumber{
-                    width: 100%;
-                }
-                
-            }
-            .form5{
-                margin-top: 35px;
-            }
-            .form6{
-                margin-top: 35px;
-            }
-            .form7{
-                margin-top: 35px;
-            }
-            .dvft{
-                display: flex;
-                
-                margin-top: 20px;
-                p{
-                    margin-left: 2px;
-                }
-                input{
-                    margin-left: 5px;
-                }
-            }
-            .dvemail{
-                margin-top: 20px;
-                p-inputGroup{
-                    width: 75%;
-                }
-            }
-            .dvcb{
-                margin-top: 35PX;
-               
-                .btns{
-                    display: flex;
-                    P{
-                        margin-top: 5px;
-                        margin-right: 2px;
-                    }
-                }
-
-            }
-            .dvus{
-                margin-top: 5px;
-                margin-bottom: 20px;
-                padding: 15px;
+            p-inputGroup{
                 width: 75%;
-                background-color: rgba(0, 69, 152, 0.5);
-                border-radius: 5px;
-                    p-inputGroup{
-                        margin-top: 25px;
-                    }
-               
-            }
-            .tituser{
-                margin-top: 20px;
-                p{
-                    margin-left: 25px;
-                    
-                }
             }
         }
+        .form2{
+            margin-top: 35px;
+            //  margin-left: 20px;
+        }
+        .filial{
+            margin-top: 35px;
+            // margin-left: 20px;
+        }
+        .form3{
+            margin-top: 35px;
+            // margin-left: 20px;
+        }
+        .dvset{
+            margin-top: 35px;
+            // margin-left: 20px;
+        }
+        .form4{
+            margin-top: 35px;
+            
+        }
+        .dvcarg{
+            margin-top: 35px;
+            //margin-left: 20px;
+        }
+        .dvtc{
+            margin-top: 35px;
+            //margin-left: 20px;
+        }
+        .dvraca{
+            margin-top: 35px;
+            //margin-left: 20px;
+        }
+        .dvinst{
+            margin-top: 35px;
+            //margin-left: 20px;
+        }
+        .sistemas{
+            display: flex;
+            
+            
+            margin-top: 3%;
+            
+        }
+    }
+    .fg2{
+        width: 100%;
+        // margin-top: 45px;
+        
+        .dvgen{
+            margin-top: 35px;
+
+        }
+        .dvcat{
+            margin-top: 35px;
+            
+            //margin-left: 15px;
+            
+        }
+        .dvsal{
+            margin-top: 16px;
+            p-inputNumber{
+                width: 100%;
+            }
+            
+        }
+        .form5{
+            margin-top: 35px;
+        }
+        .form6{
+            margin-top: 35px;
+        }
+        .form7{
+            margin-top: 35px;
+        }
+        .dvft{
+            display: flex;
+            
+            margin-top: 20px;
+            p{
+                margin-left: 2px;
+            }
+            input{
+                margin-left: 5px;
+            }
+        }
+        .dvemail{
+            margin-top: 20px;
+            p-inputGroup{
+                width: 75%;
+            }
+        }
+        .dvcb{
+            margin-top: 35PX;
+            
+            .btns{
+                display: flex;
+                P{
+                    margin-top: 5px;
+                    margin-right: 2px;
+                }
+            }
+
+        }
+        .dvus{
+            margin-top: 5px;
+            margin-bottom: 20px;
+            padding: 15px;
+            width: 75%;
+            background-color: rgba(0, 69, 152, 0.5);
+            border-radius: 5px;
+                p-inputGroup{
+                    margin-top: 25px;
+                }
+            
+        }
+        .tituser{
+            margin-top: 20px;
+            p{
+                margin-left: 25px;
+                
+            }
+        }
+    }
            
 }
 .colaboradorDetalhes{
     display: flex;
     .detalhes{
         margin-top: 50px;
-
-        .dvimg{
-            
+        .dvimg{            
             margin-left: 200px;
         }
-    }
-
-    
+    }    
 }
 
 .titulo{
@@ -355,9 +351,6 @@
         margin-left: 1%;
     }
 }
-
-
-
 
 .btnpri{
     cursor: pointer;
@@ -469,7 +462,6 @@
             p{
                 margin-left: 20px;
             }
-            
         }
     }    
     .fg2edit{
@@ -477,9 +469,9 @@
         margin-top: 45px;
         .dvsaled{
             margin-left: 15px; 
-           p-inputNumber{
-            width: 100%;
-           } 
+            p-inputNumber{
+                width: 100%;
+            } 
         }
         .dvcated{
             margin-left: 15px; 
@@ -579,10 +571,7 @@
             margin-left: 2px;
         }
     }
-
-
 }
-
 
 .dvusedit{
     margin-top: 5px;
@@ -591,9 +580,9 @@
     width: 75%;
     background-color: rgba(0, 69, 152, 0.5);
     border-radius: 5px;
-        p-inputGroup{
-            margin-top: 25px;
-        }
+    p-inputGroup{
+        margin-top: 25px;
+    }
    
 }
 .tituseredit{
