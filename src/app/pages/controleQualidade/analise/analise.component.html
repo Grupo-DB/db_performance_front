@@ -3554,20 +3554,12 @@
                                 type="number" 
                                 [(ngModel)]="massa_amostra_umida"
                                 style="width: 150px;"
+                                  (ngModelChange)="recalcularTodasLinhas()"
+
                             />
                         </label>
 
-                        <label class="flex align-items-center gap-2">
-                            Finos:
-                            <input 
-                                pInputText 
-                                id="total_fino" 
-                                type="number" 
-                                readOnly="true"
-                                [(ngModel)]="total_finos_umida"
-                                style="width: 150px;"
-                            />
-                        </label>
+                        
                     </div>
                     <div class="flex flex-row w-12 gap-3">
                         <div class="w-12">
@@ -3575,11 +3567,9 @@
                                     <ng-template pTemplate="header">
                                     <tr>
                                         <th>Peneira</th>
-                                        <th>Retido (g)</th>
-                                        <th>Retido (%)</th>
-                                        <th>Passante (%)</th>
-                                        <th>Acumulado (%)</th>
-                                        <th>Passante Acumulado(%)</th>
+                                        <th>Massa da Cápsula Vazia (g)</th>
+                                        <th>Massa da Cápsula + Amostra Seca (g)</th>
+                                        <th>Resultado Retido (%)</th>
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-linha let-i="rowIndex">
@@ -3601,21 +3591,21 @@
                                         <td>
                                             <input 
                                                 pInputText 
-                                                [(ngModel)]="linha.valor_retido"
+                                                [(ngModel)]="linha.massa_capsula_vazia"
                                                 type="number"
                                                 min="0"
                                                 step="any"
-                                                (ngModelChange)="atualizarValoresUmida(i)"
                                                 style="width: 150px"
+                                                (ngModelChange)="recalcularLinha(linha)"
                                             />
                                         </td>
 
                                         <td>
                                         <input 
                                                 pInputText 
-                                                [(ngModel)]="linha.porcentual_retido"
+                                                [(ngModel)]="linha.massa_capsula_seca"
                                                 type="number"
-                                                [readonly]="true"
+                                                (ngModelChange)="recalcularLinha(linha)"
                                                 style="width: 150px"
                                             />
                                         </td>
@@ -3623,32 +3613,14 @@
                                         <td>
                                             <input 
                                                 pInputText 
-                                                [(ngModel)]="linha.passante"
+                                                [(ngModel)]="linha.resultado"
                                                 type="number"
                                                 [readonly]="true"
                                                 style="width: 150px"
                                             />
                                         </td>
 
-                                        <td>
-                                            <input 
-                                                pInputText 
-                                                [(ngModel)]="linha.acumulado"
-                                                type="number"
-                                                [readonly]="true"
-                                                style="width: 150px"
-                                            />
-                                        </td>
-
-                                        <td>
-                                            <input 
-                                                pInputText 
-                                                [(ngModel)]="linha.passante_acumulado"
-                                                type="number"
-                                                [readonly]="true"
-                                                style="width: 150px"
-                                            />
-                                        </td>
+                       
                                     </tr>
                                 </ng-template>
                             </p-table>
@@ -3802,17 +3774,7 @@
                             />
                         </label>
 
-                        <label class="flex align-items-center gap-2">
-                            Finos:
-                            <input 
-                            pInputText 
-                            id="total_fino" 
-                            type="number" 
-                            [(ngModel)]="total_finos_umida"
-                            [readonly]="true"
-                            style="width: 150px;"
-                            />
-                        </label>
+                    
                     </div>
                     <div class="flex flex-row w-12 gap-3">
                         <div class="w-12">
@@ -3820,11 +3782,9 @@
                                 <ng-template pTemplate="header">
                                     <tr>
                                         <th>Peneira</th>
-                                        <th>Retido (g)</th>
-                                        <th>Retido (%)</th>
-                                        <th>Passante (%)</th>
-                                        <th>Acumulado (%)</th>
-                                        <th>Passante Acumulado(%)</th>
+                                        <th>Massa da Cápsula Vazia (g)</th>
+                                        <th>Massa da Cápsula + Amostra Seca (g)</th>
+                                        <th>Resultado Retido (%)</th>
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-linha let-i="rowIndex">
@@ -3841,17 +3801,7 @@
                                             {{ linha.porcentual_retido }}
                                         </td>
 
-                                        <td>
-                                            {{ linha.passante }}
-                                        </td>
-
-                                        <td>
-                                            {{ linha.acumulado }}
-                                        </td>
-
-                                        <td>
-                                            {{ linha.passante_acumulado }}
-                                        </td>                                      
+                                    
                                     </tr>
                                 </ng-template>
                             </p-table>
