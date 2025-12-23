@@ -1646,6 +1646,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
 
   // Filtro pelo MultiSelect
   filtrarPorMateriais(): void {
+    console.log('Materiais selecionados:', this.materiaisSelecionados);
     if (this.materiaisSelecionados.length === 0) {
       this.analisesFiltradas = [...this.analises];
     } else {

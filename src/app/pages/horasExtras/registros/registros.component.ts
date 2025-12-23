@@ -16,6 +16,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { FilialService } from '../../../../../app/services/avaliacoesServices/filiais/registerfilial.service';
 
 
 @Component({
@@ -39,9 +40,12 @@ import autoTable from 'jspdf-autotable';
 })
 export class RegistrosComponent implements OnInit {
   ambientes: any[] = [];
+  ambientesFiltrados: any[] = [];
   colaboradores: any[] = [];
+  filiais: any[] = [];
   selectedAmbiente: any;
   selectedColaborador: any;
+  selectedFilial: any;
   data: Date | null = null;
   horaInicial: any;
   horaFinal: any;
@@ -50,12 +54,15 @@ export class RegistrosComponent implements OnInit {
   digitador: string = '';
   motivo: string = '';
   responsavel: string = '';
+  filialSelected: any;
   
   // Novos campos para o layout
   mostrarFormulario: boolean = false;
   modoEdicao: boolean = false;
   registroEditando: any = null;
   filtroFuncionario: string = '';
+  filtroFilial: number | null = null;
+  filtroAmbiente: number | null = null;
   filtroMes: number | null = null;
   filtroAno: number = new Date().getFullYear();
   registros: any[] = [];
@@ -86,7 +93,8 @@ export class RegistrosComponent implements OnInit {
     private ambienteService: AmbienteService,
     private registrosService: RegistrosHsExtrasService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private filialService: FilialService
   ) { }
   ngOnInit(): void {
     this.getAmbientes();
@@ -94,6 +102,7 @@ export class RegistrosComponent implements OnInit {
     this.getColaboradores();
     this.inicializarAnos();
     this.getRegistros();
+    this.getFiliais();
   }
   
   inicializarAnos(): void {
@@ -107,12 +116,38 @@ export class RegistrosComponent implements OnInit {
     this.ambienteService.getAmbientes().subscribe(
       ambientes => {
         this.ambientes = ambientes;
+        this.ambientesFiltrados = ambientes; // Inicialmente mostra todos
       },
       error => {
         console.error('Erro ao carregar os ambientes:', error);
       }
     )
   }
+
+  filtrarAmbientesPorFilial(filialId: number): void {
+    if (filialId) {
+      this.ambientesFiltrados = this.ambientes.filter(amb => amb.filial === filialId);
+      this.selectedAmbiente = null; // Limpa o ambiente selecionado
+      this.selectedColaborador = null; // Limpa o colaborador selecionado
+    } else {
+      // Se nenhuma filial for selecionada, mostra todos os ambientes
+      this.ambientesFiltrados = this.ambientes;
+      this.selectedAmbiente = null;
+      this.selectedColaborador = null;
+    }
+  }
+
+  getFiliais(): void {
+    this.filialService.getFiliais().subscribe(
+      filiais => {
+        this.filiais = filiais;
+      },
+      error => {
+        console.error('Erro ao carregar as filiais:', error);
+      }
+    )
+  }
+  
 
   colaboradoeresByAmbiente(selectedAmbiente: number): void {
     this.colaboradorService.getColaboradoresByAmbiente(selectedAmbiente).subscribe(
@@ -316,6 +351,14 @@ export class RegistrosComponent implements OnInit {
       filtros.colaborador = this.filtroFuncionario;
     }
     
+    if (this.filtroFilial) {
+      filtros.filial = this.filtroFilial;
+    }
+    
+    if (this.filtroAmbiente) {
+      filtros.ambiente = this.filtroAmbiente;
+    }
+    
     if (this.filtroMes) {
       filtros.mes = this.filtroMes;
     }
@@ -346,11 +389,24 @@ export class RegistrosComponent implements OnInit {
   aplicarFiltros(): void {
     this.getRegistros();
   }
+
+  onFiltroFilialChange(filialId: number | null): void {
+    // Limpa o filtro de ambiente quando a filial muda
+    this.filtroAmbiente = null;
+    this.aplicarFiltros();
+  }
+
+  onFiltroAmbienteChange(): void {
+    this.aplicarFiltros();
+  }
   
-  limparFiltros(): void {
+  limparFiltros() {
     this.filtroFuncionario = '';
+    this.filtroFilial = null;
+    this.filtroAmbiente = null;
     this.filtroMes = null;
     this.filtroAno = new Date().getFullYear();
+    this.ambientesFiltrados = this.ambientes; // Reseta para mostrar todos os ambientes
     this.getRegistros();
   }
 
@@ -377,6 +433,18 @@ export class RegistrosComponent implements OnInit {
     yPos += 7;
     
     // Filtros aplicados
+    if (this.filtroFilial) {
+      const filialNome = this.filiais.find(f => f.id === this.filtroFilial)?.nome || '';
+      doc.text(`Filial: ${filialNome}`, 14, yPos);
+      yPos += 7;
+    }
+    
+    if (this.filtroAmbiente) {
+      const ambienteNome = this.ambientesFiltrados.find(a => a.id === this.filtroAmbiente)?.nome || '';
+      doc.text(`Ambiente: ${ambienteNome}`, 14, yPos);
+      yPos += 7;
+    }
+    
     if (this.filtroFuncionario) {
       doc.text(`Funcionário: ${this.filtroFuncionario}`, 14, yPos);
       yPos += 7;

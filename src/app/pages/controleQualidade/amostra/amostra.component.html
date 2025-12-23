@@ -663,7 +663,7 @@
                                                     pTooltip="Limpar Formulário"
                                                 />
                                                 <p-button 
-                                                    (onClick)="navegarParaOs()" 
+                                                    (onClick)="abrirModalOs()" 
                                                     label="Abrir OS"
                                                     severity="info"
                                                     icon="pi pi-arrow-right" 
@@ -901,83 +901,7 @@
                                 <p-step-panel [value]="3">
                                     <p-toast/>
                                     <ng-template #content let-activateCallback="activateCallback">
-                                        <form [formGroup]="registerOrdemForm" title="Cadastrar nova Ordem de Serviço"
-                                            class="flex flex-column gap-4">
-                                            <div class="form-geral flex flex-column align-items-center" @swipeAnimation>
-                                              <div class="bloco w-12 text-center">
-                                                    <div class="titulo titulo-custom mt-3" type="solid" class="divider-custom">
-                                                        <b>Ordem de Serviço</b>
-                                                    </div>
-                                                <div class="flex flex-column justify-content-center w-12 mt-3 gap-3 lg:flex-row">
-                                                    <div class="w-5">
-                                                        <p-floatlabel variant="on">
-                                                            <p-iconfield>
-                                                                <p-inputicon class="pi pi-file-edit" />
-                                                                <input variant="filled" [style]="{'width':'100%'}" pInputText id="on_label"
-                                                                    autocomplete="off" formControlName="numero" type="text" />
-                                                            </p-iconfield>
-                                                            <label for="on_label">Número</label>
-                                                        </p-floatlabel>
-                                                    </div>
-                                                    <div class="w-5">
-                                                        <p-floatlabel variant="on">
-                                                            <p-iconfield>
-                                                                <p-inputicon class="pi pi-file-edit" />
-                                                                <input variant="filled" [style]="{'width':'100%'}" pInputText id="on_label"
-                                                                    autocomplete="off" formControlName="digitador" type="text" />
-                                                            </p-iconfield>
-                                                            <label for="on_label">Digitador</label>
-                                                        </p-floatlabel>
-                                                    </div>
-                    
-                                                </div>
-                                                <div class="flex flex-column justify-content-center w-12 gap-3 lg:flex-row">
-                                                    <div class="w-5 text-left mb-3 mt-3">
-                                                        <p-floatLabel variant="on">
-                                                            <p-datepicker variant="filled" [style]="{'width':'100%'}" id="da"
-                                                                formControlName="data" dateFormat="dd/mm/yy" inputId="float-label"
-                                                                [showIcon]="true">
-                                                            </p-datepicker>
-                                                            <label for="float-label">Data de Abertura</label>
-                                                        </p-floatLabel>
-                                                    </div>
-                                                    <div class="w-5 text-left mb-3 mt-3">
-                                                        <p-floatLabel variant="on">
-                                                            <p-select inputId="float-label" [style]="{'width':'100%'}"
-                                                                [options]="planosAnalise" formControlName="planoAnalise"
-                                                                optionLabel="descricao" optionValue="id" appendTo="body" [filter]="true"
-                                                                filterBy="nome" [showClear]="true"
-                                                            >
-                                                            </p-select>
-                                                            <label for="float-label">Selecione o Plano de Análise</label>
-                                                        </p-floatLabel>
-                                                    </div>
-                    
-                    
-                                                </div>
-                                             
-                                                <div class="flex flex-column justify-content-center w-12 gap-3 mb-3 justify-content-end lg:flex-row">
-                                                    <div class="w-5 text-left ">
-                                                        <p-button 
-                                                            title="Voltar"
-                                                            label="Voltar" 
-                                                            severity="warn" 
-                                                            icon="pi pi-arrow-left"
-                                                            (onClick)="voltarParaStep2()"
-                                                        />
-                                                    </div>
-                                                    <div class="flex w-5 gap-3 justify-content-end text-right">
-                                                        <p-button 
-                                                            label="Gerar OS" 
-                                                            severity="success" 
-                                                            icon="pi pi-check" 
-                                                            iconPos="right"
-                                                            (onClick)="criarOSDoFormulario()" />
-                                                    </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                        </form>
+                                        
                                     </ng-template>
                                 </p-step-panel>
                             
@@ -1699,3 +1623,201 @@
 
 </div>
 
+  <p-drawer 
+    header="Criar Ordem de Serviço" 
+    [(visible)]="modalCriarOsVisivel" 
+    position="right" 
+    [style]="{ width: '80vw' }"
+    (onHide)="resetarFormOrdem()"
+>
+    <div class="form-geral flex flex-column gap-3 w-12">
+        <div class="fg1 flex flex-column w-12 align-items-center">
+            <p-card class="card w-12 text-center">
+                <ng-template #header>
+                    <div class="header titulo-info w-full text-center">
+                        <h2>Ordem de Serviço</h2>
+                    </div>
+                </ng-template>
+                <form [formGroup]="registerOrdemForm" title="Cadastrar nova Ordem de Serviço" class="flex flex-column gap-4">
+                    <div class="form-geral flex flex-column align-items-center">
+                        <div class="bloco w-12 text-center">
+                            <div class="titulo titulo-custom mt-3" type="solid" class="divider-custom">
+                                <b>Ordem de Serviço</b>
+                            </div>
+                            <div class="flex flex-column justify-content-center w-12 mt-3 gap-3 lg:flex-row">
+                                <div class="w-5">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-file-edit" />
+                                            <input variant="filled" [style]="{'width':'100%'}" pInputText id="on_label"
+                                                autocomplete="off" formControlName="numero" type="text" />
+                                        </p-iconfield>
+                                        <label for="on_label">Número</label>
+                                    </p-floatlabel>
+                                </div>
+                                <div class="w-5">
+                                    <p-floatlabel variant="on">
+                                        <p-iconfield>
+                                            <p-inputicon class="pi pi-file-edit" />
+                                            <input variant="filled" [style]="{'width':'100%'}" pInputText id="on_label"
+                                                autocomplete="off" formControlName="digitador" type="text" />
+                                        </p-iconfield>
+                                        <label for="on_label">Digitador</label>
+                                    </p-floatlabel>
+                                </div>
+                
+                            </div>
+                            <div class="flex flex-column justify-content-center w-12 gap-3 lg:flex-row">
+                                <div class="w-5 text-left mb-3 mt-3">
+                                    <p-floatLabel variant="on">
+                                        <p-datepicker variant="filled" [style]="{'width':'100%'}" id="da" formControlName="data"
+                                            dateFormat="dd/mm/yy" inputId="float-label" [showIcon]="true">
+                                        </p-datepicker>
+                                        <label for="float-label">Data de Abertura</label>
+                                    </p-floatLabel>
+                                </div>
+                                <div class="w-5 text-left mb-3 mt-3">
+                                    <p-floatLabel variant="on">
+                                        <p-select inputId="float-label" [style]="{'width':'100%'}" [options]="planosAnalise"
+                                            formControlName="planoAnalise" optionLabel="descricao" optionValue="id" appendTo="body"
+                                            [filter]="true" filterBy="nome" [showClear]="true">
+                                        </p-select>
+                                        <label for="float-label">Selecione o Plano de Análise</label>
+                                    </p-floatLabel>
+                                </div>
+                
+                
+                            </div>
+                
+                            <div class="flex flex-column justify-content-center w-12 gap-3 mb-3 justify-content-end lg:flex-row">
+                                <div class="w-5 text-left ">
+                                    <p-button title="Imprimir Etiqueta" label="Imprimir Etiqueta" severity="info" icon="pi pi-print"
+                                        (onClick)="imprimirEtiquetaForm()" />
+                                </div>
+                                <div class="flex w-5 gap-3 justify-content-end text-right">
+                                    <p-button (onClick)="navegarParaExpressa()" severity="danger" label="OS Expressa" icon="pi pi-book"
+                                        iconPos="right" tooltipPosition="top" pTooltip="OS Expressa" />
+                                    <p-button label="Gerar OS com Plano" 
+                                    severity="success" 
+                                    icon="pi pi-check" 
+                                    iconPos="right"
+                                        (onClick)="criarOSDoFormulario()" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- <div class="flex flex-column w-12 gap-3 mb-3 justify-content-end lg:w-12 lg:flex-row">
+                    <div class="w-4 text-left">
+                        <p-button 
+                            title="Voltar" 
+                            label="Voltar" 
+                            severity="warn" 
+                            icon="pi pi-arrow-left"
+                        />
+                    </div>
+                    <div class="w-4 text-center">
+                        <p-button 
+                            (onClick)="navegarParaExpressa()" 
+                            severity="danger" 
+                            label="OS Expressa" 
+                            icon="pi pi-book"
+                            iconPos="right" 
+                            tooltipPosition="top" 
+                            pTooltip="OS Expressa" 
+                        />
+                    </div>
+                    <div class=" flex w-4 gap-3 justify-content-end text-right">
+                        <p-button 
+                            title="OS Com Plano" 
+                            label="OS Com Plano" 
+                            severity="success" 
+                            icon="pi pi-arrow-right" 
+                            iconPos="right"
+                            (onClick)="receberDadosAmostra()" 
+                        />
+                    </div>
+                </div> -->
+            </p-card>
+        </div>
+    </div>
+</p-drawer>
+<!-- 
+<form [formGroup]="registerOrdemForm" title="Cadastrar nova Ordem de Serviço"
+                                            class="flex flex-column gap-4">
+                                            <div class="form-geral flex flex-column align-items-center" @swipeAnimation>
+                                              <div class="bloco w-12 text-center">
+                                                    <div class="titulo titulo-custom mt-3" type="solid" class="divider-custom">
+                                                        <b>Ordem de Serviço</b>
+                                                    </div>
+                                                <div class="flex flex-column justify-content-center w-12 mt-3 gap-3 lg:flex-row">
+                                                    <div class="w-5">
+                                                        <p-floatlabel variant="on">
+                                                            <p-iconfield>
+                                                                <p-inputicon class="pi pi-file-edit" />
+                                                                <input variant="filled" [style]="{'width':'100%'}" pInputText id="on_label"
+                                                                    autocomplete="off" formControlName="numero" type="text" />
+                                                            </p-iconfield>
+                                                            <label for="on_label">Número</label>
+                                                        </p-floatlabel>
+                                                    </div>
+                                                    <div class="w-5">
+                                                        <p-floatlabel variant="on">
+                                                            <p-iconfield>
+                                                                <p-inputicon class="pi pi-file-edit" />
+                                                                <input variant="filled" [style]="{'width':'100%'}" pInputText id="on_label"
+                                                                    autocomplete="off" formControlName="digitador" type="text" />
+                                                            </p-iconfield>
+                                                            <label for="on_label">Digitador</label>
+                                                        </p-floatlabel>
+                                                    </div>
+                    
+                                                </div>
+                                                <div class="flex flex-column justify-content-center w-12 gap-3 lg:flex-row">
+                                                    <div class="w-5 text-left mb-3 mt-3">
+                                                        <p-floatLabel variant="on">
+                                                            <p-datepicker variant="filled" [style]="{'width':'100%'}" id="da"
+                                                                formControlName="data" dateFormat="dd/mm/yy" inputId="float-label"
+                                                                [showIcon]="true">
+                                                            </p-datepicker>
+                                                            <label for="float-label">Data de Abertura</label>
+                                                        </p-floatLabel>
+                                                    </div>
+                                                    <div class="w-5 text-left mb-3 mt-3">
+                                                        <p-floatLabel variant="on">
+                                                            <p-select inputId="float-label" [style]="{'width':'100%'}"
+                                                                [options]="planosAnalise" formControlName="planoAnalise"
+                                                                optionLabel="descricao" optionValue="id" appendTo="body" [filter]="true"
+                                                                filterBy="nome" [showClear]="true"
+                                                            >
+                                                            </p-select>
+                                                            <label for="float-label">Selecione o Plano de Análise</label>
+                                                        </p-floatLabel>
+                                                    </div>
+                    
+                    
+                                                </div>
+                                             
+                                                <div class="flex flex-column justify-content-center w-12 gap-3 mb-3 justify-content-end lg:flex-row">
+                                                    <div class="w-5 text-left ">
+                                                        <p-button 
+                                                            title="Voltar"
+                                                            label="Voltar" 
+                                                            severity="warn" 
+                                                            icon="pi pi-arrow-left"
+                                                            (onClick)="voltarParaStep2()"
+                                                        />
+                                                    </div>
+                                                    <div class="flex w-5 gap-3 justify-content-end text-right">
+                                                        <p-button 
+                                                            label="Gerar OS" 
+                                                            severity="success" 
+                                                            icon="pi pi-check" 
+                                                            iconPos="right"
+                                                            (onClick)="criarOSDoFormulario()" />
+                                                    </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                </form> -->

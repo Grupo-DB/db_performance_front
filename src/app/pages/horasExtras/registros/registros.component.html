@@ -54,6 +54,34 @@
   <div class="filters-section">
     <div class="filter-group">
       <div class="filter-item">
+        <i class="pi pi-building"></i>
+        <p-select 
+          [options]="filiais" 
+          [(ngModel)]="filtroFilial"
+          (ngModelChange)="onFiltroFilialChange($event)"
+          placeholder="Selecione a filial"
+          optionLabel="nome"
+          optionValue="id"
+          [showClear]="true"
+          class="filter-select"
+        ></p-select>
+      </div>
+
+      <div class="filter-item">
+        <i class="pi pi-map-marker"></i>
+        <p-select 
+          [options]="ambientesFiltrados" 
+          [(ngModel)]="filtroAmbiente"
+          (ngModelChange)="onFiltroAmbienteChange()"
+          placeholder="Selecione o ambiente"
+          optionLabel="nome"
+          optionValue="id"
+          [showClear]="true"
+          class="filter-select"
+        ></p-select>
+      </div>
+
+      <div class="filter-item">
         <i class="pi pi-filter"></i>
         <input 
           type="text" 
@@ -122,6 +150,38 @@
     <h2 class="form-title">{{ modoEdicao ? 'Editar' : 'Novo' }} Registro de Hora Extra</h2>
     
     <div class="form-grid">
+      <div class="form-field">
+        <label for="filial">Filial</label>
+        <p-select
+          id="filial"
+          [options]="filiais"
+          optionLabel="nome"
+          placeholder="Selecione a filial"
+          optionValue="id"
+          [(ngModel)]="selectedFilial"
+          (ngModelChange)="filtrarAmbientesPorFilial($event)"
+          [style]="{'width':'100%'}"
+          [showClear]="true"
+        >
+        </p-select>
+      </div>
+
+      <div class="form-field">
+        <label for="ambiente">Ambiente</label>
+        <p-select
+          id="ambiente"
+          [options]="ambientesFiltrados"
+          optionLabel="nome"
+          placeholder="Selecione o ambiente"
+          optionValue="id"
+          [(ngModel)]="selectedAmbiente"
+          (ngModelChange)="colaboradoeresByAmbiente($event)"
+          [style]="{'width':'100%'}"
+          [showClear]="true"
+        >
+        </p-select>
+      </div>
+
       <div class="form-field">
         <label for="funcionario">Nome do Funcionário *</label>
         <p-select

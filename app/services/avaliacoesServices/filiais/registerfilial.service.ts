@@ -29,7 +29,6 @@ export class FilialService {
   }   
   getFiliaisByEmpresa(id: any): Observable<any[]> {
     return this.httpClient.get<any>(`${this.apiUrl}byEmpresa/?empresa_id=${id}`);
-
   }
   getFilial(id: string) {
     return this.httpClient.get<any>(`http://172.50.10.79:8008/management/filiais/${id}`);

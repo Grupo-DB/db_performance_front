@@ -285,6 +285,7 @@ export class AmostraComponent implements OnInit {
   inputValue: string = '';
   modalImagens: boolean = false;
   modalVisualizar: boolean = false;
+  modalCriarOsVisivel: boolean = false;
   materiaisFiltro: any[] = [];
 
   tipos = [
@@ -604,6 +605,30 @@ export class AmostraComponent implements OnInit {
       { field: 'planoEnsaios', header: 'Ensaios do Plano' },
     ];
   }
+
+  abrirModalOs(): void {
+    this.modalCriarOsVisivel = true;
+    this.inicializarFormOrdem();
+  }
+
+  resetarFormOrdem(): void {
+    // Não reseta aqui para evitar problemas de renderização
+  }
+
+  inicializarFormOrdem(): void {
+    // Re-inicializa o formulário com valores padrão
+    this.ordemService.getProximoNumero().subscribe(numero => {
+      this.registerOrdemForm.patchValue({
+        numero: numero,
+        data: new Date(),
+        planoAnalise: '',
+        responsavel: '',
+        digitador: this.registerOrdemForm.get('digitador')?.value || '',
+        classificacao: ''
+      });
+    });
+  }
+
   getSeverity(materialNome: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | undefined {
     if (!materialNome) {
       return 'secondary';
@@ -1931,11 +1956,10 @@ receberDadosAmostra(): void {
   
   // Preencher formulário da OS com dados da amostra
   this.preencherFormularioOSComAmostraFormulario(this.amostraData);
-  
-  this.activeStep = 3;
+
 }
 criarOSDoFormulario() {
-  console.log('Dados da amostra antes de criar OS:', this.amostraData);
+  this.receberDadosAmostra();
   
   // Verificar se amostraData existe
   if (!this.amostraData) {
@@ -1988,7 +2012,15 @@ criarOSDoFormulario() {
       
       // Criar amostra vinculada à ordem
       this.criarAmostraVinculada(idOrdem);
+
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Sucesso',
+        detail: 'Ordem de Serviço cadastrada com sucesso!'
+      });
     },
+
+
     error: (error) => {
       console.error('❌ Erro ao criar ordem :', error);
       this.messageService.add({ 

@@ -18,6 +18,9 @@ export class AmbienteService {
   getAmbientes(): Observable<any[]>{
     return this.httpClient.get<any[]>(this.apiUrl);  
   }
+  getAmbientesByFilial(id: any): Observable<any[]> {
+    return this.httpClient.get<any>(`${this.apiUrl}byFilial/?filial_id=${id}`);
+  }
   editAmbiente(id: number, dadosAtualizados: Partial<Ambiente>): Observable<any> {
     const url = `${this.apiUrl}${id}/`;
     return this.httpClient.patch(url, dadosAtualizados);

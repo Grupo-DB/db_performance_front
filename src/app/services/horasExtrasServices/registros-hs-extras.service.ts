@@ -37,6 +37,8 @@ export class RegistrosHsExtrasService {
   getRegistros(filtros?: {
     colaborador?: string;
     responsavel?: string;
+    filial?: number;
+    ambiente?: number;
     mes?: number;
     ano?: number;
     data_inicial?: string;
@@ -50,6 +52,12 @@ export class RegistrosHsExtrasService {
       }
       if (filtros.responsavel) {
         params = params.set('responsavel', filtros.responsavel);
+      }
+      if (filtros.filial) {
+        params = params.set('filial', filtros.filial.toString());
+      }
+      if (filtros.ambiente) {
+        params = params.set('ambiente', filtros.ambiente.toString());
       }
       if (filtros.mes) {
         params = params.set('mes', filtros.mes.toString());
