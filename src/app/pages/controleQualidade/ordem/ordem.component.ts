@@ -4182,28 +4182,17 @@ gerarNumero(materialNome: string, sequencial: number): string {
             }
           ],
           [
-            {
-              content: `Finos: ${analise.peneiras_umidas.finos.toFixed(2)}%`,
-              colSpan: 6,
-              styles: { halign: 'left', fillColor: [240,240,240], fontStyle: 'bold' }
-            }
-          ], 
-          [
             'Peneira',
-            'Passante (%)',
-            'Acumulado (%)',
-            'Valor Retido',
-            '% Retido',
-            'Passante Acumulado'
+            'Massa da Cápsula Vazia (g)',
+            'Massa da Cápsula + Amostra Seca (g)',
+            'Resultado Retido (%)',
           ],
 
           ...analise.peneiras_umidas.peneiras.map((p: any) => [
             p.peneira,
-            p.passante.toFixed(2),
-            p.acumulado.toFixed(2),
-            p.valor_retido.toFixed(3),
-            p.porcentual_retido.toFixed(2),
-            p.passante_acumulado.toFixed(2)
+            p.massa_capsula_vazia.toFixed(2),
+            p.massa_capsula_seca.toFixed(2),
+            p.resultado.toFixed(2),
           ])
         ];
 
@@ -4235,20 +4224,12 @@ gerarNumero(materialNome: string, sequencial: number): string {
               styles: { halign: 'left', fillColor: [240,240,240], fontStyle: 'bold' }
             }
           ],
-          [
-            {
-              content: `Finos: `,
-              colSpan: 6,
-              styles: { halign: 'left', fillColor: [240,240,240], fontStyle: 'bold' }
-            }
-          ],
+        
           [
             'Peneira',
-            'Passante (%)',
-            'Acumulado (%)',
-            'Valor Retido',
-            '% Retido',
-            'Passante Acumulado'
+            'Massa da Cápsula Vazia (g)',
+            'Massa da Cápsula + Amostra Seca (g)',
+            'Resultado Retido (%)',
           ],
 
           ...Array.from({ length: 10 }, () => [
@@ -4256,8 +4237,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
             { content: '' },
             { content: '' },
             { content: '' },
-            { content: '' },
-            { content: '' }
           ])
         ];
         autoTable(doc, {

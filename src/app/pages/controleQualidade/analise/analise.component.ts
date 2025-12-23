@@ -1510,9 +1510,7 @@ carregarPeneiraUmidaSalva(analise: any): void {
       passante_acumulado: item.passante_acumulado ?? null,
     }));
     this.massa_amostra_umida = analise.peneiras_umidas.amostra ?? 0;
-    this.total_finos_umida = analise.peneiras_umidas.finos ?? null;
-    this.total_finos_umida_digitado = analise.peneiras_umidas.finos_digitado ?? null;
-    this.total_finos_umida_calculado = analise.peneiras_umidas.finos_calculo ?? null;
+  
     
     if (analise.peneiras_umidas.tempo_previsto) {
       this.peneira_umida_tempo_previsto = analise.peneiras_umidas.tempo_previsto;
@@ -1531,11 +1529,8 @@ carregarPeneiraUmidaSalva(analise: any): void {
       passante_acumulado: null,
     }];
     this.massa_amostra_umida = 0;
-    this.total_finos_umida = null;
     this.peneira_umida_tempo_previsto = null;
     this.peneira_umida_tempo_trabalho = null;
-    this.total_finos_umida_digitado = null;
-    this.total_finos_umida_calculado = null;
     
   }
 }
@@ -9353,12 +9348,30 @@ canDeactivate(): boolean | Promise<boolean> {
 
 
   massa_amostra_umida: number = 0;
-  total_finos_umida: number | null = null;
-  total_finos_umida_digitado: number | null = null;
-  total_finos_umida_calculado: number | null = null;
+
+  recalcularLinha(linha: any) {
+    const capsulaVazia = linha.massa_capsula_vazia ?? 0;
+    const capsulaSeca  = linha.massa_capsula_seca ?? 0;
+    const massaAmostra = this.massa_amostra_umida ?? 0;
+
+    if (massaAmostra > 0) {
+      linha.resultado = ((capsulaSeca - capsulaVazia) / massaAmostra) * 100;
+      linha.resultado= parseFloat(linha.resultado.toFixed(2));
+
+    } else {
+      linha.resultado = null;
+    }
+  }
+  recalcularTodasLinhas() {
+    if (!this.linhasPeneiraUmida?.length) return;
+
+    this.linhasPeneiraUmida.forEach(linha => {
+      this.recalcularLinha(linha);
+    });
+  }
 
   atualizarValoresUmida(index: number) {
-    this.calcularPercentuaisEAcumuladoUmida();
+    // this.calcularPercentuaisEAcumuladoUmida();
   }
 
 
@@ -9406,11 +9419,7 @@ canDeactivate(): boolean | Promise<boolean> {
       .reverse()
       .find(l => l.acumulado != null);
 
-    // 🔹 Total finos = 100 - acumulado final
-    this.total_finos_umida =
-      ultimaLinhaComAcumulado && ultimaLinhaComAcumulado.acumulado != null
-        ? 100 - ultimaLinhaComAcumulado.acumulado
-        : null;
+  
   }
 
   salvarPeneiraUmida(analise: any){
@@ -9422,9 +9431,6 @@ canDeactivate(): boolean | Promise<boolean> {
       peneiras_umidas:{
         peneiras: this.linhasPeneiraUmida,
         amostra: this.massa_amostra_umida,
-        finos: this.total_finos_umida,
-        finos_digitado: this.total_finos_umida_digitado,
-        finos_calculo: this.total_finos_umida_calculado
       }
     };
     
@@ -10315,7 +10321,6 @@ onTracaoAbertoDataMoldagemChange():void {
         passante_acumulado: item.passante_acumulado ?? null,
       }));
       this.massa_amostra_umida = this.analise.peneiras.amostra;
-      this.total_finos_umida = this.analise.peneiras.finos;
     } else {
       this.linhasPeneiraUmida = [];
         this.linhasPeneiraUmida.push({
