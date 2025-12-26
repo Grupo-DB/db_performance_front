@@ -1477,11 +1477,9 @@ carregarPeneiraUmidaSalva(analise: any): void {
   if (analise?.peneiras_umidas?.peneiras && Array.isArray(analise.peneiras_umidas.peneiras)) {
     this.linhasPeneiraUmida = analise.peneiras_umidas.peneiras.map((item: any) => ({
       peneira: item.peneira ?? '',
-      valor_retido: item.valor_retido ?? null,
-      porcentual_retido: item.porcentual_retido ?? null,
-      acumulado: item.acumulado ?? null,
-      passante: item.passante ?? null,
-      passante_acumulado: item.passante_acumulado ?? null,
+      massa_capsula_seca: item.massa_capsula_seca ?? null,
+      massa_capsula_vazia: item.massa_capsula_vazia ?? null,
+      resultado: item.resultado ?? null,
     }));
     this.massa_amostra_umida = analise.peneiras_umidas.amostra ?? 0;
   
