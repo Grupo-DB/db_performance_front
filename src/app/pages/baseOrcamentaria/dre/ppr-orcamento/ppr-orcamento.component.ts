@@ -93,6 +93,25 @@ export class PprOrcamentoComponent implements OnInit {
   periodo: any[] = [];
   centrosCusto: CentroCusto[]|undefined;
   ano: number = new Date().getFullYear();
+  
+  // Filtros multiselect
+  anosDisponiveis: number[] = [];
+  mesesDisponiveis: any[] = [
+    { label: 'Janeiro', value: 1 },
+    { label: 'Fevereiro', value: 2 },
+    { label: 'Março', value: 3 },
+    { label: 'Abril', value: 4 },
+    { label: 'Maio', value: 5 },
+    { label: 'Junho', value: 6 },
+    { label: 'Julho', value: 7 },
+    { label: 'Agosto', value: 8 },
+    { label: 'Setembro', value: 9 },
+    { label: 'Outubro', value: 10 },
+    { label: 'Novembro', value: 11 },
+    { label: 'Dezembro', value: 12 }
+  ];
+  anoSelecionado: number[] = [];
+  periodoSelecionado: number[] = [];
   despesasAdm: any;
   variavelMatriz: any;
   fixoMatriz: any;
@@ -171,11 +190,58 @@ export class PprOrcamentoComponent implements OnInit {
   ngOnInit(): void {
     const mesAtual = new Date().getMonth() + 1; // getMonth() retorna de 0 a 11, então adicionamos 1
     this.periodo = Array.from({ length: mesAtual }, (_, i) => i + 1);
+    
+    // Inicializar anos disponíveis (últimos 5 anos)
+    const anoAtual = new Date().getFullYear();
+    this.anosDisponiveis = Array.from({ length: 5 }, (_, i) => anoAtual - i);
+    
+    // Valores padrão dos filtros
+    this.anoSelecionado = [this.ano];
+    this.periodoSelecionado = this.periodo;
+    
     this.carregarCcs(this.ccsDespesasAdm)
   }
 
       hasGroup(groups: string[]): boolean {
         return this.loginService.hasAnyGroup(groups);
+      }
+
+      aplicarFiltros(): void {
+        // Validação dos filtros
+        if (!this.anoSelecionado || this.anoSelecionado.length === 0) {
+          this.messageService.add({ 
+            severity: 'warn', 
+            summary: 'Atenção', 
+            detail: 'Por favor, selecione ao menos um ano.' 
+          });
+          return;
+        }
+
+        if (!this.periodoSelecionado || this.periodoSelecionado.length === 0) {
+          this.messageService.add({ 
+            severity: 'warn', 
+            summary: 'Atenção', 
+            detail: 'Por favor, selecione ao menos um período.' 
+          });
+          return;
+        }
+
+        // Atualizar os valores de ano e período
+        this.ano = this.anoSelecionado[0]; // Usar o primeiro ano selecionado
+        this.periodo = [...this.periodoSelecionado].sort((a, b) => a - b);
+
+        // Reiniciar os cálculos
+        this.calcularRealizado();
+      }
+
+      limparFiltros(): void {
+        const mesAtual = new Date().getMonth() + 1;
+        const anoAtual = new Date().getFullYear();
+        
+        this.anoSelecionado = [anoAtual];
+        this.periodoSelecionado = Array.from({ length: mesAtual }, (_, i) => i + 1);
+        
+        this.aplicarFiltros();
       } 
 
       carregarCcs(ccPaiId: any): void{

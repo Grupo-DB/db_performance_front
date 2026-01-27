@@ -85,7 +85,7 @@ export class HomeOrcamentoComponent implements OnInit {
   realizadosResultadosGruposItens: any;
   meuRealizadosResultadosGruposItens: any;
   ano: number = new Date().getFullYear();
-  filial: number[] = [];
+  filial: number[] = [0,1,3,5,7];
   periodo: any[] = [];
   filiaisSga: FilialSga[] = []
   //loading: boolean = true;
@@ -186,7 +186,7 @@ export class HomeOrcamentoComponent implements OnInit {
       setTimeout(() => {
       this.calcularOrcado();
       this.calcularRealizado();
-      this.loadingInicial = true;
+      //this.loadingInicial = true;
       }, 1000);
     }
     //this.filtroInicial();

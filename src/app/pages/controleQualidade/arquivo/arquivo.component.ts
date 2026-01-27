@@ -7,6 +7,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { AccordionModule } from 'primeng/accordion';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -127,7 +128,7 @@ interface LinhaElasticidade {
 @Component({
   selector: 'app-arquivo',
   imports: [
-    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule, CardModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule,NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule, TagModule, CheckboxModule, TreeTableModule, ProgressSpinnerModule
+    ReactiveFormsModule, FormsModule, CommonModule, DividerModule, InputIconModule,InputMaskModule, DialogModule, ConfirmDialogModule, SelectModule, IconFieldModule, CardModule,FloatLabelModule, TableModule, InputTextModule, InputGroupModule, InputGroupAddonModule,ButtonModule, DropdownModule, ToastModule, NzMenuModule, DrawerModule, RouterLink, IconField,InputNumberModule, AutoCompleteModule, MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule,NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule, TagModule, CheckboxModule, TreeTableModule, ProgressSpinnerModule, AccordionModule
   ],
   animations:[
     trigger('efeitoFade',[
@@ -241,6 +242,8 @@ export class ArquivoComponent implements OnInit, OnDestroy {
   parecer_elasticidade: any = null;
 
   ensaios_laudo: any[] = [];
+  ensaios_laudo_fresco: any[] = [];
+  ensaios_laudo_solto: any[] = [];
   ensaios_selecionados: any[] = [];
   amostra_detalhes_selecionada: any = {}
   analises_selecionadas: any[] = [];
@@ -274,7 +277,7 @@ export class ArquivoComponent implements OnInit, OnDestroy {
     { value: 'Plano' },
   ];
   // Grafico Lauudo
-  dadosTabela = [
+  dadosTabela: Array<{ tempo: string; valor: number; raizT?: number }> = [
     { tempo: '5min', valor: 2.3 },
     { tempo: '20min', valor: 4.1 },
     { tempo: '1h', valor: 6.85 },
@@ -2275,6 +2278,32 @@ private processarParecer(analise: any) {
           c.ed !== undefined &&
           c.ed !== ''
         );
+      
+      // Calcular média do pMax corretamente
+      const pMaxValues = cpsValidos
+        .map(c => c.pMax)
+        .filter(p => p !== null && p !== undefined && p !== '' && !isNaN(p));
+      const mediaPMax = pMaxValues.length > 0 
+        ? pMaxValues.reduce((a, b) => Number(a) + Number(b), 0) / pMaxValues.length 
+        : (dados.media?.pMax || 0); // Usar média do backend se disponível
+      
+      console.log('CPs Válidos:', cpsValidos);
+      console.log('pMax Values:', pMaxValues);
+      console.log('Média pMax calculada:', mediaPMax);
+      console.log('Média pMax do backend:', dados.media?.pMax);
+      
+      // Calcular média do Ed
+      const edValues = cpsValidos
+        .map(c => c.ed)
+        .filter(e => e !== null && e !== undefined && e !== '' && !isNaN(e));
+      const mediaEd = edValues.length > 0 
+        ? edValues.reduce((a, b) => Number(a) + Number(b), 0) / edValues.length 
+        : (dados.media?.ed || 0);
+      
+      console.log('Ed Values:', edValues);
+      console.log('Média Ed calculada:', mediaEd);
+      console.log('Média Ed do backend:', dados.media?.ed);
+      
       const body = [
         [
           {
@@ -2312,7 +2341,18 @@ private processarParecer(analise: any) {
         ],
         [
           {
-            content: `Média: ${dados.media.ed.toFixed(2)} GPa`,
+            content: `Média pMax: ${mediaPMax.toFixed(3)} (${(mediaPMax * 1000000000 / 9.81).toFixed(2)} kg/m³)`,
+            colSpan: 10,
+            styles: {
+              fontStyle: 'bold',
+              fillColor: [240, 240, 240],
+              halign: 'left'
+            }
+          }
+        ],
+        [
+          {
+            content: `Média Ed: ${mediaEd.toFixed(2)} GPa (${(mediaEd * 1000000000 / 9.81).toFixed(2)} kg/m³)`,
             colSpan: 10,
             styles: {
               fontStyle: 'bold',
@@ -3454,12 +3494,12 @@ duplicata(amostra: any): void {
 
     // Fechar confirmações abertas e abrir uma única
     this.confirmationService.close();
-    const token = `reabrir_${analise.id}_${Date.now()}`;
+    const token = `reabrir_${analise.amostra_detalhes.numero}_${Date.now()}`;
     this.reabrirOperacaoToken = token;
     this.reabrirAcceptRan = false;
 
     this.confirmationService.confirm({
-      message: `Tem certeza que deseja reabrir a análise da amostra ${analise.id}?`,
+      message: `Tem certeza que deseja reabrir a análise da amostra ${analise.amostra_detalhes.numero}?`,
       header: 'Reabrir Análise',
       icon: 'pi pi-check-circle',
       acceptIcon: 'pi pi-check',
@@ -3544,7 +3584,7 @@ duplicata(amostra: any): void {
     this.laudoAcceptRan = false;
 
     this.confirmationService.confirm({
-      message: `Tem certeza que deseja encaminhar à análise ${analise.id} para laudo?`,
+      message: `Tem certeza que deseja encaminhar à análise ${analise.amostra_detalhes.numero} para laudo?`,
       header: 'Encaminhar para Laudo',
       icon: 'pi pi-check-circle',
       acceptIcon: 'pi pi-check',
@@ -3624,12 +3664,12 @@ duplicata(amostra: any): void {
 
     // Garante um único ConfirmDialog do PrimeNG e accept single-shot
     this.confirmationService.close();
-    const token = `aprovar_${analise.id}_${Date.now()}`;
+    const token = `aprovar_${analise.amostra_detalhes.numero}_${Date.now()}`;
     this.aprovarOperacaoToken = token;
     this.aprovarAcceptRan = false;
 
     this.confirmationService.confirm({
-      message: `Tem certeza que deseja aprovar a análise ${analise.id}?`,
+      message: `Tem certeza que deseja aprovar a análise ${analise.amostra_detalhes.numero}?`,
       header: 'Aprovar Análise',
       icon: 'pi pi-check-circle',
       acceptIcon: 'pi pi-check',
@@ -3676,6 +3716,16 @@ duplicata(amostra: any): void {
   }
 
   salvarSelecionados() {
+    if (this.ensaios_selecionados.length === 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Atenção',
+        detail: 'Selecione pelo menos um ensaio para gerar o laudo'
+      });
+      return;
+    }
+    
+    this.modalLaudo = false;
     this.imprimirLaudoPDF(this.amostra_detalhes_selecionada);
   }
 
@@ -3769,6 +3819,112 @@ duplicata(amostra: any): void {
 
     // "text": "Produto: Calcário corretivo de Acidez; Perda ao Fogo: 88.89%; Re+ SiO2: 15.73%"
     this.descricaoApi = 'Produto: '+amostra_detalhes_selecionada.amostra_detalhes.produto_amostra_detalhes.nome+'; ';
+    
+    // Adicionar ensaios do estado FRESCO primeiro
+    if (amostra_detalhes_selecionada.ultimo_ensaio && amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados) {
+      // Filtrar ensaios do estado fresco
+      const ensaiosFrescos = amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.filter((e: any) => 
+        e.estado === 'fresco' || 
+        e.descricao.includes('Densidade de Massa') && e.estado !== 'solto' ||
+        e.descricao.includes('Água de Consistência') ||
+        e.descricao.includes('Índice de Consistência')
+      );
+      
+      ensaiosFrescos.forEach((ensaio: any) => {
+        if (ensaio.valor !== null && ensaio.valor !== undefined && ensaio.valor !== 0) {
+          const norma = ensaio.norma || '-';
+          const unidade = ensaio.unidade || '-';
+          const valor = ensaio.valor.toString();
+          
+          // Simplificar nome do ensaio
+          let nomeEnsaio = ensaio.descricao.replace('(Análise) - ', '');
+          
+          body.push([
+            { content: nomeEnsaio },
+            { content: valor },
+            { content: unidade },
+            { content: '-' },
+            { content: '-' },
+            { content: norma }
+          ]);
+          
+          this.descricaoApi += `${nomeEnsaio}: ${valor} ${unidade}; `;
+        }
+      });
+    }
+    
+    // Adicionar cálculos relacionados ao estado fresco (como Retenção de Água)
+    if (amostra_detalhes_selecionada.ultimo_calculo) {
+      amostra_detalhes_selecionada.ultimo_calculo.forEach((calculo: any) => {
+        if (calculo.calculos.includes('Retenção de Água') && calculo.resultados !== null && calculo.resultados !== 0) {
+          const norma = 'NBR13277';
+          const unidade = '%';
+          const valor = calculo.resultados.toString();
+          
+          body.push([
+            { content: 'Retenção de água' },
+            { content: valor },
+            { content: unidade },
+            { content: '-' },
+            { content: '-' },
+            { content: norma }
+          ]);
+          
+          this.descricaoApi += `Retenção de água: ${valor}%; `;
+        }
+      });
+    }
+    
+    // Adicionar ensaios do estado SOLTO
+    if (amostra_detalhes_selecionada.ultimo_ensaio && amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados) {
+      const ensaiosSoltos = amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.filter((e: any) => 
+        e.estado === 'solto'
+      );
+      
+      ensaiosSoltos.forEach((ensaio: any) => {
+        if (ensaio.valor !== null && ensaio.valor !== undefined && ensaio.valor !== 0) {
+          const norma = ensaio.norma || '-';
+          const unidade = ensaio.unidade || '-';
+          const valor = ensaio.valor.toString();
+          
+          let nomeEnsaio = ensaio.descricao.replace('(Análise) - ', '');
+          
+          body.push([
+            { content: nomeEnsaio },
+            { content: valor },
+            { content: unidade },
+            { content: '-' },
+            { content: '-' },
+            { content: norma }
+          ]);
+          
+          this.descricaoApi += `${nomeEnsaio}: ${valor} ${unidade}; `;
+        }
+      });
+    }
+    
+    // Adicionar cálculos relacionados ao estado solto (como Teor de Ar Incorporado)
+    if (amostra_detalhes_selecionada.ultimo_calculo) {
+      amostra_detalhes_selecionada.ultimo_calculo.forEach((calculo: any) => {
+        if (calculo.calculos.includes('Teor de Ar Incorporado') && calculo.resultados !== null && calculo.resultados !== 0) {
+          const norma = 'NBR13278';
+          const unidade = '%';
+          const valor = calculo.resultados.toString();
+          
+          body.push([
+            { content: 'Teor de Ar Incorporado' },
+            { content: valor },
+            { content: unidade },
+            { content: '-' },
+            { content: '-' },
+            { content: norma }
+          ]);
+          
+          this.descricaoApi += `Teor de Ar Incorporado: ${valor}%; `;
+        }
+      });
+    }
+    
     amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
       this.ensaios_selecionados.forEach((selected: any) => {
         const linha: any[] = [];
@@ -4160,7 +4316,7 @@ duplicata(amostra: any): void {
     //   // doc.save("Etiqueta.pdf");
   }
 
-  private montarGrafico(): Promise<void> {
+  private montarGrafico(slope?: number, intercept?: number): Promise<void> {
     return new Promise((resolve) => {
       const ctx = this.graficoCanvas.nativeElement.getContext('2d');
       if (!ctx) return resolve();
@@ -4169,29 +4325,161 @@ duplicata(amostra: any): void {
         this.chart.destroy();
       }
 
+      // Extrair valores de raizT (eixo X) e deltaMt (eixo Y)
+      const raizTValues = this.dadosTabela.map(d => d.raizT || 0);
+      const deltaMtValues = this.dadosTabela.map(d => d.valor);
       const labels = this.dadosTabela.map(d => d.tempo);
-      const valores = this.dadosTabela.map(d => d.valor);
 
+      // Calcular valores para a linha de tendência
+      let trendlineData: any[] = [];
+      if (slope !== undefined && intercept !== undefined) {
+        const minX = Math.min(...raizTValues);
+        const maxX = Math.max(...raizTValues);
+        
+        trendlineData = [
+          { x: minX, y: slope * minX + intercept },
+          { x: maxX, y: slope * maxX + intercept }
+        ];
+      }
+
+      // Definir tamanho fixo do canvas
+      const canvas = this.graficoCanvas.nativeElement;
+      canvas.width = 800;
+      canvas.height = 600;
+
+      // Criar o gráfico de dispersão com linha de tendência
       this.chart = new Chart(ctx, {
-        type: 'line',
+        type: 'scatter',
         data: {
-          labels: labels,
-          datasets: [{
-            data: valores,
-            borderColor: 'blue',
-            fill: false,
-            pointRadius: 3
-          }]
+          datasets: [
+            // Pontos de dispersão
+            {
+              label: 'Dados medidos',
+              data: raizTValues.map((x, i) => ({ x, y: deltaMtValues[i] })),
+              backgroundColor: 'rgba(54, 162, 235, 0.8)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              pointRadius: 8,
+              pointHoverRadius: 10,
+              showLine: false
+            },
+            // Linha de tendência
+            ...(trendlineData.length > 0 ? [{
+              label: `Tendência: f(x) = ${slope!.toFixed(6)}x + ${intercept!.toFixed(6)}`,
+              data: trendlineData,
+              type: 'line' as const,
+              borderColor: 'rgba(255, 99, 132, 1)',
+              borderWidth: 3,
+              fill: false,
+              pointRadius: 0,
+              tension: 0
+            }] : [])
+          ]
         },
         options: {
           responsive: false,
+          maintainAspectRatio: true,
           animation: {
             onComplete: () => {
-              resolve(); // 🔹 só libera quando o gráfico terminou de renderizar
+              // Desenhar a equação na parte superior do gráfico
+              if (slope !== undefined && intercept !== undefined) {
+                const chartArea = this.chart?.chartArea;
+                if (chartArea && ctx) {
+                  ctx.save();
+                  ctx.font = '12px Arial';
+                  ctx.fillStyle = '#000';
+                  ctx.textAlign = 'center';
+                  const equation = `f(x) = ${slope.toFixed(12)}x + ${intercept.toFixed(12)}`;
+                  const textWidth = ctx.measureText(equation).width;
+                  const padding = 10;
+                  
+                  // Desenhar fundo branco para a equação
+                  ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                  ctx.fillRect(
+                    chartArea.left + (chartArea.right - chartArea.left) / 2 - textWidth / 2 - padding,
+                    chartArea.top + 5,
+                    textWidth + padding * 2,
+                    20
+                  );
+                  
+                  // Desenhar borda
+                  ctx.strokeStyle = '#000';
+                  ctx.strokeRect(
+                    chartArea.left + (chartArea.right - chartArea.left) / 2 - textWidth / 2 - padding,
+                    chartArea.top + 5,
+                    textWidth + padding * 2,
+                    20
+                  );
+                  
+                  // Desenhar texto
+                  ctx.fillStyle = '#000';
+                  ctx.fillText(
+                    equation,
+                    chartArea.left + (chartArea.right - chartArea.left) / 2,
+                    chartArea.top + 18
+                  );
+                  ctx.restore();
+                }
+              }
+              
+              resolve();
             }
           },
-          plugins: { legend: { display: false } },
-          scales: { y: { beginAtZero: true } }
+          plugins: {
+            legend: {
+              display: true,
+              position: 'right',
+              labels: {
+                boxWidth: 15,
+                font: {
+                  size: 10
+                }
+              }
+            },
+            tooltip: {
+              callbacks: {
+                title: (tooltipItems) => {
+                  const index = tooltipItems[0].dataIndex;
+                  return labels[index] || '';
+                },
+                label: (context) => {
+                  const yValue = context.parsed.y;
+                  return yValue !== null ? `Δmt: ${yValue.toFixed(2)} kg/m²` : '';
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              type: 'linear',
+              title: {
+                display: true,
+                text: '√t (√h)',
+                font: {
+                  size: 12,
+                  weight: 'bold'
+                }
+              },
+              grid: {
+                display: true,
+                color: 'rgba(0, 0, 0, 0.1)'
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Δmt (kg/m²)',
+                font: {
+                  size: 12,
+                  weight: 'bold'
+                }
+              },
+              grid: {
+                display: true,
+                color: 'rgba(0, 0, 0, 0.1)'
+              },
+              beginAtZero: true
+            }
+          }
         }
       });
     });
@@ -4286,105 +4574,278 @@ duplicata(amostra: any): void {
     ];
     doc.rect(15, 48, 182, 20); // moldura
     linhas.forEach((linha) => {
-      doc.setFontSize(10);
+      doc.setFontSize(9);
       doc.setFont("helvetica", "normal");
       doc.text(linha[0], 16, y);
-      doc.text(linha[1], 86, y);
-      doc.text(linha[2], 140, y);
+      doc.text(linha[1], 80, y);
+      doc.text(linha[2], 145, y);
       y += 7;
     });
     let contadorLinhas = y;
 
     contadorLinhas = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 10 : contadorLinhas + 10;
 
-    const linhas2 = [
-      ["NBR 12572", "Determinação das propriedades de transmissão do vapor de água"],
-      ["NBR 13276", "Determinação do índice de consistência"],
-      ["NBR 13277", "Determinação da retenção de água"],
-      ["NBR 13278", "Determinação da densidade de massa e teor de ar incorporado"],
-      ["NBR 13279", "Determinação da resistência à tração na flexão e à compressão"],
-      ["NBR 13280", "Densidade de massa no estado endurecido"],
-      ["NBR 13281 - 1", "Argamassa para revestimento: Requisitos"],
-      ["NBR 13281 - 2", "Argamassa para assentamento: Requisitos"],
-      ["NBR 13528 - 1", "Determinação da resistência à tração: Requisitos"],
-      ["NBR 13528 - 2", "Determinação da resistência à tração: Aderência ao substrato"],
-      ["NBR 13528 - 3", "Determinação da resistência à tração: Aderência à superfície"],
-      ["NBR 15148", "Determinação do coeficiente de absorção por capilaridades"],
-      ["NBR 15258", "Argamassa para revestimento de paredes e Tetos - Determinação da resistência potencial a Tração"],
-      ["NBR 15261", "Determinação da variação dimensional (retração ou expansão linear)"],
-      ["NBR 15630", "Determinação do módulo de elasticidade, através da propagação de onda ultra-sônica"],
-      ["NBR 16605", "Determinação da massa específica"],
-      ["NBR 16973", "Granulometria úmida"],
-      ["NBR 17054", "Granulometria seca"],
-      ["NBR 6473", "Cal virgem e cal hidratada - Análise Química"],
-      ["NBR 9289", "Cal hidratada para argamassas - Determinação da finura"],
-      ["EN ISO 15.148 e NBR 13.281 Anexo A", "Determinação do coeficiente de absorção de água por capilaridade."],
-      ["NBR 14081 - 3", "Determinação do tempo em aberto - Argamassa colante industrializada para assetamento de placas cerâmicas"],
-      ["NBR 14081 - 4", "Determinação da resistência de aderência à tração - Argamassa colante industrializada para assetamento de placas cerâmicas"],
-      ["NBR 14081 - 5", "Determinação do deslizamento - Argamassa colante industrializada para assetamento de placas cerâmicas"],
-    ];
+    // const linhas2 = [
+    //   ["NBR 12572", "Determinação das propriedades de transmissão do vapor de água"],
+    //   ["NBR 13276", "Determinação do índice de consistência"],
+    //   ["NBR 13277", "Determinação da retenção de água"],
+    //   ["NBR 13278", "Determinação da densidade de massa e teor de ar incorporado"],
+    //   ["NBR 13279", "Determinação da resistência à tração na flexão e à compressão"],
+    //   ["NBR 13280", "Densidade de massa no estado endurecido"],
+    //   ["NBR 13281 - 1", "Argamassa para revestimento: Requisitos"],
+    //   ["NBR 13281 - 2", "Argamassa para assentamento: Requisitos"],
+    //   ["NBR 13528 - 1", "Determinação da resistência à tração: Requisitos"],
+    //   ["NBR 13528 - 2", "Determinação da resistência à tração: Aderência ao substrato"],
+    //   ["NBR 13528 - 3", "Determinação da resistência à tração: Aderência à superfície"],
+    //   ["NBR 15148", "Determinação do coeficiente de absorção por capilaridades"],
+    //   ["NBR 15258", "Argamassa para revestimento de paredes e Tetos - Determinação da resistência potencial a Tração"],
+    //   ["NBR 15261", "Determinação da variação dimensional (retração ou expansão linear)"],
+    //   ["NBR 15630", "Determinação do módulo de elasticidade, através da propagação de onda ultra-sônica"],
+    //   ["NBR 16605", "Determinação da massa específica"],
+    //   ["NBR 16973", "Granulometria úmida"],
+    //   ["NBR 17054", "Granulometria seca"],
+    //   ["NBR 6473", "Cal virgem e cal hidratada - Análise Química"],
+    //   ["NBR 9289", "Cal hidratada para argamassas - Determinação da finura"],
+    //   ["EN ISO 15.148 e NBR 13.281 Anexo A", "Determinação do coeficiente de absorção de água por capilaridade."],
+    //   ["NBR 14081 - 3", "Determinação do tempo em aberto - Argamassa colante industrializada para assetamento de placas cerâmicas"],
+    //   ["NBR 14081 - 4", "Determinação da resistência de aderência à tração - Argamassa colante industrializada para assetamento de placas cerâmicas"],
+    //   ["NBR 14081 - 5", "Determinação do deslizamento - Argamassa colante industrializada para assetamento de placas cerâmicas"],
+    // ];
     
-    let normasFiltradas: any[] = [];
+    // let normasFiltradas: any[] = [];
 
-    function temNormaTodas(lista: any[]): boolean {
-      return lista?.some(e => e.norma?.toLowerCase() === "todas" || e.norma?.toLowerCase() === "todos");
-    }
+    // function temNormaTodas(lista: any[]): boolean {
+    //   return lista?.some(e => e.norma?.toLowerCase() === "todas" || e.norma?.toLowerCase() === "todos");
+    // }
 
-    if (amostra_detalhes_selecionada?.ultimo_ensaio?.ensaios_utilizados) {
+    // if (amostra_detalhes_selecionada?.ultimo_ensaio?.ensaios_utilizados) {
 
-      const ensaios = amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados;
-      if (temNormaTodas(ensaios)) {
-        normasFiltradas = [...linhas2];
-      } else {
-        const normasUtilizadas = ensaios.map((e: any) => e.norma).filter((n: any) => !!n);
-          normasFiltradas = linhas2.filter(linha => normasUtilizadas.includes(linha[0])
-        );
-      }
-    }
+    //   const ensaios = amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados;
+    //   if (temNormaTodas(ensaios)) {
+    //     normasFiltradas = [...linhas2];
+    //   } else {
+    //     const normasUtilizadas = ensaios.map((e: any) => e.norma).filter((n: any) => !!n);
+    //       normasFiltradas = linhas2.filter(linha => normasUtilizadas.includes(linha[0])
+    //     );
+    //   }
+    // }
 
-    if (normasFiltradas.length === 0 && amostra_detalhes_selecionada?.ultimo_calculo) {
-      amostra_detalhes_selecionada.ultimo_calculo.forEach((ultimo_calculo: any) => {
-        const ensaios = ultimo_calculo.ensaios_utilizados || [];
-        if (temNormaTodas(ensaios)) {
-          normasFiltradas = [...linhas2];
-          return;
-        }
+    // if (normasFiltradas.length === 0 && amostra_detalhes_selecionada?.ultimo_calculo) {
+    //   amostra_detalhes_selecionada.ultimo_calculo.forEach((ultimo_calculo: any) => {
+    //     const ensaios = ultimo_calculo.ensaios_utilizados || [];
+    //     if (temNormaTodas(ensaios)) {
+    //       normasFiltradas = [...linhas2];
+    //       return;
+    //     }
 
-        const normasUtilizadas = ensaios.map((e: any) => e.norma).filter((n: any) => !!n);
-          normasFiltradas = linhas2.filter(linha => normasUtilizadas.includes(linha[0])      
-        );
-      });
-    }
+    //     const normasUtilizadas = ensaios.map((e: any) => e.norma).filter((n: any) => !!n);
+    //       normasFiltradas = linhas2.filter(linha => normasUtilizadas.includes(linha[0])      
+    //     );
+    //   });
+    // }
     contadorLinhas = contadorLinhas -10;
     // doc.rect(15, contadorLinhas, 182, 75); // moldura
 
-    contadorLinhas = contadorLinhas + 4;
-    normasFiltradas.forEach((linha) => {
-      doc.setFontSize(8);
-      doc.setFont("helvetica", "normal");
-      doc.text(linha[0], 16, contadorLinhas);
-      doc.text(linha[1], 50, contadorLinhas);
-      contadorLinhas += 4;
-    });
+    // contadorLinhas = contadorLinhas + 4;
+    // normasFiltradas.forEach((linha) => {
+    //   doc.setFontSize(8);
+    //   doc.setFont("helvetica", "normal");
+    //   doc.text(linha[0], 16, contadorLinhas);
+    //   doc.text(linha[1], 50, contadorLinhas);
+    //   contadorLinhas += 4;
+    // });
 
     contadorLinhas = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 10 : contadorLinhas + 10;
 
+    // Verificar quais tipos de ensaios foram selecionados
+    const temEnsaiosFresco = this.ensaios_selecionados.some((sel: any) => {
+      // Verificar se o ensaio selecionado está em ultimo_ensaio com estado null ou cálculos
+      if (amostra_detalhes_selecionada.ultimo_ensaio?.ensaios_utilizados) {
+        const ensaio = amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.find((e: any) => 
+          e.id === sel.id && (e.estado === null || e.estado === 'Fresco' || e.estado === 'fresco')
+        );
+        if (ensaio) return true;
+      }
+      // Verificar se é um cálculo (Retenção de água, Teor de Ar)
+      if (amostra_detalhes_selecionada.ultimo_calculo) {
+        const calculo = amostra_detalhes_selecionada.ultimo_calculo.find((c: any) =>
+          c.ensaios_utilizados?.some((e: any) => e.id === sel.id)
+        );
+        if (calculo) return true;
+      }
+      return false;
+    });
 
-// ====== TABELA DE fresco ===================================================
-    const head = [
-      [
-        { content: 'Ensaio no estado fresco', colSpan: 6 }
-      ],
-       [
-        { content: 'Ensaio' },
-        { content: 'Valor' },
-        { content: 'Unid' },
-        { content: 'Garantia' },
-        { content: ''},
-        { content: 'Norma'},
-      ]
-    ];
-    const body: any[] = [];
+    const temEnsaiosSolto = this.ensaios_selecionados.some((sel: any) => {
+      // Verificar se é um item de peneira
+      if (sel.isPeneira || sel.id === 'peneira_ret_acum_200' || sel.id === 'peneira_finos_200') {
+        return true;
+      }
+      
+      // Verificar se é um ensaio normal do tipo solto
+      if (amostra_detalhes_selecionada.ultimo_ensaio?.ensaios_utilizados) {
+        const ensaio = amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.find((e: any) => 
+          e.id === sel.id && (e.estado === 'Solto' || e.estado === 'solto')
+        );
+        if (ensaio) return true;
+      }
+      
+      // Verificar se tem estado solto no próprio objeto selecionado
+      if (sel.estado === 'Solto' || sel.estado === 'solto') {
+        return true;
+      }
+      
+      return false;
+    });
+
+
+// ====== TABELA FIXA DE ESTADO FRESCO ===================================================
+    
+    // Função auxiliar para buscar valor de ensaio, cálculo ou peneiras
+    const buscarValorEnsaio = (nome: string, tipo: 'ensaio' | 'calculo' | 'peneira' = 'ensaio', campoPeneira?: string) => {
+      // Buscar em peneiras (para Ret ACUM e Finos) - peneiras.peneiras é o array!
+      if (tipo === 'peneira') {
+        if (amostra_detalhes_selecionada.peneiras?.peneiras && Array.isArray(amostra_detalhes_selecionada.peneiras.peneiras)) {
+          const peneira200 = amostra_detalhes_selecionada.peneiras.peneiras.find((p: any) => 
+            p.peneira && p.peneira.includes('# 200')
+          );
+          
+          if (peneira200 && campoPeneira) {
+            const valor = peneira200[campoPeneira];
+            
+            if (valor !== null && valor !== undefined) {
+              return {
+                valor: valor.toString(),
+                unidade: '%',
+                norma: 'NBR16973'
+              };
+            }
+          }
+        }
+      }
+      
+      if (tipo === 'ensaio' && amostra_detalhes_selecionada.ultimo_ensaio?.ensaios_utilizados) {
+        const ensaio = amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.find((e: any) => 
+          e.descricao && e.descricao.toLowerCase().includes(nome.toLowerCase())
+        );
+        if (ensaio && ensaio.valor !== null && ensaio.valor !== undefined) {
+          return {
+            valor: ensaio.valor.toString(),
+            unidade: ensaio.unidade || '-',
+            norma: ensaio.norma || '-'
+          };
+        }
+      }
+      
+      if (tipo === 'calculo' && amostra_detalhes_selecionada.ultimo_calculo) {
+        const calculo = amostra_detalhes_selecionada.ultimo_calculo.find((c: any) => 
+          c.calculos && c.calculos.toLowerCase().includes(nome.toLowerCase())
+        );
+        if (calculo && calculo.resultados !== null && calculo.resultados !== undefined) {
+          return {
+            valor: calculo.resultados.toString(),
+            unidade: '%',
+            norma: nome.includes('Retenção') ? 'NBR13277' : (nome.includes('Teor de Ar') ? 'NBR13278' : '-')
+          };
+        }
+      }
+      
+      return { valor: 'nd', unidade: '-', norma: '-' };
+    };
+    
+    // Tabela 1: Ensaio no estado fresco (FIXA) - só renderiza se houver ensaios frescos selecionados
+    if (temEnsaiosFresco) {
+      const headFresco = [
+        [{ content: 'Ensaios no estado fresco', colSpan: 4 }],
+        [
+          { content: 'Ensaio' },
+          { content: 'Unid' },
+          { content: 'Valor' },
+          { content: 'Norma'},
+        ]
+      ];
+      
+      const bodyFresco: any[] = [];
+      
+      // Processar apenas ensaios selecionados pelo usuário
+      this.ensaios_selecionados.forEach((selected: any) => {
+        // Verificar se é um ensaio fresco (não é peneira e não é estado solto/endurecido)
+        const isEstadoFresco = !selected.isPeneira && 
+                               selected.id !== 'peneira_ret_acum_200' && 
+                               selected.id !== 'peneira_finos_200' &&
+                               (!selected.estado || selected.estado === 'Fresco' || selected.estado === 'fresco');
+        
+        if (!isEstadoFresco) return; // Pular se não for fresco
+        
+        // Buscar o ensaio nos dados da amostra
+        let ensaioEncontrado: any = null;
+        let tipo: 'ensaio' | 'calculo' = 'ensaio';
+        
+        // Buscar em ensaios_utilizados
+        if (amostra_detalhes_selecionada.ultimo_ensaio?.ensaios_utilizados) {
+          ensaioEncontrado = amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.find((e: any) => e.id === selected.id);
+        }
+        
+        // Buscar em calculos se não encontrou em ensaios
+        if (!ensaioEncontrado && amostra_detalhes_selecionada.ultimo_calculo) {
+          amostra_detalhes_selecionada.ultimo_calculo.forEach((calculo: any) => {
+            if (!ensaioEncontrado && calculo.ensaios_utilizados) {
+              const encontrado = calculo.ensaios_utilizados.find((e: any) => e.id === selected.id);
+              if (encontrado) {
+                ensaioEncontrado = encontrado;
+                tipo = 'calculo';
+              }
+            }
+          });
+        }
+        
+        if (ensaioEncontrado) {
+          const unidade = ensaioEncontrado.unidade || '-';
+          const valor = ensaioEncontrado.valor || 'nd';
+          const norma = ensaioEncontrado.norma || '-';
+          
+          bodyFresco.push([
+            { content: selected.descricao || ensaioEncontrado.descricao },
+            { content: unidade },
+            { content: valor },
+            { content: norma }
+          ]);
+          
+          if (valor !== 'nd') {
+            this.descricaoApi += `${selected.descricao}: ${valor} ${unidade}; `;
+          }
+        }
+      });
+      
+      autoTable(doc, {
+        startY: contadorLinhas,
+        head: headFresco,
+        body: bodyFresco,
+        theme: "grid",
+        styles: {
+          fontSize: 8,
+          halign: 'left',
+          valign: 'middle',
+          cellPadding: 1,
+        },
+        headStyles: {
+          fillColor: [220, 220, 220],
+          textColor: 0,
+          lineWidth: 0.1,
+          halign: 'center',
+        },
+        bodyStyles: {
+          lineWidth: 0.1,
+          halign: 'left',
+        },
+      });
+      
+      // Atualizar contadorLinhas após a tabela fresco
+      contadorLinhas = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 10 : contadorLinhas + 10;
+    }
+    
+    // Código antigo comentado para não interferir
+    /*
     if(amostra_detalhes_selecionada.ultimo_ensaio && amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados){
       amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
         if(ensaios_utilizados.estado == 'Fresco'){
@@ -4451,6 +4912,11 @@ duplicata(amostra: any): void {
         }
       });
     }
+    */
+    // FIM DO COMENTÁRIO DO CÓDIGO ANTIGO QUE ESTAVA GERANDO TABELA VAZIA
+    
+    /*
+    // Mais código antigo que também precisa ser comentado
     if(amostra_detalhes_selecionada.ultimo_calculo){
       amostra_detalhes_selecionada.ultimo_calculo.forEach((ultimo_calculo: any) => {
         ultimo_calculo.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
@@ -4519,90 +4985,122 @@ duplicata(amostra: any): void {
         });
       });
     }
-    // Posição após a última tabela de ensaios
-    contadorLinhas = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 10 : contadorLinhas + 10;
+    */
+    // FIM DO CÓDIGO ANTIGO COMENTADO
 
-     // ====== TABELA DE solto ===================================================
-    const headSolto = [
-      [
-        { content: 'Ensaio no estado solto', colSpan: 6 }
-      ],
-       [
-        { content: 'Ensaio' },
-        { content: 'Valor' },
-        { content: 'Unid' },
-        { content: 'Garantia' },
-        { content: ''},
-        { content: 'Norma'},
-      ]
-    ];
-    const bodySolto: any[] = [];
-
-    if(amostra_detalhes_selecionada.ultimo_ensaio && amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados){
-      amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
-        if(ensaios_utilizados.estado == 'Solto'){
-          this.ensaios_selecionados.forEach((selected: any) => {
-            const linha: any[] = [];
-
-            if (selected.id === ensaios_utilizados.id) {
-              let norma: string = '-';
-              if (ensaios_utilizados.norma) {
-                norma = ensaios_utilizados.norma;
-              }
-              let unidade: string = '-';
-              if (ensaios_utilizados.unidade) {
-                unidade = ensaios_utilizados.unidade;
-              }
-              let valor: string = '-';
-              if (ensaios_utilizados.valor) {
-                valor = ensaios_utilizados.valor;
-              }
-
-              let garantia_num: string = '-';
-              let garantia_texto: string = '-';
-              if (selected.garantia) {
-                const aux = selected.garantia.split(' ');
-
-                garantia_num = aux[0]; 
-                garantia_texto = aux[1]; 
-              }
-
-              this.descricaoApi += ensaios_utilizados.descricao+': '+valor+''+unidade+'; ';
-
-              linha.push({ content: ensaios_utilizados.descricao });
-              linha.push({ content: valor });
-              linha.push({ content: unidade });
-              linha.push({ content: garantia_num });
-              linha.push({ content: garantia_texto });
-              linha.push({ content: norma });
-              bodySolto.push(linha);
-            }
-          });
+    // ====== TABELA FIXA DE ESTADO SOLTO ===================================================
+    if (temEnsaiosSolto) {
+      const headSolto = [
+        [{ content: 'Ensaios no estado solto', colSpan: 4 }],
+        [
+          { content: 'Ensaio' },
+          { content: 'Unid' },
+          { content: 'Valor' },
+          { content: 'Norma'},
+        ]
+      ];
+      
+      const ensaiosSoltoDisponiveis = [
+        { id: 'massa_unitaria', nome: 'Massa Unitária (solto)', busca: 'massa unitária', tipo: 'ensaio' as const, unidadePadrao: 'kg/m³', normaPadrao: 'NBR13278', campoPeneira: undefined },
+        { id: 'massa_especifica', nome: 'Massa específica', busca: 'massa específica', tipo: 'ensaio' as const, unidadePadrao: '', normaPadrao: 'NBR 16605', campoPeneira: undefined },
+        { id: 'peneira_ret_acum_200', nome: 'Ret ACUM < Ret #200 (0,075mm)', busca: 'ret acum', tipo: 'peneira' as const, unidadePadrao: '%', normaPadrao: 'NBR16973', campoPeneira: 'porcentual_retido' },
+        { id: 'peneira_finos_200', nome: 'Finos < #200', busca: 'finos', tipo: 'peneira' as const, unidadePadrao: '%', normaPadrao: 'NBR16973', campoPeneira: 'passante' },
+      ];
+      
+      const bodySolto: any[] = [];
+      
+      // Filtrar apenas os ensaios selecionados pelo usuário
+      this.ensaios_selecionados.forEach((selected: any) => {
+        // Verificar se é um item de peneira especial
+        const itemConfig = ensaiosSoltoDisponiveis.find(e => e.id === selected.id);
+        
+        if (itemConfig) {
+          // É um item da lista fixa (incluindo peneiras)
+          const resultado = buscarValorEnsaio(itemConfig.busca, itemConfig.tipo, itemConfig.campoPeneira);
+          const unidade = resultado.unidade !== '-' ? resultado.unidade : itemConfig.unidadePadrao;
+          const norma = resultado.norma !== '-' ? resultado.norma : itemConfig.normaPadrao;
           
-          autoTable(doc, {
-            startY: contadorLinhas,
-            head: headSolto,
-            body: bodySolto,
-            theme: "grid",
-            styles: {
-              fontSize: 8,
-              halign: 'left',   // 🔹 alinhamento horizontal à esquerda
-              valign: 'middle',
-              cellPadding: 1,
-            },
-            headStyles: {
-              fillColor: [220, 220, 220],
-              textColor: 0,
-              lineWidth: 0.1,
-              halign: 'left',   // 🔹 também no cabeçalho
-            },
-            bodyStyles: {
-              lineWidth: 0.1,
-              halign: 'left',   // 🔹 e no corpo
-            },
-          });
+          bodySolto.push([
+            { content: itemConfig.nome },
+            { content: unidade },
+            { content: resultado.valor },
+            { content: norma }
+          ]);
+          
+          if (resultado.valor !== 'nd') {
+            this.descricaoApi += `${itemConfig.nome}: ${resultado.valor} ${unidade}; `;
+          }
+        } else {
+          // É um ensaio normal do banco de dados
+          if (selected.estado === 'solto' || selected.estado === 'Solto' || selected.isPeneira) {
+            // Buscar o valor do ensaio
+            let valor = 'nd';
+            let unidade = '-';
+            let norma = '-';
+            
+            if (amostra_detalhes_selecionada.ultimo_ensaio?.ensaios_utilizados) {
+              const ensaio = amostra_detalhes_selecionada.ultimo_ensaio.ensaios_utilizados.find((e: any) => e.id === selected.id);
+              if (ensaio) {
+                valor = ensaio.valor || 'nd';
+                unidade = ensaio.unidade || '-';
+                norma = ensaio.norma || '-';
+              }
+            }
+            
+            if (amostra_detalhes_selecionada.ultimo_calculo && valor === 'nd') {
+              for (const calculo of amostra_detalhes_selecionada.ultimo_calculo) {
+                const ensaio = calculo.ensaios_utilizados?.find((e: any) => e.id === selected.id);
+                if (ensaio) {
+                  valor = ensaio.valor || 'nd';
+                  unidade = ensaio.unidade || '-';
+                  norma = ensaio.norma || '-';
+                  break;
+                }
+              }
+            }
+            
+            bodySolto.push([
+              { content: selected.descricao },
+              { content: unidade },
+              { content: valor },
+              { content: norma }
+            ]);
+            
+            if (valor !== 'nd') {
+              this.descricaoApi += `${selected.descricao}: ${valor} ${unidade}; `;
+            }
+          }
         }
       });
+      
+      // Só renderizar a tabela se houver dados
+      if (bodySolto.length > 0) {
+        autoTable(doc, {
+          startY: contadorLinhas,
+          head: headSolto,
+          body: bodySolto,
+          theme: "grid",
+          styles: {
+            fontSize: 8,
+            halign: 'left',
+            valign: 'middle',
+            cellPadding: 1,
+          },
+          headStyles: {
+            fillColor: [220, 220, 220],
+            textColor: 0,
+            lineWidth: 0.1,
+            halign: 'center',
+          },
+          bodyStyles: {
+            lineWidth: 0.1,
+            halign: 'left',
+          },
+        });
+        
+        // Atualizar contadorLinhas após a tabela solto
+        contadorLinhas = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 10 : contadorLinhas + 10;
+      }
     }
 
     if(amostra_detalhes_selecionada.ultimo_calculo){
@@ -4643,10 +5141,12 @@ duplicata(amostra: any): void {
                 linha.push({ content: garantia_num });
                 linha.push({ content: garantia_texto });
                 linha.push({ content: norma });
-                bodySolto.push(linha);
+                // bodySolto.push(linha); // COMENTADO - usando nova implementação
               }
             });
             
+            // CÓDIGO ANTIGO COMENTADO - usando nova implementação condicional
+            /*
             autoTable(doc, {
               startY: contadorLinhas,
               head: headSolto,
@@ -4669,6 +5169,7 @@ duplicata(amostra: any): void {
                 halign: 'left',   // 🔹 e no corpo
               },
             });
+            */
           }
         });
       });
@@ -4832,160 +5333,659 @@ duplicata(amostra: any): void {
     contadorLinhas = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 10 : contadorLinhas + 10;
 
     console.log(amostra_detalhes_selecionada)
+    
+    // === Tabela de MÓDULO DE ELASTICIDADE ===
+    if (amostra_detalhes_selecionada.modulo_elasticidade) {
+      const headModuloElasticidade = [
+        [
+          { content: 'Determinação do Módulo de Elasticidade', colSpan: 2 }
+        ],
+        [
+          { content: 'CP' },
+          { content: 'pMax (kg/m³)' }
+        ]
+      ];
+      
+      const bodyModuloElasticidade: any[] = [];
+      
+      // Adicionar CP1
+      if (amostra_detalhes_selecionada.modulo_elasticidade.cp1) {
+        const cp1 = amostra_detalhes_selecionada.modulo_elasticidade.cp1;
+        bodyModuloElasticidade.push([
+          { content: 'CP1' },
+          { content: cp1.pMax ? `${cp1.pMax.toFixed(2)} kg/m³` : '-' }
+        ]);
+      }
+      
+      // Adicionar CP2
+      if (amostra_detalhes_selecionada.modulo_elasticidade.cp2) {
+        const cp2 = amostra_detalhes_selecionada.modulo_elasticidade.cp2;
+        bodyModuloElasticidade.push([
+          { content: 'CP2' },
+          { content: cp2.pMax ? `${cp2.pMax.toFixed(2)} kg/m³` : '-' }
+        ]);
+      }
+      
+      // Adicionar CP3
+      if (amostra_detalhes_selecionada.modulo_elasticidade.cp3) {
+        const cp3 = amostra_detalhes_selecionada.modulo_elasticidade.cp3;
+        bodyModuloElasticidade.push([
+          { content: 'CP3' },
+          { content: cp3.pMax ? `${cp3.pMax.toFixed(2)} kg/m³` : '-' }
+        ]);
+      }
+      
+      // Adicionar Média
+      if (amostra_detalhes_selecionada.modulo_elasticidade.media) {
+        const media = amostra_detalhes_selecionada.modulo_elasticidade.media;
+        bodyModuloElasticidade.push([
+          { content: 'Média', styles: { fontStyle: 'bold' } },
+          { content: media.pMax ? `${media.pMax.toFixed(2)} kg/m³` : '-', styles: { fontStyle: 'bold' } }
+        ]);
+      }
+      
+      // Renderizar tabela apenas se houver dados
+      if (bodyModuloElasticidade.length > 0) {
+        autoTable(doc, {
+          startY: contadorLinhas,
+          head: headModuloElasticidade,
+          body: bodyModuloElasticidade,
+          theme: "grid",
+          styles: {
+            fontSize: 8,
+            halign: 'center',
+            valign: 'middle',
+            cellPadding: 1,
+          },
+          headStyles: {
+            fillColor: [220, 220, 220],
+            textColor: 0,
+            lineWidth: 0.1,
+            halign: 'center',
+          },
+          bodyStyles: {
+            lineWidth: 0.1,
+            halign: 'center',
+          },
+        });
+        
+        // Atualizar contadorLinhas após a tabela
+        contadorLinhas = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 10 : contadorLinhas + 10;
+      }
+    }
+    
     // === Tabela de FLEXÃO ===
-    const headFlexao = [
-      [
-        { content: 'Determinação da resistência potencial à flexão', colSpan: 5 }
-      ],
-      [
-        { content: 'CP' },
-        { content: 'Carga de Ruptura à Flexão (N)' },
-        { content: 'Resist. à Tração na Flexão (Mpa)' },
-        { content: 'Resist. Média (Mpa)' },
-        { content: 'Resist. Tração na Flexão' },
-      ]
-    ];
-
-    // --- Cálculos das colunas de flexão ---
-    if(amostra_detalhes_selecionada.flexao){
-      const flexaoValores =
-        amostra_detalhes_selecionada.flexao
-          ?.map((item: any) => item.flexao_mpa)
-          .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor))
-        || [];
-
-      const mediaFlexao = flexaoValores.length
-        ? flexaoValores.reduce((a: number, b: number) => a + b, 0) / flexaoValores.length
-        : 0;
-
-      const maxFlexao = flexaoValores.length ? Math.max(...flexaoValores) : 0;
-      const minFlexao = flexaoValores.length ? Math.min(...flexaoValores) : 0;
-
-      // Formatados com 2 casas decimais
-      const media_flexao = mediaFlexao.toFixed(2);
-      const maximo_flexao = maxFlexao.toFixed(2);
-      const minimo_flexao = minFlexao.toFixed(2);
-
-      const bodyFlexao = [
-        ...amostra_detalhes_selecionada.flexao?.map((item: any) => [
-          item.cp ?? item.cp ?? item.cp ?? '',
-          item.flexao_n ?? '',
-          item.flexao_mpa ?? '',
-          item.media_mpa ?? '',
-          item.tracao_flexao ?? '',
-        ]),
-
+    if (amostra_detalhes_selecionada.flexao) {
+      const headFlexao = [
         [
-          { content: 'Média Flexão (Mpa)', colSpan: 3, styles: { halign: 'left' } },
-          media_flexao
+          { content: 'Determinação da resistência à tração na flexão e à compressão', colSpan: 4 }
         ],
         [
-          { content: 'Resultado Máx (Mpa)', colSpan: 3, styles: { halign: 'left' } },
-          maximo_flexao
-        ],
-        [
-          { content: 'Resultado Mín (MPa)', colSpan: 3, styles: { halign: 'left' } },
-          minimo_flexao
-        ],
+          { content: 'CP' },
+          { content: 'Carga de Ruptura à Flexão (N)' },
+          { content: 'Resist. à Tração na Flexão (MPa)', colSpan: 2 }
+        ]
+      ];
       
+      const bodyFlexao: any[] = [];
+      const flexao = amostra_detalhes_selecionada.flexao;
+      
+      // Adicionar CP1
+      if (flexao.carga_ruptura?.cp1 !== undefined) {
+        bodyFlexao.push([
+          { content: 'CP1' },
+          { content: flexao.carga_ruptura.cp1 || '-' },
+          { content: flexao.media_individual?.cp1?.toFixed(2) || '-', colSpan: 2 }
+        ]);
+      }
+      
+      // Adicionar CP2
+      if (flexao.carga_ruptura?.cp2 !== undefined) {
+        bodyFlexao.push([
+          { content: 'CP2' },
+          { content: flexao.carga_ruptura.cp2 || '-' },
+          { content: flexao.media_individual?.cp2?.toFixed(2) || '-', colSpan: 2 }
+        ]);
+      }
+      
+      // Adicionar CP3
+      if (flexao.carga_ruptura?.cp3 !== undefined) {
+        bodyFlexao.push([
+          { content: 'CP3' },
+          { content: flexao.carga_ruptura.cp3 || '-' },
+          { content: flexao.media_individual?.cp3?.toFixed(2) || '-', colSpan: 2 }
+        ]);
+      }
+      
+      // Adicionar Média Geral
+      bodyFlexao.push([
+        { content: 'Média', styles: { fontStyle: 'bold' } },
+        { content: '' },
+        { content: flexao.media_geral?.toFixed(2) || '-', colSpan: 2, styles: { fontStyle: 'bold', fillColor: [255, 255, 200] } }
+      ]);
+      
+      // Adicionar Desvio Padrão se existir
+      if (amostra_detalhes_selecionada.flexao_desvio_padrao_geral !== null && amostra_detalhes_selecionada.flexao_desvio_padrao_geral !== undefined) {
+        bodyFlexao.push([
+          { content: 'Desvio Padrão', styles: { fontStyle: 'bold' } },
+          { content: '' },
+          { content: amostra_detalhes_selecionada.flexao_desvio_padrao_geral?.toFixed(2) || '-', colSpan: 2, styles: { fontStyle: 'bold', fillColor: [230, 240, 255] } }
+        ]);
+      }
+      
+      // Adicionar Desvio Absoluto Máximo
+      bodyFlexao.push([
+        { content: 'Desvio Absoluto Máximo (MPa)', colSpan: 3, styles: { halign: 'left' } },
+        { content: flexao.desvio_absoluto_maximo?.toFixed(2) || '-' }
+      ]);
+      
+      // Renderizar tabela apenas se houver dados
+      if (bodyFlexao.length > 0) {
+        autoTable(doc, {
+          startY: contadorLinhas,
+          head: headFlexao,
+          body: bodyFlexao,
+          theme: "grid",
+          styles: {
+            fontSize: 8,
+            halign: 'center',
+            valign: 'middle',
+            cellPadding: 1,
+          },
+          headStyles: {
+            fillColor: [220, 220, 220],
+            textColor: 0,
+            lineWidth: 0.1,
+            halign: 'center',
+          },
+          bodyStyles: {
+            lineWidth: 0.1,
+            halign: 'center',
+          },
+        });
+        
+        contadorLinhas = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 10 : contadorLinhas + 10;
+      }
+    }
+
+    // === Tabela de COMPRESSÃO ===
+    if (amostra_detalhes_selecionada.compressao) {
+      const headCompressao = [
+        [
+          { content: 'Determinação da resistência à compressão', colSpan: 4 }
+        ],
+        [
+          { content: 'CP' },
+          { content: 'Carga de Ruptura à Compressão (N)' },
+          { content: 'Resist. à Compressão (MPa)', colSpan: 2 }
+        ]
+      ];
+      
+      const bodyCompressao: any[] = [];
+      const compressao = amostra_detalhes_selecionada.compressao;
+      
+      // Adicionar CP1
+      if (compressao.carga_ruptura?.cp1 !== undefined) {
+        bodyCompressao.push([
+          { content: 'CP1' },
+          { content: compressao.carga_ruptura.cp1 || '-' },
+          { content: compressao.media_individual?.cp1?.toFixed(2) || '-', colSpan: 2 }
+        ]);
+      }
+      
+      // Adicionar CP2
+      if (compressao.carga_ruptura?.cp2 !== undefined) {
+        bodyCompressao.push([
+          { content: 'CP2' },
+          { content: compressao.carga_ruptura.cp2 || '-' },
+          { content: compressao.media_individual?.cp2?.toFixed(2) || '-', colSpan: 2 }
+        ]);
+      }
+      
+      // Adicionar CP3
+      if (compressao.carga_ruptura?.cp3 !== undefined) {
+        bodyCompressao.push([
+          { content: 'CP3' },
+          { content: compressao.carga_ruptura.cp3 || '-' },
+          { content: compressao.media_individual?.cp3?.toFixed(2) || '-', colSpan: 2 }
+        ]);
+      }
+      
+      // Adicionar CP4
+      if (compressao.carga_ruptura?.cp4 !== undefined) {
+        bodyCompressao.push([
+          { content: 'CP4' },
+          { content: compressao.carga_ruptura.cp4 || '-' },
+          { content: compressao.media_individual?.cp4?.toFixed(2) || '-', colSpan: 2 }
+        ]);
+      }
+      
+      // Adicionar CP5
+      if (compressao.carga_ruptura?.cp5 !== undefined) {
+        bodyCompressao.push([
+          { content: 'CP5' },
+          { content: compressao.carga_ruptura.cp5 || '-' },
+          { content: compressao.media_individual?.cp5?.toFixed(2) || '-', colSpan: 2 }
+        ]);
+      }
+      
+      // Adicionar CP6
+      if (compressao.carga_ruptura?.cp6 !== undefined) {
+        bodyCompressao.push([
+          { content: 'CP6' },
+          { content: compressao.carga_ruptura.cp6 || '-' },
+          { content: compressao.media_individual?.cp6?.toFixed(2) || '-', colSpan: 2 }
+        ]);
+      }
+      
+      // Adicionar Média Geral
+      bodyCompressao.push([
+        { content: 'Média', styles: { fontStyle: 'bold' } },
+        { content: '' },
+        { content: compressao.media_geral?.toFixed(2) || '-', colSpan: 2, styles: { fontStyle: 'bold', fillColor: [255, 255, 200] } }
+      ]);
+      
+      // Adicionar Desvio Padrão se existir
+      if (amostra_detalhes_selecionada.compressao_desvio_padrao_geral !== null && amostra_detalhes_selecionada.compressao_desvio_padrao_geral !== undefined) {
+        bodyCompressao.push([
+          { content: 'Desvio Padrão', styles: { fontStyle: 'bold' } },
+          { content: '' },
+          { content: amostra_detalhes_selecionada.compressao_desvio_padrao_geral?.toFixed(2) || '-', colSpan: 2, styles: { fontStyle: 'bold', fillColor: [230, 240, 255] } }
+        ]);
+      }
+      
+      // Adicionar Desvio Absoluto Máximo
+      bodyCompressao.push([
+        { content: 'Desvio Absoluto Máximo (MPa)', colSpan: 3, styles: { halign: 'left' } },
+        { content: compressao.desvio_absoluto_maximo?.toFixed(2) || '-' }
+      ]);
+      
+      // Renderizar tabela apenas se houver dados
+      if (bodyCompressao.length > 0) {
+        autoTable(doc, {
+          startY: contadorLinhas,
+          head: headCompressao,
+          body: bodyCompressao,
+          theme: "grid",
+          styles: {
+            fontSize: 8,
+            halign: 'center',
+            valign: 'middle',
+            cellPadding: 1,
+          },
+          headStyles: {
+            fillColor: [220, 220, 220],
+            textColor: 0,
+            lineWidth: 0.1,
+            halign: 'center',
+          },
+          bodyStyles: {
+            lineWidth: 0.1,
+            halign: 'center',
+          },
+        });
+        
+        contadorLinhas = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 10 : contadorLinhas + 10;
+      }
+    }
+
+    // === Tabela de VARIAÇÃO DIMENSIONAL E MASSA ===
+    if (amostra_detalhes_selecionada.variacao_dimensional || amostra_detalhes_selecionada.variacao_massa) {
+      const headVariacao = [
+        [
+          { content: 'Determinação da variação dimencional linear (Retração/ Expansão) - NBR 15261', colSpan: 6 }
+        ],
+        [
+          { content: 'Data' },
+          { content: 'Idade' },
+          { content: 'Retração/ Expansão (mm/m)', colSpan: 2 },
+          { content: 'Variação de massa (%)', colSpan: 2 }
+        ],
+        [
+          { content: '' },
+          { content: '' },
+          { content: 'Média' },
+          { content: 'Desvio Máximo' },
+          { content: 'Média' },
+          { content: 'Desvio Máximo' }
+        ]
+      ];
+      
+      const bodyVariacao: any[] = [];
+      const varDim = amostra_detalhes_selecionada.variacao_dimensional;
+      const varMassa = amostra_detalhes_selecionada.variacao_massa;
+      
+      // Helper para formatar data
+      const formatarData = (dataStr: string) => {
+        if (!dataStr) return '-';
+        const data = new Date(dataStr);
+        return data.toLocaleDateString('pt-BR');
+      };
+      
+      // Linha 1 dia
+      if (varDim?.l1 || varMassa?.m1) {
+        bodyVariacao.push([
+          { content: formatarData(varDim?.l1?.data || varMassa?.m1?.data) },
+          { content: '1' },
+          { content: varDim?.l1?.media?.toFixed(2) || '-' },
+          { content: varDim?.l1?.desvio_padrao?.toFixed(2) || '-' },
+          { content: varMassa?.m1?.media?.toFixed(2) || '-' },
+          { content: varMassa?.m1?.desvio_padrao?.toFixed(2) || '-' }
+        ]);
+      }
+      
+      // Linha 7 dias
+      if (varDim?.l7 || varMassa?.m7) {
+        bodyVariacao.push([
+          { content: formatarData(varDim?.l7?.data || varMassa?.m7?.data) },
+          { content: '7' },
+          { content: varDim?.l7?.media?.toFixed(2) || '-' },
+          { content: varDim?.l7?.desvio_padrao?.toFixed(2) || '-' },
+          { content: varMassa?.m7?.media?.toFixed(2) || '-' },
+          { content: varMassa?.m7?.desvio_padrao?.toFixed(2) || '-' }
+        ]);
+      }
+      
+      // Linha 28 dias
+      if (varDim?.l28 || varMassa?.m28) {
+        bodyVariacao.push([
+          { content: formatarData(varDim?.l28?.data || varMassa?.m28?.data) },
+          { content: '28' },
+          { content: varDim?.l28?.media?.toFixed(2) || '-' },
+          { content: varDim?.l28?.desvio_padrao?.toFixed(2) || '-' },
+          { content: varMassa?.m28?.media?.toFixed(2) || '-' },
+          { content: varMassa?.m28?.desvio_padrao?.toFixed(2) || '-' }
+        ]);
+      }
+      
+      // Renderizar tabela apenas se houver dados
+      if (bodyVariacao.length > 0) {
+        autoTable(doc, {
+          startY: contadorLinhas,
+          head: headVariacao,
+          body: bodyVariacao,
+          theme: "grid",
+          styles: {
+            fontSize: 8,
+            halign: 'center',
+            valign: 'middle',
+            cellPadding: 1,
+          },
+          headStyles: {
+            fillColor: [220, 220, 220],
+            textColor: 0,
+            lineWidth: 0.1,
+            halign: 'center',
+          },
+          bodyStyles: {
+            lineWidth: 0.1,
+            halign: 'center',
+          },
+        });
+        
+        contadorLinhas = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 10 : contadorLinhas + 10;
+      }
+    }
+
+    // === Tabela de CAPILARIDADE (lado a lado com gráfico) ===
+    if (amostra_detalhes_selecionada.capilaridade && amostra_detalhes_selecionada.capilaridade.dados) {
+      const capData = amostra_detalhes_selecionada.capilaridade;
+
+      // Verificar se precisa adicionar nova página
+      if (contadorLinhas > 200) {
+        doc.addPage();
+        contadorLinhas = 20;
+      }
+
+      // Preparar dados para o gráfico
+      this.dadosTabela = capData.dados.map((ponto: any) => ({
+        tempo: ponto.tLabel,
+        valor: ponto.deltaMt,
+        raizT: ponto.raizT
+      }));
+
+      // Calcular a linha de regressão para adicionar ao gráfico
+      const sumX = capData.dados.reduce((sum: number, p: any) => sum + p.raizT, 0);
+      const sumY = capData.dados.reduce((sum: number, p: any) => sum + p.deltaMt, 0);
+      const sumXY = capData.dados.reduce((sum: number, p: any) => sum + (p.raizT * p.deltaMt), 0);
+      const sumX2 = capData.dados.reduce((sum: number, p: any) => sum + (p.raizT * p.raizT), 0);
+      const n = capData.dados.length;
+
+      // y = ax + b
+      const a = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+      const b = (sumY - a * sumX) / n;
+
+      // Gerar o gráfico antes de adicionar ao PDF
+      await this.montarGrafico(a, b);
+
+      // Cabeçalho da tabela
+      const headCapilaridade = [
+        ['Determinação do Coeficiente de absorção de água por capilaridade', 'NBR 15148'],
+        ['Tempo', 'Δmt (kg/m²)']
       ];
 
-      // --- Inserir no PDF ---
+      // Corpo da tabela com os dados
+      const bodyCapilaridade: any[] = [];
+      if (capData.dados && Array.isArray(capData.dados)) {
+        capData.dados.forEach((ponto: any) => {
+          bodyCapilaridade.push([
+            ponto.tLabel || '-',
+            ponto.deltaMt !== null && ponto.deltaMt !== undefined ? ponto.deltaMt.toFixed(2) : '-'
+          ]);
+        });
+      }
+
+      const tableStartY = contadorLinhas;
+      const tableX = 14;
+      const tableWidth = 120; // Aumentado de 70 para 120mm
+
+      // Renderizar tabela (agora mais larga)
       autoTable(doc, {
-        head: headFlexao,
-        body: bodyFlexao,
-        startY: contadorLinhas, // ou a posição desejada
+        startY: tableStartY,
+        head: headCapilaridade,
+        body: bodyCapilaridade,
+        theme: 'grid',
         styles: {
-          fontSize: 8,
+          fontSize: 9,
           halign: 'center',
           valign: 'middle',
-          cellPadding: 1,
+          cellPadding: 2,
         },
         headStyles: {
-          fillColor: [220, 220, 220],
+          fillColor: [255, 255, 255],
           textColor: 0,
           lineWidth: 0.1,
+          fontStyle: 'bold',
+          halign: 'center',
         },
         bodyStyles: {
           lineWidth: 0.1,
+          halign: 'center',
         },
-      });
+        columnStyles: {
+          0: { cellWidth: 60 }, // Aumentado de 35 para 60mm
+          1: { cellWidth: 60 }  // Aumentado de 35 para 60mm
+        },
+        tableWidth: tableWidth,
+        margin: { left: tableX }
+      } as any);
 
-      contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+      const tableFinalY = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY : tableStartY + 50;
+
+      // Adicionar gráfico ABAIXO da tabela
+      contadorLinhas = tableFinalY + 5; // Pequeno espaço após a tabela
+      
+       const imagens = amostra_detalhes_selecionada.amostra_detalhes.imagens;
+
+    const ultimaImagem = imagens.length ? imagens.reduce((prev: any, curr: any) => (curr.id > prev.id ? curr : prev)) : null;
+
+    if (ultimaImagem && ultimaImagem.image_url) {
+      const imageUrl = ultimaImagem.image_url;
+
+      try {
+        const img = await fetch(imageUrl)
+          .then(res => res.blob())
+          .then(blob => new Promise<string>((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.readAsDataURL(blob);
+          }));
+
+        const imgWidth = 150;
+        const imgHeight = 80;
+        const x = (doc.internal.pageSize.getWidth() - imgWidth) / 2;
+        const y = contadorLinhas;
+
+        doc.addImage(img, 'JPEG', x, y, imgWidth, imgHeight);
+
+        contadorLinhas = y + imgHeight + 10;
+
+      } catch (error) {
+        console.error('Erro ao carregar imagem:', error);
+      }
     }
 
-    const headCompressao = [
-      [
-        { content: 'Determinação da resistência potencial à compressão', colSpan: 5 }
-      ],
-      [
-        { content: 'CP' },
-        { content: 'Compressão (N)'},
-        { content: 'Compressão (Mpa)' },
-        { content: 'Média (Mpa)' },
-        { content: 'Tração na Compressão (Mpa)' },
-      ]
-    ];
+      // Coeficiente
+      const awValue = capData.aw_laboratorio || capData.aw_calculado || 0;
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "normal");
+      doc.text(
+        `Coeficiente de absorção de água por capilaridade (Wh): ${awValue.toFixed(1)} kg/m².h^0.5`,
+        14,
+        contadorLinhas
+      );
+      contadorLinhas += 6;
 
-    // --- Cálculos das colunas de compressão ---
-    if(amostra_detalhes_selecionada.compressao){
-      const compressaoValores = amostra_detalhes_selecionada.compressao
-        .map((item: any) => item.compressao_mpa)
-        .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
+      // Informações adicionais
+      doc.setFontSize(9);
+      doc.text('Data do ensaio: 10 e 11/09/2025', 14, contadorLinhas);
+      contadorLinhas += 5;
+      doc.text('Tipo de gráfico: Tipo A', 14, contadorLinhas);
+      contadorLinhas += 5;
+      doc.text('Quantidade de corpos de prova (CP): 05', 14, contadorLinhas);
+      contadorLinhas += 5;
+      doc.text('Duração do ensaio: 8h. Na medição de 8h, foi verificada umidade nas faces superiores dos CP\'s.', 14, contadorLinhas);
+      contadorLinhas += 5;
+      doc.text('Não foram registrados valores com diferença superior a +/- 20% da média entre os CP\'s.', 14, contadorLinhas);
+      contadorLinhas += 10;
+    }
 
-      const mediaCompressao = compressaoValores.length
-        ? compressaoValores.reduce((a: number, b: number) => a + b, 0) / compressaoValores.length
-        : 0;
-
-      const maxCompressao = compressaoValores.length ? Math.max(...compressaoValores) : 0;
-      const minCompressao = compressaoValores.length ? Math.min(...compressaoValores) : 0;
-
-      const bodyCompressao = [
-        ...amostra_detalhes_selecionada.compressao.map((item: any) => [
-          item.cp ?? item.cp ?? item.cp ?? '',
-          item.compressao_n ?? '',
-          item.compressao_mpa ?? '',
-          item.media_mpa ?? '',
-          item.tracao_compressao ?? '',
-        ]),
-
-        [
-          { content: 'Média Compressão (Mpa)', colSpan: 3, styles: { halign: 'left' } },
-          mediaCompressao.toFixed(2)
-        ],
-        [
-          { content: 'Resultado Máx (Mpa)', colSpan: 3, styles: { halign: 'left' } },
-          maxCompressao.toFixed(2)
-        ],
-        [
-          { content: 'Resultado Mín (Mpa)', colSpan: 3, styles: { halign: 'left' } },
-          minCompressao.toFixed(2)
-        ],
+    // Elasticidade Dinâmico
+    if (amostra_detalhes_selecionada.modulo_elasticidade) {
+      const dados = amostra_detalhes_selecionada.modulo_elasticidade;
       
+      // Calcular desvio padrão percentual
+      const calcularDesvioPercentual = (media: number | null, desvioPadrao: number | null): string => {
+        if (media && desvioPadrao && media !== 0) {
+          const percentual = (desvioPadrao / media) * 100;
+          return percentual.toFixed(2);
+        }
+        return '-';
+      };
+
+      const headElasticidadeDinamico = [
+        [
+          { content: 'Módulo de elasticidade dinâmico', colSpan: 2, styles: { halign: 'left' as const } },
+          { content: 'EN ISO 15148', styles: { halign: 'right' as const } }
+        ],
+        [
+          { content: 'Individual' },
+          { content: 'Média (Mpa)' },
+          { content: 'Desvio Padrão (%)' }
+        ]
       ];
 
-      autoTable(doc, {
-        head: headCompressao,
-        body: bodyCompressao,
-        startY: contadorLinhas, 
-        styles: {
-          fontSize: 8,
-          halign: 'center',
-          valign: 'middle',
-          cellPadding: 1,
-        },
-        headStyles: {
-          fillColor: [220, 220, 220],
-          textColor: 0,
-          lineWidth: 0.1,
-        },
-        bodyStyles: {
-          lineWidth: 0.1,
-        },
-      });
+      const bodyElasticidadeDinamico: any[] = [];
+      const mediaEd = dados.media?.ed || null;
+      
+      // Calcular desvio padrão do Ed se não vier do backend
+      let desvioPadraoEd = dados.media?.desvioPadraoEd || null;
+      
+      if (!desvioPadraoEd) {
+        const valoresEd: number[] = [];
+        if (dados.cp1?.ed != null && !isNaN(dados.cp1.ed)) valoresEd.push(dados.cp1.ed);
+        if (dados.cp2?.ed != null && !isNaN(dados.cp2.ed)) valoresEd.push(dados.cp2.ed);
+        if (dados.cp3?.ed != null && !isNaN(dados.cp3.ed)) valoresEd.push(dados.cp3.ed);
+        
+        if (valoresEd.length > 1) {
+          // Calcular desvio padrão manualmente
+          const media = valoresEd.reduce((sum, val) => sum + val, 0) / valoresEd.length;
+          const variancia = valoresEd.reduce((sum, val) => sum + Math.pow(val - media, 2), 0) / (valoresEd.length - 1);
+          desvioPadraoEd = Math.sqrt(variancia);
+        }
+      }
+      
+      const desvioPercentual = calcularDesvioPercentual(mediaEd, desvioPadraoEd);
 
-      contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+      // Verificar se há dados de CP
+      const temCP1 = dados.cp1 && dados.cp1.ed != null;
+      const temCP2 = dados.cp2 && dados.cp2.ed != null;
+      const temCP3 = dados.cp3 && dados.cp3.ed != null;
+
+      // CP1
+      bodyElasticidadeDinamico.push([
+        { content: 'CP1' },
+        { content: mediaEd ? `${mediaEd.toFixed(2)}` : '-' },
+        { content: desvioPercentual }
+      ]);
+
+      // CP2
+      bodyElasticidadeDinamico.push([
+        { content: 'CP2' },
+        { content: '' },
+        { content: '' }
+      ]);
+
+      // CP3
+      bodyElasticidadeDinamico.push([
+        { content: 'CP3' },
+        { content: '' },
+        { content: '' }
+      ]);
+
+      if (bodyElasticidadeDinamico.length > 0) {
+        autoTable(doc, {
+          startY: contadorLinhas,
+          head: headElasticidadeDinamico,
+          body: bodyElasticidadeDinamico,
+          theme: "grid",
+          styles: {
+            fontSize: 9,
+            halign: 'center',
+            valign: 'middle',
+            cellPadding: 2,
+          },
+          headStyles: {
+            fillColor: [220, 220, 220],
+            textColor: 0,
+            lineWidth: 0.1,
+          },
+          bodyStyles: {
+            lineWidth: 0.1,
+          },
+          columnStyles: {
+            0: { halign: 'center' },
+            1: { halign: 'center' },
+            2: { halign: 'center' }
+          },
+          didParseCell: function(data) {
+            // Mesclar células da coluna 1 (Média) e 2 (Desvio Padrão) nas linhas do body
+            if (data.section === 'body' && data.column.index > 0) {
+              if (data.row.index === 0) {
+                data.cell.rowSpan = 3;
+              } else {
+                // Ocultar as células das linhas 2 e 3 para colunas 1 e 2
+                data.cell.styles.fillColor = [255, 255, 255];
+                data.cell.styles.textColor = [255, 255, 255];
+              }
+            }
+          }
+        });
+
+        contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
+      }
     }
+
 
     // ====== TABELA head2/body2 ==================================================
     const head2 = [
@@ -5105,6 +6105,16 @@ duplicata(amostra: any): void {
     }
 
     // ====== TABELA head3/body3 ==================================================
+    
+    // Verificar se há espaço suficiente na página para a tabela superficial + imagem
+    const espacoNecessarioSuperficial = 130; // altura mínima necessária para renderizar a tabela + imagem (tabela ~80 + imagem 40 + margens 10)
+    const espacoDisponivel = doc.internal.pageSize.height - contadorLinhas - 20; // 20 é a margem inferior
+    
+    if (espacoDisponivel < espacoNecessarioSuperficial) {
+      doc.addPage();
+      contadorLinhas = 20; // Reset para o topo da nova página
+    }
+    
     const head3 = [
       [
         {content: 'Determinação da resistência potencial de aderência à tração superficial', colSpan: 11}
@@ -5628,8 +6638,6 @@ duplicata(amostra: any): void {
       contadorLinhas = (doc as any).lastAutoTable.finalY + 10;
     }
 
-    console.log('amostra_detalhes_selecionada', amostra_detalhes_selecionada);
-
     // ====== TABELA headRetracao/bodyRetracao ==================================================
     const headRetracao = [
       [
@@ -5644,7 +6652,7 @@ duplicata(amostra: any): void {
     ];
 
     // --- Cálculos das colunas de retração ---
-    if (amostra_detalhes_selecionada.retracao) {
+    if (amostra_detalhes_selecionada.retracao && Array.isArray(amostra_detalhes_selecionada.retracao)) {
       const retracaoMedias = amostra_detalhes_selecionada.retracao
         .map((item: any) => item.media)
         .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
@@ -5726,7 +6734,7 @@ duplicata(amostra: any): void {
     ];
 
     // --- Cálculos das colunas de elasticidade ---
-    if (amostra_detalhes_selecionada.elasticidade) {
+    if (amostra_detalhes_selecionada.elasticidade && Array.isArray(amostra_detalhes_selecionada.elasticidade)) {
       const elasticidadeModulos = amostra_detalhes_selecionada.elasticidade
         .map((item: any) => item.modulo)
         .filter((valor: any): valor is number => typeof valor === 'number' && !isNaN(valor));
@@ -6602,37 +7610,6 @@ duplicata(amostra: any): void {
       }
     }
 
-
-    const imagens = amostra_detalhes_selecionada.amostra_detalhes.imagens;
-
-    const ultimaImagem = imagens.length ? imagens.reduce((prev: any, curr: any) => (curr.id > prev.id ? curr : prev)) : null;
-
-    if (ultimaImagem && ultimaImagem.image_url) {
-      const imageUrl = ultimaImagem.image_url;
-
-      try {
-        const img = await fetch(imageUrl)
-          .then(res => res.blob())
-          .then(blob => new Promise<string>((resolve) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result as string);
-            reader.readAsDataURL(blob);
-          }));
-
-        const imgWidth = 100;
-        const imgHeight = 60;
-        const x = (doc.internal.pageSize.getWidth() - imgWidth) / 2;
-        const y = contadorLinhas;
-
-        doc.addImage(img, 'JPEG', x, y, imgWidth, imgHeight);
-
-        contadorLinhas = y + imgHeight + 10;
-
-      } catch (error) {
-        console.error('Erro ao carregar imagem:', error);
-      }
-    }
-
     // ====== Segunda página: Observações e rodapé ===============================
     doc.addImage(logoAssinaturaBase64, 'PNG', 84, contadorLinhas, 40, 30); // assinatura
 
@@ -7027,83 +8004,11 @@ duplicata(amostra: any): void {
     contadorLinhas += 105;
     doc.addImage(segunda_imagem_arg, 'PNG', 14, contadorLinhas, 182, 40) // x, y, largura, altura
 
-      await this.montarGrafico();
-
-    const canvas = this.graficoCanvas.nativeElement;
-    const imgData = canvas.toDataURL('image/png');
-
+   
+    
     contadorLinhas += 55;
-    // --- tabela de dados (só 2 colunas)
-    autoTable(doc, {
-      startY: contadorLinhas,
-      head: [['t', 'Δmt (kg/m²)']],
-      body: this.dadosTabela.map(d => [d.tempo, d.valor.toString()]),
-      theme: 'grid',
-      styles: { fontSize: 9, cellPadding: 2, halign: 'center' },
-      headStyles: { fontStyle: 'bold', fillColor: [255, 255, 255], textColor: 0 },
-      columnStyles: {
-        0: { cellWidth: 25 },
-        1: { cellWidth: 30 }
-      },
-      tableWidth: 55, // largura fixa da tabela
-      margin: { left: 14 } // margem esquerda
-    } as any);
-
-
-    // --- posição da tabela e do gráfico lado a lado
-    const tableY = contadorLinhas;
-    const tableX = 14;
-    const graphX = tableX + 60; // posição do gráfico à direita da tabela
-    const graphY = 180;
-    const graphW = 120;
-    const graphH = tableY - graphY;
-    // --- legenda embaixo
-    let finalY = 250;
-
-    doc.addImage(imgData, 'PNG', graphX, graphY, graphW, graphH);
-
-    // Texto principal com borda centralizado
-    const textoPrincipal = 'Coeficiente de absorção de água por capilaridade (Wh): 5,4   kg/m²·h^0.5';
-    doc.setFontSize(10);
-
-    // largura da página (A4 = 210mm) com margens
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const marginX = 14;
-    const boxWidth = pageWidth - marginX * 2; // largura da caixa
-    const boxHeight = 8; // altura fixa da caixa
-
-    // desenha borda
-    doc.rect(marginX, finalY - 5, boxWidth, boxHeight);
-
-    // centraliza texto dentro da caixa
-    doc.text(textoPrincipal, pageWidth / 2, finalY, { align: 'center' });
-
-    // avança depois da caixa
-    finalY += boxHeight + 2;
-
-    // --- bloco de informações alinhado à esquerda
-    doc.setFontSize(9);
-    const lineSpacing = 4.5; // diminui o espaço entre linhas
-
-    doc.text('Data do ensaio: 1 e 2/7/2025', marginX, finalY);
-    finalY += lineSpacing;
-    doc.text('Tipo de gráfico: Tipo A', marginX, finalY);
-    finalY += lineSpacing;
-    doc.text('Quantidade de corpos de prova (CP): 05', marginX, finalY);
-    finalY += lineSpacing;
-    doc.text(
-      'Duração do ensaio: 6h   Na medição de 6h, foi verificada umidade nas faces superiores dos CP\'s.',
-      marginX,
-      finalY
-    );
-    finalY += lineSpacing;
-    doc.text(
-      'Não foram registrados valores com diferença superior a +/- 20% da média entre os CP\'s.',
-      marginX,
-      finalY
-    );
-
-    // doc.addPage();
+    
+    doc.addPage();
     doc.addImage(logoAssinaturaBase64, 'PNG', 84, 238, 40, 30); // x, y, largura, altura
 
     doc.rect(14, 215, 182, 20); //tabela obs
@@ -7165,30 +8070,171 @@ duplicata(amostra: any): void {
   
     this.amostra_detalhes_selecionada = amostra_detalhes;
 
+    // Limpar arrays
     while (this.ensaios_laudo.length > 0) {
-        this.ensaios_laudo.pop(); // Removes elements one by one from the end
+        this.ensaios_laudo.pop();
+    }
+    while (this.ensaios_laudo_fresco.length > 0) {
+        this.ensaios_laudo_fresco.pop();
+    }
+    while (this.ensaios_laudo_solto.length > 0) {
+        this.ensaios_laudo_solto.pop();
     }
 
+    // Função helper para verificar se ensaio é permitido (busca mais flexível)
+    const verificaEnsaioFresco = (descricao: string): boolean => {
+      const desc = descricao.toLowerCase();
+      return desc.includes('densidade') && desc.includes('massa') ||
+             desc.includes('água') && desc.includes('consistência') ||
+             desc.includes('índice') && desc.includes('consistência') ||
+             desc.includes('análise') ||
+             desc.includes('retenção') ||
+             desc.includes('teor') && desc.includes('ar');
+    };
+    
+    const verificaEnsaioSolto = (descricao: string): boolean => {
+      const desc = descricao.toLowerCase();
+      return desc.includes('análise') || 
+             desc.includes('finos') ||
+             (desc.includes('ret') && desc.includes('acum')) ||
+             (desc.includes('ret acum') && desc.includes('#200'));
+    };
+
+    // Separar ensaios por estado, filtrando apenas os permitidos
     if(amostra_detalhes.ultimo_ensaio){
       amostra_detalhes.ultimo_ensaio.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
-        this.ensaios_laudo.push({
-            id: ensaios_utilizados.id,
-            descricao: ensaios_utilizados.descricao,
-            garantia: ensaios_utilizados.garantia
-          });
+        const descricao = ensaios_utilizados.descricao;
+        
+        // Verificar se o ensaio está na lista de permitidos
+        const isFrescoPermitido = verificaEnsaioFresco(descricao);
+        const isSoltoPermitido = verificaEnsaioSolto(descricao);
+        
+        if (!isFrescoPermitido && !isSoltoPermitido) {
+          return; // Pular ensaios que não estão nas listas
+        }
+        
+        const ensaio = {
+          id: ensaios_utilizados.id,
+          descricao: descricao,
+          garantia: ensaios_utilizados.garantia,
+          estado: ensaios_utilizados.estado
+        };
+        
+        // Classificar por estado
+        if((ensaios_utilizados.estado === 'solto' || ensaios_utilizados.estado === 'Solto') && isSoltoPermitido) {
+          this.ensaios_laudo_solto.push(ensaio);
+          this.ensaios_laudo.push(ensaio);
+        } else if(isFrescoPermitido) {
+          // Estado null, 'fresco', 'Fresco' vão para fresco
+          this.ensaios_laudo_fresco.push(ensaio);
+          this.ensaios_laudo.push(ensaio);
+        }
       });
     }
+    
+    // Cálculos vão para fresco (apenas os permitidos)
     if(amostra_detalhes.ultimo_calculo){
       amostra_detalhes.ultimo_calculo.forEach((ultimo_calculo: any) => {
         ultimo_calculo.ensaios_utilizados.forEach((ensaios_utilizados: any) => {
-          this.ensaios_laudo.push({
+          const descricao = ensaios_utilizados.descricao;
+          
+          // Verificar se o cálculo está na lista de permitidos
+          const isFrescoPermitido = verificaEnsaioFresco(descricao);
+          
+          if (!isFrescoPermitido) {
+            return; // Pular cálculos que não estão na lista
+          }
+          
+          const ensaio = {
             id: ensaios_utilizados.id,
-            descricao: ensaios_utilizados.descricao,
+            descricao: descricao,
             garantia: ensaios_utilizados.garantia
-          });
+          };
+          this.ensaios_laudo_fresco.push(ensaio);
+          this.ensaios_laudo.push(ensaio);
         });
       });
     }
+      
+    // Tentar buscar em peneiras
+    if(amostra_detalhes.peneiras?.peneiras && Array.isArray(amostra_detalhes.peneiras.peneiras)) {
+      const peneira200 = amostra_detalhes.peneiras.peneiras.find((p: any) => 
+        p.peneira?.includes('# 200') || 
+        p.peneira?.includes('#200') || 
+        p.peneira?.includes('0,075') || 
+        p.peneira?.includes('0.075')
+      );
+      
+
+      
+      if(peneira200) {
+        // Adicionar Ret ACUM
+        if(peneira200.porcentual_retido !== null && peneira200.porcentual_retido !== undefined) {
+          const retAcum = {
+            id: 'peneira_ret_acum_200',
+            descricao: 'Ret ACUM < Ret #200 (0,075mm)',
+            garantia: '',
+            estado: 'Solto',
+            isPeneira: true
+          };
+          this.ensaios_laudo_solto.push(retAcum);
+          this.ensaios_laudo.push(retAcum);
+        }
+        
+        // Adicionar Finos
+        if(peneira200.passante !== null && peneira200.passante !== undefined) {
+          const finos = {
+            id: 'peneira_finos_200',
+            descricao: 'Finos < #200',
+            garantia: '',
+            estado: 'Solto',
+            isPeneira: true
+          };
+          this.ensaios_laudo_solto.push(finos);
+          this.ensaios_laudo.push(finos);
+        }
+      }
+    }
+    
+    // Tentar buscar em peneiras_umidas
+    if(amostra_detalhes.peneiras_umidas?.peneiras && Array.isArray(amostra_detalhes.peneiras_umidas.peneiras)) {
+      const peneira200 = amostra_detalhes.peneiras_umidas.peneiras.find((p: any) => 
+        p.peneira?.includes('# 200') || 
+        p.peneira?.includes('#200') || 
+        p.peneira?.includes('0,075') || 
+        p.peneira?.includes('0.075')
+      );
+      
+      if(peneira200 && !this.ensaios_laudo_solto.find(e => e.id === 'peneira_ret_acum_200')) {
+        // Adicionar Ret ACUM se ainda não foi adicionado
+        if(peneira200.porcentual_retido !== null && peneira200.porcentual_retido !== undefined) {
+          const retAcum = {
+            id: 'peneira_ret_acum_200',
+            descricao: 'Ret ACUM < Ret #200 (0,075mm)',
+            garantia: '',
+            estado: 'Solto',
+            isPeneira: true
+          };
+          this.ensaios_laudo_solto.push(retAcum);
+          this.ensaios_laudo.push(retAcum);
+        }
+        
+        // Adicionar Finos se ainda não foi adicionado
+        if(peneira200.passante !== null && peneira200.passante !== undefined && !this.ensaios_laudo_solto.find(e => e.id === 'peneira_finos_200')) {
+          const finos = {
+            id: 'peneira_finos_200',
+            descricao: 'Finos < #200',
+            garantia: '',
+            estado: 'Solto',
+            isPeneira: true
+          };
+          this.ensaios_laudo_solto.push(finos);
+          this.ensaios_laudo.push(finos);
+
+        }
+      }
+    }
+    
     this.modalLaudo = true;
   }
 

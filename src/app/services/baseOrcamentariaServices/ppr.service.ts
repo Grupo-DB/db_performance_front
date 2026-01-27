@@ -6,9 +6,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class PprService {
-  private apiUrl = 'http://172.50.10.79:8008/ppr/realizado_ppr/'
-  private apiRealizadoUrl = 'http://172.50.10.79:8008/ppr/realizado_matriz/'
-  private orcadoUrl = 'http://172.50.10.79:8008/orcamento/orcamentosbase/calculosPpr/'
+  private apiUrl = 'https://managerdb.com.br/api/ppr/realizado_ppr/'
+  private apiRealizadoUrl = 'https://managerdb.com.br/api/ppr/realizado_matriz/'
+  private orcadoUrl = 'https://managerdb.com.br/api/orcamento/orcamentosbase/calculosPpr/'
   constructor(
     private httpClient: HttpClient
   ) { }

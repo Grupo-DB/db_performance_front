@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class GetTipoContratoService {
-  private apiUrl = 'http://172.50.10.79:8008/management/get_tipocontrato/'; 
+  private apiUrl = 'https://managerdb.com.br/api/management/get_tipocontrato/'; 
   constructor(private http: HttpClient) { }
 
   getTipocontratos(): Observable<any[]>{

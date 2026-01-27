@@ -7,11 +7,11 @@ import { Analise } from '../../pages/controleQualidade/analise/analise.component
   providedIn: 'root'
 })
 export class AnaliseService {
-  private analiseUrl = 'http://172.50.10.79:8008/analise/analise/';
-  private parecerUrl = 'http://172.50.10.79:8008/analise/chat/completions/';
-  private mediasEnsaiosUrl = 'http://172.50.10.79:8008/analise/analiseEnsaio/medias-ensaios-por-periodo/';
-  private mediasCalculosUrl = 'http://172.50.10.79:8008/analise/analiseCalculo/medias-por-periodo/';
-  private acompanhamentoUrl = 'http://172.50.10.79:8008/analise/analiseEnsaio/tempo-por-analise/';
+  private analiseUrl = 'https://managerdb.com.br/api/analise/analise/';
+  private parecerUrl = 'https://managerdb.com.br/api/analise/chat/completions/';
+  private mediasEnsaiosUrl = 'https://managerdb.com.br/api/analise/analiseEnsaio/medias-ensaios-por-periodo/';
+  private mediasCalculosUrl = 'https://managerdb.com.br/api/analise/analiseCalculo/medias-por-periodo/';
+  private acompanhamentoUrl = 'https://managerdb.com.br/api/analise/analiseEnsaio/tempo-por-analise/';
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
@@ -130,7 +130,7 @@ export class AnaliseService {
   //---------------------RESULTADOS---------------------
 
   getResultadosAnteriores(calculoDescricao: string, ensaioIds: number[], limit: number = 5): Observable<any[]> {
-    const url = `http://172.50.10.79:8008/analise/analise/resultados-anteriores/`;
+    const url = `https://managerdb.com.br/api/analise/analise/resultados-anteriores/`;
     
     // Corpo da requisição POST
     const body = {
@@ -143,7 +143,7 @@ export class AnaliseService {
   }
 
   getResultadosAnterioresEnsaios(ensaioDescricao: string, ensaioIds: number[], limit: number = 5): Observable<any[]> {
-    const url = `http://172.50.10.79:8008/analise/analise/resultados-anteriores/`;
+    const url = `https://managerdb.com.br/api/analise/analise/resultados-anteriores/`;
     
     // Corpo da requisição POST
     const body = {
@@ -208,7 +208,7 @@ export class AnaliseService {
     agrupar_por: string,
     laboratorio: string = ''
   ): Observable<any> {
-    const url = 'http://172.50.10.79:8008/analise/analiseEnsaio/tempo-por-analise/';
+    const url = 'https://managerdb.com.br/api/analise/analiseEnsaio/tempo-por-analise/';
     const body: any = {
       data_inicial: data_inicial,
       data_final: data_final,

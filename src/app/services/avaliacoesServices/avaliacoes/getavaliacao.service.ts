@@ -7,17 +7,17 @@ import { Avaliacao } from '../../../pages/avaliacoes/novaliacao/novaliacao.compo
   providedIn: 'root'
 })
 export class AvaliacaoService {
-  private apiUrl = 'http://172.50.10.79:8008/management/avaliacoes/';
-  private apiUrlfb = 'http://172.50.10.79:8008/management/';
-  private filterUrl = 'http://172.50.10.79:8008/datacalc/filtrar-avaliacoes/';
-  private filterLogadoUrl = 'http://172.50.10.79:8008/datacalc/filtrar-avaliacoes-logado/';
-  private filterAvaliadosUrl = 'http://172.50.10.79:8008/datacalc/filtrar-avaliados/';
-  private filterAvaliacoesPeriodoUrl = 'http://172.50.10.79:8008/datacalc/filtrar-avaliacoes-periodo/';
-  private filterAvaliacoesAvaliadorPeriodoUrl = 'http://172.50.10.79:8008/datacalc/filtrar-avaliacoes-avaliador-periodo/';
-  private apiAvUrl = 'http://172.50.10.79:8008/management/avaliacoes/minhas_avaliacoes/';
-  private periodoUrl = 'http://172.50.10.79:8008/datacalc/get-periodos/';
-  private tipoUrl = 'http://172.50.10.79:8008/datacalc/get-tipos/';
-  private historicoUrl = 'http://172.50.10.79:8008/datacalc/filtrar-historico/';  
+  private apiUrl = 'https://managerdb.com.br/api/management/avaliacoes/';
+  private apiUrlfb = 'https://managerdb.com.br/api/management/';
+  private filterUrl = 'https://managerdb.com.br/api/datacalc/filtrar-avaliacoes/';
+  private filterLogadoUrl = 'https://managerdb.com.br/api/datacalc/filtrar-avaliacoes-logado/';
+  private filterAvaliadosUrl = 'https://managerdb.com.br/api/datacalc/filtrar-avaliados/';
+  private filterAvaliacoesPeriodoUrl = 'https://managerdb.com.br/api/datacalc/filtrar-avaliacoes-periodo/';
+  private filterAvaliacoesAvaliadorPeriodoUrl = 'https://managerdb.com.br/api/datacalc/filtrar-avaliacoes-avaliador-periodo/';
+  private apiAvUrl = 'https://managerdb.com.br/api/management/avaliacoes/minhas_avaliacoes/';
+  private periodoUrl = 'https://managerdb.com.br/api/datacalc/get-periodos/';
+  private tipoUrl = 'https://managerdb.com.br/api/datacalc/get-tipos/';
+  private historicoUrl = 'https://managerdb.com.br/api/datacalc/filtrar-historico/';  
 
   constructor(private http: HttpClient) { }
 

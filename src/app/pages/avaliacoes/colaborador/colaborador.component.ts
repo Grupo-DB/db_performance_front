@@ -905,8 +905,14 @@ saveEdit(){
     this.colaboradorService.editColaborador(colaboradorId, dadosAtualizados).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Colaborador atualizado com sucesso!' });
+        
+        // Atualizar imagem se houver uma nova imagem selecionada
+        if (this.imgForm.valid && this.imgForm.get('image')?.value) {
+          this.updateImage();
+        }
+        
         setTimeout(() => {
-         window.location.reload(); // Atualiza a página após a exclusão
+         //window.location.reload(); // Atualiza a página após a exclusão
         }, 1000); // Tempo em milissegundos (1 segundo de atraso)
       },
       error: (err) => {
@@ -938,7 +944,7 @@ updateImage() {
         next: () => {
           this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Imagem atualizada com sucesso!' });
           setTimeout(() => {
-            window.location.reload(); // Atualiza a página após a atualização
+            //window.location.reload(); // Atualiza a página após a atualização
           }, 1000); // Tempo em milissegundos (2 segundos de atraso)
         },
         error: (err) => {
@@ -1091,7 +1097,7 @@ submit() {
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Colaborador registrado com sucesso!' });
         setTimeout(() => {
-          window.location.reload(); // Atualiza a página após o registro
+          this.clearForm(); // Atualiza a página após o registro
        }, 1000); // Tempo em milissegundos (1 segundo de atraso)
       },
       error: (err) => {

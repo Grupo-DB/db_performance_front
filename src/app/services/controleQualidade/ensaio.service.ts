@@ -11,11 +11,11 @@ import { Variavel } from '../../pages/controleQualidade/variavel/variavel.compon
   providedIn: 'root'
 })
 export class EnsaioService {
-  private apiUrl = 'http://172.50.10.79:8008/ensaio/tipos_ensaio/';
-  private apiUrlEnsaio = 'http://172.50.10.79:8008/ensaio/ensaio/';
-  private apiUrlVariaveisEnsaio = 'http://172.50.10.79:8008/ensaio/variavel/';
-  private apiUrlCalculoEnsaio = 'http://172.50.10.79:8008/calculosEnsaio/calculoEnsaio/';
-  private apiUrlPlano = 'http://172.50.10.79:8008/plano/planoAnalise/';
+  private apiUrl = 'https://managerdb.com.br/api/ensaio/tipos_ensaio/';
+  private apiUrlEnsaio = 'https://managerdb.com.br/api/ensaio/ensaio/';
+  private apiUrlVariaveisEnsaio = 'https://managerdb.com.br/api/ensaio/variavel/';
+  private apiUrlCalculoEnsaio = 'https://managerdb.com.br/api/calculosEnsaio/calculoEnsaio/';
+  private apiUrlPlano = 'https://managerdb.com.br/api/plano/planoAnalise/';
   constructor(
     private http: HttpClient,
   ) { }

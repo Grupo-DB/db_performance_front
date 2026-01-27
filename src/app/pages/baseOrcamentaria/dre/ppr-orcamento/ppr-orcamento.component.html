@@ -55,6 +55,71 @@
     </ul>
 </div>
 
+<!-- Seção de Filtros -->
+<div class="container flex flex-column align-items-center mb-4">
+    <div class="containerInterno w-12">
+        <div @efeitoFade>
+            <p-card class="card w-12">
+                <ng-template #header>
+                    <div class="header titulo-info w-full text-center">
+                        <h2>Filtros</h2>
+                    </div>
+                </ng-template>
+                <div class="flex flex-column md:flex-row gap-3 align-items-end">
+                    <div class="flex-1 text-left">
+                        <p-floatlabel>
+                            <p-multiselect 
+                                [(ngModel)]="anoSelecionado" 
+                                [options]="anosDisponiveis"
+                                [showToggleAll]="false"
+                                [showClear]="true"
+                                placeholder="Selecione o ano"
+                                inputId="anoFilter"
+                                [maxSelectedLabels]="3"
+                                [style]="{'width':'100%'}">
+                            </p-multiselect>
+                            <label for="anoFilter">Ano</label>
+                        </p-floatlabel>
+                    </div>
+                    <div class="flex-1 text-left">
+                        <p-floatlabel>
+                            <p-multiselect 
+                                [(ngModel)]="periodoSelecionado" 
+                                [options]="mesesDisponiveis"
+                                optionLabel="label"
+                                optionValue="value"
+                                [showToggleAll]="true"
+                                [showClear]="true"
+                                placeholder="Selecione os meses"
+                                inputId="periodoFilter"
+                                [maxSelectedLabels]="3"
+                                [style]="{'width':'100%'}">
+                            </p-multiselect>
+                            <label for="periodoFilter">Período (Meses)</label>
+                        </p-floatlabel>
+                    </div>
+                    <div class="flex gap-2">
+                        <p-button 
+                            label="Aplicar Filtros" 
+                            icon="pi pi-filter" 
+                            (click)="aplicarFiltros()"
+                            [disabled]="loading"
+                            severity="success">
+                        </p-button>
+                        <p-button 
+                            label="Limpar" 
+                            icon="pi pi-filter-slash" 
+                            (click)="limparFiltros()"
+                            [disabled]="loading"
+                            severity="secondary">
+                        </p-button>
+                    </div>
+                </div>
+            </p-card>
+        </div>
+    </div>
+</div>
+
 <div class="container flex flex-column align-items-center mb-4">
     <div class="containerInterno w-12">
         <div @swipeAnimation>

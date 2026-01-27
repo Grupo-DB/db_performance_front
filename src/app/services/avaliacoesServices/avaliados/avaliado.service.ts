@@ -8,10 +8,10 @@ import { AvaliadoResponse } from '../../../types/avaliacoes/avaliado-response';
   providedIn: 'root'
 })
 export class AvaliadoService {
-  private apiAvUrl = 'http://172.50.10.79:8008/management/avaliadores/meus_avaliados/';
-  private apiUrl = 'http://172.50.10.79:8008/management/avaliados/';
-  private apiUrlsa = 'http://172.50.10.79:8008/management/';
-  private apiUrlAV = 'http://172.50.10.79:8008/management/avaliacoes/'
+  private apiAvUrl = 'https://managerdb.com.br/api/management/avaliadores/meus_avaliados/';
+  private apiUrl = 'https://managerdb.com.br/api/management/avaliados/';
+  private apiUrlsa = 'https://managerdb.com.br/api/management/';
+  private apiUrlAV = 'https://managerdb.com.br/api/management/avaliacoes/'
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
   registeravaliado(colaborador_ptr:number,formulario_id: number,  ){

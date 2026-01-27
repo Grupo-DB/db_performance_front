@@ -141,11 +141,9 @@ interface LinhaPeneira {
 
 interface LinhaPeneiraUmida {
   peneira: string;
-  valor_retido: number | null;
-  porcentual_retido: number | null;
-  acumulado: number | null;
-  passante: number | null;
-  passante_acumulado: number | null;
+  massa_capsula_vazia: number | null;
+  massa_capsula_seca: number | null;
+  resultado: number | null;
 }
 
 interface LinhaTracaoNormal {
@@ -534,6 +532,11 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   peneira_umida_tempo_previsto: any;
   peneira_umida_tempo_trabalho: any;
 
+  // Mapa para armazenar o fator selecionado por ensaio
+  fatoresSelecionados: { [ensaioId: string]: any } = {};
+  
+  // Lista de variáveis de fator disponíveis (carregadas do backend)
+  variaveisFatorDisponiveis: any[] = [];
 
 
 
@@ -604,6 +607,47 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
     { value: '# 400 - ABNT/ASTM 400 - 0,038 mm' },
     { value: '# 635 - ABNT/ASTM 635 - 0,020 mm' },
   ];
+
+  // Planos de peneiras predefinidos
+  planosPeneiras = [
+    {
+      label: 'Reatividade do Calcário: RE',
+      value: 'areia-mf',
+      peneiras: [
+        '# 10 - ABNT/ASTM 10 - 2,00 mm',
+        '# 20 - ABNT/ASTM 20 - 0,850 mm',
+        '# 50 - ABNT/ASTM 50 - 0,300 mm'
+      ]
+    },
+    {
+      label: 'Argamassa e Areias',
+      value: 'brita-0',
+      peneiras: [
+        '# 8 - ABNT/ASTM 8 - 2,36 mm',
+        '# 10 - ABNT/ASTM 10 - 2,00 mm',
+        '# 16 - ABNT/ASTM 16 - 1,18 mm',
+        '# 30 - ABNT/ASTM 30 - 0,600 mm',
+        '# 50 - ABNT/ASTM 50 - 0,300 mm',
+        '# 100 - ABNT/ASTM 100 - 0,150 mm',
+      ]
+    },
+  ];
+
+  // Planos de peneiras úmidas predefinidos
+  planosPeneirasUmidas = [
+    {
+      label: 'Argamassa e Areias - Peneira Úmida',
+      value: 'brita-0',
+      peneiras: [
+        '# 30 - ABNT/ASTM 30 - 0,600 mm',
+        '# 200 - ABNT/ASTM 200 - 0,075 mm',
+      ]
+    }
+  ];
+
+  planoSelecionado: string | null = null;
+  planoUmidaSelecionado: string | null = null;
+
   //Variáveis para Variação Dimensional
   exibirModalVariacaoDimensional: boolean = false;
   variacaoDimensionalTableData: any[] = [];
@@ -868,6 +912,7 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
     this.getDigitadorInfo();
     this.getAnalise();
     this.carregarEnsaiosECalculosDisponiveis();
+    this.carregarVariaveisFator(); // Carregar variáveis de fator disponíveis
     // Inicializar sistema de alertas
     this.iniciarSistemaAlertas();
 
@@ -1129,6 +1174,55 @@ calculosModuloElasticidade(): void {
   this.atualizarTabelaModuloElasticidadeInline();
 }
 
+// Método para calcular média do pMax
+calcularMediaPMax(): number | null {
+  const valoresPMax: number[] = [];
+  if (this.pMaxCp1 != null && !isNaN(this.pMaxCp1)) valoresPMax.push(this.pMaxCp1);
+  if (this.pMaxCp2 != null && !isNaN(this.pMaxCp2)) valoresPMax.push(this.pMaxCp2);
+  if (this.pMaxCp3 != null && !isNaN(this.pMaxCp3)) valoresPMax.push(this.pMaxCp3);
+  
+  if (valoresPMax.length > 0) {
+    return mean(valoresPMax) as number;
+  }
+  return null;
+}
+
+calcularDesvioPadraoPMax(): number | null {
+  const valoresPMax: number[] = [];
+  if (this.pMaxCp1 != null && !isNaN(this.pMaxCp1)) valoresPMax.push(this.pMaxCp1);
+  if (this.pMaxCp2 != null && !isNaN(this.pMaxCp2)) valoresPMax.push(this.pMaxCp2);
+  if (this.pMaxCp3 != null && !isNaN(this.pMaxCp3)) valoresPMax.push(this.pMaxCp3);
+  
+  if (valoresPMax.length > 1) {
+    return std(valoresPMax, 'unbiased') as number;
+  }
+  return null;
+}
+
+calcularMediaEd(): number | null {
+  const valoresEd: number[] = [];
+  if (this.edCp1 != null && !isNaN(this.edCp1)) valoresEd.push(this.edCp1);
+  if (this.edCp2 != null && !isNaN(this.edCp2)) valoresEd.push(this.edCp2);
+  if (this.edCp3 != null && !isNaN(this.edCp3)) valoresEd.push(this.edCp3);
+  
+  if (valoresEd.length > 0) {
+    return mean(valoresEd) as number;
+  }
+  return null;
+}
+
+calcularDesvioPadraoEd(): number | null {
+  const valoresEd: number[] = [];
+  if (this.edCp1 != null && !isNaN(this.edCp1)) valoresEd.push(this.edCp1);
+  if (this.edCp2 != null && !isNaN(this.edCp2)) valoresEd.push(this.edCp2);
+  if (this.edCp3 != null && !isNaN(this.edCp3)) valoresEd.push(this.edCp3);
+  
+  if (valoresEd.length > 1) {
+    return std(valoresEd, 'unbiased') as number;
+  }
+  return null;
+}
+
 // Método para atualizar dados da tabela de Módulo de Elasticidade
 atualizarTabelaModuloElasticidade(): void {
   this.moduloElasticidadeTableData = [
@@ -1265,7 +1359,10 @@ salvarModuloElasticidade(analise: any): void {
       ed: this.edCp3
     },
     media: {
-      ed: this.moduloElasticidadeMediaTotal
+      ed: this.calcularMediaEd(),
+      desvioPadraoEd: this.calcularDesvioPadraoEd(),
+      pMax: this.calcularMediaPMax(),
+      desvioPadraoPMax: this.calcularDesvioPadraoPMax()
     },
     tempo_previsto: this.elasticidade_tempo_previsto,
     tempo_trabalho: this.elasticidade_tempo_trabalho,
@@ -1460,6 +1557,7 @@ carregarModuloElasticidadeSalvo(analise: any): void {
 
 //==================================================== PENEIRAS SECAS =========================================================//
 carregarPeneiraSecaSalva(analise: any): void {
+  this.planoSelecionado = null; // Resetar o plano selecionado
   if (analise?.peneiras?.peneiras && Array.isArray(analise.peneiras.peneiras)) {
     this.linhasPeneira = analise.peneiras.peneiras.map((item: any) => ({
       peneira: item.peneira ?? '',
@@ -1503,11 +1601,9 @@ carregarPeneiraUmidaSalva(analise: any): void {
   if (analise?.peneiras_umidas?.peneiras && Array.isArray(analise.peneiras_umidas.peneiras)) {
     this.linhasPeneiraUmida = analise.peneiras_umidas.peneiras.map((item: any) => ({
       peneira: item.peneira ?? '',
-      valor_retido: item.valor_retido ?? null,
-      porcentual_retido: item.porcentual_retido ?? null,
-      acumulado: item.acumulado ?? null,
-      passante: item.passante ?? null,
-      passante_acumulado: item.passante_acumulado ?? null,
+      massa_capsula_vazia: item.massa_capsula_vazia ?? null,
+      massa_capsula_seca: item.massa_capsula_seca ?? null,
+      resultado: item.resultado ?? null,
     }));
     this.massa_amostra_umida = analise.peneiras_umidas.amostra ?? 0;
   
@@ -1522,11 +1618,9 @@ carregarPeneiraUmidaSalva(analise: any): void {
     // Inicializa com dados vazios
     this.linhasPeneiraUmida = [{
       peneira: '',
-      valor_retido: null,
-      porcentual_retido: null,
-      acumulado: null,
-      passante: null,
-      passante_acumulado: null,
+      massa_capsula_vazia: null,
+      massa_capsula_seca: null,
+      resultado: null,
     }];
     this.massa_amostra_umida = 0;
     this.peneira_umida_tempo_previsto = null;
@@ -2984,6 +3078,11 @@ calculateAndDrawRegression(): void {
 }
 
 renderChart(todosOsPontos: DataPoint[], regressionLineData: DataPoint[], interceptoUsado?: number) {
+    if (!this.chartRef || !this.chartRef.nativeElement) {
+      console.error('Canvas do gráfico não está disponível');
+      return;
+    }
+    
     const ctx = this.chartRef.nativeElement.getContext('2d');
     
     // 1. DADOS PROTEGIDOS PARA FORMATAÇÃO
@@ -3182,8 +3281,30 @@ gerarESalvarImagemGrafico(): void {
   this.salvandoImagemGrafico = true;
 
   try {
+    // Verificar se o canvas está disponível
+    if (!this.chartRef || !this.chartRef.nativeElement) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Gráfico não disponível. Por favor, gere o gráfico primeiro.'
+      });
+      this.salvandoImagemGrafico = false;
+      return;
+    }
+    
     // Gerar imagem JPEG do gráfico
     const canvas = this.chartRef.nativeElement;
+    
+    // Verificar se o canvas tem conteúdo
+    if (!canvas.width || !canvas.height) {
+      this.salvandoImagemGrafico = false;
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'O gráfico está vazio. Por favor, gere o gráfico novamente.'
+      });
+      return;
+    }
     
     // Forçar re-renderização para garantir que as linhas de grade estejam visíveis
     if (this.chartInstance) {
@@ -3193,95 +3314,157 @@ gerarESalvarImagemGrafico(): void {
     // Aguardar a renderização completa do gráfico incluindo linhas de grade
     setTimeout(() => {
       try {
-        // Converter canvas para blob PNG
+        // Converter canvas para blob PNG com qualidade específica
         canvas.toBlob((blob: Blob | null) => {
           if (!blob) {
-            this.salvandoImagemGrafico = false;
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Erro',
-              detail: 'Falha ao gerar imagem do gráfico.'
-            });
-            return;
-          }
-
-          // Criar FormData para envio
-          const formData = new FormData();
-          
-          // Gerar nome descritivo para o arquivo
-          const timestamp = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
-          const nomeArquivo = `grafico-capilaridade-${timestamp}.png`;
-          
-          // Adicionar arquivo ao FormData
-          formData.append('images', blob, nomeArquivo);
-          
-          // Adicionar descrição detalhada
-          const descricao = this.gerarDescricaoGrafico();
-          formData.append('descricoes', descricao);
-
-          // Enviar para o servidor
-          this.amostraService.uploadImagens(this.analise.amostra_detalhes.id, formData).subscribe({
-            next: (response) => {
+            // Tentar método alternativo usando toDataURL
+            try {
+              const dataUrl = canvas.toDataURL('image/png', 0.95);
+              fetch(dataUrl)
+                .then(res => res.blob())
+                .then(alternativeBlob => {
+                  this.processarImagemBlob(alternativeBlob);
+                })
+                .catch(() => {
+                  this.salvandoImagemGrafico = false;
+                  this.messageService.add({
+                    severity: 'error',
+                    summary: 'Erro',
+                    detail: 'Falha ao gerar imagem do gráfico. Verifique se o gráfico foi renderizado corretamente.'
+                  });
+                });
+            } catch (err) {
               this.salvandoImagemGrafico = false;
               this.messageService.add({
-                severity: 'success',
-                summary: 'Sucesso',
-                detail: 'Imagem do gráfico salva com sucesso!'
+                severity: 'error',
+                summary: 'Erro',
+                detail: 'Falha ao gerar imagem do gráfico.'
               });
-              
-              // Atualizar lista de imagens se estiver visualizando
-              if (this.modalImagensVisible && this.amostraImagensSelecionada) {
-                this.carregarImagensAmostra(this.amostraImagensSelecionada.id);
-              }
-            },
-            error: (error) => {
-              this.salvandoImagemGrafico = false;
-              console.error('Erro ao salvar imagem do gráfico:', error);
-              
-              if (error.status === 401) {
-                this.messageService.add({
-                  severity: 'error',
-                  summary: 'Erro de Autenticação',
-                  detail: 'Sessão expirada. Faça login novamente.'
-                });
-              } else if (error.status === 413) {
-                this.messageService.add({
-                  severity: 'error',
-                  summary: 'Arquivo muito grande',
-                  detail: 'A imagem gerada é muito grande. Tente reduzir a resolução.'
-                });
-              } else {
-                this.messageService.add({
-                  severity: 'error',
-                  summary: 'Erro',
-                  detail: 'Falha ao salvar imagem do gráfico. Tente novamente.'
-                });
-              }
             }
-          });
-        }, 'image/png', 0.95); // Qualidade 95% para PNG
-        this.modalGrafico = false;
+            return;
+          }
+          
+          this.processarImagemBlob(blob);
+        }, 'image/png', 0.95);
       } catch (error) {
         this.salvandoImagemGrafico = false;
-        console.error('Erro ao converter gráfico para imagem:', error);
+        console.error('Erro ao capturar imagem do gráfico:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
-          detail: 'Falha ao processar imagem do gráfico.'
+          detail: 'Erro ao capturar imagem do gráfico: ' + (error as Error).message
         });
       }
-    }, 800); // Aguardar 800ms para garantir renderização completa das linhas de grade
-    
+    }, 300); // Aumentar timeout para 300ms
   } catch (error) {
     this.salvandoImagemGrafico = false;
-    console.error('Erro geral ao gerar imagem:', error);
+    console.error('Erro ao salvar imagem:', error);
     this.messageService.add({
       severity: 'error',
       summary: 'Erro',
-      detail: 'Erro inesperado ao gerar imagem do gráfico.'
+      detail: 'Erro ao salvar imagem do gráfico.'
     });
   }
-  this.modalGrafico = false;
+}
+
+// Função auxiliar para processar o blob da imagem
+private processarImagemBlob(blob: Blob): void {
+  const formData = new FormData();
+  
+  // Gerar nome descritivo para o arquivo
+  const timestamp = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+  const nomeArquivo = `grafico-capilaridade-${timestamp}.png`;
+  
+  // Adicionar arquivo ao FormData
+  formData.append('images', blob, nomeArquivo);
+  
+  // Adicionar descrição detalhada
+  const descricao = this.gerarDescricaoGrafico();
+  formData.append('descricoes', descricao);
+
+  // Enviar imagem para o servidor
+  this.amostraService.uploadImagens(this.analise.amostra_detalhes.id, formData).subscribe({
+    next: (response) => {
+      // Após salvar a imagem, salvar os dados de capilaridade
+      this.salvarDadosCapilaridade();
+      
+      this.salvandoImagemGrafico = false;
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Sucesso',
+        detail: 'Imagem e dados do gráfico salvos com sucesso!'
+      });
+      
+      // Atualizar lista de imagens se estiver visualizando
+      if (this.modalImagensVisible && this.amostraImagensSelecionada) {
+        this.carregarImagensAmostra(this.amostraImagensSelecionada.id);
+      }
+    },
+    error: (error) => {
+      this.salvandoImagemGrafico = false;
+      console.error('Erro ao salvar imagem do gráfico:', error);
+      
+      if (error.status === 401) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro de Autenticação',
+          detail: 'Sessão expirada. Faça login novamente.'
+        });
+      } else if (error.status === 413) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Arquivo muito grande',
+          detail: 'A imagem gerada é muito grande. Tente reduzir a resolução.'
+        });
+      } else {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Falha ao salvar imagem do gráfico. Tente novamente.'
+        });
+      }
+    }
+  });
+}
+
+/**
+ * Salva os dados de capilaridade (raizT e deltaMt) no banco de dados
+ */
+private salvarDadosCapilaridade(): void {
+  // Obter os dados da tabela
+  const dados = this.dataRows.value || [];
+  // Preparar dados no formato JSON
+  const dadosCapilaridade = dados.map((row: any) => ({
+    tLabel: row.tLabel || '',
+    raizT: row.raizT !== null && row.raizT !== '' ? parseFloat(row.raizT) : null,
+    deltaMt: row.deltaMt !== null && row.deltaMt !== '' ? parseFloat(row.deltaMt) : null
+  })).filter((item: any) => item.raizT !== null || item.deltaMt !== null); // Filtrar linhas vazias
+  
+  // Adicionar dados calculados
+  const dadosCompletos = {
+    dados: dadosCapilaridade,
+    aw_calculado: this.awCalculado,
+    r2_calculado: this.r2Calculado,
+    aw_laboratorio: this.awLaboratorioCalculado,
+    b_intercepto: this.bIntercepto,
+    coeficiente_linear_customizado: this.coeficienteLinearCustomizado,
+    usar_coeficiente_customizado: this.usarCoeficienteCustomizado
+  };
+
+  // Enviar para o servidor
+  this.analiseService.salvarCapilaridade(this.analise.id, dadosCompletos).subscribe({
+    next: (response) => {
+      console.log('Dados de capilaridade salvos com sucesso');
+    },
+    error: (error) => {
+      console.error('Erro ao salvar dados de capilaridade:', error);
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Aviso',
+        detail: 'Imagem salva, mas houve erro ao salvar os dados de capilaridade.'
+      });
+    }
+  });
 }
 
 /**
@@ -3337,6 +3520,15 @@ downloadImagemGrafico(): void {
   }
 
   try {
+    if (!this.chartRef || !this.chartRef.nativeElement) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Gráfico não disponível para download. Por favor, gere o gráfico primeiro.'
+      });
+      return;
+    }
+    
     const canvas = this.chartRef.nativeElement;
     const timestamp = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
     const nomeArquivo = `grafico-capilaridade-${timestamp}.png`;
@@ -7291,16 +7483,16 @@ salvarAnaliseResultados() {
         detail: 'Análise salva com sucesso!' 
       });
       // Navegar para a página de ordem após salvar (caminho correto informado)
-      this.router.navigate(['/welcome/controleQualidade/ordem']).catch(() => {
-        // Fallback: se navegação falhar, recarregar a análise como antes
-        this.analiseService.getAnaliseById(idAnalise).subscribe({
-          next: (analiseAtualizada: any) => {
-            this.analise = analiseAtualizada;
-            this.loadAnalisePorId(analiseAtualizada);
-            this.cd.detectChanges();
-          }
-        });
-      });
+      // this.router.navigate(['/welcome/controleQualidade/ordem']).catch(() => {
+      //   // Fallback: se navegação falhar, recarregar a análise como antes
+      //   this.analiseService.getAnaliseById(idAnalise).subscribe({
+      //     next: (analiseAtualizada: any) => {
+      //       this.analise = analiseAtualizada;
+      //       this.loadAnalisePorId(analiseAtualizada);
+      //       this.cd.detectChanges();
+      //     }
+      //   });
+      // });
     },
     error: (err) => {
       console.error('[SALVAR] Erro ao salvar análise:', err);
@@ -8480,10 +8672,25 @@ processarResultadosAnteriores(resultados: any[], calcAtual: any) {
   }
   //Obtém o nome de exibição amigável para uma variável
   getVariavelDisplayName(variavel: any, ensaio: any): string {
-    if (!variavel.nome || variavel.nome === variavel.tecnica) {
-      // Se o nome não existe ou é igual ao técnico, criar um nome amigável
-      return `${variavel.tecnica} (${ensaio.descricao})`;
+    // Mapeamento de variáveis técnicas para nomes descritivos
+    const mapeamentoVariaveis: { [key: string]: string } = {
+      'var100': 'Massa do recipiente cilíndrico contendo argamassa',
+      'var101': 'Massa do recipiente cilíndrico vazio',
+      'var102': 'Volume do  recipiente cilíndrico'
+    };
+    
+    // Se o nome contém a técnica seguida de parênteses (formato incorreto do backend)
+    // Ex: "var100 ((Análise) - ...)"
+    if (variavel.nome && variavel.nome.startsWith(variavel.tecnica + ' (')) {
+      // Usar o mapeamento para retornar o nome correto
+      return mapeamentoVariaveis[variavel.tecnica] || variavel.nome;
     }
+    
+    if (!variavel.nome) {
+      // Se o nome não existe, tentar o mapeamento ou usar técnico como fallback
+      return mapeamentoVariaveis[variavel.tecnica] || variavel.tecnica || 'Valor';
+    }
+    
     return variavel.nome;
   }
   // PERMITE DUPLICATAS para que múltiplos laboratórios possam realizar o mesmo ensaio
@@ -8608,6 +8815,241 @@ getVariaveisOrdenadas(variaveis: any[]): any[] {
     return 0;
   });
 }
+
+/**
+ * Carrega as variáveis de fator disponíveis (IDs 49 e 64)
+ */
+carregarVariaveisFator(): void {
+  // Definir as variáveis de fator padrão
+  const variaveisPadrao = [
+    { id: 49, nome: 'Fator calibr. AP1', valor: 1.299 },
+    { id: 64, nome: 'Fator calibr. AP2', valor: 1.339 }
+  ];
+  
+  // Buscar nos ensaios carregados se já existem valores salvos
+  variaveisPadrao.forEach(variavelPadrao => {
+    let variavelEncontrada: any = null;
+    
+    // Buscar em todos os ensaios do plano
+    const planoDetalhes = this.analisesSimplificadas[0]?.planoDetalhes || [];
+    
+    outerLoop: for (const plano of planoDetalhes) {
+      // Buscar em ensaios diretos
+      if (plano.ensaio_detalhes) {
+        for (const ens of plano.ensaio_detalhes) {
+          if (ens.variavel_detalhes) {
+            variavelEncontrada = ens.variavel_detalhes.find((v: any) => v.id === variavelPadrao.id);
+            if (variavelEncontrada) break outerLoop;
+          }
+        }
+      }
+      
+      // Buscar em cálculos
+      if (plano.calculo_ensaio_detalhes) {
+        for (const calc of plano.calculo_ensaio_detalhes) {
+          if (calc.ensaios_detalhes) {
+            for (const ens of calc.ensaios_detalhes) {
+              if (ens.variavel_detalhes) {
+                variavelEncontrada = ens.variavel_detalhes.find((v: any) => v.id === variavelPadrao.id);
+                if (variavelEncontrada) break outerLoop;
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    // Usar a variável encontrada ou a padrão
+    const variavel = variavelEncontrada || variavelPadrao;
+    this.variaveisFatorDisponiveis.push(variavel);
+    console.log('Variável de fator disponível:', variavel);
+  });
+}
+
+/**
+ * Verifica se o ensaio tem variáveis de fator (1 ou mais)
+ */
+temVariaveisFator(ensaio: any): boolean {
+  if (!ensaio?.variavel_detalhes) return false;
+  const fatores = ensaio.variavel_detalhes.filter((v: any) => 
+    v.nome?.toLowerCase().includes('fator') || 
+    v.nome?.toLowerCase().includes('calibr')
+  );
+  console.log(`Ensaio ${ensaio.descricao} - Fatores encontrados:`, fatores.length, fatores);
+  return fatores.length >= 1;
+}
+
+/**
+ * Retorna lista de variáveis de fator para seleção
+ */
+getVariaveisFator(ensaio: any): any[] {
+  const fatoresDisponiveis: any[] = [];
+  
+  // Usar as variáveis carregadas do backend
+  this.variaveisFatorDisponiveis.forEach(variavelBase => {
+    let variavelComValor: any = null;
+    
+    // Primeiro verificar se está no ensaio atual
+    if (ensaio?.variavel_detalhes) {
+      variavelComValor = ensaio.variavel_detalhes.find((v: any) => v.id === variavelBase.id);
+    }
+    
+    // Se não encontrou no ensaio atual, buscar em outros ensaios do plano
+    if (!variavelComValor) {
+      const planoDetalhes = this.analisesSimplificadas[0]?.planoDetalhes || [];
+      
+      outerLoop: for (const plano of planoDetalhes) {
+        // Buscar em ensaios diretos
+        if (plano.ensaio_detalhes) {
+          for (const ens of plano.ensaio_detalhes) {
+            if (ens.variavel_detalhes) {
+              variavelComValor = ens.variavel_detalhes.find((v: any) => v.id === variavelBase.id);
+              if (variavelComValor) break outerLoop;
+            }
+          }
+        }
+        
+        // Buscar em cálculos
+        if (plano.calculo_ensaio_detalhes) {
+          for (const calc of plano.calculo_ensaio_detalhes) {
+            if (calc.ensaios_detalhes) {
+              for (const ens of calc.ensaios_detalhes) {
+                if (ens.variavel_detalhes) {
+                  variavelComValor = ens.variavel_detalhes.find((v: any) => v.id === variavelBase.id);
+                  if (variavelComValor) break outerLoop;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    // Se encontrou a variável com valor, usar ela; senão usar a base
+    const variavel = variavelComValor || variavelBase;
+    
+    // Garantir que a variável tenha o campo tecnica
+    // Se não tiver, tentar extrair da função do ensaio atual
+    if (!variavel.tecnica && !variavel.varTecnica && ensaio?.funcao) {
+      // Tentar encontrar qual varX corresponde a esta variável no ensaio
+      const varTokens = (ensaio.funcao.match(/\b(var\d+)\b/g) || []);
+      // Como são fatores de calibração, geralmente é a primeira variável (var1)
+      if (varTokens.length > 0 && ensaio.variavel_detalhes) {
+        const indexNoEnsaio = ensaio.variavel_detalhes.findIndex((v: any) => v.id === variavel.id);
+        if (indexNoEnsaio >= 0 && indexNoEnsaio < varTokens.length) {
+          variavel.tecnica = varTokens[indexNoEnsaio];
+          variavel.varTecnica = varTokens[indexNoEnsaio];
+        } else if (varTokens.length > 0) {
+          // Fallback: usar var1 para o primeiro fator
+          variavel.tecnica = 'var1';
+          variavel.varTecnica = 'var1';
+        }
+      }
+    }
+    
+    fatoresDisponiveis.push({
+      label: `${variavel.nome} (${variavel.valor || 0})`,
+      value: variavel
+    });
+  });
+  
+  console.log('Fatores disponíveis para seleção:', fatoresDisponiveis);
+  return fatoresDisponiveis;
+}
+
+
+/**
+ * Aplica o fator selecionado ao ensaio
+ */
+aplicarFatorSelecionado(ensaio: any, fatorVariavel: any): void {
+  if (!fatorVariavel || !ensaio) return;
+  
+  // Armazenar a seleção
+  this.fatoresSelecionados[ensaio.id] = fatorVariavel;
+  
+  // Atualizar o valor do ensaio com o valor do fator selecionado
+  const novoValor = parseFloat(fatorVariavel.valor?.toString() || '0');
+  
+  // Verificar se a variável já existe no ensaio
+  if (!ensaio.variavel_detalhes) {
+    ensaio.variavel_detalhes = [];
+  }
+  
+  console.log('=== Aplicando fator de calibração ===');
+  console.log('Ensaio:', ensaio.descricao, 'ID:', ensaio.id);
+  console.log('Fator:', fatorVariavel.nome, 'ID:', fatorVariavel.id, 'Valor:', novoValor);
+  console.log('Fórmula do ensaio:', ensaio.funcao);
+  console.log('Variáveis atuais:', ensaio.variavel_detalhes);
+  
+  // Primeiro, tentar encontrar a variável que corresponde ao fator de calibração
+  // Procurar por nome (contém "fator" ou "calibr")
+  let variavelFator = ensaio.variavel_detalhes.find((v: any) => {
+    const nome = (v.nome || '').toLowerCase();
+    return nome.includes('fator') || nome.includes('calibr');
+  });
+  
+  // Se não encontrou por nome, procurar por ID
+  if (!variavelFator) {
+    variavelFator = ensaio.variavel_detalhes.find((v: any) => v.id === fatorVariavel.id);
+  }
+  
+  if (variavelFator) {
+    // Encontrou a variável correspondente - atualizar seu valor
+    console.log('Variável de fator encontrada:', variavelFator.nome, 'tecnica:', variavelFator.tecnica || variavelFator.varTecnica);
+    variavelFator.valor = novoValor;
+    variavelFator.id = fatorVariavel.id;
+    
+    // Atualizar através da função que recalcula
+    this.atualizarVariavelEnsaio(ensaio, variavelFator, novoValor);
+    
+    console.log('Variável atualizada com sucesso');
+  } else {
+    // Não encontrou - criar nova variável
+    // Buscar qual var técnica (var01, var45, etc) ainda não está atribuída
+    const varTokens = (ensaio.funcao.match(/\b(var\d+)\b/g) || []);
+    const variaveisComValor = new Set(
+      ensaio.variavel_detalhes
+        .map((v: any) => v.tecnica || v.varTecnica)
+        .filter(Boolean)
+    );
+    
+    // Encontrar a primeira var da fórmula que não tem valor atribuído
+    const tecnicaDisponivel = varTokens.find((t: string) => !variaveisComValor.has(t));
+    
+    console.log('Criando nova variável com tecnica:', tecnicaDisponivel);
+    
+    const novaVariavel = {
+      id: fatorVariavel.id,
+      nome: fatorVariavel.nome,
+      valor: novoValor,
+      tecnica: tecnicaDisponivel || 'var1',
+      varTecnica: tecnicaDisponivel || 'var1',
+      tipo: fatorVariavel.tipo
+    };
+    
+    ensaio.variavel_detalhes.push(novaVariavel);
+    this.atualizarVariavelEnsaio(ensaio, novaVariavel, novoValor);
+    
+    console.log('Nova variável criada');
+  }
+  
+  console.log('Variáveis finais:', ensaio.variavel_detalhes);
+  console.log('=== Fim da aplicação do fator ===');
+  
+  this.messageService.add({
+    severity: 'success',
+    summary: 'Fator Aplicado',
+    detail: `${fatorVariavel.nome} (${novoValor}) aplicado com sucesso!`
+  });
+}
+
+/**
+ * Retorna o fator atualmente selecionado para o ensaio
+ */
+getFatorSelecionado(ensaio: any): any {
+  return this.fatoresSelecionados[ensaio?.id];
+}
+
 //Abre o modal para ordenar variáveis de um ensaio
 abrirModalOrdemVariaveis(ensaio: any): void {
   this.ensaioSelecionado = ensaio; 
@@ -8822,9 +9264,147 @@ limparTodosAlertas(): void {
 //Alterna o estado de expansão de um ensaio
 toggleEnsaioExpansion(ensaio: any): void {
   ensaio.expanded = !ensaio.expanded;
+  
+  // Se estiver expandindo um ensaio de reatividade, preencher variáveis com dados das peneiras
+  if (ensaio.expanded && ensaio.descricao?.toLowerCase().includes('reatividade')) {
+    this.preencherVariaveisReatividade(ensaio);
+  }
+  
   this.verificarEstadoTodasLinhas();
   this.cd.detectChanges();
 }
+
+/**
+ * Preenche automaticamente as variáveis do ensaio de reatividade
+ * com base nos dados das peneiras salvas
+ */
+preencherVariaveisReatividade(ensaio: any): void {
+  console.log('=== PREENCHIMENTO REATIVIDADE ===');
+  console.log('Ensaio:', ensaio.descricao);
+  console.log('Variáveis do ensaio:', ensaio.variavel_detalhes);
+  
+  // Verificar se existem dados de peneiras salvas
+  const peneiras = this.analise?.peneiras?.peneiras;
+  console.log('Dados de peneiras:', peneiras);
+  
+  if (!peneiras || !Array.isArray(peneiras) || peneiras.length === 0) {
+    console.log('Nenhum dado de peneira encontrado');
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Atenção',
+      detail: 'Não há dados de peneiras secas salvos para preencher as variáveis.'
+    });
+    return;
+  }
+
+  // Verificar se o ensaio tem variáveis
+  if (!ensaio.variavel_detalhes || !Array.isArray(ensaio.variavel_detalhes)) {
+    console.log('Ensaio não tem variáveis');
+    return;
+  }
+
+  let variaveisPreenchidas = 0;
+
+  // Extrair números das peneiras disponíveis e mapear para variáveis
+  peneiras.forEach((peneira: any) => {
+    console.log('Processando peneira:', peneira.peneira);
+    console.log('  - Retido (%):', peneira.porcentual_retido);
+    console.log('  - Passante (%):', peneira.passante);
+    
+    // Extrair o número da peneira (ex: "# 50" -> "50", "# 200" -> "200")
+    const match = peneira.peneira?.match(/#\s*(\d+(?:\.\d+)?)/);
+    if (!match) return;
+    
+    const numeroPeneira = match[1];
+    console.log('Número extraído da peneira:', numeroPeneira);
+    
+    // Procurar TODAS as variáveis que correspondam a este número (não apenas a primeira)
+    const variaveisCorrespondentes = ensaio.variavel_detalhes.filter((v: any) => {
+      const nomeVar = v.nome?.toLowerCase() || '';
+      const nomeVarLimpo = nomeVar.replace(/[^a-z0-9]/g, ''); // Remove caracteres especiais
+      
+      // Verifica se o nome contém o número da peneira
+      const contemNumero = nomeVar.includes(numeroPeneira) || nomeVarLimpo.includes(numeroPeneira);
+      
+      return contemNumero;
+    });
+
+    console.log(`  → Encontradas ${variaveisCorrespondentes.length} variável(is) para peneira #${numeroPeneira}`);
+
+    // Processar cada variável encontrada
+    variaveisCorrespondentes.forEach((variavel: any) => {
+      console.log('  ✓ Processando variável:', variavel.nome, 'Valor atual:', variavel.valor);
+      
+      const nomeVar = variavel.nome?.toLowerCase() || '';
+      const isPassante = nomeVar.includes('pass') || nomeVar.includes('passante');
+      const isRetido = nomeVar.includes('retido') || nomeVar.includes('ret');
+      
+      let novoValor = null;
+      
+      // Determinar qual campo usar baseado no nome da variável
+      if (isPassante && peneira.passante !== null && peneira.passante !== undefined) {
+        novoValor = parseFloat(peneira.passante.toString());
+        console.log('    → Variável de PASSANTE, usando passante:', novoValor);
+      } else if (isRetido && peneira.porcentual_retido !== null && peneira.porcentual_retido !== undefined) {
+        novoValor = parseFloat(peneira.porcentual_retido.toString());
+        console.log('    → Variável de RETIDO, usando porcentual_retido:', novoValor);
+      } else if (peneira.porcentual_retido !== null && peneira.porcentual_retido !== undefined) {
+        // Fallback para porcentual_retido se não identificar o tipo
+        novoValor = parseFloat(peneira.porcentual_retido.toString());
+        console.log('    → Usando porcentual_retido (fallback):', novoValor);
+      }
+      
+      if (novoValor !== null && !isNaN(novoValor)) {
+        variavel.valor = novoValor;
+        variaveisPreenchidas++;
+        console.log('    ✓ Atualizando variável com valor:', novoValor);
+        // Recalcular o ensaio após atualizar a variável
+        this.atualizarVariavelEnsaio(ensaio, variavel, novoValor);
+      }
+    });
+
+    if (variaveisCorrespondentes.length === 0) {
+      console.log('  ✗ Nenhuma variável encontrada para peneira #' + numeroPeneira);
+    }
+  });
+
+  // Buscar também massa da amostra se necessário
+  if (this.analise?.peneiras?.amostra) {
+    const variavelMassa = ensaio.variavel_detalhes.find((v: any) => {
+      const nomeVar = v.nome?.toLowerCase() || '';
+      return nomeVar.includes('massa') || nomeVar.includes('amostra');
+    });
+    
+    console.log('Variável massa encontrada:', variavelMassa?.nome);
+    
+    if (variavelMassa) {
+      const massaAmostra = parseFloat(this.analise.peneiras.amostra.toString());
+      if (!isNaN(massaAmostra)) {
+        variavelMassa.valor = massaAmostra;
+        variaveisPreenchidas++;
+        this.atualizarVariavelEnsaio(ensaio, variavelMassa, massaAmostra);
+      }
+    }
+  }
+
+  console.log('Total de variáveis preenchidas:', variaveisPreenchidas);
+
+  // Mostrar mensagem de sucesso se variáveis foram preenchidas
+  if (variaveisPreenchidas > 0) {
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Variáveis Preenchidas',
+      detail: `${variaveisPreenchidas} variável(is) preenchida(s) automaticamente com dados das peneiras.`
+    });
+  } else {
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Informação',
+      detail: 'Nenhuma variável compatível encontrada. Verifique se os nomes das variáveis correspondem aos números das peneiras.'
+    });
+  }
+}
+
 //=======================================================LINHAS EXPANDABLES=================================
 //Expande ou recolhe todas as linhas de ensaios
 toggleTodasLinhas(): void {
@@ -9155,335 +9735,6 @@ canDeactivate(): boolean | Promise<boolean> {
 
     return itens;
   }
-
-  getItensPeneira(analise: any) {
-    return [
-      // { 
-      //   label: 'Peneiras Secas (Visualizar)', 
-      //   icon: 'pi pi-eye', 
-      //   command: () => this.visualizarPeneira() 
-      // },
-      // { 
-      //   label: 'Peneiras Úmidas (Visualizar)', 
-      //   icon: 'pi pi-eye', 
-      //   command: () => this.visualizarPeneiraUmida() 
-      // },
-      { 
-        label: 'Peneiras Secas', 
-        icon: 'pi pi-pencil', 
-        command: () => {
-          this.carregarPeneiraSecaSalva(analise);
-          this.exibirModalPeneiraSeca = true;
-        }
-      },
-      { 
-        label: 'Peneiras Úmidas', 
-        icon: 'pi pi-pencil', 
-        command: () => {
-          this.carregarPeneiraUmidaSalva(analise);
-          this.exibirModalPeneiraUmida = true;
-        }
-      }
-    ];
-  }
-
-  // abrirModalPeneira(analise: any){
-    
-  //   if(this.peneira_seca){
-  //     this.linhasPeneira = this.peneira_seca.map((item: any, index: number) => ({
-  //       peneira: item.peneira ?? '',
-  //       valor_retido: item.valor_retido ?? null,
-  //       porcentual_retido: item.porcentual_retido ?? null,
-  //       acumulado: item.acumulado ?? null,
-  //       passante: item.passante ?? null,
-  //       passante_acumulado: item.passante_acumulado ?? null,
-  //     }));
-  //   }else if (analise?.peneiras?.peneiras && Array.isArray(analise.peneiras?.peneiras)) {
-  //           alert('fdsfsd');
-
-  //     this.linhasPeneira = analise.peneiras.peneiras.map((item: any, index: number) => ({
-  //       peneira: item.peneira ?? '',
-  //       valor_retido: item.valor_retido ?? null,
-  //       porcentual_retido: item.porcentual_retido ?? null,
-  //       acumulado: item.acumulado ?? null,
-  //       passante: item.passante ?? null,
-  //       passante_acumulado: item.passante_acumulado ?? null,
-  //     }));
-
-  //     this.massa_amostra = analise.peneiras.amostra;
-  //     this.total_finos = analise.peneiras.finos;
-  //     this.total_finos_calculado = analise.peneiras.finos_calculado;
-  //     this.total_finos_digitado = analise.peneiras.finos_digitado;
-  //   } else {
-  //     this.linhasPeneira = [];
-  //     this.linhasPeneira.push({
-  //       peneira: '',
-  //       valor_retido: null,
-  //       porcentual_retido: null,
-  //       acumulado: null,
-  //       passante: null,
-  //       passante_acumulado: null,
-  //     });
-  //   }
-  //   this.modalDadosPeneira = true;
-  // }
-
-  massa_amostra: number = 0;
-  total_finos: number | null = null;
-  total_finos_digitado: number | null = null;
-  total_finos_calculado: number | null = null;
-
-  atualizarValores(index: number) {
-    this.calcularPercentuaisEAcumulado();
-    this.atualizaValoresCalculoPeneira();
-  }
-
-  atualizarTodosValores() {
-    this.calcularPercentuaisEAcumulado();
-    this.atualizaValoresCalculoPeneira();
-  }
-
-  get bloqueiaSalvarPeneiraSeca(): boolean {
-    return (this.total_finos_calculado ?? 0) > 2;
-  }
-
-  atualizaValoresCalculoPeneira(){
-    if(this.total_finos_digitado == 0 || this.total_finos_digitado == null){
-      this.total_finos_calculado = 0;
-    }else{
-      this.total_finos_calculado =  100 - ( ((this.total_finos_digitado ?? 0) * 100) /(this.total_finos ?? 0) ) ;
-    }
-  }
-
-  calcularPercentuaisEAcumulado() {
-    let somaPercentual = 0;
-
-    this.linhasPeneira.forEach((linha) => {
-      const retido = Number(linha.valor_retido);
-
-      // Calcula o % Retido apenas se houver massa válida e valor_retido
-      if (
-        this.massa_amostra &&
-        this.massa_amostra > 0 &&
-        !isNaN(retido) &&
-        linha.valor_retido !== null &&
-        linha.valor_retido !== undefined
-      ) {
-        linha.porcentual_retido = (retido * 100) / this.massa_amostra;
-      } else {
-        linha.porcentual_retido = null;
-      }
-
-      // Só acumula se houver porcentual válido
-      if (
-        linha.porcentual_retido !== null &&
-        !isNaN(linha.porcentual_retido)
-      ) {
-        somaPercentual += linha.porcentual_retido;
-        linha.acumulado = somaPercentual;
-        linha.passante_acumulado = 100 - linha.acumulado;
-        linha.passante = 100 - linha.porcentual_retido;
-      } else {
-        linha.acumulado = null; // 🔹 Mantém vazio se não houver % Retido
-        linha.passante_acumulado = null;
-        linha.passante = null;
-      }
-    });
-
-    // 🔹 Pega a última linha com acumulado válido
-    const ultimaLinhaComAcumulado = [...this.linhasPeneira]
-      .reverse()
-      .find(l => l.acumulado != null);
-
-    // 🔹 Total finos = 100 - acumulado final
-    this.total_finos =
-      ultimaLinhaComAcumulado && ultimaLinhaComAcumulado.acumulado != null
-        ? 100 - ultimaLinhaComAcumulado.acumulado
-        : null;
-
-  }
-
-  salvarPeneiraSeca(analise: any){
-
-    this.peneira_seca = this.linhasPeneira;
-    this.modalDadosPeneira = false;
-
-    const dadosAtualizados: Partial<Analise> = {
-      peneiras:{
-        peneiras: this.linhasPeneira,
-        amostra: this.massa_amostra,
-        finos: this.total_finos,
-        finos_digitado: this.total_finos_digitado,
-        finos_calculo: this.total_finos_calculado
-      }
-    };
-   
-    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Peneira Seca Cadastrada com sucesso!'
-        });
-        setTimeout(() => {
-        }, 1000);
-      },
-      error: (err) => {
-        console.error('Login error:', err); 
-      
-        if (err.status === 401) {
-          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
-        } else if (err.status === 403) {
-          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
-        } else if (err.status === 400) {
-          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
-        }
-        else {
-          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
-        } 
-      }
-    });    
-  }
-
-
-
-  massa_amostra_umida: number = 0;
-
-  recalcularLinha(linha: any) {
-    const capsulaVazia = linha.massa_capsula_vazia ?? 0;
-    const capsulaSeca  = linha.massa_capsula_seca ?? 0;
-    const massaAmostra = this.massa_amostra_umida ?? 0;
-
-    if (massaAmostra > 0) {
-      linha.resultado = ((capsulaSeca - capsulaVazia) / massaAmostra) * 100;
-      linha.resultado= parseFloat(linha.resultado.toFixed(2));
-
-    } else {
-      linha.resultado = null;
-    }
-  }
-  recalcularTodasLinhas() {
-    if (!this.linhasPeneiraUmida?.length) return;
-
-    this.linhasPeneiraUmida.forEach(linha => {
-      this.recalcularLinha(linha);
-    });
-  }
-
-  atualizarValoresUmida(index: number) {
-    // this.calcularPercentuaisEAcumuladoUmida();
-  }
-
-
-  atualizarTodosValoresUmida() {
-    this.calcularPercentuaisEAcumuladoUmida();
-  }
-
-  calcularPercentuaisEAcumuladoUmida() {
-    let somaPercentual = 0;
-
-    this.linhasPeneiraUmida.forEach((linha) => {
-      const retido = Number(linha.valor_retido);
-
-      // Calcula o % Retido apenas se houver massa válida e valor_retido
-      if (
-        this.massa_amostra_umida &&
-        this.massa_amostra_umida > 0 &&
-        !isNaN(retido) &&
-        linha.valor_retido !== null &&
-        linha.valor_retido !== undefined
-      ) {
-        linha.porcentual_retido = (retido * 100) / this.massa_amostra_umida;
-      } else {
-        linha.porcentual_retido = null;
-      }
-
-      // Só acumula se houver porcentual válido
-      if (
-        linha.porcentual_retido !== null &&
-        !isNaN(linha.porcentual_retido)
-      ) {
-        somaPercentual += linha.porcentual_retido;
-        linha.acumulado = somaPercentual;
-        linha.passante_acumulado = 100 - linha.acumulado;
-        linha.passante = 100 - linha.porcentual_retido;
-      } else {
-        linha.acumulado = null; // 🔹 Mantém vazio se não houver % Retido
-        linha.passante_acumulado = null;
-        linha.passante = null;
-      }
-    });
-
-    // 🔹 Pega a última linha com acumulado válido
-    const ultimaLinhaComAcumulado = [...this.linhasPeneiraUmida]
-      .reverse()
-      .find(l => l.acumulado != null);
-
-  
-  }
-
-  salvarPeneiraUmida(analise: any){
-
-    this.peneira_umida = this.linhasPeneiraUmida;
-    this.modalDadosPeneiraUmida = false;
-
-    const dadosAtualizados: Partial<Analise> = {
-      peneiras_umidas:{
-        peneiras: this.linhasPeneiraUmida,
-        amostra: this.massa_amostra_umida,
-      }
-    };
-    
-   
-    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Peneira Úmida Cadastrada com sucesso!'
-        });
-        setTimeout(() => {
-        }, 1000);
-      },
-      error: (err) => {
-        console.error('Login error:', err); 
-      
-        if (err.status === 401) {
-          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
-        } else if (err.status === 403) {
-          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
-        } else if (err.status === 400) {
-          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
-        }
-        else {
-          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
-        } 
-      }
-    });    
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -10264,6 +10515,231 @@ onTracaoAbertoDataMoldagemChange():void {
     }
   }
 
+
+
+
+    getItensPeneira(analise: any) {
+    return [
+
+      { 
+        label: 'Peneiras Secas', 
+        icon: 'pi pi-pencil', 
+        command: () => {
+          this.carregarPeneiraSecaSalva(analise);
+          this.exibirModalPeneiraSeca = true;
+        }
+      },
+      { 
+        label: 'Peneiras Úmidas', 
+        icon: 'pi pi-pencil', 
+        command: () => {
+          this.carregarPeneiraUmidaSalva(analise);
+          this.exibirModalPeneiraUmida = true;
+        }
+      }
+    ];
+  }
+
+  massa_amostra: number = 0;
+  total_finos: number | null = null;
+  total_finos_digitado: number | null = null;
+  total_finos_calculado: number | null = null;
+
+  atualizarValores(index: number) {
+    this.calcularPercentuaisEAcumulado();
+    this.atualizaValoresCalculoPeneira();
+  }
+
+  atualizarTodosValores() {
+    this.calcularPercentuaisEAcumulado();
+    this.atualizaValoresCalculoPeneira();
+  }
+
+  get bloqueiaSalvarPeneiraSeca(): boolean {
+    return (this.total_finos_calculado ?? 0) > 2;
+  }
+
+  atualizaValoresCalculoPeneira(){
+    if(this.total_finos_digitado == 0 || this.total_finos_digitado == null){
+      this.total_finos_calculado = 0;
+    }else{
+      this.total_finos_calculado =  100 - ( ((this.total_finos_digitado ?? 0) * 100) /(this.total_finos ?? 0) ) ;
+    }
+  }
+
+  calcularPercentuaisEAcumulado() {
+    let somaPercentual = 0;
+
+    this.linhasPeneira.forEach((linha) => {
+      const retido = Number(linha.valor_retido);
+
+      // Calcula o % Retido apenas se houver massa válida e valor_retido
+      if (
+        this.massa_amostra &&
+        this.massa_amostra > 0 &&
+        !isNaN(retido) &&
+        linha.valor_retido !== null &&
+        linha.valor_retido !== undefined
+      ) {
+        linha.porcentual_retido = (retido * 100) / this.massa_amostra;
+      } else {
+        linha.porcentual_retido = null;
+      }
+
+      // Só acumula se houver porcentual válido
+      if (
+        linha.porcentual_retido !== null &&
+        !isNaN(linha.porcentual_retido)
+      ) {
+        somaPercentual += linha.porcentual_retido;
+        linha.acumulado = somaPercentual;
+        linha.passante_acumulado = 100 - linha.acumulado;
+        linha.passante = 100 - linha.porcentual_retido;
+      } else {
+        linha.acumulado = null; // 🔹 Mantém vazio se não houver % Retido
+        linha.passante_acumulado = null;
+        linha.passante = null;
+      }
+    });
+
+    // 🔹 Pega a última linha com acumulado válido
+    const ultimaLinhaComAcumulado = [...this.linhasPeneira]
+      .reverse()
+      .find(l => l.acumulado != null);
+
+    // 🔹 Total finos = 100 - acumulado final
+    this.total_finos =
+      ultimaLinhaComAcumulado && ultimaLinhaComAcumulado.acumulado != null
+        ? 100 - ultimaLinhaComAcumulado.acumulado
+        : null;
+
+  }
+
+  salvarPeneiraSeca(analise: any){
+
+    this.peneira_seca = this.linhasPeneira;
+    this.modalDadosPeneira = false;
+
+    const dadosAtualizados: Partial<Analise> = {
+      peneiras:{
+        peneiras: this.linhasPeneira,
+        amostra: this.massa_amostra,
+        finos: this.total_finos,
+        finos_digitado: this.total_finos_digitado,
+        finos_calculo: this.total_finos_calculado
+      }
+    };
+   
+    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Peneira Seca Cadastrada com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });    
+  }
+
+
+
+  massa_amostra_umida: number = 0;
+
+  recalcularLinha(linha: any) {
+    const capsulaVazia = linha.massa_capsula_vazia ?? 0;
+    const capsulaSeca  = linha.massa_capsula_seca ?? 0;
+    const massaAmostra = this.massa_amostra_umida ?? 0;
+
+    if (massaAmostra > 0) {
+      linha.resultado = ((capsulaSeca - capsulaVazia) / massaAmostra) * 100;
+      linha.resultado= parseFloat(linha.resultado.toFixed(2));
+
+    } else {
+      linha.resultado = null;
+    }
+  }
+  recalcularTodasLinhas() {
+    if (!this.linhasPeneiraUmida?.length) return;
+
+    this.linhasPeneiraUmida.forEach(linha => {
+      this.recalcularLinha(linha);
+    });
+  }
+
+  atualizarValoresUmida(index: number) {
+    // this.calcularPercentuaisEAcumuladoUmida();
+  }
+
+
+  atualizarTodosValoresUmida() {
+    this.recalcularTodasLinhas();
+  }
+
+  calcularPercentuaisEAcumuladoUmida() {
+    // Para peneira úmida, apenas recalculamos o resultado de cada linha
+    this.recalcularTodasLinhas();
+  }
+
+  salvarPeneiraUmida(analise: any){
+
+    this.peneira_umida = this.linhasPeneiraUmida;
+    this.modalDadosPeneiraUmida = false;
+
+    const dadosAtualizados: Partial<Analise> = {
+      peneiras_umidas:{
+        peneiras: this.linhasPeneiraUmida,
+        amostra: this.massa_amostra_umida,
+      }
+    };
+    
+   
+    this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Peneira Úmida Cadastrada com sucesso!'
+        });
+        setTimeout(() => {
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Login error:', err); 
+      
+        if (err.status === 401) {
+          this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+        } else if (err.status === 403) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Você não tem autorização para realizar essa operação.' });
+        } else if (err.status === 400) {
+          this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+        }
+        else {
+          this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+        } 
+      }
+    });    
+  }
+
+
+
+
+
   visualizarPeneira(){
     if(this.peneira_seca){
       this.linhasPeneira = this.peneira_seca.map((item: any, index: number) => ({
@@ -10297,39 +10773,70 @@ onTracaoAbertoDataMoldagemChange():void {
         passante_acumulado: null,
       });
     }
+    this.planoSelecionado = null;
     this.modalVisualizarPeneira = true;
     this.modalVisualizarPeneiraUmida = false;
+  }
+
+  carregarPlanoPeneira(planoValue: string): void {
+    const plano = this.planosPeneiras.find(p => p.value === planoValue);
+    if (plano) {
+      this.linhasPeneira = plano.peneiras.map(peneira => ({
+        peneira: peneira,
+        valor_retido: null,
+        porcentual_retido: null,
+        acumulado: null,
+        passante: null,
+        passante_acumulado: null,
+      }));
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Plano Carregado',
+        detail: `Plano "${plano.label}" carregado com sucesso!`
+      });
+    }
+  }
+
+  carregarPlanoPeneiraUmida(planoValue: string): void {
+    const plano = this.planosPeneirasUmidas.find(p => p.value === planoValue);
+    if (plano) {
+      this.linhasPeneiraUmida = plano.peneiras.map(peneira => ({
+        peneira: peneira,
+        massa_capsula_vazia: null,
+        massa_capsula_seca: null,
+        resultado: null,
+      }));
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Plano Carregado',
+        detail: `Plano "${plano.label}" carregado com sucesso!`
+      });
+    }
   }
 
   visualizarPeneiraUmida(){
     if(this.peneira_umida){
       this.linhasPeneiraUmida = this.peneira_umida.map((item: any, index: number) => ({
         peneira: item.peneira ?? '',
-        valor_retido: item.valor_retido ?? null,
-        porcentual_retido: item.porcentual_retido ?? null,
-        acumulado: item.acumulado ?? null,
-        passante: item.passante ?? null,
-        passante_acumulado: item.passante_acumulado ?? null,
+        massa_capsula_vazia: item.massa_capsula_vazia ?? null,
+        massa_capsula_seca: item.massa_capsula_seca ?? null,
+        resultado: item.resultado ?? null,
       }));
     }else if (this.analise?.peneiras_umidas?.peneiras && Array.isArray(this.analise.peneiras_umidas.peneiras)) {
       this.linhasPeneiraUmida = this.analise.peneiras_umidas.peneiras.map((item: any, index: number) => ({
         peneira: item.peneira ?? '',
-        valor_retido: item.valor_retido ?? null,
-        porcentual_retido: item.porcentual_retido ?? null,
-        acumulado: item.acumulado ?? null,
-        passante: item.passante ?? null,
-        passante_acumulado: item.passante_acumulado ?? null,
+        massa_capsula_vazia: item.massa_capsula_vazia ?? null,
+        massa_capsula_seca: item.massa_capsula_seca ?? null,
+        resultado: item.resultado ?? null,
       }));
-      this.massa_amostra_umida = this.analise.peneiras.amostra;
+      this.massa_amostra_umida = this.analise.peneiras_umidas.amostra;
     } else {
       this.linhasPeneiraUmida = [];
         this.linhasPeneiraUmida.push({
           peneira: '',
-          valor_retido: null,
-          porcentual_retido: null,
-          acumulado: null,
-          passante: null,
-          passante_acumulado: null,
+          massa_capsula_vazia: null,
+          massa_capsula_seca: null,
+          resultado: null,
         });
       
     }
@@ -10340,11 +10847,9 @@ onTracaoAbertoDataMoldagemChange():void {
   addLinha(): void {
     this.linhasPeneiraUmida.push({
       peneira: '',
-      valor_retido: null,
-      porcentual_retido: null,
-      acumulado: null,
-      passante: null,
-      passante_acumulado: null,
+      massa_capsula_vazia: null,
+      massa_capsula_seca: null,
+      resultado: null,
     });
   }
 
@@ -10358,16 +10863,6 @@ onTracaoAbertoDataMoldagemChange():void {
       passante_acumulado: null,
     });
   }
-
- 
-
-
-
-
-
-
-
-
 
   abrirModalTracaoNormal(analise: any){
     this.ensaioService.getEnsaiosId(228).subscribe(

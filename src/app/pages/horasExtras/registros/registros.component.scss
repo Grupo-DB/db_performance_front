@@ -132,24 +132,19 @@
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   margin-bottom: 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
 
   .filter-group {
     display: flex;
     gap: 16px;
-    flex: 1;
     flex-wrap: wrap;
+    margin-bottom: 16px;
 
     .filter-item {
       display: flex;
       align-items: center;
       gap: 8px;
       flex: 1;
-      min-width: 250px;
+      min-width: 200px;
       
       i {
         color: #6b7280;
@@ -359,6 +354,12 @@
   }
 }
 
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 16px;
+  }
 .table-section {
   .section-title {
     font-size: 20px;
@@ -458,6 +459,201 @@
   }
 }
 
+// Estilos específicos para o Dialog
+// ::ng-deep .p-dialog {
+//   border-radius: 12px;
+//   overflow: hidden;
+//   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+//   border: 1px solid #e5e7eb;
+  
+//   .p-dialog-header {
+//     background: #64748b;
+//     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+//     padding: 24px 28px;
+    
+//     .p-dialog-title {
+//       font-weight: 700;
+//       color: #ffffff;
+//       font-size: 18px;
+//     }
+    
+//     i {
+//       color: #ffffff;
+//       opacity: 0.9;
+//     }
+    
+//     .p-dialog-header-icon {
+//       color: #ffffff;
+//       width: 32px;
+//       height: 32px;
+//       border-radius: 6px;
+//       transition: all 0.2s;
+//       opacity: 0.8;
+      
+//       &:hover {
+//         opacity: 1;
+//         background-color: rgba(255, 255, 255, 0.15);
+//       }
+      
+//       &:focus {
+//         box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+//       }
+//     }
+//   }
+  
+//   .p-dialog-content {
+//     padding: 28px;
+//     background-color: #ffffff;
+    
+//     .form-card {
+//       background: transparent;
+//       padding: 0;
+//       box-shadow: none;
+//       margin: 0;
+//       animation: none;
+      
+//       .form-field,
+//       .form-field-full {
+//         label {
+//           font-size: 14px;
+//           font-weight: 500;
+//           color: #374151;
+//         }
+
+//         input,
+//         textarea {
+//           padding: 12px 16px;
+//           border: 1px solid #d1d5db;
+//           border-radius: 8px;
+//           font-size: 14px;
+//           transition: all 0.2s;
+//           background-color: #ffffff;
+//           color: #1f2937;
+
+//           &:focus {
+//             outline: none;
+//             border-color: #3b82f6;
+//             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+//           }
+
+//           &:disabled {
+//             background-color: #f3f4f6;
+//             cursor: not-allowed;
+//             opacity: 0.7;
+//             color: #6b7280;
+//           }
+          
+//           &::placeholder {
+//             color: #9ca3af;
+//           }
+//         }
+        
+//         .p-select {
+//           .p-select-label {
+//             background-color: #ffffff;
+//             color: #1f2937;
+//             border: 1px solid #d1d5db;
+//             padding: 12px 16px;
+            
+//             &.p-placeholder {
+//               color: #9ca3af;
+//             }
+//           }
+          
+//           .p-select-dropdown {
+//             background-color: #ffffff;
+//             border: 1px solid #d1d5db;
+//             border-left: none;
+//             color: #1f2937;
+//           }
+          
+//           &:not(.p-disabled):hover {
+//             .p-select-label,
+//             .p-select-dropdown {
+//               border-color: #3b82f6;
+//             }
+//           }
+          
+//           &.p-focus {
+//             .p-select-label {
+//               border-color: #3b82f6;
+//               box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+//             }
+            
+//             .p-select-dropdown {
+//               border-color: #3b82f6;
+//             }
+//           }
+//         }
+        
+//         .p-datepicker {
+//           .p-inputtext {
+//             background-color: #ffffff;
+//             color: #1f2937;
+//             border: 1px solid #d1d5db;
+//             padding: 12px 16px;
+            
+//             &:focus {
+//               border-color: #3b82f6;
+//               box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+//             }
+            
+//             &::placeholder {
+//               color: #9ca3af;
+//             }
+//           }
+//         }
+
+//         textarea {
+//           min-height: 120px;
+//           font-family: inherit;
+//           line-height: 1.5;
+//           resize: vertical;
+//         }
+//       }
+      
+//       .form-actions {
+//         display: flex;
+//         justify-content: flex-end;
+//         gap: 16px;
+//         margin-top: 32px;
+//         padding-top: 24px;
+//         border-top: 1px solid #e5e7eb;
+        
+//         .p-button {
+//           padding: 12px 24px;
+//           font-weight: 500;
+//           font-size: 14px;
+//           border-radius: 8px;
+//           transition: all 0.2s;
+          
+//           &.p-button-secondary {
+//             background-color: transparent;
+//             border: 1px solid #d1d5db;
+//             color: #6b7280;
+            
+//             &:hover {
+//               background-color: #f9fafb;
+//               border-color: #9ca3af;
+//               color: #374151;
+//             }
+//           }
+          
+//           &:not(.p-button-secondary) {
+//             background-color: #10b981;
+//             border-color: #10b981;
+            
+//             &:hover {
+//               background-color: #059669;
+//               border-color: #059669;
+//             }
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
+
 // Responsive
 @media (max-width: 768px) {
   .page-container {
@@ -517,5 +713,44 @@
         }
       }
     }
+  }
+}
+
+// Estilos específicos para o dialog de registro de horas extras
+::ng-deep .registro-dialog {
+  .p-dialog-header {
+    background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+    color: white;
+    padding: 24px;
+    border-radius: 12px 12px 0 0;
+
+    .p-dialog-title {
+      color: white;
+      font-weight: 700;
+    }
+
+    .p-dialog-header-icon {
+      color: white;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    // Forçar cor branca para todos os elementos do header customizado
+    i, h2 {
+      color: white !important;
+    }
+  }
+
+  .p-dialog-content {
+    background: #ffffff;
+    padding: 32px;
+  }
+
+  .p-dialog-footer {
+    background: #f9fafb;
+    padding: 20px 32px;
+    border-top: none;
   }
 }

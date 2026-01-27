@@ -8,7 +8,7 @@ import { ContaContabil } from '../../../../pages/baseOrcamentaria/orcamentoBase/
   providedIn: 'root'
 })
 export class ContaContabilService {
-  private apiUrl = 'http://172.50.10.79:8008/orcamento/contascontabeis/'
+  private apiUrl = 'https://managerdb.com.br/api/orcamento/contascontabeis/'
   constructor(
     private httpClient: HttpClient,
     private router: Router,

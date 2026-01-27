@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class GetSetorService {
-  private apiUrl = 'http://172.50.10.79:8008/management/get_setor/'; 
+  private apiUrl = 'https://managerdb.com.br/api/management/get_setor/'; 
   constructor(private http: HttpClient) { }
 
   getSetores(): Observable<any[]>{

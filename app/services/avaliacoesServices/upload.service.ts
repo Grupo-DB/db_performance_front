@@ -9,7 +9,7 @@ import { UploadResponse } from '../../types/avaliacoes/upload-response';
   providedIn: 'root'
 })
 export class UploadService {
-  private apiUrl = 'http://172.50.10.79:8008/management/upload/';
+  private apiUrl = 'https://managerdb.com.br/api/management/upload/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
   upload(imagem:File){

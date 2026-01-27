@@ -9,28 +9,28 @@ import { Observable } from 'rxjs';
 })
 export class HomeService {
   //declarar as urls
-  private calcarioUrl = 'http://172.50.10.79:8008/home/calcular_calcario/';
-  private britagemUrl =  'http://172.50.10.79:8008/britagem/calcular_britagem/';
-  private rebritagemUrl =  'http://172.50.10.79:8008/rebritagem/calcular_rebritagem/';
-  private fabricaCalcarioUrl =  'http://172.50.10.79:8008/calcario/calcular_calcario/';
-  private fabricaFertilizanteUrl =  'http://172.50.10.79:8008/fertilizante/calcular_fertilizante/';
-  private graficosFabricaCalcarioUrl =  'http://172.50.10.79:8008/calcario/calcular_calcario_graficos/';
-  private rebritagemParadasUrl =  'http://172.50.10.79:8008/rebritagem/calcular_rebritagem_paradas/';
-  private graficosUrl =  'http://172.50.10.79:8008/britagem/calcular_graficos/';
-  private calculosEquipamentosUrl = 'http://172.50.10.79:8008/calcario/calcular_equipamentos_detalhes/';
-  private calUrl = 'http://172.50.10.79:8008/cal/calcular_cal/';
-  private calProdutosUrl = 'http://172.50.10.79:8008/cal/calcular_cal_produtos/';
-  private calEquipamentosUrl = 'http://172.50.10.79:8008/cal/calcular_cal_equipamentos/';
-  private calGraficosUrl = 'http://172.50.10.79:8008/cal/calcular_cal_graficos/';
-  private calEquipamentosDetalhesUrl = 'http://172.50.10.79:8008/cal/calcular_cal_detalhes/';
-  private calGraficosCarregamentoUrl = 'http://172.50.10.79:8008/cal/calcular_cal_carregamento_graficos/';
-  private calcarioGraficosCarregamentoUrl = 'http://172.50.10.79:8008/calcario/calcular_calcario_carregamento_graficos/';
-  private argamasssaCarregamentoUrl = 'http://172.50.10.79:8008/argamassa/calcular_argamassa/';
-  private argamassaProdutosUrl = 'http://172.50.10.79:8008/argamassa/calcular_argamassa_produtos/';
-  private argamassaProdutosCarregamentoUrl = 'http://172.50.10.79:8008/argamassa/calcular_argamassa_produtos_carregamento/';
-  private argamassaProdutosGraficolUrl = 'http://172.50.10.79:8008/argamassa/calcular_argamassa_graficos/';
-  private argamassaProdutosGraficoCarregamentolUrl = 'http://172.50.10.79:8008/argamassa/calcular_argamassa_graficos_carregamento/';
-  private argamassaEquipamentosDetalhesUrl = 'http://172.50.10.79:8008/argamassa/calcular_argamassa_equipamentos/';
+  private calcarioUrl = 'https://managerdb.com.br/api/home/calcular_calcario/';
+  private britagemUrl =  'https://managerdb.com.br/api/britagem/calcular_britagem/';
+  private rebritagemUrl =  'https://managerdb.com.br/api/rebritagem/calcular_rebritagem/';
+  private fabricaCalcarioUrl =  'https://managerdb.com.br/api/calcario/calcular_calcario/';
+  private fabricaFertilizanteUrl =  'https://managerdb.com.br/api/fertilizante/calcular_fertilizante/';
+  private graficosFabricaCalcarioUrl =  'https://managerdb.com.br/api/calcario/calcular_calcario_graficos/';
+  private rebritagemParadasUrl =  'https://managerdb.com.br/api/rebritagem/calcular_rebritagem_paradas/';
+  private graficosUrl =  'https://managerdb.com.br/api/britagem/calcular_graficos/';
+  private calculosEquipamentosUrl = 'https://managerdb.com.br/api/calcario/calcular_equipamentos_detalhes/';
+  private calUrl = 'https://managerdb.com.br/api/cal/calcular_cal/';
+  private calProdutosUrl = 'https://managerdb.com.br/api/cal/calcular_cal_produtos/';
+  private calEquipamentosUrl = 'https://managerdb.com.br/api/cal/calcular_cal_equipamentos/';
+  private calGraficosUrl = 'https://managerdb.com.br/api/cal/calcular_cal_graficos/';
+  private calEquipamentosDetalhesUrl = 'https://managerdb.com.br/api/cal/calcular_cal_detalhes/';
+  private calGraficosCarregamentoUrl = 'https://managerdb.com.br/api/cal/calcular_cal_carregamento_graficos/';
+  private calcarioGraficosCarregamentoUrl = 'https://managerdb.com.br/api/calcario/calcular_calcario_carregamento_graficos/';
+  private argamasssaCarregamentoUrl = 'https://managerdb.com.br/api/argamassa/calcular_argamassa/';
+  private argamassaProdutosUrl = 'https://managerdb.com.br/api/argamassa/calcular_argamassa_produtos/';
+  private argamassaProdutosCarregamentoUrl = 'https://managerdb.com.br/api/argamassa/calcular_argamassa_produtos_carregamento/';
+  private argamassaProdutosGraficolUrl = 'https://managerdb.com.br/api/argamassa/calcular_argamassa_graficos/';
+  private argamassaProdutosGraficoCarregamentolUrl = 'https://managerdb.com.br/api/argamassa/calcular_argamassa_graficos_carregamento/';
+  private argamassaEquipamentosDetalhesUrl = 'https://managerdb.com.br/api/argamassa/calcular_argamassa_equipamentos/';
 
   constructor(private  httpClient: HttpClient, private router: Router,) { }
 

@@ -1,6 +1,6 @@
 {
       "/api": {
-            "target": "http://172.50.10.79:8008",
+            "target": "http://managerdb.com.br/api",
             "secure": false,
             "changeOrigin": true
       },

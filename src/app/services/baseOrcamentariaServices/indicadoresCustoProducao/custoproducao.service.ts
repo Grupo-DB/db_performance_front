@@ -7,9 +7,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class CustoproducaoService {
-  private apiUrl = 'http://172.50.10.79:8008/custoproducao/custoproducao/';
-  private calcUrl = 'http://172.50.10.79:8008/custoproducao/custoproducao/calculosCustoProducao/';
-  private pedraUrl = 'http://172.50.10.79:8008/britagem/calcular_pedras/';
+  private apiUrl = 'https://managerdb.com.br/api/custoproducao/custoproducao/';
+  private calcUrl = 'https://managerdb.com.br/api/custoproducao/custoproducao/calculosCustoProducao/';
+  private pedraUrl = 'https://managerdb.com.br/api/britagem/calcular_pedras/';
   constructor(
     private http: HttpClient,
     private router: Router

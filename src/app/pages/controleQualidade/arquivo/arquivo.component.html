@@ -314,9 +314,10 @@
                                                         tooltipPosition="top" 
                                                     />
                                                 </div>
+                                                <!-- *ngIf="analise.finalizada && !analise.aprovada && !analise.laudo"   -->
                                                 <div 
                                                     style="position: relative;"
-                                                    *ngIf="analise.finalizada && !analise.aprovada && !analise.laudo"    
+                                                    
                                                     class="ml-2"
                                                 >
                                                         <p-button 
@@ -2419,6 +2420,9 @@
                               
                                 <div class="mt-2 p-2 text-center" style="background-color: rgba(178, 245, 234, 0.15); border-radius: 8px;">
                                     <p class="font-bold mb-0" style="color: #b2f5ea;">Média: {{ analiseSelecionada.flexao.media_geral | number:'1.2-2' }} MPa</p>
+                                    <p class="text-xs mb-0 mt-1" style="color: #ccfbf1;" *ngIf="analiseSelecionada.flexao_desvio_padrao_geral !== null && analiseSelecionada.flexao_desvio_padrao_geral !== undefined">
+                                      Desvio Padrão: {{ analiseSelecionada.flexao_desvio_padrao_geral | number:'1.2-2' }} MPa
+                                    </p>
                                 </div>
                                 <div class="mt-2 p-2 text-center" style="background-color: rgba(178, 245, 234, 0.15); border-radius: 8px;">
                                     <p class="font-bold mb-0" style="color: #b2f5ea;">Desvio Absoluto: {{ analiseSelecionada.flexao.desvio_absoluto | number:'1.2-2' }} MPa</p>
@@ -2589,6 +2593,9 @@
                               
                                 <div class="mt-2 p-2 text-center" style="background-color: rgba(178, 245, 234, 0.15); border-radius: 8px;">
                                     <p class="font-bold mb-0" style="color: #b2f5ea;">Média: {{ analiseSelecionada.compressao.media_geral | number:'1.2-2' }} MPa</p>
+                                    <p class="text-xs mb-0 mt-1" style="color: #ccfbf1;" *ngIf="analiseSelecionada.compressao_desvio_padrao_geral !== null && analiseSelecionada.compressao_desvio_padrao_geral !== undefined">
+                                      Desvio Padrão: {{ analiseSelecionada.compressao_desvio_padrao_geral | number:'1.2-2' }} MPa
+                                    </p>
                                 </div>
                                 <div class="mt-2 p-2 text-center" style="background-color: rgba(178, 245, 234, 0.15); border-radius: 8px;">
                                     <p class="font-bold mb-0" style="color: #b2f5ea;">Desvio Absoluto: {{ analiseSelecionada.compressao.desvio_absoluto | number:'1.2-2' }} MPa</p>
@@ -2628,42 +2635,85 @@
                                 </div>
                             </ng-template>
                             <div class="flex flex-row w-12 gap-3">
-                                <!-- Coluna da tabela -->
+                                <!-- Coluna da tabela com accordion -->
                                 <div class="w-12">
-                                    <p-table 
-                                        [value]="ensaios_laudo" 
-                                        [(selection)]="ensaios_selecionados" 
-                                        dataKey="id"   
-                                    >
-                                    <ng-template pTemplate="header">
-                                        <tr>
-                                            <th style="width: 3em">
-                                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                                            </th>
-                                            <th>Análises</th>
-                                            <th>Garantias</th>
-                                        </tr>
-                                    </ng-template>
+                                    <p-accordion [multiple]="true" [activeIndex]="[0, 1]">
+                                        <!-- Ensaios no estado fresco -->
+                                        <p-accordionTab header="Ensaios no estado fresco">
+                                            <p-table 
+                                                [value]="ensaios_laudo_fresco" 
+                                                [(selection)]="ensaios_selecionados" 
+                                                dataKey="id"   
+                                            >
+                                                <ng-template pTemplate="header">
+                                                    <tr>
+                                                        <th style="width: 3em">
+                                                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                                        </th>
+                                                        <th>Análises</th>
+                                                        <th>Garantias</th>
+                                                    </tr>
+                                                </ng-template>
 
-                                    <ng-template pTemplate="body" let-ensaio>
-                                        <tr [pSelectableRow]="ensaio">
-                                        <td>
-                                            <p-tableCheckbox [value]="ensaio"></p-tableCheckbox>
-                                        </td>
-                                            <td>{{ ensaio.descricao }}</td>
-                                            <td>
-                                                <input
-                                                    pInputText
-                                                    value="{{ ensaio.garantia }}"
-                                                    type="text"
-                                                    [(ngModel)]="ensaio.garantia"
-                                                    placeholder="Digite a garantia"
-                                                    class="form-control"
-                                                />
-                                            </td>
-                                        </tr>
-                                    </ng-template>
-                                    </p-table>
+                                                <ng-template pTemplate="body" let-ensaio>
+                                                    <tr [pSelectableRow]="ensaio">
+                                                        <td>
+                                                            <p-tableCheckbox [value]="ensaio"></p-tableCheckbox>
+                                                        </td>
+                                                        <td>{{ ensaio.descricao }}</td>
+                                                        <td>
+                                                            <input
+                                                                pInputText
+                                                                value="{{ ensaio.garantia }}"
+                                                                type="text"
+                                                                [(ngModel)]="ensaio.garantia"
+                                                                placeholder="Digite a garantia"
+                                                                class="form-control"
+                                                            />
+                                                        </td>
+                                                    </tr>
+                                                </ng-template>
+                                            </p-table>
+                                        </p-accordionTab>
+
+                                        <!-- Ensaios no estado solto -->
+                                        <p-accordionTab header="Ensaios no estado solto">
+                                            <p-table 
+                                                [value]="ensaios_laudo_solto" 
+                                                [(selection)]="ensaios_selecionados" 
+                                                dataKey="id"   
+                                            >
+                                                <ng-template pTemplate="header">
+                                                    <tr>
+                                                        <th style="width: 3em">
+                                                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                                        </th>
+                                                        <th>Análises</th>
+                                                        <th>Garantias</th>
+                                                    </tr>
+                                                </ng-template>
+
+                                                <ng-template pTemplate="body" let-ensaio>
+                                                    <tr [pSelectableRow]="ensaio">
+                                                        <td>
+                                                            <p-tableCheckbox [value]="ensaio"></p-tableCheckbox>
+                                                        </td>
+                                                        <td>{{ ensaio.descricao }}</td>
+                                                        <td>
+                                                            <input
+                                                                pInputText
+                                                                value="{{ ensaio.garantia }}"
+                                                                type="text"
+                                                                [(ngModel)]="ensaio.garantia"
+                                                                placeholder="Digite a garantia"
+                                                                class="form-control"
+                                                            />
+                                                        </td>
+                                                    </tr>
+                                                </ng-template>
+                                            </p-table>
+                                        </p-accordionTab>
+                                    </p-accordion>
                                 </div>
                             </div>
                             
@@ -2684,7 +2734,7 @@
             </div>
         </div>
     </p-dialog>
-    <canvas #graficoCanvas style="display: none;"></canvas>
+    <canvas #graficoCanvas width="800" height="600" style="display: none;"></canvas>
 
     <!-- substrato -->
     <p-drawer 

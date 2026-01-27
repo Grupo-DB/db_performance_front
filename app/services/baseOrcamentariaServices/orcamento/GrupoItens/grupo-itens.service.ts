@@ -8,8 +8,8 @@ import { GrupoItens } from '../../../../pages/baseOrcamentaria/orcamentoBase/gru
   providedIn: 'root'
 })
 export class GrupoItensService {
-  private apiUrl = 'http://172.50.10.79:8008/orcamento/grupositens/'
-  private apiRealizadoUrl = 'http://172.50.10.79:8008/grupoitens/calculos_realizados_grupo_itens/'
+  private apiUrl = 'https://managerdb.com.br/api/orcamento/grupositens/'
+  private apiRealizadoUrl = 'https://managerdb.com.br/api/grupoitens/calculos_realizados_grupo_itens/'
   constructor(
     private httpClient: HttpClient,
     private router: Router

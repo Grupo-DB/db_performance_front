@@ -537,9 +537,7 @@
                                                                     <label for="float-label">Tipo de Amostragem</label>
                                                                 </p-floatLabel>
                                                             </div>
-                                                        </div>
-                                                        <div class="flex flex-column w-12 gap-3 lg:w-12 lg:flex-row">
-                                                            <div *ngIf="exibirRepresentatividadeLote()" class=" w-10 mt-3">
+                                                            <div *ngIf="exibirRepresentatividadeLote()" class="w-11 text-left">
                                                                 <p-floatLabel variant="on">
                                                                     <input pInputText formControlName="representatividadeLote" type="text"
                                                                         id="representatividadeLote" [style]="{'width':'100%'}"
@@ -1229,7 +1227,6 @@
                                                 <label for="on_label">Digite o Período Hora</label>
                                             </p-floatlabel>
                                         </div>
-
                                         <div class="w-12 text-left">
                                             <p-floatLabel variant="on">
                                                 <p-select inputId="float-label" [style]="{'width':'100%'}"
@@ -1240,29 +1237,33 @@
                                                 <label for="float-label">Periodicidade</label>
                                             </p-floatLabel>
                                         </div>
-
-                                    </div>
-
-                                    <div class="flex flex-column mt-3 w-12 gap-3">
-                                        <div class="w-12 text-left">
-                                            <p-floatLabel variant="on">
-                                                <p-select inputId="float-label" [style]="{'width':'100%'}"
-                                                    [options]="tipos" formControlName="tipoAmostragem"
-                                                    optionLabel="value" optionValue="value" appendTo="body"
-                                                    [filter]="true" filterBy="value" [showClear]="true">
-                                                </p-select>
-                                                <label for="float-label">Tipo de Amostragem</label>
-                                            </p-floatLabel>
+                                        <div class="flex flex-column mt-3 w-12 gap-3">
+                                            <div class="w-12 text-left">
+                                                <p-floatLabel variant="on">
+                                                    <p-select inputId="float-label" [style]="{'width':'100%'}"
+                                                        [options]="tipos" formControlName="tipoAmostragem"
+                                                        optionLabel="value" optionValue="value" appendTo="body"
+                                                        [filter]="true" filterBy="value" [showClear]="true">
+                                                    </p-select>
+                                                    <label for="float-label">Tipo de Amostragem</label>
+                                                </p-floatLabel>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="flex flex-column w-12 gap-3 lg:w-12 lg:flex-row">
-                                        <div *ngIf="exibirRepresentatividadeLote()" class=" w-12 mt-3">
-                                            <p-floatLabel variant="on">
-                                                <input pInputText formControlName="representatividadeLote" type="text"
-                                                    id="representatividadeLote" [style]="{'width':'100%'}"
-                                                    autocomplete="off" variant="filled" [readOnly]="false" />
-                                                <label>Representatividade do Lote Tn</label>
-                                            </p-floatLabel>
+                                        <div *ngIf="exibirRepresentatividadeLote()" class="w-12">
+                                        <p-floatLabel variant="on">
+                                            <p-iconfield>
+                                                <p-inputicon class="pi pi-file-edit" />
+                                                <input 
+                                                    pInputText 
+                                                    formControlName="representatividadeLote" 
+                                                    type="text"
+                                                    id="representatividadeLote" 
+                                                    [style]="{'width':'100%'}"
+                                                    autocomplete="off" variant="filled" 
+                                                    />
+                                                <label for="representatividadeLote">Representatividade do Lote Tn</label>
+                                            </p-iconfield>
+                                        </p-floatLabel>    
                                         </div>
                                     </div>
                                 </p-card>
@@ -1680,7 +1681,7 @@
                                     <p-floatLabel variant="on">
                                         <p-select inputId="float-label" [style]="{'width':'100%'}" [options]="planosAnalise"
                                             formControlName="planoAnalise" optionLabel="descricao" optionValue="id" appendTo="body"
-                                            [filter]="true" filterBy="nome" [showClear]="true">
+                                            [filter]="true" filterBy="descricao"[showClear]="true">
                                         </p-select>
                                         <label for="float-label">Selecione o Plano de Análise</label>
                                     </p-floatLabel>

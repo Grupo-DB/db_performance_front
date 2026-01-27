@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class RealizadoService {
-  private apiUrl = 'http://172.50.10.79:8008/realizado/realizado/'
+  private apiUrl = 'https://managerdb.com.br/api/realizado/realizado/'
   constructor(
     private httpClient: HttpClient
   ) { }

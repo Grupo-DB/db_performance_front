@@ -803,7 +803,7 @@ export class AmostraComponent implements OnInit {
           next: () => {
             this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Amostra excluída com sucesso!!', life: 1000 });
             setTimeout(() => {
-              window.location.reload(); // Atualiza a página após a exclusão
+              this.loadAmostras(); // Atualiza a página após a exclusão
             }, 1000); // Tempo em milissegundos (1 segundo de atraso)
           },
           error: (err) => {
@@ -1371,7 +1371,7 @@ uploadImages(): void {
       });
       
       this.uploadedFilesWithInfo = [];
-      this.activeStep = 3;
+     
     },
     error: (error) => {
       console.error('Erro ao enviar imagens:', error);
@@ -1380,7 +1380,7 @@ uploadImages(): void {
         summary: 'Erro',
         detail: 'Erro ao enviar imagens. A amostra foi salva, mas as imagens não foram anexadas.'
       });
-      this.activeStep = 3;
+    
     }
   });
 }
@@ -1959,7 +1959,20 @@ receberDadosAmostra(): void {
 
 }
 criarOSDoFormulario() {
-  this.receberDadosAmostra();
+  // SEMPRE recapturar os valores atuais do formulário antes de criar
+  const formData = this.registerForm.value;
+  this.amostraData = this.enriquecerDadosFormulario(formData);
+  
+  // Adiciona as imagens aos dados
+  if (this.uploadedFilesWithInfo && this.uploadedFilesWithInfo.length > 0) {
+    this.amostraData.imagens = this.uploadedFilesWithInfo.map(fileInfo => ({
+      file: fileInfo.file,
+      descricao: fileInfo.descricao,
+      nome: fileInfo.file.name,
+      tamanho: fileInfo.file.size,
+      tipo: fileInfo.file.type
+    }));
+  }
   
   // Verificar se amostraData existe
   if (!this.amostraData) {
@@ -2017,6 +2030,13 @@ criarOSDoFormulario() {
         severity: 'success',
         summary: 'Sucesso',
         detail: 'Ordem de Serviço cadastrada com sucesso!'
+      });
+
+      // Buscar o próximo número de ordem para evitar duplicatas
+      this.ordemService.getProximoNumero().subscribe(numero => {
+        this.registerOrdemForm.patchValue({
+          numero: numero
+        });
       });
     },
 
@@ -2088,6 +2108,7 @@ limparDadosFormulario() {
       }
     }
 
+
     // Criar amostra vinculada à ordem
     this.amostraService.registerAmostra(
       this.amostraData.laboratorio,
@@ -2132,6 +2153,37 @@ limparDadosFormulario() {
       if (this.uploadedFilesWithInfo.length > 0) {
         this.uploadImages();
       } 
+
+      // Atualizar o número da amostra no formulário para a próxima criação
+      if (material) {
+        const materialNormalizado = this.normalize(material);    
+        this.amostraService.getProximoSequencialPorNome(materialNormalizado).subscribe({
+          next: (sequencial) => {
+            const numero = this.gerarNumero(materialNormalizado, sequencial);
+            this.registerForm.get('numero')?.setValue(numero);
+            // Também atualizar no amostraData para evitar números duplicados
+            if (this.amostraData) {
+              this.amostraData.numero = numero;
+            }
+          },
+          error: (err) => {
+            console.error('Erro ao buscar sequencial:', err);
+            const sequencialFallback = this.gerarSequencialFallback(materialNormalizado);
+            const numero = this.gerarNumero(materialNormalizado, sequencialFallback);
+            this.registerForm.get('numero')?.setValue(numero);
+            // Também atualizar no amostraData para evitar números duplicados
+            if (this.amostraData) {
+              this.amostraData.numero = numero;
+            }
+            this.messageService.add({ 
+              severity: 'warn', 
+              summary: 'Aviso', 
+              detail: 'Usando numeração local. Verifique a conectividade.' 
+            });
+          }
+        });
+      }
+
         // Criar análise vinculada à amostra
         this.criarAnaliseVinculada(amostraCriada.id);
       },
@@ -2156,8 +2208,9 @@ limparDadosFormulario() {
           summary: 'Sucesso', 
           detail: 'Amostra expressa criada com sucesso! (Ordem → Amostra → Análise)'
         });
+
         // redirecionar  
-        this.router.navigate(['/welcome/controleQualidade/ordem']);
+        //this.router.navigate(['/welcome/controleQualidade/ordem']);
       },
       error: (error) => {
         console.error('❌ Erro ao criar análise:', error);

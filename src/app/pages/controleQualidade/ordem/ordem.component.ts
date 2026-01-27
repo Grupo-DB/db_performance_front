@@ -6108,7 +6108,8 @@ gerarNumero(materialNome: string, sequencial: number): string {
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: 'Ordem de serviço excluída com sucesso!!', life: 1000 });
         setTimeout(() => {
-          window.location.reload(); // Atualiza a página após a exclusão
+          this.loadOrdens();
+          this.loadAnalises(); // Atualiza a página após a exclusão
         }, 1000); // Tempo em milissegundos (1 segundo de atraso)
       },
       error: (err) => {
@@ -6361,7 +6362,7 @@ onDescricaoInput(index: number, event: Event): void {
   //Finalizar análise
   finalizarAnalise(analise: any): void {
     this.confirmationService.confirm({
-      message: `Tem certeza que deseja finalizar a análise da amostra ${analise.id}?`,
+      message: `Tem certeza que deseja finalizar a análise da amostra ${analise.amostra_detalhes.numero}?`,
       header: 'Finalizar Análise',
       icon: 'pi pi-check-circle',
       acceptIcon: 'pi pi-check',
@@ -6397,7 +6398,7 @@ onDescricaoInput(index: number, event: Event): void {
 
   reabrirAnalise(analise: any): void {
     this.confirmationService.confirm({
-      message: `Tem certeza que deseja reabrir a análise da amostra ${analise.id}?`,
+      message: `Tem certeza que deseja reabrir a análise da amostra ${analise.amostra_detalhes.numero}?`,
       header: 'Reabrir Análise',
       icon: 'pi pi-check-circle',
       acceptIcon: 'pi pi-check',
@@ -6465,7 +6466,7 @@ onDescricaoInput(index: number, event: Event): void {
     this.laudoAcceptRan = false;
 
     this.confirmationService.confirm({
-      message: `Tem certeza que deseja encaminhar à análise ${analise.id} para laudo?`,
+      message: `Tem certeza que deseja encaminhar à análise ${analise.amostra_detalhes.numero} para laudo?`,
       header: 'Encaminhar para Laudo',
       icon: 'pi pi-check-circle',
       acceptIcon: 'pi pi-check',
@@ -6544,12 +6545,12 @@ onDescricaoInput(index: number, event: Event): void {
 
     // Fecha diálogos anteriores para garantir um único confirm visível
     this.confirmationService.close();
-    const token = `aprovar_${analise.id}_${Date.now()}`;
+    const token = `aprovar_${analise.amostra_detalhes.numero}_${Date.now()}`;
     this.aprovarOperacaoToken = token;
     this.aprovarAcceptRan = false;
 
     this.confirmationService.confirm({
-      message: `Tem certeza que deseja aprovar a análise ${analise.id}?`,
+      message: `Tem certeza que deseja aprovar a análise ${analise.amostra_detalhes.numero}?`,
       header: 'Aprovar Análise',
       icon: 'pi pi-check-circle',
       acceptIcon: 'pi pi-check',

@@ -11,17 +11,17 @@ import { da } from 'date-fns/locale';
 })
 export class AmostraService {
 
-  private amostraExpressaUrl = 'http://172.50.10.79:8008/ordem/expressa/';
-  private amostraOrdemUrl = 'http://172.50.10.79:8008/ordem/ordem/';
-  private tipoAmostraUrl = 'http://172.50.10.79:8008/amostra/tipoAmostra/';
-  private amostraUrl = 'http://172.50.10.79:8008/amostra/amostra/';
-  private garantiaProdutoUrl = 'http://172.50.10.79:8008/amostra/garantiaProduto/';
-  private consultaGarantiaUrl = 'http://172.50.10.79:8008/amostra/garantiaProduto/por-produto/';
-  private imageUrl = 'http://172.50.10.79:8008/amostra/amostraImagem/';
-  private produtoUrl = 'http://172.50.10.79:8008/amostra/produto/';
-  private sequencialUrl = 'http://172.50.10.79:8008/amostra/amostra/proximo-sequencial/';
-  private representatividadeUrl = 'http://172.50.10.79:8008/cal/representatividade/';
-  private getLocaisColetaUrl = 'http://172.50.10.79:8008/amostra/amostra/locais-coleta/';
+  private amostraExpressaUrl = 'https://managerdb.com.br/api/ordem/expressa/';
+  private amostraOrdemUrl = 'https://managerdb.com.br/api/ordem/ordem/';
+  private tipoAmostraUrl = 'https://managerdb.com.br/api/amostra/tipoAmostra/';
+  private amostraUrl = 'https://managerdb.com.br/api/amostra/amostra/';
+  private garantiaProdutoUrl = 'https://managerdb.com.br/api/amostra/garantiaProduto/';
+  private consultaGarantiaUrl = 'https://managerdb.com.br/api/amostra/garantiaProduto/por-produto/';
+  private imageUrl = 'https://managerdb.com.br/api/amostra/amostraImagem/';
+  private produtoUrl = 'https://managerdb.com.br/api/amostra/produto/';
+  private sequencialUrl = 'https://managerdb.com.br/api/amostra/amostra/proximo-sequencial/';
+  private representatividadeUrl = 'https://managerdb.com.br/api/cal/representatividade/';
+  private getLocaisColetaUrl = 'https://managerdb.com.br/api/amostra/amostra/locais-coleta/';
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'

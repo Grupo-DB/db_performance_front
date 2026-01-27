@@ -67,12 +67,12 @@
           </ul> 
           <ul>
             <li class="cor-menu" *ngIf="hasGroup(['Admin'])" nz-menu-item   nzMatchRouter>
-              <a class="cor-menu-a" href="http://172.50.10.79:8008/admin/" target="_blank"><span nz-icon nzType="user" nzTheme="outline"></span>  Admin</a>
+              <a class="cor-menu-a" href="https://managerdb.com.br/api/admin/" target="_blank"><span nz-icon nzType="user" nzTheme="outline"></span>  Admin</a>
             </li> 
           </ul>
         </li>
         
-        <li class="" *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador'])" nz-submenu  nzTitle="Gestão de Pessoas" nzIcon="team">
+        <li class="" *ngIf="hasGroup(['Admin','Master','RHGestor','RHAvaliacao','RHAvaliador','HorasExtras'])" nz-submenu  nzTitle="Gestão de Pessoas" nzIcon="team">
           <ul>
             <li class="cor-menu" *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item nzMatchRouter>
               <a class="cor-menu-a" routerLink="colaborador" ><span nz-icon nzType="user" nzTheme="outline"></span> Colaboradores</a>
@@ -84,7 +84,7 @@
             </li> 
           </ul>
           <ul>
-            <li class="cor-menu" *ngIf="hasGroup(['Admin','Master','RHGestor'])" nz-menu-item nzMatchRouter>
+            <li class="cor-menu" *ngIf="hasGroup(['Admin','HorasExtras'])" nz-menu-item nzMatchRouter>
               <a class="cor-menu-a" routerLink="horasExtras/registros" ><span nz-icon nzType="clock-circle" nzTheme="outline"></span> Registros de Horas Extras</a>
             </li>
           </ul>

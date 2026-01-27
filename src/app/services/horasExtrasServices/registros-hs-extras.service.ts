@@ -23,7 +23,7 @@ export interface RegistrosResponse {
   providedIn: 'root'
 })
 export class RegistrosHsExtrasService {
-  private apiUrl = 'http://172.50.10.79:8008/registroHoraExtra/registroHoraExtra/';
+  private apiUrl = 'https://managerdb.com.br/api/registroHoraExtra/registroHoraExtra/';
 
   constructor(private http: HttpClient) { }
 

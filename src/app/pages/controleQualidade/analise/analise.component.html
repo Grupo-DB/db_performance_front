@@ -516,7 +516,25 @@
                                                 <h2 class="text-2xl font-bold text-primary"><i class="pi pi-objects-column"></i> {{ ensaio.descricao }}
                                                 </h2>
                                                 
-                                            </div>            
+                                            </div>
+                                            
+                                            <!-- Seletor de Fator (para ensaios com múltiplos fatores) -->
+                                            <div class="flex flex-row w-12 gap-2 mb-3" *ngIf="temVariaveisFator(ensaio)">
+                                                <p-floatLabel variant="in">
+                                                    <p-select
+                                                        [options]="getVariaveisFator(ensaio)"
+                                                        [(ngModel)]="fatoresSelecionados[ensaio.id]"
+                                                        optionLabel="label"
+                                                        optionValue="value"
+                                                        
+                                                        (onChange)="aplicarFatorSelecionado(ensaio, $event.value)"
+                                                        appendTo="body"
+                                                        [style]="{'width':'100%', 'min-width': '300px'}"
+                                                    ></p-select>
+                                                    <label>Selecionar Fator de Calibração</label>
+                                                </p-floatLabel>
+                                            </div>
+                                            
                                             <div class="flex flex-row justify-content-between align-items-center mt-2 mb-2 w-full" *ngIf="ensaio.descricao?.toLowerCase().trim().includes('reatividade') || ensaio.descricao?.toLowerCase().trim().includes('finura');">
                                                             
                                                     <div class="flex flex-row gap-1 flex-shrink-0">
@@ -3442,11 +3460,9 @@
     [(visible)]="exibirModalPeneiraSeca" 
     position="full" 
 >
-
     <div class="background-form">
         <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
             <div class="fg1 flex flex-column w-12 align-items-center">
-
                 <p-card class="card w-12 text-center card-peneira">
                     <ng-template #header>
                         <div class="header-substrato w-full text-center">
@@ -3454,6 +3470,22 @@
                         </div>
                     </ng-template>
                         <div class="flex flex-row w-12 gap-4 justify-content-start mb-3">
+                            <label class="flex align-items-center gap-2">
+                                <span class="font-semibold">Plano de Peneiras:</span>
+                                <p-select
+                                    [options]="planosPeneiras"
+                                    [(ngModel)]="planoSelecionado"
+                                    optionLabel="label"
+                                    optionValue="value"
+                                    placeholder="Selecione um plano"
+                                    (onChange)="carregarPlanoPeneira($event.value)"
+                                    appendTo="body"
+                                    [showClear]="true"
+                                    styleClass="w-15rem"
+                                ></p-select>
+                            </label>
+                        </div>
+                    <div class="flex flex-row w-12 gap-4 justify-content-start mb-3">
                         <label class="flex align-items-center gap-2">
                             Massa da Amostra:
                             <input 
@@ -3464,7 +3496,6 @@
                                 style="width: 150px;"
                             />
                         </label>
-
                         <label class="flex align-items-center gap-2">
                             Finos Calculados:
                             <input 
@@ -3618,25 +3649,38 @@
             </div>    
         </div>
     </div>
-    
 </p-drawer>
 
 <!-- Peneira Úmida -->
 <p-drawer 
     [(visible)]="exibirModalPeneiraUmida" 
-    position="full" >
-
+    position="full" 
+>
     <div class="background-form">
         <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
             <div class="fg1 flex flex-column w-12 align-items-center">
-
                 <p-card class="card w-12 text-center card-peneira">
                     <ng-template #header>
                         <div class="header-superficial w-full text-center">
                             <b>Peneiras Úmidas</b>
                         </div>
                     </ng-template>
-                    
+                    <div class="flex flex-row w-12 gap-4 justify-content-start mb-3">
+                            <label class="flex align-items-center gap-2">
+                                <span class="font-semibold">Plano de Peneiras:</span>
+                                <p-select
+                                    [options]="planosPeneirasUmidas"
+                                    [(ngModel)]="planoSelecionado"
+                                    optionLabel="label"
+                                    optionValue="value"
+                                    placeholder="Selecione um plano"
+                                    (onChange)="carregarPlanoPeneiraUmida($event.value)"
+                                    appendTo="body"
+                                    [showClear]="true"
+                                    styleClass="w-15rem"
+                                ></p-select>
+                            </label>
+                    </div>
                     <div class="flex flex-row w-12 gap-4 justify-content-start mb-3">
                         <label class="flex align-items-center gap-2">
                             Massa da Amostra:
@@ -3646,12 +3690,9 @@
                                 type="number" 
                                 [(ngModel)]="massa_amostra_umida"
                                 style="width: 150px;"
-                                  (ngModelChange)="recalcularTodasLinhas()"
-
+                                (ngModelChange)="recalcularTodasLinhas()"
                             />
-                        </label>
-
-                        
+                        </label> 
                     </div>
                     <div class="flex flex-row w-12 gap-3">
                         <div class="w-12">
@@ -3711,17 +3752,13 @@
                                                 style="width: 150px"
                                             />
                                         </td>
-
-                       
                                     </tr>
                                 </ng-template>
                             </p-table>
                         </div>
                     </div>
-
                     <br>
                     <br>
-
                     <p-button 
                         (onClick)="addLinha()" 
                         label="Adicionar Linha"
@@ -3746,7 +3783,6 @@
             </div>    
         </div>
     </div>
-    
 </p-drawer>
 
 
@@ -3876,7 +3912,7 @@
                                         <th>Peneira</th>
                                         <th>Massa da Cápsula Vazia (g)</th>
                                         <th>Massa da Cápsula + Amostra Seca (g)</th>
-                                        <th>Resultado Retido (%)</th>
+                                        <th>Resultado Retido</th>
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-linha let-i="rowIndex">
@@ -3886,13 +3922,15 @@
                                         </td>
 
                                         <td>
-                                            {{ linha.valor_retido }}
+                                            {{ linha.massa_capsula_vazia }}
                                         </td>
 
                                         <td>
-                                            {{ linha.porcentual_retido }}
+                                            {{ linha.massa_capsula_seca }}
                                         </td>
-
+                                        <td>
+                                            {{ linha.resultado }}
+                                        </td>
                                     
                                     </tr>
                                 </ng-template>

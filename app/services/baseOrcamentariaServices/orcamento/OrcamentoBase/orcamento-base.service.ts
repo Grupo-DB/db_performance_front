@@ -8,8 +8,8 @@ import { OrcamentoBase } from '../../../../pages/baseOrcamentaria/orcamentoBase/
   providedIn: 'root'
 })
 export class OrcamentoBaseService {
-  private apiUrl = 'http://172.50.10.79:8008/orcamento/orcamentosbase/'
-  private apiRealizadoUrl = 'http://172.50.10.79:8008/realizado/realizado/'
+  private apiUrl = 'https://managerdb.com.br/api/orcamento/orcamentosbase/'
+  private apiRealizadoUrl = 'https://managerdb.com.br/api/realizado/realizado/'
 
   constructor(
     private httpClient: HttpClient,
@@ -96,7 +96,7 @@ export class OrcamentoBaseService {
     return this.httpClient.delete(url);
   }
   aplicarDissidio(porcentagem: number){
-    const dissidioUrl = 'http://172.50.10.79:8008/orcamento/aplicarDissidio/';
+    const dissidioUrl = 'https://managerdb.com.br/api/orcamento/aplicarDissidio/';
     return this.httpClient.post<any>(dissidioUrl, {porcentagem:porcentagem})
   }
   calcularOrcamentoRealizado(ccs: any, periodo: any, ano: any, filiais:any): Observable<any>{

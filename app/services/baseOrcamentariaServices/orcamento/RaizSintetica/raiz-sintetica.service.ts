@@ -8,7 +8,7 @@ import { RaizSintetica } from '../../../../pages/baseOrcamentaria/orcamentoBase/
   providedIn: 'root'
 })
 export class RaizSinteticaService {
-  private apiUrl = 'http://172.50.10.79:8008/orcamento/raizessinteticas/'
+  private apiUrl = 'https://managerdb.com.br/api/orcamento/raizessinteticas/'
   constructor(
     private httpClient: HttpClient,
     private router: Router,) { }

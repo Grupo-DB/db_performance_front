@@ -7,11 +7,11 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class CurvaService {
-  private realizadoUrl = 'http://172.50.10.79:8008/curva/calculos_realizados_curva/'
-  private meuRealizadoUrl = 'http://172.50.10.79:8008/curva/meus_calculos_cc_curva/'
-  private meuRealizadoGpUrl = 'http://172.50.10.79:8008/curva/meus_calculos_gp_curva/'
-  private orcadoUrl = 'http://172.50.10.79:8008/orcamento/orcamentosbase/agrupamentosPorAno/'
-  private meuOrcadoUrl = 'http://172.50.10.79:8008/orcamento/orcamentosbase/meusAgrupamentosPorAno/'
+  private realizadoUrl = 'https://managerdb.com.br/api/curva/calculos_realizados_curva/'
+  private meuRealizadoUrl = 'https://managerdb.com.br/api/curva/meus_calculos_cc_curva/'
+  private meuRealizadoGpUrl = 'https://managerdb.com.br/api/curva/meus_calculos_gp_curva/'
+  private orcadoUrl = 'https://managerdb.com.br/api/orcamento/orcamentosbase/agrupamentosPorAno/'
+  private meuOrcadoUrl = 'https://managerdb.com.br/api/orcamento/orcamentosbase/meusAgrupamentosPorAno/'
   constructor(
     private httpClient: HttpClient,
     private router: Router

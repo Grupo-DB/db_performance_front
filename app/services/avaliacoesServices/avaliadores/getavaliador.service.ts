@@ -6,8 +6,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class GetAvaliadorService {
-  private apiUrl = 'http://172.50.10.79:8008/management/get_avaliador/';
-  private colaboradorUrl = 'http://172.50.10.79:8008/management/get_colaborador/';  // URL para obter dados do colaborador
+  private apiUrl = 'https://managerdb.com.br/api/management/get_avaliador/';
+  private colaboradorUrl = 'https://managerdb.com.br/api/management/get_colaborador/';  // URL para obter dados do colaborador
 
   constructor(private http: HttpClient) { }
 

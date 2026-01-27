@@ -9,7 +9,7 @@ import { Filial } from '../../../pages/avaliacoes/filial/filial.component';
   providedIn: 'root'
 })
 export class FilialService {
-  private apiUrl = 'http://172.50.10.79:8008/management/filiais/';
+  private apiUrl = 'https://managerdb.com.br/api/management/filiais/';
   constructor(private  httpClient: HttpClient, private router: Router, ) { }
 
   registerfilial(empresa: string, nome: string, cnpj: string, endereco: string, cidade: string, estado: string, codigo: string){
@@ -32,7 +32,7 @@ export class FilialService {
 
   }
   getFilial(id: string) {
-    return this.httpClient.get<any>(`http://172.50.10.79:8008/management/filiais/${id}`);
+    return this.httpClient.get<any>(`https://managerdb.com.br/api/management/filiais/${id}`);
 }
   
 }

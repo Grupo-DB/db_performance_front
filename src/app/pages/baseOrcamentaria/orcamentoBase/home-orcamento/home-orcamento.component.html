@@ -67,7 +67,7 @@
         <img src="assets/imagens/startmanager2.gif" alt="Loading..." class="w-12">
     </div>
     <div class="flex justify-content-center ml-3 w-12 mt-3 mb-3 lg:w-1">
-            <div *ngIf="!loadingInicial && hasGroup(['Admin','Master'])" class="class">
+            <div *ngIf="hasGroup(['Admin','Master'])" class="class">
                 <p-button (onClick)="carregarFiltros()" label="Filtros" icon="pi pi-angle-double-down" />
             </div>    
         </div>
@@ -206,7 +206,7 @@
     <img src="assets/imagens/startmanager2.gif" alt="Loading..." class="w-12">
 </div>
   
-    <div *ngIf="mostrarIndividual && !loadingInicial3 && hasGroup(['OrcamentoGestorItens','OrcamentoGestorSetor'])"  class="flex justify-content-center  w-12 ml-3 mt-3 mb-3 lg:w-1">
+    <div *ngIf="mostrarIndividual && hasGroup(['OrcamentoGestorItens','OrcamentoGestorSetor'])"  class="flex justify-content-center  w-12 ml-3 mt-3 mb-3 lg:w-1">
         <div class="class">
             <p-button (onClick)="carregarFiltros()" label="Filtros" icon="pi pi-angle-double-down" />
         </div>    

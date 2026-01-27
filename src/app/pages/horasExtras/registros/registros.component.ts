@@ -17,6 +17,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { FilialService } from '../../../../../app/services/avaliacoesServices/filiais/registerfilial.service';
+import { DrawerModule } from 'primeng/drawer';
 
 
 @Component({
@@ -32,7 +33,8 @@ import { FilialService } from '../../../../../app/services/avaliacoesServices/fi
     ToastModule,
     DialogModule,
     ConfirmDialogModule,
-    TooltipModule
+    TooltipModule,
+    DrawerModule
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './registros.component.html',
@@ -58,6 +60,7 @@ export class RegistrosComponent implements OnInit {
   
   // Novos campos para o layout
   mostrarFormulario: boolean = false;
+  mostrarDialog: boolean = false;
   modoEdicao: boolean = false;
   registroEditando: any = null;
   filtroFuncionario: string = '';
@@ -268,7 +271,7 @@ export class RegistrosComponent implements OnInit {
           });
           this.limparFormulario();
           this.getRegistros();
-          this.mostrarFormulario = false;
+          this.mostrarDialog = false;
           this.modoEdicao = false;
           this.registroEditando = null;
         },
@@ -292,7 +295,7 @@ export class RegistrosComponent implements OnInit {
           });
           this.limparFormulario();
           this.getRegistros();
-          this.mostrarFormulario = false;
+          this.mostrarDialog = false;
         },
         error => {
           console.error('Erro ao criar registro:', error);
@@ -327,7 +330,7 @@ export class RegistrosComponent implements OnInit {
   }
 
   cancelarFormulario(): void {
-    this.mostrarFormulario = false;
+    this.mostrarDialog = false;
     this.modoEdicao = false;
     this.registroEditando = null;
     this.limparFormulario();
@@ -568,7 +571,7 @@ export class RegistrosComponent implements OnInit {
   editarRegistro(registro: any): void {
     this.modoEdicao = true;
     this.registroEditando = registro;
-    this.mostrarFormulario = true;
+    this.mostrarDialog = true;
     
     // Preenche o formulário com os dados do registro
     const colaborador = this.colaboradores.find(c => c.nome === registro.colaborador);
@@ -595,9 +598,13 @@ export class RegistrosComponent implements OnInit {
     this.confirmationService.confirm({
       message: `Tem certeza que deseja excluir o registro de ${registro.colaborador}?`,
       header: 'Confirmar Exclusão',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Sim',
-      rejectLabel: 'Não',
+        icon: 'pi pi-exclamation-triangle',
+        acceptIcon: 'pi pi-check',
+        rejectIcon: 'pi pi-times',
+        acceptLabel: 'Sim',
+        rejectLabel: 'Cancelar',
+        acceptButtonStyleClass: 'p-button-info',
+        rejectButtonStyleClass: 'p-button-secondary',
       accept: () => {
         this.registrosService.deleteRegistro(registro.id).subscribe(
           () => {

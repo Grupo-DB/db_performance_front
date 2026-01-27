@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class GetFuncaoService {
-  private apiUrl = 'http://172.50.10.79:8008/management/get_funcao/'; 
+  private apiUrl = 'https://managerdb.com.br/api/management/get_funcao/'; 
   constructor(private http: HttpClient) { }
 
   getFuncaos(): Observable<any[]>{

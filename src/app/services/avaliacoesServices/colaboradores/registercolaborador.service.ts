@@ -9,11 +9,11 @@ import { catchError, map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class ColaboradorService {
-  private apiUrl = 'http://172.50.10.79:8008/management/colaboradores/';
-  private urlme= 'http://172.50.10.79:8008/management/avaliadores/';
-  private calcUrl = 'http://172.50.10.79:8008/datacalc/total-colaboradores/';
-  private filterUrl = 'http://172.50.10.79:8008/datacalc/filtrar-colaboradores/';
-  private baseCalcUrl = 'http://172.50.10.79:8008/datacalc/';
+  private apiUrl = 'https://managerdb.com.br/api/management/colaboradores/';
+  private urlme= 'https://managerdb.com.br/api/management/avaliadores/';
+  private calcUrl = 'https://managerdb.com.br/api/datacalc/total-colaboradores/';
+  private filterUrl = 'https://managerdb.com.br/api/datacalc/filtrar-colaboradores/';
+  private baseCalcUrl = 'https://managerdb.com.br/api/datacalc/';
 
   constructor(private  httpClient: HttpClient, private router: Router) { }
    
