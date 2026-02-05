@@ -21,10 +21,10 @@
                     <a routerLink="/welcome/controleQualidade/plano" >Plano de Análise</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/controleQualidade/tipoAmostra" >Tipo de Amostra</a>
+                    <a routerLink="/welcome/controleQualidade/tipoAmostra" >Local de Coleta</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/controleQualidade/produtoAmostra" >Produto de Amostra</a>
+                    <a routerLink="/welcome/controleQualidade/produtoAmostra" >Produto</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/controleQualidade/garantia" >Garantias</a>
@@ -207,6 +207,7 @@
                                                                         dateFormat="dd/mm/yy"
                                                                         inputId="float-label" 
                                                                         [showIcon]="true"
+                                                                        [showClear]="true"
                                                                     >
                                                                     </p-datepicker>
                                                                     <label for="float-label">Data da Amostra</label>
@@ -291,10 +292,20 @@
 
                                                             <div class="w-11 text-left">
                                                                 <p-floatLabel variant="on">
-                                                                    <p-select inputId="float-label" [style]="{'width':'100%'}"
-                                                                        [options]="locaisColeta" formControlName="localColeta"
-                                                                        optionLabel="nome" optionValue="nome" appendTo="body"
-                                                                        [filter]="true" filterBy="nome" [showClear]="true" [editable]="true">
+                                                                    <!-- [options]="tiposAmostra transformei em locais de coleta" -->
+                                                                    <p-select 
+                                                                        inputId="float-label" 
+                                                                        [style]="{'width':'100%'}"
+                                                                        [options]="tiposAmostra" 
+                                                                        formControlName="localColeta"
+                                                                        optionLabel="nome" 
+                                                                        optionValue="nome" 
+                                                                        appendTo="body"
+                                                                        [filter]="true" 
+                                                                        filterBy="nome" 
+                                                                        [showClear]="true" 
+                                                                        [editable]="true"
+                                                                    >
                                                                     </p-select>
                                                                     <label for="float-label">Local de Coleta</label>
                                                                 </p-floatLabel>
@@ -662,7 +673,7 @@
                                                 />
                                                 <p-button 
                                                     (onClick)="abrirModalOs()" 
-                                                    label="Abrir OS"
+                                                    label="Abrir OS e Salvar Amostra"
                                                     severity="info"
                                                     icon="pi pi-arrow-right" 
                                                     iconPos="right"  
@@ -671,12 +682,12 @@
                                                 />
                                                 <p-button 
                                                     (onClick)="submitAmostra()" 
-                                                    label="Salvar Amostra" 
+                                                    label="Salvar Somente Amostra" 
                                                     severity="success"
                                                     icon="pi pi-check" 
                                                     iconPos="right" 
                                                     tooltipPosition="top"
-                                                    pTooltip="Salvar Amostra"
+                                                    pTooltip="Salvar Amostra sem abrir OS"
                                                 />
                                             </div>
                                         </div>
@@ -1011,20 +1022,39 @@
 
                                         <div class="w-12 text-left">
                                             <p-floatLabel variant="on">
-                                                <p-select inputId="float-label" [style]="{'width':'100%'}"
-                                                    [options]="status" formControlName="status" optionLabel="nome"
-                                                    optionValue="nome" appendTo="body" [filter]="true" filterBy="value"
-                                                    [showClear]="true" [editable]="true">
+                                                <p-select 
+                                                    inputId="float-label" 
+                                                    [style]="{'width':'100%'}"
+                                                    [options]="status" 
+                                                    formControlName="status" 
+                                                    optionLabel="nome"
+                                                    optionValue="nome" 
+                                                    appendTo="body" 
+                                                    [filter]="true" 
+                                                    filterBy="value"
+                                                    [showClear]="true" 
+                                                    [editable]="true"
+                                                >
                                                 </p-select>
                                                 <label for="float-label">Classificação</label>
                                             </p-floatLabel>
                                         </div>
                                         <div class="w-12 text-left">
                                             <p-floatLabel variant="on">
-                                                <p-select inputId="float-label" [style]="{'width':'100%'}"
-                                                    [options]="locaisColeta" formControlName="localColeta"
-                                                    optionLabel="nome" optionValue="nome" appendTo="body"
-                                                    [filter]="true" filterBy="value" [showClear]="true" [editable]="true">
+                                                <!-- [options]="tiposAmostra transformei em locais de coleta" -->
+                                                <p-select 
+                                                    inputId="float-label" 
+                                                    [style]="{'width':'100%'}"
+                                                    [options]="tiposAmostra" 
+                                                    formControlName="localColeta"
+                                                    optionLabel="nome" 
+                                                    optionValue="nome" 
+                                                    appendTo="body"
+                                                    [filter]="true" 
+                                                    filterBy="value" 
+                                                    [showClear]="true" 
+                                                    [editable]="true"
+                                                >
                                                 </p-select>
                                                 <label for="float-label">Local de Coleta</label>
                                             </p-floatLabel>

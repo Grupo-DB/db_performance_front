@@ -21,10 +21,10 @@
                     <a routerLink="/welcome/controleQualidade/plano" >Plano de Análise</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/controleQualidade/tipoAmostra" >Tipo de Amostra</a>
+                    <a routerLink="/welcome/controleQualidade/tipoAmostra" >Local de Coleta</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/controleQualidade/produtoAmostra" >Produto de Amostra</a>
+                    <a routerLink="/welcome/controleQualidade/produtoAmostra" >Produto</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/controleQualidade/garantia" >Garantias</a>
@@ -58,7 +58,7 @@
 <div class="container flex flex-column align-items-center mb-4">
     <div class="containerInterno w-12" @swipeAnimation>
             <form
-                [formGroup]="registerForm" title="Cadastrar novo tipo de amostra" class="flex flex-column gap-4" 
+                [formGroup]="registerForm" title="Cadastrar novo local de coleta" class="flex flex-column gap-4" 
                 
             >
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
@@ -66,7 +66,7 @@
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
                                 <div class="header titulo-info w-full text-center">
-                                    <h2>Tipo de Amostra</h2>
+                                    <h2>Local de Coleta</h2>
                                 </div>
                             </ng-template>
                             <div class="bloco flex flex-column w-12 gap-3">
@@ -130,9 +130,9 @@
                     <p-inplace closable="true" closeIcon="pi pi-angle-up">
                         <ng-template pTemplate="display">
                             <p-button 
-                                label="Tipos de Amostras" 
+                                label="Locais de Coleta" 
                                 tooltipPosition="top"
-                                pTooltip="Exibir Tipos de Amostras"
+                                pTooltip="Exibir Locais de Coleta"
                                 severity="info"      
                             >
                                 <div class="inline-flex align-items-center">
@@ -150,7 +150,7 @@
                                 [rowsPerPageOptions]="[10, 20, 50]"
                                 [globalFilterFields]="['nome', 'natureza', 'material']"
                                 [showCurrentPageReport]="true"
-                                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Tipos de Amostra"
+                                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Locais de Coleta"
                                 scrollable="true"
                                 
                             >
@@ -234,14 +234,14 @@
 >
         <div class="background-form">
             <form
-                [formGroup]="editForm" title="Editar Tipo de Amostra" class="flex flex-column gap-4" 
+                [formGroup]="editForm" title="Editar Local de Coleta" class="flex flex-column gap-4" 
             >
                 <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
                     <div class="fg1 flex flex-column w-12 align-items-center">
                         <p-card class="card w-12 text-center">
                             <ng-template #header>
                                 <div class="header titulo-infow-full text-center">
-                                    <b>Editar Tipo de Amostra</b>
+                                    <b>Editar Local de Coleta</b>
                                 </div>
                             </ng-template>
                             <div class="bloco flex flex-column w-12 gap-3">

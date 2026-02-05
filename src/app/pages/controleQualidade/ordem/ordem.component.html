@@ -24,10 +24,10 @@
                     <a routerLink="/welcome/controleQualidade/plano" >Plano de Análise</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/controleQualidade/tipoAmostra" >Tipo de Amostra</a>
+                    <a routerLink="/welcome/controleQualidade/tipoAmostra" >Local de Coleta</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
-                    <a routerLink="/welcome/controleQualidade/produtoAmostra" >Produto de Amostra</a>
+                    <a routerLink="/welcome/controleQualidade/produtoAmostra" >Produto</a>
                 </li>
                 <li *ngIf="hasGroup(['Admin','Master','LabGestor','LabOp'])" nz-menu-item  nzMatchRouter>
                     <a routerLink="/welcome/controleQualidade/garantia" >Garantias</a>
@@ -2904,78 +2904,7 @@
 <p-toast position="top-left"></p-toast>
    
 
-
 <!-- Modal para seleção de ensaios PARA IMPRESSÃO -->
-<p-dialog 
-    [(visible)]="modalImpressao" 
-    [modal]="true" 
-    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" 
-    [style]="{ width: '80vw' }" 
-    [draggable]="false" 
-    [resizable]="false"
->
-    <div class="containerInterno w-12">
-        <div class="background-form">
-           
-            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-                <div class="fg1 flex flex-column w-12 align-items-center">
-
-                    <p-card class="card w-12 text-center">
-                        <ng-template #header>
-                            <div class="header w-full text-center">
-                                <b>Selecionar Ánalises para Impressão</b>
-                            </div>
-                        </ng-template>
-                        <div class="flex flex-row w-12 gap-3">
-                            <!-- Coluna da tabela -->
-                            <div class="w-12">
-                                <p-table 
-                                    [value]="ensaios_laudo" 
-                                    [(selection)]="ensaios_selecionados" 
-                                    dataKey="id"   
-                                >
-                                    <ng-template pTemplate="header">
-                                        <tr>
-                                            <th style="width: 3em">
-                                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                                            </th>
-                                            <th>Análises</th>
-                                        </tr>
-                                    </ng-template>
-
-                                    <ng-template pTemplate="body" let-ensaio>
-                                        <tr [pSelectableRow]="ensaio">
-                                        <td>
-                                            <p-tableCheckbox [value]="ensaio" [disabled]="ensaio.disabled"></p-tableCheckbox>
-                                        </td>
-                                            <td [style.color]="ensaio.color">{{ ensaio.descricao }}</td>
-                                        </tr>
-                                    </ng-template>
-                                </p-table>
-                            </div>
-                        </div>
-                    
-                        <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
-                            <p-button 
-                                label="Gerar Impressão" 
-                                (onClick)="imprimirSelecionados()"
-                                severity="success"
-                                icon="pi pi-check" 
-                                iconPos="right" 
-                                tooltipPosition="top"
-                                pTooltip="Gerar Impressão"
-                            />
-                        </div>
-                    </p-card>
-                </div>    
-            </div>
-        </div>
-    </div>
-</p-dialog>
-
-
-<!-- Modal para seleção de ensaios PARA IMPRESSÃO -->
-
 <p-dialog 
     [(visible)]="modalImpressao2" 
     [modal]="true" 
@@ -2984,72 +2913,62 @@
     [draggable]="false" 
     [resizable]="false"
 >
-    <div class="containerInterno w-12">
-        <div class="background-form">
-           
-            <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-                <div class="fg1 flex flex-column w-12 align-items-center">
-
-                    <p-card class="card w-12 text-center">
-                        <ng-template #header>
-                            <div class="header w-full text-center">
-                                <b>Selecionar Análises para Impressão</b>
-                            </div>
-                        </ng-template>
-                        <div class="flex flex-row w-12 gap-3">
-                            <!-- Coluna da tabela -->
-                            <div class="w-12">
-                                <p-treeTable
-                                    [value]="ensaios_laudo"
-                                    selectionMode="checkbox"
-                                    [(selection)]="selectedEnsaios"
-                                >
-
-                                    <ng-template pTemplate="header">
-                                        <tr>
-                                            <th>
-                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <p-checkbox
-                                                binary="true"
+    <div class="background-form">    
+        <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
+            <div class="fg1 flex flex-column w-12 align-items-center">
+                <p-card class="card w-12 text-center">
+                    <ng-template #header>
+                        <div class="header w-full text-center">
+                            <b>Selecionar Análises para Impressão</b>
+                        </div>
+                    </ng-template>
+                    <div class="flex flex-row w-12 gap-3">
+                        <!-- Coluna da tabela -->
+                        <div class="w-12">
+                            <p-treeTable 
+                                [value]="ensaios_laudo" 
+                                selectionMode="checkbox" 
+                                [(selection)]="selectedEnsaios"
+                            >
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <p-checkbox 
+                                                binary="true" 
                                                 [indeterminate]="!isAllSelected() && selectedEnsaios.length > 0"
-                                                [ngModel]="isAllSelected()"
-                                                (onChange)="toggleSelectAll($event)"
-                                            ></p-checkbox>
+                                                [ngModel]="isAllSelected()" (onChange)="toggleSelectAll($event)"></p-checkbox>
                                             <span class="ml-2">Análises</span>
-                                            </th>
-                                        </tr>
-                                    </ng-template>
-
-                                    <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
-                                        <tr>
-                                            <td>
-                                                <!-- 👇 toggler fica em TODAS as linhas -->
-                                                <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
-                                                <p-treeTableCheckbox [value]="rowNode"></p-treeTableCheckbox>
-
-                                                {{ rowData?.descricao }}
-                                            </td>
-                                        </tr>
-                                    </ng-template>
-                                </p-treeTable>
-
-                            </div>
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                
+                                <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+                                    <tr>
+                                        <td>
+                                            <!-- 👇 toggler fica em TODAS as linhas -->
+                                            <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                                            <p-treeTableCheckbox [value]="rowNode"></p-treeTableCheckbox>
+                
+                                            {{ rowData?.descricao }}
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-treeTable>
                         </div>
-                    
-                        <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
-                            <p-button 
-                                label="Gerar Impressão" 
-                                (onClick)="imprimirSelecionados()"
-                                severity="success"
-                                icon="pi pi-check" 
-                                iconPos="right" 
-                                tooltipPosition="top"
-                                pTooltip="Gerar Impressão"
-                            />
-                        </div>
-                    </p-card>
-                </div>    
-            </div>
+                    </div>
+                    <div class=" flex w-12 gap-3 mt-4 justify-content-center text-center">
+                        <p-button 
+                            label="Gerar Impressão" 
+                            (onClick)="imprimirSelecionados()" 
+                            severity="success" icon="pi pi-print"
+                            iconPos="right" 
+                            tooltipPosition="top" 
+                            pTooltip="Gerar Impressão com Resultados" 
+                        />      
+                    </div>
+                </p-card>
+            </div>    
         </div>
     </div>
 </p-dialog>

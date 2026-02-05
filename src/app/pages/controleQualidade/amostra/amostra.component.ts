@@ -430,7 +430,7 @@ export class AmostraComponent implements OnInit {
       registroEp: new FormControl('',),
       registroProduto: new FormControl('',),
       numeroLote: new FormControl(''),
-      dataColeta: new FormControl(new Date()),
+      dataColeta: new FormControl(null),
       dataEntrada: new FormControl(new Date()),
       numero: new FormControl(''),
       tipoAmostra: new FormControl(''),

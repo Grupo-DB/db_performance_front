@@ -481,7 +481,17 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
 
 
   substrato_media: any;
+  substrato_desvio_padrao: any = null;
+  substrato_resultado_max: any = null;
+  substrato_resultado_min: any = null;
+  substrato_parecer_ensaio: string = '';
+  
   superficial_media: any;
+  superficial_desvio_padrao: any = null;
+  superficial_resultado_max: any = null;
+  superficial_resultado_min: any = null;
+  superficial_parecer_ensaio: string = '';
+
 
   substratoDataMoldagem: Date | null = null;
   substratoDataRompimento: Date | null = null;
@@ -568,9 +578,6 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   linhasTracaoAberto: LinhaTracaoAberto[] = [];
   parecer_tracao_aberto: any = null;
   tracao_aberto_media: any;
-
-
-
 
   peneirasDados = [
     { value: '# 1.1/2 - ABNT/ASTM 1.1/2 - 37,5 mm' },
@@ -3860,6 +3867,14 @@ loadAnalisePorId(analise: any) {
   try {
     const laboratorioAnalise = analise.amostra_detalhes?.laboratorio || null;
     if (isOrdemNormal) {
+      // Coletar IDs dos ensaios que pertencem ao plano
+      const idsEnsaiosPlano = new Set<number>();
+      if (analise.amostra_detalhes?.ordem_detalhes?.plano_detalhes) {
+        analise.amostra_detalhes.ordem_detalhes.plano_detalhes.forEach((plano: any) => {
+          (plano.ensaio_detalhes || []).forEach((e: any) => idsEnsaiosPlano.add(e.id));
+        });
+      }
+
       const existeChave = new Set(
         (ensaioDetalhes || []).map((e: any) => `${String(e.id)}::${e.instanceId || ''}`)
       );
@@ -3868,7 +3883,8 @@ loadAnalisePorId(analise: any) {
         const snapshotEnsaios = (this.adHocSnapshot?.ensaios || []) as any[];
         snapshotEnsaios.forEach((e: any) => {
           const k = `${String(e.id)}::${e.instanceId || ''}`;
-          if (!existeChave.has(k)) {
+          // Adicionar apenas se não existe E não pertence ao plano
+          if (!existeChave.has(k) && !idsEnsaiosPlano.has(e.id)) {
             const novo = {
               ...e,
               laboratorio: e.laboratorio || laboratorioAnalise || null,
@@ -3884,18 +3900,41 @@ loadAnalisePorId(analise: any) {
       if (dadosSalvos.length > 0) {
         dadosSalvos.forEach((u: any) => {
           const k = `${String(u.id)}::${u.instanceId || ''}`;
-          if (!existeChave.has(k)) {
+          // Adicionar apenas se não existe E não pertence ao plano
+          if (!existeChave.has(k) && !idsEnsaiosPlano.has(u.id)) {
             const base = (this.ensaiosDisponiveis || []).find((b: any) =>
               String(b.id) === String(u.id) || this.normalize(b.descricao) === this.normalize(u.descricao || '')
             );
-            const variaveisDetalhes = Array.isArray(u.variaveis_utilizadas)
-              ? u.variaveis_utilizadas.map((v: any, idx: number) => ({
-                  nome: v.descricao || v.nome || v.tecnica || `var${idx + 1}`,
-                  tecnica: v.tecnica || v.nome || `var${idx + 1}`,
+            
+            // Criar variavel_detalhes a partir de variaveis_utilizadas OU variaveis (objeto)
+            let variaveisDetalhes: any[] = [];
+            if (Array.isArray(u.variaveis_utilizadas) && u.variaveis_utilizadas.length > 0) {
+              // Se tem variaveis_utilizadas como array
+              variaveisDetalhes = u.variaveis_utilizadas.map((v: any, idx: number) => ({
+                nome: v.descricao || v.nome || v.tecnica || `var${idx + 1}`,
+                tecnica: v.tecnica || v.nome || `var${idx + 1}`,
+                valor: v.valor ?? 0,
+                id: `${u.id}_${v.tecnica || v.nome || `var${idx + 1}`}`
+              }));
+            } else if (u.variaveis && typeof u.variaveis === 'object' && Object.keys(u.variaveis).length > 0) {
+              // Se tem variaveis como objeto
+              variaveisDetalhes = Object.keys(u.variaveis).map((key: string) => {
+                const v = u.variaveis[key];
+                return {
+                  nome: v.descricao || key,
+                  tecnica: key,
                   valor: v.valor ?? 0,
-                  id: `${u.id}_${v.tecnica || v.nome || `var${idx + 1}`}`
-                }))
-              : [];
+                  id: `${u.id}_${key}`
+                };
+              });
+            } else if (base?.variavel_detalhes) {
+              // Fallback: usar as variáveis da base se disponível
+              variaveisDetalhes = base.variavel_detalhes.map((v: any) => ({
+                ...v,
+                valor: 0
+              }));
+            }
+            
             const novo = {
               ...(base || {}),
               id: u.id,
@@ -3907,7 +3946,8 @@ loadAnalisePorId(analise: any) {
               variavel_detalhes: variaveisDetalhes,
               laboratorio: u.laboratorio || laboratorioAnalise || null,
               instanceId: u.instanceId || `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
-              origem: 'ad-hoc'
+              origem: 'ad-hoc',
+              funcao: u.funcao || base?.funcao || null
               ,tipo_ensaio_detalhes: (base?.tipo_ensaio_detalhes) || (u.tipo_ensaio_detalhes ? u.tipo_ensaio_detalhes : (u.tipo_ensaio ? { nome: u.tipo_ensaio } : null))
             };
             ensaioDetalhes.push(novo);
@@ -8862,7 +8902,6 @@ carregarVariaveisFator(): void {
     // Usar a variável encontrada ou a padrão
     const variavel = variavelEncontrada || variavelPadrao;
     this.variaveisFatorDisponiveis.push(variavel);
-    console.log('Variável de fator disponível:', variavel);
   });
 }
 
@@ -8871,12 +8910,25 @@ carregarVariaveisFator(): void {
  */
 temVariaveisFator(ensaio: any): boolean {
   if (!ensaio?.variavel_detalhes) return false;
-  const fatores = ensaio.variavel_detalhes.filter((v: any) => 
-    v.nome?.toLowerCase().includes('fator') || 
-    v.nome?.toLowerCase().includes('calibr')
+  
+  // Se o ensaio tem função matemática que usa as variáveis, mostrar todas individualmente
+  if (ensaio.funcao && ensaio.funcao.trim().length > 0) {
+    return false;
+  }
+  
+  // Se tem mais de uma variável com valor preenchido, mostrar todas individualmente
+  const variaveisComValor = ensaio.variavel_detalhes.filter((v: any) => 
+    v.valor !== null && v.valor !== undefined && v.valor !== 0
   );
-  console.log(`Ensaio ${ensaio.descricao} - Fatores encontrados:`, fatores.length, fatores);
-  return fatores.length >= 1;
+  if (variaveisComValor.length > 1) {
+    return false;
+  }
+  
+  // Apenas mostrar dropdown se tem exatamente 1 variável de calibração
+  const fatores = ensaio.variavel_detalhes.filter((v: any) => 
+    v.nome?.toLowerCase().includes('calibracao')
+  );
+  return fatores.length === 1 && ensaio.variavel_detalhes.length === 1;
 }
 
 /**
@@ -8953,10 +9005,19 @@ getVariaveisFator(ensaio: any): any[] {
     });
   });
   
-  console.log('Fatores disponíveis para seleção:', fatoresDisponiveis);
   return fatoresDisponiveis;
 }
 
+
+/**
+ * Retorna opções de valores para o select de fator de calibração
+ */
+getOpcoesValoresFator(): any[] {
+  return [
+    { label: 'Fator AP 1 (1.299)', value: 1.299 },
+    { label: 'Fator AP 2 (1.339)', value: 1.339 }
+  ];
+}
 
 /**
  * Aplica o fator selecionado ao ensaio
@@ -8974,18 +9035,12 @@ aplicarFatorSelecionado(ensaio: any, fatorVariavel: any): void {
   if (!ensaio.variavel_detalhes) {
     ensaio.variavel_detalhes = [];
   }
-  
-  console.log('=== Aplicando fator de calibração ===');
-  console.log('Ensaio:', ensaio.descricao, 'ID:', ensaio.id);
-  console.log('Fator:', fatorVariavel.nome, 'ID:', fatorVariavel.id, 'Valor:', novoValor);
-  console.log('Fórmula do ensaio:', ensaio.funcao);
-  console.log('Variáveis atuais:', ensaio.variavel_detalhes);
-  
+    
   // Primeiro, tentar encontrar a variável que corresponde ao fator de calibração
   // Procurar por nome (contém "fator" ou "calibr")
   let variavelFator = ensaio.variavel_detalhes.find((v: any) => {
     const nome = (v.nome || '').toLowerCase();
-    return nome.includes('fator') || nome.includes('calibr');
+    return nome.includes('fator') || nome.includes('calibracao');
   });
   
   // Se não encontrou por nome, procurar por ID
@@ -8995,14 +9050,10 @@ aplicarFatorSelecionado(ensaio: any, fatorVariavel: any): void {
   
   if (variavelFator) {
     // Encontrou a variável correspondente - atualizar seu valor
-    console.log('Variável de fator encontrada:', variavelFator.nome, 'tecnica:', variavelFator.tecnica || variavelFator.varTecnica);
     variavelFator.valor = novoValor;
     variavelFator.id = fatorVariavel.id;
-    
     // Atualizar através da função que recalcula
     this.atualizarVariavelEnsaio(ensaio, variavelFator, novoValor);
-    
-    console.log('Variável atualizada com sucesso');
   } else {
     // Não encontrou - criar nova variável
     // Buscar qual var técnica (var01, var45, etc) ainda não está atribuída
@@ -9015,9 +9066,6 @@ aplicarFatorSelecionado(ensaio: any, fatorVariavel: any): void {
     
     // Encontrar a primeira var da fórmula que não tem valor atribuído
     const tecnicaDisponivel = varTokens.find((t: string) => !variaveisComValor.has(t));
-    
-    console.log('Criando nova variável com tecnica:', tecnicaDisponivel);
-    
     const novaVariavel = {
       id: fatorVariavel.id,
       nome: fatorVariavel.nome,
@@ -9029,12 +9077,7 @@ aplicarFatorSelecionado(ensaio: any, fatorVariavel: any): void {
     
     ensaio.variavel_detalhes.push(novaVariavel);
     this.atualizarVariavelEnsaio(ensaio, novaVariavel, novoValor);
-    
-    console.log('Nova variável criada');
   }
-  
-  console.log('Variáveis finais:', ensaio.variavel_detalhes);
-  console.log('=== Fim da aplicação do fator ===');
   
   this.messageService.add({
     severity: 'success',
@@ -9278,17 +9321,10 @@ toggleEnsaioExpansion(ensaio: any): void {
  * Preenche automaticamente as variáveis do ensaio de reatividade
  * com base nos dados das peneiras salvas
  */
-preencherVariaveisReatividade(ensaio: any): void {
-  console.log('=== PREENCHIMENTO REATIVIDADE ===');
-  console.log('Ensaio:', ensaio.descricao);
-  console.log('Variáveis do ensaio:', ensaio.variavel_detalhes);
-  
+preencherVariaveisReatividade(ensaio: any): void {  
   // Verificar se existem dados de peneiras salvas
   const peneiras = this.analise?.peneiras?.peneiras;
-  console.log('Dados de peneiras:', peneiras);
-  
   if (!peneiras || !Array.isArray(peneiras) || peneiras.length === 0) {
-    console.log('Nenhum dado de peneira encontrado');
     this.messageService.add({
       severity: 'warn',
       summary: 'Atenção',
@@ -9299,25 +9335,18 @@ preencherVariaveisReatividade(ensaio: any): void {
 
   // Verificar se o ensaio tem variáveis
   if (!ensaio.variavel_detalhes || !Array.isArray(ensaio.variavel_detalhes)) {
-    console.log('Ensaio não tem variáveis');
     return;
   }
 
   let variaveisPreenchidas = 0;
 
   // Extrair números das peneiras disponíveis e mapear para variáveis
-  peneiras.forEach((peneira: any) => {
-    console.log('Processando peneira:', peneira.peneira);
-    console.log('  - Retido (%):', peneira.porcentual_retido);
-    console.log('  - Passante (%):', peneira.passante);
-    
+  peneiras.forEach((peneira: any) => {    
     // Extrair o número da peneira (ex: "# 50" -> "50", "# 200" -> "200")
     const match = peneira.peneira?.match(/#\s*(\d+(?:\.\d+)?)/);
     if (!match) return;
     
-    const numeroPeneira = match[1];
-    console.log('Número extraído da peneira:', numeroPeneira);
-    
+    const numeroPeneira = match[1];    
     // Procurar TODAS as variáveis que correspondam a este número (não apenas a primeira)
     const variaveisCorrespondentes = ensaio.variavel_detalhes.filter((v: any) => {
       const nomeVar = v.nome?.toLowerCase() || '';
@@ -9329,12 +9358,8 @@ preencherVariaveisReatividade(ensaio: any): void {
       return contemNumero;
     });
 
-    console.log(`  → Encontradas ${variaveisCorrespondentes.length} variável(is) para peneira #${numeroPeneira}`);
-
     // Processar cada variável encontrada
-    variaveisCorrespondentes.forEach((variavel: any) => {
-      console.log('  ✓ Processando variável:', variavel.nome, 'Valor atual:', variavel.valor);
-      
+    variaveisCorrespondentes.forEach((variavel: any) => {      
       const nomeVar = variavel.nome?.toLowerCase() || '';
       const isPassante = nomeVar.includes('pass') || nomeVar.includes('passante');
       const isRetido = nomeVar.includes('retido') || nomeVar.includes('ret');
@@ -9344,28 +9369,20 @@ preencherVariaveisReatividade(ensaio: any): void {
       // Determinar qual campo usar baseado no nome da variável
       if (isPassante && peneira.passante !== null && peneira.passante !== undefined) {
         novoValor = parseFloat(peneira.passante.toString());
-        console.log('    → Variável de PASSANTE, usando passante:', novoValor);
       } else if (isRetido && peneira.porcentual_retido !== null && peneira.porcentual_retido !== undefined) {
         novoValor = parseFloat(peneira.porcentual_retido.toString());
-        console.log('    → Variável de RETIDO, usando porcentual_retido:', novoValor);
       } else if (peneira.porcentual_retido !== null && peneira.porcentual_retido !== undefined) {
         // Fallback para porcentual_retido se não identificar o tipo
         novoValor = parseFloat(peneira.porcentual_retido.toString());
-        console.log('    → Usando porcentual_retido (fallback):', novoValor);
       }
-      
       if (novoValor !== null && !isNaN(novoValor)) {
         variavel.valor = novoValor;
         variaveisPreenchidas++;
-        console.log('    ✓ Atualizando variável com valor:', novoValor);
         // Recalcular o ensaio após atualizar a variável
         this.atualizarVariavelEnsaio(ensaio, variavel, novoValor);
       }
     });
 
-    if (variaveisCorrespondentes.length === 0) {
-      console.log('  ✗ Nenhuma variável encontrada para peneira #' + numeroPeneira);
-    }
   });
 
   // Buscar também massa da amostra se necessário
@@ -9374,8 +9391,6 @@ preencherVariaveisReatividade(ensaio: any): void {
       const nomeVar = v.nome?.toLowerCase() || '';
       return nomeVar.includes('massa') || nomeVar.includes('amostra');
     });
-    
-    console.log('Variável massa encontrada:', variavelMassa?.nome);
     
     if (variavelMassa) {
       const massaAmostra = parseFloat(this.analise.peneiras.amostra.toString());
@@ -9386,8 +9401,6 @@ preencherVariaveisReatividade(ensaio: any): void {
       }
     }
   }
-
-  console.log('Total de variáveis preenchidas:', variaveisPreenchidas);
 
   // Mostrar mensagem de sucesso se variáveis foram preenchidas
   if (variaveisPreenchidas > 0) {
@@ -9557,6 +9570,8 @@ abrirDrawerResultadosEnsaios(ensaio: any): void {
     }
   });
 }
+// =============================== FIM Drawer de Resultados (Ensaios) =============================
+// Fecha o drawer de resultados de ensaios
 fecharDrawerResultadosEnsaios(): void {
   this.drawerResultadosEnsaioVisivel = false;
   this.ensaioSelecionadoParaPesquisa = null;
@@ -9564,7 +9579,6 @@ fecharDrawerResultadosEnsaios(): void {
 }
 // Implementação do CanComponentDeactivate
 canDeactivate(): boolean | Promise<boolean> {
-
     if (!this.hasUnsavedChanges) {
       return true;
     }
@@ -9635,7 +9649,7 @@ canDeactivate(): boolean | Promise<boolean> {
       this.hasUnsavedChanges = true;
     }
   }
-
+//========================================= GET ITEMS DE ARGAMASSA ==============================
   getItensArgamassa(analise: any) {
     const itens: any[] = [];
     const nome = analise?.amostra_detalhes?.produto_amostra_detalhes?.nome?.toLowerCase() || '';
@@ -9736,7 +9750,7 @@ canDeactivate(): boolean | Promise<boolean> {
     return itens;
   }
 
-
+//========================================== FIM GET ITEMS DE ARGAMASSA ==============================
 
 
 onSubstratoDataMoldagemChange():void {
@@ -9805,22 +9819,24 @@ onTracaoAbertoDataMoldagemChange():void {
     this.ensaioService.getEnsaiosId(226).subscribe(
       response => {
         this.ensaios = response;
+        
+        // Configurar valores após receber os dados do ensaio
+        if(analise?.substrato?.tempo_trabalho){
+          this.substrato_tempo_trabalho = analise?.substrato.tempo_trabalho;
+        }else{
+          this.substrato_tempo_trabalho = this.ensaios.tempo_trabalho;
+        }
+
+        if(analise?.substrato?.tempo_previsto){
+          this.substrato_tempo_previsto = analise.substrato.tempo_previsto;
+        }else{
+          this.substrato_tempo_previsto = this.ensaios.tempo_previsto;
+        }
+        
       }, error => {
         console.error('Erro ao carregar ensaio de substrato:', error);
       }
     )
-
-    if(analise?.substrato?.tempo_trabalho){
-      this.substrato_tempo_trabalho = analise.substrato.tempo_trabalho;
-    }else{
-      this.substrato_tempo_trabalho = this.ensaios.tempo_trabalho;
-    }
-
-    if(analise?.substrato?.tempo_previsto){
-      this.substrato_tempo_previsto = analise.substrato.tempo_previsto;
-    }else{
-      this.substrato_tempo_previsto = this.ensaios.tempo_previsto;
-    }
 
     this.substrato_media = 0;
     if(this.parecer_substrato){
@@ -9845,6 +9861,18 @@ onTracaoAbertoDataMoldagemChange():void {
     }else if (analise?.substrato?.linhas && Array.isArray(analise?.substrato?.linhas)) {
       if(analise?.substrato.media){
         this.substrato_media = analise?.substrato.media;
+      }
+      if(analise?.substrato.desvio_padrao !== undefined){
+        this.substrato_desvio_padrao = analise?.substrato.desvio_padrao;
+      }
+      if(analise?.substrato.resultado_max !== undefined){
+        this.substrato_resultado_max = analise?.substrato.resultado_max;
+      }
+      if(analise?.substrato.resultado_min !== undefined){
+        this.substrato_resultado_min = analise?.substrato.resultado_min;
+      }
+      if(analise?.substrato.parecer_ensaio){
+        this.substrato_parecer_ensaio = analise?.substrato.parecer_ensaio;
       }
       this.linhasSubstrato = analise.substrato.linhas.map((item: any, index: number) => ({
         numero: item.numero ?? index + 1,
@@ -9914,6 +9942,78 @@ onTracaoAbertoDataMoldagemChange():void {
   salvarSubstrato(analise: any){
     this.parecer_substrato = this.linhasSubstrato;
     this.modalDadosLaudoSubstrato = false;
+    
+    // Calcular tipo_ruptura baseado na maior soma das rupturas
+    const somaRupturas = {
+      A: 0,  // sub
+      B: 0,  // subArga
+      C: 0,  // rupArga
+      D: 0,  // argaCola
+      E: 0   // colarPastilha
+    };
+    
+    // Somar os valores numéricos de cada coluna de ruptura
+    this.linhasSubstrato.forEach((linha: any) => {
+      if (linha.rupturas) {
+        somaRupturas.A += Number(linha.rupturas.sub) || 0;
+        somaRupturas.B += Number(linha.rupturas.subArga) || 0;
+        somaRupturas.C += Number(linha.rupturas.rupArga) || 0;
+        somaRupturas.D += Number(linha.rupturas.argaCola) || 0;
+        somaRupturas.E += Number(linha.rupturas.colarPastilha) || 0;
+      }
+    });
+    
+    // Encontrar a letra com maior soma
+    let tipoRuptura = '';
+    let maiorSoma = 0;
+    Object.entries(somaRupturas).forEach(([letra, soma]) => {
+      if (soma > maiorSoma) {
+        maiorSoma = soma;
+        tipoRuptura = letra;
+      }
+    });
+    
+    // Calcular desvio padrão, máximo e mínimo dos valores de resistência válidos
+    const resistValidos = this.linhasSubstrato
+      .filter((l: any) => l.validacao !== 'Inválido')
+      .map((l: any) => l.resist)
+      .filter((v: any) => v !== null && v !== undefined && v !== '' && !isNaN(Number(v)) && Number(v) !== 0)
+      .map((v: any) => Number(v));
+    
+    let desvioPadrao = null;
+    let resultadoMax = null;
+    let resultadoMin = null;
+    
+    if (resistValidos.length > 0) {
+      // Máximo e Mínimo
+      resultadoMax = Math.max(...resistValidos);
+      resultadoMin = Math.min(...resistValidos);
+      
+      // Desvio Padrão
+      if (resistValidos.length > 1) {
+        const media = resistValidos.reduce((acc, val) => acc + val, 0) / resistValidos.length;
+        const somaQuadrados = resistValidos.reduce((acc, val) => acc + Math.pow(val - media, 2), 0);
+        desvioPadrao = Math.sqrt(somaQuadrados / resistValidos.length);
+        desvioPadrao = parseFloat(desvioPadrao.toFixed(4));
+      } else {
+        desvioPadrao = 0;
+      }
+      
+      resultadoMax = parseFloat(resultadoMax.toFixed(2));
+      resultadoMin = parseFloat(resultadoMin.toFixed(2));
+    }
+    
+    // Armazenar valores nas propriedades do componente
+    this.substrato_desvio_padrao = desvioPadrao;
+    this.substrato_resultado_max = resultadoMax;
+    this.substrato_resultado_min = resultadoMin;
+    
+    // Calcular parecer_ensaio baseado na diferença entre válidos e inválidos
+    const validosCount = this.linhasSubstrato.filter((l: any) => l.validacao === 'Válido').length;
+    const invalidosCount = this.linhasSubstrato.filter((l: any) => l.validacao === 'Inválido').length;
+    const diferenca = validosCount - invalidosCount;
+    this.substrato_parecer_ensaio = validosCount > 5 ? 'Ensaio Válido' : 'Ensaio Inválido';
+    
     const dadosAtualizados: Partial<Analise> = {
       substrato:{
         linhas: this.linhasSubstrato,
@@ -9922,6 +10022,11 @@ onTracaoAbertoDataMoldagemChange():void {
         tempo_trabalho: this.substrato_tempo_trabalho,
         data_moldagem: this.substratoDataMoldagem,
         data_rompimento: this.substratoDataRompimento,
+        tipo_ruptura: tipoRuptura,
+        desvio_padrao: desvioPadrao,
+        resultado_max: resultadoMax,
+        resultado_min: resultadoMin,
+        parecer_ensaio: this.substrato_parecer_ensaio
       }
     };
     this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
@@ -9954,23 +10059,25 @@ onTracaoAbertoDataMoldagemChange():void {
     this.ensaioService.getEnsaiosId(227).subscribe(
       response => {
         this.ensaios = response;
+        
+        // Configurar tempo_trabalho e tempo_previsto após carregar os dados do ensaio
+        if(analise?.superficial?.tempo_trabalho){
+          this.superficial_tempo_trabalho = analise.superficial.tempo_trabalho;
+        }else{
+          this.superficial_tempo_trabalho = this.ensaios.tempo_trabalho;
+        }
+
+        if(analise?.superficial?.tempo_previsto){
+          this.superficial_tempo_previsto = analise.superficial.tempo_previsto;
+        }else{
+          this.superficial_tempo_previsto = this.ensaios.tempo_previsto;
+        }
       }, error => {
         console.error('Erro ao carregar ensaio de superficial:', error);
       }
     )
 
-    if(analise?.superficial?.tempo_trabalho){
-      this.superficial_tempo_trabalho = analise.superficial.tempo_trabalho;
-    }else{
-      this.superficial_tempo_trabalho = this.ensaios.tempo_trabalho;
-    }
-
-    if(analise?.superficial?.tempo_previsto){
-      this.superficial_tempo_previsto = analise.superficial.tempo_previsto;
-    }else{
-      this.superficial_tempo_previsto = this.ensaios.tempo_previsto;
-    }
-
+    this.superficial_media = 0;
     if(this.parecer_superficial){
       this.linhasSuperficial = this.parecer_superficial.map((item: any, index: number) => ({
         numero: item.numero ?? index + 1,
@@ -9989,6 +10096,21 @@ onTracaoAbertoDataMoldagemChange():void {
         }
       }));
     }else if (analise?.superficial?.linhas && Array.isArray(analise?.superficial?.linhas)) {
+      if(analise?.superficial.media){
+        this.superficial_media = analise?.superficial.media;
+      }
+      if(analise?.superficial.desvio_padrao !== undefined){
+        this.superficial_desvio_padrao = analise?.superficial.desvio_padrao;
+      }
+      if(analise?.superficial.resultado_max !== undefined){
+        this.superficial_resultado_max = analise?.superficial.resultado_max;
+      }
+      if(analise?.superficial.resultado_min !== undefined){
+        this.superficial_resultado_min = analise?.superficial.resultado_min;
+      }
+      if(analise?.superficial.parecer_ensaio){
+        this.superficial_parecer_ensaio = analise?.superficial.parecer_ensaio;
+      }
       this.linhasSuperficial = analise.superficial.linhas.map((item: any, index: number) => ({
         numero: item.numero ?? index + 1,
         diametro: item.diametro ?? null,
@@ -10050,6 +10172,78 @@ onTracaoAbertoDataMoldagemChange():void {
   salvarSuperficial(analise: any){
     this.parecer_superficial = this.linhasSuperficial;
     this.modalDadosLaudoSuperficial = false;
+
+    // Calcular tipo_ruptura baseado na maior soma das rupturas
+    const somaRupturas = {
+      A: 0,  // sub
+      B: 0,  // subArga
+      C: 0,  // rupArga
+      D: 0,  // argaCola
+      E: 0   // colarPastilha
+    };
+
+    // Somar os valores numéricos de cada coluna de ruptura
+    this.linhasSuperficial.forEach((linha: any) => {
+      if (linha.rupturas) {
+        somaRupturas.A += Number(linha.rupturas.sub) || 0;
+        somaRupturas.B += Number(linha.rupturas.subArga) || 0;
+        somaRupturas.C += Number(linha.rupturas.rupArga) || 0;
+        somaRupturas.D += Number(linha.rupturas.argaCola) || 0;
+        somaRupturas.E += Number(linha.rupturas.colarPastilha) || 0;
+      }
+    });
+
+        // Encontrar a letra com maior soma
+    let tipoRuptura = '';
+    let maiorSoma = 0;
+    Object.entries(somaRupturas).forEach(([letra, soma]) => {
+      if (soma > maiorSoma) {
+        maiorSoma = soma;
+        tipoRuptura = letra;
+      }
+    });
+
+    // Calcular desvio padrão, máximo e mínimo dos valores de resistência válidos
+    const resistValidos = this.linhasSuperficial
+      .filter((l: any) => l.validacao !== 'Inválido')
+      .map((l: any) => l.resist)
+      .filter((v: any) => v !== null && v !== undefined && v !== '' && !isNaN(Number(v)) && Number(v) !== 0)
+      .map((v: any) => Number(v));
+    
+    let desvioPadrao = null;
+    let resultadoMax = null;
+    let resultadoMin = null;
+
+    if (resistValidos.length > 0) {
+      // Máximo e Mínimo
+      resultadoMax = Math.max(...resistValidos);
+      resultadoMin = Math.min(...resistValidos);
+      
+      // Desvio Padrão
+      if (resistValidos.length > 1) {
+        const media = resistValidos.reduce((acc, val) => acc + val, 0) / resistValidos.length;
+        const somaQuadrados = resistValidos.reduce((acc, val) => acc + Math.pow(val - media, 2), 0);
+        desvioPadrao = Math.sqrt(somaQuadrados / resistValidos.length);
+        desvioPadrao = parseFloat(desvioPadrao.toFixed(4));
+      } else {
+        desvioPadrao = 0;
+      }
+      
+      resultadoMax = parseFloat(resultadoMax.toFixed(2));
+      resultadoMin = parseFloat(resultadoMin.toFixed(2));
+    }
+
+    // Armazenar valores nas propriedades do componente
+    this.superficial_desvio_padrao = desvioPadrao;
+    this.superficial_resultado_max = resultadoMax;
+    this.superficial_resultado_min = resultadoMin;
+    
+    // Calcular parecer_ensaio baseado na diferença entre válidos e inválidos
+    const validosCount = this.linhasSuperficial.filter((l: any) => l.validacao === 'Válido').length;
+    const invalidosCount = this.linhasSuperficial.filter((l: any) => l.validacao === 'Inválido').length;
+    const diferenca = validosCount - invalidosCount;
+    this.superficial_parecer_ensaio = validosCount > 5 ? 'Ensaio Válido' : 'Ensaio Inválido';
+    
     const dadosAtualizados: Partial<Analise> = {
       superficial:{
         linhas: this.linhasSuperficial,
@@ -10058,6 +10252,11 @@ onTracaoAbertoDataMoldagemChange():void {
         tempo_trabalho: this.superficial_tempo_trabalho,
         data_moldagem: this.superficialDataMoldagem,
         data_rompimento: this.superficialDataRompimento,
+        tipo_ruptura: tipoRuptura,
+        desvio_padrao: desvioPadrao,
+        resultado_max: resultadoMax,
+        resultado_min: resultadoMin,
+        parecer_ensaio: this.superficial_parecer_ensaio
       }
     };
     this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
@@ -10380,18 +10579,20 @@ onTracaoAbertoDataMoldagemChange():void {
     this.atualizarCalculosSubstrato(numero);
   }
 
+  //==Atualiza a àrea de acordo com o diâmetro
   atualizarArea(numero: any) {
     const diametro = Number(numero.diametro);
     if (!isNaN(diametro) && diametro > 0) {
       const raio = diametro / 2;
-      const area = 3.14 * Math.pow(raio, 2);
-      numero.area = parseFloat(area.toFixed(2));
+      const area = 3.1415 * Math.pow(raio, 2);
+      numero.area = parseFloat(area.toFixed(0));
     } else {
       numero.area = '!#REF';
     }
     this.atualizarCalculosSubstrato(numero);
   }
 
+  //==Atualiza os cálculos do substrato
   atualizarCalculosSubstrato(linha: any) {
     const carga = Number(linha.carga);
     const area = Number(linha.area);
@@ -10409,8 +10610,9 @@ onTracaoAbertoDataMoldagemChange():void {
       this.linhasSubstrato = [];
     }
 
-    // Filtra resist válidos (≠ null, '', '!#REF', NaN, 0)
+    // Filtra resist válidos (≠ null, '', '!#REF', NaN, 0) e validação ≠ 'Inválido'
     const resistValidos = this.linhasSubstrato
+      .filter(l => l.validacao !== 'Inválido')
       .map(l => l.resist)
       .filter((v: any) =>
         v !== null &&
@@ -10425,16 +10627,43 @@ onTracaoAbertoDataMoldagemChange():void {
     // Calcula média e armazena em this.media_substrato
     if (resistValidos.length > 0) {
       const soma = resistValidos.reduce((acc, val) => acc + val, 0);
-      this.substrato_media = parseFloat((soma / resistValidos.length).toFixed(2));
+      this.substrato_media = parseFloat((soma / resistValidos.length).toFixed(4));
+      
+      // Calcular desvio padrão, máximo e mínimo em tempo real
+      this.substrato_resultado_max = Math.max(...resistValidos);
+      this.substrato_resultado_min = Math.min(...resistValidos);
+      
+      if (resistValidos.length > 1) {
+        const media = this.substrato_media;
+        const somaQuadrados = resistValidos.reduce((acc, val) => acc + Math.pow(val - media, 2), 0);
+        this.substrato_desvio_padrao = Math.sqrt(somaQuadrados / resistValidos.length);
+        this.substrato_desvio_padrao = parseFloat(this.substrato_desvio_padrao.toFixed(4));
+      } else {
+        this.substrato_desvio_padrao = 0;
+      }
+      
+      this.substrato_resultado_max = parseFloat(this.substrato_resultado_max.toFixed(2));
+      this.substrato_resultado_min = parseFloat(this.substrato_resultado_min.toFixed(2));
+      
+      // Calcular parecer_ensaio em tempo real
+      const validosCount = this.linhasSubstrato.filter((l: any) => l.validacao === 'Válido').length;
+      const invalidosCount = this.linhasSubstrato.filter((l: any) => l.validacao === 'Inválido').length;
+      const diferenca = validosCount - invalidosCount;
+      this.substrato_parecer_ensaio = validosCount > 5 ? 'Ensaio Válido' : 'Ensaio Inválido';
     } else {
       this.substrato_media = null;
+      this.substrato_desvio_padrao = null;
+      this.substrato_resultado_max = null;
+      this.substrato_resultado_min = null;
+      this.substrato_parecer_ensaio = '';
     }
 
     // --- Validação de ±30% ---
     if (this.substrato_media !== null && linha.resist !== '!#REF') {
-      const valor_vezes_03 = 0.3 * this.substrato_media;
-      const linha_mais_03 = this.substrato_media + valor_vezes_03;
-      const linha_menos_03 = this.substrato_media - valor_vezes_03;
+      const resistencia = Number(linha.resist);
+      const valor_vezes_03 = 0.3 * resistencia;
+      const linha_mais_03 = resistencia + valor_vezes_03;
+      const linha_menos_03 = resistencia - valor_vezes_03;
 
       if (linha.resist > linha_mais_03 || linha.resist < linha_menos_03) {
         linha.validacao = 'Inválido';
@@ -10445,19 +10674,19 @@ onTracaoAbertoDataMoldagemChange():void {
       linha.validacao = null;
     }
   }
-
+//==Atualiza a àrea de acordo com o diâmetro
   atualizarAreaSuper(numero: any) {
     const diametro = Number(numero.diametro);
     if (!isNaN(diametro) && diametro > 0) {
       const raio = diametro / 2;
       const area = 3.14 * Math.pow(raio, 2);
-      numero.area = parseFloat(area.toFixed(2));
+      numero.area = parseFloat(area.toFixed(0));
     } else {
       numero.area = '!#REF';
     }
     this.atualizarCalculosSuper(numero);
   }
-
+//== Atualiza os cálculos do superficial
   atualizarCalculosSuper(linha: any) {
     const carga = Number(linha.carga);
     const area = Number(linha.area);
@@ -10475,8 +10704,9 @@ onTracaoAbertoDataMoldagemChange():void {
       this.linhasSuperficial = [];
     }
 
-    // Filtrar resistências válidas
+    // Filtrar resistências válidas (desconsiderando linhas com validação 'Inválido')
     const resistValidos = this.linhasSuperficial
+      .filter(l => l.validacao !== 'Inválido') // Desconsiderar linhas inválidas
       .map(l => l.resist)
       .filter((v: any) =>
         v !== null &&
@@ -10491,19 +10721,45 @@ onTracaoAbertoDataMoldagemChange():void {
     // Calcular média
     if (resistValidos.length > 0) {
       const soma = resistValidos.reduce((acc, val) => acc + val, 0);
-      this.superficial_media = parseFloat((soma / resistValidos.length).toFixed(2));
+      this.superficial_media = parseFloat((soma / resistValidos.length).toFixed(4));
+
+    // Calcular desvio padrão, máximo e mínimo em tempo real
+      this.superficial_resultado_max = Math.max(...resistValidos);
+      this.superficial_resultado_min = Math.min(...resistValidos);
+
+      if (resistValidos.length > 1) {
+        const media = this.superficial_media;
+        const somaQuadrados = resistValidos.reduce((acc, val) => acc + Math.pow(val - media, 2), 0);
+        this.superficial_desvio_padrao = Math.sqrt(somaQuadrados / resistValidos.length);
+        this.superficial_desvio_padrao = parseFloat(this.superficial_desvio_padrao.toFixed(4));
+      } else {
+        this.superficial_desvio_padrao = 0;
+      }
+
+      this.superficial_resultado_max = parseFloat(this.superficial_resultado_max.toFixed(2));
+      this.superficial_resultado_min = parseFloat(this.superficial_resultado_min.toFixed(2));
+
+      // Calcular parecer_ensaio em tempo real
+      const validosCount = this.linhasSuperficial.filter((l: any) => l.validacao === 'Válido').length;
+      const invalidosCount = this.linhasSuperficial.filter((l: any) => l.validacao === 'Inválido').length;
+      const diferenca = validosCount - invalidosCount;
+      this.superficial_parecer_ensaio = validosCount > 5 ? 'Ensaio Válido' : 'Ensaio Inválido';
+
     } else {
       this.superficial_media = null;
+      this.superficial_desvio_padrao = null;
+      this.superficial_resultado_max = null;
+      this.superficial_resultado_min = null;
+      this.superficial_parecer_ensaio = '';
     }
 
-    // Copiar média para analise (o que aparece no HTML)
-    this.superficial_media = this.superficial_media;
 
     // ---- Validação ±30% ----
-    if (this.superficial_media !== null && linha.resist !== '!#REF') {
-      const valor_vezes_03 = 0.3 * this.superficial_media;
-      const linha_mais_03 = this.superficial_media + valor_vezes_03;
-      const linha_menos_03 = this.superficial_media - valor_vezes_03;
+ if (this.superficial_media !== null && linha.resist !== '!#REF') {
+      const resistencia = Number(linha.resist);
+      const valor_vezes_03 = 0.3 * resistencia;
+      const linha_mais_03 = resistencia + valor_vezes_03;
+      const linha_menos_03 = resistencia - valor_vezes_03;
 
       if (linha.resist > linha_mais_03 || linha.resist < linha_menos_03) {
         linha.validacao = 'Inválido';
@@ -10514,9 +10770,6 @@ onTracaoAbertoDataMoldagemChange():void {
       linha.validacao = null;
     }
   }
-
-
-
 
     getItensPeneira(analise: any) {
     return [
