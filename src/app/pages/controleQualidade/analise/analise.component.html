@@ -2008,19 +2008,49 @@
                             </div>
 
                             <br>
-                            <div class="w-12"> 
-                                <h2 style="color: white">
+
+                            <div class="w-12 flex flex-row gap-4" style="align-items: flex-end;"> 
+                                <h2 style="color: white; margin-bottom: 0;">
                                     <strong> Média de Resist. MPa: {{ tracao_normal_media}} </strong>
                                 </h2>
+                                <h2 style="color: white; margin-bottom: 0;">
+                                    <strong> Desvio Padrão: {{ tracao_normal_desvio_padrao  !== null ? tracao_normal_desvio_padrao : '-' }} </strong>
+                                </h2>
+                                <h2 style="color: white; margin-bottom: 0;">
+                                    <strong> Máx: {{ tracaoNormalResultadoMax !== null ? tracaoNormalResultadoMax : '-' }} </strong>
+                                </h2>
+                                <h2 style="color: white; margin-bottom: 0;">
+                                    <strong> Mín: {{ tracaoNormalResultadoMin !== null ? tracaoNormalResultadoMin : '-' }} </strong>
+                                </h2>
+                                <!-- Card de Parecer do Ensaio -->
+                                <div *ngIf="tracaoNormalParecerEnsaio"
+                                    [style]="{'background': tracaoNormalParecerEnsaio === 'Ensaio Válido' ? 'linear-gradient(135deg, rgba(46, 125, 50, 0.9) 0%, rgba(76, 175, 80, 0.9) 100%)' : 'linear-gradient(135deg, rgba(198, 40, 40, 0.9) 0%, rgba(244, 67, 54, 0.9) 100%)', 'color': 'white', 'padding': '0.75rem 1.25rem', 'border-radius': '12px', 'border': tracaoNormalParecerEnsaio === 'Ensaio Válido' ? '2px solid rgba(76, 175, 80, 0.5)' : '2px solid rgba(244, 67, 54, 0.5)', 'box-shadow': '0 4px 6px rgba(0,0,0,0.3)', 'margin-bottom': '0', 'min-width': '280px'}"
+                                    class="flex align-items-center">
+                                    <i [class]="tracaoNormalParecerEnsaio === 'Ensaio Válido' ? 'pi pi-check-circle' : 'pi pi-times-circle'"
+                                        style="font-size: 1.5rem; margin-right: 0.75rem;"></i>
+                                    <div style="flex: 1;">
+                                        <div *ngIf="tracaoNormalParecerEnsaio === 'Ensaio Válido'" style="font-weight: 600; font-size: 1rem;">
+                                            {{ tracaoNormalParecerEnsaio }}
+                                        </div>
+                                        <div *ngIf="tracaoNormalParecerEnsaio === 'Ensaio Inválido'">
+                                            <div style="font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem;">
+                                                {{ tracaoNormalParecerEnsaio }}
+                                            </div>
+                                            <div style="font-size: 0.85rem; opacity: 0.95;">
+                                                Refazer o Ensaio = Número de pontos válidos menor que o mínimo necessário
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <p-table [value]="linhasTracaoNormal" stripedRows>
                                 <ng-template pTemplate="header">
                                     <tr>
                                         <th>Nº</th>
                                         <th>Diâmetro mm</th>
-                                        <th>Aresta mm²</th>
+                                        <!-- <th>Aresta mm²</th>
                                         <th>Espessura mm</th>
-                                        <th>Subst</th>
+                                        <th>Subst</th> -->
                                         <th>Junta</th>
                                         <th>Carga kgf</th>
                                         <th>RESIST. Mpa</th>
@@ -2046,9 +2076,9 @@
                                             />
                                         </td>
                                         <td><input pInputText [(ngModel)]="linha.area" type="text" readonly (ngModelChange)="atualizarCalculosTracaoNormal(linha)" style="width: 95px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.espessura" type="number" style="width: 70px"/></td>
+                                        <!-- <td><input pInputText [(ngModel)]="linha.espessura" type="number" style="width: 70px"/></td>
                                         <td><input pInputText [(ngModel)]="linha.subst" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td> -->
                                         <td><input pInputText [(ngModel)]="linha.carga" type="number" (ngModelChange)="atualizarCalculosTracaoNormal(linha)" style="width: 70px"/></td>
                                         <td><input pInputText [(ngModel)]="linha.resist" type="text" readonly style="width: 80px"/></td>
                                         <td><input pInputText [(ngModel)]="linha.validacao" type="text" style="width: 100px" readonly/></td>
@@ -2085,11 +2115,9 @@
 <p-drawer 
     [(visible)]="modalDadosTracaoSubmersa" 
     position="full" >
-
     <div class="background-form">
         <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
             <div class="fg1 flex flex-column w-12 align-items-center">
-
                 <p-card class="card w-12 text-center card-substrato">
                     <ng-template #header>
                         <div class="header-substrato w-full text-center">
@@ -2129,10 +2157,39 @@
                             </div>
 
                             <br>
-                            <div class="w-12"> 
-                                <h2 style="color: white">
+                            <div class="w-12 flex flex-row gap-4" style="align-items: flex-end;"> 
+                                <h2 style="color: white; margin-bottom: 0;">
                                     <strong> Média de Resist. MPa: {{ tracao_submersa_media}} </strong>
                                 </h2>
+                                <h2 style="color: white; margin-bottom: 0;">
+                                    <strong> Desvio Padrão: {{ tracao_submersa_desvio_padrao !== null ? tracao_submersa_desvio_padrao : '-' }} </strong>
+                                </h2>
+                                <h2 style="color: white; margin-bottom: 0;">
+                                    <strong> Máx: {{ tracaoSubmersaResultadoMax !== null ? tracaoSubmersaResultadoMax : '-' }} </strong>
+                                </h2>
+                                <h2 style="color: white; margin-bottom: 0;">
+                                    <strong> Mín: {{ tracaoSubmersaResultadoMin !== null ? tracaoSubmersaResultadoMin : '-' }} </strong>
+                                </h2>
+                                <!-- Card de Parecer do Ensaio -->
+                                <div *ngIf="tracaoSubmersaParecerEnsaio"
+                                    [style]="{'background': tracaoSubmersaParecerEnsaio === 'Ensaio Válido' ? 'linear-gradient(135deg, rgba(46, 125, 50, 0.9) 0%, rgba(76, 175, 80, 0.9) 100%)' : 'linear-gradient(135deg, rgba(198, 40, 40, 0.9) 0%, rgba(244, 67, 54, 0.9) 100%)', 'color': 'white', 'padding': '0.75rem 1.25rem', 'border-radius': '12px', 'border': tracaoSubmersaParecerEnsaio === 'Ensaio Válido' ? '2px solid rgba(76, 175, 80, 0.5)' : '2px solid rgba(244, 67, 54, 0.5)', 'box-shadow': '0 4px 6px rgba(0,0,0,0.3)', 'margin-bottom': '0', 'min-width': '280px'}"
+                                    class="flex align-items-center">
+                                    <i [class]="tracaoSubmersaParecerEnsaio === 'Ensaio Válido' ? 'pi pi-check-circle' : 'pi pi-times-circle'"
+                                        style="font-size: 1.5rem; margin-right: 0.75rem;"></i>
+                                    <div style="flex: 1;">
+                                        <div *ngIf="tracaoSubmersaParecerEnsaio === 'Ensaio Válido'" style="font-weight: 600; font-size: 1rem;">
+                                            {{ tracaoSubmersaParecerEnsaio }}
+                                        </div>
+                                        <div *ngIf="tracaoSubmersaParecerEnsaio === 'Ensaio Inválido'">
+                                            <div style="font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem;">
+                                                {{ tracaoSubmersaParecerEnsaio }}
+                                            </div>
+                                            <div style="font-size: 0.85rem; opacity: 0.95;">
+                                                Refazer o Ensaio = Número de pontos válidos menor que o mínimo necessário
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                                 
                             <p-table [value]="linhasTracaoSubmersa" stripedRows>
@@ -2140,9 +2197,9 @@
                                     <tr>
                                         <th>Nº</th>
                                         <th>Diâmetro mm</th>
-                                        <th>Aresta mm²</th>
+                                        <!-- <th>Aresta mm²</th>
                                         <th>Espessura mm</th>
-                                        <th>Subst</th>
+                                        <th>Subst</th> -->
                                         <th>Junta</th>
                                         <th>Carga kgf</th>
                                         <th>RESIST. Mpa</th>
@@ -2168,9 +2225,9 @@
                                             />
                                         </td>
                                         <td><input pInputText [(ngModel)]="linha.area" type="text" readonly (ngModelChange)="atualizarCalculosTracaoSubmersa(linha)" style="width: 95px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.espessura" type="number" style="width: 70px"/></td>
+                                        <!-- <td><input pInputText [(ngModel)]="linha.espessura" type="number" style="width: 70px"/></td>
                                         <td><input pInputText [(ngModel)]="linha.subst" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td> -->
                                         <td><input pInputText [(ngModel)]="linha.carga" type="number" (ngModelChange)="atualizarCalculosTracaoSubmersa(linha)" style="width: 70px"/></td>
                                         <td><input pInputText [(ngModel)]="linha.resist" type="text" readonly style="width: 80px"/></td>
                                         <td><input pInputText [(ngModel)]="linha.validacao" type="text" style="width: 100px" readonly/></td>
@@ -2251,19 +2308,48 @@
                             </div>
 
                             <br>
-                            <div class="w-12"> 
-                                <h2 style="color: white">
-                                    <strong> Média de Resist. MPa: {{ tracao_submersa_media}} </strong>
+                            <div class="w-12 flex flex-row gap-4" style="align-items: flex-end;"> 
+                                <h2 style="color: white; margin-bottom: 0;">
+                                    <strong> Média de Resist. MPa: {{ tracao_estufa_media}} </strong>
                                 </h2>
+                                <h2 style="color: white; margin-bottom: 0;">
+                                    <strong> Desvio Padrão: {{ tracao_estufa_desvio_padrao !== null ? tracao_estufa_desvio_padrao : '-' }} </strong>
+                                </h2>
+                                <h2 style="color: white; margin-bottom: 0;">
+                                    <strong> Máx: {{ tracaoEstufaResultadoMax !== null ? tracaoEstufaResultadoMax : '-' }} </strong>
+                                </h2>
+                                <h2 style="color: white; margin-bottom: 0;">
+                                    <strong> Mín: {{ tracaoEstufaResultadoMin !== null ? tracaoEstufaResultadoMin : '-' }} </strong>
+                                </h2>
+                                <!-- Card de Parecer do Ensaio -->
+                                <div *ngIf="tracaoEstufaParecerEnsaio"
+                                    [style]="{'background': tracaoEstufaParecerEnsaio === 'Ensaio Válido' ? 'linear-gradient(135deg, rgba(46, 125, 50, 0.9) 0%, rgba(76, 175, 80, 0.9) 100%)' : 'linear-gradient(135deg, rgba(198, 40, 40, 0.9) 0%, rgba(244, 67, 54, 0.9) 100%)', 'color': 'white', 'padding': '0.75rem 1.25rem', 'border-radius': '12px', 'border': tracaoEstufaParecerEnsaio === 'Ensaio Válido' ? '2px solid rgba(76, 175, 80, 0.5)' : '2px solid rgba(244, 67, 54, 0.5)', 'box-shadow': '0 4px 6px rgba(0,0,0,0.3)', 'margin-bottom': '0', 'min-width': '280px'}"
+                                    class="flex align-items-center">
+                                    <i [class]="tracaoEstufaParecerEnsaio === 'Ensaio Válido' ? 'pi pi-check-circle' : 'pi pi-times-circle'"
+                                        style="font-size: 1.5rem; margin-right: 0.75rem;"></i>
+                                    <div style="flex: 1;">
+                                        <div *ngIf="tracaoEstufaParecerEnsaio === 'Ensaio Válido'" style="font-weight: 600; font-size: 1rem;">
+                                            {{ tracaoEstufaParecerEnsaio }}
+                                        </div>
+                                        <div *ngIf="tracaoEstufaParecerEnsaio === 'Ensaio Inválido'">
+                                            <div style="font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem;">
+                                                {{ tracaoEstufaParecerEnsaio }}
+                                            </div>
+                                            <div style="font-size: 0.85rem; opacity: 0.95;">
+                                                Refazer o Ensaio = Número de pontos válidos menor que o mínimo necessário
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <p-table [value]="linhasTracaoEstufa" stripedRows>
                                 <ng-template pTemplate="header">
                                     <tr>
                                         <th>Nº</th>
                                         <th>Diâmetro mm</th>
-                                        <th>Aresta mm²</th>
+                                        <!-- <th>Aresta mm²</th>
                                         <th>Espessura mm</th>
-                                        <th>Subst</th>
+                                        <th>Subst</th> -->
                                         <th>Junta</th>
                                         <th>Carga kgf</th>
                                         <th>RESIST. Mpa</th>
@@ -2289,9 +2375,9 @@
                                             />
                                         </td>
                                         <td><input pInputText [(ngModel)]="linha.area" type="text" readonly (ngModelChange)="atualizarCalculosTracaoEstufa(linha)" style="width: 95px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.espessura" type="number" style="width: 70px"/></td>
+                                        <!-- <td><input pInputText [(ngModel)]="linha.espessura" type="number" style="width: 70px"/></td>
                                         <td><input pInputText [(ngModel)]="linha.subst" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td> -->
                                         <td><input pInputText [(ngModel)]="linha.carga" type="number" (ngModelChange)="atualizarCalculosTracaoEstufa(linha)" style="width: 70px"/></td>
                                         <td><input pInputText [(ngModel)]="linha.resist" type="text" readonly style="width: 80px"/></td>
                                         <td><input pInputText [(ngModel)]="linha.validacao" type="text" style="width: 100px" readonly/></td>
@@ -2353,10 +2439,15 @@
                                     <input pInputText [(ngModel)]="tracao_aberto_tempo_trabalho" style="width: 200px" />
                                     </strong>
                                 </div>
+                                <div class="w-6">
+                                    <strong> Tempo em Aberto:
+                                    <input pInputText [(ngModel)]="tracao_aberto_tempo_aberto" style="width: 200px" />
+                                    </strong>
+                                </div>
                             </div>
 
                             <div class="flex gap-3">
-                                    <div class="w-6 mb-5">
+                                    <div class="w-4 mb-5">
                                         <label class="font-bold text-lg mb-2 block"> Data de Moldagem</label>
                                         <p-datePicker 
                                             [(ngModel)]="tracaoAbertoDataMoldagem" 
@@ -2366,25 +2457,56 @@
                                             [style]="{'width':'30%'}" 
                                             />
                                      </div>
-                                     <div class="w-6 mt-3">
+                                     <div class="w-4 mt-3">
                                         <strong> Data Rompimento: </strong>{{ tracaoAbertoDataRompimento | date:'dd/MM/yyyy' }}
-                                     </div>     
+                                     </div>
                             </div>
 
                             <br>
-                            <div class="w-12"> 
-                                <h2 style="color: white">
+                            <div class="w-12 flex flex-row gap-4" style="align-items: flex-end;"> 
+                                <h2 style="color: white; margin-bottom: 0;">
                                     <strong> Média de Resist. MPa: {{ tracao_aberto_media}} </strong>
                                 </h2>
+                                    <h2 style="color: white; margin-bottom: 0;">
+                                        <strong> Desvio Padrão: {{ tracao_aberto_desvio_padrao  !== null ? tracao_aberto_desvio_padrao : '-' }} </strong>
+                                    </h2>
+                                    <h2 style="color: white; margin-bottom: 0;">
+                                        <strong> Máx: {{ tracaoAbertoResultadoMax !== null ? tracaoAbertoResultadoMax : '-' }} </strong>
+                                    </h2>
+                                    <h2 style="color: white; margin-bottom: 0;">
+                                        <strong> Mín: {{ tracaoAbertoResultadoMin !== null ? tracaoAbertoResultadoMin : '-' }} </strong>
+                                    </h2>
+                                    
+                                    <!-- Card de Parecer do Ensaio -->
+                                    <div 
+                                        *ngIf="tracaoAbertoParecerEnsaio" 
+                                        [style]="{'background': tracaoAbertoParecerEnsaio === 'Ensaio Válido' ? 'linear-gradient(135deg, rgba(46, 125, 50, 0.9) 0%, rgba(76, 175, 80, 0.9) 100%)' : 'linear-gradient(135deg, rgba(198, 40, 40, 0.9) 0%, rgba(244, 67, 54, 0.9) 100%)', 'color': 'white', 'padding': '0.75rem 1.25rem', 'border-radius': '12px', 'border': tracaoAbertoParecerEnsaio === 'Ensaio Válido' ? '2px solid rgba(76, 175, 80, 0.5)' : '2px solid rgba(244, 67, 54, 0.5)', 'box-shadow': '0 4px 6px rgba(0,0,0,0.3)', 'margin-bottom': '0', 'min-width': '280px'}"
+                                        class="flex align-items-center">
+                                        <i [class]="tracaoAbertoParecerEnsaio === 'Ensaio Válido' ? 'pi pi-check-circle' : 'pi pi-times-circle'" 
+                                           style="font-size: 1.5rem; margin-right: 0.75rem;"></i>
+                                        <div style="flex: 1;">
+                                            <div *ngIf="tracaoAbertoParecerEnsaio === 'Ensaio Válido'" style="font-weight: 600; font-size: 1rem;">
+                                                {{ tracaoAbertoParecerEnsaio }}
+                                            </div>
+                                            <div *ngIf="tracaoAbertoParecerEnsaio === 'Ensaio Inválido'">
+                                                <div style="font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem;">
+                                                    {{ tracaoAbertoParecerEnsaio }}
+                                                </div>
+                                                <div style="font-size: 0.85rem; opacity: 0.95;">
+                                                    Refazer o Ensaio = Número de pontos válidos menor que o mínimo necessário
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                             </div>
                             <p-table [value]="linhasTracaoAberto" stripedRows>
                                 <ng-template pTemplate="header">
                                     <tr>
                                         <th>Nº</th>
                                         <th>Diâmetro mm</th>
-                                        <th>Aresta mm²</th>
+                                        <!-- <th>Aresta mm²</th>
                                         <th>Espessura mm</th>
-                                        <th>Subst</th>
+                                        <th>Subst</th> -->
                                         <th>Junta</th>
                                         <th>Carga kgf</th>
                                         <th>RESIST. Mpa</th>
@@ -2410,9 +2532,9 @@
                                             />
                                         </td>
                                         <td><input pInputText [(ngModel)]="linha.area" type="text" readonly (ngModelChange)="atualizarCalculosTracaoAberto(linha)" style="width: 95px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.espessura" type="number" style="width: 70px"/></td>
+                                        <!-- <td><input pInputText [(ngModel)]="linha.espessura" type="number" style="width: 70px"/></td>
                                         <td><input pInputText [(ngModel)]="linha.subst" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td> -->
                                         <td><input pInputText [(ngModel)]="linha.carga" type="number" (ngModelChange)="atualizarCalculosTracaoAberto(linha)" style="width: 70px"/></td>
                                         <td><input pInputText [(ngModel)]="linha.resist" type="text" readonly style="width: 80px"/></td>
                                         <td><input pInputText [(ngModel)]="linha.validacao" type="text" style="width: 100px" readonly/></td>
