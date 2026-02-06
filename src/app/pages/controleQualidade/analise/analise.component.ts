@@ -3112,7 +3112,7 @@ renderChart(todosOsPontos: DataPoint[], regressionLineData: DataPoint[], interce
         const tipoIntercepto = (this.usarCoeficienteCustomizado && this.coeficienteLinearCustomizado !== null) 
             ? '' 
             : '';
-        equacaoFormatada = `f(x) = ${m.toFixed(11)}x ${b >= 0 ? '+' : '-'} ${Math.abs(b).toFixed(11)}${tipoIntercepto}`;
+        equacaoFormatada = `f(x) = ${m.toFixed(4)}x ${b >= 0 ? '+' : '-'} ${Math.abs(b).toFixed(4)}${tipoIntercepto}`;
     } else {
         equacaoFormatada = 'f(x) = Cálculo Indisponível';
     }
@@ -3247,8 +3247,8 @@ renderChart(todosOsPontos: DataPoint[], regressionLineData: DataPoint[], interce
                             xValue: xPos, 
                             yValue: yPos, 
                             content: equacaoFormatada,
-                            font: { size: 14, weight: 'bold' },
-                            color: 'blue',
+                            font: { size: 18, weight: 'bold' },
+                            color: 'black',
                             backgroundColor: 'rgba(255, 255, 255, 0.8)',
                             borderRadius: 6,
                             borderWidth: 1,
@@ -11315,9 +11315,8 @@ onTracaoAbertoDataMoldagemChange():void {
       }
     });
 
-     // Calcular desvio padrão, máximo e mínimo dos valores de resistência válidos
+     // Calcular desvio padrão, máximo e mínimo dos valores de resistência - INCLUINDO inválidos
     const resistValidos = this.linhasTracaoNormal
-      .filter((l: any) => l.validacao !== 'Inválido')
       .map((l: any) => l.resist)
       .filter((v: any) => v !== null && v !== undefined && v !== '' && !isNaN(Number(v)) && Number(v) !== 0)
       .map((v: any) => Number(v));
@@ -11327,13 +11326,19 @@ onTracaoAbertoDataMoldagemChange():void {
     let resultadoMin = null;
 
     if (resistValidos.length > 0) {
+      // Recalcular a média para garantir sincronização
+      const soma = resistValidos.reduce((acc, val) => acc + val, 0);
+      const media = parseFloat((soma / resistValidos.length).toFixed(2));
+      
+      // Atualizar a propriedade da média
+      this.tracao_normal_media = media;
+      
       // Máximo e Mínimo
       resultadoMax = Math.max(...resistValidos);
       resultadoMin = Math.min(...resistValidos);
       
-      // Desvio Padrão
+      // Desvio Padrão - usar a média recalculada
       if (resistValidos.length > 1) {
-        const media = resistValidos.reduce((acc, val) => acc + val, 0) / resistValidos.length;
         const somaQuadrados = resistValidos.reduce((acc, val) => acc + Math.pow(val - media, 2), 0);
         desvioPadrao = Math.sqrt(somaQuadrados / resistValidos.length);
         desvioPadrao = parseFloat(desvioPadrao.toFixed(4));
@@ -11360,14 +11365,14 @@ onTracaoAbertoDataMoldagemChange():void {
       tracao_normal:{
         linhas: this.linhasTracaoNormal,
         media: this.tracao_normal_media,
-        desvio_padrao: this.tracao_aberto_desvio_padrao,
+        desvio_padrao: this.tracao_normal_desvio_padrao,
         tempo_previsto: this.tracao_normal_tempo_previsto,
         tempo_trabalho: this.tracao_normal_tempo_trabalho,
         data_moldagem: this.tracaoNormalDataMoldagem,
         data_rompimento: this.tracaoNormalDataRompimento,
-        resultado_max: this.tracaoAbertoResultadoMax,
-        resultado_min: this.tracaoAbertoResultadoMin,
-        parecer_ensaio: this.tracaoAbertoParecerEnsaio,
+        resultado_max: this.tracaoNormalResultadoMax,
+        resultado_min: this.tracaoNormalResultadoMin,
+        parecer_ensaio: this.tracaoNormalParecerEnsaio,
         tipo_ruptura: tipoRuptura
       }
     };
@@ -11588,9 +11593,8 @@ onTracaoAbertoDataMoldagemChange():void {
       }
     });
 
-    // Calcular desvio padrão, máximo e mínimo dos valores de resistência válidos
+    // Calcular desvio padrão, máximo e mínimo dos valores de resistência - INCLUINDO inválidos
     const resistValidos = this.linhasTracaoSubmersa
-      .filter((l: any) => l.validacao !== 'Inválido')
       .map((l: any) => l.resist)
       .filter((v: any) => v !== null && v !== undefined && v !== '' && !isNaN(Number(v)) && Number(v) !== 0)
       .map((v: any) => Number(v));
@@ -11600,13 +11604,19 @@ onTracaoAbertoDataMoldagemChange():void {
     let resultadoMin = null;
 
     if (resistValidos.length > 0) {
+      // Recalcular a média para garantir sincronização
+      const soma = resistValidos.reduce((acc, val) => acc + val, 0);
+      const media = parseFloat((soma / resistValidos.length).toFixed(2));
+      
+      // Atualizar a propriedade da média
+      this.tracao_submersa_media = media;
+      
       // Máximo e Mínimo
       resultadoMax = Math.max(...resistValidos);
       resultadoMin = Math.min(...resistValidos);
       
-      // Desvio Padrão
+      // Desvio Padrão - usar a média recalculada
       if (resistValidos.length > 1) {
-        const media = resistValidos.reduce((acc, val) => acc + val, 0) / resistValidos.length;
         const somaQuadrados = resistValidos.reduce((acc, val) => acc + Math.pow(val - media, 2), 0);
         desvioPadrao = Math.sqrt(somaQuadrados / resistValidos.length);
         desvioPadrao = parseFloat(desvioPadrao.toFixed(4));
@@ -11862,9 +11872,8 @@ onTracaoAbertoDataMoldagemChange():void {
       }
     });
 
-       // Calcular desvio padrão, máximo e mínimo dos valores de resistência válidos
+       // Calcular desvio padrão, máximo e mínimo dos valores de resistência - INCLUINDO inválidos
     const resistValidos = this.linhasTracaoEstufa
-      .filter((l: any) => l.validacao !== 'Inválido')
       .map((l: any) => l.resist)
       .filter((v: any) => v !== null && v !== undefined && v !== '' && !isNaN(Number(v)) && Number(v) !== 0)
       .map((v: any) => Number(v));
@@ -11874,13 +11883,19 @@ onTracaoAbertoDataMoldagemChange():void {
     let resultadoMin = null;
 
         if (resistValidos.length > 0) {
+      // Recalcular a média para garantir sincronização
+      const soma = resistValidos.reduce((acc, val) => acc + val, 0);
+      const media = parseFloat((soma / resistValidos.length).toFixed(2));
+      
+      // Atualizar a propriedade da média
+      this.tracao_estufa_media = media;
+      
       // Máximo e Mínimo
       resultadoMax = Math.max(...resistValidos);
       resultadoMin = Math.min(...resistValidos);
       
-      // Desvio Padrão
+      // Desvio Padrão - usar a média recalculada
       if (resistValidos.length > 1) {
-        const media = resistValidos.reduce((acc, val) => acc + val, 0) / resistValidos.length;
         const somaQuadrados = resistValidos.reduce((acc, val) => acc + Math.pow(val - media, 2), 0);
         desvioPadrao = Math.sqrt(somaQuadrados / resistValidos.length);
         desvioPadrao = parseFloat(desvioPadrao.toFixed(4));
@@ -12152,9 +12167,8 @@ onTracaoAbertoDataMoldagemChange():void {
       }
     });
 
-     // Calcular desvio padrão, máximo e mínimo dos valores de resistência válidos
+     // Calcular desvio padrão, máximo e mínimo dos valores de resistência - INCLUINDO inválidos
     const resistValidos = this.linhasTracaoAberto
-      .filter((l: any) => l.validacao !== 'Inválido')
       .map((l: any) => l.resist)
       .filter((v: any) => v !== null && v !== undefined && v !== '' && !isNaN(Number(v)) && Number(v) !== 0)
       .map((v: any) => Number(v));
@@ -12164,13 +12178,19 @@ onTracaoAbertoDataMoldagemChange():void {
     let resultadoMin = null;
     
     if (resistValidos.length > 0) {
+      // Recalcular a média para garantir sincronização
+      const soma = resistValidos.reduce((acc, val) => acc + val, 0);
+      const media = parseFloat((soma / resistValidos.length).toFixed(2));
+      
+      // Atualizar a propriedade da média
+      this.tracao_aberto_media = media;
+      
       // Máximo e Mínimo
       resultadoMax = Math.max(...resistValidos);
       resultadoMin = Math.min(...resistValidos);
       
-      // Desvio Padrão
+      // Desvio Padrão - usar a média recalculada
       if (resistValidos.length > 1) {
-        const media = resistValidos.reduce((acc, val) => acc + val, 0) / resistValidos.length;
         const somaQuadrados = resistValidos.reduce((acc, val) => acc + Math.pow(val - media, 2), 0);
         desvioPadrao = Math.sqrt(somaQuadrados / resistValidos.length);
         desvioPadrao = parseFloat(desvioPadrao.toFixed(4));
@@ -12255,7 +12275,7 @@ onTracaoAbertoDataMoldagemChange():void {
       this.linhasTracaoNormal = [];
     }
 
-    // Filtra resist válidos (≠ null, '', '!#REF', NaN, 0)
+    // Filtra resist válidos (≠ null, '', '!#REF', NaN, 0) - INCLUINDO inválidos
     const resistValidos = this.linhasTracaoNormal
       .map(l => l.resist)
       .filter((v: any) =>

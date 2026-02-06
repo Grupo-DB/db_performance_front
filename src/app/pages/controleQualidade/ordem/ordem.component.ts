@@ -5354,7 +5354,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
       const body: any[] = [
         [
           {
-            content: 'TRAÇÃO NORMAL',
+            content: 'Determinação da resistência aderência à tração Cura Normal - NBR 14081-4',
             colSpan: 9,
             styles: {
               halign: 'center',
@@ -5367,7 +5367,16 @@ gerarNumero(materialNome: string, sequencial: number): string {
         [
           {
             content: `Média (MPa): `,
-            colSpan: 4,
+            colSpan: 3,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [225, 232, 237]
+            }
+          },
+          {
+            content: `Desvio Padrão: `,
+            colSpan: 3,
             styles: {
               fontStyle: 'bold',
               halign: 'left',
@@ -5376,17 +5385,18 @@ gerarNumero(materialNome: string, sequencial: number): string {
           },
           {
             content: `Tipos de Ruptura: `,
-            colSpan: 5,
+            colSpan: 3,
             styles: {
               fontStyle: 'bold',
-              halign: 'center',
+              halign: 'left',
               fillColor: [225, 232, 237]
             }
-          }
+          },
         ],
         [
           { content: 'Nº', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: 'Diâmetro (mm)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: 'Lado (mm)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: 'Área (mm²)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
           { content: 'Carga (Kgf)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
           { content: 'Resist (MPa)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
           { content: '(A) Sub', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
@@ -5397,7 +5407,8 @@ gerarNumero(materialNome: string, sequencial: number): string {
         ],
         ...Array.from({ length: 10 }, (_, i) => [
           { content: (i + 1).toString(), styles: { fillColor: [248, 248, 255] }},
-          { content: '' },
+          ...(i === 0 ? [{ content: '50', styles: {valign:'middle', halign: 'center', fillColor: [248, 248, 255] }, rowSpan: 10 }] : []),
+          ...(i === 0 ? [{ content: '2500', styles: {valign:'middle', halign: 'center', fillColor: [248, 248, 255] }, rowSpan: 10 }] : []),
           { content: '' },
           { content: '' },
           { content: '' },
@@ -5420,7 +5431,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
         const body: any[] = [
           [
             {
-              content: 'TRAÇÃO ESTUFA',
+              content: 'Determinação da resistência aderência à tração Cura com aquecimento em estufa - NBR 14081-4',
               colSpan: 9,
               styles: {
                 halign: 'center',
@@ -5433,7 +5444,16 @@ gerarNumero(materialNome: string, sequencial: number): string {
            [
           {
             content: `Média (MPa): `,
-            colSpan: 4,
+            colSpan: 3,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [225, 232, 237]
+            }
+          },
+          {
+            content: `Desvio Padrão: `,
+            colSpan: 3,
             styles: {
               fontStyle: 'bold',
               halign: 'left',
@@ -5442,17 +5462,18 @@ gerarNumero(materialNome: string, sequencial: number): string {
           },
           {
             content: `Tipos de Ruptura: `,
-            colSpan: 5,
+            colSpan: 3,
             styles: {
               fontStyle: 'bold',
-              halign: 'center',
+              halign: 'left',
               fillColor: [225, 232, 237]
             }
           }
         ],
           [
           { content: 'Nº', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: 'Diâmetro (mm)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: 'Lado (mm)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: 'Área (mm²)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
           { content: 'Carga (Kgf)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
           { content: 'Resist (MPa)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
           { content: '(A) Sub', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
@@ -5464,7 +5485,8 @@ gerarNumero(materialNome: string, sequencial: number): string {
 
           ...Array.from({ length: 10 }, (_, i) => [
           { content: (i + 1).toString(), styles: { fillColor: [248, 248, 255] }},
-          { content: '' },
+          ...(i === 0 ? [{ content: '50', styles: {valign:'middle', halign: 'center', fillColor: [248, 248, 255] }, rowSpan: 10 }] : []),
+          ...(i === 0 ? [{ content: '2500', styles: {valign:'middle', halign: 'center', fillColor: [248, 248, 255] }, rowSpan: 10 }] : []),
           { content: '' },
           { content: '' },
           { content: '' },
@@ -5487,7 +5509,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
         const body: any[] = [
           [
             {
-              content: 'TRAÇÃO SUBMERSA',
+              content: 'Determinação da resistência aderência à tração Cura com imersão em água - NBR 14081-4',
               colSpan: 9,
               styles: {
                 halign: 'center',
@@ -5500,7 +5522,16 @@ gerarNumero(materialNome: string, sequencial: number): string {
            [
           {
             content: `Média (MPa): `,
-            colSpan: 4,
+            colSpan: 3,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [225, 232, 237]
+            }
+          },
+          {
+            content: `Desvio Padrão: `,
+            colSpan: 3,
             styles: {
               fontStyle: 'bold',
               halign: 'left',
@@ -5509,18 +5540,18 @@ gerarNumero(materialNome: string, sequencial: number): string {
           },
           {
             content: `Tipos de Ruptura: `,
-            colSpan: 5,
+            colSpan: 3,
             styles: {
               fontStyle: 'bold',
-              halign: 'center',
+              halign: 'left',
               fillColor: [225, 232, 237]
             }
           }
         ],
            [
               { content: 'Nº', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-              { content: 'Diâmetro (mm)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-              { content: 'Carga (Kgf)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+              { content: 'Lado (mm)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+              { content: 'Área (mm²)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
               { content: 'Resist (MPa)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
               { content: '(A) Sub', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
               { content: '(B) Sub/Arga', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
@@ -5531,7 +5562,8 @@ gerarNumero(materialNome: string, sequencial: number): string {
 
           ...Array.from({ length: 10 }, (_, i) => [
           { content: (i + 1).toString(), styles: { fillColor: [248, 248, 255] }},
-          { content: '' },
+          ...(i === 0 ? [{ content: '50', styles: {valign:'middle', halign: 'center', fillColor: [248, 248, 255] }, rowSpan: 10 }] : []),
+          ...(i === 0 ? [{ content: '2500', styles: {valign:'middle', halign: 'center', fillColor: [248, 248, 255] }, rowSpan: 10 }] : []),
           { content: '' },
           { content: '' },
           { content: '' },
@@ -5557,7 +5589,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
         const body: any[] = [
           [
             {
-              content: 'TRAÇÃO TEMPO ABERTO',
+              content: 'Determinação da resistência de aderência Tempo Aberto - NBR 14081-3',
               colSpan: 9,
               styles: {
                 halign: 'center',
@@ -5570,7 +5602,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
           [
             {
               content: `Média (MPa): `,
-              colSpan: 4,
+              colSpan: 3,
               styles: {
                 fontStyle: 'bold',
                 halign: 'left',
@@ -5578,18 +5610,37 @@ gerarNumero(materialNome: string, sequencial: number): string {
               }
             },
           {
-            content: `Tipos de Ruptura: `,
-            colSpan: 5,
+            content: `Desvio Padrão: `,
+            colSpan: 2,
             styles: {
               fontStyle: 'bold',
-              halign: 'center',
+              halign: 'left',
               fillColor: [225, 232, 237]
             }
-          }
+          },
+          {
+            content: `Tempo em Aberto: `,
+            colSpan: 2,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [225, 232, 237]
+            }
+          },
+          {
+            content: `Tipos de Ruptura: `,
+            colSpan: 2,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [225, 232, 237]
+            }
+          },
         ],
            [
             { content: 'Nº', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-            { content: 'Diâmetro (mm)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+            { content: 'Lado (mm)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+            { content: 'Área (mm²)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
             { content: 'Carga (Kgf)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
             { content: 'Resist (MPa)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
             { content: '(A) Sub', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
@@ -5601,7 +5652,8 @@ gerarNumero(materialNome: string, sequencial: number): string {
 
           ...Array.from({ length: 10 }, (_, i) => [
           { content: (i + 1).toString(), styles: { fillColor: [248, 248, 255] }},
-          { content: '' },
+          ...(i === 0 ? [{ content: '50', styles: {valign:'middle', halign: 'center', fillColor: [248, 248, 255] }, rowSpan: 10 }] : []),
+          ...(i === 0 ? [{ content: '2500', styles: {valign:'middle', halign: 'center', fillColor: [248, 248, 255] }, rowSpan: 10 }] : []),
           { content: '' },
           { content: '' },
           { content: '' },

@@ -1,6 +1,6 @@
 import { HTTP_INTERCEPTORS, HttpClientModule, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { customInterceptor } from './services/avaliacoesServices/interceptors/custom.interceptor';
 import { routes } from './app.routes';
 import { provideHttpClient, withFetch } from '@angular/common/http';
@@ -23,7 +23,7 @@ registerLocaleData(pt);
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes),
+    provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(withFetch(),withInterceptors([customInterceptor])),
     provideAnimations(),
     provideAnimationsAsync(),

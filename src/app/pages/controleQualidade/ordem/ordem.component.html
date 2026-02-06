@@ -2937,7 +2937,8 @@
                                             <p-checkbox 
                                                 binary="true" 
                                                 [indeterminate]="!isAllSelected() && selectedEnsaios.length > 0"
-                                                [ngModel]="isAllSelected()" (onChange)="toggleSelectAll($event)"></p-checkbox>
+                                                [ngModel]="isAllSelected()" 
+                                                (onChange)="toggleSelectAll($event)"></p-checkbox>
                                             <span class="ml-2">Análises</span>
                                         </th>
                                     </tr>
