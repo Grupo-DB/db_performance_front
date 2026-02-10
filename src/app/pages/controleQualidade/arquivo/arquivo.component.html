@@ -2623,14 +2623,10 @@
     >
     <p-toast />
         
-        <div class="containerInterno w-12">
-            <div class="background-form">
-                <div class="form-geral flex flex-column gap-3 w-12 lg:flex-row">
-                    <div class="fg1 flex flex-column w-12 align-items-center">
-
-                        <p-card class="card w-12 text-center">
-                            <ng-template #header>
-                                <div class="header w-full text-center">
+            <div class="fg1 flex flex-column w-12 align-items-center">
+                <p-card class="card w-12 text-center">
+                    <ng-template #header>
+                    <div class="header w-full text-center">
                                     <b>Selecionar Ánalises do Laudo</b>
                                 </div>
                             </ng-template>
@@ -2727,7 +2723,7 @@
                             
                             <!-- Opções Adicionais -->
                             <div class="flex flex-column w-12 gap-3 mt-4 p-3" style="border-top: 1px solid #dee2e6;">
-                                <h5 class="mb-2">Opções Adicionais</h5>
+                                <h5 class="mb-2" style="color: #ffffff;">Opções Adicionais</h5>
                                 
                                 <!-- Campo adicional customizável -->
                                 <div class="field">
@@ -2745,9 +2741,10 @@
                                 <p-divider></p-divider>
                                 
                                 <!-- Campos para Capilaridade -->
-                                <h6 class="mb-2">Informações de Capilaridade (opcional):</h6>
-                                
-                                <div class="field">
+                                <h6 *ngIf="!isProdutoColante" class="mb-2" style="color: #ffffff;">
+                                    Informações de Capilaridade (opcional):
+                                </h6>
+                                <div *ngIf="!isProdutoColante" class="field">
                                     <label for="coeficienteAbsorcao" class="mb-2">Coeficiente de absorção:</label>
                                     <input 
                                         pInputText 
@@ -2759,7 +2756,7 @@
                                     <small class="text-500">Se não preenchido, será usado o valor calculado automaticamente</small>
                                 </div>
                                 
-                                <div class="field">
+                                <div *ngIf="!isProdutoColante" class="field">
                                     <label for="dataEnsaioCapilaridade" class="mb-2">Data do ensaio:</label>
                                     <input 
                                         pInputText 
@@ -2770,7 +2767,7 @@
                                     />
                                 </div>
                                 
-                                <div class="field">
+                                <div *ngIf="!isProdutoColante" class="field">
                                     <label for="tipoGraficoCapilaridade" class="mb-2">Tipo de gráfico:</label>
                                     <input 
                                         pInputText 
@@ -2781,7 +2778,7 @@
                                     />
                                 </div>
                                 
-                                <div class="field">
+                                <div *ngIf="!isProdutoColante" class="field">
                                     <label for="duracaoEnsaioCapilaridade" class="mb-2">Duração do ensaio:</label>
                                     <input 
                                         pInputText 
@@ -2796,7 +2793,7 @@
                                 <!-- Opções específicas para Argamassa -->
                                 <div *ngIf="isProdutoArgamassa">
                                     <p-divider></p-divider>
-                                    <h6 class="mb-2">Opções para Argamassa:</h6>
+                                    <h6 class="mb-2" style="color: #ffffff; font-size: 16px;">Opções para Argamassa: Revestimento, Contrapiso, Estrutural e Assentamento</h6>
                                     
                                     <div class="field-checkbox">
                                         <p-checkbox 
@@ -2805,57 +2802,7 @@
                                             inputId="moduloElasticidade"
                                         ></p-checkbox>
                                         <label for="moduloElasticidade" class="ml-2">
-                                            Incluir tabela de Determinação do Módulo de Elasticidade no laudo
-                                        </label>
-                                    </div>
-                                    <div class="field-checkbox">
-                                        <p-checkbox 
-                                            [(ngModel)]="incluirTabelaFlexaoCompressao" 
-                                            [binary]="true" 
-                                            inputId="flexaoCompressao"
-                                        ></p-checkbox>
-                                        <label for="flexaoCompressao" class="ml-2">
-                                            Incluir tabela de Determinação da resistência à tração na flexão e à compressão no laudo
-                                        </label>
-                                    </div>
-                                    <div class="field-checkbox">
-                                        <p-checkbox 
-                                            [(ngModel)]="incluirTabelaCompressao" 
-                                            [binary]="true" 
-                                            inputId="compressao"
-                                        ></p-checkbox>
-                                        <label for="compressao" class="ml-2">
-                                            Incluir tabela de Determinação da resistência à compressão no laudo
-                                        </label>
-                                    </div>
-                                    <div class="field-checkbox">
-                                        <p-checkbox 
-                                            [(ngModel)]="incluirTabelaVariacaoDimensional" 
-                                            [binary]="true" 
-                                            inputId="variacaoDimensional"
-                                        ></p-checkbox>
-                                        <label for="variacaoDimensional" class="ml-2">
-                                            Incluir tabela de Determinação da variação dimensional linear (Retração/Expansão) - NBR 15261 no laudo
-                                        </label>
-                                    </div>
-                                    <div class="field-checkbox">
-                                        <p-checkbox 
-                                            [(ngModel)]="incluirTabelaCapilaridade" 
-                                            [binary]="true" 
-                                            inputId="capilaridade"
-                                        ></p-checkbox>
-                                        <label for="capilaridade" class="ml-2">
-                                            Incluir tabela e gráfico de Determinação do Coeficiente de absorção de água por capilaridade - NBR 15148 no laudo
-                                        </label>
-                                    </div>
-                                    <div class="field-checkbox">
-                                        <p-checkbox 
-                                            [(ngModel)]="incluirTabelaElasticidadeDinamico" 
-                                            [binary]="true" 
-                                            inputId="elasticidadeDinamico"
-                                        ></p-checkbox>
-                                        <label for="elasticidadeDinamico" class="ml-2">
-                                            Incluir tabela de Módulo de elasticidade dinâmico - EN ISO 15148 no laudo
+                                            Incluir tabela de <b>Densidade de Massa (endurecido)</b> no laudo
                                         </label>
                                     </div>
                                     <div class="field-checkbox">
@@ -2865,7 +2812,7 @@
                                             inputId="substrato"
                                         ></p-checkbox>
                                         <label for="substrato" class="ml-2">
-                                            Incluir tabela de Determinação da resistência potencial de aderência à tração ao substrato no laudo
+                                            Incluir tabela de Determinação da resistência potencial de aderência à <b>Tração ao Substrato</b> no laudo
                                         </label>
                                     </div>
                                     <div class="field-checkbox">
@@ -2875,7 +2822,57 @@
                                             inputId="superficial"
                                         ></p-checkbox>
                                         <label for="superficial" class="ml-2">
-                                            Incluir tabela de Determinação da resistência potencial de aderência à tração superficial no laudo
+                                            Incluir tabela de Determinação da resistência potencial de aderência à <b>Tração Superficial</b> no laudo
+                                        </label>
+                                    </div>
+                                    <div class="field-checkbox">
+                                        <p-checkbox 
+                                            [(ngModel)]="incluirTabelaFlexaoCompressao" 
+                                            [binary]="true" 
+                                            inputId="flexaoCompressao"
+                                        ></p-checkbox>
+                                        <label for="flexaoCompressao" class="ml-2">
+                                            Incluir tabela de Determinação da <b>Resistência à Tração na Flexão</b> no laudo
+                                        </label>
+                                    </div>
+                                    <div class="field-checkbox">
+                                        <p-checkbox 
+                                            [(ngModel)]="incluirTabelaCompressao" 
+                                            [binary]="true" 
+                                            inputId="compressao"
+                                        ></p-checkbox>
+                                        <label for="compressao" class="ml-2">
+                                            Incluir tabela de Determinação da <b>Resistência à Tração na Compressão</b> no laudo
+                                        </label>
+                                    </div>
+                                    <div class="field-checkbox">
+                                        <p-checkbox 
+                                            [(ngModel)]="incluirTabelaVariacaoDimensional" 
+                                            [binary]="true" 
+                                            inputId="variacaoDimensional"
+                                        ></p-checkbox>
+                                        <label for="variacaoDimensional" class="ml-2">
+                                            Incluir tabela de Determinação da <b>Variação Dimensional Linear (Retração/Expansão)</b> no laudo
+                                        </label>
+                                    </div>
+                                    <div class="field-checkbox">
+                                        <p-checkbox 
+                                            [(ngModel)]="incluirTabelaCapilaridade" 
+                                            [binary]="true" 
+                                            inputId="capilaridade"
+                                        ></p-checkbox>
+                                        <label for="capilaridade" class="ml-2">
+                                            Incluir tabela e gráfico de Determinação do <b>Coeficiente de Absorção de Água por Capilaridade</b> no laudo
+                                        </label>
+                                    </div>
+                                    <div class="field-checkbox">
+                                        <p-checkbox 
+                                            [(ngModel)]="incluirTabelaElasticidadeDinamico" 
+                                            [binary]="true" 
+                                            inputId="elasticidadeDinamico"
+                                        ></p-checkbox>
+                                        <label for="elasticidadeDinamico" class="ml-2">
+                                            Incluir tabela de Determinação do <b>Módulo de Elasticidade Dinâmico</b> no laudo
                                         </label>
                                     </div>
                                 </div>
@@ -2883,7 +2880,7 @@
                                 <!-- Opções específicas para Colante -->
                                 <div *ngIf="isProdutoColante">
                                     <p-divider></p-divider>
-                                    <h6 class="mb-2">Opções para Colante:</h6>
+                                    <h6 class="mb-2" style="color: #ffffff; font-size: 16px;">Opções para Argamassa: Colantes</h6>
                                     
                                     <div class="field-checkbox">
                                         <p-checkbox 
@@ -2892,7 +2889,7 @@
                                             inputId="resistenciaTempoAberto"
                                         ></p-checkbox>
                                         <label for="resistenciaTempoAberto" class="ml-2">
-                                            Incluir tabela de Resistência Tempo Aberto no laudo
+                                            Incluir tabela de Resistência <b>Tempo Aberto</b> no laudo
                                         </label>
                                     </div>
                                     
@@ -2903,7 +2900,7 @@
                                             inputId="resistenciaCuraNormal"
                                         ></p-checkbox>
                                         <label for="resistenciaCuraNormal" class="ml-2">
-                                            Incluir tabela de Resistência à aderência Cura Normal no laudo
+                                            Incluir tabela de Resistência à aderência <b>Cura Normal</b> no laudo
                                         </label>
                                     </div>
                                     
@@ -2914,7 +2911,7 @@
                                             inputId="resistenciaSubmersa"
                                         ></p-checkbox>
                                         <label for="resistenciaSubmersa" class="ml-2">
-                                            Incluir tabela de Resistência à aderência Submersa no laudo
+                                            Incluir tabela de Resistência à aderência <b>Submersa</b> no laudo
                                         </label>
                                     </div>
                                     
@@ -2925,7 +2922,7 @@
                                             inputId="resistenciaEstufa"
                                         ></p-checkbox>
                                         <label for="resistenciaEstufa" class="ml-2">
-                                            Incluir tabela de Resistência à aderência em Estufa no laudo
+                                            Incluir tabela de Resistência à aderência em <b>Estufa</b> no laudo
                                         </label>
                                     </div>
                                     
@@ -2936,7 +2933,7 @@
                                             inputId="deslizamento"
                                         ></p-checkbox>
                                         <label for="deslizamento" class="ml-2">
-                                            Incluir tabela de Determinação do Deslizamento no laudo
+                                            Incluir tabela de Determinação do <b>Deslizamento</b> no laudo
                                         </label>
                                     </div>
                                 </div>
@@ -2953,11 +2950,8 @@
                                     pTooltip="Gerar Laudo"
                                 />
                             </div>
-                        </p-card>
-                    </div>    
-                </div>
-            </div>
-        </div>
+                </p-card>
+            </div>    
     </p-dialog>
     <canvas #graficoCanvas width="800" height="600" style="display: none;"></canvas>
 

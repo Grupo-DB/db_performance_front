@@ -523,31 +523,31 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   tracaoAbertoResultadoMin: number | null = null;
 
   ensaios: any;
-  substrato_tempo_previsto: any;
-  substrato_tempo_trabalho: any;
-  superficial_tempo_previsto: any;
-  superficial_tempo_trabalho: any;
-  tracao_normal_tempo_previsto: any;
-  tracao_normal_tempo_trabalho: any;
-  tracao_submersa_tempo_previsto: any;
-  tracao_submersa_tempo_trabalho: any;
-  tracao_estufa_tempo_previsto: any;
-  tracao_estufa_tempo_trabalho: any;
-  tracao_aberto_tempo_previsto: any;
-  tracao_aberto_tempo_trabalho: any;
+  substrato_tempo_previsto:number = 40320; // 28 dias em minutos
+  substrato_tempo_trabalho: number = 40;
+  superficial_tempo_previsto:number = 40320; // 28 dias em minutos
+  superficial_tempo_trabalho: number = 40;
+  tracao_normal_tempo_previsto:number = 40320; // 28 dias em minutos
+  tracao_normal_tempo_trabalho: number = 40;
+  tracao_submersa_tempo_previsto: number = 40320; // 28 dias em minutos
+  tracao_submersa_tempo_trabalho: number = 40;
+  tracao_estufa_tempo_previsto: number = 40320; // 28 dias em minutos
+  tracao_estufa_tempo_trabalho: number = 40;
+  tracao_aberto_tempo_previsto: number = 40320; // 28 dias em minutos
+  tracao_aberto_tempo_trabalho: number = 40;
   tracao_aberto_tempo_aberto: any;
-  variacao_dimensional_tempo_previsto: any;
-  variacao_dimensional_tempo_trabalho: any;
-  variacao_massa_tempo_previsto: any;
-  variacao_massa_tempo_trabalho: any;
-  elasticidade_tempo_previsto: any;
-  elasticidade_tempo_trabalho: any;
-  deslizamento_tempo_previsto: any;
-  deslizamento_tempo_trabalho: any;
-  peneira_seca_tempo_previsto: any;
-  peneira_seca_tempo_trabalho: any;
-  peneira_umida_tempo_previsto: any;
-  peneira_umida_tempo_trabalho: any;
+  variacao_dimensional_tempo_previsto: number = 40320; // 28 dias em minutos
+  variacao_dimensional_tempo_trabalho: number = 15;
+  variacao_massa_tempo_previsto: number = 40320; // 28 dias em minutos
+  variacao_massa_tempo_trabalho: number = 15;
+  elasticidade_tempo_previsto: number = 40320; // 28 dias em minutos
+  elasticidade_tempo_trabalho: number = 40;
+  deslizamento_tempo_previsto:number = 500;
+  deslizamento_tempo_trabalho:number = 20;
+  peneira_seca_tempo_previsto:number = 10;
+  peneira_seca_tempo_trabalho: number = 10;
+  peneira_umida_tempo_previsto: number = 180;
+  peneira_umida_tempo_trabalho:number = 10;
 
   // Mapa para armazenar o fator selecionado por ensaio
   fatoresSelecionados: { [ensaioId: string]: any } = {};
@@ -958,7 +958,7 @@ calculosDeslizamento(): void {
     const mediaFinal = somaFinal / medidasFinais.length;
     
     // Resultado = (Soma Medidas Iniciais - Soma Medidas Finais) / 6
-    this.deslizamentoTotal = (somaInicial - somaFinal) / 6;
+    this.deslizamentoTotal = (somaFinal - somaInicial) / 6;
   } else {
     this.deslizamentoTotal = null;
   }
@@ -1042,8 +1042,8 @@ carregarDeslizamentoSalvo(analise: any): void {
     this.medidaFinal5 = null;
     this.medidaFinal6 = null;
     this.deslizamentoTotal = null;
-    this.deslizamento_tempo_previsto = null;
-    this.deslizamento_tempo_trabalho = null;
+    this.deslizamento_tempo_previsto = 20;
+    this.deslizamento_tempo_trabalho = 20;
     this.atualizarTabelaDeslizamento();
   }
 }
@@ -1605,8 +1605,8 @@ carregarPeneiraSecaSalva(analise: any): void {
     }];
     this.massa_amostra = 0;
     this.total_finos = null;
-    this.peneira_seca_tempo_previsto = null;
-    this.peneira_seca_tempo_trabalho = null;
+    this.peneira_seca_tempo_previsto = 10;
+    this.peneira_seca_tempo_trabalho = 10;
     this.total_finos_digitado = null;
     this.total_finos_calculado = null;
   }
@@ -1638,8 +1638,8 @@ carregarPeneiraUmidaSalva(analise: any): void {
       resultado: null,
     }];
     this.massa_amostra_umida = 0;
-    this.peneira_umida_tempo_previsto = null;
-    this.peneira_umida_tempo_trabalho = null;
+    this.peneira_umida_tempo_previsto = 180;
+    this.peneira_umida_tempo_trabalho = 10;
     
   }
 }

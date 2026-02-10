@@ -1812,7 +1812,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
             const variaveisChildren = (ensaio.variavel_detalhes || []).map((variavel: any) => ({
               data: {
                 id: calculo.id + '/' + ensaio.id + '/' + variavel.id,
-                descricao: variavel.id + ' - ' + variavel.nome,
+                descricao: variavel.nome,
                 disabled: false
               },
               leaf: true
@@ -1849,7 +1849,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
           const children = (ensaio.variavel_detalhes || []).map((variavel: any) => ({
             data: {
               id: ensaio.id + '/' + variavel.id,
-              descricao: variavel.id + ' - ' + variavel.nome,
+              descricao: variavel.nome,
               disabled: false
             },
             leaf: true
@@ -2648,7 +2648,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
         head,
         body: body,
         theme: "grid",
-        styles: { fontSize: 8, halign: 'left', cellPadding: 1 },
+        styles: { fontSize: 8, halign: 'left', cellPadding: 1, lineWidth: 0.5, lineColor: [0, 0, 0] },
         headStyles: { halign: 'left', fillColor: [200, 200, 200], textColor: [0, 0, 0], fontStyle: 'bold' },
       });
     });
@@ -2696,7 +2696,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
           head,
           body: body,
           theme: "grid",
-          styles: { fontSize: 8, halign: 'left', cellPadding: 1 },
+          styles: { fontSize: 8, halign: 'left', cellPadding: 1, lineWidth: 0.5, lineColor: [0, 0, 0] },
           headStyles: { halign: 'left', fillColor: [200, 200, 200], textColor: [0, 0, 0], fontStyle: 'bold' },
         });
       });
@@ -2876,7 +2876,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
         head,
         body: body,
         theme: "grid",
-        styles: { fontSize: 8, halign: 'left', cellPadding: 1 },
+        styles: { fontSize: 8, halign: 'left', cellPadding: 1, lineWidth: 0.5, lineColor: [0, 0, 0] },
         headStyles: { halign: 'left', fillColor: [200, 200, 200], textColor: [0, 0, 0], fontStyle: 'bold' },
       });
     });
@@ -2924,7 +2924,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
           head,
           body: body,
           theme: "grid",
-          styles: { fontSize: 8, halign: 'left', cellPadding: 1 },
+          styles: { fontSize: 8, halign: 'left', cellPadding: 1, lineWidth: 0.5, lineColor: [0, 0, 0] },
           headStyles: { halign: 'left', fillColor: [200, 200, 200], textColor: [0, 0, 0], fontStyle: 'bold' },
         });
       });
@@ -3146,7 +3146,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
         head,
         body: body,
         theme: "grid",
-        styles: { fontSize: 8, halign: 'left', cellPadding: 1 },
+        styles: { fontSize: 8, halign: 'left', cellPadding: 1, lineWidth: 0.5, lineColor: [0, 0, 0] },
         headStyles: { halign: 'left', fillColor: [200, 200, 200], textColor: [0, 0, 0], fontStyle: 'bold' },
       });
     });
@@ -3194,7 +3194,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
           head,
           body: body,
           theme: "grid",
-          styles: { fontSize: 8, halign: 'left', cellPadding: 1 },
+          styles: { fontSize: 8, halign: 'left', cellPadding: 1, lineWidth: 0.5, lineColor: [0, 0, 0] },
           headStyles: { halign: 'left', fillColor: [200, 200, 200], textColor: [0, 0, 0], fontStyle: 'bold' },
         });
       });
@@ -3364,7 +3364,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
       head: [['t', 'Δmt (kg/m²)']],
       body: this.dadosTabela.map((d: any) => [d.tempo, d.valor.toString()]),
       theme: 'grid',
-      styles: { fontSize: 9, cellPadding: 2, halign: 'center' },
+      styles: { fontSize: 9, cellPadding: 2, halign: 'center', lineWidth: 0.5, lineColor: [0, 0, 0] },
       headStyles: { fontStyle: 'bold', fillColor: [255, 255, 255], textColor: 0 },
       columnStyles: {
         0: { cellWidth: 25 },
@@ -3822,7 +3822,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
       head: [['t', 'Δmt (kg/m²)']],
       body: this.dadosTabela.map(d => [d.tempo, d.valor.toString()]),
       theme: 'grid',
-      styles: { fontSize: 9, cellPadding: 2, halign: 'center' },
+      styles: { fontSize: 9, cellPadding: 2, halign: 'center', lineWidth: 0.5, lineColor: [0, 0, 0] },
       headStyles: { fontStyle: 'bold', fillColor: [255, 255, 255], textColor: 0 },
       columnStyles: {
         0: { cellWidth: 25 },
@@ -4184,8 +4184,12 @@ gerarNumero(materialNome: string, sequencial: number): string {
       ]],
       body: bodyTabela,
       theme: 'grid',
+      showHead: 'firstPage',
+      pageBreak: 'avoid',
       styles: {
         fontSize: 9,
+        lineWidth: 0.5,
+        lineColor: [0, 0, 0],
         cellPadding: 2,
         halign: 'left'
       },
@@ -4214,9 +4218,21 @@ gerarNumero(materialNome: string, sequencial: number): string {
       // Cabeçalho "Análises"
       autoTable(doc, {
         startY: contadorLinhas + 2,
-        body: [[{ content: 'Análises', styles: { halign: "center", fontStyle: "bold", fillColor: [135, 187, 218] } }]],
+        body: [[{ content: 'Análises', 
+          styles: { 
+            halign: "center", 
+            fontStyle: "bold", 
+            fillColor: [135, 187, 218] 
+          } }]],
         theme: "grid",
-        styles: { fontSize: 10, cellPadding: 3 }
+        showHead: 'firstPage',
+        pageBreak: 'avoid',
+        styles: { 
+          fontSize: 10, 
+          cellPadding: 3,
+          lineWidth: 0.5,
+          lineColor: [0, 0, 0], 
+        }
       });
       contadorLinhas = (doc as any).lastAutoTable.finalY + 3;
            
@@ -4248,7 +4264,46 @@ gerarNumero(materialNome: string, sequencial: number): string {
             linhaVazia.push({ content: '', styles: { halign: "center" } });
           }
 
-          ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
+          // Ordenar variáveis com prioridade personalizada
+          const variaveis_ordenadas = [...ensaio_detalhes.variavel_detalhes].sort((a: any, b: any) => {
+            const nomeA = a.nome.toLowerCase();
+            const nomeB = b.nome.toLowerCase();
+            
+            // 0. "Massa Capsula + Amostra Seca" deve ser a última (mas antes de Resultado)
+            const temCapsulaSecaA = nomeA.includes('capsula') && nomeA.includes('seca');
+            const temCapsulaSecaB = nomeB.includes('capsula') && nomeB.includes('seca');
+            if (temCapsulaSecaA && !temCapsulaSecaB) return 1;
+            if (!temCapsulaSecaA && temCapsulaSecaB) return -1;
+            
+            // 1. Priorizar "massa" - vem primeiro (mas não "Massa Capsula + Amostra Seca")
+            const temMassaA = nomeA.includes('massa') && !temCapsulaSecaA;
+            const temMassaB = nomeB.includes('massa') && !temCapsulaSecaB;
+            if (temMassaA && !temMassaB) return -1;
+            if (!temMassaA && temMassaB) return 1;
+            
+            // 2. "vazio" vem antes de "contendo"
+            const temVazioA = nomeA.includes('vazio');
+            const temVazioB = nomeB.includes('vazio');
+            const temContendoA = nomeA.includes('contendo');
+            const temContendoB = nomeB.includes('contendo');
+            
+            if (temVazioA && temContendoB) return -1;
+            if (temContendoA && temVazioB) return 1;
+            
+            // 3. "inicial" vem antes de "final"
+            const temInicialA = nomeA.includes('inicial');
+            const temInicialB = nomeB.includes('inicial');
+            const temFinalA = nomeA.includes('final');
+            const temFinalB = nomeB.includes('final');
+            
+            if (temInicialA && temFinalB) return -1;
+            if (temFinalA && temInicialB) return 1;
+            
+            // 4. Manter ordem original se não houver prioridade
+            return 0;
+          });
+
+          variaveis_ordenadas.forEach((variavel_detalhes: any) => {
             const pai = resultado.find(item => item.pai == ensaio_detalhes.id);
             const filhoExiste = pai?.filhos.includes(String(variavel_detalhes.id));
             if (filhoExiste) {
@@ -4271,13 +4326,6 @@ gerarNumero(materialNome: string, sequencial: number): string {
               linhaVazia.push({ content: variavel_valor, styles: { halign: "center" } });
             }
           });
-          ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
-            let variavel_valor = '';
-            if(variavel_detalhes.valor && variavel_detalhes.valor != 0){
-              variavel_valor = variavel_detalhes.valor;
-            }
-            linhaVazia.push({ content: variavel_valor, styles: { halign: "center" } });
-          });
 
           // Adicionar Resultado no final (à direita)
           linha.push({ content: 'Resultado', styles: { halign: "center", fontStyle: "bold", fillColor: [225, 232, 237] } });
@@ -4292,7 +4340,14 @@ gerarNumero(materialNome: string, sequencial: number): string {
             startY: contadorLinhas,
             body,
             theme: "grid",
-            styles: { fontSize: 8, cellPadding: 2 },
+            showHead: 'firstPage',
+            pageBreak: 'avoid',
+            styles: { 
+              fontSize: 8, 
+              cellPadding: 2, 
+              lineWidth: 0.5,
+              lineColor: [0, 0, 0],
+            },
             columnStyles: {
               0: { cellWidth: 45 },  // Descrição do Ensaio - largura fixa
               [numTotalCols - 1]: { cellWidth: 35 }  // Resultado - largura fixa
@@ -4310,6 +4365,11 @@ gerarNumero(materialNome: string, sequencial: number): string {
       // tabela de calculos para ordem expressa
       let contador_calculo = 0;
       analise.amostra_detalhes.expressa_detalhes.calculo_ensaio_detalhes.forEach((calculo_ensaio_detalhes: any) => {
+        // Pular Retenção de água - usar tabela customizada da linha 6255
+        if (calculo_ensaio_detalhes.descricao && calculo_ensaio_detalhes.descricao.toLowerCase().includes('retenção')) {
+          return;
+        }
+        
         const existe = resultado.some(item => {
           return item.pai == calculo_ensaio_detalhes.id;
         });
@@ -4323,6 +4383,8 @@ gerarNumero(materialNome: string, sequencial: number): string {
                   ],
                 ],
                 theme: "grid",
+                showHead: 'firstPage',
+                pageBreak: 'avoid',
                 styles: {
                   fontSize: 10,
                   cellPadding: 2
@@ -4330,6 +4392,79 @@ gerarNumero(materialNome: string, sequencial: number): string {
               });
               contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
               contador_calculo = 1;
+
+              // Adicionar tabela de Retenção de água se necessário
+              if (variaveis_argamassa.includes("retencao")) {
+                const bodyRetencao: any[] = [
+                  [
+                    {
+                      content: 'Retenção de água (%)',
+                      rowSpan: 2,
+                      styles: {
+                        halign: 'center',
+                        valign: 'middle',
+                        fontSize: 8,
+                        fontStyle: 'bold',
+                        fillColor: [225, 232, 237]
+                      }
+                    },
+                    {
+                      content: 'Massa conjunto vazio e úmido(funil + papel umido) (g)',
+                      styles: {
+                        halign: 'center',
+                        fontSize: 8,
+                        fontStyle: 'bold',
+                        fillColor: [225, 232, 237]
+                      }
+                    },
+                    {
+                      content: 'Massa conjunto com argamassa antes da sucção (g)',
+                      styles: {
+                        halign: 'center',
+                        fontSize: 8,
+                        fontStyle: 'bold',
+                        fillColor: [225, 232, 237]
+                      }
+                    },
+                    {
+                      content: 'Massa conjunto com argamassa após da sucção (g)',
+                      styles: {
+                        halign: 'center',
+                        fontSize: 8,
+                        fontStyle: 'bold',
+                        fillColor: [225, 232, 237]
+                      }
+                    },
+                    {
+                      content: 'Resultado(%)',
+                      styles: {
+                        halign: 'center',
+                        fontSize: 8,
+                        fontStyle: 'bold',
+                        fillColor: [225, 232, 237]
+                      }
+                    }
+                  ],
+                  [
+                    { content: '', styles: { fillColor: [255, 255, 255] } },
+                    { content: '', styles: { fillColor: [255, 255, 255] } },
+                    { content: '', styles: { fillColor: [255, 255, 255] } },
+                    { content: '', styles: { fillColor: [255, 255, 255] } },
+                    { content: '', styles: { fillColor: [255, 255, 255] } }
+                  ]
+                ];
+
+                autoTable(doc, {
+                  startY: contadorLinhas,
+                  body: bodyRetencao,
+                  theme: 'grid',
+                  showHead: 'firstPage',
+                  pageBreak: 'avoid',
+                  styles: { fontSize: 9, lineWidth: 0.5, lineColor: [0, 0, 0] },
+                  headStyles: { fillColor: [230, 230, 230] }
+                });
+                contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+              }
           }
 
           let body: any[] = [];
@@ -4407,7 +4542,9 @@ gerarNumero(materialNome: string, sequencial: number): string {
             startY: contadorLinhas,
             body,
             theme: "grid",
-            styles: { fontSize: 8, cellPadding: 2 },
+            showHead: 'firstPage',
+            pageBreak: 'avoid',
+            styles: { fontSize: 8, cellPadding: 2, lineWidth: 0.5, lineColor: [0, 0, 0] },
             columnStyles: {
               0: { cellWidth: 45 },  // Descrição do Ensaio - largura fixa
               [numTotalCols - 1]: { cellWidth: 35 }  // Resultado - largura fixa
@@ -4429,7 +4566,9 @@ gerarNumero(materialNome: string, sequencial: number): string {
         startY: contadorLinhas + 2,
         body: [[{ content: 'Análises', styles: { halign: "center", fontStyle: "bold", fillColor: [135, 187, 218] } }]],
         theme: "grid",
-        styles: { fontSize: 10, cellPadding: 3 }
+        showHead: 'firstPage',
+        pageBreak: 'avoid',
+        styles: { fontSize: 10, cellPadding: 3, lineWidth: 0.5, lineColor: [0, 0, 0] }
       });
       contadorLinhas = (doc as any).lastAutoTable.finalY + 3;
 
@@ -4454,9 +4593,48 @@ gerarNumero(materialNome: string, sequencial: number): string {
               linhaVazia.push({ content: '', styles: { halign: "center" } });
             }
 
-            ensaio_detalhes.variavel_detalhes.forEach((variavel_detalhes: any) => {
-              const pai = resultado.find(item => item.pai == ensaio_detalhes.id);
-              const filhoExiste = pai?.filhos.includes(String(variavel_detalhes.id));
+            // Ordenar variáveis com prioridade personalizada
+          const variaveis_ordenadas = [...ensaio_detalhes.variavel_detalhes].sort((a: any, b: any) => {
+            const nomeA = a.nome.toLowerCase();
+            const nomeB = b.nome.toLowerCase();
+            
+            // 0. "Massa Capsula + Amostra Seca" deve ser a última (mas antes de Resultado)
+            const temCapsulaSecaA = nomeA.includes('capsula') && nomeA.includes('seca');
+            const temCapsulaSecaB = nomeB.includes('capsula') && nomeB.includes('seca');
+            if (temCapsulaSecaA && !temCapsulaSecaB) return 1;
+            if (!temCapsulaSecaA && temCapsulaSecaB) return -1;
+            
+            // 1. Priorizar "massa" - vem primeiro (mas não "Massa Capsula + Amostra Seca")
+            const temMassaA = nomeA.includes('massa') && !temCapsulaSecaA;
+            const temMassaB = nomeB.includes('massa') && !temCapsulaSecaB;
+            if (temMassaA && !temMassaB) return -1;
+            if (!temMassaA && temMassaB) return 1;
+            
+            // 2. "vazio" vem antes de "contendo"
+            const temVazioA = nomeA.includes('vazio');
+            const temVazioB = nomeB.includes('vazio');
+            const temContendoA = nomeA.includes('contendo');
+            const temContendoB = nomeB.includes('contendo');
+            
+            if (temVazioA && temContendoB) return -1;
+            if (temContendoA && temVazioB) return 1;
+            
+            // 3. "inicial" vem antes de "final"
+            const temInicialA = nomeA.includes('inicial');
+            const temInicialB = nomeB.includes('inicial');
+            const temFinalA = nomeA.includes('final');
+            const temFinalB = nomeB.includes('final');
+            
+            if (temInicialA && temFinalB) return -1;
+            if (temFinalA && temInicialB) return 1;
+            
+            // 4. Manter ordem original se não houver prioridade
+            return 0;
+          });
+
+            variaveis_ordenadas.forEach((variavel_detalhes: any) => {
+            const pai = resultado.find(item => item.pai == ensaio_detalhes.id);
+            const filhoExiste = pai?.filhos.includes(String(variavel_detalhes.id));
               if (filhoExiste) {
                 let nomeComUnidade = variavel_detalhes.nome;
                 const nomeLower = variavel_detalhes.nome.toLowerCase();
@@ -4490,7 +4668,9 @@ gerarNumero(materialNome: string, sequencial: number): string {
               startY: contadorLinhas,
               body,
               theme: "grid",
-              styles: { fontSize: 8, cellPadding: 2 },
+              showHead: 'firstPage',
+              pageBreak: 'avoid',
+              styles: { fontSize: 8, cellPadding: 2, lineWidth: 0.5, lineColor: [0, 0, 0] },
               columnStyles: {
                 0: { cellWidth: 45 },
                 [numTotalCols - 1]: { cellWidth: 35 }
@@ -4508,6 +4688,11 @@ gerarNumero(materialNome: string, sequencial: number): string {
 
         let contador_calculo = 0;
         plano_detalhes.calculo_ensaio_detalhes.forEach((calculo_ensaio_detalhes: any) => {
+          // Pular Retenção de água - usar tabela customizada da linha 6255
+          if (calculo_ensaio_detalhes.descricao && calculo_ensaio_detalhes.descricao.toLowerCase().includes('retenção')) {
+            return;
+          }
+          
           const existe = resultado.some(item => item.pai == calculo_ensaio_detalhes.id);
 
           if (existe) {
@@ -4520,6 +4705,8 @@ gerarNumero(materialNome: string, sequencial: number): string {
                   ],
                 ],
                 theme: "grid",
+                showHead: 'firstPage',
+                pageBreak: 'avoid',
                 styles: {
                   fontSize: 10,
                   cellPadding: 2
@@ -4528,6 +4715,79 @@ gerarNumero(materialNome: string, sequencial: number): string {
 
               contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
               contador_calculo = 1;
+
+              // Adicionar tabela de Retenção de água se necessário
+              if (variaveis_argamassa.includes("retencao")) {
+                const bodyRetencao: any[] = [
+                  [
+                    {
+                      content: 'Retenção de água (%)',
+                      rowSpan: 2,
+                      styles: {
+                        halign: 'center',
+                        valign: 'middle',
+                        fontSize: 8,
+                        fontStyle: 'bold',
+                        fillColor: [135, 187, 218]
+                      }
+                    },
+                    {
+                      content: 'Massa conjunto vazio e úmido(funil + papel umido) (g)',
+                      styles: {
+                        halign: 'center',
+                        fontSize: 8,
+                        fontStyle: 'bold',
+                        fillColor: [225, 232, 237]
+                      }
+                    },
+                    {
+                      content: 'Massa conjunto com argamassa antes da sucção (g)',
+                      styles: {
+                        halign: 'center',
+                        fontSize: 8,
+                        fontStyle: 'bold',
+                        fillColor: [225, 232, 237]
+                      }
+                    },
+                    {
+                      content: 'Massa conjunto com argamassa após da sucção (g)',
+                      styles: {
+                        halign: 'center',
+                        fontSize: 8,
+                        fontStyle: 'bold',
+                        fillColor: [225, 232, 237]
+                      }
+                    },
+                    {
+                      content: 'Resultado(%)',
+                      styles: {
+                        halign: 'center',
+                        fontSize: 8,
+                        fontStyle: 'bold',
+                        fillColor: [225, 232, 237]
+                      }
+                    }
+                  ],
+                  [
+                    { content: '', styles: { fillColor: [255, 255, 255] } },
+                    { content: '', styles: { fillColor: [255, 255, 255] } },
+                    { content: '', styles: { fillColor: [255, 255, 255] } },
+                    { content: '', styles: { fillColor: [255, 255, 255] } },
+                    { content: '', styles: { fillColor: [255, 255, 255] } }
+                  ]
+                ];
+
+                autoTable(doc, {
+                  startY: contadorLinhas,
+                  body: bodyRetencao,
+                  theme: 'grid',
+                  showHead: 'firstPage',
+                  pageBreak: 'avoid',
+                  styles: { fontSize: 9, lineWidth: 0.5, lineColor: [0, 0, 0] },
+                  headStyles: { fillColor: [230, 230, 230] }
+                });
+                contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+              }
             }
 
             let body: any[] = [];
@@ -4631,7 +4891,9 @@ gerarNumero(materialNome: string, sequencial: number): string {
               startY: contadorLinhas,
               body,
               theme: "grid",
-              styles: { fontSize: 8, cellPadding: 2 },
+              showHead: 'firstPage',
+              pageBreak: 'avoid',
+              styles: { fontSize: 8, cellPadding: 2, lineWidth: 0.5, lineColor: [0, 0, 0] },
               columnStyles: {
                 0: { cellWidth: 45 },
                 [numTotalCols - 1]: { cellWidth: 35 }
@@ -4659,13 +4921,18 @@ gerarNumero(materialNome: string, sequencial: number): string {
         });
       });
 
-      // Ensaios fora do plano
+      // ===================================== Ensaios fora do plano ================================
       const ensaiosForaPlano = (analise.ultimo_ensaio?.ensaios_utilizados || [])
         .filter((e: any) => !idsEnsaiosPlano.has(e.id));
 
       let contador_ensaio_fora = 0;
       if (ensaiosForaPlano.length > 0) {
         ensaiosForaPlano.forEach((ensaio: any) => {
+          // Pular Retenção de água - usar tabela customizada da linha 6255
+          if (ensaio.descricao && ensaio.descricao.toLowerCase().includes('retenção')) {
+            return;
+          }
+          
           const existe = resultado.some(item => item.pai == ensaio.id);
           
           if (existe) {
@@ -4674,10 +4941,85 @@ gerarNumero(materialNome: string, sequencial: number): string {
                 startY: contadorLinhas + 5,
                 body: [[{ content: 'Análises (Fora do Plano)', styles: { halign: "center", fontStyle: "bold", fillColor: [135, 187, 218] } }]],
                 theme: "grid",
-                styles: { fontSize: 10, cellPadding: 2 }
+                showHead: 'firstPage',
+                pageBreak: 'avoid',
+                styles: { fontSize: 10, cellPadding: 2, lineWidth: 0.5, lineColor: [0, 0, 0] }
               });
               contadorLinhas = (doc as any).lastAutoTable.finalY + 3;
               contador_ensaio_fora = 1;
+
+              // Adicionar tabela de Retenção de água se necessário
+              if (variaveis_argamassa.includes("retencao")) {
+                const bodyRetencao: any[] = [
+                  [
+                    {
+                      content: 'Retenção de água (%)',
+                      rowSpan: 2,
+                      styles: {
+                        halign: 'center',
+                        valign: 'middle',
+                        fontSize: 8,
+                        fontStyle: 'bold',
+                        fillColor: [135, 187, 218]
+                      }
+                    },
+                    {
+                      content: 'Massa conjunto vazio e úmido(funil + papel umido) (g)',
+                      styles: {
+                        halign: 'center',
+                        fontSize: 8,
+                        fontStyle: 'bold',
+                        fillColor: [225, 232, 237]
+                      }
+                    },
+                    {
+                      content: 'Massa conjunto com argamassa antes da sucção (g)',
+                      styles: {
+                        halign: 'center',
+                        fontSize: 8,
+                        fontStyle: 'bold',
+                        fillColor: [225, 232, 237]
+                      }
+                    },
+                    {
+                      content: 'Massa conjunto com argamassa após da sucção (g)',
+                      styles: {
+                        halign: 'center',
+                        fontSize: 8,
+                        fontStyle: 'bold',
+                        fillColor: [225, 232, 237]
+                      }
+                    },
+                    {
+                      content: 'Resultado(%)',
+                      styles: {
+                        halign: 'center',
+                        fontSize: 8,
+                        fontStyle: 'bold',
+                        fillColor: [225, 232, 237]
+                      }
+                    }
+                  ],
+                  [
+                    { content: '', styles: { fillColor: [255, 255, 255] } },
+                    { content: '', styles: { fillColor: [255, 255, 255] } },
+                    { content: '', styles: { fillColor: [255, 255, 255] } },
+                    { content: '', styles: { fillColor: [255, 255, 255] } },
+                    { content: '', styles: { fillColor: [255, 255, 255] } }
+                  ]
+                ];
+
+                autoTable(doc, {
+                  startY: contadorLinhas,
+                  body: bodyRetencao,
+                  theme: 'grid',
+                  showHead: 'firstPage',
+                  pageBreak: 'avoid',
+                  styles: { fontSize: 9, lineWidth: 0.5, lineColor: [0, 0, 0] },
+                  headStyles: { fillColor: [230, 230, 230] }
+                });
+                contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+              }
             }
 
             let body: any[] = [];
@@ -4734,7 +5076,9 @@ gerarNumero(materialNome: string, sequencial: number): string {
               startY: contadorLinhas,
               body,
               theme: "grid",
-              styles: { fontSize: 8, cellPadding: 2 },
+              showHead: 'firstPage',
+              pageBreak: 'avoid',
+              styles: { fontSize: 8, cellPadding: 2, lineWidth: 0.5, lineColor: [0, 0, 0] },
               columnStyles: {
                 0: { cellWidth: 45 },
                 [numTotalCols - 1]: { cellWidth: 35 }
@@ -4750,7 +5094,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
         });
       }
 
-      // Cálculos fora do plano (comparar por descrição, não por ID)
+      // ===========================Cálculos fora do plano (comparar por descrição, não por ID)
       const calculosForaPlano = (Array.isArray(analise.ultimo_calculo) ? analise.ultimo_calculo : [])
         .filter((c: any) => {
           const descricaoCalculo = c.calculos || c.descricao;
@@ -4760,6 +5104,14 @@ gerarNumero(materialNome: string, sequencial: number): string {
       let contador_calculo_fora = 0;
       if (calculosForaPlano.length > 0) {
         calculosForaPlano.forEach((calculo: any) => {
+          // Pular Retenção de água - usar tabela customizada da linha 6255
+          if (calculo.descricao && calculo.descricao.toLowerCase().includes('retenção')) {
+            return;
+          }
+          if (calculo.calculos && calculo.calculos.toLowerCase().includes('retenção')) {
+            return;
+          }
+          
           const existe = resultado.some(item => item.pai == calculo.id);
 
           if (existe) {
@@ -4768,10 +5120,85 @@ gerarNumero(materialNome: string, sequencial: number): string {
                 startY: contadorLinhas + 5,
                 body: [[{ content: 'Análises Compostas (Fora do Plano)', styles: { halign: "center", fontStyle: "bold", fillColor: [135, 187, 218] } }]],
                 theme: "grid",
-                styles: { fontSize: 10, cellPadding: 2 }
+                showHead: 'firstPage',
+                pageBreak: 'avoid',
+                styles: { fontSize: 10, cellPadding: 2, lineWidth: 0.5, lineColor: [0, 0, 0] }
               });
               contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
               contador_calculo_fora = 1;
+
+              // Adicionar tabela de Retenção de água se necessário
+              if (variaveis_argamassa.includes("retencao")) {
+                const bodyRetencao: any[] = [
+                  [
+                    {
+                      content: 'Retenção de água (%)',
+                      rowSpan: 2,
+                      styles: {
+                        halign: 'center',
+                        valign: 'middle',
+                        fontSize: 8,
+                        fontStyle: 'bold',
+                        fillColor: [135, 187, 218]
+                      }
+                    },
+                    {
+                      content: 'Massa conjunto vazio e úmido(funil + papel umido) (g)',
+                      styles: {
+                        halign: 'center',
+                        fontSize: 8,
+                        fontStyle: 'bold',
+                        fillColor: [225, 232, 237]
+                      }
+                    },
+                    {
+                      content: 'Massa conjunto com argamassa antes da sucção (g)',
+                      styles: {
+                        halign: 'center',
+                        fontSize: 8,
+                        fontStyle: 'bold',
+                        fillColor: [225, 232, 237]
+                      }
+                    },
+                    {
+                      content: 'Massa conjunto com argamassa após da sucção (g)',
+                      styles: {
+                        halign: 'center',
+                        fontSize: 8,
+                        fontStyle: 'bold',
+                        fillColor: [225, 232, 237]
+                      }
+                    },
+                    {
+                      content: 'Resultado(%)',
+                      styles: {
+                        halign: 'center',
+                        fontSize: 8,
+                        fontStyle: 'bold',
+                        fillColor: [225, 232, 237]
+                      }
+                    }
+                  ],
+                  [
+                    { content: '', styles: { fillColor: [255, 255, 255] } },
+                    { content: '', styles: { fillColor: [255, 255, 255] } },
+                    { content: '', styles: { fillColor: [255, 255, 255] } },
+                    { content: '', styles: { fillColor: [255, 255, 255] } },
+                    { content: '', styles: { fillColor: [255, 255, 255] } }
+                  ]
+                ];
+
+                autoTable(doc, {
+                  startY: contadorLinhas,
+                  body: bodyRetencao,
+                  theme: 'grid',
+                  showHead: 'firstPage',
+                  pageBreak: 'avoid',
+                  styles: { fontSize: 9, lineWidth: 0.5, lineColor: [0, 0, 0] },
+                  headStyles: { fillColor: [230, 230, 230] }
+                });
+                contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+              }
             }
 
             let body: any[] = [];
@@ -4833,7 +5260,9 @@ gerarNumero(materialNome: string, sequencial: number): string {
               startY: contadorLinhas,
               body,
               theme: "grid",
-              styles: { fontSize: 8, cellPadding: 2 },
+              showHead: 'firstPage',
+              pageBreak: 'avoid',
+              styles: { fontSize: 8, cellPadding: 2, lineWidth: 0.5, lineColor: [0, 0, 0] },
               columnStyles: {
                 0: { cellWidth: 45 },
                 [numTotalCols - 1]: { cellWidth: 35 }
@@ -4851,6 +5280,9 @@ gerarNumero(materialNome: string, sequencial: number): string {
       // ============= FIM ENSAIOS E CÁLCULOS FORA DO PLANO =============
     }
 ////////////////////FIM ENSAIOS e/ Cáculos///////////////////
+
+
+//=============================  PENEIRAS SECA ==========================================///
 
     if (variaveis_argamassa.includes("peneira_seca") || peneiras_selecionadas.length > 0) {
       // Determinar quais peneiras usar
@@ -4913,7 +5345,13 @@ gerarNumero(materialNome: string, sequencial: number): string {
           startY: contadorLinhas,
           body,
           theme: 'grid',
-          styles: { fontSize: 9 },
+          showHead: 'firstPage',
+          pageBreak: 'avoid',
+          styles: { 
+            fontSize: 9, 
+            lineWidth: 0.5,
+            lineColor: [0, 0, 0],
+          },
           headStyles: { fillColor: [230, 230, 230] }
         });
       }else{
@@ -4964,12 +5402,20 @@ gerarNumero(materialNome: string, sequencial: number): string {
           startY: contadorLinhas,
           body,
           theme: 'grid',
-          styles: { fontSize: 9 },
+          showHead: 'firstPage',
+          pageBreak: 'avoid',
+          styles: { 
+            fontSize: 9,
+            lineWidth: 0.5,
+            lineColor: [0, 0, 0], 
+          },
           headStyles: { fillColor: [230, 230, 230] }
         });
       }
       contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
     }
+   
+//////////////////==============================  PENEIRAS ÙMIDAS ===================================///////    
     
     if (variaveis_argamassa.includes("peneira_umida") || peneiras_umidas_selecionadas.length > 0) {
       // Determinar quais peneiras usar
@@ -5022,7 +5468,13 @@ gerarNumero(materialNome: string, sequencial: number): string {
           startY: contadorLinhas,
           body,
           theme: 'grid',
-          styles: { fontSize: 9 },
+          showHead: 'firstPage',
+          pageBreak: 'avoid',
+          styles: { 
+            fontSize: 9,
+            lineWidth: 0.5,
+            lineColor: [0, 0, 0],
+          },
           headStyles: { fillColor: [230, 230, 230] }
         });
       }else{
@@ -5065,20 +5517,28 @@ gerarNumero(materialNome: string, sequencial: number): string {
           startY: contadorLinhas,
           body,
           theme: 'grid',
-          styles: { fontSize: 9 },
+          showHead: 'firstPage',
+          pageBreak: 'avoid',
+          styles: { 
+            fontSize: 9,
+            lineWidth: 0.5,
+            lineColor: [0, 0, 0], 
+          },
           headStyles: { fillColor: [230, 230, 230] }
         });
 
       }
       contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
     }
+
+
 //==================================  Substrato =====================================================
     if (variaveis_argamassa.includes("substrato")) {
         const body: any[] = [
           [
             {
               content: 'SUBSTRATO',
-              colSpan: 6,
+              colSpan: 9,
               styles: {
                 halign: 'center',
                 fontSize: 10,
@@ -5134,7 +5594,13 @@ gerarNumero(materialNome: string, sequencial: number): string {
           startY: contadorLinhas,
           body,
           theme: 'grid',
-          styles: { fontSize: 9 },
+          showHead: 'firstPage',
+          pageBreak: 'avoid',
+          styles: { 
+            fontSize: 9,
+            lineWidth: 0.5,
+            lineColor: [0, 0, 0], 
+          },
           headStyles: { fillColor: [230, 230, 230] }
         });
       
@@ -5201,7 +5667,13 @@ gerarNumero(materialNome: string, sequencial: number): string {
           startY: contadorLinhas,
           body,
           theme: 'grid',
-          styles: { fontSize: 9 },
+          showHead: 'firstPage',
+          pageBreak: 'avoid',
+          styles: { 
+            fontSize: 9,
+            lineWidth: 0.5,
+            lineColor: [0, 0, 0], 
+          },
           headStyles: { fillColor: [230, 230, 230] }
         });
       contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
@@ -5245,8 +5717,21 @@ gerarNumero(materialNome: string, sequencial: number): string {
           startY: contadorLinhas,
           body,
           theme: 'grid',
-          styles: { fontSize: 9 },
-          headStyles: { fillColor: [230, 230, 230] }
+          showHead: 'firstPage',
+          pageBreak: 'avoid',
+          styles: { 
+            fontSize: 9,
+            lineWidth: 0.5,
+            lineColor: [0, 0, 0], 
+          },
+          headStyles: { fillColor: [230, 230, 230] },
+          columnStyles: {
+            0: { cellWidth: 20 },  // Idade - mais estreita
+            1: { cellWidth: 'auto' },  // CP1
+            2: { cellWidth: 'auto' },  // CP2
+            3: { cellWidth: 'auto' },  // CP3
+            4: { cellWidth: 'auto' }   // Média
+          }
         });
       
       contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
@@ -5289,8 +5774,21 @@ gerarNumero(materialNome: string, sequencial: number): string {
           startY: contadorLinhas,
           body,
           theme: 'grid',
-          styles: { fontSize: 9 },
-          headStyles: { fillColor: [230, 230, 230] }
+          showHead: 'firstPage',
+          pageBreak: 'avoid',
+          styles: { 
+            fontSize: 9,
+            lineWidth: 0.5,
+            lineColor: [0, 0, 0], 
+          },
+          headStyles: { fillColor: [230, 230, 230] },
+          columnStyles: {
+            0: { cellWidth: 20 },  // Idade - mais estreita
+            1: { cellWidth: 'auto' },  // CP1
+            2: { cellWidth: 'auto' },  // CP2
+            3: { cellWidth: 'auto' },  // CP3
+            4: { cellWidth: 'auto' }   // Média
+          }
         });
       contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
     }
@@ -5317,7 +5815,9 @@ gerarNumero(materialNome: string, sequencial: number): string {
               styles: {
                 fontStyle: 'bold',
                 fillColor: [225, 232, 237],
-                halign: 'left'
+                halign: 'left',
+                lineWidth: 0.5,
+                lineColor: [0, 0, 0],
               }
             }
           ],
@@ -5344,246 +5844,17 @@ gerarNumero(materialNome: string, sequencial: number): string {
           startY: contadorLinhas,
           body,
           theme: 'grid',
-          styles: { fontSize: 9 },
+          showHead: 'firstPage',
+          pageBreak: 'avoid',
+          styles: { 
+            fontSize: 9, 
+            lineWidth: 0.5,
+            lineColor: [0, 0, 0],
+          },
           headStyles: { fillColor: [230, 230, 230] }
         });
       }
       contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
-// ================ TRACAO NORMAL ================ //
-    if (variaveis_argamassa.includes("normal")) {
-      const body: any[] = [
-        [
-          {
-            content: 'Determinação da resistência aderência à tração Cura Normal - NBR 14081-4',
-            colSpan: 9,
-            styles: {
-              halign: 'center',
-              fontSize: 10,
-              fontStyle: 'bold',
-              fillColor: [135, 187, 218]
-            }
-          }
-        ],
-        [
-          {
-            content: `Média (MPa): `,
-            colSpan: 3,
-            styles: {
-              fontStyle: 'bold',
-              halign: 'left',
-              fillColor: [225, 232, 237]
-            }
-          },
-          {
-            content: `Desvio Padrão: `,
-            colSpan: 3,
-            styles: {
-              fontStyle: 'bold',
-              halign: 'left',
-              fillColor: [225, 232, 237]
-            }
-          },
-          {
-            content: `Tipos de Ruptura: `,
-            colSpan: 3,
-            styles: {
-              fontStyle: 'bold',
-              halign: 'left',
-              fillColor: [225, 232, 237]
-            }
-          },
-        ],
-        [
-          { content: 'Nº', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: 'Lado (mm)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: 'Área (mm²)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: 'Carga (Kgf)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: 'Resist (MPa)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: '(A) Sub', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: '(B) Sub/Arga', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: '(C) Rup Arga', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: '(D) Arga Cola', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: '(E) Colar pastilha', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-        ],
-        ...Array.from({ length: 10 }, (_, i) => [
-          { content: (i + 1).toString(), styles: { fillColor: [248, 248, 255] }},
-          ...(i === 0 ? [{ content: '50', styles: {valign:'middle', halign: 'center', fillColor: [248, 248, 255] }, rowSpan: 10 }] : []),
-          ...(i === 0 ? [{ content: '2500', styles: {valign:'middle', halign: 'center', fillColor: [248, 248, 255] }, rowSpan: 10 }] : []),
-          { content: '' },
-          { content: '' },
-          { content: '' },
-          { content: '' },
-          { content: '' }
-        ])
-      ];
-
-      autoTable(doc, {
-        startY: contadorLinhas,
-        body,
-        theme: 'grid',
-        styles: { fontSize: 9 },
-        headStyles: { fillColor: [230, 230, 230] }
-      });
-    }
-      contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
-// ============== Estufa ================ //
-    if (variaveis_argamassa.includes("estufa")) { 
-        const body: any[] = [
-          [
-            {
-              content: 'Determinação da resistência aderência à tração Cura com aquecimento em estufa - NBR 14081-4',
-              colSpan: 9,
-              styles: {
-                halign: 'center',
-                fontSize: 10,
-                fontStyle: 'bold',
-                fillColor: [135, 187, 218]
-              }
-            }
-          ],
-           [
-          {
-            content: `Média (MPa): `,
-            colSpan: 3,
-            styles: {
-              fontStyle: 'bold',
-              halign: 'left',
-              fillColor: [225, 232, 237]
-            }
-          },
-          {
-            content: `Desvio Padrão: `,
-            colSpan: 3,
-            styles: {
-              fontStyle: 'bold',
-              halign: 'left',
-              fillColor: [225, 232, 237]
-            }
-          },
-          {
-            content: `Tipos de Ruptura: `,
-            colSpan: 3,
-            styles: {
-              fontStyle: 'bold',
-              halign: 'left',
-              fillColor: [225, 232, 237]
-            }
-          }
-        ],
-          [
-          { content: 'Nº', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: 'Lado (mm)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: 'Área (mm²)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: 'Carga (Kgf)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: 'Resist (MPa)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: '(A) Sub', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: '(B) Sub/Arga', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: '(C) Rup Arga', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: '(D) Arga Cola', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: '(E) Colar pastilha', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-        ],
-
-          ...Array.from({ length: 10 }, (_, i) => [
-          { content: (i + 1).toString(), styles: { fillColor: [248, 248, 255] }},
-          ...(i === 0 ? [{ content: '50', styles: {valign:'middle', halign: 'center', fillColor: [248, 248, 255] }, rowSpan: 10 }] : []),
-          ...(i === 0 ? [{ content: '2500', styles: {valign:'middle', halign: 'center', fillColor: [248, 248, 255] }, rowSpan: 10 }] : []),
-          { content: '' },
-          { content: '' },
-          { content: '' },
-          { content: '' },
-          { content: '' }
-        ])
-        ];
-
-        autoTable(doc, {
-          startY: contadorLinhas,
-          body,
-          theme: 'grid',
-          styles: { fontSize: 9 },
-          headStyles: { fillColor: [230, 230, 230] }
-        });
-      contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
-    }
-// ================ TRACAO SUBMERSA ================ //
-    if (variaveis_argamassa.includes("submersa")) { 
-        const body: any[] = [
-          [
-            {
-              content: 'Determinação da resistência aderência à tração Cura com imersão em água - NBR 14081-4',
-              colSpan: 9,
-              styles: {
-                halign: 'center',
-                fontSize: 10,
-                fontStyle: 'bold',
-                fillColor: [135, 187, 218]
-              }
-            }
-          ],
-           [
-          {
-            content: `Média (MPa): `,
-            colSpan: 3,
-            styles: {
-              fontStyle: 'bold',
-              halign: 'left',
-              fillColor: [225, 232, 237]
-            }
-          },
-          {
-            content: `Desvio Padrão: `,
-            colSpan: 3,
-            styles: {
-              fontStyle: 'bold',
-              halign: 'left',
-              fillColor: [225, 232, 237]
-            }
-          },
-          {
-            content: `Tipos de Ruptura: `,
-            colSpan: 3,
-            styles: {
-              fontStyle: 'bold',
-              halign: 'left',
-              fillColor: [225, 232, 237]
-            }
-          }
-        ],
-           [
-              { content: 'Nº', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-              { content: 'Lado (mm)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-              { content: 'Área (mm²)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-              { content: 'Resist (MPa)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-              { content: '(A) Sub', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-              { content: '(B) Sub/Arga', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-              { content: '(C) Rup Arga', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-              { content: '(D) Arga Cola', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-              { content: '(E) Colar pastilha', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-        ],
-
-          ...Array.from({ length: 10 }, (_, i) => [
-          { content: (i + 1).toString(), styles: { fillColor: [248, 248, 255] }},
-          ...(i === 0 ? [{ content: '50', styles: {valign:'middle', halign: 'center', fillColor: [248, 248, 255] }, rowSpan: 10 }] : []),
-          ...(i === 0 ? [{ content: '2500', styles: {valign:'middle', halign: 'center', fillColor: [248, 248, 255] }, rowSpan: 10 }] : []),
-          { content: '' },
-          { content: '' },
-          { content: '' },
-          { content: '' },
-          { content: '' }
-        ])
-        ];
-
-        
-        autoTable(doc, {
-          startY: contadorLinhas,
-          body,
-          theme: 'grid',
-          styles: { fontSize: 9 },
-          headStyles: { fillColor: [230, 230, 230] }
-        });
-      
-      contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
-    }
-
 // ================ TRACAO TEMPO ABERTO ================ //
     if (variaveis_argamassa.includes("aberto")) {
         const body: any[] = [
@@ -5666,14 +5937,368 @@ gerarNumero(materialNome: string, sequencial: number): string {
           startY: contadorLinhas,
           body,
           theme: 'grid',
-          styles: { fontSize: 9 },
+          showHead: 'firstPage',
+          pageBreak: 'avoid',
+          styles: { fontSize: 9, lineWidth: 0.5, lineColor: [0, 0, 0] },
           headStyles: { fillColor: [230, 230, 230] }
         });
       contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
     }
 
+      // ================ TRACAO NORMAL ================ //
+    if (variaveis_argamassa.includes("normal")) {
+      const body: any[] = [
+        [
+          {
+            content: 'Determinação da resistência aderência à tração Cura Normal - NBR 14081-4',
+            colSpan: 10,
+            styles: {
+              halign: 'center',
+              lineWidth: 0.5,
+              lineColor: [0, 0, 0],
+              fontSize: 10,
+              fontStyle: 'bold',
+              fillColor: [135, 187, 218],
+            }
+          }
+        ],
+        [
+          {
+            content: `Média (MPa): `,
+            colSpan: 4,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [225, 232, 237],
+              lineWidth: 0.5,
+              lineColor: [0, 0, 0],
+            }
+          },
+          {
+            content: `Desvio Padrão: `,
+            colSpan: 3,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [225, 232, 237],
+              lineWidth: 0.5,
+              lineColor: [0, 0, 0],
+            }
+          },
+          {
+            content: `Tipos de Ruptura: `,
+            colSpan: 3,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [225, 232, 237],
+              lineWidth: 0.5,
+              lineColor: [0, 0, 0],
+            }
+          },
+        ],
+        [
+          { content: 'Nº', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: 'Lado (mm)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: 'Área (mm²)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: 'Carga (Kgf)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: 'Resist (MPa)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(A) Sub', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(B) Sub/Arga', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(C) Rup Arga', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(D) Arga Cola', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(E) Colar pastilha', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+        ],
+        ...Array.from({ length: 10 }, (_, i) => [
+          { content: (i + 1).toString(), styles: { fillColor: [248, 248, 255] }},
+          ...(i === 0 ? [{ content: '50', styles: {valign:'middle', halign: 'center', fillColor: [248, 248, 255] }, rowSpan: 10 }] : []),
+          ...(i === 0 ? [{ content: '2500', styles: {valign:'middle', halign: 'center', fillColor: [248, 248, 255] }, rowSpan: 10 }] : []),
+          { content: '' },
+          { content: '' },
+          { content: '' },
+          { content: '' },
+          { content: '' }
+        ])
+      ];
+
+      autoTable(doc, {
+        startY: contadorLinhas,
+        body,
+        theme: 'grid',
+        showHead: 'firstPage',
+        pageBreak: 'avoid',
+        styles: { 
+          fontSize: 9, 
+          lineWidth: 0.5,
+          lineColor: [0, 0, 0],
+        },
+        headStyles: { fillColor: [230, 230, 230] }
+      });
+    }
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+
+// ================ TRACAO SUBMERSA ================ //
+    if (variaveis_argamassa.includes("submersa")) { 
+        const body: any[] = [
+          [
+            {
+              content: 'Determinação da resistência aderência à tração Cura com imersão em água - NBR 14081-4',
+              colSpan: 9,
+              styles: {
+                halign: 'center',
+                fontSize: 10,
+                fontStyle: 'bold',
+                fillColor: [135, 187, 218]
+              }
+            }
+          ],
+           [
+          {
+            content: `Média (MPa): `,
+            colSpan: 3,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [225, 232, 237]
+            }
+          },
+          {
+            content: `Desvio Padrão: `,
+            colSpan: 3,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [225, 232, 237]
+            }
+          },
+          {
+            content: `Tipos de Ruptura: `,
+            colSpan: 3,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [225, 232, 237]
+            }
+          }
+        ],
+           [
+              { content: 'Nº', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+              { content: 'Lado (mm)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+              { content: 'Área (mm²)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+              { content: 'Resist (MPa)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+              { content: '(A) Sub', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+              { content: '(B) Sub/Arga', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+              { content: '(C) Rup Arga', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+              { content: '(D) Arga Cola', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+              { content: '(E) Colar pastilha', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+        ],
+
+          ...Array.from({ length: 10 }, (_, i) => [
+          { content: (i + 1).toString(), styles: { fillColor: [248, 248, 255] }},
+          ...(i === 0 ? [{ content: '50', styles: {valign:'middle', halign: 'center', fillColor: [248, 248, 255] }, rowSpan: 10 }] : []),
+          ...(i === 0 ? [{ content: '2500', styles: {valign:'middle', halign: 'center', fillColor: [248, 248, 255] }, rowSpan: 10 }] : []),
+          { content: '' },
+          { content: '' },
+          { content: '' },
+          { content: '' },
+          { content: '' }
+        ])
+        ];
+
+        
+        autoTable(doc, {
+          startY: contadorLinhas,
+          body,
+          theme: 'grid',
+          showHead: 'firstPage',
+          pageBreak: 'avoid',
+          styles: { fontSize: 9, lineWidth: 0.5, lineColor: [0, 0, 0] },
+          headStyles: { fillColor: [230, 230, 230] }
+        });
+      
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+    }
+// ============== Estufa ================ //
+    if (variaveis_argamassa.includes("estufa")) { 
+        const body: any[] = [
+          [
+            {
+              content: 'Determinação da resistência aderência à tração Cura com aquecimento em estufa - NBR 14081-4',
+              colSpan: 9,
+              styles: {
+                halign: 'center',
+                fontSize: 10,
+                fontStyle: 'bold',
+                fillColor: [135, 187, 218]
+              }
+            }
+          ],
+           [
+          {
+            content: `Média (MPa): `,
+            colSpan: 3,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [225, 232, 237]
+            }
+          },
+          {
+            content: `Desvio Padrão: `,
+            colSpan: 3,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [225, 232, 237]
+            }
+          },
+          {
+            content: `Tipos de Ruptura: `,
+            colSpan: 3,
+            styles: {
+              fontStyle: 'bold',
+              halign: 'left',
+              fillColor: [225, 232, 237]
+            }
+          }
+        ],
+          [
+          { content: 'Nº', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: 'Lado (mm)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: 'Área (mm²)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: 'Carga (Kgf)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: 'Resist (MPa)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(A) Sub', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(B) Sub/Arga', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(C) Rup Arga', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(D) Arga Cola', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(E) Colar pastilha', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+        ],
+
+          ...Array.from({ length: 10 }, (_, i) => [
+          { content: (i + 1).toString(), styles: { fillColor: [248, 248, 255] }},
+          ...(i === 0 ? [{ content: '50', styles: {valign:'middle', halign: 'center', fillColor: [248, 248, 255] }, rowSpan: 10 }] : []),
+          ...(i === 0 ? [{ content: '2500', styles: {valign:'middle', halign: 'center', fillColor: [248, 248, 255] }, rowSpan: 10 }] : []),
+          { content: '' },
+          { content: '' },
+          { content: '' },
+          { content: '' },
+          { content: '' }
+        ])
+        ];
+
+        autoTable(doc, {
+          startY: contadorLinhas,
+          body,
+          theme: 'grid',
+          showHead: 'firstPage',
+          pageBreak: 'avoid',
+          styles: { fontSize: 9, lineWidth: 0.5, lineColor: [0, 0, 0] },
+          headStyles: { fillColor: [230, 230, 230] }
+        });
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+    }
+//========================== Flexão =======================================================//
+    if (variaveis_argamassa.includes("flexao")) {
+        const body:any[] = [
+          [
+            {
+              content: 'FLEXÃO',
+              colSpan: 3,
+              styles: {
+                halign: 'center',
+                fontSize: 10,
+                fontStyle: 'bold',
+                fillColor: [135, 187, 218]
+              }
+            }
+          ],
+          [
+            {
+              content: "Data Moldagem:",
+              colSpan: 4,
+              styles: {
+                fontStyle: 'bold',
+                halign: 'left',
+                fillColor: [225, 232, 237]
+              }
+            }
+          ],
+          [
+            {
+              content: "Cimento - 28 dias:",
+              colSpan: 4,
+              styles: {
+                fontStyle: 'bold',
+                halign: 'left',
+                fillColor: [225, 232, 237]
+              }
+            }
+          ],
+          [
+            {
+              content: "Argamassa - 28 dias:",
+              colSpan: 4,
+              styles: {
+                fontStyle: 'bold',
+                halign: 'left',
+                fillColor: [225, 232, 237]
+              }
+            }
+          ],
+          [
+            { content: 'Corpo de Prova', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }  },
+            { content: 'Carga (N)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }  },
+            { content: 'Resistência (MPa)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }  },
+          ],    
+        
+          ...Array.from({ length: 3 }, (_,i) => [
+            { content: `${i === 0 ? 'CP1' : i === 1 ? 'CP2' : 'CP3'}`, styles: { fillColor: [248, 248, 255] } },
+            { content: '' },
+            { content: '' },
+		      ])
+        ];
+
+          body.push([
+            {
+              content: 'MÉDIA GERAL',
+              colSpan: 2,
+              styles: {
+                fontStyle: 'bold',
+                halign: 'center',
+                fillColor: [225, 232, 237]
+              }
+            },
+            {
+              content:'',
+              colSpan: 1,
+              styles: {
+                halign: 'center',
+                fillColor: [225, 232, 237]
+              }
+            }
+          ]);
+
+        autoTable(doc, {
+          startY: contadorLinhas,
+          body,
+          theme: 'grid',
+          showHead: 'firstPage',
+          pageBreak: 'avoid',
+          styles: { fontSize: 9, lineWidth: 0.5, lineColor: [0, 0, 0] },
+          headStyles: { fillColor: [230, 230, 230] },
+          columnStyles: {
+            0: { cellWidth: 30 },  // Corpo de Prova - mais estreita
+            1: { cellWidth: 'auto' },  // Carga (N)
+            2: { cellWidth: 'auto' },  // Resistência (MPa)
+          }
+        });
+      }
+      contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
+    
+
 //========================== Compressao =======================================================//
-    if (variaveis_argamassa.includes("compressao")) {
+if (variaveis_argamassa.includes("compressao")) {
         const body:any[] = [
           [
             {
@@ -5771,103 +6396,19 @@ gerarNumero(materialNome: string, sequencial: number): string {
           startY: contadorLinhas,
           body,
           theme: 'grid',
-          styles: { fontSize: 9 },
-          headStyles: { fillColor: [230, 230, 230] }
+          showHead: 'firstPage',
+          pageBreak: 'avoid',
+          styles: { fontSize: 9, lineWidth: 0.5, lineColor: [0, 0, 0] },
+          headStyles: { fillColor: [230, 230, 230] },
+          columnStyles: {
+            0: { cellWidth: 30 },  // Corpo de Prova - mais estreita
+            1: { cellWidth: 'auto' },  // Carga (N)
+            2: { cellWidth: 'auto' },  // Resistência (MPa)
+          }
         });
       }
       contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
 
-//========================== Flexão =======================================================//
-
-    if (variaveis_argamassa.includes("flexao")) {
-        const body:any[] = [
-          [
-            {
-              content: 'FLEXÃO',
-              colSpan: 3,
-              styles: {
-                halign: 'center',
-                fontSize: 10,
-                fontStyle: 'bold',
-                fillColor: [135, 187, 218]
-              }
-            }
-          ],
-          [
-            {
-              content: "Data Moldagem:",
-              colSpan: 4,
-              styles: {
-                fontStyle: 'bold',
-                halign: 'left',
-                fillColor: [225, 232, 237]
-              }
-            }
-          ],
-          [
-            {
-              content: "Cimento - 28 dias:",
-              colSpan: 4,
-              styles: {
-                fontStyle: 'bold',
-                halign: 'left',
-                fillColor: [225, 232, 237]
-              }
-            }
-          ],
-          [
-            {
-              content: "Argamassa - 28 dias:",
-              colSpan: 4,
-              styles: {
-                fontStyle: 'bold',
-                halign: 'left',
-                fillColor: [225, 232, 237]
-              }
-            }
-          ],
-          [
-            { content: 'Corpo de Prova', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }  },
-            { content: 'Carga (N)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }  },
-            { content: 'Resistência (MPa)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }  },
-          ],    
-        
-          ...Array.from({ length: 3 }, (_,i) => [
-            { content: `${i === 0 ? 'CP1' : i === 1 ? 'CP2' : 'CP3'}`, styles: { fillColor: [248, 248, 255] } },
-            { content: '' },
-            { content: '' },
-		      ])
-        ];
-
-          body.push([
-            {
-              content: 'MÉDIA GERAL',
-              colSpan: 2,
-              styles: {
-                fontStyle: 'bold',
-                halign: 'center',
-                fillColor: [225, 232, 237]
-              }
-            },
-            {
-              content:'',
-              colSpan: 1,
-              styles: {
-                halign: 'center',
-                fillColor: [225, 232, 237]
-              }
-            }
-          ]);
-
-        autoTable(doc, {
-          startY: contadorLinhas,
-          body,
-          theme: 'grid',
-          styles: { fontSize: 9 },
-          headStyles: { fillColor: [230, 230, 230] }
-        });
-      }
-      contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
 
 //========================== Capilaridade =======================================================//
 
@@ -5890,6 +6431,7 @@ gerarNumero(materialNome: string, sequencial: number): string {
             {
               content: 'Horários',
               rowSpan: 3,
+              colSpan: 1,
               styles: {
                 halign: 'center',
                 fontStyle: 'bold',
@@ -6042,86 +6584,25 @@ gerarNumero(materialNome: string, sequencial: number): string {
           startY: contadorLinhas,
           body,
           theme: 'grid',
-          styles: { fontSize: 9 },
+          showHead: 'firstPage',
+          pageBreak: 'avoid',
+          styles: { fontSize: 9, lineWidth: 0.5, lineColor: [0, 0, 0] },
           headStyles: { fillColor: [230, 230, 230] },
+          columnStyles: {
+            0: { cellWidth: 25 },  // Horários - mais estreita
+            1: { cellWidth: 20 },  // A/B/Tempos - mais estreita
+            2: { cellWidth: 'auto' },  // Coluna 1 - mais larga
+            3: { cellWidth: 'auto' },  // Coluna 2 - mais larga
+            4: { cellWidth: 'auto' },  // Coluna 3 - mais larga
+            5: { cellWidth: 'auto' },  // Coluna 4 - mais larga
+            6: { cellWidth: 'auto' }   // Coluna 5 - mais larga
+          },
           didDrawCell: (data: any) => {
             // Garantir altura mínima para a linha de observações
             if (data.row.index === body.length - 1) {
               data.cell.height = Math.max(data.cell.height, 50);
             }
           }
-        });
-      }
-      contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
-
-//========================== Retenção de água =======================================================//
-
-    if (variaveis_argamassa.includes("retencao")) {
-        const body:any[] = [
-          [
-            {
-              content: 'Retenção de água (%)',
-              rowSpan: 2,
-              styles: {
-                halign: 'center',
-                valign: 'middle',
-                fontSize: 8,
-                fontStyle: 'bold',
-                fillColor: [135, 187, 218]
-              }
-            },
-            {
-              content: 'Massa conjunto vazio e úmido(funil + papel umido) (g)',
-              styles: {
-                halign: 'center',
-                fontSize: 8,
-                fontStyle: 'bold',
-                fillColor: [225, 232, 237]
-              }
-            },
-            {
-              content: 'Massa conjunto com argamassa antes da sucção (g)',
-              styles: {
-                halign: 'center',
-                fontSize: 8,
-                fontStyle: 'bold',
-                fillColor: [225, 232, 237]
-              }
-            },
-            {
-              content: 'Massa conjunto com argamassa após da sucção (g)',
-              styles: {
-                halign: 'center',
-                fontSize: 8,
-                fontStyle: 'bold',
-                fillColor: [225, 232, 237]
-              }
-            },
-            {
-              content: 'Resultado(%)',
-              styles: {
-                halign: 'center',
-                fontSize: 8,
-                fontStyle: 'bold',
-                fillColor: [225, 232, 237]
-              }
-            }
-          ],
-          [
-            { content: '', styles: { fillColor: [255, 255, 255] } },
-            { content: '', styles: { fillColor: [255, 255, 255] } },
-            { content: '', styles: { fillColor: [255, 255, 255] } },
-            { content: '', styles: { fillColor: [255, 255, 255] } },
-            { content: '', styles: { fillColor: [255, 255, 255] } }
-          ]
-        ];
-
-        autoTable(doc, {
-          startY: contadorLinhas,
-          body,
-          theme: 'grid',
-          styles: { fontSize: 9 },
-          headStyles: { fillColor: [230, 230, 230] }
         });
       }
       contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
@@ -6244,7 +6725,9 @@ gerarNumero(materialNome: string, sequencial: number): string {
       startY: contadorLinhas,
       body,
       theme: 'grid',
-      styles: { fontSize: 9 },
+      showHead: 'firstPage',
+      pageBreak: 'avoid',
+      styles: { fontSize: 9, lineWidth: 0.5, lineColor: [0, 0, 0] },
       headStyles: { fillColor: [230, 230, 230] }
     });
     contadorLinhas = (doc as any).lastAutoTable.finalY + 5;
