@@ -3247,7 +3247,7 @@ renderChart(todosOsPontos: DataPoint[], regressionLineData: DataPoint[], interce
                             xValue: xPos, 
                             yValue: yPos, 
                             content: equacaoFormatada,
-                            font: { size: 18, weight: 'bold' },
+                            font: { size: 24},
                             color: 'black',
                             backgroundColor: 'rgba(255, 255, 255, 0.8)',
                             borderRadius: 6,
@@ -4814,15 +4814,15 @@ getClasseTipoEnsaio(ensaio: any): string | undefined {
     return Math.round(num * 10000) / 10000;
   }
   
-  // Arredonda com base no ID do ensaio (ID 125 não arredonda)
+  // Arredonda com base no ID do ensaio (ID 558 não arredonda)
   // Também aceita 'true' para forçar não arredondar
   private roundPorEnsaio(value: any, ensaioIdOuFlag?: number | boolean): number {
     const num = typeof value === 'number' ? value : Number(value);
     if (!isFinite(num)) return 0;
     
-    // ID 125 não arredonda - retorna valor bruto
+    // ID 558 não arredonda - retorna valor bruto
     // Ou se receber true como flag
-    if (ensaioIdOuFlag === 125 || ensaioIdOuFlag === true) {
+    if (ensaioIdOuFlag === 558 || ensaioIdOuFlag === true) {
       return num;
     }
     
@@ -4853,20 +4853,20 @@ getClasseTipoEnsaio(ensaio: any): string | undefined {
     const num = typeof value === 'number' ? value : Number(value);
     if (!isFinite(num)) return '0';
     
-    // Se receber um objeto (cálculo), verificar se tem ensaios com ID 125
+    // Se receber um objeto (cálculo), verificar se tem ensaios com ID 558
     let deveUsarPrecisaoTotal = false;
     
     if (typeof idOuCalculo === 'object' && idOuCalculo !== null) {
       // É um objeto de cálculo
       const calc = idOuCalculo;
       deveUsarPrecisaoTotal = Array.isArray(calc.ensaios_detalhes) && 
-        calc.ensaios_detalhes.some((e: any) => e.id === 125);
-    } else if (idOuCalculo === 125) {
-      // É o ID 125 diretamente
+        calc.ensaios_detalhes.some((e: any) => e.id === 558);
+    } else if (idOuCalculo === 558) {
+      // É o ID 558 diretamente
       deveUsarPrecisaoTotal = true;
     }
     
-    // Sem arredondamento para ID 125 ou cálculos que usam ensaio 125
+    // Sem arredondamento para ID 558 ou cálculos que usam ensaio 558
     if (deveUsarPrecisaoTotal) {
       return num.toString();
     }
@@ -4882,8 +4882,8 @@ getClasseTipoEnsaio(ensaio: any): string | undefined {
     const num = typeof value === 'number' ? value : Number(value);
     if (!isFinite(num)) return '0';
     
-    // Se for ensaio ID 125, retornar valor sem arredondamento
-    if (ensaioId === 125) {
+    // Se for ensaio ID 558, retornar valor sem arredondamento
+    if (ensaioId === 558) {
       return num.toString();
     }
     
@@ -5385,16 +5385,7 @@ onDescricaoInput(index: number, event: Event): void {
                   if (tipo) item.tipo = tipo;
                   return item;
                 });
-                
-                // REMOVIDO: Não copiar valores default do catálogo
-                // Cada ensaio de cada laboratório deve ter seus próprios valores
-                // if (Array.isArray(baseVars) && baseVars.length === e.variavel_detalhes.length) {
-                //   e.variavel_detalhes.forEach((v: any, i: number) => {
-                //     const bv = baseVars[i];
-                //     if (typeof bv?.valor !== 'undefined') v.valor = Number(bv.valor) || 0;
-                //     if (typeof bv?.valorTimestamp === 'number') v.valorTimestamp = bv.valorTimestamp;
-                //   });
-                // }
+            
               }
             });
           }
@@ -5974,12 +5965,12 @@ recalcularTodosCalculos() {
         // Se já existia resultado e não há expressão significativa, não sobrescrever
         if (varList.length === 0 && calc.resultado !== undefined && calc.resultado !== null) return;
         
-        // Verificar se algum ENSAIO interno tem ID 125
-        const temEnsaio125 = Array.isArray(calc.ensaios_detalhes) && 
-          calc.ensaios_detalhes.some((e: any) => e.id === 125);
+        // Verificar se algum ENSAIO interno tem ID 558
+        const temEnsaio558 = Array.isArray(calc.ensaios_detalhes) && 
+          calc.ensaios_detalhes.some((e: any) => e.id === 558);
         
-        // Se tem ensaio ID 125, passar true para não arredondar
-        calc.resultado = (typeof resultado === 'number' && isFinite(resultado)) ? this.roundPorEnsaio(resultado, temEnsaio125) : resultadoAnterior;
+        // Se tem ensaio ID 558, passar true para não arredondar
+        calc.resultado = (typeof resultado === 'number' && isFinite(resultado)) ? this.roundPorEnsaio(resultado, temEnsaio558) : resultadoAnterior;
       }
       // Verificar alertas após o cálculo
       this.verificarAlertaPRNT(calc);
@@ -6869,8 +6860,8 @@ calcularEnsaioDireto(ensaio: any, planoRef?: any) {
       }
       } else {
         if (typeof resultado === 'number' && isFinite(resultado)) {
-          // Se for ensaio ID 125, não arredondar
-          const arredondado = ensaio.id === 125 ? resultado : this.roundN(resultado, 4);
+          // Se for ensaio ID 558, não arredondar
+          const arredondado = ensaio.id === 558 ? resultado : this.roundN(resultado, 4);
           ensaio.valor = arredondado;
         } else {
           // Mantém valor anterior se resultado inválido
@@ -9330,6 +9321,7 @@ toggleEnsaioExpansion(ensaio: any): void {
  * com base nos dados das peneiras salvas
  */
 preencherVariaveisReatividade(ensaio: any): void {  
+
   // Verificar se existem dados de peneiras salvas
   const peneiras = this.analise?.peneiras?.peneiras;
   if (!peneiras || !Array.isArray(peneiras) || peneiras.length === 0) {
@@ -9369,14 +9361,14 @@ preencherVariaveisReatividade(ensaio: any): void {
     // Processar cada variável encontrada
     variaveisCorrespondentes.forEach((variavel: any) => {      
       const nomeVar = variavel.nome?.toLowerCase() || '';
-      const isPassante = nomeVar.includes('pass') || nomeVar.includes('passante');
+      const isPassante = nomeVar.includes('pass') || nomeVar.includes('passante') || nomeVar.includes('acumulado');
       const isRetido = nomeVar.includes('retido') || nomeVar.includes('ret');
       
       let novoValor = null;
       
       // Determinar qual campo usar baseado no nome da variável
-      if (isPassante && peneira.passante !== null && peneira.passante !== undefined) {
-        novoValor = parseFloat(peneira.passante.toString());
+      if (isPassante && peneira.passante_acumulado !== null && peneira.passante_acumulado !== undefined) {
+        novoValor = parseFloat(peneira.passante_acumulado.toString());
       } else if (isRetido && peneira.porcentual_retido !== null && peneira.porcentual_retido !== undefined) {
         novoValor = parseFloat(peneira.porcentual_retido.toString());
       } else if (peneira.porcentual_retido !== null && peneira.porcentual_retido !== undefined) {
@@ -9424,6 +9416,8 @@ preencherVariaveisReatividade(ensaio: any): void {
       detail: 'Nenhuma variável compatível encontrada. Verifique se os nomes das variáveis correspondem aos números das peneiras.'
     });
   }
+
+  
 }
 
 //=======================================================LINHAS EXPANDABLES=================================
@@ -11023,7 +11017,11 @@ onTracaoAbertoDataMoldagemChange():void {
           this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
         } 
       }
-    });    
+    });  
+    setTimeout(() => {
+         window.location.reload(); 
+        }, 1000); 
+   
   }
 
   // =================================================== visualizar modal peneira umida =====================================================
@@ -11118,7 +11116,10 @@ onTracaoAbertoDataMoldagemChange():void {
           this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
         } 
       }
-    });    
+    }); 
+      setTimeout(() => {
+       window.location.reload(); 
+      }, 1000);   
   }
 
 // =================================================== abreo modal tracao normal =====================================================
