@@ -4684,27 +4684,27 @@ duplicata(amostra: any): void {
               const valorNum = parseFloat(valor);
               
               if (descricaoLower.includes('índice') && descricaoLower.includes('consistência') && unidade === 'mm') {
-                valor = Math.round(valorNum).toString();
+                valor = valorNum.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
               } else if (descricaoLower.includes('água') && descricaoLower.includes('consistência') && unidade === '%') {
-                valor = valorNum.toFixed(1);
+                valor = valorNum.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
               } else if (descricaoLower.includes('retenção') && descricaoLower.includes('água') && unidade === '%') {
-                valor = Math.round(valorNum).toString();
+                valor = valorNum.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
               } else if (descricaoLower.includes('retenção') && descricaoLower.includes('acumulada') && unidade === '%') {
-                valor = Math.round(valorNum).toString();
+                valor = valorNum.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
               } else if ((descricaoLower.includes('finos') || descricaoLower.includes('passante')) && unidade === '%') {
-                valor = Math.round(valorNum).toString();
+                valor = valorNum.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
               } else if (descricaoLower.includes('densidade') && descricaoLower.includes('massa')) {
                 if (unidade === 'g/cm³' || unidade === 'g/cm3') {
-                  valor = valorNum.toFixed(3);
+                  valor = valorNum.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
                 } else if (unidade === 'kg/m³' || unidade === 'kg/m3') {
-                  valor = valorNum.toFixed(3);
+                  valor = valorNum.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
                 }
               } else if (descricaoLower.includes('massa') && descricaoLower.includes('específica') && (unidade === 'kg/m3' || unidade === 'kg/m3')) {
-                valor = valorNum.toFixed(3);
+                valor = valorNum.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
               } else if (descricaoLower.includes('massa') && (descricaoLower.includes('unitária') || descricaoLower.includes('unitaria'))) {
-                valor = valorNum.toFixed(3);
+                valor = valorNum.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
               } else if (descricaoLower.includes('teor') && descricaoLower.includes('ar') && unidade === '%') {
-                valor = valorNum.toFixed(1);
+                valor = valorNum.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
               }
             }
             

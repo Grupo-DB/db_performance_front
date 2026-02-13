@@ -69,6 +69,17 @@
                                 <h2>Ordens de Serviço</h2>
                             </div>
                         </ng-template>
+                        <p-button 
+                                    label="Boletim Diário" 
+                                    tooltipPosition="top"
+                                    pTooltip="Boletim Diário de Análise"
+                                    severity="info"
+                                    (onClick)="getAnalisesBoletimDiaraio()"    
+                                >
+                                    <div class="inline-flex align-items-center">
+                                        <span><i class="pi pi-angle-down"></i></span>
+                                    </div>
+                                </p-button>
                         <p-inplace closable="true" closeIcon="pi pi-angle-up">
                             <ng-template pTemplate="display">
                                 <p-button 
@@ -1339,22 +1350,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12 md:col-6">
-                            <div
-                                class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
-                                style="border-radius: 12px; background-color: #26413c;"
-                            >
-                                <div class="flex align-items-center justify-content-center">
-                                    <i class="pi pi-filter mr-2" style="color: #b2f5ea; font-size: 1.5rem;"></i>
-                                    <div>
-                                        <p class="mb-1" style="color: #ccfbf1; font-size: 0.8rem;">Total de Finos</p>
-                                        <p class="mb-0" style="color: #b2f5ea; font-size: 1.5rem; font-weight: 700;">
-                                            {{ analiseSelecionada.peneiras_umidas.finos | number:'1.2-2' }} g
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                       
                     </div>
                 </div>
 
@@ -1368,21 +1364,17 @@
                             <ng-template pTemplate="header">
                                 <tr style="background-color: rgba(178, 245, 234, 0.1);">
                                     <th style="color: #b2f5ea;">Peneira</th>
-                                    <th style="color: #b2f5ea;">Retido (g)</th>
-                                    <th style="color: #b2f5ea;">Retido (%)</th>
-                                    <th style="color: #b2f5ea;">Passante (%)</th>
-                                    <th style="color: #b2f5ea;">Acumulado (%)</th>
-                                    <th style="color: #b2f5ea;">Passante Acumulado (%)</th>
+                                    <th style="color: #b2f5ea;">Massa da Cápsula Vazia (g)</th>
+                                    <th style="color: #b2f5ea;">Massa da Cápsula + Amostra Seca (g)</th>
+                                    <th style="color: #b2f5ea;">Resultado Retido (%)</th>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-linha>
                                 <tr style="color: #ccfbf1;">
                                     <td><b>{{ linha.peneira }}</b></td>
-                                    <td>{{ linha.valor_retido | number:'1.2-2' }}</td>
-                                    <td>{{ linha.porcentual_retido | number:'1.2-2' }}</td>
-                                    <td>{{ linha.passante | number:'1.2-2' }}</td>
-                                    <td>{{ linha.acumulado | number:'1.2-2' }}</td>
-                                    <td>{{ linha.passante_acumulado | number:'1.2-2' }}</td>
+                                    <td>{{ linha.massa_capsula_seca | number:'1.2-2' }}</td>
+                                    <td>{{ linha.massa_capsula_vazia | number:'1.2-2' }}</td>
+                                    <td>{{ linha.resultado | number:'1.2-2' }}</td>
                                 </tr>
                             </ng-template>
                         </p-table>
@@ -3081,4 +3073,127 @@
             <p class="text-xl text-gray-600">Esta amostra não possui imagens anexadas.</p>
         </div>
     </div>    
+</p-drawer>
+
+<!------------------------------ DRAWER BOLETIM DIÁRIO--------------------------------------->
+<p-drawer
+    header="Boletim Diário de Análises" 
+    [(visible)]="modalBoletimDiario" 
+    position="left" 
+    [style]="{ width: '100vw' }"
+>
+
+    <div class="step1 flex flex-column w-12 gap-3 mt-3">
+        <div class="bloco w-12 text-left">
+            <h2 style="color: #EEEEEE; margin-left: 10px;">Análises de Calcário</h2>
+            <p-table 
+                #dt2 
+                [value]="analisesCalcario" 
+                [paginator]="true"
+                 [rows]="30"
+                [rowsPerPageOptions]="[20, 30, 50]" 
+                [loading]="loading"
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th rowspan="2">Número da Amostra</th>
+                        <th rowspan="2">Data de Coleta</th>
+                        <th rowspan="2">Período</th>
+                        <th rowspan="2">Local</th>
+                        <th rowspan="2">Informação Complementar</th>
+                        <th rowspan="2">Umidade %</th>
+                        <th rowspan="2">Ri + So2 %</th>
+                        <th colspan="4" style="text-align: center;">Granulometria %</th>
+                        <th rowspan="2">RE %</th>
+                        <th rowspan="2">PN %</th>
+                        <th rowspan="2">PRNT %</th>
+                    </tr>
+                    <tr>
+                        <th>% RET #10<br>(2mm)</th>
+                        <th>% RET #20<br>(0,84mm)</th>
+                        <th>% RET #50<br>(0,30mm)</th>
+                        <th>% PAS #50<br>(0,30mm)</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-analise>
+                <tr>
+                    <td>{{ analise.amostra_detalhes?.numero }}</td>
+                    <td>{{ analise.amostra_detalhes?.data_coleta | date:'dd/MM/yyyy' }}</td>
+                    <td>{{ analise.amostra_detalhes?.periodo_hora }}</td>
+                    <td>{{ analise.amostra_detalhes?.local_coleta }}</td>
+                    <td>{{ analise.amostra_detalhes?.observacoes }}</td>
+                    <td>{{ getValorEnsaioPorId(analise, 131)  }}</td>
+                    <td>{{ getValorEnsaioPorId(analise, 76) }}</td>
+                    <td>{{ getValorPeneira(analise, '# 10 - ABNT/ASTM 10 - 2,00 mm')  }}</td>
+                    <td>{{ getValorPeneira(analise, '# 20 - ABNT/ASTM 20 - 0,850 mm')  }}</td>
+                    <td>{{ getValorPeneira(analise, '# 50 - ABNT/ASTM 50 - 0,300 mm')  }}</td>
+                    <td>{{ getValorPeneiraPassante(analise, '# 50 - ABNT/ASTM 50 - 0,300 mm')  }}</td>
+                    <td>{{ getValorEnsaioPorId(analise, 554)  }}</td>
+                    <td>{{ getValorEnsaioPorId(analise, 82)  }}</td>
+                    <td>{{ getValorEnsaioPorId(analise, 555)  }}</td>
+                </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+     <div class="step1 flex flex-column w-12 gap-3 mt-3">
+        <div class="bloco w-12 text-left">
+            <h2 style="color: #EEEEEE; margin-left: 10px;">Análises de Cal</h2>
+            <p-table 
+                #dt2 
+                [value]="analisesCal" 
+                [paginator]="true"
+                 [rows]="30"
+                [rowsPerPageOptions]="[20, 30, 50]" 
+                [loading]="loading"
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th rowspan="2">Número da Amostra</th>
+                        <th rowspan="2">Data de Coleta</th>
+                        <th rowspan="2">Tipo</th>
+                        <th rowspan="2">Local</th>
+                       
+                        <th rowspan="2">Ri+SO2 %</th>
+                        <th rowspan="2">Ro %</th>
+                        <th rowspan="2">Perda ao Fogo %</th>
+                        <th rowspan="2">CO2 %</th>
+                        <th colspan="7" style="text-align: center;">Granulometria %</th>
+                        
+                    </tr>
+                    <tr>
+                        <th>% RET #10<br>(2mm)</th>
+                        <th>% RET #20<br>(0,84mm)</th>
+                        <th>% RET #50<br>(0,30mm)</th>
+                        <th>% PAS #50<br>(0,30mm)</th>
+                        <th>% RET #200<br>(0,075mm)</th>
+                        <th>% RET #325<br>(0,045mm)</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-analise>
+                <tr>
+                    <td>{{ analise.amostra_detalhes?.numero }}</td>
+                    <td>{{ analise.amostra_detalhes?.data_coleta | date:'dd/MM/yyyy' }}</td>
+                    <td>{{ analise.amostra_detalhes?.produto_amostra_detalhes?.tipo }}</td>
+                    <td>{{ analise.amostra_detalhes?.local_coleta }}</td>
+                    
+                    <td>{{ getValorEnsaioPorId(analise, 76) }}</td>
+                    <td>{{ getValorEnsaioPorId(analise, 139)  }}</td>
+                    <td>{{ getValorEnsaioPorId(analise, 130)  }}</td>
+                    <td>{{ getValorCalculoPorId(analise, 132)  }}</td>
+                    <td>{{ getValorPeneira(analise, '# 18 - ABNT/ASTM 18 - 1,00 mm')  }}</td>
+                    <td>{{ getValorPeneira(analise, '# 30 - ABNT/ASTM 30 - 0,600 mm')  }}</td>
+                    <td>{{ getValorPeneira(analise, '# 50 - ABNT/ASTM 50 - 0,300 mm')  }}</td>
+                    <td>{{ getValorPeneiraPassante(analise, '# 50 - ABNT/ASTM 50 - 0,300 mm')  }}</td><!--  Verificar Retido Total-->
+                    <td>{{ getValorPeneira(analise, '# 200 - ABNT/ASTM 200 - 0,075 mm')  }}</td>
+                    <td>{{ getValorPeneira(analise, '# 325 - ABNT/ASTM 325 - 0,045 mm')  }}</td>
+                </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
 </p-drawer>

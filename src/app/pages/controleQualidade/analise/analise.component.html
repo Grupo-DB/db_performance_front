@@ -1347,13 +1347,14 @@
             </div>
         </div>    
         <div class="step1 flex justify-content-between align-items-center w-12 mt-3 mb-5">
-  
             <div>
                 <p-menu 
                     #menuPeneiras 
                     [model]="menuPeneira" 
                     popup="true" 
-                    styleClass="menu-up">
+                    styleClass="menu-up"
+                    [appendTo]="'body'"
+                >
                 </p-menu>
 
                 <p-button 
@@ -1361,7 +1362,9 @@
                     icon="pi pi-chevron-up"
                     (click)="menuPeneiras.toggle($event)"
                     size="large" 
-                    severity="help">
+                    severity="help"
+                    [disabled]="hasUnsavedChanges"
+                >
                 </p-button>
             </div>
 

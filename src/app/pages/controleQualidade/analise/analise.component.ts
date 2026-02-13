@@ -5804,6 +5804,8 @@ recalcularTodosCalculos() {
     } catch (e) {
       ensaio.valor = 'Erro no cálculo';
     }
+
+    this.verificarAlertaPRNT(ensaio);
   }
 //---------------------- CALCULAR (CÁLCULO ENSAIO)-------------------------------------------------------------
   calcular(calc: any, produtoOuPlano?: any) {
@@ -5973,7 +5975,7 @@ recalcularTodosCalculos() {
         calc.resultado = (typeof resultado === 'number' && isFinite(resultado)) ? this.roundPorEnsaio(resultado, temEnsaio558) : resultadoAnterior;
       }
       // Verificar alertas após o cálculo
-      this.verificarAlertaPRNT(calc);
+      //this.verificarAlertaPRNT(calc);
     } catch (e) {
       // Preservar resultado anterior em caso de erro
       calc.resultado = resultadoAnterior !== undefined ? resultadoAnterior : 'Erro no cálculo';
@@ -5981,21 +5983,22 @@ recalcularTodosCalculos() {
     }
   }
   // Verificar alerta PRNT após o cálculo
-  private verificarAlertaPRNT(calc: any) {  
-    if (!calc || !calc.descricao) {
+  private verificarAlertaPRNT(ensaio: any) { 
+    console.log('Verificando alerta PRNT para ensaio:', ensaio); 
+    if (!ensaio || !ensaio.descricao) {
       return;
     }
     // CORREÇÃO: Permitir resultado 0 - remover verificação !calc.resultado
-    if (calc.resultado === null || calc.resultado === undefined) {
+    if (ensaio.valor === null || ensaio.valor === undefined) {
       return;
     }
     // Verificar se é um cálculo PRNT (por descrição)
-    const descricaoLower = calc.descricao.toLowerCase();  
-    const isPRNT = descricaoLower.includes('prnt calcário') || 
+    const descricaoLower = ensaio.descricao.toLowerCase();  
+    const isPRNT = descricaoLower.includes('prnt') || 
                    descricaoLower.includes('poder relativo de neutralização total') ||
                    descricaoLower.includes('neutralização');
     if (isPRNT) {
-      const resultado = typeof calc.resultado === 'number' ? calc.resultado : Number(calc.resultado);
+      const resultado = typeof ensaio.valor === 'number' ? ensaio.valor : Number(ensaio.valor);
       if (!isNaN(resultado)) {
         if (resultado < 73) {
           // PRNT abaixo de 73 - REPROVADO
@@ -6020,7 +6023,7 @@ recalcularTodosCalculos() {
           }
         }
       } else {
-        console.error('❌ Resultado não é um número válido:', calc.resultado);
+        console.error('❌ Resultado não é um número válido:', ensaio.resultado);
       }
     }
   }
@@ -6054,11 +6057,12 @@ recalcularTodosCalculos() {
     let calculosEncontrados = 0;
     let ensaiosEncontrados = 0;
     planoDetalhes.forEach((plano: any) => {
-      // Verificar cálculos (PRNT)
+      // Verificar cálculos (PRNT e Fechamento)
       if (plano.calculo_ensaio_detalhes) {
         plano.calculo_ensaio_detalhes.forEach((calc: any) => {
           calculosEncontrados++;
-          this.verificarAlertaPRNT(calc);
+          //this.verificarAlertaPRNT(calc);
+          this.verificarAlertaFechamento(calc, plano);
         });
       }
       // Verificar ensaios (Fechamento)
@@ -6076,74 +6080,104 @@ recalcularTodosCalculos() {
   }
   //============================ Verificar alerta Fechamento para ensaios com regras específicas=====================
   private verificarAlertaFechamento(ensaio: any, planoBase?: any) {
-    if (!ensaio || !ensaio.descricao) {
+    // Buscar fechamento tanto em ensaio_detalhes quanto em calculo_ensaio_detalhes
+    let fechamento = null;
+    if (planoBase) {
+      // Procurar em ensaio_detalhes
+      if (Array.isArray(planoBase.ensaio_detalhes)) {
+        fechamento = planoBase.ensaio_detalhes.find((e: any) => {
+          const desc = (e.descricao || '').toLowerCase();
+          return desc.includes('fechamento') || desc.includes('fechament') || desc.includes('analitico');
+        });
+      }
+      // Procurar em calculo_ensaio_detalhes se não encontrou
+      if (!fechamento && Array.isArray(planoBase.calculo_ensaio_detalhes)) {
+        fechamento = planoBase.calculo_ensaio_detalhes.find((c: any) => {
+          const desc = (c.descricao || '').toLowerCase();
+          return desc.includes('fechamento') || desc.includes('fechament') || desc.includes('balanço');
+        });
+      }
+    }
+    // Se não veio pelo plano, usar o ensaio passado
+    if (!fechamento && ensaio && ensaio.descricao) {
+      const desc = ensaio.descricao.toLowerCase();
+      if (desc.includes('fechamento') || desc.includes('fechament') || desc.includes('balanço')) {
+        fechamento = ensaio;
+      }
+    }
+    if (!fechamento) {
+      console.log('[Fechamento] Não encontrado para plano ou ensaio:', planoBase, ensaio);
       return;
     }
-    // Verificar se é um ensaio Fechamento (por descrição)
-    const descricaoLower = ensaio.descricao.toLowerCase();
-    const isFechamento = descricaoLower.includes('fechamento') || 
-                         descricaoLower.includes('fechament') ||
-                         descricaoLower.includes('balanço');
-    if (isFechamento) {
-      // Primeiro verificar se há ensaios obrigatórios
-      const ensaiosObrigatorios = ['ri + sio₂', 'cao', 'mgo', 'perda ao fogo'];
-      const ensaiosEncontrados = this.verificarEnsaiosObrigatoriosFechamento(null, planoBase, ensaiosObrigatorios);
-      if (ensaiosEncontrados.faltantes.length > 0) {
-        // Análise incompleta
-        const chaveIncompleta = `FECHAMENTO_INCOMPLETO_${ensaiosEncontrados.faltantes.join('_')}`;
-        if (!this.alertasExibidos.has(chaveIncompleta)) {
-          this.alertasExibidos.add(chaveIncompleta);
-          this.messageService.add({
-            severity: 'warn',
-            summary: 'Análise Parcial ou Incompleta',
-            detail: `Fechamento não pode ser validado. Faltam ensaios: ${ensaiosEncontrados.faltantes.join(', ')}`,
-            life: 8000,
-            sticky: true
-          });
-        }
-        return;
+    console.log('[Fechamento] Encontrado:', fechamento);
+    // Primeiro verificar se há ensaios obrigatórios
+    const ensaiosObrigatorios = ['ri + sio₂', 'cao', 'mgo', 'perda ao fogo'];
+    const ensaiosEncontrados = this.verificarEnsaiosObrigatoriosFechamento(null, planoBase, ensaiosObrigatorios);
+    if (ensaiosEncontrados.faltantes.length > 0) {
+      console.log('[Fechamento] Faltam ensaios obrigatórios:', ensaiosEncontrados.faltantes);
+      // Análise incompleta
+      const chaveIncompleta = `FECHAMENTO_INCOMPLETO_${ensaiosEncontrados.faltantes.join('_')}`;
+      if (!this.alertasExibidos.has(chaveIncompleta)) {
+        this.alertasExibidos.add(chaveIncompleta);
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Análise Parcial ou Incompleta',
+          detail: `Fechamento não pode ser validado. Faltam ensaios: ${ensaiosEncontrados.faltantes.join(', ')}`,
+          life: 8000,
+          sticky: true
+        });
       }
-      // Se chegou aqui, todos os ensaios obrigatórios estão presentes
-      if (ensaio.valor === null || ensaio.valor === undefined) {
-        return;
+      return;
+    }
+    // Se chegou aqui, todos os ensaios obrigatórios estão presentes
+    let valorFechamento = fechamento.valor;
+    if (valorFechamento === null || valorFechamento === undefined) {
+      valorFechamento = fechamento.resultado;
+      console.log('[Fechamento] Usando resultado em vez de valor:', valorFechamento);
+    }
+    if (valorFechamento === null || valorFechamento === undefined) {
+      console.log('[Fechamento] Valor do fechamento está null ou undefined:', fechamento);
+      return;
+    }
+    const resultado = typeof valorFechamento === 'number' ? valorFechamento : Number(valorFechamento);
+    if (isNaN(resultado)) {
+      console.log('[Fechamento] Valor do fechamento não é número:', valorFechamento);
+      return;
+    }
+    console.log('[Fechamento] Resultado:', resultado);
+    if (resultado < 97.5) {
+      // Fechamento baixo - REPROVADO
+      if (this.podeExibirAlerta('FECHAMENTO_BAIXO', resultado)) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'REPROVADO - Fechamento Baixo',
+          detail: `O resultado do Fechamento (${resultado.toFixed(4)}%) está abaixo de 97,5%. Material reprovado!`,
+          life: 8000,
+          sticky: true
+        });
       }
-      const resultado = typeof ensaio.valor === 'number' ? ensaio.valor : Number(ensaio.valor);
-      if (!isNaN(resultado)) {
-        if (resultado < 97.5) {
-          // Fechamento baixo - REPROVADO
-          if (this.podeExibirAlerta('FECHAMENTO_BAIXO', resultado)) {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'REPROVADO - Fechamento Baixo',
-              detail: `O resultado do Fechamento (${resultado.toFixed(4)}%) está abaixo de 97,5%. Material reprovado!`,
-              life: 8000,
-              sticky: true
-            });
-          }
-        } else if (resultado >= 99) {
-          // Fechamento alto - REPROVADO
-          if (this.podeExibirAlerta('FECHAMENTO_ALTO', resultado)) {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'REPROVADO - Fechamento Alto',
-              detail: `O resultado do Fechamento (${resultado.toFixed(4)}%) está acima de 99%. Material reprovado!`,
-              life: 8000,
-              sticky: true
-            });
-          }
-        } else {
-          // Fechamento OK (97.5 <= resultado < 99)
-          if (this.podeExibirAlerta('FECHAMENTO_OK', resultado)) {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Fechamento OK',
-              detail: `O resultado do Fechamento (${resultado.toFixed(4)}%) está dentro do padrão (97,5% - 99%).`,
-              life: 5000
-            });
-          }
-        }
-      } 
-    } 
+    } else if (resultado >= 99) {
+      // Fechamento alto - REPROVADO
+      if (this.podeExibirAlerta('FECHAMENTO_ALTO', resultado)) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'REPROVADO - Fechamento Alto',
+          detail: `O resultado do Fechamento (${resultado.toFixed(4)}%) está acima de 99%. Material reprovado!`,
+          life: 8000,
+          sticky: true
+        });
+      }
+    } else {
+      // Fechamento OK (97.5 <= resultado < 99)
+      if (this.podeExibirAlerta('FECHAMENTO_OK', resultado)) {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Fechamento OK',
+          detail: `O resultado do Fechamento (${resultado.toFixed(4)}%) está dentro do padrão (97,5% - 99%).`,
+          life: 5000
+        });
+      }
+    }
   }
   // Verificar se todos os ensaios obrigatórios para Fechamento estão presentes
   private verificarEnsaiosObrigatoriosFechamento(calc: any, planoBase: any, ensaiosObrigatorios: string[]): {encontrados: string[], faltantes: string[]} {
@@ -6530,6 +6564,7 @@ onValorEnsaioChange(ensaio: any, novoValor: any) {
     const plano = this.encontrarPlanoDoEnsaio(ensaio);
     // Verificar alerta Fechamento após alteração manual
     this.verificarAlertaFechamento(ensaio, plano);
+    this.verificarAlertaPRNT(ensaio);
     if (plano) {
       this.recalcularTodosEnsaiosDirectos(plano);
     }
@@ -6546,7 +6581,7 @@ onResultadoCalculoChange(calculo: any, novoValor: any) {
     const num = typeof novoValor === 'number' ? novoValor : Number(novoValor?.toString().replace(',', '.')) || 0;
     calculo.resultado = this.round2(num);
     // Verificar alerta PRNT após alteração manual
-    this.verificarAlertaPRNT(calculo);
+    //this.verificarAlertaPRNT(calculo);
     this.recalcularTodosCalculos();
     this.cd.detectChanges();
   }, 120);
@@ -6871,6 +6906,7 @@ calcularEnsaioDireto(ensaio: any, planoRef?: any) {
     // Verificar alerta Fechamento após cálculo do ensaio
     const plano = planoRef || this.encontrarPlanoDoEnsaio(ensaio);
     this.verificarAlertaFechamento(ensaio, plano);
+    this.verificarAlertaPRNT(ensaio);
     // Remover recálculo automático aqui para evitar loops de alertas
     this.forcarDeteccaoMudancas();
     } catch (error) {

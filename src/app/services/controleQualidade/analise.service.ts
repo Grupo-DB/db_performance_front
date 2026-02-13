@@ -32,6 +32,12 @@ export class AnaliseService {
     const url = `${this.analiseUrl}abertas/`;
     return this.httpClient.get<any[]>(url);   
   }
+
+  getAnalisesBoletimDiario(dataInicial: any, dataFinal: any): Observable<any>{
+    const url = `${this.analiseUrl}porData/`;
+    return this.httpClient.post<any[]>(url, { data_inicial: dataInicial, data_final: dataFinal });   
+  }
+
   getAnalisesFechadas(): Observable<any>{
     const url = `${this.analiseUrl}fechadas/`;
     return this.httpClient.get<any[]>(url);   
