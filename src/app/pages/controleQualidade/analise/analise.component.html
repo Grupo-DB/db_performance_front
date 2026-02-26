@@ -1409,6 +1409,9 @@
                     [pTooltip]="hasUnsavedChanges ? 'Há alterações não salvas' : 'Salvar análise'" 
                 ></p-button>
             </div>
+            <div class="flex gap-2">
+                <b>CaOComb</b>{{ caoCombCo2 || 0 }}
+            </div>
         </div>
     </div>
 </div>
@@ -2051,18 +2054,16 @@
                                     <tr>
                                         <th>Nº</th>
                                         <th>Diâmetro mm</th>
-                                        <!-- <th>Aresta mm²</th>
-                                        <th>Espessura mm</th>
-                                        <th>Subst</th> -->
                                         <th>Área</th>
                                         <th>Carga kgf</th>
                                         <th>RESIST. Mpa</th>
                                         <th>Validação</th>
-                                        <th>(A) Sub</th>
-                                        <th>(B) Sub/Arga</th>
-                                        <th>(C) Rup Arga</th>
-                                        <th>(D) Arga Cola</th>
-                                        <th>(E) Colar pastilha</th>
+                                        <th>S</th>
+                                        <th>S/A</th>
+                                        <th>A</th>
+                                        <th>A/P</th>
+                                        <th>P</th>
+                                        <th>F</th>
                                     </tr>
                                 </ng-template>
 
@@ -2079,17 +2080,15 @@
                                             />
                                         </td>
                                         <td><input pInputText [(ngModel)]="linha.area" type="text" readonly (ngModelChange)="atualizarCalculosTracaoNormal(linha)" style="width: 95px"/></td>
-                                        <!-- <td><input pInputText [(ngModel)]="linha.espessura" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.subst" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td> -->
                                         <td><input pInputText [(ngModel)]="linha.carga" type="number" (ngModelChange)="atualizarCalculosTracaoNormal(linha)" style="width: 70px"/></td>
                                         <td><input pInputText [(ngModel)]="linha.resist" type="text" readonly style="width: 80px"/></td>
                                         <td><input pInputText [(ngModel)]="linha.validacao" type="text" style="width: 100px" readonly/></td>
-                                        <td><input pInputText [(ngModel)]="linha.rupturas.sub" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.rupturas.subArga" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.rupturas.rupArga" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.rupturas.argaCola" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.rupturas.colarPastilha" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.substrato" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.interfaceSubstrato" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.argamassa" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.interfaceArgamassa" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.placaCeramica" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.falhaCola" type="number" style="width: 70px"/></td>
                                     </tr>
                                 </ng-template>
                             </p-table>
@@ -2200,18 +2199,16 @@
                                     <tr>
                                         <th>Nº</th>
                                         <th>Diâmetro mm</th>
-                                        <!-- <th>Aresta mm²</th>
-                                        <th>Espessura mm</th>
-                                        <th>Subst</th> -->
                                         <th>Área</th>
                                         <th>Carga kgf</th>
                                         <th>RESIST. Mpa</th>
                                         <th>Validação</th>
-                                        <th>(A) Sub</th>
-                                        <th>(B) Sub/Arga</th>
-                                        <th>(C) Rup Arga</th>
-                                        <th>(D) Arga Cola</th>
-                                        <th>(E) Colar pastilha</th>
+                                        <th>S</th>
+                                        <th>S/A</th>
+                                        <th>A</th>
+                                        <th>A/P</th>
+                                        <th>P</th>
+                                        <th>F</th>
                                     </tr>
                                 </ng-template>
 
@@ -2228,17 +2225,15 @@
                                             />
                                         </td>
                                         <td><input pInputText [(ngModel)]="linha.area" type="text" readonly (ngModelChange)="atualizarCalculosTracaoSubmersa(linha)" style="width: 95px"/></td>
-                                        <!-- <td><input pInputText [(ngModel)]="linha.espessura" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.subst" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td> -->
                                         <td><input pInputText [(ngModel)]="linha.carga" type="number" (ngModelChange)="atualizarCalculosTracaoSubmersa(linha)" style="width: 70px"/></td>
                                         <td><input pInputText [(ngModel)]="linha.resist" type="text" readonly style="width: 80px"/></td>
                                         <td><input pInputText [(ngModel)]="linha.validacao" type="text" style="width: 100px" readonly/></td>
-                                        <td><input pInputText [(ngModel)]="linha.rupturas.sub" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.rupturas.subArga" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.rupturas.rupArga" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.rupturas.argaCola" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.rupturas.colarPastilha" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.substrato" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.interfaceSubstrato" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.argamassa" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.interfaceArgamassa" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.placaCeramica" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.falhaCola" type="number" style="width: 70px"/></td>
                                     </tr>
                                 </ng-template>
                             </p-table>
@@ -2350,18 +2345,16 @@
                                     <tr>
                                         <th>Nº</th>
                                         <th>Diâmetro mm</th>
-                                        <!-- <th>Aresta mm²</th>
-                                        <th>Espessura mm</th>
-                                        <th>Subst</th> -->
                                         <th>Área</th>
                                         <th>Carga kgf</th>
                                         <th>RESIST. Mpa</th>
                                         <th>Validação</th>
-                                        <th>(A) Sub</th>
-                                        <th>(B) Sub/Arga</th>
-                                        <th>(C) Rup Arga</th>
-                                        <th>(D) Arga Cola</th>
-                                        <th>(E) Colar pastilha</th>
+                                        <th>S</th>
+                                        <th>S/A</th>
+                                        <th>A</th>
+                                        <th>A/P</th>
+                                        <th>P</th>
+                                        <th>F</th>
                                     </tr>
                                 </ng-template>
 
@@ -2378,17 +2371,15 @@
                                             />
                                         </td>
                                         <td><input pInputText [(ngModel)]="linha.area" type="text" readonly (ngModelChange)="atualizarCalculosTracaoEstufa(linha)" style="width: 95px"/></td>
-                                        <!-- <td><input pInputText [(ngModel)]="linha.espessura" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.subst" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td> -->
                                         <td><input pInputText [(ngModel)]="linha.carga" type="number" (ngModelChange)="atualizarCalculosTracaoEstufa(linha)" style="width: 70px"/></td>
                                         <td><input pInputText [(ngModel)]="linha.resist" type="text" readonly style="width: 80px"/></td>
                                         <td><input pInputText [(ngModel)]="linha.validacao" type="text" style="width: 100px" readonly/></td>
-                                        <td><input pInputText [(ngModel)]="linha.rupturas.sub" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.rupturas.subArga" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.rupturas.rupArga" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.rupturas.argaCola" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.rupturas.colarPastilha" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.substrato" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.interfaceSubstrato" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.argamassa" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.interfaceArgamassa" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.placaCeramica" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.falhaCola" type="number" style="width: 70px"/></td>
                                     </tr>
                                 </ng-template>
                             </p-table>
@@ -2507,18 +2498,16 @@
                                     <tr>
                                         <th>Nº</th>
                                         <th>Diâmetro mm</th>
-                                        <!-- <th>Aresta mm²</th>
-                                        <th>Espessura mm</th>
-                                        <th>Subst</th> -->
                                         <th>Área</th>
                                         <th>Carga kgf</th>
                                         <th>RESIST. Mpa</th>
                                         <th>Validação</th>
-                                        <th>(A) Sub</th>
-                                        <th>(B) Sub/Arga</th>
-                                        <th>(C) Rup Arga</th>
-                                        <th>(D) Arga Cola</th>
-                                        <th>(E) Colar pastilha</th>
+                                        <th>S</th>
+                                        <th>S/A</th>
+                                        <th>A</th>
+                                        <th>A/P</th>
+                                        <th>P</th>
+                                        <th>F</th>
                                     </tr>
                                 </ng-template>
 
@@ -2535,17 +2524,15 @@
                                             />
                                         </td>
                                         <td><input pInputText [(ngModel)]="linha.area" type="text" readonly (ngModelChange)="atualizarCalculosTracaoAberto(linha)" style="width: 95px"/></td>
-                                        <!-- <td><input pInputText [(ngModel)]="linha.espessura" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.subst" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.junta" type="number" style="width: 70px"/></td> -->
                                         <td><input pInputText [(ngModel)]="linha.carga" type="number" (ngModelChange)="atualizarCalculosTracaoAberto(linha)" style="width: 70px"/></td>
                                         <td><input pInputText [(ngModel)]="linha.resist" type="text" readonly style="width: 80px"/></td>
                                         <td><input pInputText [(ngModel)]="linha.validacao" type="text" style="width: 100px" readonly/></td>
-                                        <td><input pInputText [(ngModel)]="linha.rupturas.sub" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.rupturas.subArga" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.rupturas.rupArga" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.rupturas.argaCola" type="number" style="width: 70px"/></td>
-                                        <td><input pInputText [(ngModel)]="linha.rupturas.colarPastilha" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.substrato" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.interfaceSubstrato" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.argamassa" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.argamassaCola" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.placaCeramica" type="number" style="width: 70px"/></td>
+                                        <td><input pInputText [(ngModel)]="linha.rupturas.falhaCola" type="number" style="width: 70px"/></td>
                                     </tr>
                                 </ng-template>
                             </p-table>

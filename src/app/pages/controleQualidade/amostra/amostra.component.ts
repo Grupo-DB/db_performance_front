@@ -306,6 +306,10 @@ export class AmostraComponent implements OnInit {
     { value: 'Finaliza' },
     { value: 'Aditivos' },
     { value: 'Mineração' },
+    { value: 'Padrão' },
+    { value: 'Padrão Calcário' },
+    { value: 'Padrão Cal' },
+    { value: 'Outros' },
     
   ]
 

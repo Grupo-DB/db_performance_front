@@ -69,18 +69,9 @@
                                 <h2>Ordens de Serviço</h2>
                             </div>
                         </ng-template>
-                        <p-button 
-                                    label="Boletim Diário" 
-                                    tooltipPosition="top"
-                                    pTooltip="Boletim Diário de Análise"
-                                    severity="info"
-                                    (onClick)="getAnalisesBoletimDiaraio()"    
-                                >
-                                    <div class="inline-flex align-items-center">
-                                        <span><i class="pi pi-angle-down"></i></span>
-                                    </div>
-                                </p-button>
-                        <p-inplace closable="true" closeIcon="pi pi-angle-up">
+                        <div class="flex flex-row justify-content-between align-items-center w-12 gap-3">
+                            <div class="w-10">
+                                <p-inplace closable="true" closeIcon="pi pi-angle-up">
                             <ng-template pTemplate="display">
                                 <p-button 
                                     label="Formulário de OS" 
@@ -183,7 +174,22 @@
                                     </div>
                                 </form>
                             </ng-template>
-                        </p-inplace>
+                                </p-inplace>
+                            </div>
+                            <div class="flex w-2">
+                                <p-button 
+                                    label="Boletim Diário" 
+                                    tooltipPosition="top"
+                                    pTooltip="Boletim Diário de Análise"
+                                    severity="info"
+                                    (onClick)="abrirModalBoletimDiario()"    
+                                >
+                                    <div class="inline-flex align-items-center">
+                                        <span><i class="pi pi-clipboard"></i></span>
+                                    </div>
+                                </p-button>
+                            </div>    
+                        </div>    
                         <div class="step1 flex flex-column w-12 gap-3 mt-3">
                             <div class="bloco w-12 text-left">
                                 <p-table 
@@ -1688,7 +1694,7 @@
 
             <!-- Cards de Tração Normal -->
             <div *ngIf="analiseSelecionada?.tracao_normal?.linhas && analiseSelecionada.tracao_normal.linhas.length > 0">
-                <h3 class="mb-3" style="color: #e6defa;">💪 Tração Normal</h3>
+                <h3 class="mb-3" style="color: #e6defa;">Tração Normal</h3>
                 
                 <!-- Cards de Datas e Status -->
                 <div class="flex gap-3 mb-4" *ngIf="analiseSelecionada?.tracao_normal?.data_moldagem">
@@ -1824,11 +1830,12 @@
                                     </td>
                                     <td style="font-size: 0.85rem;">
                                         <div *ngIf="linha.rupturas">
-                                            <span *ngIf="linha.rupturas.sub"><b>Sub:</b> {{ linha.rupturas.sub }}</span>
-                                            <span *ngIf="linha.rupturas.subArga"> | <b>SubArga:</b> {{ linha.rupturas.subArga }}</span>
-                                            <span *ngIf="linha.rupturas.rupArga"> | <b>RupArga:</b> {{ linha.rupturas.rupArga }}</span>
-                                            <span *ngIf="linha.rupturas.argaCola"> | <b>ArgaCola:</b> {{ linha.rupturas.argaCola }}</span>
-                                            <span *ngIf="linha.rupturas.colarPastilha"> | <b>ColarPast:</b> {{ linha.rupturas.colarPastilha }}</span>
+                                            <span *ngIf="linha.rupturas.substrato"><b>S:</b> {{ linha.rupturas.substrato }}</span>
+                                            <span *ngIf="linha.rupturas.interfaceSubstrato"> | <b>S/A:</b> {{ linha.rupturas.interfaceSubstrato }}</span>
+                                            <span *ngIf="linha.rupturas.argamassa"> | <b>A:</b> {{ linha.rupturas.argamassa }}</span>
+                                            <span *ngIf="linha.rupturas.interfaceArgamassa"> | <b>A/P:</b> {{ linha.rupturas.interfaceArgamassa }}</span>
+                                            <span *ngIf="linha.rupturas.placaCeramica"> | <b>P:</b> {{ linha.rupturas.placaCeramica }}</span>
+                                            <span *ngIf="linha.rupturas.falhaCola"> | <b>F:</b> {{ linha.rupturas.falhaCola }}</span>                                            <span *ngIf="linha.rupturas.interfacePlacaCeramica"> | <b>I/P:</b> {{ linha.rupturas.interfacePlacaCeramica }}</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -1840,7 +1847,7 @@
 
             <!-- Cards de Tração Submersa -->
             <div *ngIf="analiseSelecionada?.tracao_submersa?.linhas && analiseSelecionada.tracao_submersa.linhas.length > 0">
-                <h3 class="mb-3" style="color: #e6defa;">🌊 Tração Submersa</h3>
+                <h3 class="mb-3" style="color: #e6defa;">Tração Submersa</h3>
                 
                 <!-- Cards de Datas e Status -->
                 <div class="flex gap-3 mb-4" *ngIf="analiseSelecionada?.tracao_submersa?.data_moldagem">
@@ -1976,11 +1983,12 @@
                                     </td>
                                     <td style="font-size: 0.85rem;">
                                         <div *ngIf="linha.rupturas">
-                                            <span *ngIf="linha.rupturas.sub"><b>Sub:</b> {{ linha.rupturas.sub }}</span>
-                                            <span *ngIf="linha.rupturas.subArga"> | <b>SubArga:</b> {{ linha.rupturas.subArga }}</span>
-                                            <span *ngIf="linha.rupturas.rupArga"> | <b>RupArga:</b> {{ linha.rupturas.rupArga }}</span>
-                                            <span *ngIf="linha.rupturas.argaCola"> | <b>ArgaCola:</b> {{ linha.rupturas.argaCola }}</span>
-                                            <span *ngIf="linha.rupturas.colarPastilha"> | <b>ColarPast:</b> {{ linha.rupturas.colarPastilha }}</span>
+                                            <span *ngIf="linha.rupturas.substrato"><b>S:</b> {{ linha.rupturas.substrato }}</span>
+                                            <span *ngIf="linha.rupturas.interfaceSubstrato"> | <b>S/A:</b> {{ linha.rupturas.interfaceSubstrato }}</span>
+                                            <span *ngIf="linha.rupturas.argamassa"> | <b>A:</b> {{ linha.rupturas.argamassa }}</span>
+                                            <span *ngIf="linha.rupturas.interfaceArgamassa"> | <b>A/P:</b> {{ linha.rupturas.interfaceArgamassa }}</span>
+                                            <span *ngIf="linha.rupturas.placaCeramica"> | <b>P:</b> {{ linha.rupturas.placaCeramica }}</span>
+                                            <span *ngIf="linha.rupturas.falhaCola"> | <b>F:</b> {{ linha.rupturas.falhaCola }}</span>                                            <span *ngIf="linha.rupturas.interfacePlacaCeramica"> | <b>I/P:</b> {{ linha.rupturas.interfacePlacaCeramica }}</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -1992,7 +2000,7 @@
 
             <!-- Cards de Tração Estufa -->
             <div *ngIf="analiseSelecionada?.tracao_estufa?.linhas && analiseSelecionada.tracao_estufa.linhas.length > 0">
-                <h3 class="mb-3" style="color: #e6defa;">🔥 Tração Estufa</h3>
+                <h3 class="mb-3" style="color: #e6defa;">Tração Estufa</h3>
                 
                 <!-- Cards de Datas e Status -->
                 <div class="flex gap-3 mb-4" *ngIf="analiseSelecionada?.tracao_estufa?.data_moldagem">
@@ -2128,11 +2136,12 @@
                                     </td>
                                     <td style="font-size: 0.85rem;">
                                         <div *ngIf="linha.rupturas">
-                                            <span *ngIf="linha.rupturas.sub"><b>Sub:</b> {{ linha.rupturas.sub }}</span>
-                                            <span *ngIf="linha.rupturas.subArga"> | <b>SubArga:</b> {{ linha.rupturas.subArga }}</span>
-                                            <span *ngIf="linha.rupturas.rupArga"> | <b>RupArga:</b> {{ linha.rupturas.rupArga }}</span>
-                                            <span *ngIf="linha.rupturas.argaCola"> | <b>ArgaCola:</b> {{ linha.rupturas.argaCola }}</span>
-                                            <span *ngIf="linha.rupturas.colarPastilha"> | <b>ColarPast:</b> {{ linha.rupturas.colarPastilha }}</span>
+                                            <span *ngIf="linha.rupturas.substrato"><b>S:</b> {{ linha.rupturas.substrato }}</span>
+                                            <span *ngIf="linha.rupturas.interfaceSubstrato"> | <b>S/A:</b> {{ linha.rupturas.interfaceSubstrato }}</span>
+                                            <span *ngIf="linha.rupturas.argamassa"> | <b>A:</b> {{ linha.rupturas.argamassa }}</span>
+                                            <span *ngIf="linha.rupturas.interfaceArgamassa"> | <b>A/P:</b> {{ linha.rupturas.interfaceArgamassa }}</span>
+                                            <span *ngIf="linha.rupturas.placaCeramica"> | <b>P:</b> {{ linha.rupturas.placaCeramica }}</span>
+                                            <span *ngIf="linha.rupturas.falhaCola"> | <b>F:</b> {{ linha.rupturas.falhaCola }}</span>                                            <span *ngIf="linha.rupturas.interfacePlacaCeramica"> | <b>I/P:</b> {{ linha.rupturas.interfacePlacaCeramica }}</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -2144,7 +2153,7 @@
 
             <!-- Cards de Tração Tempo Aberto -->
             <div *ngIf="analiseSelecionada?.tracao_tempo_aberto?.linhas && analiseSelecionada.tracao_tempo_aberto.linhas.length > 0">
-                <h3 class="mb-3" style="color: #e6defa;">⏱️ Tração Tempo Aberto</h3>
+                <h3 class="mb-3" style="color: #e6defa;">Tração Tempo Aberto</h3>
                 
                 <!-- Cards de Datas e Status -->
                 <div class="flex gap-3 mb-4" *ngIf="analiseSelecionada?.tracao_tempo_aberto?.data_moldagem">
@@ -2280,11 +2289,12 @@
                                     </td>
                                     <td style="font-size: 0.85rem;">
                                         <div *ngIf="linha.rupturas">
-                                            <span *ngIf="linha.rupturas.sub"><b>Sub:</b> {{ linha.rupturas.sub }}</span>
-                                            <span *ngIf="linha.rupturas.subArga"> | <b>SubArga:</b> {{ linha.rupturas.subArga }}</span>
-                                            <span *ngIf="linha.rupturas.rupArga"> | <b>RupArga:</b> {{ linha.rupturas.rupArga }}</span>
-                                            <span *ngIf="linha.rupturas.argaCola"> | <b>ArgaCola:</b> {{ linha.rupturas.argaCola }}</span>
-                                            <span *ngIf="linha.rupturas.colarPastilha"> | <b>ColarPast:</b> {{ linha.rupturas.colarPastilha }}</span>
+                                            <span *ngIf="linha.rupturas.substrato"><b>S:</b> {{ linha.rupturas.substrato }}</span>
+                                            <span *ngIf="linha.rupturas.interfaceSubstrato"> | <b>S/A:</b> {{ linha.rupturas.interfaceSubstrato }}</span>
+                                            <span *ngIf="linha.rupturas.argamassa"> | <b>A:</b> {{ linha.rupturas.argamassa }}</span>
+                                            <span *ngIf="linha.rupturas.interfaceArgamassa"> | <b>A/P:</b> {{ linha.rupturas.interfaceArgamassa }}</span>
+                                            <span *ngIf="linha.rupturas.placaCeramica"> | <b>P:</b> {{ linha.rupturas.placaCeramica }}</span>
+                                            <span *ngIf="linha.rupturas.falhaCola"> | <b>F:</b> {{ linha.rupturas.falhaCola }}</span>                                            <span *ngIf="linha.rupturas.interfacePlacaCeramica"> | <b>I/P:</b> {{ linha.rupturas.interfacePlacaCeramica }}</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -3084,13 +3094,37 @@
 >
 
     <div class="step1 flex flex-column w-12 gap-3 mt-3">
+        <div class="flex justify-content-center gap-3">
+            <p-datepicker 
+                [(ngModel)]="dataInicial" 
+                dateFormat="dd/mm/yy" 
+                [showIcon]="true"
+                placeholder="Selecione a data inicial"
+            >
+            </p-datepicker>
+            <p-datepicker 
+                [(ngModel)]="dataFinal" 
+                dateFormat="dd/mm/yy" 
+                [showIcon]="true"
+                placeholder="Selecione a data final"
+            ></p-datepicker>
+            <p-button 
+                label="Alterar Data Boletim Diário" 
+                severity="success" 
+                icon="pi pi-clipboard" 
+                iconPos="right" 
+                tooltipPosition="top" 
+                pTooltip="Alterar Período do Boletim Diário" 
+                (onClick)="getAnalisesBoletimDiaraio()"
+            />
+        </div>
         <div class="bloco w-12 text-left">
             <h2 style="color: #EEEEEE; margin-left: 10px;">Análises de Calcário</h2>
             <p-table 
                 #dt2 
                 [value]="analisesCalcario" 
                 [paginator]="true"
-                 [rows]="30"
+                 [rows]="10"
                 [rowsPerPageOptions]="[20, 30, 50]" 
                 [loading]="loading"
             >
@@ -3102,7 +3136,7 @@
                         <th rowspan="2">Local</th>
                         <th rowspan="2">Informação Complementar</th>
                         <th rowspan="2">Umidade %</th>
-                        <th rowspan="2">Ri + So2 %</th>
+                        <th rowspan="2">Ri + Silica %</th>
                         <th colspan="4" style="text-align: center;">Granulometria %</th>
                         <th rowspan="2">RE %</th>
                         <th rowspan="2">PN %</th>
@@ -3124,7 +3158,7 @@
                     <td>{{ analise.amostra_detalhes?.local_coleta }}</td>
                     <td>{{ analise.amostra_detalhes?.observacoes }}</td>
                     <td>{{ getValorEnsaioPorId(analise, 131)  }}</td>
-                    <td>{{ getValorEnsaioPorId(analise, 76) }}</td>
+                    <td>{{ getValorEnsaioPorId(analise, 560) }}</td>
                     <td>{{ getValorPeneira(analise, '# 10 - ABNT/ASTM 10 - 2,00 mm')  }}</td>
                     <td>{{ getValorPeneira(analise, '# 20 - ABNT/ASTM 20 - 0,850 mm')  }}</td>
                     <td>{{ getValorPeneira(analise, '# 50 - ABNT/ASTM 50 - 0,300 mm')  }}</td>
@@ -3145,7 +3179,7 @@
                 #dt2 
                 [value]="analisesCal" 
                 [paginator]="true"
-                 [rows]="30"
+                [rows]="10"
                 [rowsPerPageOptions]="[20, 30, 50]" 
                 [loading]="loading"
             >
@@ -3155,19 +3189,17 @@
                         <th rowspan="2">Data de Coleta</th>
                         <th rowspan="2">Tipo</th>
                         <th rowspan="2">Local</th>
-                       
-                        <th rowspan="2">Ri+SO2 %</th>
-                        <th rowspan="2">Ro %</th>
+                        <th rowspan="2">Ri + Silica %</th>
                         <th rowspan="2">Perda ao Fogo %</th>
                         <th rowspan="2">CO2 %</th>
                         <th colspan="7" style="text-align: center;">Granulometria %</th>
                         
                     </tr>
                     <tr>
-                        <th>% RET #10<br>(2mm)</th>
-                        <th>% RET #20<br>(0,84mm)</th>
-                        <th>% RET #50<br>(0,30mm)</th>
-                        <th>% PAS #50<br>(0,30mm)</th>
+                        <th>% RET #18<br>(1mm)</th>
+                        <th>% RET #30<br>(0,600mm)</th>
+                        <th>% RET #50<br>(0,300mm)</th>
+                        <th>% PAS #50<br>(0,300mm)</th>
                         <th>% RET #200<br>(0,075mm)</th>
                         <th>% RET #325<br>(0,045mm)</th>
                     </tr>
@@ -3179,17 +3211,20 @@
                     <td>{{ analise.amostra_detalhes?.data_coleta | date:'dd/MM/yyyy' }}</td>
                     <td>{{ analise.amostra_detalhes?.produto_amostra_detalhes?.tipo }}</td>
                     <td>{{ analise.amostra_detalhes?.local_coleta }}</td>
-                    
-                    <td>{{ getValorEnsaioPorId(analise, 76) }}</td>
-                    <td>{{ getValorEnsaioPorId(analise, 139)  }}</td>
+                    <td>{{ getValorEnsaioPorId(analise, 560) }}</td>
                     <td>{{ getValorEnsaioPorId(analise, 130)  }}</td>
                     <td>{{ getValorCalculoPorId(analise, 132)  }}</td>
-                    <td>{{ getValorPeneira(analise, '# 18 - ABNT/ASTM 18 - 1,00 mm')  }}</td>
-                    <td>{{ getValorPeneira(analise, '# 30 - ABNT/ASTM 30 - 0,600 mm')  }}</td>
-                    <td>{{ getValorPeneira(analise, '# 50 - ABNT/ASTM 50 - 0,300 mm')  }}</td>
-                    <td>{{ getValorPeneiraPassante(analise, '# 50 - ABNT/ASTM 50 - 0,300 mm')  }}</td><!--  Verificar Retido Total-->
-                    <td>{{ getValorPeneira(analise, '# 200 - ABNT/ASTM 200 - 0,075 mm')  }}</td>
-                    <td>{{ getValorPeneira(analise, '# 325 - ABNT/ASTM 325 - 0,045 mm')  }}</td>
+                    <td *ngIf="analise.amostra_detalhes?.produto_amostra_detalhes?.tipo.toLowerCase() != 'virgem'">{{ getValorPeneiraUmida(analise, '# 18 - ABNT/ASTM 18 - 1,00 mm')  }}</td>
+                    <td *ngIf="analise.amostra_detalhes?.produto_amostra_detalhes?.tipo.toLowerCase() == 'virgem'">{{ getValorPeneira(analise, '# 18 - ABNT/ASTM 18 - 1,00 mm')  }}</td>
+                    <td *ngIf="analise.amostra_detalhes?.produto_amostra_detalhes?.tipo.toLowerCase() != 'virgem'">{{ getValorPeneiraUmida(analise, '# 30 - ABNT/ASTM 30 - 0,600 mm')  }}</td>
+                    <td *ngIf="analise.amostra_detalhes?.produto_amostra_detalhes?.tipo.toLowerCase() == 'virgem'">{{ getValorPeneira(analise, '# 30 - ABNT/ASTM 30 - 0,600 mm')  }}</td>
+                    <td *ngIf="analise.amostra_detalhes?.produto_amostra_detalhes?.tipo.toLowerCase() != 'virgem'">{{ getValorPeneiraUmida(analise, '# 50 - ABNT/ASTM 50 - 0,300 mm')  }}</td>
+                    <td *ngIf="analise.amostra_detalhes?.produto_amostra_detalhes?.tipo.toLowerCase() == 'virgem'">{{ getValorPeneira(analise, '# 50 - ABNT/ASTM 50 - 0,300 mm')  }}</td>
+                    <td>{{ getValorPeneiraPassante(analise, '# 50 - ABNT/ASTM 50 - 0,300 mm')  }}</td>
+                    <td *ngIf="analise.amostra_detalhes?.produto_amostra_detalhes?.tipo.toLowerCase() != 'virgem'">{{ getValorPeneiraUmida(analise, '# 200 - ABNT/ASTM 200 - 0,075 mm')  }}</td>
+                    <td *ngIf="analise.amostra_detalhes?.produto_amostra_detalhes?.tipo.toLowerCase() == 'virgem'">{{ getValorPeneira(analise, '# 200 - ABNT/ASTM 200 - 0,075 mm')  }}</td>
+                    <td *ngIf="analise.amostra_detalhes?.produto_amostra_detalhes?.tipo.toLowerCase() != 'virgem'">{{ getValorPeneiraUmida(analise, '# 325 - ABNT/ASTM 325 - 0,045 mm')  }}</td>
+                    <td *ngIf="analise.amostra_detalhes?.produto_amostra_detalhes?.tipo.toLowerCase() == 'virgem'">{{ getValorPeneira(analise, '# 325 - ABNT/ASTM 325 - 0,045 mm')  }}</td>
                 </tr>
                 </ng-template>
             </p-table>

@@ -53,6 +53,7 @@ import autoTable, { CellInput } from "jspdf-autotable";
 import { Chart } from 'chart.js';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { CalendarModule } from 'primeng/calendar';
 
 interface OrdemForm {
   data: FormControl,
@@ -88,7 +89,8 @@ export interface Ordem {
     MultiSelectModule, DatePickerModule, StepperModule,InputIcon, FieldsetModule, 
     MenuModule, SplitButtonModule, DrawerModule, SpeedDialModule, InplaceModule,
     NzButtonModule, NzIconModule, NzUploadModule, ToggleSwitchModule, TooltipModule, 
-    TagModule, CheckboxModule,TreeTableModule,ProgressSpinnerModule,SkeletonModule
+    TagModule, CheckboxModule,TreeTableModule,ProgressSpinnerModule,SkeletonModule,
+    DatePickerModule
   ],
   animations: [
     trigger('efeitoFade',[
@@ -206,10 +208,10 @@ export class OrdemComponent implements OnInit {
   analiseSelecionada: any;
 
   // Datas para Boletim Diário
-  dataInicial: Date = new Date(2026, 1, 10);
-  dataFinal: Date = new Date(2026, 1, 14);
-  //dataInicial: Date = new Date();
-  //dataFinal: Date = new Date(Date.now() + 1000 * 60 * 60 * 24); // Data final é um dia após a data inicial
+  //dataInicial: Date = new Date(2026, 1, 10);
+  //dataFinal: Date = new Date(2026, 1, 14);
+  dataInicial: Date = new Date();
+  dataFinal: Date = new Date(Date.now() + 1000 * 60 * 60 * 24); // Data final é um dia após a data inicial
   analisesBoletimDiario: any[] = [];
   analisesCalcario: any[] = [];
   analisesCal: any[] = [];
@@ -982,8 +984,12 @@ gerarNumero(materialNome: string, sequencial: number): string {
     return null;
   }
 
-getAnalisesBoletimDiaraio() {
+abrirModalBoletimDiario(){
   this.modalBoletimDiario = true;
+  this.getAnalisesBoletimDiaraio();
+}  
+
+getAnalisesBoletimDiaraio() {
   this.analiseService.getAnalisesBoletimDiario(this.dataInicial, this.dataFinal).subscribe({
     next: (response: any[]) => {
       this.analisesBoletimDiario = response.map(analise => {
@@ -5969,7 +5975,7 @@ getAnalisesBoletimDiaraio() {
           [
             {
               content: 'Determinação da resistência de aderência Tempo Aberto - NBR 14081-3',
-              colSpan: 9,
+              colSpan: 11,
               styles: {
                 halign: 'center',
                 fontSize: 10,
@@ -5999,7 +6005,7 @@ getAnalisesBoletimDiaraio() {
           },
           {
             content: `Tempo em Aberto: `,
-            colSpan: 2,
+            colSpan: 3,
             styles: {
               fontStyle: 'bold',
               halign: 'left',
@@ -6007,8 +6013,8 @@ getAnalisesBoletimDiaraio() {
             }
           },
           {
-            content: `Tipos de Ruptura: `,
-            colSpan: 2,
+            content: `Tipo de Ruptura: `,
+            colSpan: 3,
             styles: {
               fontStyle: 'bold',
               halign: 'left',
@@ -6022,12 +6028,13 @@ getAnalisesBoletimDiaraio() {
             { content: 'Área (mm²)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
             { content: 'Carga (Kgf)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
             { content: 'Resist (MPa)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-            { content: '(A) Sub', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-            { content: '(B) Sub/Arga', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-            { content: '(C) Rup Arga', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-            { content: '(D) Arga Cola', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-            { content: '(E) Colar pastilha', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-        ],
+            { content: '(S)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+            { content: '(S/A)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+            { content: '(A)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+            { content: '(A/P)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+            { content: '(P)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+            { content: '(F)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          ],
 
           ...Array.from({ length: 10 }, (_, i) => [
           { content: (i + 1).toString(), styles: { fillColor: [248, 248, 255] }},
@@ -6059,7 +6066,7 @@ getAnalisesBoletimDiaraio() {
         [
           {
             content: 'Determinação da resistência aderência à tração Cura Normal - NBR 14081-4',
-            colSpan: 10,
+            colSpan: 11,
             styles: {
               halign: 'center',
               lineWidth: 0.5,
@@ -6084,7 +6091,7 @@ getAnalisesBoletimDiaraio() {
           },
           {
             content: `Desvio Padrão: `,
-            colSpan: 3,
+            colSpan: 4,
             styles: {
               fontStyle: 'bold',
               halign: 'left',
@@ -6094,7 +6101,7 @@ getAnalisesBoletimDiaraio() {
             }
           },
           {
-            content: `Tipos de Ruptura: `,
+            content: `Tipo de Ruptura: `,
             colSpan: 3,
             styles: {
               fontStyle: 'bold',
@@ -6111,11 +6118,12 @@ getAnalisesBoletimDiaraio() {
           { content: 'Área (mm²)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
           { content: 'Carga (Kgf)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
           { content: 'Resist (MPa)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: '(A) Sub', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: '(B) Sub/Arga', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: '(C) Rup Arga', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: '(D) Arga Cola', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: '(E) Colar pastilha', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(S)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(S/A)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(A)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(A/P)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(P)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(F)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
         ],
         ...Array.from({ length: 10 }, (_, i) => [
           { content: (i + 1).toString(), styles: { fillColor: [248, 248, 255] }},
@@ -6151,7 +6159,7 @@ getAnalisesBoletimDiaraio() {
           [
             {
               content: 'Determinação da resistência aderência à tração Cura com imersão em água - NBR 14081-4',
-              colSpan: 9,
+              colSpan: 11,
               styles: {
                 halign: 'center',
                 fontSize: 10,
@@ -6172,7 +6180,7 @@ getAnalisesBoletimDiaraio() {
           },
           {
             content: `Desvio Padrão: `,
-            colSpan: 3,
+            colSpan: 4,
             styles: {
               fontStyle: 'bold',
               halign: 'left',
@@ -6180,8 +6188,8 @@ getAnalisesBoletimDiaraio() {
             }
           },
           {
-            content: `Tipos de Ruptura: `,
-            colSpan: 3,
+            content: `Tipo de Ruptura: `,
+            colSpan: 4,
             styles: {
               fontStyle: 'bold',
               halign: 'left',
@@ -6193,12 +6201,14 @@ getAnalisesBoletimDiaraio() {
               { content: 'Nº', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
               { content: 'Lado (mm)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
               { content: 'Área (mm²)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+              { content: 'Carga (Kgf)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
               { content: 'Resist (MPa)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-              { content: '(A) Sub', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-              { content: '(B) Sub/Arga', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-              { content: '(C) Rup Arga', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-              { content: '(D) Arga Cola', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-              { content: '(E) Colar pastilha', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+              { content: '(S)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+              { content: '(S/A)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+              { content: '(A)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+              { content: '(A/P)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+              { content: '(P)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+              { content: '(F)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
         ],
 
           ...Array.from({ length: 10 }, (_, i) => [
@@ -6232,7 +6242,7 @@ getAnalisesBoletimDiaraio() {
           [
             {
               content: 'Determinação da resistência aderência à tração Cura com aquecimento em estufa - NBR 14081-4',
-              colSpan: 9,
+              colSpan: 11,
               styles: {
                 halign: 'center',
                 fontSize: 10,
@@ -6253,7 +6263,7 @@ getAnalisesBoletimDiaraio() {
           },
           {
             content: `Desvio Padrão: `,
-            colSpan: 3,
+            colSpan: 4,
             styles: {
               fontStyle: 'bold',
               halign: 'left',
@@ -6261,8 +6271,8 @@ getAnalisesBoletimDiaraio() {
             }
           },
           {
-            content: `Tipos de Ruptura: `,
-            colSpan: 3,
+            content: `Tipo de Ruptura: `,
+            colSpan: 4,
             styles: {
               fontStyle: 'bold',
               halign: 'left',
@@ -6276,11 +6286,12 @@ getAnalisesBoletimDiaraio() {
           { content: 'Área (mm²)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
           { content: 'Carga (Kgf)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
           { content: 'Resist (MPa)', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: '(A) Sub', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: '(B) Sub/Arga', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: '(C) Rup Arga', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: '(D) Arga Cola', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
-          { content: '(E) Colar pastilha', styles: { halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(S)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(S/A)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(A)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(A/P)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(P)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
+          { content: '(F)', styles: { minCellWidth: 12, halign: 'center', fontStyle: 'bold', fillColor: [225, 232, 237] }},
         ],
 
           ...Array.from({ length: 10 }, (_, i) => [

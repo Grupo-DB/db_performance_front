@@ -1,3 +1,4 @@
+
 import { ChangeDetectorRef, Component, OnInit, OnDestroy, HostListener, ViewChild,ElementRef } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CanComponentDeactivate } from '../../../guards/can-deactivate.guard';
@@ -150,18 +151,16 @@ interface LinhaTracaoNormal {
   numero: number;
   diametro: number | null;
   area: number | null;
-  //espessura: number | null;
-  //subst: number | null;
-  //junta: number | null;
   carga: number | null;
   resist: number | null;
   validacao: string;
   rupturas: {
-    sub: number | null;
-    subArga: number | null;
-    rupArga: number | null;
-    argaCola: number | null;
-    colarPastilha: number | null;
+    substrato: number | null;
+    interfaceSubstrato: number | null;
+    argamassa: number | null;
+    interfaceArgamassa: number | null;
+    placaCeramica: number | null;
+    falhaCola: number | null;
   };
 }
 
@@ -169,18 +168,16 @@ interface LinhaTracaoSubmersa {
   numero: number;
   diametro: number | null;
   area: number | null;
-  //espessura: number | null;
-  //subst: number | null;
-  //junta: number | null;
   carga: number | null;
   resist: number | null;
   validacao: string;
   rupturas: {
-    sub: number | null;
-    subArga: number | null;
-    rupArga: number | null;
-    argaCola: number | null;
-    colarPastilha: number | null;
+    substrato: number | null;
+    interfaceSubstrato: number | null;
+    argamassa: number | null;
+    interfaceArgamassa: number | null;
+    placaCeramica: number | null;
+    falhaCola: number | null;
   };
 }
 
@@ -188,18 +185,16 @@ interface LinhaTracaoEstufa {
   numero: number;
   diametro: number | null;
   area: number | null;
-  //espessura: number | null;
-  //subst: number | null;
-  //junta: number | null;
   carga: number | null;
   resist: number | null;
   validacao: string;
   rupturas: {
-    sub: number | null;
-    subArga: number | null;
-    rupArga: number | null;
-    argaCola: number | null;
-    colarPastilha: number | null;
+    substrato: number | null;
+    interfaceSubstrato: number | null;
+    argamassa: number | null;
+    interfaceArgamassa: number | null;
+    placaCeramica: number | null;
+    falhaCola: number | null;
   };
 }
 
@@ -207,18 +202,16 @@ interface LinhaTracaoAberto {
   numero: number;
   diametro: number | null;
   area: number | null;
- // espessura: number | null;
-  //subst: number | null;
-  //junta: number | null;
   carga: number | null;
   resist: number | null;
   validacao: string;
   rupturas: {
-    sub: number | null;
-    subArga: number | null;
-    rupArga: number | null;
-    argaCola: number | null;
-    colarPastilha: number | null;
+    substrato: number | null;
+    interfaceSubstrato: number | null;
+    argamassa: number | null;
+    interfaceArgamassa: number | null;
+    placaCeramica: number | null;
+    falhaCola: number | null;
   };
 }
 
@@ -383,6 +376,11 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
     { nome: 'Matriz', descricao: 'Laboratório Matriz' },
     { nome: 'ATM', descricao: 'Laboratório ATM' },
   ];
+
+  // ================= VARIAVEIS PARA PLANO CAL COMPLETO =================
+  ensaioEnviado: any;
+  mgCombSo4: any;
+  caoCombCo2: any;
   // Controle para evitar múltiplas confirmações
   private confirmacoesAbertas = new Set<string>();
   ensaiosDisponiveis: any[] = [];
@@ -555,6 +553,7 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   // Lista de variáveis de fator disponíveis (carregadas do backend)
   variaveisFatorDisponiveis: any[] = [];
 
+  ensaioValor: any;
 
 
   materiaisOrganicos = [
@@ -930,7 +929,6 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
     this.carregarVariaveisFator(); // Carregar variáveis de fator disponíveis
     // Inicializar sistema de alertas
     this.iniciarSistemaAlertas();
-
     //chamo os itens aqui para não ficar chamamdo toda hora
     //AQUI NÃO FUNCIONOU______na linha 454 funcionou
     // this.menuArgamassa = this.getItensArgamassa(this.analise);
@@ -3669,9 +3667,10 @@ downloadImagemGrafico(): void {
           //AQUI CARREGOU
           this.menuArgamassa = this.getItensArgamassa(analise);
           this.menuPeneira = this.getItensPeneira(analise);
+          //this.startCalcompleo();
         },
         (error) => {
-          // console.error('Erro ao buscar análise:', error);
+           console.error('Erro ao buscar análise:', error);
         }
       );
     }
@@ -6882,7 +6881,7 @@ calcularEnsaioDireto(ensaio: any, planoRef?: any) {
     } catch (re) {
     }
     // Se não há tokens (varX/ensaioNN), ainda assim avalie a expressão. 
-    const resultado = this.evaluateSeguro(expressao, scope);
+   const resultado = this.evaluateSeguro(expressao, scope);
     // Se o resultado é um timestamp (resultado de função de data), converter para data legível
   if (ensaio.funcao.includes('adicionarDias') || ensaio.funcao.includes('hoje') || ensaio.funcao.includes('diasEntre')) {
       // Verificar se o resultado é um timestamp válido
@@ -6890,8 +6889,10 @@ calcularEnsaioDireto(ensaio: any, planoRef?: any) {
         const dataResultado = new Date(resultado);
         ensaio.valor = dataResultado.toLocaleDateString('pt-BR');
         ensaio.valorTimestamp = resultado; // manter timestamp para cálculos
+          
       } else {
         ensaio.valor = resultado;
+        console.log('Resdfvgsfyjhdgjhmfjkgfkgj:', resultado);
       }
       } else {
         if (typeof resultado === 'number' && isFinite(resultado)) {
@@ -6901,12 +6902,27 @@ calcularEnsaioDireto(ensaio: any, planoRef?: any) {
         } else {
           // Mantém valor anterior se resultado inválido
           ensaio.valor = valorAnterior;
-        }
-      }
+        }      
+      
+    }
+
+    this.ensaioEnviado = ensaio;
+
     // Verificar alerta Fechamento após cálculo do ensaio
     const plano = planoRef || this.encontrarPlanoDoEnsaio(ensaio);
+
+    if (plano && Array.isArray(plano.ensaio_detalhes)) {
+      const ensaio126 = plano.ensaio_detalhes.find((e: any) => e.id === 126);
+      if (ensaio126) {
+        console.log('[DEBUG] Valor do ensaio 126:', ensaio126.valor);
+      } else {
+        console.log('[DEBUG] Ensaio 126 não encontrado no plano.');
+      }
+    }
+
     this.verificarAlertaFechamento(ensaio, plano);
     this.verificarAlertaPRNT(ensaio);
+    this.startCalcompleo(this.ensaioEnviado);
     // Remover recálculo automático aqui para evitar loops de alertas
     this.forcarDeteccaoMudancas();
     } catch (error) {
@@ -11186,18 +11202,16 @@ onTracaoAbertoDataMoldagemChange():void {
         numero: item.numero ?? index + 1,
         diametro: item.diametro ?? 50,
         area: item.area ?? 2500,
-        //espessura: item.espessura ?? null,
-        //subst: item.subst ?? null,
-        //junta: item.junta ?? null,
         carga: item.carga ?? null,
         resist: item.resist ?? null,
         validacao: item.validacao ?? "",
         rupturas: {
-          sub: item.rupturas?.sub ?? null,
-          subArga: item.rupturas?.subArga ?? null,
-          rupArga: item.rupturas?.rupArga ?? null,
-          argaCola: item.rupturas?.argaCola ?? null,
-          colarPastilha: item.rupturas?.colarPastilha ?? null
+          substrato: item.rupturas?.substrato ?? null,
+          interfaceSubstrato: item.rupturas?.interfaceSubstrato ?? null,
+          argamassa: item.rupturas?.argamassa ?? null,
+          interfaceArgamassa: item.rupturas?.interfaceArgamassa ?? null,
+          placaCeramica: item.rupturas?.placaCeramica ?? null,
+          falhaCola: item.rupturas?.falhaCola ?? null
         }
       }));
     }else if (analise?.tracao_normal?.linhas && Array.isArray(analise.tracao_normal.linhas)) {
@@ -11220,18 +11234,16 @@ onTracaoAbertoDataMoldagemChange():void {
         numero: item.numero ?? index + 1,
         diametro: item.diametro ?? 50,
         area: item.area ?? 2500,
-        //espessura: item.espessura ?? null,
-        //subst: item.subst ?? null,
-        //junta: item.junta ?? null,
         carga: item.carga ?? null,
         resist: item.resist ?? null,
         validacao: item.validacao ?? "",
         rupturas: {
-          sub: item.rupturas?.sub ?? null,
-          subArga: item.rupturas?.subArga ?? null,
-          rupArga: item.rupturas?.rupArga ?? null,
-          argaCola: item.rupturas?.argaCola ?? null,
-          colarPastilha: item.rupturas?.colarPastilha ?? null
+          substrato: item.rupturas?.substrato ?? null,
+          interfaceSubstrato: item.rupturas?.interfaceSubstrato ?? null,
+          argamassa: item.rupturas?.argamassa ?? null,
+          interfaceArgamassa: item.rupturas?.interfaceArgamassa ?? null,
+          placaCeramica: item.rupturas?.placaCeramica ?? null,
+          falhaCola: item.rupturas?.falhaCola ?? null
         }
       }));
       while (this.linhasTracaoNormal.length < 10) {
@@ -11240,18 +11252,16 @@ onTracaoAbertoDataMoldagemChange():void {
           numero,
           diametro: 50,
           area: 2500,
-          //espessura: null,
-          //subst: null,
-          //junta: null,
           carga: null,
           resist: null,
           validacao: "",
           rupturas: {
-            sub: null,
-            subArga: null,
-            rupArga: null,
-            argaCola: null,
-            colarPastilha: null
+            substrato: null,
+            interfaceSubstrato: null,
+            argamassa: null,
+            interfaceArgamassa: null,
+            placaCeramica: null,
+            falhaCola: null
           }
         });
       }
@@ -11299,18 +11309,16 @@ onTracaoAbertoDataMoldagemChange():void {
           numero: i,
           diametro: 50,
           area: 2500,
-          //espessura: null,
-          //subst: null,
-          //junta: null,
           carga: null,
           resist: null,
           validacao: "",
           rupturas: {
-            sub: null,
-            subArga: null,
-            rupArga: null,
-            argaCola: null,
-            colarPastilha: null
+            substrato: null,
+            interfaceSubstrato: null,
+            argamassa: null,
+            interfaceArgamassa: null,
+            placaCeramica: null,
+            falhaCola: null
           }
         });
       }
@@ -11324,21 +11332,23 @@ onTracaoAbertoDataMoldagemChange():void {
 
      // Calcular tipo_ruptura baseado na maior soma das rupturas
     const somaRupturas = {
-      A: 0,  // sub
-      B: 0,  // subArga
-      C: 0,  // rupArga
-      D: 0,  // argaCola
-      E: 0   // colarPastilha
+      S: 0,  // substrato
+      SA: 0,  // subArga
+      A: 0,  // rupArga
+      AP: 0,  // argaCola
+      P: 0,   // colarPastilha
+      F: 0
     };
 
     // Somar os valores numéricos de cada coluna de ruptura
     this.linhasTracaoNormal.forEach((linha: any) => {
       if (linha.rupturas) {
-        somaRupturas.A += Number(linha.rupturas.sub) || 0;
-        somaRupturas.B += Number(linha.rupturas.subArga) || 0;
-        somaRupturas.C += Number(linha.rupturas.rupArga) || 0;
-        somaRupturas.D += Number(linha.rupturas.argaCola) || 0;
-        somaRupturas.E += Number(linha.rupturas.colarPastilha) || 0;
+        somaRupturas.S += Number(linha.rupturas.substrato) || 0;
+        somaRupturas.SA += Number(linha.rupturas.interfaceSubstrato) || 0;
+        somaRupturas.A += Number(linha.rupturas.argamassa) || 0;
+        somaRupturas.AP += Number(linha.rupturas.interfaceArgamassa) || 0;
+        somaRupturas.P += Number(linha.rupturas.placaCeramica) || 0;
+        somaRupturas.F += Number(linha.rupturas.falhaCola) || 0;
       }
     });
 
@@ -11468,18 +11478,16 @@ onTracaoAbertoDataMoldagemChange():void {
         numero: item.numero ?? index + 1,
         diametro: item.diametro ?? null,
         area: item.area ?? null,
-        //espessura: item.espessura ?? null,
-        //subst: item.subst ?? null,
-        //junta: item.junta ?? null,
         carga: item.carga ?? null,
         resist: item.resist ?? null,
         validacao: item.validacao ?? "",
         rupturas: {
-          sub: item.rupturas?.sub ?? null,
-          subArga: item.rupturas?.subArga ?? null,
-          rupArga: item.rupturas?.rupArga ?? null,
-          argaCola: item.rupturas?.argaCola ?? null,
-          colarPastilha: item.rupturas?.colarPastilha ?? null
+          substrato: item.rupturas?.substrato ?? null,
+          interfaceSubstrato: item.rupturas?.interfaceSubstrato ?? null,
+          argamassa: item.rupturas?.argamassa ?? null,
+          interfaceArgamassa: item.rupturas?.interfaceArgamassa ?? null,
+          placaCeramica: item.rupturas?.placaCeramica ?? null,
+          falhaCola: item.rupturas?.falhaCola ?? null
         }
       }));
     }else if (analise?.tracao_submersa?.linhas && Array.isArray(analise.tracao_submersa.linhas)) {
@@ -11502,18 +11510,16 @@ onTracaoAbertoDataMoldagemChange():void {
         numero: item.numero ?? index + 1,
         diametro: item.diametro ?? 50,
         area: item.area ?? 2500,
-        //espessura: item.espessura ?? null,
-        //subst: item.subst ?? null,
-        //junta: item.junta ?? null,
         carga: item.carga ?? null,
         resist: item.resist ?? null,
         validacao: item.validacao ?? "",
         rupturas: {
-          sub: item.rupturas?.sub ?? null,
-          subArga: item.rupturas?.subArga ?? null,
-          rupArga: item.rupturas?.rupArga ?? null,
-          argaCola: item.rupturas?.argaCola ?? null,
-          colarPastilha: item.rupturas?.colarPastilha ?? null
+          substrato: item.rupturas?.substrato ?? null,
+          interfaceSubstrato: item.rupturas?.interfaceSubstrato ?? null,
+          argamassa: item.rupturas?.argamassa ?? null,
+          interfaceArgamassa: item.rupturas?.interfaceArgamassa ?? null,
+          placaCeramica: item.rupturas?.placaCeramica ?? null,
+          falhaCola: item.rupturas?.falhaCola ?? null
         }
       }));
       while (this.linhasTracaoSubmersa.length < 10) {
@@ -11522,18 +11528,16 @@ onTracaoAbertoDataMoldagemChange():void {
           numero,
           diametro: 50,
           area: 2500,
-          //espessura: null,
-          //subst: null,
-          //junta: null,
           carga: null,
           resist: null,
           validacao: "",
           rupturas: {
-            sub: null,
-            subArga: null,
-            rupArga: null,
-            argaCola: null,
-            colarPastilha: null
+            substrato: null,
+            interfaceSubstrato: null,
+            argamassa: null,
+            interfaceArgamassa: null,
+            placaCeramica: null,
+            falhaCola: null
           }
         });
       }
@@ -11577,18 +11581,16 @@ onTracaoAbertoDataMoldagemChange():void {
           numero: i,
           diametro: 50,
           area: 2500,
-          //espessura: null,
-          //subst: null,
-          //junta: null,
           carga: null,
           resist: null,
           validacao: "",
           rupturas: {
-            sub: null,
-            subArga: null,
-            rupArga: null,
-            argaCola: null,
-            colarPastilha: null
+            substrato: null,
+            interfaceSubstrato: null,
+            argamassa: null,
+            interfaceArgamassa: null,
+            placaCeramica: null,
+            falhaCola: null
           }
         });
       }
@@ -11602,21 +11604,23 @@ onTracaoAbertoDataMoldagemChange():void {
 
     // Calcular tipo_ruptura baseado na maior soma das rupturas
     const somaRupturas = {
-      A: 0,  // sub
-      B: 0,  // subArga
-      C: 0,  // rupArga
-      D: 0,  // argaCola
-      E: 0   // colarPastilha
+      S: 0,  // substrato
+      SA: 0,  // interfaceSubstrato
+      A: 0,  // argamassa
+      AP: 0,  // interfaceArgamassa
+      P: 0,   // placaCeramica
+      F: 0
     };
 
     // Somar os valores numéricos de cada coluna de ruptura
     this.linhasTracaoSubmersa.forEach((linha: any) => {
-      if (linha.rupturas) {
-        somaRupturas.A += Number(linha.rupturas.sub) || 0;
-        somaRupturas.B += Number(linha.rupturas.subArga) || 0;
-        somaRupturas.C += Number(linha.rupturas.rupArga) || 0;
-        somaRupturas.D += Number(linha.rupturas.argaCola) || 0;
-        somaRupturas.E += Number(linha.rupturas.colarPastilha) || 0;
+       if (linha.rupturas) {
+        somaRupturas.S += Number(linha.rupturas.substrato) || 0;
+        somaRupturas.SA += Number(linha.rupturas.interfaceSubstrato) || 0;
+        somaRupturas.A += Number(linha.rupturas.argamassa) || 0;
+        somaRupturas.AP += Number(linha.rupturas.interfaceArgamassa) || 0;
+        somaRupturas.P += Number(linha.rupturas.placaCeramica) || 0;
+        somaRupturas.F += Number(linha.rupturas.falhaCola) || 0;
       }
     });
 
@@ -11747,18 +11751,16 @@ onTracaoAbertoDataMoldagemChange():void {
         numero: item.numero ?? index + 1,
         diametro: item.diametro ?? 50,
         area: item.area ?? 2500,
-        //espessura: item.espessura ?? null,
-        //subst: item.subst ?? null,
-        //junta: item.junta ?? null,
         carga: item.carga ?? null,
         resist: item.resist ?? null,
         validacao: item.validacao ?? "",
         rupturas: {
-          sub: item.rupturas?.sub ?? null,
-          subArga: item.rupturas?.subArga ?? null,
-          rupArga: item.rupturas?.rupArga ?? null,
-          argaCola: item.rupturas?.argaCola ?? null,
-          colarPastilha: item.rupturas?.colarPastilha ?? null
+          substrato: item.rupturas?.substrato ?? null,
+          interfaceSubstrato: item.rupturas?.interfaceSubstrato ?? null,
+          argamassa: item.rupturas?.argamassa ?? null,
+          interfaceArgamassa: item.rupturas?.interfaceArgamassa ?? null,
+          placaCeramica: item.rupturas?.placaCeramica ?? null,
+          falhaCola: item.rupturas?.falhaCola ?? null
         }
       }));
     }else if (analise?.tracao_estufa?.linhas && Array.isArray(analise.tracao_estufa.linhas)) {
@@ -11781,18 +11783,16 @@ onTracaoAbertoDataMoldagemChange():void {
         numero: item.numero ?? index + 1,
         diametro: item.diametro ?? 50,
         area: item.area ?? 2500,
-        //espessura: item.espessura ?? null,
-        //subst: item.subst ?? null,
-        //junta: item.junta ?? null,
         carga: item.carga ?? null,
         resist: item.resist ?? null,
         validacao: item.validacao ?? "",
         rupturas: {
-          sub: item.rupturas?.sub ?? null,
-          subArga: item.rupturas?.subArga ?? null,
-          rupArga: item.rupturas?.rupArga ?? null,
-          argaCola: item.rupturas?.argaCola ?? null,
-          colarPastilha: item.rupturas?.colarPastilha ?? null
+          substrato: null,
+          interfaceSubstrato: null,
+          argamassa: null,
+          interfaceArgamassa: null,
+          placaCeramica: null,
+          falhaCola: null
         }
       }));
       while (this.linhasTracaoEstufa.length < 10) {
@@ -11801,18 +11801,16 @@ onTracaoAbertoDataMoldagemChange():void {
           numero,
           diametro: 50,
           area: 2500,
-          //espessura: null,
-          //subst: null,
-          //junta: null,
           carga: null,
           resist: null,
           validacao: "",
           rupturas: {
-            sub: null,
-            subArga: null,
-            rupArga: null,
-            argaCola: null,
-            colarPastilha: null
+            substrato: null,
+            interfaceSubstrato: null,
+            argamassa: null,
+            interfaceArgamassa: null,
+            placaCeramica: null,
+            falhaCola: null
           }
         });
       }
@@ -11856,18 +11854,16 @@ onTracaoAbertoDataMoldagemChange():void {
           numero: i,
           diametro: 50,
           area: 2500,
-          //espessura: null,
-          //subst: null,
-          //junta: null,
           carga: null,
           resist: null,
           validacao: "",
           rupturas: {
-            sub: null,
-            subArga: null,
-            rupArga: null,
-            argaCola: null,
-            colarPastilha: null
+            substrato: null,
+            interfaceSubstrato: null,
+            argamassa: null,
+            interfaceArgamassa: null,
+            placaCeramica: null,
+            falhaCola: null
           }
         });
       }
@@ -11881,21 +11877,23 @@ onTracaoAbertoDataMoldagemChange():void {
 
     // Calcular tipo_ruptura baseado na maior soma das rupturas
     const somaRupturas = {
-      A: 0,  // sub
-      B: 0,  // subArga
-      C: 0,  // rupArga
-      D: 0,  // argaCola
-      E: 0   // colarPastilha
+      S: 0,  // substrato
+      SA: 0,  // subArga
+      A: 0,  // rupArga
+      AP: 0,  // argaCola
+      P: 0,   // colarPastilha
+      F: 0
     };
 
     // Somar os valores numéricos de cada coluna de ruptura
     this.linhasTracaoEstufa.forEach((linha: any) => {
-      if (linha.rupturas) {
-        somaRupturas.A += Number(linha.rupturas.sub) || 0;
-        somaRupturas.B += Number(linha.rupturas.subArga) || 0;
-        somaRupturas.C += Number(linha.rupturas.rupArga) || 0;
-        somaRupturas.D += Number(linha.rupturas.argaCola) || 0;
-        somaRupturas.E += Number(linha.rupturas.colarPastilha) || 0;
+       if (linha.rupturas) {
+        somaRupturas.S += Number(linha.rupturas.substrato) || 0;
+        somaRupturas.SA += Number(linha.rupturas.interfaceSubstrato) || 0;
+        somaRupturas.A += Number(linha.rupturas.argamassa) || 0;
+        somaRupturas.AP += Number(linha.rupturas.interfaceArgamassa) || 0;
+        somaRupturas.P += Number(linha.rupturas.placaCeramica) || 0;
+        somaRupturas.F += Number(linha.rupturas.falhaCola) || 0;
       }
     });
 
@@ -12042,18 +12040,16 @@ onTracaoAbertoDataMoldagemChange():void {
         numero: item.numero ?? index + 1,
         diametro: item.diametro ?? 50,
         area: item.area ?? 2500,
-        //espessura: item.espessura ?? null,
-        //subst: item.subst ?? null,
-        //junta: item.junta ?? null,
         carga: item.carga ?? null,
         resist: item.resist ?? null,
         validacao: item.validacao ?? "",
         rupturas: {
-          sub: item.rupturas?.sub ?? null,
-          subArga: item.rupturas?.subArga ?? null,
-          rupArga: item.rupturas?.rupArga ?? null,
-          argaCola: item.rupturas?.argaCola ?? null,
-          colarPastilha: item.rupturas?.colarPastilha ?? null
+          substrato: null,
+          interfaceSubstrato: null,
+          argamassa: null,
+          interfaceArgamassa: null,
+          placaCeramica: null,
+          falhaCola: null
         }
       }));
     }else if (analise?.tracao_tempo_aberto?.linhas && Array.isArray(analise.tracao_tempo_aberto.linhas)) {
@@ -12076,18 +12072,16 @@ onTracaoAbertoDataMoldagemChange():void {
         numero: item.numero ?? index + 1,
         diametro: item.diametro ?? 50,
         area: item.area ?? 2500,
-        //espessura: item.espessura ?? null,
-        //subst: item.subst ?? null,
-        //junta: item.junta ?? null,
         carga: item.carga ?? null,
         resist: item.resist ?? null,
         validacao: item.validacao ?? "",
         rupturas: {
-          sub: item.rupturas?.sub ?? null,
-          subArga: item.rupturas?.subArga ?? null,
-          rupArga: item.rupturas?.rupArga ?? null,
-          argaCola: item.rupturas?.argaCola ?? null,
-          colarPastilha: item.rupturas?.colarPastilha ?? null
+          substrato: item.rupturas?.substrato ?? null,
+          interfaceSubstrato: item.rupturas?.interfaceSubstrato ?? null,
+          argamassa: item.rupturas?.argamassa ?? null,
+          interfaceArgamassa: item.rupturas?.interfaceArgamassa ?? null,
+          placaCeramica: item.rupturas?.placaCeramica ?? null,
+          falhaCola: item.rupturas?.falhaCola ?? null
         }
       }));
       while (this.linhasTracaoAberto.length < 10) {
@@ -12096,18 +12090,16 @@ onTracaoAbertoDataMoldagemChange():void {
           numero,
           diametro: 50,
           area: 2500,
-          //espessura: null,
-          //subst: null,
-          //junta: null,
           carga: null,
           resist: null,
           validacao: "",
           rupturas: {
-            sub: null,
-            subArga: null,
-            rupArga: null,
-            argaCola: null,
-            colarPastilha: null
+            substrato: null,
+            interfaceSubstrato: null,
+            argamassa: null,
+            interfaceArgamassa: null,
+            placaCeramica: null,
+            falhaCola: null
           }
         });
       }
@@ -12151,18 +12143,16 @@ onTracaoAbertoDataMoldagemChange():void {
           numero: i,
           diametro: 50,
           area: 2500,
-          //espessura: null,
-          //subst: null,
-          //junta: null,
           carga: null,
           resist: null,
           validacao: "",
           rupturas: {
-            sub: null,
-            subArga: null,
-            rupArga: null,
-            argaCola: null,
-            colarPastilha: null
+            substrato: null,
+            interfaceSubstrato: null,
+            argamassa: null,
+            interfaceArgamassa: null,
+            placaCeramica: null,
+            falhaCola: null
           }
         });
       }
@@ -12176,21 +12166,23 @@ onTracaoAbertoDataMoldagemChange():void {
 
      // Calcular tipo_ruptura baseado na maior soma das rupturas
     const somaRupturas = {
-      A: 0,  // sub
-      B: 0,  // subArga
-      C: 0,  // rupArga
-      D: 0,  // argaCola
-      E: 0   // colarPastilha
+      S: 0,  // substrato
+      SA: 0,  // subArga
+      A: 0,  // rupArga
+      AP: 0,  // argaCola
+      P: 0,   // colarPastilha
+      F: 0
     };
     
     // Somar os valores numéricos de cada coluna de ruptura
     this.linhasTracaoAberto.forEach((linha: any) => {
-      if (linha.rupturas) {
-        somaRupturas.A += Number(linha.rupturas.sub) || 0;
-        somaRupturas.B += Number(linha.rupturas.subArga) || 0;
-        somaRupturas.C += Number(linha.rupturas.rupArga) || 0;
-        somaRupturas.D += Number(linha.rupturas.argaCola) || 0;
-        somaRupturas.E += Number(linha.rupturas.colarPastilha) || 0;
+       if (linha.rupturas) {
+        somaRupturas.S += Number(linha.rupturas.substrato) || 0;
+        somaRupturas.SA += Number(linha.rupturas.interfaceSubstrato) || 0;
+        somaRupturas.A += Number(linha.rupturas.argamassa) || 0;
+        somaRupturas.AP += Number(linha.rupturas.interfaceArgamassa) || 0;
+        somaRupturas.P += Number(linha.rupturas.placaCeramica) || 0;
+        somaRupturas.F += Number(linha.rupturas.falhaCola) || 0;
       }
     });
     
@@ -12607,6 +12599,68 @@ onTracaoAbertoDataMoldagemChange():void {
       linha.validacao = null;
     }
   }
+
+//=============================    METODOS PARA PLANO CAL COMPLETO =================================//
+startCalcompleo(ensaioEnviado: any) {
+  console.log('ENSAIO COMPLETO:', ensaioEnviado);
+  console.log('VALOR RECEBIDO DO ENSAIO ENVIADO:', ensaioEnviado.valor);
+ 
+
+  setTimeout(() => {
+    console.log("Valor após delay:", ensaioEnviado.valor);
+     if (ensaioEnviado.id === 126) {
+    this.caoCombCo2 = ensaioEnviado.valor * 1.27;
+    console.log('Valor do ensaio enviado:', this.caoCombCo2);
+  } 
+
+
+  }, 500);
+ 
+  this.calcculosCalCompleto(this.analise);
+}
+
+ calcculosCalCompleto(analise: any) {
+  const ordem = analise.amostra_detalhes?.ordem_detalhes;
+  console.log('ordem:', ordem);
+  if (ordem && Array.isArray(ordem.plano_detalhes) && ordem.plano_detalhes.length > 0) {
+    const planoDetalhes = ordem.plano_detalhes;
+    console.log('planoDetalhes:', planoDetalhes);
+
+    // Buscar valor de ensaio por ID
+    const getEnsaioValor = (id: number) => {
+      for (const plano of planoDetalhes) {
+        console.log('plano.ensaio_detalhes:', plano.ensaio_detalhes);
+        if (Array.isArray(plano.ensaio_detalhes) && plano.ensaio_detalhes.length > 0) {
+          const ensaio = plano.ensaio_detalhes.find((e: any) => e.id === id);
+          if (ensaio) return ensaio.valor;
+        }
+      }
+      return undefined;
+    };
+    const ID_MG = 126;
+
+    // Buscar valor de cálculo por ID
+    const getEnsaioUtilizadoValor = (id: number) => {
+      for (const resultado of analise?.calculos_detalhes || []) {
+        for (const ensaio of resultado.ensaios_utilizados || []) {
+          if (ensaio.id === id) {
+            return ensaio.valor;
+          }
+        }
+      }
+      return undefined;
+    };
+    
+    
+    // Exemplo de uso dos IDs definidos
+    //const caoCombSo4 = getEnsaioValor(ID_CAO) !== undefined ? getEnsaioValor(ID_CAO) * 2 : null;
+    const mgCombSo4 = getEnsaioUtilizadoValor(ID_MG) !== undefined ? getEnsaioUtilizadoValor(ID_MG) + 10 : null;
+    //const siO2Calc = getCalculoValor(ID_SIO2) !== undefined ? getCalculoValor(ID_SIO2) / 5 : null;
+    // ...adicione outros cálculos conforme necessário
+    console.log('afgafgfgd',mgCombSo4);
+  }
+  
+}
 
 
 }

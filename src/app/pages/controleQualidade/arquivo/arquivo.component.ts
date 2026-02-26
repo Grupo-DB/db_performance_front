@@ -6145,7 +6145,7 @@ duplicata(amostra: any): void {
     // ====== TABELA headTracaoAberto ==================================================
     const headTracaoAberto = [
       [
-        {content: 'Determinação do tempo em aberto Mpa - NBR 14081-3', colSpan: 11}
+        {content: 'Determinação do tempo em aberto Mpa - NBR 14081-3', colSpan: 12}
       ],
       [
         { content: 'N°', rowSpan: 2 },
@@ -6157,11 +6157,12 @@ duplicata(amostra: any): void {
         { content: 'Forma de Ruptura (%)', colSpan: 5,},
       ],
       [
-        { content: '(A) Sub' },
-        { content: '(B) Sub/Arga' },
-        { content: '(C) Rup Arga' },
-        { content: '(D) Arga Cola' },
-        { content: '(E) Colar pastilha' },
+        { content: '(s)' },
+        { content: '(S/A)' },
+        { content: '(A)' },
+        { content: '(A/P)' },
+        { content: '(P)' },
+        { content: '(F)' },
       ],
     ];
 
@@ -6194,11 +6195,12 @@ duplicata(amostra: any): void {
           item.carga ?? '',
           item.resist ?? '',
           item.validacao ?? '',
-          item.rupturas?.sub ?? '',
-          item.rupturas?.subArga ?? '',
-          item.rupturas?.rupArga ?? '',
-          item.rupturas?.argaCola ?? '',
-          item.rupturas?.colarPastilha ?? ''
+          item.rupturas?.substrato ?? '',
+          item.rupturas?.interfaceSubstrato ?? '',
+          item.rupturas?.argamassa ?? '',
+          item.rupturas?.interfaceArgamassa ?? '',
+          item.rupturas?.placaCeramica ?? '',
+          item.rupturas?.falhaCola ?? ''
         ]),
 
           [
@@ -6248,7 +6250,7 @@ duplicata(amostra: any): void {
     const headTracaoNormal = [
       [
         { content: 'Determinação da resistência aderência à tração Cura Normal - NBR 14081-4', 
-          colSpan: 11,
+          colSpan: 12,
         }
       ],
       [
@@ -6261,11 +6263,12 @@ duplicata(amostra: any): void {
         { content: 'Forma de Ruptura (%)', colSpan: 5,},
       ],
       [
-        { content: '(A) Sub',},
-        { content: '(B) Sub/Arga',},
-        { content: '(C) Rup Arga',},
-        { content: '(D) Arga Cola',},
-        { content: '(E) Colar pastilha',},
+        { content: '(s)' },
+        { content: '(S/A)' },
+        { content: '(A)' },
+        { content: '(A/P)' },
+        { content: '(P)' },
+        { content: '(F)' },
       ],
     ];
 
@@ -6298,11 +6301,12 @@ duplicata(amostra: any): void {
           item.carga ?? '',
           item.resist ?? '',
           item.validacao ?? '',
-          item.rupturas?.sub ?? '',
-          item.rupturas?.subArga ?? '',
-          item.rupturas?.rupArga ?? '',
-          item.rupturas?.argaCola ?? '',
-          item.rupturas?.colarPastilha ?? ''
+          item.rupturas?.substrato ?? '',
+          item.rupturas?.interfaceSubstrato ?? '',
+          item.rupturas?.argamassa ?? '',
+          item.rupturas?.interfaceArgamassa ?? '',
+          item.rupturas?.placaCeramica ?? '',
+          item.rupturas?.falhaCola ?? ''
         ]),
 
           [
@@ -6346,7 +6350,7 @@ duplicata(amostra: any): void {
     // ====== TABELA headTracaoEstufa ==================================================
     const headTracaoEstufa = [
       [
-        {content: 'Determinação da resistência aderência à tração Cura com Aquecimento em Estufa - NBR 14081-4', colSpan: 11}
+        {content: 'Determinação da resistência aderência à tração Cura com Aquecimento em Estufa - NBR 14081-4', colSpan: 12}
       ],
       [
         { content: 'N°', rowSpan: 2 },
@@ -6358,11 +6362,12 @@ duplicata(amostra: any): void {
         { content: 'Forma de Ruptura (%)', colSpan: 5,},
       ],
       [
-        { content: '(A) Sub' },
-        { content: '(B) Sub/Arga' },
-        { content: '(C) Rup Arga' },
-        { content: '(D) Arga Cola' },
-        { content: '(E) Colar pastilha' },
+        { content: '(s)' },
+        { content: '(S/A)' },
+        { content: '(A)' },
+        { content: '(A/P)' },
+        { content: '(P)' },
+        { content: '(F)' },
       ],
     ];
 
@@ -6395,11 +6400,12 @@ duplicata(amostra: any): void {
           item.carga ?? '',
           item.resist ?? '',
           item.validacao ?? '',
-          item.rupturas?.sub ?? '',
-          item.rupturas?.subArga ?? '',
-          item.rupturas?.rupArga ?? '',
-          item.rupturas?.argaCola ?? '',
-          item.rupturas?.colarPastilha ?? ''
+          item.rupturas?.substrato ?? '',
+          item.rupturas?.interfaceSubstrato ?? '',
+          item.rupturas?.argamassa ?? '',
+          item.rupturas?.interfaceArgamassa ?? '',
+          item.rupturas?.placaCeramica ?? '',
+          item.rupturas?.falhaCola ?? ''
         ]),
 
           [
@@ -6442,7 +6448,7 @@ duplicata(amostra: any): void {
     const headTracaoSubmersa = [
       [
         {content: 'Determinação da resistência aderência à tração Cura em Imersão em Água - NBR 14081-4', 
-          colSpan: 11
+          colSpan: 12
         }
       ],
       [
@@ -6455,11 +6461,12 @@ duplicata(amostra: any): void {
         { content: 'Forma de Ruptura (%)', colSpan: 5,},
       ],
       [
-        { content: '(A) Sub' },
-        { content: '(B) Sub/Arga' },
-        { content: '(C) Rup Arga' },
-        { content: '(D) Arga Cola' },
-        { content: '(E) Colar pastilha' },
+        { content: '(s)' },
+        { content: '(S/A)' },
+        { content: '(A)' },
+        { content: '(A/P)' },
+        { content: '(P)' },
+        { content: '(F)' },
       ],
     ];
 
@@ -6492,11 +6499,12 @@ duplicata(amostra: any): void {
           item.carga ?? '',
           item.resist ?? '',
           item.validacao ?? '',
-          item.rupturas?.sub ?? '',
-          item.rupturas?.subArga ?? '',
-          item.rupturas?.rupArga ?? '',
-          item.rupturas?.argaCola ?? '',
-          item.rupturas?.colarPastilha ?? ''
+          item.rupturas?.substrato ?? '',
+          item.rupturas?.interfaceSubstrato ?? '',
+          item.rupturas?.argamassa ?? '',
+          item.rupturas?.interfaceArgamassa ?? '',
+          item.rupturas?.placaCeramica ?? '',
+          item.rupturas?.falhaCola ?? ''
         ]),
 
           [

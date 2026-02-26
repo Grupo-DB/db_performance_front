@@ -129,7 +129,7 @@ export class ProdutoAmostraComponent implements OnInit {
   { value: 'fertilizante', display:'Fertilizante' },
   { value: 'finaliza', display:'Finaliza' },
   { value: 'aditivos', display:'Aditivos' },
-  { value: 'mineracaoo', display:'Mineração' },
+  { value: 'mineracao', display:'Mineração' },
 ]
 
   constructor(

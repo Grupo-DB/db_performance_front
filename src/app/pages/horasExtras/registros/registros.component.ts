@@ -16,8 +16,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { FilialService } from '../../../../../app/services/avaliacoesServices/filiais/registerfilial.service';
 import { DrawerModule } from 'primeng/drawer';
+import { FilialService } from '../../../services/avaliacoesServices/filiais/registerfilial.service';
 
 
 @Component({
@@ -34,7 +34,7 @@ import { DrawerModule } from 'primeng/drawer';
     DialogModule,
     ConfirmDialogModule,
     TooltipModule,
-    DrawerModule
+    DrawerModule,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './registros.component.html',
