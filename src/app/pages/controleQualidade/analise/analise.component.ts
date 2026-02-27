@@ -243,6 +243,7 @@ export interface Analise {
   tracao_tempo_aberto: any;
   deslizamento: any;
   classificacao: string;
+  cal_completo: any;
 
 }
 interface FileWithInfo {
@@ -379,8 +380,7 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
 
   // ================= VARIAVEIS PARA PLANO CAL COMPLETO =================
   ensaioEnviado: any;
-  mgCombSo4: any;
-  caoCombCo2: any;
+  
   // Controle para evitar múltiplas confirmações
   private confirmacoesAbertas = new Set<string>();
   ensaiosDisponiveis: any[] = [];
@@ -3646,6 +3646,9 @@ downloadImagemGrafico(): void {
       this.analiseService.getAnaliseById(this.analiseId).subscribe(
         (analise) => {
           this.analise = analise;
+          this.caoCombCo2 = analise.cal_completo?.cao_comb_co2 ?? 0;
+          this.caoCombSo4 = analise.cal_completo?.cao_comb_so4 ?? 0;
+          this.h2oComb = analise.cal_completo?.h2o_comb ?? 0;
           // Mapear campos snake_case do backend para camelCase usados no front
           if (this.analise) {
             (this.analise as any).metodoModelagem = (this.analise as any).metodoModelagem ?? (this.analise as any).metodo_modelagem ?? '';
@@ -12601,21 +12604,37 @@ onTracaoAbertoDataMoldagemChange():void {
   }
 
 //=============================    METODOS PARA PLANO CAL COMPLETO =================================//
+caoCombSo4: number | null = null;
+caoCombCo2: number | null = null;
+h2oComb: number | null = null;
+valorCo2: number = 0;
+valorUmidade: number  =  0;
+
 startCalcompleo(ensaioEnviado: any) {
-  console.log('ENSAIO COMPLETO:', ensaioEnviado);
-  console.log('VALOR RECEBIDO DO ENSAIO ENVIADO:', ensaioEnviado.valor);
  
-
   setTimeout(() => {
-    console.log("Valor após delay:", ensaioEnviado.valor);
-     if (ensaioEnviado.id === 126) {
-    this.caoCombCo2 = ensaioEnviado.valor * 1.27;
-    console.log('Valor do ensaio enviado:', this.caoCombCo2);
-  } 
-
-
-  }, 500);
- 
+    //obter valor umidade id 131
+    if (ensaioEnviado.id === 131) {
+      this.valorUmidade = this.ensaioEnviado.valor;
+    }
+  // calculo CaO combinado com CO2 id 126
+    if (ensaioEnviado.id === 126) {
+      this.valorCo2 = this.ensaioEnviado.valor;
+      this.caoCombCo2 = ensaioEnviado.valor * 1.27;
+    } 
+  // calculo CaO combinado com SO4  id 77 = SO3
+    if(ensaioEnviado.id === 77){
+      this.ensaioEnviado.valor == 0 ? this.caoCombSo4 = 0.15 * 0.7 : this.caoCombSo4 = ensaioEnviado.valor * 0.7;
+    }
+    // calculo H2O combinado id 130 = PF
+    if(ensaioEnviado.id === 130){
+      const valorSoma = this.valorCo2 + this.valorUmidade;
+      const valorDiferenca = this.valorCo2 - this.valorUmidade;
+      this.ensaioEnviado.valor < valorSoma ? 0 : this.ensaioEnviado.valor - valorDiferenca;
+    }
+    500 }
+  );
+  
   this.calcculosCalCompleto(this.analise);
 }
 
@@ -12662,5 +12681,39 @@ startCalcompleo(ensaioEnviado: any) {
   
 }
 
+salvarCalculoCalCompleto(analise: any) {
+  const dadosAtualizados: Partial<Analise> = {
+    cal_completo:{
+      cao_comb_so4: this.caoCombSo4,
+      cao_comb_co2: this.caoCombCo2,
+      h2o_comb: this.h2oComb
+    }
+  };
+  console.log('CHAMOU O METODO', dadosAtualizados);
+  this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
+    next: () => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Sucesso',
+        detail: 'Cálculo do Cal Completo salvo com sucesso!'
+      });
+      setTimeout(() => {
+      }, 1000);
+    },
+    error: (err) => {
+      console.error('Login error:', err); 
+      if (err.status === 401) {
+        this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
+      } else if (err.status === 403) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Vocês não tem autorização para realizar essa operação.' });
+      } else if (err.status === 400) {
+        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
+      }
+      else {
+        this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
+      } 
+    }
+  });
+  }
 
 }
