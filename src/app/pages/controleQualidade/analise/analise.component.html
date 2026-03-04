@@ -55,6 +55,7 @@
     </ul>
 </div>
 <p-confirmDialog></p-confirmDialog>
+
 <!-- Painel de Alertas de Rompimento -->
 <div *ngIf="alertasRompimento.length > 0" class="alertas-rompimento-panel">
     <p-card class="mb-3">
@@ -347,6 +348,30 @@
                             <span style="font-size: 1rem; font-weight: 700;">{{ podeAdicionarRemoverItens() ? 'Pode Adicionar/Remover' : 'Somente Visualização' }}</span>
                         </div>
                     </div>
+
+                    <!-- Mensagens de Validação em Overlay -->
+                    <div class="mensagens-validacao-overlay flex flex-column">
+                        <!-- Mensagem PRNT -->
+                        <div *ngIf="mensagemPRNT" class="mb-2">
+                            <p-message 
+                                [severity]="mensagemPRNT.severity" 
+                                [text]="mensagemPRNT.summary + ' - ' + mensagemPRNT.detail"
+                                styleClass="w-full"
+                                [closable]="false">
+                            </p-message>
+                        </div>
+                        
+                        <!-- Mensagem Fechamento -->
+                        <div *ngIf="mensagemFechamento">
+                            <p-message 
+                                [severity]="mensagemFechamento.severity" 
+                                [text]="mensagemFechamento.summary + ' - ' + mensagemFechamento.detail"
+                                styleClass="w-full"
+                                [closable]="false">
+                            </p-message>
+                        </div>
+                    </div>
+
                 </div>
                 
                 <!-- Tabela para cada ensaio fixo (fora dos cálculos) -->
@@ -496,6 +521,7 @@
                                     </td>
                                     <td *ngIf="podeEditarEnsaiosCalculos()" class="text-right">
                                         <p-button 
+                                            *ngIf="ensaio.origem === 'ad-hoc'"
                                             icon="pi pi-trash" 
                                             severity="danger" 
                                             [raised]="true" 
@@ -939,6 +965,7 @@
                                     </td>
                                     <td *ngIf="podeEditarEnsaiosCalculos()" class="text-right">
                                         <p-button 
+                                            *ngIf="calc.origem === 'ad-hoc'"
                                             icon="pi pi-trash" 
                                             severity="danger" 
                                             [raised]="true" 
@@ -1346,21 +1373,21 @@
                 </div>
             </div>
         </div>
-        <div class="step1 mt-5 w-12">
+        <div class="step1 mt-5 w-12" *ngIf="analise?.amostra_detalhes?.ordem_detalhes?.plano_detalhes?.[0]?.id === 20 ">
             <div class="header w-full flex justify-content-between align-items-center">
                 <h2 style="color: #ffffff">Resultados Cal Completo</h2>
             </div>
-            <div class="flex gap-2" style="background-color: rgba(179, 229, 255, 0.1); border-radius: 8px;">
+            <div class="flex flex-wrap gap-2 justify-content-center" style="background-color: rgba(179, 229, 255, 0.1); border-radius: 8px;">
                 <!-- CaO Comb c/ SO4 -->
                 <div 
-                    class="m-2 col-12 md:col-6 lg:col-1 shadow-2 hover:shadow-3 transition-duration-200"
+                    class="m-2 col-12 md:col-6 lg:col-2 shadow-2 hover:shadow-3 transition-duration-200"
                     style="height: 100px; border-radius: 10px; background-color: #1e2f45; position: relative; cursor: pointer;"
                 >
                     <i class="pi pi-check-circle" style="position: absolute; top: 8px; left: 8px; color: #b3e5ff; font-size: 1rem;"></i>
                     <div
                         style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #d6f1ff; font-size: 1.4rem; font-weight: 700; text-align: center;"
                     >    
-                        {{ caoCombSo4 || 0 | number: '1.2-4' }}
+                        {{ caoCombSo4 || 0 | number: '1.2-2' }}
                     </div>
                     <div class="flex align-items-end h-full">
                         <span class="p-2 text-xs font-semibold" style="color: #d6f1ff;">CaO Comb c/ SO4</span>
@@ -1368,19 +1395,215 @@
                 </div>
                 <!-- CaO Comb c/ CO2 -->
                 <div 
-                    class="m-2 col-12 md:col-6 lg:col-1 shadow-2 hover:shadow-3 transition-duration-200"
+                    class="m-2 col-12 md:col-6 lg:col-2 shadow-2 hover:shadow-3 transition-duration-200"
                     style="height: 100px; border-radius: 10px; background-color: #1e2f45; position: relative; cursor: pointer;"
                 >
                     <i class="pi pi-check-circle" style="position: absolute; top: 8px; left: 8px; color: #b3e5ff; font-size: 1rem;"></i>
                     <div
                         style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #d6f1ff; font-size: 1.4rem; font-weight: 700; text-align: center;"
                     >    
-                        {{ caoCombCo2 || 0 | number: '1.2-4' }}
+                        {{ caoCombCo2 || 0 | number: '1.2-2' }}
                     </div>
                     <div class="flex align-items-end h-full">
                         <span class="p-2 text-xs font-semibold" style="color: #d6f1ff;">CaO Comb c/ CO2</span>
                     </div>
                 </div>
+                <!-- CaO Comb c/ H2O -->
+                <div 
+                    class="m-2 col-12 md:col-6 lg:col-2 shadow-2 hover:shadow-3 transition-duration-200"
+                    style="height: 100px; border-radius: 10px; background-color: #1e2f45; position: relative; cursor: pointer;"
+                >
+                    <i class="pi pi-check-circle" style="position: absolute; top: 8px; left: 8px; color: #b3e5ff; font-size: 1rem;"></i>
+                    <div
+                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #d6f1ff; font-size: 1.4rem; font-weight: 700; text-align: center;"
+                    >    
+                        {{ h2oComb || 0 | number: '1.2-2' }}
+                    </div>
+                    <div class="flex align-items-end h-full">
+                        <span class="p-2 text-xs font-semibold" style="color: #d6f1ff;">H2O Combinado</span>
+                    </div>
+                </div>
+                <!-------------------------   CAO Hidratado --------------------->
+                <div 
+                    class="m-2 col-12 md:col-6 lg:col-2 shadow-2 hover:shadow-3 transition-duration-200"
+                    style="height: 100px; border-radius: 10px; background-color: #1e2f45; position: relative; cursor: pointer;"
+                >
+                    <i class="pi pi-check-circle" style="position: absolute; top: 8px; left: 8px; color: #b3e5ff; font-size: 1rem;"></i>
+                    <div
+                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #d6f1ff; font-size: 1.4rem; font-weight: 700; text-align: center;"
+                    >    
+                        {{ caoHidratado || 0 | number: '1.2-2' }}
+                    </div>
+                    <div class="flex align-items-end h-full">
+                        <span class="p-2 text-xs font-semibold" style="color: #d6f1ff;">CaO Hidratado</span>
+                    </div>
+                </div>
+                <!-------------------------   CAO Não Hidratado --------------------->
+                <div 
+                    class="m-2 col-12 md:col-6 lg:col-2 shadow-2 hover:shadow-3 transition-duration-200"
+                    style="height: 100px; border-radius: 10px; background-color: #1e2f45; position: relative; cursor: pointer;"
+                >
+                    <i class="pi pi-check-circle" style="position: absolute; top: 8px; left: 8px; color: #b3e5ff; font-size: 1rem;"></i>
+                    <div
+                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #d6f1ff; font-size: 1.4rem; font-weight: 700; text-align: center;"
+                    >    
+                        {{ caoNaoHidratado || 0 | number: '1.2-2' }}
+                    </div>
+                    <div class="flex align-items-end h-full">
+                        <span class="p-2 text-xs font-semibold" style="color: #d6f1ff;">CaO N/ Hidratado</span>
+                    </div>
+                </div>
+                <!---------------------------  MGO Hidratado  ----------------------->
+                <div 
+                    class="m-2 col-12 md:col-6 lg:col-2 shadow-2 hover:shadow-3 transition-duration-200"
+                    style="height: 100px; border-radius: 10px; background-color: #1e2f45; position: relative; cursor: pointer;"
+                >
+                    <i class="pi pi-check-circle" style="position: absolute; top: 8px; left: 8px; color: #b3e5ff; font-size: 1rem;"></i>
+                    <div
+                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #d6f1ff; font-size: 1.4rem; font-weight: 700; text-align: center;"
+                    >    
+                        {{ mgoHidratado || 0 | number: '1.2-2' }}
+                    </div>
+                    <div class="flex align-items-end h-full">
+                        <span class="p-2 text-xs font-semibold" style="color: #d6f1ff;">MgO Hidratado</span>
+                    </div>
+                </div>
+                <!---------------------------  CaO Não Hidratado Final  ----------------------->
+                <div 
+                    class="m-2 col-12 md:col-6 lg:col-2 shadow-2 hover:shadow-3 transition-duration-200"
+                    style="height: 100px; border-radius: 10px; background-color: #1e2f45; position: relative; cursor: pointer;"
+                >
+                    <i class="pi pi-check-circle" style="position: absolute; top: 8px; left: 8px; color: #b3e5ff; font-size: 1rem;"></i>
+                    <div
+                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #d6f1ff; font-size: 1.4rem; font-weight: 700; text-align: center;"
+                    >    
+                        {{ caoNaoHidratadoFinal || 0 | number: '1.2-2' }}
+                    </div>
+                    <div class="flex align-items-end h-full">
+                        <span class="p-2 text-xs font-semibold" style="color: #d6f1ff;">CaO N/ Hidr Final</span>
+                    </div>
+                </div>
+                <!---------------------------  Óxidos Total Não hidratados  ----------------------->
+                <div 
+                    class="m-2 col-12 md:col-6 lg:col-2 shadow-2 hover:shadow-3 transition-duration-200"
+                    style="height: 100px; border-radius: 10px; background-color: #1e2f45; position: relative; cursor: pointer;"
+                >
+                    <i class="pi pi-check-circle" style="position: absolute; top: 8px; left: 8px; color: #b3e5ff; font-size: 1rem;"></i>
+                    <div
+                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #d6f1ff; font-size: 1.4rem; font-weight: 700; text-align: center;"
+                    >    
+                        {{ oxidosTotalNaoHidratados || 0 | number: '1.2-2' }}
+                    </div>
+                    <div class="flex align-items-end h-full">
+                        <span class="p-2 text-xs font-semibold" style="color: #d6f1ff;">Óx T N/ Hidratados</span>
+                    </div>
+                </div>
+                <!---------------------------  CA  ----------------------->
+                <div 
+                    class="m-2 col-12 md:col-6 lg:col-2 shadow-2 hover:shadow-3 transition-duration-200"
+                    style="height: 100px; border-radius: 10px; background-color: #1e2f45; position: relative; cursor: pointer;"
+                >
+                    <i class="pi pi-check-circle" style="position: absolute; top: 8px; left: 8px; color: #b3e5ff; font-size: 1rem;"></i>
+                    <div
+                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #d6f1ff; font-size: 1.4rem; font-weight: 700; text-align: center;"
+                    >    
+                        {{ ca || 0 | number: '1.2-2' }}
+                    </div>
+                    <div class="flex align-items-end h-full">
+                        <span class="p-2 text-xs font-semibold" style="color: #d6f1ff;">Ca Calc Esteq.</span>
+                    </div>
+                </div>
+                <!---------------------------  Mg  ----------------------->
+                <div 
+                    class="m-2 col-12 md:col-6 lg:col-2 shadow-2 hover:shadow-3 transition-duration-200"
+                    style="height: 100px; border-radius: 10px; background-color: #1e2f45; position: relative; cursor: pointer;"
+                >
+                    <i class="pi pi-check-circle" style="position: absolute; top: 8px; left: 8px; color: #b3e5ff; font-size: 1rem;"></i>
+                    <div
+                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #d6f1ff; font-size: 1.4rem; font-weight: 700; text-align: center;"
+                    >    
+                        {{ mg || 0 | number: '1.2-2' }}
+                    </div>
+                    <div class="flex align-items-end h-full">
+                        <span class="p-2 text-xs font-semibold" style="color: #d6f1ff;">Mg Calc Esteq.</span>
+                    </div>
+                </div>
+                <!---------------------------  oxidosTotaisNaoVolumetricos  ----------------------->
+                <div 
+                    class="m-2 col-12 md:col-6 lg:col-2 shadow-2 hover:shadow-3 transition-duration-200"
+                    style="height: 100px; border-radius: 10px; background-color: #1e2f45; position: relative; cursor: pointer;"
+                >
+                    <i class="pi pi-check-circle" style="position: absolute; top: 8px; left: 8px; color: #b3e5ff; font-size: 1rem;"></i>
+                    <div
+                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #d6f1ff; font-size: 1.4rem; font-weight: 700; text-align: center;"
+                    >    
+                        {{ oxidosTotaisNaoVolumetricos || 0 | number: '1.2-2' }}
+                    </div>
+                    <div class="flex align-items-end h-full">
+                        <span class="p-2 text-xs font-semibold" style="color: #d6f1ff;">Óx T N/ Vol</span>
+                    </div>
+                </div>
+                <!---------------------------  Soma óxidos  ----------------------->
+                <div 
+                    class="m-2 col-12 md:col-6 lg:col-2 shadow-2 hover:shadow-3 transition-duration-200"
+                    style="height: 100px; border-radius: 10px; background-color: #1e2f45; position: relative; cursor: pointer;"
+                >
+                    <i class="pi pi-check-circle" style="position: absolute; top: 8px; left: 8px; color: #b3e5ff; font-size: 1rem;"></i>
+                    <div
+                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #d6f1ff; font-size: 1.4rem; font-weight: 700; text-align: center;"
+                    >    
+                        {{ somaOxidos || 0 | number: '1.2-2' }}
+                    </div>
+                    <div class="flex align-items-end h-full">
+                        <span class="p-2 text-xs font-semibold" style="color: #d6f1ff;">Soma Óxidos</span>
+                    </div>
+                </div>
+                <!---------------------------  Hidr Totais  ----------------------->
+                <div 
+                    class="m-2 col-12 md:col-6 lg:col-2 shadow-2 hover:shadow-3 transition-duration-200"
+                    style="height: 100px; border-radius: 10px; background-color: #1e2f45; position: relative; cursor: pointer;"
+                >
+                    <i class="pi pi-check-circle" style="position: absolute; top: 8px; left: 8px; color: #b3e5ff; font-size: 1rem;"></i>
+                    <div
+                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #d6f1ff; font-size: 1.4rem; font-weight: 700; text-align: center;"
+                    >    
+                        {{ hidroxTotais || 0 | number: '1.2-2' }}
+                    </div>
+                    <div class="flex align-items-end h-full">
+                        <span class="p-2 text-xs font-semibold" style="color: #d6f1ff;">Hidr Totais</span>
+                    </div>
+                </div>
+                <!---------------------------  H20 Comb  ----------------------->
+                <div 
+                    class="m-2 col-12 md:col-6 lg:col-2 shadow-2 hover:shadow-3 transition-duration-200"
+                    style="height: 100px; border-radius: 10px; background-color: #1e2f45; position: relative; cursor: pointer;"
+                >
+                    <i class="pi pi-check-circle" style="position: absolute; top: 8px; left: 8px; color: #b3e5ff; font-size: 1rem;"></i>
+                    <div
+                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #d6f1ff; font-size: 1.4rem; font-weight: 700; text-align: center;"
+                    >    
+                        {{ h2Comb || 0 | number: '1.2-2' }}
+                    </div>
+                    <div class="flex align-items-end h-full">
+                        <span class="p-2 text-xs font-semibold" style="color: #d6f1ff;">H2O Comb</span>
+                    </div>
+                </div>
+                <!--------------------------- Eq CaCO3 resid   ----------------------->
+                <div 
+                    class="m-2 col-12 md:col-6 lg:col-2 shadow-2 hover:shadow-3 transition-duration-200"
+                    style="height: 100px; border-radius: 10px; background-color: #1e2f45; position: relative; cursor: pointer;"
+                >
+                    <i class="pi pi-check-circle" style="position: absolute; top: 8px; left: 8px; color: #b3e5ff; font-size: 1rem;"></i>
+                    <div
+                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #d6f1ff; font-size: 1.4rem; font-weight: 700; text-align: center;"
+                    >    
+                        {{ eqCaco2 || 0 | number: '1.2-2' }}
+                    </div>
+                    <div class="flex align-items-end h-full">
+                        <span class="p-2 text-xs font-semibold" style="color: #d6f1ff;">Eq CaCO2 Resid</span>
+                    </div>
+                </div>
+
             </div>        
         </div>    
         <div class="step1 flex justify-content-between align-items-center w-12 mt-3 mb-5">
@@ -1836,7 +2059,7 @@
 </p-dialog>
 <!-- Componentes necessários para confirmações e notificações -->
 <p-confirmDialog key="confirmDialog"></p-confirmDialog>
-<p-toast></p-toast>
+<p-toast position="top-center"></p-toast>
 
 <!-- Modal para Transferir Laboratório -->
 <p-dialog 

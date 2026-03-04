@@ -552,4 +552,38 @@ h2{
       margin-bottom: 0.5rem;
     }
   }
+}
+
+// Estilos para mensagens de validação em overlay
+.mensagens-validacao-overlay {
+  //position: fixed;
+  //top: 60px;
+  margin-left: 25%;
+  transform: translateX(-50%);
+  //z-index: 9999;
+  width: 80%;
+  max-width: 600px;
+  pointer-events: none;
+
+  > div {
+    pointer-events: auto;
+    animation: slideDown 0.3s ease-out;
+  }
+
+  ::ng-deep .p-message {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 } 

@@ -243,7 +243,6 @@ export interface Analise {
   tracao_tempo_aberto: any;
   deslizamento: any;
   classificacao: string;
-  cal_completo: any;
 
 }
 interface FileWithInfo {
@@ -370,9 +369,6 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   private alertasExibidos = new Set<string>();
   private timerLimpezaAlertas: any;
   editFormVisible = false;
-  // Mensagens fixas de validação
-  mensagemPRNT: { severity: 'success' | 'error' | 'warn', summary: string, detail: string } | null = null;
-  mensagemFechamento: { severity: 'success' | 'error' | 'warn', summary: string, detail: string } | null = null;
   // Controle de transferência de laboratório
   modalTransferirLaboratorioVisible = false;
   laboratorioDestinoTransferencia: string = '';
@@ -383,7 +379,8 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
 
   // ================= VARIAVEIS PARA PLANO CAL COMPLETO =================
   ensaioEnviado: any;
-  
+  mgCombSo4: any;
+  caoCombCo2: any;
   // Controle para evitar múltiplas confirmações
   private confirmacoesAbertas = new Set<string>();
   ensaiosDisponiveis: any[] = [];
@@ -555,7 +552,9 @@ export class AnaliseComponent implements OnInit,OnDestroy, CanComponentDeactivat
   
   // Lista de variáveis de fator disponíveis (carregadas do backend)
   variaveisFatorDisponiveis: any[] = [];
+
   ensaioValor: any;
+
 
   materiaisOrganicos = [
     { value: 'Abaixo do Limite' },
@@ -3647,21 +3646,6 @@ downloadImagemGrafico(): void {
       this.analiseService.getAnaliseById(this.analiseId).subscribe(
         (analise) => {
           this.analise = analise;
-          this.caoCombCo2 = analise.cal_completo?.cao_comb_co2 ?? 0;
-          this.caoCombSo4 = analise.cal_completo?.cao_comb_so4 ?? 0;
-          this.h2oComb = analise.cal_completo?.h2o_comb ?? 0;
-          this.caoHidratado = analise.cal_completo?.cao_hidratado ?? 0;
-          this.caoNaoHidratado = analise.cal_completo?.cao_nao_hidratado ?? 0;
-          this.mgoHidratado = analise.cal_completo?.mgo_hidratado ?? 0;
-          this.caoNaoHidratadoFinal = analise.cal_completo?.cao_nao_hidratado_final ?? 0;
-          this.oxidosTotalNaoHidratados = analise.cal_completo?.oxidos_total_nao_hidratados ?? 0;
-          this.ca = analise.cal_completo?.ca ?? 0;
-          this.mg = analise.cal_completo?.mg ?? 0;
-          this.oxidosTotaisNaoVolumetricos = analise.cal_completo?.oxidos_totais_nao_volumetricos ?? 0;
-          this.somaOxidos = analise.cal_completo?.soma_oxidos ?? 0;
-          this.hidroxTotais = analise.cal_completo?.hidrox_totais ?? 0;
-          this.eqCaco2 = analise.cal_completo?.eq_caco2 ?? 0;
-          this.h2Comb = analise.cal_completo?.h2o_combinado ?? 0;
           // Mapear campos snake_case do backend para camelCase usados no front
           if (this.analise) {
             (this.analise as any).metodoModelagem = (this.analise as any).metodoModelagem ?? (this.analise as any).metodo_modelagem ?? '';
@@ -4886,8 +4870,8 @@ getClasseTipoEnsaio(ensaio: any): string | undefined {
       return num.toString();
     }
     
-    // Demais usam 2 casas decimais
-    return parseFloat(num.toFixed(2)).toString();
+    // Demais usam 4 casas decimais
+    return parseFloat(num.toFixed(4)).toString();
   }
 
   /**
@@ -4903,7 +4887,7 @@ getClasseTipoEnsaio(ensaio: any): string | undefined {
     }
     
     // Demais ensaios usam 4 casas decimais
-    return parseFloat(num.toFixed(2)).toString();
+    return parseFloat(num.toFixed(4)).toString();
   }
   // Formata valores (timestamp/Date/string) em DD/MM/YYYY para exibição
   formatarDataExibicao(value: any): string {
@@ -5999,7 +5983,7 @@ recalcularTodosCalculos() {
   }
   // Verificar alerta PRNT após o cálculo
   private verificarAlertaPRNT(ensaio: any) { 
-    //console.log('Verificando alerta PRNT para ensaio:', ensaio); 
+    console.log('Verificando alerta PRNT para ensaio:', ensaio); 
     if (!ensaio || !ensaio.descricao) {
       return;
     }
@@ -6017,18 +6001,25 @@ recalcularTodosCalculos() {
       if (!isNaN(resultado)) {
         if (resultado < 73) {
           // PRNT abaixo de 73 - REPROVADO
-          this.mensagemPRNT = {
-            severity: 'error',
-            summary: 'REPROVADO - Baixo PRNT',
-            detail: `O resultado do cálculo PRNT (${resultado.toFixed(2)}) está abaixo de 73. Material reprovado!`
-          };
+          if (this.podeExibirAlerta('PRNT_REPROVADO', resultado)) {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'REPROVADO - Baixo PRNT',
+              detail: `O resultado do cálculo PRNT (${resultado.toFixed(4)}) está abaixo de 73. Material reprovado!`,
+              life: 8000,
+              sticky: true
+            });
+          }
         } else {
           // PRNT >= 73 - OK
-          this.mensagemPRNT = {
-            severity: 'success',
-            summary: 'PRNT OK',
-            detail: `O resultado do cálculo PRNT (${resultado.toFixed(2)}) está dentro do padrão (≥ 73).`
-          };
+          if (this.podeExibirAlerta('PRNT_OK', resultado)) {            
+            this.messageService.add({
+              severity: 'success',
+              summary: 'PRNT OK',
+              detail: `O resultado do cálculo PRNT (${resultado.toFixed(4)}) está dentro do padrão (≥ 73).`,
+              life: 5000
+            });
+          }
         }
       } else {
         console.error('❌ Resultado não é um número válido:', ensaio.resultado);
@@ -6037,7 +6028,7 @@ recalcularTodosCalculos() {
   }
   // Controlar alertas duplicados
   private podeExibirAlerta(tipo: string, valor: number): boolean {
-    const chave = `${tipo}_${valor.toFixed(2)}`; 
+    const chave = `${tipo}_${valor.toFixed(4)}`; 
     if (this.alertasExibidos.has(chave)) {
       return false;
     }
@@ -6048,7 +6039,7 @@ recalcularTodosCalculos() {
     }
     this.timerLimpezaAlertas = setTimeout(() => {
       this.alertasExibidos.clear();
-    }, 300); 
+    }, 30000); 
     return true;
   }
   // Método para limpar cache de alertas manualmente
@@ -6114,15 +6105,15 @@ recalcularTodosCalculos() {
       }
     }
     if (!fechamento) {
-      //console.log('[Fechamento] Não encontrado para plano ou ensaio:', planoBase, ensaio);
+      console.log('[Fechamento] Não encontrado para plano ou ensaio:', planoBase, ensaio);
       return;
     }
-    //console.log('[Fechamento] Encontrado:', fechamento);
+    console.log('[Fechamento] Encontrado:', fechamento);
     // Primeiro verificar se há ensaios obrigatórios
     const ensaiosObrigatorios = ['ri + sio₂', 'cao', 'mgo', 'perda ao fogo'];
     const ensaiosEncontrados = this.verificarEnsaiosObrigatoriosFechamento(null, planoBase, ensaiosObrigatorios);
     if (ensaiosEncontrados.faltantes.length > 0) {
-      //console.log('[Fechamento] Faltam ensaios obrigatórios:', ensaiosEncontrados.faltantes);
+      console.log('[Fechamento] Faltam ensaios obrigatórios:', ensaiosEncontrados.faltantes);
       // Análise incompleta
       const chaveIncompleta = `FECHAMENTO_INCOMPLETO_${ensaiosEncontrados.faltantes.join('_')}`;
       if (!this.alertasExibidos.has(chaveIncompleta)) {
@@ -6132,6 +6123,7 @@ recalcularTodosCalculos() {
           summary: 'Análise Parcial ou Incompleta',
           detail: `Fechamento não pode ser validado. Faltam ensaios: ${ensaiosEncontrados.faltantes.join(', ')}`,
           life: 8000,
+          sticky: true
         });
       }
       return;
@@ -6140,40 +6132,50 @@ recalcularTodosCalculos() {
     let valorFechamento = fechamento.valor;
     if (valorFechamento === null || valorFechamento === undefined) {
       valorFechamento = fechamento.resultado;
-      //console.log('[Fechamento] Usando resultado em vez de valor:', valorFechamento);
+      console.log('[Fechamento] Usando resultado em vez de valor:', valorFechamento);
     }
     if (valorFechamento === null || valorFechamento === undefined) {
-      //console.log('[Fechamento] Valor do fechamento está null ou undefined:', fechamento);
+      console.log('[Fechamento] Valor do fechamento está null ou undefined:', fechamento);
       return;
     }
     const resultado = typeof valorFechamento === 'number' ? valorFechamento : Number(valorFechamento);
     if (isNaN(resultado)) {
-      //console.log('[Fechamento] Valor do fechamento não é número:', valorFechamento);
+      console.log('[Fechamento] Valor do fechamento não é número:', valorFechamento);
       return;
     }
-    //console.log('[Fechamento] Resultado:', resultado);
-    
+    console.log('[Fechamento] Resultado:', resultado);
     if (resultado < 97.5) {
       // Fechamento baixo - REPROVADO
-      this.mensagemFechamento = {
-        severity: 'error',
-        summary: 'REPROVADO - Fechamento Baixo',
-        detail: `O resultado do Fechamento (${resultado.toFixed(2)}%) está abaixo de 97,5%. Material reprovado!`
-      };
+      if (this.podeExibirAlerta('FECHAMENTO_BAIXO', resultado)) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'REPROVADO - Fechamento Baixo',
+          detail: `O resultado do Fechamento (${resultado.toFixed(4)}%) está abaixo de 97,5%. Material reprovado!`,
+          life: 8000,
+          sticky: true
+        });
+      }
     } else if (resultado >= 99) {
       // Fechamento alto - REPROVADO
-      this.mensagemFechamento = {
-        severity: 'error',
-        summary: 'REPROVADO - Fechamento Alto',
-        detail: `O resultado do Fechamento (${resultado.toFixed(2)}%) está acima de 99%. Material reprovado!`
-      };
+      if (this.podeExibirAlerta('FECHAMENTO_ALTO', resultado)) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'REPROVADO - Fechamento Alto',
+          detail: `O resultado do Fechamento (${resultado.toFixed(4)}%) está acima de 99%. Material reprovado!`,
+          life: 8000,
+          sticky: true
+        });
+      }
     } else {
       // Fechamento OK (97.5 <= resultado < 99)
-      this.mensagemFechamento = {
-        severity: 'success',
-        summary: 'Fechamento OK',
-        detail: `O resultado do Fechamento (${resultado.toFixed(2)}%) está dentro do padrão (97,5% - 99%).`
-      };
+      if (this.podeExibirAlerta('FECHAMENTO_OK', resultado)) {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Fechamento OK',
+          detail: `O resultado do Fechamento (${resultado.toFixed(4)}%) está dentro do padrão (97,5% - 99%).`,
+          life: 5000
+        });
+      }
     }
   }
   // Verificar se todos os ensaios obrigatórios para Fechamento estão presentes
@@ -6492,15 +6494,10 @@ atualizarVariavelEnsaio(ensaio: any, variavel: any, novoValor: any) {
     }
   }
   // Recalcular dependências do plano (ensaio atual e ensaios que dependem dele)
-  const plano = this.analisesSimplificadas?.[0]?.planoDetalhes?.[0];
-  
-  
-  // Executar cálculos complementares (passar o plano)
+  const plano = this.encontrarPlanoDoEnsaio(ensaio);
   if (plano) {
-    this.startCalcompleo(ensaio, plano);
     this.recalcularTodosEnsaiosDirectos(plano);
   } else {
-    console.warn('[onValorVariavelChange] Plano não encontrado, pulando startCalcompleo');
     // Fallback mínimo: recalcular apenas o ensaio
     this.calcularEnsaioDireto(ensaio);
   }
@@ -6547,7 +6544,7 @@ atualizarVariavelData(ensaio: any, variavel: any, novaData: Date) {
   // Chama cálculos automáticos de data
   this.calcularDatasAutomaticas(ensaio, variavel);
   // Recalcula ensaios dependentes e cálculos
-  const plano = this.analisesSimplificadas?.[0]?.planoDetalhes?.[0];
+  const plano = this.encontrarPlanoDoEnsaio(ensaio);
   if (plano) {
     this.recalcularTodosEnsaiosDirectos(plano);
   } else {
@@ -6563,16 +6560,12 @@ onValorEnsaioChange(ensaio: any, novoValor: any) {
   this._ensaioChangeTimer = setTimeout(() => {
   const num = typeof novoValor === 'number' ? novoValor : Number(novoValor?.toString().replace(',', '.')) || 0;
   ensaio.valor = this.roundPorEnsaio(num, ensaio.id);
-    const plano = this.analisesSimplificadas?.[0]?.planoDetalhes?.[0];    
-    // Executar cálculos complementares (passar o plano)
+    const plano = this.encontrarPlanoDoEnsaio(ensaio);
+    // Verificar alerta Fechamento após alteração manual
+    this.verificarAlertaFechamento(ensaio, plano);
+    this.verificarAlertaPRNT(ensaio);
     if (plano) {
-      this.startCalcompleo(ensaio, plano);
-      // Verificar alerta Fechamento após alteração manual
-      this.verificarAlertaFechamento(ensaio, plano);
-      this.verificarAlertaPRNT(ensaio);
       this.recalcularTodosEnsaiosDirectos(plano);
-    } else {
-      console.warn('[onValorEnsaioChange] Plano não encontrado, pulando startCalcompleo');
     }
     this.recalcularTodosCalculos();
     this.markAsChanged(); // Marcar mudanças
@@ -6620,13 +6613,7 @@ calcularDatasAutomaticas(ensaio: any, variavelAlterada: any) {
   // Permite editar o valor de um ensaio listado dentro do cálculo expandido
   onValorEnsaioDentroCalculoChange(plano: any, ensaioCalc: any, novoValor: any) {
   const num = typeof novoValor === 'number' ? novoValor : Number(novoValor?.toString().replace(',', '.')) || 0;
-  ensaioCalc.valor = this.roundPorEnsaio(num, ensaioCalc.id);    
-    // Executar cálculos complementares (passar o plano)
-    if (plano) {
-      this.startCalcompleo(ensaioCalc, plano);
-    } else {
-      console.warn('[onValorEnsaioDentroCalculoChange] Plano inválido recebido');
-    }
+  ensaioCalc.valor = this.roundPorEnsaio(num, ensaioCalc.id);
     // Recalcula apenas os cálculos deste plano (o cálculo atual certamente será recalculado)
     if (plano?.calculo_ensaio_detalhes) {
       const calcRef = plano.calculo_ensaio_detalhes.find((c: any) => Array.isArray(c.ensaios_detalhes) && c.ensaios_detalhes.includes(ensaioCalc));
@@ -6902,8 +6889,10 @@ calcularEnsaioDireto(ensaio: any, planoRef?: any) {
         const dataResultado = new Date(resultado);
         ensaio.valor = dataResultado.toLocaleDateString('pt-BR');
         ensaio.valorTimestamp = resultado; // manter timestamp para cálculos
+          
       } else {
         ensaio.valor = resultado;
+        console.log('Resdfvgsfyjhdgjhmfjkgfkgj:', resultado);
       }
       } else {
         if (typeof resultado === 'number' && isFinite(resultado)) {
@@ -6914,20 +6903,26 @@ calcularEnsaioDireto(ensaio: any, planoRef?: any) {
           // Mantém valor anterior se resultado inválido
           ensaio.valor = valorAnterior;
         }      
+      
     }
+
     this.ensaioEnviado = ensaio;
 
     // Verificar alerta Fechamento após cálculo do ensaio
-    const plano = planoRef || this.analisesSimplificadas?.[0]?.planoDetalhes?.[0];
+    const plano = planoRef || this.encontrarPlanoDoEnsaio(ensaio);
 
-    if (plano) {
-      this.verificarAlertaFechamento(ensaio, plano);
-      this.verificarAlertaPRNT(ensaio);
-      this.startCalcompleo(this.ensaioEnviado, plano);
-    } else {
-      console.warn('[calcularEnsaioDireto] Plano não encontrado, pulando startCalcompleo');
+    if (plano && Array.isArray(plano.ensaio_detalhes)) {
+      const ensaio126 = plano.ensaio_detalhes.find((e: any) => e.id === 126);
+      if (ensaio126) {
+        console.log('[DEBUG] Valor do ensaio 126:', ensaio126.valor);
+      } else {
+        console.log('[DEBUG] Ensaio 126 não encontrado no plano.');
+      }
     }
-    
+
+    this.verificarAlertaFechamento(ensaio, plano);
+    this.verificarAlertaPRNT(ensaio);
+    this.startCalcompleo(this.ensaioEnviado);
     // Remover recálculo automático aqui para evitar loops de alertas
     this.forcarDeteccaoMudancas();
     } catch (error) {
@@ -6937,73 +6932,9 @@ calcularEnsaioDireto(ensaio: any, planoRef?: any) {
 }
 // Localiza o plano que contém o ensaio informado
 private encontrarPlanoDoEnsaio(ensaio: any): any | undefined {
-  console.log('[encontrarPlanoDoEnsaio] ======= INÍCIO =======');
-  console.log('[encontrarPlanoDoEnsaio] Ensaio recebido:', {
-    id: ensaio?.id,
-    descricao: ensaio?.descricao,
-    valor: ensaio?.valor
-  });
-  
-  // Buscar na estrutura analisesSimplificadas
   const analiseData = this.analisesSimplificadas && this.analisesSimplificadas[0];
   const planos = analiseData?.planoDetalhes || [];
-  
-  console.log('[encontrarPlanoDoEnsaio] analisesSimplificadas existe?', !!this.analisesSimplificadas);
-  console.log('[encontrarPlanoDoEnsaio] analiseData existe?', !!analiseData);
-  console.log('[encontrarPlanoDoEnsaio] Total de planos:', planos.length);
-  
-  if (planos.length > 0) {
-    console.log('[encontrarPlanoDoEnsaio] Estrutura do primeiro plano:', {
-      id: planos[0]?.id,
-      descricao: planos[0]?.descricao,
-      temEnsaioDetalhes: !!planos[0]?.ensaio_detalhes,
-      totalEnsaiosDetalhes: planos[0]?.ensaio_detalhes?.length || 0,
-      temCalculoEnsaioDetalhes: !!planos[0]?.calculo_ensaio_detalhes,
-      totalCalculos: planos[0]?.calculo_ensaio_detalhes?.length || 0,
-      idsEnsaios: planos[0]?.ensaio_detalhes?.map((e: any) => e.id) || [],
-      idsCalculos: planos[0]?.calculo_ensaio_detalhes?.map((c: any) => ({
-        id: c.id,
-        descricao: c.descricao,
-        ensaios: c.ensaios_detalhes?.map((e: any) => e.id) || []
-      })) || []
-    });
-  }
-  
-  const planoEncontrado = planos.find((pl: any) => {
-    console.log('[encontrarPlanoDoEnsaio] Analisando plano:', pl.descricao || pl.id);
-    
-    // Buscar em ensaio_detalhes
-    const temEmEnsaios = (pl.ensaio_detalhes || []).some((e: any) => {
-      const match = e.id === ensaio.id;
-      if (match) {
-        console.log('[encontrarPlanoDoEnsaio] ✅ Match em ensaio_detalhes!');
-      }
-      return match;
-    });
-    
-    // Buscar em calculo_ensaio_detalhes[].ensaios_detalhes[]
-    const temEmCalculos = (pl.calculo_ensaio_detalhes || []).some((calc: any) => {
-      return (calc.ensaios_detalhes || []).some((e: any) => {
-        const match = e.id === ensaio.id;
-        if (match) {
-          console.log('[encontrarPlanoDoEnsaio] ✅ Match em calculo:', calc.descricao);
-        }
-        return match;
-      });
-    });
-    
-    console.log('[encontrarPlanoDoEnsaio] Resultado da busca:', { temEmEnsaios, temEmCalculos });
-    return temEmEnsaios || temEmCalculos;
-  });
-  
-  if (!planoEncontrado) {
-    console.error('[encontrarPlanoDoEnsaio] ❌ NENHUM PLANO encontrado');
-  } else {
-    console.log('[encontrarPlanoDoEnsaio] ✅ PLANO ENCONTRADO:', planoEncontrado.descricao);
-  }
-  
-  console.log('[encontrarPlanoDoEnsaio] ======= FIM =======');
-  return planoEncontrado;
+  return planos.find((pl: any) => (pl.ensaio_detalhes || []).some((e: any) => e.id === ensaio.id || e.descricao === ensaio.descricao));
 }
 // Dado um token 'ensaioNN', encontra o valor do ensaio correspondente no plano
 private obterValorEnsaioPorToken(plano: any, token: string, contexto?: any): number {
@@ -12670,319 +12601,66 @@ onTracaoAbertoDataMoldagemChange():void {
   }
 
 //=============================    METODOS PARA PLANO CAL COMPLETO =================================//
-caoCombSo4: number = 0;
-caoCombCo2: number = 0;
-h2oComb: number = 0;
-valorCo2: number = 0;
-valorUmidade: number  = 0;
-caoHidratado: number = 0;
-caoNaoHidratado: number = 0;
-mgoHidratado: number = 0;
-valorCao: number = 0;
-valorMgo: number = 0;
-caoNaoHidratadoFinal: number = 0;
-oxidosTotalNaoHidratados: number = 0;
-ca: any;
-mg: number = 0;
-oxidosTotaisNaoVolumetricos: number = 0;
-valorPf: number = 0;
-somaOxidos: number = 0;
-hidroxTotais: number = 0;
-h2Comb: number = 0;
-eqCaco2: number = 0;
-private _calCompletoTimer: any;
+startCalcompleo(ensaioEnviado: any) {
+  console.log('ENSAIO COMPLETO:', ensaioEnviado);
+  console.log('VALOR RECEBIDO DO ENSAIO ENVIADO:', ensaioEnviado.valor);
+ 
 
-startCalcompleo(ensaioEnviado: any, planoParam?: any) {
-  console.log('[startCalcompleo] ===== CHAMADO =====', {
-    ensaioId: ensaioEnviado?.id,
-    ensaioDescricao: ensaioEnviado?.descricao,
-    ensaioValor: ensaioEnviado?.valor,
-    planoRecebido: !!planoParam
-  });
-  
-  // IDs relevantes para cal completo - verificar ANTES de agendar timeout
-  const idsRelevantes = [130, 131, 126, 77, 81, 98];
-  
-  // Se o ensaio não é relevante, não fazer nada (não cancelar timeout nem agendar novo)
-  if (!ensaioEnviado || !ensaioEnviado.id || !idsRelevantes.includes(ensaioEnviado.id)) {
-    console.log('[startCalcompleo] Ensaio', ensaioEnviado?.id, 'não é relevante para cal completo - ignorando');
-    return;
-  }
-  
-  console.log('[startCalcompleo] ✅ Ensaio relevante! Agendando execução...');
-  
-  // Limpar timeout anterior se existir
-  if (this._calCompletoTimer) {
-    clearTimeout(this._calCompletoTimer);
-  }
-  
-  // Agendar execução com delay de 150ms
-  this._calCompletoTimer = setTimeout(() => {
-    console.log('[startCalcompleo] Executando setTimeout após 150ms para ensaio', ensaioEnviado.id);
-    this.executarCalcompleo(ensaioEnviado, planoParam);
-  }, 150);
+  setTimeout(() => {
+    console.log("Valor após delay:", ensaioEnviado.valor);
+     if (ensaioEnviado.id === 126) {
+    this.caoCombCo2 = ensaioEnviado.valor * 1.27;
+    console.log('Valor do ensaio enviado:', this.caoCombCo2);
+  } 
+
+
+  }, 500);
+ 
+  this.calcculosCalCompleto(this.analise);
 }
 
-private executarCalcompleo(ensaioEnviado: any, planoParam?: any) {
-    console.log('[executarCalcompleo] ===== INÍCIO =====', {
-      ensaioId: ensaioEnviado?.id,
-      ensaioValor: ensaioEnviado?.valor,
-      tipoValor: typeof ensaioEnviado?.valor
-    });
+ calcculosCalCompleto(analise: any) {
+  const ordem = analise.amostra_detalhes?.ordem_detalhes;
+  console.log('ordem:', ordem);
+  if (ordem && Array.isArray(ordem.plano_detalhes) && ordem.plano_detalhes.length > 0) {
+    const planoDetalhes = ordem.plano_detalhes;
+    console.log('planoDetalhes:', planoDetalhes);
 
-    console.log(`[Cal Completo] ✅ Processando ensaio ID ${ensaioEnviado.id} com valor:`, ensaioEnviado.valor);
-    console.log('[Cal Completo] PlanoParam recebido:', planoParam ? planoParam.nome : 'NENHUM');
-
-    // PRIMEIRO: Usar o plano passado ou buscar
-    const plano = planoParam || this.encontrarPlanoDoEnsaio(ensaioEnviado);
-    
-    if (!plano) {
-      console.error('[Cal Completo] ⚠️ PLANO NÃO ENCONTRADO para o ensaio', ensaioEnviado.id, ensaioEnviado);
-      console.error('[Cal Completo] analisesSimplificadas:', this.analisesSimplificadas);
-      return;
-    }
-    
-    console.log('[Cal Completo] Plano:', plano?.nome || 'sem nome');
-    
-    if (!plano.ensaio_detalhes || !Array.isArray(plano.ensaio_detalhes)) {
-      console.warn('[Cal Completo] Plano sem ensaio_detalhes válido');
-      return;
-    }
-
-    console.log('[Cal Completo] Valores ANTES da atualização:', {
-      valorUmidade: this.valorUmidade,
-      valorCo2: this.valorCo2,
-      valorPf: this.valorPf,
-      valorCao: this.valorCao,
-      valorMgo: this.valorMgo
-    });
-    
-    // Função helper para buscar ensaio em AMBOS: ensaio_detalhes e calculo_ensaio_detalhes
-    const buscarEnsaioNoPlano = (plano: any, idEnsaio: number): any => {
-      console.log(`[buscarEnsaioNoPlano] Buscando ensaio ${idEnsaio}`);
-      
-      // 1. Buscar em ensaio_detalhes direto
-      let ensaio = (plano.ensaio_detalhes || []).find((e: any) => e.id === idEnsaio);
-      if (ensaio) {
-        console.log(`[buscarEnsaioNoPlano] ✅ Ensaio ${idEnsaio} encontrado em ensaio_detalhes, valor:`, ensaio.valor);
-        return ensaio;
-      }
-      
-      // 2. Buscar em calculo_ensaio_detalhes[].ensaios_detalhes[]
-      console.log(`[buscarEnsaioNoPlano] Procurando ensaio ${idEnsaio} em calculo_ensaio_detalhes...`);
-      console.log(`[buscarEnsaioNoPlano] Total de cálculos:`, plano.calculo_ensaio_detalhes?.length || 0);
-      
-      for (const calculo of (plano.calculo_ensaio_detalhes || [])) {
-        console.log(`[buscarEnsaioNoPlano] Verificando cálculo: ${calculo.descricao}, total ensaios:`, calculo.ensaios_detalhes?.length || 0);
-        ensaio = (calculo.ensaios_detalhes || []).find((e: any) => e.id === idEnsaio);
-        if (ensaio) {
-          console.log(`[buscarEnsaioNoPlano] ✅ Ensaio ${idEnsaio} encontrado em calculo ${calculo.descricao}, valor:`, ensaio.valor);
-          return ensaio;
+    // Buscar valor de ensaio por ID
+    const getEnsaioValor = (id: number) => {
+      for (const plano of planoDetalhes) {
+        console.log('plano.ensaio_detalhes:', plano.ensaio_detalhes);
+        if (Array.isArray(plano.ensaio_detalhes) && plano.ensaio_detalhes.length > 0) {
+          const ensaio = plano.ensaio_detalhes.find((e: any) => e.id === id);
+          if (ensaio) return ensaio.valor;
         }
       }
-      
-      console.log(`[buscarEnsaioNoPlano] ❌ Ensaio ${idEnsaio} NÃO encontrado!`);
-      return null;
+      return undefined;
+    };
+    const ID_MG = 126;
+
+    // Buscar valor de cálculo por ID
+    const getEnsaioUtilizadoValor = (id: number) => {
+      for (const resultado of analise?.calculos_detalhes || []) {
+        for (const ensaio of resultado.ensaios_utilizados || []) {
+          if (ensaio.id === id) {
+            return ensaio.valor;
+          }
+        }
+      }
+      return undefined;
     };
     
-    // Buscar TODOS os ensaios relevantes do plano em AMBOS os lugares
-    const ensaio131 = buscarEnsaioNoPlano(plano, 131); // Umidade
-    const ensaio126 = buscarEnsaioNoPlano(plano, 126); // CO2
-    const ensaio130 = buscarEnsaioNoPlano(plano, 130); // PF
-    const ensaio81 = buscarEnsaioNoPlano(plano, 81);   // CaO
-    const ensaio98 = buscarEnsaioNoPlano(plano, 98);   // MgO
-    const ensaio77 = buscarEnsaioNoPlano(plano, 77);   // SO3
     
-    // Atualizar TODAS as variáveis com valores do plano (incluindo 0)
-    this.valorUmidade = ensaio131 ? (Number(ensaio131.valor) || 0) : 0;
-    this.valorCo2 = ensaio126 ? (Number(ensaio126.valor) || 0) : 0;
-    this.valorPf = ensaio130 ? (Number(ensaio130.valor) || 0) : 0;
-    this.valorCao = ensaio81 ? (Number(ensaio81.valor) || 0) : 0;
-    this.valorMgo = ensaio98 ? (Number(ensaio98.valor) || 0) : 0;
-    
-    console.log('[Cal Completo] Valores buscados do plano:', {
-      ensaio131_valor: ensaio131?.valor,
-      ensaio126_valor: ensaio126?.valor,
-      ensaio130_valor: ensaio130?.valor,
-      ensaio81_valor: ensaio81?.valor,
-      ensaio98_valor: ensaio98?.valor,
-      ensaio77_valor: ensaio77?.valor
-    });
-    
-    // Garantir que o valor do ensaio modificado está atualizado (sobrescrever)
-    if (ensaioEnviado.id === 131) {
-      this.valorUmidade = Number(ensaioEnviado.valor) || 0;
-    } else if (ensaioEnviado.id === 126) {
-      this.valorCo2 = Number(ensaioEnviado.valor) || 0;
-    } else if (ensaioEnviado.id === 130) {
-      this.valorPf = Number(ensaioEnviado.valor) || 0;
-    } else if (ensaioEnviado.id === 81) {
-      this.valorCao = Number(ensaioEnviado.valor) || 0;
-    } else if (ensaioEnviado.id === 98) {
-      this.valorMgo = Number(ensaioEnviado.valor) || 0;
-    }
-    
-    console.log('[Cal Completo] Valores DEPOIS da atualização:', {
-      valorUmidade: this.valorUmidade,
-      valorCo2: this.valorCo2,
-      valorPf: this.valorPf,
-      valorCao: this.valorCao,
-      valorMgo: this.valorMgo
-    });
-
-    // AGORA: Realizar todos os cálculos em sequência com os valores atualizados
-    
-    // calculo CaO combinado com CO2 id 126
-    this.caoCombCo2 = Number(this.valorCo2) * 1.27;
-    
-    // calculo CaO combinado com SO4  id 77 = SO3
-    if (ensaioEnviado.id === 77) {
-      this.caoCombSo4 = Number(ensaioEnviado.valor || 0) * 0.7;
-    } else if (ensaio77) {
-      this.caoCombSo4 = (Number(ensaio77.valor) || 0) * 0.7;
-    } else {
-      this.caoCombSo4 = 0;
-    }
-    
-    console.log('[Cal Completo] Cálculos iniciais:', {
-      valorCo2: this.valorCo2,
-      caoCombCo2: this.caoCombCo2,
-      valorSO3: ensaio77?.valor || 0,
-      caoCombSo4: this.caoCombSo4
-    });
-    
-    // calculo H2O combinado id 130 = PF
-    const valorSoma = Number(this.valorCo2) + Number(this.valorUmidade);
-    const pfNum = Number(this.valorPf);
-    this.h2oComb = pfNum < valorSoma ? 0 : pfNum - valorSoma;
-    this.caoHidratado = Number(this.h2oComb) * 3.11;
-    
-    console.log('[Cal Completo] Cálculo H2O Combinado:', {
-      valorPf: this.valorPf,
-      valorCo2: this.valorCo2,
-      valorUmidade: this.valorUmidade,
-      valorSoma: valorSoma,
-      pfNum: pfNum,
-      comparacao: `${pfNum} < ${valorSoma} = ${pfNum < valorSoma}`,
-      h2oComb: this.h2oComb,
-      caoHidratado: this.caoHidratado
-    });
-    
-    // calculo CaO não hidratado id cao = 81
-    this.caoNaoHidratado = Number(this.valorCao) - (Number(this.caoCombSo4) + Number(this.caoCombCo2) + Number(this.caoHidratado)); 
-    this.ca = Number(this.valorCao) * 0.7142;
-    
-    console.log('[Cal Completo] Cálculo CaO Não Hidratado:', {
-      valorCao: this.valorCao,
-      caoCombSo4: this.caoCombSo4,
-      caoCombCo2: this.caoCombCo2,
-      caoHidratado: this.caoHidratado,
-      soma: Number(this.caoCombSo4) + Number(this.caoCombCo2) + Number(this.caoHidratado),
-      caoNaoHidratado: this.caoNaoHidratado,
-      ca: this.ca
-    });
-    
-    // Recalcular mgo Hidratado
-    if (this.caoNaoHidratado) {
-      this.mgoHidratado = this.caoNaoHidratado < 0 ? (-1 * this.caoNaoHidratado * 0.72) : Number(this.caoNaoHidratado) * 0.72;
-    }
-    // Recalcular CaO não hidratado final
-    this.caoNaoHidratadoFinal = this.caoNaoHidratado < 0 ? 0 : this.valorCao;
-    
-    // calculo dos oxidos total não hidratados apartir do mgo id=98
-    this.mg = Number(this.valorMgo) * 0.628;
-    
-    this.oxidosTotalNaoHidratados = this.caoNaoHidratado < 0 
-                          ? (Number(this.valorMgo) - Number(this.mgoHidratado)) 
-                          : this.caoNaoHidratado === 0 ? Number(this.valorMgo) 
-                          : Number(this.caoNaoHidratado) + Number(this.valorMgo);
-
-    // Recalcular óxidos totais não volumétricos
-    this.oxidosTotaisNaoVolumetricos = ((Number(this.valorCao) + Number(this.valorMgo)) / (100 - Number(this.valorPf))) * 100;
-    this.somaOxidos = Number(this.valorCao) + Number(this.valorMgo);
-
-    // Calculo Hidrox Totais
-    if (this.caoHidratado && this.mgoHidratado) {
-      this.hidroxTotais = Number(this.caoHidratado) + Number(this.mgoHidratado);
-    }
-    
-    // calculo H2O combinado e eqCaCO3
-    this.h2Comb = Number(this.valorPf) - Number(this.valorCo2);
-    // calculo eqCaCO3
-    this.eqCaco2 = Number(this.valorCo2) * 1.27;
+    // Exemplo de uso dos IDs definidos
+    //const caoCombSo4 = getEnsaioValor(ID_CAO) !== undefined ? getEnsaioValor(ID_CAO) * 2 : null;
+    const mgCombSo4 = getEnsaioUtilizadoValor(ID_MG) !== undefined ? getEnsaioUtilizadoValor(ID_MG) + 10 : null;
+    //const siO2Calc = getCalculoValor(ID_SIO2) !== undefined ? getCalculoValor(ID_SIO2) / 5 : null;
+    // ...adicione outros cálculos conforme necessário
+    console.log('afgafgfgd',mgCombSo4);
+  }
   
-
-    console.log('[Cal Completo] RESULTADO FINAL:', {
-      // Valores de entrada
-      valorUmidade: this.valorUmidade,
-      valorCo2: this.valorCo2,
-      valorPf: this.valorPf,
-      valorCao: this.valorCao,
-      valorMgo: this.valorMgo,
-      // Valores calculados
-      caoCombSo4: this.caoCombSo4,
-      caoCombCo2: this.caoCombCo2,
-      h2oComb: this.h2oComb,
-      caoHidratado: this.caoHidratado,
-      caoNaoHidratado: this.caoNaoHidratado,
-      mgoHidratado: this.mgoHidratado,
-      oxidosTotalNaoHidratados: this.oxidosTotalNaoHidratados,
-      // Resultados finais
-      h2Comb: this.h2Comb,
-      eqCaco2: this.eqCaco2,
-      somaOxidos: this.somaOxidos,
-      oxidosTotaisNaoVolumetricos: this.oxidosTotaisNaoVolumetricos,
-      hidroxTotais: this.hidroxTotais
-    });
 }
 
-
-salvarCalculoCalCompleto(analise: any) {
-  const dadosAtualizados: Partial<Analise> = {
-    cal_completo:{
-      cao_comb_so4: this.caoCombSo4,
-      cao_comb_co2: this.caoCombCo2,
-      h2o_comb: this.h2oComb,
-      cao_hidratado: this.caoHidratado,
-      cao_nao_hidratado: this.caoNaoHidratado,
-      mgo_hidratado: this.mgoHidratado,
-      cao_nao_hidratado_final: this.caoNaoHidratadoFinal,
-      oxidos_total_nao_hidratados: this.oxidosTotalNaoHidratados,
-      ca: this.ca,
-      mg: this.mg,
-      oxidos_totais_nao_volumetricos: this.oxidosTotaisNaoVolumetricos,
-      hidrox_totais: this.hidroxTotais,
-      eq_caco2: this.eqCaco2,
-      soma_oxidos: this.somaOxidos,
-      h2o_combinado: this.h2Comb,
-      
-    }
-  };
-  
-  this.analiseService.editAnalise(analise.id, dadosAtualizados).subscribe({
-    next: () => {
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Sucesso',
-        detail: 'Cálculo do Cal Completo salvo com sucesso!'
-      });
-      setTimeout(() => {
-      }, 1000);
-    },
-    error: (err) => {
-      console.error('Login error:', err); 
-      if (err.status === 401) {
-        this.messageService.add({ severity: 'error', summary: 'Timeout!', detail: 'Sessão expirada! Por favor faça o login com suas credenciais novamente.' });
-      } else if (err.status === 403) {
-        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Acesso negado! Vocês não tem autorização para realizar essa operação.' });
-      } else if (err.status === 400) {
-        this.messageService.add({ severity: 'error', summary: 'Erro!', detail: 'Preenchimento do formulário incorreto, por favor revise os dados e tente novamente.' });
-      }
-      else {
-        this.messageService.add({ severity: 'error', summary: 'Falha!', detail: 'Erro interno, comunicar o administrador do sistema.' });
-      } 
-    }
-  });
-  }
 
 }

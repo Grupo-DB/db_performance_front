@@ -671,7 +671,7 @@
                                 <h4 class="m-0" style="color: #d6f1ff;">{{ ultimo_calculo.calculos }}</h4>
                             </div>
                             <div class="mb-3 p-3" style="background-color: rgba(179, 229, 255, 0.1); border-radius: 8px;">
-                                <p class="text-xl mb-0" style="color: #d6f1ff;"><b>Resultado:</b> <span style="font-size: 1.5rem; font-weight: 700;">
+                                <p class="text-xl mb-0" style="color: #d6f1ff;"><b>Resultado: </b> <span style="font-size: 1.5rem; font-weight: 700;">
                                     {{ calcResultadoEhData(ultimo_calculo) ? 
                                         converterResultadoCalculoParaData(ultimo_calculo) : 
                                         (typeof ultimo_calculo.resultados === 'number' ? 
@@ -740,6 +740,239 @@
                 </div>
             </div>
 
+            <!-- Cards de Ensaios Plano Cal Completo -->
+            <div *ngIf="analiseSelecionada?.cal_completo">
+                <h3 class="mb-3 mt-5" style="color: #e6defa;">Ensaios Plano Cal Completo</h3>
+                <div class="mb-4">
+                    <div class="grid">
+                        <div class="col-12 md:col-6 lg:col-2">
+                            <div
+                                class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                                style="border-radius: 12px; background-color: #2b3a55;"
+                            >
+                                <div class="flex align-items-center justify-content-center">
+                                    <div>
+                                        <p class="mb-1" style="color: #d6f1ff; font-size: 0.8rem;">CaO Comb c/ SO4</p>
+                                        <p class="mb-0" style="color: #b3e5ff; font-size: 1.5rem; font-weight: 700;">
+                                            {{ analiseSelecionada.cal_completo.cao_comb_so4 | number:'1.2-2' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-6 lg:col-2">
+                            <div
+                                class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                                style="border-radius: 12px; background-color: #2b3a55;"
+                            >
+                                <div class="flex align-items-center justify-content-center">
+                                    <div>
+                                        <p class="mb-1" style="color: #d6f1ff; font-size: 0.8rem;">CaO Comb c/ CO2</p>
+                                        <p class="mb-0" style="color: #b3e5ff; font-size: 1.5rem; font-weight: 700;">
+                                            {{ analiseSelecionada.cal_completo.cao_comb_co2 | number:'1.2-2' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-6 lg:col-2">
+                            <div
+                                class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                                style="border-radius: 12px; background-color: #2b3a55;"
+                            >
+                                <div class="flex align-items-center justify-content-center">
+                                    <div>
+                                        <p class="mb-1" style="color: #d6f1ff; font-size: 0.8rem;">H2O Combinado</p>
+                                        <p class="mb-0" style="color: #b3e5ff; font-size: 1.5rem; font-weight: 700;">
+                                            {{ analiseSelecionada.cal_completo.h2o_comb | number:'1.2-2' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-6 lg:col-2">
+                            <div
+                                class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                                style="border-radius: 12px; background-color: #2b3a55;"
+                            >
+                                <div class="flex align-items-center justify-content-center">
+                                    <div>
+                                        <p class="mb-1" style="color: #d6f1ff; font-size: 0.8rem;">CaO Hidratado</p>
+                                        <p class="mb-0" style="color: #b3e5ff; font-size: 1.5rem; font-weight: 700;">
+                                            {{ analiseSelecionada.cal_completo.cao_hidratado | number:'1.2-2' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-6 lg:col-2">
+                            <div
+                                class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                                style="border-radius: 12px; background-color: #2b3a55;"
+                            >
+                                <div class="flex align-items-center justify-content-center">
+                                    <div>
+                                        <p class="mb-1" style="color: #d6f1ff; font-size: 0.8rem;">CaO N/ Hidratado</p>
+                                        <p class="mb-0" style="color: #b3e5ff; font-size: 1.5rem; font-weight: 700;">
+                                            {{ analiseSelecionada.cal_completo.cao_nao_hidratado | number:'1.2-2' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-6 lg:col-2">
+                            <div
+                                class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                                style="border-radius: 12px; background-color: #2b3a55;"
+                            >
+                                <div class="flex align-items-center justify-content-center">
+                                    <div>
+                                        <p class="mb-1" style="color: #d6f1ff; font-size: 0.8rem;">MgO Hidratado</p>
+                                        <p class="mb-0" style="color: #b3e5ff; font-size: 1.5rem; font-weight: 700;">
+                                            {{ analiseSelecionada.cal_completo.mgo_hidratado | number:'1.2-2' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-6 lg:col-2">
+                            <div
+                                class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                                style="border-radius: 12px; background-color: #2b3a55;"
+                            >
+                                <div class="flex align-items-center justify-content-center">
+                                    <div>
+                                        <p class="mb-1" style="color: #d6f1ff; font-size: 0.8rem;">CaO N/ Hidr Final</p>
+                                        <p class="mb-0" style="color: #b3e5ff; font-size: 1.5rem; font-weight: 700;">
+                                            {{ analiseSelecionada.cal_completo.cao_nao_hidratado_final | number:'1.2-2' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-6 lg:col-2">
+                            <div
+                                class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                                style="border-radius: 12px; background-color: #2b3a55;"
+                            >
+                                <div class="flex align-items-center justify-content-center">
+                                    <div>
+                                        <p class="mb-1" style="color: #d6f1ff; font-size: 0.8rem;">Ox T N/ Hidratados</p>
+                                        <p class="mb-0" style="color: #b3e5ff; font-size: 1.5rem; font-weight: 700;">
+                                            {{ analiseSelecionada.cal_completo.oxidos_total_nao_hidratados | number:'1.2-2' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-6 lg:col-2">
+                            <div
+                                class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                                style="border-radius: 12px; background-color: #2b3a55;"
+                            >
+                                <div class="flex align-items-center justify-content-center">
+                                    <div>
+                                        <p class="mb-1" style="color: #d6f1ff; font-size: 0.8rem;">Ca Calc Esteq.</p>
+                                        <p class="mb-0" style="color: #b3e5ff; font-size: 1.5rem; font-weight: 700;">
+                                            {{ analiseSelecionada.cal_completo.ca | number:'1.2-2' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-6 lg:col-2">
+                            <div
+                                class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                                style="border-radius: 12px; background-color: #2b3a55;"
+                            >
+                                <div class="flex align-items-center justify-content-center">
+                                    <div>
+                                        <p class="mb-1" style="color: #d6f1ff; font-size: 0.8rem;">Mg Calc Esteq.</p>
+                                        <p class="mb-0" style="color: #b3e5ff; font-size: 1.5rem; font-weight: 700;">
+                                            {{ analiseSelecionada.cal_completo.mg | number:'1.2-2' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-6 lg:col-2">
+                            <div
+                                class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                                style="border-radius: 12px; background-color: #2b3a55;"
+                            >
+                                <div class="flex align-items-center justify-content-center">
+                                    <div>
+                                        <p class="mb-1" style="color: #d6f1ff; font-size: 0.8rem;">Ox T N/ Vol</p>
+                                        <p class="mb-0" style="color: #b3e5ff; font-size: 1.5rem; font-weight: 700;">
+                                            {{ analiseSelecionada.cal_completo.oxidos_totais_nao_volumetricos | number:'1.2-2' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-6 lg:col-2">
+                            <div
+                                class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                                style="border-radius: 12px; background-color: #2b3a55;"
+                            >
+                                <div class="flex align-items-center justify-content-center">
+                                    <div>
+                                        <p class="mb-1" style="color: #d6f1ff; font-size: 0.8rem;">Soma Oxidos</p>
+                                        <p class="mb-0" style="color: #b3e5ff; font-size: 1.5rem; font-weight: 700;">
+                                            {{ analiseSelecionada.cal_completo.soma_oxidos | number:'1.2-2' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-6 lg:col-2">
+                            <div
+                                class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                                style="border-radius: 12px; background-color: #2b3a55;"
+                            >
+                                <div class="flex align-items-center justify-content-center">
+                                    <div>
+                                        <p class="mb-1" style="color: #d6f1ff; font-size: 0.8rem;">Hidr Totais</p>
+                                        <p class="mb-0" style="color: #b3e5ff; font-size: 1.5rem; font-weight: 700;">
+                                            {{ analiseSelecionada.cal_completo.hidrox_totais | number:'1.2-2' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-6 lg:col-2">
+                            <div
+                                class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                                style="border-radius: 12px; background-color: #2b3a55;"
+                            >
+                                <div class="flex align-items-center justify-content-center">
+                                    <div>
+                                        <p class="mb-1" style="color: #d6f1ff; font-size: 0.8rem;">H2O Comb</p>
+                                        <p class="mb-0" style="color: #b3e5ff; font-size: 1.5rem; font-weight: 700;">
+                                            {{ analiseSelecionada.cal_completo.h2o_combinado | number:'1.2-2' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-6 lg:col-2">
+                            <div
+                                class="shadow-2 hover:shadow-4 transition-duration-200 p-3"
+                                style="border-radius: 12px; background-color: #2b3a55;"
+                            >
+                                <div class="flex align-items-center justify-content-center">
+                                    <div>
+                                        <p class="mb-1" style="color: #d6f1ff; font-size: 0.8rem;">Eq CaCO2 Resid</p>
+                                        <p class="mb-0" style="color: #b3e5ff; font-size: 1.5rem; font-weight: 700;">
+                                            {{ analiseSelecionada.cal_completo.eq_caco2 | number:'1.2-2' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Cards de Variação Dimensional -->
             <div *ngIf="analiseSelecionada?.variacao_dimensional">
