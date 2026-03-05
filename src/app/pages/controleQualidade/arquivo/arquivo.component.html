@@ -343,7 +343,7 @@
                                                             icon="pi pi-print"
                                                             severity="help"
                                                             [rounded]="true" 
-                                                            pTooltip="Imprimir Laudo 2"
+                                                            pTooltip="Imprimir Laudo"
                                                             (onClick)="abrirModalLaudo(analise)"
                                                             tooltipPosition="top">
                                                         </p-button>
@@ -3682,3 +3682,118 @@
 
     <!-- Único ConfirmDialog centralizado para toda a página -->
     <p-confirmDialog></p-confirmDialog>
+
+
+<!-- Modal para montar laudo cal -->
+<p-dialog 
+    [(visible)]="modalLaudoCalVisible" 
+    [modal]="true" 
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" 
+    [style]="{ width: '80vw' }" 
+    [draggable]="false" 
+    [resizable]="false"
+    [header]="'Selecionar Ensaios para PDF'"
+>
+    <p-toast />
+    
+    <p-table 
+        [value]="ensaiosLaudoTabela" 
+        [tableStyle]="{ 'min-width': '100%' }"
+        styleClass="p-datatable-sm"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 2.5%">✓</th>
+                <th style="width: 20%">Ensaio</th>
+                <th style="width: 5%">Unid</th>
+                <th style="width: 8%">Resultado</th>
+                <th style="width: 8%">Garantia</th>
+                <th style="width: 2.5%">✓</th>
+                <th style="width: 20%">Ensaio</th>
+                <th style="width: 5%">Unid</th>
+                <th style="width: 8%">Resultado</th>
+                <th style="width: 8%">Garantia</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row>
+            <tr>
+                <!-- Coluna Esquerda -->
+                <td>
+                    <p-checkbox 
+                        [(ngModel)]="row.checked1" 
+                        [binary]="true"
+                        *ngIf="row.ensaio1"
+                    />
+                </td>
+                <td>{{ row.ensaio1 }}</td>
+                <td>{{ row.unidade1 }}</td>
+                <td>
+                    <input 
+                        *ngIf="row.ensaio1"
+                        type="text" 
+                        pInputText 
+                        [(ngModel)]="row.resultado1"
+                        class="w-full"
+                        style="text-align: center; font-size: 0.9rem;"
+                    />
+                </td>
+                <td>
+                    <input 
+                        *ngIf="row.ensaio1"
+                        type="text" 
+                        pInputText 
+                        [(ngModel)]="row.garantia1"
+                        class="w-full"
+                        style="text-align: center; font-size: 0.9rem;"
+                    />
+                </td>
+                
+                <!-- Coluna Direita -->
+                <td>
+                    <p-checkbox 
+                        [(ngModel)]="row.checked2" 
+                        [binary]="true"
+                        *ngIf="row.ensaio2"
+                    />
+                </td>
+                <td>{{ row.ensaio2 }}</td>
+                <td>{{ row.unidade2 }}</td>
+                <td>
+                    <input 
+                        *ngIf="row.ensaio2"
+                        type="text" 
+                        pInputText 
+                        [(ngModel)]="row.resultado2"
+                        class="w-full"
+                        style="text-align: center; font-size: 0.9rem;"
+                    />
+                </td>
+                <td>
+                    <input 
+                        *ngIf="row.ensaio2"
+                        type="text" 
+                        pInputText 
+                        [(ngModel)]="row.garantia2"
+                        class="w-full"
+                        style="text-align: center; font-size: 0.9rem;"
+                    />
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    
+    <ng-template pTemplate="footer">
+        <p-button 
+            label="Gerar PDF" 
+            icon="pi pi-file-pdf" 
+            (onClick)="gerarPDFSelecionados()"
+            [disabled]="!temEnsaiosSelecionados()"
+        />
+        <p-button 
+            label="Cancelar" 
+            icon="pi pi-times" 
+            (onClick)="modalLaudoCalVisible = false"
+            severity="secondary"
+        />
+    </ng-template>
+</p-dialog>    

@@ -207,7 +207,8 @@ export class CalculoEnsaioComponent implements OnInit {
     { label: '[', value: '[' },
     { label: ']', value: ']' },
     { label: '{', value: '{' },
-    { label: '}', value: '}' },  
+    { label: '}', value: '}' },
+    { label: ',', value: ',' },  
   ];
   operadores = [
     { label: '+', value: '+' },
@@ -1002,7 +1003,7 @@ validarExpressaoComValores(expr: string): boolean {
 
     fakeExpr = fakeExpr.replace(/\s+/g, ' ');
     const resultado = evaluate(fakeExpr, testContext);
-    
+    console.log('Expressão testada:', fakeExpr);
     this.messageService.add({
       severity: 'info',
       summary: 'Expressão válida!',

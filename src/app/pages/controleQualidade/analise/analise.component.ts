@@ -4418,9 +4418,161 @@ loadAnalisePorId(analise: any) {
         this.mapearEnsaiosParaCalculos();
         // Aplicar responsável padrão (primeiro do histórico, depois usuário logado)
         this.aplicarResponsavelPadrao();
+        // Preencher variáveis CP1, CP2 e CP3 se cálculo de densidade estiver presente
+        this.preencherVariaveisCpsDeCalculoDensidade();
         // O processamento dos ensaios diretos e recálculo dos cálculos deve acontecer após aplicar os valores restaurados
     }, 1000);
   }  
+
+//---------------------------------PREENCHER VARIÁVEIS CP1, CP2 E CP3 DO ENSAIO 562-567 SE CÁLCULO 139 ESTIVER PRESENTE-------------------
+preencherVariaveisCpsDeCalculoDensidade(): void {
+  try {
+    // Verificar se this.analise existe e tem calculos_detalhes
+    if (!this.analise) {
+      return;
+    }
+    
+    const calculosDetalhes = (this.analise as any).calculos_detalhes || [];
+    
+    if (calculosDetalhes.length === 0) {
+      return;
+    }
+    
+    // Buscar o cálculo que se refere ao cálculo 139
+    // Ele pode ter qualquer ID, mas o campo "calculos" contém a descrição do cálculo 139
+    const calculoDensidade = calculosDetalhes.find((calc: any) => 
+      calc.calculos && calc.calculos.includes('Densidade de Massa Endurecido')
+    );
+    
+    if (!calculoDensidade) {
+      return;
+    }
+    
+    // Agora buscar os ensaios 562-567 nos ensaios_utilizados desse cálculo
+    const ensaiosUtilizados = calculoDensidade.ensaios_utilizados || [];
+    
+    let valoresAtualizados = false;
+    
+    // ==== CP1 - Volume (Ensaio 562) ====
+    const ensaio562 = ensaiosUtilizados.find((ensaio: any) => ensaio.id === 562);
+    if (ensaio562) {
+      const variaveis562 = ensaio562.variaveis || {};
+      
+      if (variaveis562.var130 && variaveis562.var130.valor !== undefined) {
+        this.comprimentoCp1 = variaveis562.var130.valor;
+        valoresAtualizados = true;
+      }
+      
+      if (variaveis562.var133 && variaveis562.var133.valor !== undefined) {
+        this.larguraCp1 = variaveis562.var133.valor;
+        valoresAtualizados = true;
+      }
+      
+      if (variaveis562.var136 && variaveis562.var136.valor !== undefined) {
+        this.alturaCp1 = variaveis562.var136.valor;
+        valoresAtualizados = true;
+      }
+      
+      // Recalcular volume CP1
+      if (this.comprimentoCp1 != null && this.larguraCp1 != null && this.alturaCp1 != null) {
+        this.volumeCp1 = (this.comprimentoCp1 * this.larguraCp1 * this.alturaCp1) / 1000;
+      }
+    }
+    
+    // ==== CP1 - Massa (Ensaio 565) ====
+    const ensaio565 = ensaiosUtilizados.find((ensaio: any) => ensaio.id === 565);
+    if (ensaio565) {
+      const variaveis565 = ensaio565.variaveis || {};
+      
+      if (variaveis565.var139 && variaveis565.var139.valor !== undefined) {
+        this.massaCp1 = variaveis565.var139.valor;
+        valoresAtualizados = true;
+      }
+    }
+    
+    // ==== CP2 - Volume (Ensaio 563) ====
+    const ensaio563 = ensaiosUtilizados.find((ensaio: any) => ensaio.id === 563);
+    if (ensaio563) {
+      const variaveis563 = ensaio563.variaveis || {};
+      
+      if (variaveis563.var131 && variaveis563.var131.valor !== undefined) {
+        this.comprimentoCp2 = variaveis563.var131.valor;
+        valoresAtualizados = true;
+      }
+      
+      if (variaveis563.var134 && variaveis563.var134.valor !== undefined) {
+        this.larguraCp2 = variaveis563.var134.valor;
+        valoresAtualizados = true;
+      }
+      
+      if (variaveis563.var137 && variaveis563.var137.valor !== undefined) {
+        this.alturaCp2 = variaveis563.var137.valor;
+        valoresAtualizados = true;
+      }
+      
+      // Recalcular volume CP2
+      if (this.comprimentoCp2 != null && this.larguraCp2 != null && this.alturaCp2 != null) {
+        this.volumeCp2 = (this.comprimentoCp2 * this.larguraCp2 * this.alturaCp2) / 1000;
+      }
+    }
+    
+    // ==== CP2 - Massa (Ensaio 566) ====
+    const ensaio566 = ensaiosUtilizados.find((ensaio: any) => ensaio.id === 566);
+    if (ensaio566) {
+      const variaveis566 = ensaio566.variaveis || {};
+      
+      if (variaveis566.var140 && variaveis566.var140.valor !== undefined) {
+        this.massaCp2 = variaveis566.var140.valor;
+        valoresAtualizados = true;
+      }
+    }
+    
+    // ==== CP3 - Volume (Ensaio 564) ====
+    const ensaio564 = ensaiosUtilizados.find((ensaio: any) => ensaio.id === 564);
+    if (ensaio564) {
+      const variaveis564 = ensaio564.variaveis || {};
+      
+      if (variaveis564.var132 && variaveis564.var132.valor !== undefined) {
+        this.comprimentoCp3 = variaveis564.var132.valor;
+        valoresAtualizados = true;
+      }
+      
+      if (variaveis564.var135 && variaveis564.var135.valor !== undefined) {
+        this.larguraCp3 = variaveis564.var135.valor;
+        valoresAtualizados = true;
+      }
+      
+      if (variaveis564.var138 && variaveis564.var138.valor !== undefined) {
+        this.alturaCp3 = variaveis564.var138.valor;
+        valoresAtualizados = true;
+      }
+      
+      // Recalcular volume CP3
+      if (this.comprimentoCp3 != null && this.larguraCp3 != null && this.alturaCp3 != null) {
+        this.volumeCp3 = (this.comprimentoCp3 * this.larguraCp3 * this.alturaCp3) / 1000;
+      }
+    }
+    
+    // ==== CP3 - Massa (Ensaio 567) ====
+    const ensaio567 = ensaiosUtilizados.find((ensaio: any) => ensaio.id === 567);
+    if (ensaio567) {
+      const variaveis567 = ensaio567.variaveis || {};
+      
+      if (variaveis567.var141 && variaveis567.var141.valor !== undefined) {
+        this.massaCp3 = variaveis567.var141.valor;
+        valoresAtualizados = true;
+      }
+    }
+    
+    if (valoresAtualizados) {
+      // Detectar mudanças após preencher as variáveis
+      this.cd.detectChanges();
+    }
+    
+  } catch (error) {
+    console.error('❌ Erro ao preencher variáveis CP1/CP2/CP3 dos ensaios 562-567:', error);
+  }
+}
 
 //---------------------------------INICIALIZAÇÃO DE VARIÁVEIS DOS ENSAIOS DIRETOS E MAPEARENSAIOSPARACALCULOS-------------------
 inicializarVariaveisEnsaios() {
